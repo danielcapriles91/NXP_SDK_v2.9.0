@@ -1,0 +1,1042 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component:config_component
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd"
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0"
+   id="lpi2c_reg" label="LPI2C" category="Register init" registers_init="true" options="UI_COMPONENT_MODE_HIDDEN">
+   
+  <description>Low Power Inter-Integrated Circuit (LPI2C)</description>
+   <mode id="General" label="General">
+      <description>General LPI2C initialization</description>
+      <config_set_refs>
+         <config_set_ref>generalConfigSet</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>        
+         <peripheral_type>LPI2C</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="generalConfigSet" label="General configuration">
+     <description>General LPI2C configuration</description>
+      <generated_types/>
+      <user_types/> 
+      <settings>
+        <struct id="lpi2c_template_params" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+          <variable id="PERIPHERAL" value="$instance.getPeripheral()"></variable>
+          <variable id="VPREFIX" value="$configSet.inst_ID_def.getValue()"></variable>
+          <!-- Enable clock gate -->
+          <variable id="clockGate" value="1">                
+            <assign when="true"> 
+              <register peripheral_expr="system::getInstanceClockGatePeripheral()" 
+                name_expr="system::getInstanceClockGateRegister()" 
+                bitfield_expr="system::getInstanceClockGateBitfield()" 
+                value="system::getInstanceClockGateEnableValue()"/>
+            </assign>     
+          </variable>
+          <!-- Software reset -->
+          <variable id="softwareReset" value="0">           
+            <assign when="true">
+              <register peripheral_expr="system::getInstanceSwResetPeripheral()" name_expr="system::getInstanceSwResetRegister()" bitfield_expr="system::getInstanceSwResetBitfield()" value="system::getInstanceSwResetDisableValue()"/>              
+            </assign>
+          </variable>
+          <!-- Software reset -->
+          <variable id="SW_RESET_CONTROL_PERIPHERAL" value="system::getInstanceSwResetPeripheral()"></variable>
+          <variable id="SW_RESET_CONTROL_REGISTER" value="system::getInstanceSwResetRegister()"></variable>
+          <variable id="SW_RESET_CONTROL_BITFIELD" value="system::getInstanceSwResetBitfield()"></variable>
+        </struct>
+        <struct id="clkConfig_t" label="Clock configuration">
+          <variable id="clockSourceUId" value="`Lpi2cClock`"/>
+          <dynamic_enum id="clockSource" label="Functional clock source" options="remove_from_struct_init" items="createArray().addItemToList($parent.clockSourceUId.getValue(), getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()), ($instance.getPeripheral() + `_CLK_SRC`),true)" >
+            <description>Clock source used for I2C bus transfers by the master and by the slave to support digital filter and data hold time configurations.</description>
+            <validation>
+              <dependency resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                description_expr="getPeripheralClockSignal($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + ` is inactive.`"
+                level="Error">
+                <feature name="frequency" evaluation="greaterThan">
+                  <data expr="0" unit="Hz" type="Frequency"/>
+                </feature>
+              </dependency>
+            </validation>
+          </dynamic_enum>
+          <dynamic_enum id="clockSourceFreq" label="Functional clock source frequency" options="remove_from_struct_init" 
+            items="createArray().merge(
+            getClockFunctionalGroups().arrayToEnumItems(
+            enumItem -> true,
+            enumItem -> enumItem,
+            enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)) + ` (` + enumItem + `)`,
+            enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)))" >
+            <description>Selection of the clock source frequency used for I2C bus transfers by the master and by the slave to support digital filter and data hold time configurations.</description>
+            <validation>
+              <constraint cond_expr="$this.getEnumItemValue().toHertz() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+            </validation>
+            <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+          </dynamic_enum>
+          <info id="calculateFreqPeriod" label="Functional clock frequency/period" 
+            value="system::calculateFreqPeriod(1,$parent.clockSourceFreq.getEnumItemValue())">
+            <description>Clock frequency and period of functional clock (in time units).</description>
+          </info>
+          <!-- Calculated real timer counter input frequency - one tick of timer-->
+          <variable id="calculatedFreq" value="system::calculateRealFreq(1, $parent.clockSourceFreq.getEnumItemValue())"/>
+        </struct>
+
+        <struct id="masterSlaveStruct" label="Master and slave configuration" public="true" options="ShowContentAs=Tabs; UI_LABEL_HIDDEN">  
+        
+          <struct id="masterInitStruct" label="Master" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+            
+            <bool id="masterInit" label="Initialize master" options="UI_LABEL_BOLD;REGISTERS_REFRESH">
+              <description>Enable I2C master module configuration. Initialized registers: MIER, MDER, MCFGR[0-4], MDMR, MCCR[0-3], MFCR.</description>
+              <validation>
+                <dependency when_expr="($this.getValue() == true)"
+                  resource_type="PeripheralUnifiedSignal" 
+                  resource_id_expr="$instance.getPeripheral() + `.lpi2c_scl`" 
+                  description_expr="`Serial clock of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                  <feature name="routed" evaluation="equal">
+                    <data expr="true"/>
+                  </feature>
+                </dependency>
+                <dependency when_expr="($this.getValue() == true)"
+                  resource_type="PeripheralUnifiedSignal" 
+                  resource_id_expr="$instance.getPeripheral() + `.lpi2c_sda`" 
+                  description_expr="`Serial data of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                  <feature name="routed" evaluation="equal">
+                    <data expr="true"/>
+                  </feature>
+                </dependency>
+              </validation>
+            </bool>
+            
+            <struct id="masterStruct" label="Master configuration" available="$parent.masterInit.getValue()" options="UI_LABEL_HIDDEN">
+              <description>I2C master module configuration. Initialized registers: MIER, MDER, MCFGR[0-4], MDMR, MCCR[0-3], MFCR.</description>
+              
+              <bool id="MCR_MEN" label="Enable master" options="REGISTERS_REFRESH">
+                <description>Enables I2C master at the end of component initialization.</description>
+                <assign when="true">
+                  <register name="MCR" bitfield="MEN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                </assign>
+              </bool>
+              
+              <struct id="masterClocks" label="Clock configuration ">
+                <description>configuration  of master clock settings.</description>
+                <enum id="MCFGR1_PRESCALE" label="Prescaler" options="REGISTERS_REFRESH">
+                  <description>Clock prescaler used for all LPI2C master logic, except for the digital glitch filters.</description>
+                  <assign when="true">
+                    <register name="MCFGR1" bitfield="PRESCALE" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>                 
+                  </assign>
+                  <item id="0" label="1" value="0"/>
+                  <item id="1" label="2" value="1"/>
+                  <item id="2" label="4" value="2"/>
+                  <item id="3" label="8" value="3"/>
+                  <item id="4" label="16" value="4"/>
+                  <item id="5" label="32" value="5"/>
+                  <item id="6" label="64" value="6"/>
+                  <item id="7" label="128" value="7"/>
+                </enum>
+                <integer id="MCFGR3_FILTSDA" label="SDA glitch filter [ticks]" type="uint8_t" min_expr="0" max_expr="0xF">
+                  <description>
+Configures the I2C master digital glitch filters for SDA input:
+- A configuration of 0 will disable the glitch filter
+- Glitches equal to or less than configured number of cycles will be filtered out and ignored
+- The latency through the glitch filter is equal to configured number of cycles, and must be configured to be less than the minimum SCL low or high period
+- The glitch filter cycle count is not affected by the prescaler configuration, and the glitch filter cycle count is automatically bypassed in High Speed mode            
+                  </description>
+                  <validation>
+                    <constraint cond_expr="$this.getValue() &gt;= $parent.MCFGR3_FILTSCL.getValue()" level="warning" description="It is not recommended to use SDA glitch filter value lower than used by SCL glitch filter."/>
+                  </validation>
+                  <assign when="true">
+                    <register name="MCFGR3" bitfield="FILTSDA" value="$this.getCValue().toInt()" reverse_value="x -> x"/>                 
+                  </assign>
+                </integer>
+                <integer id="MCFGR3_FILTSCL" label="SCL glitch filter [ticks]" type="uint8_t" min_expr="0" max_expr="0xF">
+                  <description>
+Configures the I2C master digital glitch filters for SCL input:
+- A configuration of 0 will disable the glitch filter
+- Glitches equal to or less than configured number of cycles will be filtered out and ignored
+- The latency through the glitch filter is equal to configured number of cycles, and must be configured to be less than the minimum SCL low or high period
+- The glitch filter cycle count is not affected by the prescaler configuration, and the glitch filter cycle count is automatically bypassed in High Speed mode            
+                  </description>
+                  <assign when="true">
+                    <register name="MCFGR3" bitfield="FILTSCL" value="$this.getCValue().toInt()" reverse_value="x -> x"/>                 
+                  </assign>
+                </integer>
+                <variable id="masterSCLLatency" value="floor((2 + $parent.MCFGR3_FILTSCL.getValue()) / (2**$parent.MCFGR1_PRESCALE.getEnumItemValue().toInt()),0)"></variable>
+                <struct id="masterStandardFastModes" label="Standard/fast modes">
+                  <description>Master clock configuration  used for standard, fast, fast-mode plus and ultra-fast transfers.</description>
+                  <integer id="MCCR0_CLKLO" label="Clock low period [ticks]" type="uint8_t" min_expr="0" max_expr="0x3F">
+                    <description>Minimum number of cycles (minus one) that the SCL clock is driven low by the master. The clock low period value is also used for the minimum bus free time between a STOP and a START condition; this is extended by the time it takes to detect a rising edge on the external SCL pin. Ignoring any additional board delay due to external loading, this time is equal to (2 + SCL glitch filter) / 2^prescaler cycles.</description>
+                    <validation>
+                      <constraint cond_expr="$this.getValue() &gt;= 3" level="warning" description="It is not recommended to use Clock low period value lower than 3 ticks."/>
+                    </validation>
+                    <assign when="true">
+                      <register name="MCCR0" bitfield="CLKLO" value="$this.getCValue().toInt()" reverse_value="x -> x"/>                 
+                    </assign>
+                  </integer>
+                  <integer id="MCCR0_CLKHI" label="Clock high period [ticks]" type="uint8_t" min_expr="0" max_expr="0x3F">
+                    <description>Minimum number of cycles (minus one) that the SCL clock is driven high by the master. The SCL high time is extended by the time it takes to detect a rising edge on the external SCL pin. Ignoring any additional board delay due to external loading, this time is equal to (2 + SCL glitch filter) / 2^prescaler cycles.</description>
+                    <validation>
+                      <constraint cond_expr="$this.getValue() &gt;= 1" level="warning" description="It is not recommended to use Clock high period value lower than 1 tick."/>
+                    </validation>
+                    <assign when="true">
+                      <register name="MCCR0" bitfield="CLKHI" value="$this.getCValue().toInt()" reverse_value="x -> x"/>                 
+                    </assign>
+                  </integer>              
+                  <integer id="MCCR1_DATAVD" label="Data valid delay [ticks]" type="uint8_t" min_expr="0" max_expr="0x3F">
+                    <description>Minimum number of cycles (minus one) that is used as the data hold time for SDA. Must be configured less than the minimum SCL low period.</description>
+                    <validation>
+                      <constraint cond_expr="$this.getValue() &gt;= 1" level="warning" description="It is not recommended to use Data valid delay value lower than 1 tick."/>
+                    </validation>
+                    <assign when="true">
+                      <register name="MCCR1" bitfield="DATAVD" value="$this.getCValue().toInt()" reverse_value="x -> x"/>                 
+                    </assign>
+                  </integer>
+                  <integer id="MCCR1_SETHOLD" label="Setup hold delay [ticks]" type="uint8_t" min_expr="0" max_expr="0x3F">
+                    <description>
+Minimum number of cycles (minus one) that is used by the master:
+- as the hold time for a START condition
+- as the setup and hold time for a repeated START condition
+- as the setup time for a STOP condition
+The setup time is extended by the time it takes to detect a rising edge on the external SCL pin. Ignoring any additional board delay due to external loading, this time is equal to (2 + SCL glitch filter) / 2^prescaler cycles.
+                    </description>
+                    <validation>
+                      <constraint cond_expr="$this.getValue() &gt;= 2" level="warning" description="It is not recommended to use Setup hold delay value lower than 2 ticks."/>
+                    </validation>
+                    <assign when="true">
+                      <register name="MCCR1" bitfield="SETHOLD" value="$this.getCValue().toInt()" reverse_value="x -> x"/>                 
+                    </assign>
+                  </integer>
+                  <variable id="clock" value="$configSet.clkConfig_t.calculatedFreq.getValue()"></variable>
+                  <variable id="CLKHI" value="$parent.MCCR0_CLKHI.getValue()"></variable>
+                  <variable id="CLKLO" value="$parent.MCCR0_CLKLO.getValue()"></variable>
+                  <variable id="SCLLatency" value="$configSet.masterSlaveStruct.masterInitStruct.masterStruct.masterClocks.masterSCLLatency.getValue()"></variable>
+                  <variable id="PRESC" value="2**$configSet.masterSlaveStruct.masterInitStruct.masterStruct.masterClocks.MCFGR1_PRESCALE.getEnumItemValue().toInt()"></variable>
+                  <info id="StdFastBaudRate" label="Baud rate [bps]" value="$parent.clock.getValue() == `N/A` ? `N/A` : $parent.clock.getValue().toInt() / ($parent.PRESC.getValue().toInt() * (2 + $parent.CLKHI.getValue().toInt() + $parent.CLKLO.getValue().toInt() + $parent.SCLLatency.getValue().toInt()))" >
+                    <description>Standard/fast mode baud rate. The baud rate is calculated as (Clock freq) / ((2 + Clock low period + Clock high period + SCL latency) * Prescaler). The SCL latency is calculated as (2 + SCL glitch filter) / Prescaler, rounded toward zero.</description>
+                  </info>
+                </struct>
+                
+                <struct id="masterHighModes" label="High speed mode">
+                  <description>Master clock configuration  used for high speed mode transfers. The separate clock configuration for high speed mode allows arbitration to take place in fast modes before switching to high speed mode.</description>
+                  <integer id="MCCR2_CLKLO" label="Clock low period [ticks]" type="uint8_t" min_expr="0" max_expr="0x3F">
+                    <description>Minimum number of cycles (minus one) that the SCL clock is driven low by the master. The clock low period value is also used for the minimum bus free time between a STOP and a START condition; this is extended by the time it takes to detect a rising edge on the external SCL pin. Ignoring any additional board delay due to external loading, this time is equal to (2 + SCL glitch filter) / 2^prescaler cycles.</description>
+                    <validation>
+                      <constraint cond_expr="$this.getValue() &gt;= 3" level="warning" description="It is not recommended to use Clock low period value lower than 3 ticks."/>
+                    </validation>
+                    <assign when="true">
+                      <register name="MCCR2" bitfield="CLKLO" value="$this.getCValue().toInt()" reverse_value="x -> x"/>                 
+                    </assign>
+                  </integer>
+                  <integer id="MCCR2_CLKHI" label="Clock high period [ticks]" type="uint8_t" min_expr="0" max_expr="0x3F">
+                    <description>Minimum number of cycles (minus one) that the SCL clock is driven high by the master. The SCL high time is extended by the time it takes to detect a rising edge on the external SCL pin. Ignoring any additional board delay due to external loading, this time is equal to (2 + SCL glitch filter) / 2^prescaler cycles.</description>
+                    <validation>
+                      <constraint cond_expr="$this.getValue() &gt;= 1" level="warning" description="It is not recommended to use Clock high period value lower than 1 tick."/>
+                    </validation>
+                    <assign when="true">
+                      <register name="MCCR2" bitfield="CLKHI" value="$this.getCValue().toInt()" reverse_value="x -> x"/>                 
+                    </assign>
+                  </integer>
+                  
+                  <integer id="MCCR3_DATAVD" label="Data valid delay [ticks]" type="uint8_t" min_expr="0" max_expr="0x3F">
+                    <description>Minimum number of cycles (minus one) that is used as the data hold time for SDA. Must be configured less than the minimum SCL low period.</description>
+                    <validation>
+                      <constraint cond_expr="$this.getValue() &gt;= 1" level="warning" description="It is not recommended to use Data valid delay value lower than 1 tick."/>
+                    </validation>
+                    <assign when="true">
+                      <register name="MCCR3" bitfield="DATAVD" value="$this.getCValue().toInt()" reverse_value="x -> x"/>                 
+                    </assign>
+                  </integer>
+                  <integer id="MCCR3_SETHOLD" label="Setup hold delay [ticks]" type="uint8_t" min_expr="0" max_expr="0x3F">
+                    <description>
+Minimum number of cycles (minus one) that is used by the master:
+- as the hold time for a START condition
+- as the setup and hold time for a repeated START condition
+- as the setup time for a STOP condition
+The setup time is extended by the time it takes to detect a rising edge on the external SCL pin. Ignoring any additional board delay due to external loading, this time is equal to (2 + SCL glitch filter) / 2^prescaler cycles.
+                    </description>
+                    <validation>
+                      <constraint cond_expr="$this.getValue() &gt;= 2" level="warning" description="It is not recommended to use Setup hold delay value lower than 2 ticks."/>
+                    </validation>
+                    <assign when="true">
+                      <register name="MCCR3" bitfield="SETHOLD" value="$this.getCValue().toInt()" reverse_value="x -> x"/>                 
+                    </assign>
+                  </integer>
+                  <variable id="clock" value="$configSet.clkConfig_t.calculatedFreq.getValue()"></variable>
+                  <variable id="CLKHI" value="$parent.MCCR2_CLKHI.getValue()"></variable>
+                  <variable id="CLKLO" value="$parent.MCCR2_CLKLO.getValue()"></variable>
+                  <variable id="SCLLatency" value="$configSet.masterSlaveStruct.masterInitStruct.masterStruct.masterClocks.masterSCLLatency.getValue()"></variable>
+                  <variable id="PRESC" value="2**$configSet.masterSlaveStruct.masterInitStruct.masterStruct.masterClocks.MCFGR1_PRESCALE.getEnumItemValue().toInt()"></variable>
+                  <info id="highBaudRate" label="Baud rate [bps]" value="$parent.clock.getValue() == `N/A` ? `N/A` : $parent.clock.getValue().toInt() /  ($parent.PRESC.getValue().toInt() * (2 + $parent.CLKHI.getValue().toInt() + $parent.CLKLO.getValue().toInt() + $parent.SCLLatency.getValue().toInt()))" >
+                    <description>High speed mode baud rate. The baud rate is calculated as (Clock freq) / ((2 + Clock low period + Clock high period + SCL latence) * Prescaler). The SCL latency is calculated as (2 + SCL glitch filter) / Prescaler, rounded toward zero.</description>
+                  </info>
+                </struct>
+              </struct>              
+              
+              <bool id="MCFGR1_FRCHS" label="High speed mode" options="REGISTERS_REFRESH">
+                <description>When set, forces the LPI2C pin state into high speed mode (HS-mode). Setting this does not impact the digital filter configuration or digital timing parameters.</description>
+                <assign when="true">
+                  <register name="MCFGR1" bitfield="FRCHS" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                </assign>
+              </bool>
+              <bool id="MCR_DBGEN" label="Enable in debug mode" options="REGISTERS_REFRESH">
+                <description>Enables master in debug mode.</description>
+                <assign when="true">
+                  <register name="MCR" bitfield="DBGEN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                </assign>
+              </bool>
+              <bool id="MCR_DOZEN" label="Enable in doze mode" options="REGISTERS_REFRESH">
+                <description>Enables master in doze mode.</description>
+                <assign when="true">
+                  <register name="MCR" bitfield="DOZEN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                </assign>
+              </bool>
+              
+              
+              <enum id="MCFGR1_PINCFG" label="Pin configuration " options="REGISTERS_REFRESH">
+                <description>Configures the pin mode for LPI2C.</description>
+                <validation>
+                  <dependency when_expr="($this.getEnumItemId() == `3` || $this.getEnumItemId() == `7`)"
+                    resource_type="PeripheralUnifiedSignal" 
+                    resource_id_expr="$instance.getPeripheral() + `.lpi2c_scls`" 
+                    description_expr="`Secondary serial clock of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                    <feature name="routed" evaluation="equal">
+                      <data expr="true"/>
+                    </feature>
+                  </dependency>
+                  <dependency when_expr="($this.getEnumItemId() == `3` || $this.getEnumItemId() == `7`)"
+                    resource_type="PeripheralUnifiedSignal" 
+                    resource_id_expr="$instance.getPeripheral() + `.lpi2c_sdas`" 
+                    description_expr="`Secondary serial data of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                    <feature name="routed" evaluation="equal">
+                      <data expr="true"/>
+                    </feature>
+                  </dependency>
+                </validation>
+                <assign when="true">
+                  <register name="MCFGR1" bitfield="PINCFG" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                </assign>
+                <item id="0" label="2-pin open drain" value="0">
+                  <description>SCL / SDA pins - Bi-directional open drain for master and slave, SCLS / SDAS pins - Not used.</description>
+                </item>            
+                <item id="1" label="2-pin output only (ultra-fast mode)" value="1">
+                  <description>SCL / SDA pins - Output-only (ultra-fast mode) open drain for master and slave, SCLS / SDAS pins - Not used.</description>
+                </item>
+                <item id="2" label="2-pin push-pull" value="2">
+                  <description>SCL / SDA pins - Bi-directional push-pull for master and slave, SCLS / SDAS pins - Not used.</description>
+                </item>
+                <item id="3" label="4-pin push-pull" value="3">
+                  <description>SCL / SDA pins - Input only for master and slave, SCLS / SDAS pins - Output-only push-pull for master and slave.</description>
+                </item>
+                <item id="4" label="2-pin open drain with separate slave" value="4">
+                  <description>SCL / SDA pins - Bi-directional open drain for master, SCLS / SDAS pins - Bi-directional open drain for slave.</description>
+                </item>
+                <item id="5" label="2-pin output only (ultra-fast mode) with separate slave" value="5">
+                  <description>SCL / SDA pins - Output-only (ultra-fast mode) open drain for master, SCLS / SDAS pins - Output-only open drain for slave.</description>
+                </item>
+                <item id="6" label="2-pin push-pull with separate slave" value="6">
+                  <description>SCL / SDA pins - Bi-directional push-pull for master, SCLS / SDAS pins - Bi-directional push-pull for slave.</description>
+                </item>
+                <item id="7" label="4-pin push-pull (inverted outputs)" value="7">
+                  <description>SCL / SDA pins - Input only for master and slave, SCLS / SDAS pins - Inverted output-only push-pull for master and slave.</description>
+                </item>
+              </enum>
+              <enum id="MCFGR1_TIMECFG" label="Pin low timeout" options="REGISTERS_REFRESH">
+                <description>When set, forces the LPI2C pin state into high speed mode (HS-mode). Setting this does not impact the digital filter configuration or digital timing parameters.</description>
+                <assign when="true">
+                  <register name="MCFGR1" bitfield="TIMECFG" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                </assign>
+                <item id="0" label="SCL" value="0">
+                  <description>Pin low timeout flag will set if SCL is low for longer than the configured timeout.</description>
+                </item>            
+                <item id="1" label="SCL or SDA" value="1">
+                  <description>Pin low timeout flag will set if either SCL or SDA is low for longer than the configured timeout.</description>
+                </item>
+              </enum>
+              <bool id="MCFGR1_IGNACK" label="Ignore NACK" options="REGISTERS_REFRESH">
+                <description>When enabled, the received NACK field is ignored and assumed to be ACK. Required to be enabled in Ultra-Fast mode.</description>
+                <validation>
+                  <constraint cond_expr="($parent.MCFGR1_PINCFG.getEnumItemValue() == `1` || $parent.MCFGR1_PINCFG.getEnumItemValue() == `5`) &amp;&amp; $this.getValue() == true" level="warning" description="Ignore NACK should be enabled if ultra-fast pin mode is used."/>
+                </validation>
+                <assign when="true">
+                  <register name="MCFGR1" bitfield="IGNACK" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                </assign>
+              </bool>
+              <bool id="MCFGR1_AUTOSTOP" label="Automatic STOP generation" options="REGISTERS_REFRESH">
+                <description>When enabled, a STOP condition is generated whenever the LPI2C master is busy and the transmit FIFO is empty. The STOP condition can also be generated using a transmit FIFO command.</description>
+                <assign when="true">
+                  <register name="MCFGR1" bitfield="AUTOSTOP" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                </assign>
+              </bool>
+              
+              
+              
+              <integer id="MCFGR2_BUSIDLE" label="Bus idle timeout" type="uint16_t" min_expr="0" max_expr="0xFFF">
+                <description>Configures the bus idle timeout period in clock cycles. If both SCL and SDA are high for longer than than the specified clock cycles, then the I2C bus is assumed to be idle and the master can generate a START condition. The bus idle timeout is disabled when set to zero.</description>
+                <assign when="true">
+                  <register name="MCFGR2" bitfield="BUSIDLE" value="$this.getCValue().toInt()" reverse_value="x -> x"/>                 
+                </assign>
+              </integer>
+              
+              <integer id="MCFGR4_PINLOW" label="Pin low timeout" type="uint32_t" min_expr="0" max_expr="0xFFF00">
+                <description>Configures the pin low timeout flag in clock cycles. If either SCL or SDA is low for longer than the configured value number of cycles, then pin low timeout flag is set. The pin low timeout is disabled when set to zero.</description>
+                <validation>
+                  <constraint cond_expr="$this.getValue() % 0x100 == 0" level="error" description="The timout value must be multiple of 256."/>
+                </validation>
+                <assign when="true">
+                  <register name="MCFGR4" bitfield="PINLOW" value="$this.getCValue().toInt() == 0 ? 0 : ($this.getCValue().toInt() / 256)" reverse_value="x -> (x * 256)"/>                 
+                </assign>            
+              </integer>
+              
+              <struct id="masterDataMatch" label="Data match">
+                <description>Configuration of master data match.</description>
+                <enum id="MCFGR1_MATCFG" label="Data match condition" options="REGISTERS_REFRESH">
+                  <description>Configures the condition that will cause the data match flag to set.</description>
+                  <assign when="true">
+                    <register name="MCFGR1" bitfield="MATCFG" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                  </assign>
+                  <item id="0" label="Disabled" value="0">
+                    <description>Match is disabled.</description>
+                  </item>            
+                  <item id="2" label="1st data word == (MATCH0 or MATCH1)" value="2">
+                    <description>First data word equals Data match 0 or Data match 1.</description>
+                  </item>
+                  <item id="3" label="Any data word == (MATCH0 or MATCH1)" value="3">
+                    <description>Any data word equals Data match 0 or Data match 1.</description>
+                  </item>
+                  <item id="4" label="(1st data word == MATCH0) and (2nd data word == MATCH1)" value="4">
+                    <description>First data word equals Data match 0 and second data word equals Data match 1.</description>
+                  </item>
+                  <item id="5" label="(Any data word == MATCH0) and (next data word == MATCH1)" value="5">
+                    <description>Any data word equals Data match 0 and next data word equals Data match 1.</description>
+                  </item>
+                  <item id="6" label="(1st data word &amp; MATCH1) == (MATCH0 &amp; MATCH1)" value="6">
+                    <description>Bitwise AND of first data word and Data match 1 equals bitwise AND of Data match 0 and Data match 1.</description>
+                  </item>
+                  <item id="7" label="(Any data word &amp; MATCH1) == (MATCH0 &amp; MATCH1)" value="7">
+                    <description>Bitwise AND of any data word and Data match 1 equals bitwise AND of Data match 0 and Data match 1.</description>
+                  </item>
+                </enum>
+                <integer id="MDMR_MATCH0" label="Data match 0" type="uint8_t" min_expr="0" max_expr="0xFF">
+                  <description>Compared against the received data when receive data match is enabled.</description>
+                  <assign when="true">
+                    <register name="MDMR" bitfield="MATCH0" value="$this.getCValue().toInt()" reverse_value="x -> x"/>                 
+                  </assign>
+                </integer>
+                <integer id="MDMR_MATCH1" label="Data match 1" type="uint8_t" min_expr="0" max_expr="0xFF">
+                  <description>Compared against the received data when receive data match is enabled.</description>
+                  <assign when="true">
+                    <register name="MDMR" bitfield="MATCH1" value="$this.getCValue().toInt()" reverse_value="x -> x"/>                 
+                  </assign>
+                </integer>
+                <bool id="MCFGR0_RDMO" label="Discard not matching data" options="REGISTERS_REFRESH">
+                  <description>When enabled, all received data that does not cause the data match flag to set are discarded. Once is data match flag set, data are no longer discarded.</description>
+                  <assign when="true">
+                    <register name="MCFGR0" bitfield="RDMO" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </bool>
+              </struct>
+              
+              <struct id="masterHostRequest" label="Host request">
+                <description>Configuration of master host request.</description>
+                <bool id="MCFGR0_HREN" label="Enable host request" options="REGISTERS_REFRESH">
+                  <description>When enabled, the LPI2C master will only initiate a START condition if the host request input is asserted and the bus is idle. A repeated START is not affected by the host request.</description>
+                  <assign when="true">
+                    <register name="MCFGR0" bitfield="HREN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </bool>
+                <enum id="MCFGR0_HRSEL" label="Host request input" options="REGISTERS_REFRESH">
+                  <description>Selects the source of the host request input. It is possible to use HREQ pin or use trigger from various internal peripherals. If HREQ pin is selected, make sure that the pin is routed in Pins tool.</description>
+                  <validation>
+                    <dependency when_expr="($this.getEnumItemId() == `0`)"
+                      resource_type="PeripheralUnifiedSignal" 
+                      resource_id_expr="$instance.getPeripheral() + `.lpi2c_trig`" 
+                      description_expr="`Host request (HREQ) of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                      <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                      </feature>
+                    </dependency>
+                  </validation>
+                  <assign when="true">
+                    <register name="MCFGR0" bitfield="HRSEL" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                  </assign>
+                  <item id="0" label="HREQ pin" value="0">
+                    <description>Host request input is pin HREQ.</description>
+                  </item>
+                  <item id="1" label="Input trigger" value="1">
+                    <description>Host request input is input trigger.</description>
+                  </item>            
+                </enum>
+                <enum id="MCFGR0_HRPOL" label="Host request polarity" options="REGISTERS_REFRESH">
+                  <description>Configures polarity of the host request input pin.</description>
+                  <assign when="true">
+                    <register name="MCFGR0" bitfield="HRPOL" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                  </assign>
+                  <item id="0" label="Active high" value="0">
+                  </item>
+                  <item id="1" label="Active low" value="1">
+                  </item>            
+                </enum>            
+              </struct>
+                        
+              <struct id="masterFIFO" label="Transmit/Receive FIFO">
+                <description>configuration  of master transmit/receive FIFO</description>
+                <bool id="MCR_RRF" label="Reset receive FIFO" options="REGISTERS_REFRESH">
+                  <description>When enabled, resets receive FIFO as part of component initialization.</description>
+                  <assign when="true">
+                    <register name="MCR" bitfield="RRF" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </bool>
+                <bool id="MCR_RTF" label="Reset transmit FIFO" options="REGISTERS_REFRESH">
+                  <description>When enabled, resets transmit FIFO as part of component initialization.</description>
+                  <assign when="true">
+                    <register name="MCR" bitfield="RTF" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </bool>
+                <bool id="MCFGR0_CIRFIFO" label="Circular transmit FIFO" options="REGISTERS_REFRESH">
+                  <description>When enabled, the transmit FIFO read pointer is saved to a temporary register. The transmit FIFO will be emptied as normal, but after the LPI2C master is idle and the transmit FIFO is empty, then the read pointer value will be restored from the temporary register. This will cause the contents of the transmit FIFO to be cycled through repeatedly. If AUTOSTOP is set, then a STOP condition will be sent whenever the transmit FIFO is empty and the read pointer is restored.</description>
+                  <assign when="true">
+                    <register name="MCFGR0" bitfield="CIRFIFO" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </bool>
+                <enum id="MFCR_RXWATER" label="Receive FIFO watermark">
+                  <description>The receive data flag is set whenever the number of words in the receive FIFO is greater than the configured number of words.</description>
+                  <assign when="true">
+                    <register name="MFCR" bitfield="RXWATER" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>                 
+                  </assign>
+                  <item id="0" label="0 words" value="0"></item>
+                  <item id="1" label="1 word" value="1"></item>
+                  <item id="2" label="2 words" value="2"></item>
+                  <item id="3" label="3 words" value="3"></item>            
+                </enum>
+                <enum id="MFCR_TXWATER" label="Transmit FIFO watermark">
+                  <description>The transmit data flag is set whenever the number of words in the transmit FIFO is equal or less than the configured number of words.</description>
+                  <assign when="true">
+                    <register name="MFCR" bitfield="TXWATER" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>                 
+                  </assign>
+                  <item id="0" label="0 words" value="0"></item>
+                  <item id="1" label="1 word" value="1"></item>
+                  <item id="2" label="2 words" value="2"></item>
+                  <item id="3" label="3 words" value="3"></item>            
+                </enum>
+              </struct>  
+              
+              <set id="masterDMA" label="DMA sources">
+                <item id="MDER_RDDE" label="Receive data">
+                  <description>Enable DMA request for data receive.</description>
+                  <assign when="true">
+                    <register name="MDER" bitfield="RDDE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="MDER_TDDE" label="Transmit data">
+                  <description>Enable DMA request for data transmit.</description>
+                  <assign when="true">
+                    <register name="MDER" bitfield="TDDE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+              </set>
+              <set id="masterInterrupts" label="Interrupt sources">
+                <item id="MIER_DMIE" label="Data match">
+                  <description>Enables data match interrupt. This interrupt signals that the received data matches the configured data match, but the received data is not discarded due to a command FIFO entry.</description>
+                  <assign when="true">
+                    <register name="MIER" bitfield="DMIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="MIER_PLTIE" label="Pin low timeout">
+                  <description>Enables pin low timeout interrupt. This interrupt signals that the pin low timeout is enabled and SCL (or SDA if configured) is low for longer than the configured timeout.</description>
+                  <assign when="true">
+                    <register name="MIER" bitfield="PLTIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="MIER_FEIE" label="FIFO error">
+                  <description>Enables FIFO error interrupt. This interrupt signals that the master is expecting a START condition in the command FIFO, but the next entry in the command FIFO is not a START condition.</description>
+                  <assign when="true">
+                    <register name="MIER" bitfield="FEIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="MIER_ALIE" label="Arbitration lost">
+                  <description>
+Enables arbitration lost interrupt. This interrupt signals either:
+- The master lost arbitration due to a START/STOP condition detected at the wrong time
+- The master was transmitting data but received different data than the data that was transmitted
+                  </description>
+                  <assign when="true">
+                    <register name="MIER" bitfield="ALIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="MIER_NDIE" label="NACK detected">
+                  <description>
+Enables NACK detected interrupt. This interrupt signals one of following conditions:
+- During an address byte, the master expected an ACK but detected a NACK
+- During an address byte, the master expected a NACK but detected an ACK
+- During a master-transmitter data byte, the master detected a NACK
+                  </description>
+                  <assign when="true">
+                    <register name="MIER" bitfield="NDIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="MIER_SDIE" label="STOP detected">
+                  <description>Enables STOP detected interrupt. This interrupt signals that master has transmitted a STOP condition.</description>
+                  <assign when="true">
+                    <register name="MIER" bitfield="SDIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="MIER_EPIE" label="End packed">
+                  <description>Enables end packet interrupt. This interrupt signals that master has transmitted a repeated START or STOP condition.</description>
+                  <assign when="true">
+                    <register name="MIER" bitfield="EPIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="MIER_RDIE" label="Receive data">
+                  <description>Enables receive data interrupt. This interrupt signals that data can be read from receive FIFO.</description>
+                  <assign when="true">
+                    <register name="MIER" bitfield="RDIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="MIER_TDIE" label="Transmit data">
+                  <description>Enables transmit data interrupt. This interrupt signals that data can be written to transmit FIFO.</description>
+                  <assign when="true">
+                    <register name="MIER" bitfield="TDIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+              </set>
+            </struct>
+          
+          </struct>
+        
+          <struct id="slaveInitStruct" label="Slave" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+            
+            <bool id="slaveInit" label="Initialize slave" options="UI_LABEL_BOLD;REGISTERS_REFRESH">
+              <description>Enable I2C slave module configuration. Initialized registers: SIER, SDER, SCFGR[0-4], SAMR[0-1], STAR.</description>
+              <validation>
+                <dependency when_expr="($this.getValue() == true) &amp;&amp; ($configSet.masterSlaveStruct.masterInitStruct.masterInit.getValue() == false)"
+                  resource_type="PeripheralUnifiedSignal" 
+                  resource_id_expr="$instance.getPeripheral() + `.lpi2c_scl`" 
+                  description_expr="`Serial clock of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                  <feature name="routed" evaluation="equal">
+                    <data expr="true"/>
+                  </feature>
+                </dependency>
+                <dependency when_expr="($this.getValue() == true) &amp;&amp; ($configSet.masterSlaveStruct.masterInitStruct.masterInit.getValue() == false)"
+                  resource_type="PeripheralUnifiedSignal" 
+                  resource_id_expr="$instance.getPeripheral() + `.lpi2c_sda`" 
+                  description_expr="`Serial data of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                  <feature name="routed" evaluation="equal">
+                    <data expr="true"/>
+                  </feature>
+                </dependency>
+              </validation>
+            </bool>
+
+            <struct id="slaveStruct" label="Slave configuration" available="$parent.slaveInit.getValue()" options="UI_LABEL_HIDDEN">
+              <description>I2C slave module configuration. Initialized registers: SIER, SDER, SCFGR[0-4], SAMR[0-1], STAR.</description>
+              
+              <bool id="SCR_SEN" label="Enable slave" options="REGISTERS_REFRESH">
+                <description>Enables I2C slave module at the end of component initializaiton.</description>
+                <assign when="true">
+                  <register name="SCR" bitfield="SEN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                </assign>
+              </bool>
+              
+              <struct id="slaveGlitchFilter" label="Timing configuration">
+                <description>Configuration of slave SDA/SCL glitch filters, data valid delay and clock hold time.</description>
+                <integer id="SCFGR3_FILTSDA" label="SDA glitch filter [ticks]" type="uint8_t" min_expr="0" max_expr="0xF">
+                  <description>Configures the I2C slave digital glitch filters for SDA input.</description>
+                  <assign when="true">
+                    <register name="SCFGR3" bitfield="FILTSDA" value="$this.getCValue().toInt()" reverse_value="x -> x"/>                 
+                  </assign>
+                </integer>
+                <integer id="SCFGR3_FILTSCL" label="SCL glitch filter [ticks]" type="uint8_t" min_expr="0" max_expr="0xF">
+                  <description>Configures the I2C slave digital glitch filters for SCL input.</description>
+                  <assign when="true">
+                    <register name="SCFGR3" bitfield="FILTSCL" value="$this.getCValue().toInt()" reverse_value="x -> x"/>                 
+                  </assign>
+                </integer>
+                <integer id="SCFGR2_DATAVD" label="Data valid delay" type="uint8_t" min_expr="0" max_expr="0x3F">
+                  <description>Configures the SDA data valid delay time in cycles for the I2C slave.</description>
+                  <assign when="true">
+                    <register name="SCFGR2" bitfield="DATAVD" value="$this.getCValue().toInt()" reverse_value="x -> x"/>                 
+                  </assign>
+                </integer>                
+                <integer id="SCFGR2_CLKHOLD" label="Clock hold time" type="uint8_t" min_expr="0" max_expr="0xF">
+                  <description>Configures the minimum clock hold time for the I2C slave.</description>
+                  <assign when="true">
+                    <register name="SCFGR2" bitfield="CLKHOLD" value="$this.getCValue().toInt()" reverse_value="x -> x"/>                 
+                  </assign>
+                </integer>
+              </struct>
+              
+              <bool id="SCFGR0_HSMEN" label="High speed mode detection" options="REGISTERS_REFRESH">
+                <description>Enables detection of HS-mode master code.</description>
+                <assign when="true">
+                  <register name="SCFGR0" bitfield="HSMEN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                </assign>
+              </bool>
+              
+              <bool id="SCR_FILTEN" label="Enable digital filter" options="REGISTERS_REFRESH">
+                <description>Enables digital filter and output delay counter for slave mode.</description>
+                <assign when="true">
+                  <register name="SCR" bitfield="FILTEN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                </assign>
+              </bool>
+              <bool id="SCR_FILTDZ" label="Enable digital filter in doze mode" options="REGISTERS_REFRESH">
+                <description>Enables digital filter in doze mode.</description>
+                <assign when="true">
+                  <register name="SCR" bitfield="FILTDZ" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                </assign>
+              </bool>
+    
+              <enum id="SCFGR0_RXCFG" label="Receive data register configuration" options="REGISTERS_REFRESH">
+                <description>Controls if address status can be returned when reading receive data register.</description>
+                <assign when="true">
+                  <register name="SCFGR0" bitfield="RXCFG" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                </assign>
+                <item id="0" label="Store received data only" value="0">
+                  <description>Reading the receive data register will return received data and clear the receive data flag.</description>
+                </item>
+                <item id="1" label="Store received data and address" value="1">
+                  <description>If the address valid flag is set, reading the receive data register will return address status register and clear the address valid flag. Otherwise, reading the receive data register will return received data and clear the receive data flag.</description>
+                </item>
+              </enum>
+              <enum id="SCFGR0_TXCFG" label="Transmit data flag assert" options="REGISTERS_REFRESH">
+                <description>When enabled, the slave will continue transfers after a NACK is detected.</description>
+                <assign when="true">
+                  <register name="SCFGR0" bitfield="TXCFG" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                </assign>
+                <item id="0" label="On slave-transmit transfer detected" value="0">
+                  <description>Transmit data flag will assert only during a slave-transmit transfer when the transmit data register is empty. The transmit data flag will negate at the end of the slave-transmit transfer.</description>
+                </item>
+                <item id="1" label="On transmit data register empty" value="1">
+                  <description>Transmit data flag will assert whenever the transmit data register is empty. The transmit data flag will negate when the transmit data register is full.</description>
+                </item>
+              </enum>
+              <!-- TBD add check that IGNACK is set in Ultra-Fast Mode-->
+              <bool id="SCFGR0_IGNACK" label="Ignore received NACK" options="REGISTERS_REFRESH">
+                <description>When enabled, the slave will continue transfers after a NACK is detected.</description>
+                <assign when="true">
+                  <register name="SCFGR0" bitfield="HSMEN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                </assign>
+              </bool>
+              <enum id="STAR_TXNACK" label="Transmit ACK/NACK" options="REGISTERS_REFRESH">
+                <description>Selects if ACK (logic 0) or a NACK (logic 1) is transmitted after receiving each word.</description>
+                <assign when="true">
+                  <register name="STAR" bitfield="TXNACK" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                </assign>
+                <item id="0" label="Transmit ACK" value="0">
+                  <description>Transmit ACK.</description>
+                </item>
+                <item id="1" label="Transmit NACK" value="1">
+                  <description>Transmit NACK.</description>
+                </item>
+              </enum>
+                  
+              <struct id="slaveAddressMatch" label="Address match">
+                <description>Configuration of slave address match.</description>
+                <enum id="SCFGR1_ADDRCFG" label="Address match configuration" options="REGISTERS_REFRESH">
+                  <description>Configures the condition that will cause an address to match.</description>
+                  <assign when="true">
+                    <register name="SCFGR1" bitfield="ADDRCFG" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                  </assign>
+                  <item id="0" label="Match 0 (7-bit)" value="0">
+                    <description>7-bit address mode, slave address equals Address match 0.</description>
+                  </item>
+                  <item id="1" label="Match 0 (10-bit)" value="1">
+                    <description>10-bit address mode, slave address equals Address match 0.</description>
+                  </item>
+                  <item id="2" label="Match 0 (7-bit) or match 1 (7-bit)" value="2">
+                    <description>7-bit address mode, slave address equals Address match 0 or Address match 1.</description>
+                  </item>
+                  <item id="3" label="Match 0 (10-bit) or match 1 (10-bit)" value="3">
+                    <description>10-bit address mod, slave address equals Address match 0 or Address match 1.</description>
+                  </item>
+                  <item id="4" label="Match 0 (7-bit) or match 1 (10-bit)" value="4">
+                    <description>Slave address equals Address match 0 (7-bit) or Address match 1 (10-bit).</description>
+                  </item>
+                  <item id="5" label="Match 0 (10-bit) or match 1 (7-bit)" value="5">
+                    <description>Slave address equals Address match 0 (10-bit) or Address match 1 (7-bit).</description>
+                  </item>
+                  <item id="6" label="From match 0 (7-bit) to match 1 (7-bit)" value="6">
+                    <description>7-bit address mode, slave address ranges from Address match 0 Address match 1.</description>
+                  </item>
+                  <item id="7" label="From match 0 (10-bit) to match 1 (10-bit)" value="7">
+                    <description>10-bit address mode, slave address ranges from Address match 0 to Address match 1 (10-bit).</description>
+                  </item>
+                </enum>
+                <integer id="SAMR0_ADDR0" label="Address match 0" type="uint16_t" min_expr="0" max_expr="0x2FF">
+                  <description>
+Address used to compare against the received address to detect the slave address.
+- In 10-bit mode, the first address byte is compared to address upper 2 bits extended with 0x1E constant (i.e. {11110, Address match 0 [9:8]} and the second address byte is compared to address lower 8 bits (i.e. Address match 0 7:0])
+- In 7-bit mode, the address is compared to address lower 7 bits (i.e. Address match 0 [6:0])
+                  </description>
+                  <validation>
+                    <constraint cond_expr="$parent.SCFGR1_ADDRCFG.getEnumItemValue().toInt() % 2 == 0 ? $this.getValue() &lt;= 0x7F : true" level="warning" description="The address can't be greater than 0x7F in case of 7-bit addressing mode. See Address match configuration setting."/>
+                  </validation>
+                  <assign when="true">
+                    <register name="SAMR0" bitfield="ADDR0" value="$this.getCValue().toInt() * 2" reverse_value="x -> x / 2"/>                 
+                  </assign>
+                </integer>
+                <integer id="SAMR1_ADDR1" label="Address match 1" type="uint16_t" min_expr="0" max_expr="0x2FF">
+                  <description>
+Address used to compare against the received address to detect the slave address.
+- In 10-bit mode, the first address byte is compared to address upper 2 bits extended with 0x1E constant (i.e. {11110, Address match 1 [9:8]} and the second address byte is compared to address lower 8 bits (i.e. Address match 1 [7:0])
+- In 7-bit mode, the address is compared to address lower 7 bits (i.e. Address match 1 [6:0])
+                  </description>
+                  <validation>
+                    <constraint cond_expr="$parent.SCFGR1_ADDRCFG.getEnumItemValue().toInt() == 2 || $parent.SCFGR1_ADDRCFG.getEnumItemValue().toInt() == 5 || $parent.SCFGR1_ADDRCFG.getEnumItemValue().toInt() == 6 ? $this.getValue() &lt;= 0x7F : true" level="warning" description="The address can't be greater than 0x7F in case of 7-bit addressing mode. See Address match configuration setting."/>
+                  </validation>
+                  <assign when="true">
+                    <register name="SAMR1" bitfield="ADDR1" value="$this.getCValue().toInt() * 2" reverse_value="x -> x / 2"/>                 
+                  </assign>
+                </integer>
+                <bool id="SCFGR0_SAEN" label="SMBus alert" options="REGISTERS_REFRESH">
+                  <description>Enables alert on SMBus match.</description>
+                  <assign when="true">
+                    <register name="SCFGR0" bitfield="SAEN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </bool>
+                <bool id="SCFGR0_GCEN" label="General call address" options="REGISTERS_REFRESH">
+                  <description>Enables general call address.</description>
+                  <assign when="true">
+                    <register name="SCFGR0" bitfield="GCEN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </bool>
+              </struct>
+              
+              <struct id="slaveClockStretching" label="Clock stretching">
+                <description>configuration  of slave clock stretching.</description>
+                <bool id="SCFGR0_ACKSTALL" label="ACK clock stretching" options="REGISTERS_REFRESH">
+                  <description>Enables SCL clock stretching during transmit of address byte(s) and receive of address and data byte(s).</description>
+                  <assign when="true">
+                    <register name="SCFGR0" bitfield="ACKSTALL" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </bool>
+                <bool id="SCFGR0_TXDSTALL" label="TX data clock stretching" options="REGISTERS_REFRESH">
+                  <description>Enables SCL clock stretching when the transmit data flag is set during transmit.</description>
+                  <assign when="true">
+                    <register name="SCFGR0" bitfield="TXDSTALL" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </bool>
+                <bool id="SCFGR0_RXSTALL" label="RX clock stretching" options="REGISTERS_REFRESH">
+                  <description>Enables SCL clock stretching when the receive data flag is set during receive.</description>
+                  <assign when="true">
+                    <register name="SCFGR0" bitfield="RXSTALL" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </bool>
+                <bool id="SCFGR0_ADRSTALL" label="Address clock stretching" options="REGISTERS_REFRESH">
+                  <description>Enables SCL clock stretching when the address valid flag is asserted.</description>
+                  <assign when="true">
+                    <register name="SCFGR0" bitfield="ADRSTALL" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </bool>
+              </struct>
+              
+              <struct id="slaveFIFO" label="Transmit/Receive FIFO">
+                <description>configuration  of slave transmit/receive FIFO</description>
+                <bool id="SCR_RRF" label="Reset receive FIFO" options="REGISTERS_REFRESH">
+                  <description>When enabled, resets receive FIFO as part of component initialization.</description>
+                  <assign when="true">
+                    <register name="SCR" bitfield="RRF" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </bool>
+                <bool id="SCR_RTF" label="Reset transmit FIFO" options="REGISTERS_REFRESH">
+                  <description>When enabled, resets transmit FIFO as part of component initialization.</description>
+                  <assign when="true">
+                    <register name="SCR" bitfield="RTF" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </bool> 
+              </struct>
+              
+              <set id="slaveDMA" label="DMA sources">
+                <item id="SDER_SDDE" label="Stop detect">
+                  <description>Enable DMA request for end-of-packet processing on stop detect.</description>
+                  <assign when="true">
+                    <register name="SDER" bitfield="SDDE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="SDER_RSDE" label="Repeated start">
+                  <description>Enable DMA request for end-of-packet processing on repeated start.</description>
+                  <assign when="true">
+                    <register name="SDER" bitfield="RSDE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="SDER_AVDE" label="Valid address">
+                  <description>Enable DMA request for valid slave address.</description>
+                  <assign when="true">
+                    <register name="SDER" bitfield="RSDE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="SDER_RDDE" label="Receive data">
+                  <description>Enable DMA request for data receive.</description>
+                  <assign when="true">
+                    <register name="SDER" bitfield="RDDE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="SDER_TDDE" label="Transmit data">
+                  <description>Enable DMA request for data transmit.</description>
+                  <assign when="true">
+                    <register name="SDER" bitfield="TDDE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+              </set>
+              
+              <set id="slaveInterrupts" label="Interrupt sources">
+                <item id="SIER_SARIE" label="SMBus alert response">
+                  <description>Enables SMBus alert response interrupt. This interrupt signals that slave detected an address match with the SMBus alert address.</description>
+                  <assign when="true">
+                    <register name="SIER" bitfield="SARIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="SIER_GCIE" label="General call">
+                  <description>Enables generate call interrupt. This interrupt signals that slave detected an address match with the general call address.</description>
+                  <assign when="true">
+                    <register name="SIER" bitfield="GCIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="SIER_AM1IE" label="Address match 1">
+                  <description>Enables address match 1 interrupt. This interrupt signals that slave detected an address match with Address match 1.</description>
+                  <assign when="true">
+                    <register name="SIER" bitfield="AM1IE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="SIER_AM0IE" label="Address match 0">
+                  <description>Enables address match 0 interrupt. This interrupt signals that  slave detected an address match with Address match 0.</description>
+                  <assign when="true">
+                    <register name="SIER" bitfield="AM0IE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="SIER_FEIE" label="FIFO error">
+                  <description>Enables FIFO error interrupt. This interrupt signals transmit data underrun, receive data overrun or address status overrun.</description>
+                  <assign when="true">
+                    <register name="SIER" bitfield="FEIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="SIER_BEIE" label="Bit error">
+                  <description>Enables bit error interrupt. This interrupt signals that slave was transmitting data, but received different data than what was transmitted.</description>
+                  <assign when="true">
+                    <register name="SIER" bitfield="BEIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="SIER_SDIE" label="STOP detect error">
+                  <description>Enables STOP detect error interrupt. This interrupt signals that slave has detected an address match followed by a STOP condition.</description>
+                  <assign when="true">
+                    <register name="SIER" bitfield="SDIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="SIER_RSIE" label="Repeated start">
+                  <description>Enables repeated start interrupt. This interrupt signals that slave has detected an address match followed by a Repeated START condition.</description>
+                  <assign when="true">
+                    <register name="SIER" bitfield="RSIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="SIER_TAIE" label="Transmit ACK">
+                  <description>Enables transmit ACK interrupt. This interrupt signals that ACK/NACK can be written to the slave transmit ACK register.</description>
+                  <assign when="true">
+                    <register name="SIER" bitfield="TAIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="SIER_AVIE" label="Address valid">
+                  <description>Enables address valid interrupt. This interrupt signals that address can be read from the slave address status register.</description>
+                  <assign when="true">
+                    <register name="SIER" bitfield="AVIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="SIER_RDIE" label="Receive data">
+                  <description>Enables receive data interrupt. This interrupt signals that data can be read from the slave receive data register.</description>
+                  <assign when="true">
+                    <register name="SIER" bitfield="RDIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+                <item id="SIER_TDIE" label="Transmit data">
+                  <description>Enables transmit data interrupt. This interrupt signals that data can be written to the slave transmit data register.</description>
+                  <assign when="true">
+                    <register name="SIER" bitfield="TDIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+                </item>
+              </set>
+              
+            </struct>        
+          </struct>        
+        </struct>
+        
+        <bool id="enable_irq" label="Enable interrupt vector" options="UI_LABEL_BOLD;REGISTERS_REFRESH">
+          <description>
+            Enable interrupts initialization, like priority and enablement in the INITC and SIM.
+          </description>
+          <validation>
+            <constraint when_expr="$this.value()"
+              cond_expr="$configSet.masterSlaveStruct.masterInitStruct.masterStruct.masterInterrupts.getCValue() != `` || $configSet.masterSlaveStruct.slaveInitStruct.slaveStruct.slaveInterrupts.getCValue() != ``"
+              level="warning"
+              description_expr="`INTC settings are initialized, but no master or slave interrupt source is enabled.`"/>
+          </validation>
+        </bool>
+        <reference id="interrupt" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_irq.getValue()" options="UI_LABEL_HIDDEN"/>
+        <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+        <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+        <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+      </fragment_defs>
+      <code>
+        <section target="includes">
+          <fragment id="include">
+            <param id="name">common</param>
+            <param id="filename">fsl_device_registers.h</param>
+          </fragment>
+        </section>
+        <section target="common_pre_init_function"> 
+          <!-- Clock gate enable --> 
+          <fragment id="clock_gate_enable_init"></fragment> 
+        </section>
+        <section target="defines">
+          <fragment id="IRQ_definitions" apply_to="$this.interrupt" if_expr="$this.enable_irq.value()"/>
+          <fragment id="all_assigned_regs_init">
+            <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+          </fragment>
+        </section>
+        <section target="init_function_body">
+          <fragment id="template" apply_to="$configSet.lpi2c_template_params">
+            <param id="file">fsl_lpi2c.template</param>
+            <param id="setting" expr="$this"></param>
+            <param id="separators"></param>
+            <param id="description" expr="`LPI2C initialization`"></param>
+          </fragment>
+        </section>
+      </code> 
+      <quick_selections>
+         <quick_selection id="default" label="Default">
+            <description>Default configuration</description>
+            <set id="masterSlaveStruct.masterInitStruct.masterInit">false</set>
+            <set id="masterSlaveStruct.slaveInitStruct.slaveInit">false</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.MCFGR2_BUSIDLE">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.MCFGR4_PINLOW">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterClocks.MCFGR3_FILTSDA">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterClocks.MCFGR3_FILTSCL">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterClocks.masterStandardFastModes.MCCR0_CLKLO">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterClocks.masterStandardFastModes.MCCR0_CLKHI">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterClocks.masterStandardFastModes.MCCR1_DATAVD">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterClocks.masterStandardFastModes.MCCR1_SETHOLD">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterClocks.masterHighModes.MCCR2_CLKLO">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterClocks.masterHighModes.MCCR2_CLKHI">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterClocks.masterHighModes.MCCR3_DATAVD">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterClocks.masterHighModes.MCCR3_SETHOLD">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterDataMatch.MDMR_MATCH0">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterDataMatch.MDMR_MATCH1">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterGlitchFilter.MCFGR3_FILTSDA">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterGlitchFilter.MCFGR3_FILTSCL">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterStandardFastModes.MCCR0_CLKLO">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterStandardFastModes.MCCR0_CLKHI">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterStandardFastModes.MCCR1_DATAVD">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterStandardFastModes.MCCR1_SETHOLD">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterHighModes.MCCR2_CLKLO">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterHighModes.MCCR2_CLKHI">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterHighModes.MCCR3_DATAVD">0</set>
+            <set id="masterSlaveStruct.masterInitStruct.masterStruct.masterHighModes.MCCR3_SETHOLD">0</set>
+            <set id="masterSlaveStruct.slaveInitStruct.slaveStruct.slaveGlitchFilter.SCFGR2_DATAVD">0</set>
+            <set id="masterSlaveStruct.slaveInitStruct.slaveStruct.slaveGlitchFilter.SCFGR2_CLKHOLD">0</set>
+            <set id="masterSlaveStruct.slaveInitStruct.slaveStruct.slaveAddressMatch.SAMR0_ADDR0">0</set>
+            <set id="masterSlaveStruct.slaveInitStruct.slaveStruct.slaveAddressMatch.SAMR1_ADDR1">0</set>
+            <set id="masterSlaveStruct.slaveInitStruct.slaveStruct.slaveGlitchFilter.SCFGR3_FILTSDA">0</set>
+            <set id="masterSlaveStruct.slaveInitStruct.slaveStruct.slaveGlitchFilter.SCFGR3_FILTSCL">0</set>
+         </quick_selection>
+      </quick_selections>
+   </config_set>
+</component:config_component>

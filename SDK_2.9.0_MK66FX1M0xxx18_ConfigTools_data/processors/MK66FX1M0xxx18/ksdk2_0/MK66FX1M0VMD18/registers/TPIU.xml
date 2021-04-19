@@ -1,0 +1,776 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="32" name="SSPSR" description="Supported Parallel Port Size Register">
+    <bit_field offset="0" width="32" name="SWIDTH" access="RO" reset_value="0" description="SWIDTH[N] represents a trace port width of (N+1). The meaning of each bit is: 0 = Width (N+1) not supported. 1 = Width (N+1) supported."/>
+  </register>
+  <register offset="0x4" width="32" name="CSPSR" description="Current Parallel Port Size Register">
+    <bit_field offset="0" width="32" name="CWIDTH" access="RW" reset_value="0" description="CWIDTH[N] represents a trace port width of (N+1). The meaning of each bit is: 0 = Width (N+1) is not the current trace port width. 1 = Width (N+1) is the current trace port width."/>
+  </register>
+  <register offset="0x10" width="32" name="ACPR" description="Asynchronous Clock Prescaler Register">
+    <bit_field offset="0" width="13" name="PRESCALER" access="RW" reset_value="0" description="Divisor for TRACECLKIN is Prescaler + 1"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xF0" width="32" name="SPPR" description="Selected Pin Protocol Register">
+    <bit_field offset="0" width="2" name="TXMODE" access="RW" reset_value="0x1" description="Specified the protocol for trace output from the TPIU.">
+      <bit_field_value name="SPPR_TXMODE_0b00" value="0b00" description="Parallel trace port mode."/>
+      <bit_field_value name="SPPR_TXMODE_0b01" value="0b01" description="Asynchronous SWO, using Manchester encoding."/>
+      <bit_field_value name="SPPR_TXMODE_0b10" value="0b10" description="Asynchronous SWO, using NRZ encoding."/>
+      <bit_field_value name="SPPR_TXMODE_0b11" value="0b11" description="Reserved. The effect of selecting a reserved value, or a mode that the implementation does not support, is UNPREDICTABLE."/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x300" width="32" name="FFSR" description="Formatter and Flush Status Register">
+    <bit_field offset="0" width="1" name="F1InProg" access="RO" reset_value="0" description="F1InProg. This bit always reads zero"/>
+    <bit_field offset="1" width="1" name="FtStopped" access="RO" reset_value="0" description="FtStopped. This bit always reads zero"/>
+    <bit_field offset="2" width="1" name="TCPresent" access="RO" reset_value="0" description="TCPresent. This bit always reads zero"/>
+    <bit_field offset="3" width="1" name="FtNonStop" access="RO" reset_value="0x1" description="FtNonStop. Formatter cannot be stopped"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x304" width="32" name="FFCR" description="Formatter and Flush Control Register">
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <bit_field offset="1" width="1" name="EnFCont" access="RW" reset_value="0x1" description="Enable continuous formatting.">
+      <bit_field_value name="FFCR_EnFCont_0b0" value="0b0" description="Continuous formatting disabled."/>
+      <bit_field_value name="FFCR_EnFCont_0b1" value="0b1" description="Continuous formatting enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="TrigIn" access="RW" reset_value="0x1" description="This bit Reads-As-One (RAO), specifying that triggers are inserted when a trigger pin is asserted."/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x308" width="32" name="FSCR" description="Formatter Synchronization Counter Register">
+    <bit_field offset="0" width="12" name="CycCount" access="RW" reset_value="0x40" description="CycCount[11:0]. 12-bit counter value to indicate the number of complete frames between full synchronization packets. Default value is 64 (0x40)."/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xEE8" width="32" name="TRIGGER" description="Trigger Register">
+    <bit_field offset="0" width="1" name="TRIGGER" access="RO" reset_value="0" description="TRIGGER input value. When read, this bit returns the TRIGGER input."/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xEEC" width="32" name="FIFODATA0" description="FIFODATA0 Register">
+    <bit_field offset="0" width="8" name="ETMdata0" access="RO" reset_value="0" description="ETM trace data. The TPIU discards this data when the registers is read."/>
+    <bit_field offset="8" width="8" name="ETMdata1" access="RO" reset_value="0" description="ETM trace data. The TPIU discards this data when the registers is read."/>
+    <bit_field offset="16" width="8" name="ETMdata2" access="RO" reset_value="0" description="ETM trace data. The TPIU discards this data when the registers is read."/>
+    <bit_field offset="24" width="2" name="ETMbytecount" access="RO" reset_value="0" description="Number of bytes of ETM trace data since last read of Integration ETM Data Register."/>
+    <bit_field offset="26" width="1" name="ETMATVALID" access="RO" reset_value="0" description="Returns the value of the ETM ATVALID signal."/>
+    <bit_field offset="27" width="2" name="ITMbytecount" access="RO" reset_value="0" description="Number of bytes of ITM trace data since last read of Integration ITM Data Register."/>
+    <bit_field offset="29" width="1" name="ITMATVALID" access="RO" reset_value="0" description="Returns the value of the ITM ATVALID signal."/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xEF0" width="32" name="ITATBCTR2" description="Integration Test ATB Control 2 Register">
+    <bit_field offset="0" width="1" name="ATREADY1_ATREADY2" access="RO" reset_value="0" description="This bit sets the value of both the ETM and ITM ATREADY."/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xEF8" width="32" name="ITATBCTR0" description="Integration Test ATB Control 0 Register">
+    <bit_field offset="0" width="1" name="ATVALID1_ATVALID2" access="RO" reset_value="0" description="A read of this bit returns the value of ATVALIDS1 OR-ed with ATVALIDS2."/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xEFC" width="32" name="FIFODATA1" description="FIFODATA1 Register">
+    <bit_field offset="0" width="8" name="ITMdata0" access="RO" reset_value="0" description="ITM trace data. The TPIU discards this data when the registers is read."/>
+    <bit_field offset="8" width="8" name="ITMdata1" access="RO" reset_value="0" description="ITM trace data. The TPIU discards this data when the registers is read."/>
+    <bit_field offset="16" width="8" name="ITMdata2" access="RO" reset_value="0" description="ITM trace data. The TPIU discards this data when the registers is read."/>
+    <bit_field offset="24" width="2" name="ETMbytecount" access="RO" reset_value="0" description="Number of bytes of ETM trace data since last read of Integration ETM Data Register."/>
+    <bit_field offset="26" width="1" name="ETMATVALID" access="RO" reset_value="0" description="Returns the value of the ETM ATVALID signal."/>
+    <bit_field offset="27" width="2" name="ITMbytecount" access="RO" reset_value="0" description="Number of bytes of ITM trace data since last read of Integration ITM Data Register."/>
+    <bit_field offset="29" width="1" name="ITMATVALID" access="RO" reset_value="0" description="Returns the value of the ITM ATVALID signal."/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xF00" width="32" name="ITCTRL" description="Integration Mode Control Register">
+    <bit_field offset="0" width="2" name="Mode" access="RW" reset_value="0" description="Specifies the current mode for the TPIU.">
+      <bit_field_value name="ITCTRL_Mode_0b00" value="0b00" description="normal mode"/>
+      <bit_field_value name="ITCTRL_Mode_0b01" value="0b01" description="integration test mode"/>
+      <bit_field_value name="ITCTRL_Mode_0b10" value="0b10" description="integration data test mode"/>
+      <bit_field_value name="ITCTRL_Mode_0b11" value="0b11" description="Reserved."/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFA0" width="32" name="CLAIMSET" description="Claim Tag Set Register">
+    <bit_field offset="0" width="4" name="CLAIMSET" access="RW" reset_value="0xF" description="A bit programmable register bank which sets the Claim Tag Value. Write 1 to set the bit in the claim tag. A read will return a logic 1 for all implemented locations."/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFA4" width="32" name="CLAIMCLR" description="Claim Tag Clear Register">
+    <bit_field offset="0" width="4" name="CLAIMCLR" access="RW" reset_value="0" description="A bit programmable register bank that is zero at reset. Write 1 to clear the bit in the claim tag. On reads, returns the current setting of the claim tag."/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFC8" width="32" name="DEVID" description="TPIU_DEVID Register">
+    <bit_field offset="0" width="5" name="NumberOfTraceInputs" access="RO" reset_value="0x1" description="Number of trace inputs. Specifies the number of trace inputs: b000000 = 1 input b000001 = 2 inputs If your implementation includes an ETM, the value of this field is b000001."/>
+    <bit_field offset="5" width="1" name="TRACECELKIN" access="RO" reset_value="0" reset_mask="0" description="Asynchronous TRACECLKIN. Specifies whether TRACECLKIN can be asynchronous to CLK.">
+      <bit_field_value name="DEVID_TRACECELKIN_0b0" value="0b0" description="b0 = TRACECLKIN must be synchronous to CLK"/>
+      <bit_field_value name="DEVID_TRACECELKIN_0b1" value="0b1" description="b1 = TRACECLKIN can be asynchronous to CLK"/>
+    </bit_field>
+    <bit_field offset="6" width="3" name="MinimumBufferSize" access="RO" reset_value="0x2" description="Minimum buffer size. Specifies the minimum TPIU buffer size: b010 = 4 bytes"/>
+    <bit_field offset="9" width="1" name="TraceAndClockModes" access="RO" reset_value="0" description="Trace and clock modes. This bit Reads-As-Zero (RAZ), indicating that tracedata and clock modes are supported.">
+      <bit_field_value name="DEVID_TraceAndClockModes_0b0" value="0b0" description="Supported"/>
+      <bit_field_value name="DEVID_TraceAndClockModes_0b1" value="0b1" description="Not supported"/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="Manchester" access="RO" reset_value="0x1" description="Asynchronous Serial Wire Output (Manchester). This bit Reads-As-One (RAO), indicating that the output is supported."/>
+    <bit_field offset="11" width="1" name="NRZ" access="RO" reset_value="0x1" description="Asynchronous Serial Wire Output (NRZ). This bit Reads-As-One (RAO), indicating that the output is supported."/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFD0" width="32" name="PID4" description="Peripheral Identification Register 4.">
+    <bit_field offset="0" width="4" name="JEP106" access="RO" reset_value="0x4" description="JEP106 continuation code."/>
+    <bit_field offset="4" width="4" name="c4KB" access="RO" reset_value="0" description="4KB Count"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFD4" width="32" name="PID5" description="Peripheral Identification Register 5.">
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFD8" width="32" name="PID6" description="Peripheral Identification Register 6.">
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFDC" width="32" name="PID7" description="Peripheral Identification Register 7.">
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFE0" width="32" name="PID0" description="Peripheral Identification Register 0.">
+    <bit_field offset="0" width="8" name="PartNumber" access="RO" reset_value="0xA1" description="Part Number [7:0]"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFE4" width="32" name="PID1" description="Peripheral Identification Register 1.">
+    <bit_field offset="0" width="4" name="PartNumber" access="RO" reset_value="0x9" description="Part Number [11:8]"/>
+    <bit_field offset="4" width="4" name="JEP106_identity_code" access="RO" reset_value="0xB" description="JEP106 identity code [3:0]"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFE8" width="32" name="PID2" description="Peripheral Identification Register 2.">
+    <bit_field offset="0" width="3" name="JEP106_identity_code" access="RO" reset_value="0x3" description="JEP106 identity code [6:4]"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0x1"/>
+    <bit_field offset="4" width="4" name="Revision" access="RO" reset_value="0" description="Revision"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFEC" width="32" name="PID3" description="Peripheral Identification Register 3.">
+    <bit_field offset="0" width="4" name="CustomerModified" access="RO" reset_value="0" description="Customer Modified."/>
+    <bit_field offset="4" width="4" name="RevAnd" access="RO" reset_value="0" description="RevAnd"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFF0" width="32" name="CID0" description="Component Identification Register 0.">
+    <bit_field offset="0" width="8" name="Preamble" access="RO" reset_value="0xD" description="Preamble"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFF4" width="32" name="CID1" description="Component Identification Register 1.">
+    <bit_field offset="0" width="4" name="Preamble" access="RO" reset_value="0" description="Preamble"/>
+    <bit_field offset="4" width="4" name="ComponentClass" access="RO" reset_value="0x9" description="Component class">
+      <bit_field_value name="CID1_ComponentClass_0b0001" value="0b0001" description="ROM table."/>
+      <bit_field_value name="CID1_ComponentClass_0b1001" value="0b1001" description="CoreSight component."/>
+      <bit_field_value name="CID1_ComponentClass_0b1111" value="0b1111" description="PrimeCell of system component with no standardized register layout, for backward compatibility."/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFF8" width="32" name="CID2" description="Component Identification Register 2.">
+    <bit_field offset="0" width="8" name="Preamble" access="RO" reset_value="0x5" description="Preamble"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFFC" width="32" name="CID3" description="Component Identification Register 3.">
+    <bit_field offset="0" width="8" name="Preamble" access="RO" reset_value="0xB1" description="Preamble"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+</regs:peripheral>

@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="8" name="NV_BACKKEY3" description="Backdoor Comparison Key 3.">
+    <alias type="CMSIS" value="BACKKEY3"/>
+    <bit_field offset="0" width="8" name="KEY" access="RO" reset_value="0xFF" description="Backdoor Comparison Key.">
+      <alias type="CMSIS" value="NV_BACKKEY3_KEY(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x1" width="8" name="NV_BACKKEY2" description="Backdoor Comparison Key 2.">
+    <alias type="CMSIS" value="BACKKEY2"/>
+    <bit_field offset="0" width="8" name="KEY" access="RO" reset_value="0xFF" description="Backdoor Comparison Key.">
+      <alias type="CMSIS" value="NV_BACKKEY2_KEY(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x2" width="8" name="NV_BACKKEY1" description="Backdoor Comparison Key 1.">
+    <alias type="CMSIS" value="BACKKEY1"/>
+    <bit_field offset="0" width="8" name="KEY" access="RO" reset_value="0xFF" description="Backdoor Comparison Key.">
+      <alias type="CMSIS" value="NV_BACKKEY1_KEY(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x3" width="8" name="NV_BACKKEY0" description="Backdoor Comparison Key 0.">
+    <alias type="CMSIS" value="BACKKEY0"/>
+    <bit_field offset="0" width="8" name="KEY" access="RO" reset_value="0xFF" description="Backdoor Comparison Key.">
+      <alias type="CMSIS" value="NV_BACKKEY0_KEY(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x4" width="8" name="NV_BACKKEY7" description="Backdoor Comparison Key 7.">
+    <alias type="CMSIS" value="BACKKEY7"/>
+    <bit_field offset="0" width="8" name="KEY" access="RO" reset_value="0xFF" description="Backdoor Comparison Key.">
+      <alias type="CMSIS" value="NV_BACKKEY7_KEY(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x5" width="8" name="NV_BACKKEY6" description="Backdoor Comparison Key 6.">
+    <alias type="CMSIS" value="BACKKEY6"/>
+    <bit_field offset="0" width="8" name="KEY" access="RO" reset_value="0xFF" description="Backdoor Comparison Key.">
+      <alias type="CMSIS" value="NV_BACKKEY6_KEY(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x6" width="8" name="NV_BACKKEY5" description="Backdoor Comparison Key 5.">
+    <alias type="CMSIS" value="BACKKEY5"/>
+    <bit_field offset="0" width="8" name="KEY" access="RO" reset_value="0xFF" description="Backdoor Comparison Key.">
+      <alias type="CMSIS" value="NV_BACKKEY5_KEY(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x7" width="8" name="NV_BACKKEY4" description="Backdoor Comparison Key 4.">
+    <alias type="CMSIS" value="BACKKEY4"/>
+    <bit_field offset="0" width="8" name="KEY" access="RO" reset_value="0xFF" description="Backdoor Comparison Key.">
+      <alias type="CMSIS" value="NV_BACKKEY4_KEY(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x8" width="8" name="NV_FPROT3" description="Non-volatile P-Flash Protection 1 - Low Register">
+    <alias type="CMSIS" value="FPROT3"/>
+    <bit_field offset="0" width="8" name="PROT" access="RO" reset_value="0xFF" description="P-Flash Region Protect">
+      <alias type="CMSIS" value="NV_FPROT3_PROT(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x9" width="8" name="NV_FPROT2" description="Non-volatile P-Flash Protection 1 - High Register">
+    <alias type="CMSIS" value="FPROT2"/>
+    <bit_field offset="0" width="8" name="PROT" access="RO" reset_value="0xFF" description="P-Flash Region Protect">
+      <alias type="CMSIS" value="NV_FPROT2_PROT(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xA" width="8" name="NV_FPROT1" description="Non-volatile P-Flash Protection 0 - Low Register">
+    <alias type="CMSIS" value="FPROT1"/>
+    <bit_field offset="0" width="8" name="PROT" access="RO" reset_value="0xFF" description="P-Flash Region Protect">
+      <alias type="CMSIS" value="NV_FPROT1_PROT(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xB" width="8" name="NV_FPROT0" description="Non-volatile P-Flash Protection 0 - High Register">
+    <alias type="CMSIS" value="FPROT0"/>
+    <bit_field offset="0" width="8" name="PROT" access="RO" reset_value="0xFF" description="P-Flash Region Protect">
+      <alias type="CMSIS" value="NV_FPROT0_PROT(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xC" width="8" name="NV_FSEC" description="Non-volatile Flash Security Register">
+    <alias type="CMSIS" value="FSEC"/>
+    <bit_field offset="0" width="2" name="SEC" access="RO" reset_value="0x3" description="Flash Security">
+      <alias type="CMSIS" value="NV_FSEC_SEC(x)"/>
+      <bit_field_value name="NV_FSEC_SEC_0b10" value="0b10" description="MCU security status is unsecure"/>
+      <bit_field_value name="NV_FSEC_SEC_0b11" value="0b11" description="MCU security status is secure"/>
+    </bit_field>
+    <bit_field offset="2" width="2" name="FSLACC" access="RO" reset_value="0x3" description="Freescale Failure Analysis Access Code">
+      <alias type="CMSIS" value="NV_FSEC_FSLACC(x)"/>
+      <bit_field_value name="NV_FSEC_FSLACC_0b10" value="0b10" description="Freescale factory access denied"/>
+      <bit_field_value name="NV_FSEC_FSLACC_0b11" value="0b11" description="Freescale factory access granted"/>
+    </bit_field>
+    <bit_field offset="4" width="2" name="MEEN" access="RO" reset_value="0x3" description="">
+      <alias type="CMSIS" value="NV_FSEC_MEEN(x)"/>
+      <bit_field_value name="NV_FSEC_MEEN_0b10" value="0b10" description="Mass erase is disabled"/>
+      <bit_field_value name="NV_FSEC_MEEN_0b11" value="0b11" description="Mass erase is enabled"/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="KEYEN" access="RO" reset_value="0x3" description="Backdoor Key Security Enable">
+      <alias type="CMSIS" value="NV_FSEC_KEYEN(x)"/>
+      <bit_field_value name="NV_FSEC_KEYEN_0b10" value="0b10" description="Backdoor key access enabled"/>
+      <bit_field_value name="NV_FSEC_KEYEN_0b11" value="0b11" description="Backdoor key access disabled"/>
+    </bit_field>
+  </register>
+  <register offset="0xD" width="8" name="NV_FOPT" description="Non-volatile Flash Option Register">
+    <alias type="CMSIS" value="FOPT"/>
+    <bit_field offset="0" width="1" name="LPBOOT" access="RO" reset_value="0x1" description="">
+      <alias type="CMSIS" value="NV_FOPT_LPBOOT(x)"/>
+      <bit_field_value name="NV_FOPT_LPBOOT_0b0" value="0b0" description="Low-power boot"/>
+      <bit_field_value name="NV_FOPT_LPBOOT_0b1" value="0b1" description="Normal boot"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="EZPORT_DIS" access="RO" reset_value="0x1" description="">
+      <alias type="CMSIS" value="NV_FOPT_EZPORT_DIS(x)"/>
+      <bit_field_value name="NV_FOPT_EZPORT_DIS_0b0" value="0b0" description="EzPort operation is disabled"/>
+      <bit_field_value name="NV_FOPT_EZPORT_DIS_0b1" value="0b1" description="EzPort operation is enabled"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="NMI_DIS" access="RO" reset_value="0x1" description="">
+      <alias type="CMSIS" value="NV_FOPT_NMI_DIS(x)"/>
+      <bit_field_value name="NV_FOPT_NMI_DIS_0b0" value="0b0" description="NMI interrupts are always blocked"/>
+      <bit_field_value name="NV_FOPT_NMI_DIS_0b1" value="0b1" description="NMI_b pin/interrupts reset default to enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0x1"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0x1"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0x1"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0x1"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0x1"/>
+  </register>
+  <register offset="0xE" width="8" name="NV_FEPROT" description="Non-volatile EERAM Protection Register">
+    <alias type="CMSIS" value="FEPROT"/>
+    <bit_field offset="0" width="8" name="EPROT" access="RO" reset_value="0xFF" description="">
+      <alias type="CMSIS" value="NV_FEPROT_EPROT(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xF" width="8" name="NV_FDPROT" description="Non-volatile D-Flash Protection Register">
+    <alias type="CMSIS" value="FDPROT"/>
+    <bit_field offset="0" width="8" name="DPROT" access="RO" reset_value="0xFF" description="D-Flash Region Protect">
+      <alias type="CMSIS" value="NV_FDPROT_DPROT(x)"/>
+    </bit_field>
+  </register>
+</regs:peripheral>

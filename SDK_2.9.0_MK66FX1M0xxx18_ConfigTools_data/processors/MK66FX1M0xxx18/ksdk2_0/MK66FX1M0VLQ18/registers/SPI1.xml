@@ -1,0 +1,477 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="32" name="MCR" description="Module Configuration Register">
+    <alias type="CMSIS" value="MCR"/>
+    <bit_field offset="0" width="1" name="HALT" access="RW" reset_value="0x1" description="Halt">
+      <alias type="CMSIS" value="SPI_MCR_HALT(x)"/>
+      <bit_field_value name="MCR_HALT_0b0" value="0b0" description="Start transfers."/>
+      <bit_field_value name="MCR_HALT_0b1" value="0b1" description="Stop transfers."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="5" reset_value="0"/>
+    <bit_field offset="8" width="2" name="SMPL_PT" access="RW" reset_value="0" description="Sample Point">
+      <alias type="CMSIS" value="SPI_MCR_SMPL_PT(x)"/>
+      <bit_field_value name="MCR_SMPL_PT_0b00" value="0b00" description="0 protocol clock cycles between SCK edge and SIN sample"/>
+      <bit_field_value name="MCR_SMPL_PT_0b01" value="0b01" description="1 protocol clock cycle between SCK edge and SIN sample"/>
+      <bit_field_value name="MCR_SMPL_PT_0b10" value="0b10" description="2 protocol clock cycles between SCK edge and SIN sample"/>
+      <bit_field_value name="MCR_SMPL_PT_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="CLR_RXF" access="WORZ" reset_value="0" description="CLR_RXF">
+      <alias type="CMSIS" value="SPI_MCR_CLR_RXF(x)"/>
+      <bit_field_value name="MCR_CLR_RXF_0b0" value="0b0" description="Do not clear the RX FIFO counter."/>
+      <bit_field_value name="MCR_CLR_RXF_0b1" value="0b1" description="Clear the RX FIFO counter."/>
+    </bit_field>
+    <bit_field offset="11" width="1" name="CLR_TXF" access="WORZ" reset_value="0" description="Clear TX FIFO">
+      <alias type="CMSIS" value="SPI_MCR_CLR_TXF(x)"/>
+      <bit_field_value name="MCR_CLR_TXF_0b0" value="0b0" description="Do not clear the TX FIFO counter."/>
+      <bit_field_value name="MCR_CLR_TXF_0b1" value="0b1" description="Clear the TX FIFO counter."/>
+    </bit_field>
+    <bit_field offset="12" width="1" name="DIS_RXF" access="RW" reset_value="0" description="Disable Receive FIFO">
+      <alias type="CMSIS" value="SPI_MCR_DIS_RXF(x)"/>
+      <bit_field_value name="MCR_DIS_RXF_0b0" value="0b0" description="RX FIFO is enabled."/>
+      <bit_field_value name="MCR_DIS_RXF_0b1" value="0b1" description="RX FIFO is disabled."/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="DIS_TXF" access="RW" reset_value="0" description="Disable Transmit FIFO">
+      <alias type="CMSIS" value="SPI_MCR_DIS_TXF(x)"/>
+      <bit_field_value name="MCR_DIS_TXF_0b0" value="0b0" description="TX FIFO is enabled."/>
+      <bit_field_value name="MCR_DIS_TXF_0b1" value="0b1" description="TX FIFO is disabled."/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="MDIS" access="RW" reset_value="0x1" description="Module Disable">
+      <alias type="CMSIS" value="SPI_MCR_MDIS(x)"/>
+      <bit_field_value name="MCR_MDIS_0b0" value="0b0" description="Enables the module clocks."/>
+      <bit_field_value name="MCR_MDIS_0b1" value="0b1" description="Allows external logic to disable the module clocks."/>
+    </bit_field>
+    <bit_field offset="15" width="1" name="DOZE" access="RW" reset_value="0" description="Doze Enable">
+      <alias type="CMSIS" value="SPI_MCR_DOZE(x)"/>
+      <bit_field_value name="MCR_DOZE_0b0" value="0b0" description="Doze mode has no effect on the module."/>
+      <bit_field_value name="MCR_DOZE_0b1" value="0b1" description="Doze mode disables the module."/>
+    </bit_field>
+    <bit_field offset="16" width="6" name="PCSIS" access="RW" reset_value="0" description="Peripheral Chip Select x Inactive State">
+      <alias type="CMSIS" value="SPI_MCR_PCSIS(x)"/>
+      <bit_field_value name="MCR_PCSIS_0b000000" value="0b000000" description="The inactive state of PCSx is low."/>
+      <bit_field_value name="MCR_PCSIS_0b000001" value="0b000001" description="The inactive state of PCSx is high."/>
+    </bit_field>
+    <reserved_bit_field offset="22" width="2" reset_value="0"/>
+    <bit_field offset="24" width="1" name="ROOE" access="RW" reset_value="0" description="Receive FIFO Overflow Overwrite Enable">
+      <alias type="CMSIS" value="SPI_MCR_ROOE(x)"/>
+      <bit_field_value name="MCR_ROOE_0b0" value="0b0" description="Incoming data is ignored."/>
+      <bit_field_value name="MCR_ROOE_0b1" value="0b1" description="Incoming data is shifted into the shift register."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="PCSSE" access="RW" reset_value="0" description="Peripheral Chip Select Strobe Enable">
+      <alias type="CMSIS" value="SPI_MCR_PCSSE(x)"/>
+      <bit_field_value name="MCR_PCSSE_0b0" value="0b0" description="PCS5/ PCSS is used as the Peripheral Chip Select[5] signal."/>
+      <bit_field_value name="MCR_PCSSE_0b1" value="0b1" description="PCS5/ PCSS is used as an active-low PCS Strobe signal."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="MTFE" access="RW" reset_value="0" description="Modified Transfer Format Enable">
+      <alias type="CMSIS" value="SPI_MCR_MTFE(x)"/>
+      <bit_field_value name="MCR_MTFE_0b0" value="0b0" description="Modified SPI transfer format disabled."/>
+      <bit_field_value name="MCR_MTFE_0b1" value="0b1" description="Modified SPI transfer format enabled."/>
+    </bit_field>
+    <bit_field offset="27" width="1" name="FRZ" access="RW" reset_value="0" description="Freeze">
+      <alias type="CMSIS" value="SPI_MCR_FRZ(x)"/>
+      <bit_field_value name="MCR_FRZ_0b0" value="0b0" description="Do not halt serial transfers in Debug mode."/>
+      <bit_field_value name="MCR_FRZ_0b1" value="0b1" description="Halt serial transfers in Debug mode."/>
+    </bit_field>
+    <bit_field offset="28" width="2" name="DCONF" access="RO" reset_value="0" description="SPI Configuration.">
+      <alias type="CMSIS" value="SPI_MCR_DCONF(x)"/>
+      <bit_field_value name="MCR_DCONF_0b00" value="0b00" description="SPI"/>
+      <bit_field_value name="MCR_DCONF_0b01" value="0b01" description="Reserved"/>
+      <bit_field_value name="MCR_DCONF_0b10" value="0b10" description="Reserved"/>
+      <bit_field_value name="MCR_DCONF_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="CONT_SCKE" access="RW" reset_value="0" description="Continuous SCK Enable">
+      <alias type="CMSIS" value="SPI_MCR_CONT_SCKE(x)"/>
+      <bit_field_value name="MCR_CONT_SCKE_0b0" value="0b0" description="Continuous SCK disabled."/>
+      <bit_field_value name="MCR_CONT_SCKE_0b1" value="0b1" description="Continuous SCK enabled."/>
+    </bit_field>
+    <bit_field offset="31" width="1" name="MSTR" access="RW" reset_value="0" description="Master/Slave Mode Select">
+      <alias type="CMSIS" value="SPI_MCR_MSTR(x)"/>
+      <bit_field_value name="MCR_MSTR_0b0" value="0b0" description="Enables Slave mode"/>
+      <bit_field_value name="MCR_MSTR_0b1" value="0b1" description="Enables Master mode"/>
+    </bit_field>
+  </register>
+  <register offset="0x8" width="32" name="TCR" description="Transfer Count Register">
+    <alias type="CMSIS" value="TCR"/>
+    <reserved_bit_field offset="0" width="16" reset_value="0"/>
+    <bit_field offset="16" width="16" name="SPI_TCNT" access="RW" reset_value="0" description="SPI Transfer Counter">
+      <alias type="CMSIS" value="SPI_TCR_SPI_TCNT(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xC" width="32" name="CTAR0_SLAVE" description="Clock and Transfer Attributes Register (In Slave Mode)">
+    <alias type="CMSIS" value="CTAR_SLAVE[0]"/>
+    <reserved_bit_field offset="0" width="22" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="2" reset_value="0"/>
+    <bit_field offset="25" width="1" name="CPHA" access="RW" reset_value="0" description="Clock Phase">
+      <alias type="CMSIS" value="SPI_CTAR_SLAVE_CPHA(x)"/>
+      <bit_field_value name="CTAR0_SLAVE_CPHA_0b0" value="0b0" description="Data is captured on the leading edge of SCK and changed on the following edge."/>
+      <bit_field_value name="CTAR0_SLAVE_CPHA_0b1" value="0b1" description="Data is changed on the leading edge of SCK and captured on the following edge."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="CPOL" access="RW" reset_value="0" description="Clock Polarity">
+      <alias type="CMSIS" value="SPI_CTAR_SLAVE_CPOL(x)"/>
+      <bit_field_value name="CTAR0_SLAVE_CPOL_0b0" value="0b0" description="The inactive state value of SCK is low."/>
+      <bit_field_value name="CTAR0_SLAVE_CPOL_0b1" value="0b1" description="The inactive state value of SCK is high."/>
+    </bit_field>
+    <bit_field offset="27" width="4" name="FMSZ" access="RW" reset_value="0xF" description="Frame Size">
+      <alias type="CMSIS" value="SPI_CTAR_SLAVE_FMSZ(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xC" width="32" name="CTAR0" description="Clock and Transfer Attributes Register (In Master Mode)">
+    <alias type="CMSIS" value="CTAR[0]"/>
+    <bit_field offset="0" width="4" name="BR" access="RW" reset_value="0" description="Baud Rate Scaler">
+      <alias type="CMSIS" value="SPI_CTAR_BR(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="4" name="DT" access="RW" reset_value="0" description="Delay After Transfer Scaler">
+      <alias type="CMSIS" value="SPI_CTAR_DT(x)"/>
+    </bit_field>
+    <bit_field offset="8" width="4" name="ASC" access="RW" reset_value="0" description="After SCK Delay Scaler">
+      <alias type="CMSIS" value="SPI_CTAR_ASC(x)"/>
+    </bit_field>
+    <bit_field offset="12" width="4" name="CSSCK" access="RW" reset_value="0" description="PCS to SCK Delay Scaler">
+      <alias type="CMSIS" value="SPI_CTAR_CSSCK(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="2" name="PBR" access="RW" reset_value="0" description="Baud Rate Prescaler">
+      <alias type="CMSIS" value="SPI_CTAR_PBR(x)"/>
+      <bit_field_value name="CTAR0_PBR_0b00" value="0b00" description="Baud Rate Prescaler value is 2."/>
+      <bit_field_value name="CTAR0_PBR_0b01" value="0b01" description="Baud Rate Prescaler value is 3."/>
+      <bit_field_value name="CTAR0_PBR_0b10" value="0b10" description="Baud Rate Prescaler value is 5."/>
+      <bit_field_value name="CTAR0_PBR_0b11" value="0b11" description="Baud Rate Prescaler value is 7."/>
+    </bit_field>
+    <bit_field offset="18" width="2" name="PDT" access="RW" reset_value="0" description="Delay after Transfer Prescaler">
+      <alias type="CMSIS" value="SPI_CTAR_PDT(x)"/>
+      <bit_field_value name="CTAR0_PDT_0b00" value="0b00" description="Delay after Transfer Prescaler value is 1."/>
+      <bit_field_value name="CTAR0_PDT_0b01" value="0b01" description="Delay after Transfer Prescaler value is 3."/>
+      <bit_field_value name="CTAR0_PDT_0b10" value="0b10" description="Delay after Transfer Prescaler value is 5."/>
+      <bit_field_value name="CTAR0_PDT_0b11" value="0b11" description="Delay after Transfer Prescaler value is 7."/>
+    </bit_field>
+    <bit_field offset="20" width="2" name="PASC" access="RW" reset_value="0" description="After SCK Delay Prescaler">
+      <alias type="CMSIS" value="SPI_CTAR_PASC(x)"/>
+      <bit_field_value name="CTAR0_PASC_0b00" value="0b00" description="Delay after Transfer Prescaler value is 1."/>
+      <bit_field_value name="CTAR0_PASC_0b01" value="0b01" description="Delay after Transfer Prescaler value is 3."/>
+      <bit_field_value name="CTAR0_PASC_0b10" value="0b10" description="Delay after Transfer Prescaler value is 5."/>
+      <bit_field_value name="CTAR0_PASC_0b11" value="0b11" description="Delay after Transfer Prescaler value is 7."/>
+    </bit_field>
+    <bit_field offset="22" width="2" name="PCSSCK" access="RW" reset_value="0" description="PCS to SCK Delay Prescaler">
+      <alias type="CMSIS" value="SPI_CTAR_PCSSCK(x)"/>
+      <bit_field_value name="CTAR0_PCSSCK_0b00" value="0b00" description="PCS to SCK Prescaler value is 1."/>
+      <bit_field_value name="CTAR0_PCSSCK_0b01" value="0b01" description="PCS to SCK Prescaler value is 3."/>
+      <bit_field_value name="CTAR0_PCSSCK_0b10" value="0b10" description="PCS to SCK Prescaler value is 5."/>
+      <bit_field_value name="CTAR0_PCSSCK_0b11" value="0b11" description="PCS to SCK Prescaler value is 7."/>
+    </bit_field>
+    <bit_field offset="24" width="1" name="LSBFE" access="RW" reset_value="0" description="LSB First">
+      <alias type="CMSIS" value="SPI_CTAR_LSBFE(x)"/>
+      <bit_field_value name="CTAR0_LSBFE_0b0" value="0b0" description="Data is transferred MSB first."/>
+      <bit_field_value name="CTAR0_LSBFE_0b1" value="0b1" description="Data is transferred LSB first."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="CPHA" access="RW" reset_value="0" description="Clock Phase">
+      <alias type="CMSIS" value="SPI_CTAR_CPHA(x)"/>
+      <bit_field_value name="CTAR0_CPHA_0b0" value="0b0" description="Data is captured on the leading edge of SCK and changed on the following edge."/>
+      <bit_field_value name="CTAR0_CPHA_0b1" value="0b1" description="Data is changed on the leading edge of SCK and captured on the following edge."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="CPOL" access="RW" reset_value="0" description="Clock Polarity">
+      <alias type="CMSIS" value="SPI_CTAR_CPOL(x)"/>
+      <bit_field_value name="CTAR0_CPOL_0b0" value="0b0" description="The inactive state value of SCK is low."/>
+      <bit_field_value name="CTAR0_CPOL_0b1" value="0b1" description="The inactive state value of SCK is high."/>
+    </bit_field>
+    <bit_field offset="27" width="4" name="FMSZ" access="RW" reset_value="0xF" description="Frame Size">
+      <alias type="CMSIS" value="SPI_CTAR_FMSZ(x)"/>
+    </bit_field>
+    <bit_field offset="31" width="1" name="DBR" access="RW" reset_value="0" description="Double Baud Rate">
+      <alias type="CMSIS" value="SPI_CTAR_DBR(x)"/>
+      <bit_field_value name="CTAR0_DBR_0b0" value="0b0" description="The baud rate is computed normally with a 50/50 duty cycle."/>
+      <bit_field_value name="CTAR0_DBR_0b1" value="0b1" description="The baud rate is doubled with the duty cycle depending on the Baud Rate Prescaler."/>
+    </bit_field>
+  </register>
+  <register offset="0x10" width="32" name="CTAR1" description="Clock and Transfer Attributes Register (In Master Mode)">
+    <alias type="CMSIS" value="CTAR[1]"/>
+    <bit_field offset="0" width="4" name="BR" access="RW" reset_value="0" description="Baud Rate Scaler">
+      <alias type="CMSIS" value="SPI_CTAR_BR(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="4" name="DT" access="RW" reset_value="0" description="Delay After Transfer Scaler">
+      <alias type="CMSIS" value="SPI_CTAR_DT(x)"/>
+    </bit_field>
+    <bit_field offset="8" width="4" name="ASC" access="RW" reset_value="0" description="After SCK Delay Scaler">
+      <alias type="CMSIS" value="SPI_CTAR_ASC(x)"/>
+    </bit_field>
+    <bit_field offset="12" width="4" name="CSSCK" access="RW" reset_value="0" description="PCS to SCK Delay Scaler">
+      <alias type="CMSIS" value="SPI_CTAR_CSSCK(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="2" name="PBR" access="RW" reset_value="0" description="Baud Rate Prescaler">
+      <alias type="CMSIS" value="SPI_CTAR_PBR(x)"/>
+      <bit_field_value name="CTAR1_PBR_0b00" value="0b00" description="Baud Rate Prescaler value is 2."/>
+      <bit_field_value name="CTAR1_PBR_0b01" value="0b01" description="Baud Rate Prescaler value is 3."/>
+      <bit_field_value name="CTAR1_PBR_0b10" value="0b10" description="Baud Rate Prescaler value is 5."/>
+      <bit_field_value name="CTAR1_PBR_0b11" value="0b11" description="Baud Rate Prescaler value is 7."/>
+    </bit_field>
+    <bit_field offset="18" width="2" name="PDT" access="RW" reset_value="0" description="Delay after Transfer Prescaler">
+      <alias type="CMSIS" value="SPI_CTAR_PDT(x)"/>
+      <bit_field_value name="CTAR1_PDT_0b00" value="0b00" description="Delay after Transfer Prescaler value is 1."/>
+      <bit_field_value name="CTAR1_PDT_0b01" value="0b01" description="Delay after Transfer Prescaler value is 3."/>
+      <bit_field_value name="CTAR1_PDT_0b10" value="0b10" description="Delay after Transfer Prescaler value is 5."/>
+      <bit_field_value name="CTAR1_PDT_0b11" value="0b11" description="Delay after Transfer Prescaler value is 7."/>
+    </bit_field>
+    <bit_field offset="20" width="2" name="PASC" access="RW" reset_value="0" description="After SCK Delay Prescaler">
+      <alias type="CMSIS" value="SPI_CTAR_PASC(x)"/>
+      <bit_field_value name="CTAR1_PASC_0b00" value="0b00" description="Delay after Transfer Prescaler value is 1."/>
+      <bit_field_value name="CTAR1_PASC_0b01" value="0b01" description="Delay after Transfer Prescaler value is 3."/>
+      <bit_field_value name="CTAR1_PASC_0b10" value="0b10" description="Delay after Transfer Prescaler value is 5."/>
+      <bit_field_value name="CTAR1_PASC_0b11" value="0b11" description="Delay after Transfer Prescaler value is 7."/>
+    </bit_field>
+    <bit_field offset="22" width="2" name="PCSSCK" access="RW" reset_value="0" description="PCS to SCK Delay Prescaler">
+      <alias type="CMSIS" value="SPI_CTAR_PCSSCK(x)"/>
+      <bit_field_value name="CTAR1_PCSSCK_0b00" value="0b00" description="PCS to SCK Prescaler value is 1."/>
+      <bit_field_value name="CTAR1_PCSSCK_0b01" value="0b01" description="PCS to SCK Prescaler value is 3."/>
+      <bit_field_value name="CTAR1_PCSSCK_0b10" value="0b10" description="PCS to SCK Prescaler value is 5."/>
+      <bit_field_value name="CTAR1_PCSSCK_0b11" value="0b11" description="PCS to SCK Prescaler value is 7."/>
+    </bit_field>
+    <bit_field offset="24" width="1" name="LSBFE" access="RW" reset_value="0" description="LSB First">
+      <alias type="CMSIS" value="SPI_CTAR_LSBFE(x)"/>
+      <bit_field_value name="CTAR1_LSBFE_0b0" value="0b0" description="Data is transferred MSB first."/>
+      <bit_field_value name="CTAR1_LSBFE_0b1" value="0b1" description="Data is transferred LSB first."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="CPHA" access="RW" reset_value="0" description="Clock Phase">
+      <alias type="CMSIS" value="SPI_CTAR_CPHA(x)"/>
+      <bit_field_value name="CTAR1_CPHA_0b0" value="0b0" description="Data is captured on the leading edge of SCK and changed on the following edge."/>
+      <bit_field_value name="CTAR1_CPHA_0b1" value="0b1" description="Data is changed on the leading edge of SCK and captured on the following edge."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="CPOL" access="RW" reset_value="0" description="Clock Polarity">
+      <alias type="CMSIS" value="SPI_CTAR_CPOL(x)"/>
+      <bit_field_value name="CTAR1_CPOL_0b0" value="0b0" description="The inactive state value of SCK is low."/>
+      <bit_field_value name="CTAR1_CPOL_0b1" value="0b1" description="The inactive state value of SCK is high."/>
+    </bit_field>
+    <bit_field offset="27" width="4" name="FMSZ" access="RW" reset_value="0xF" description="Frame Size">
+      <alias type="CMSIS" value="SPI_CTAR_FMSZ(x)"/>
+    </bit_field>
+    <bit_field offset="31" width="1" name="DBR" access="RW" reset_value="0" description="Double Baud Rate">
+      <alias type="CMSIS" value="SPI_CTAR_DBR(x)"/>
+      <bit_field_value name="CTAR1_DBR_0b0" value="0b0" description="The baud rate is computed normally with a 50/50 duty cycle."/>
+      <bit_field_value name="CTAR1_DBR_0b1" value="0b1" description="The baud rate is doubled with the duty cycle depending on the Baud Rate Prescaler."/>
+    </bit_field>
+  </register>
+  <register offset="0x2C" width="32" name="SR" description="Status Register">
+    <alias type="CMSIS" value="SR"/>
+    <bit_field offset="0" width="4" name="POPNXTPTR" access="RO" reset_value="0" description="Pop Next Pointer">
+      <alias type="CMSIS" value="SPI_SR_POPNXTPTR(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="4" name="RXCTR" access="RO" reset_value="0" description="RX FIFO Counter">
+      <alias type="CMSIS" value="SPI_SR_RXCTR(x)"/>
+    </bit_field>
+    <bit_field offset="8" width="4" name="TXNXTPTR" access="RO" reset_value="0" description="Transmit Next Pointer">
+      <alias type="CMSIS" value="SPI_SR_TXNXTPTR(x)"/>
+    </bit_field>
+    <bit_field offset="12" width="4" name="TXCTR" access="RO" reset_value="0" description="TX FIFO Counter">
+      <alias type="CMSIS" value="SPI_SR_TXCTR(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <bit_field offset="17" width="1" name="RFDF" access="W1C" reset_value="0" description="Receive FIFO Drain Flag">
+      <alias type="CMSIS" value="SPI_SR_RFDF(x)"/>
+      <bit_field_value name="SR_RFDF_0b0" value="0b0" description="RX FIFO is empty."/>
+      <bit_field_value name="SR_RFDF_0b1" value="0b1" description="RX FIFO is not empty."/>
+    </bit_field>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <bit_field offset="19" width="1" name="RFOF" access="W1C" reset_value="0" description="Receive FIFO Overflow Flag">
+      <alias type="CMSIS" value="SPI_SR_RFOF(x)"/>
+      <bit_field_value name="SR_RFOF_0b0" value="0b0" description="No Rx FIFO overflow."/>
+      <bit_field_value name="SR_RFOF_0b1" value="0b1" description="Rx FIFO overflow has occurred."/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <bit_field offset="25" width="1" name="TFFF" access="W1C" reset_value="0x1" description="Transmit FIFO Fill Flag">
+      <alias type="CMSIS" value="SPI_SR_TFFF(x)"/>
+      <bit_field_value name="SR_TFFF_0b0" value="0b0" description="TX FIFO is full."/>
+      <bit_field_value name="SR_TFFF_0b1" value="0b1" description="TX FIFO is not full."/>
+    </bit_field>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <bit_field offset="27" width="1" name="TFUF" access="W1C" reset_value="0" description="Transmit FIFO Underflow Flag">
+      <alias type="CMSIS" value="SPI_SR_TFUF(x)"/>
+      <bit_field_value name="SR_TFUF_0b0" value="0b0" description="No TX FIFO underflow."/>
+      <bit_field_value name="SR_TFUF_0b1" value="0b1" description="TX FIFO underflow has occurred."/>
+    </bit_field>
+    <bit_field offset="28" width="1" name="EOQF" access="W1C" reset_value="0" description="End of Queue Flag">
+      <alias type="CMSIS" value="SPI_SR_EOQF(x)"/>
+      <bit_field_value name="SR_EOQF_0b0" value="0b0" description="EOQ is not set in the executing command."/>
+      <bit_field_value name="SR_EOQF_0b1" value="0b1" description="EOQ is set in the executing SPI command."/>
+    </bit_field>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <bit_field offset="30" width="1" name="TXRXS" access="W1C" reset_value="0" description="TX and RX Status">
+      <alias type="CMSIS" value="SPI_SR_TXRXS(x)"/>
+      <bit_field_value name="SR_TXRXS_0b0" value="0b0" description="Transmit and receive operations are disabled (The module is in Stopped state)."/>
+      <bit_field_value name="SR_TXRXS_0b1" value="0b1" description="Transmit and receive operations are enabled (The module is in Running state)."/>
+    </bit_field>
+    <bit_field offset="31" width="1" name="TCF" access="W1C" reset_value="0" description="Transfer Complete Flag">
+      <alias type="CMSIS" value="SPI_SR_TCF(x)"/>
+      <bit_field_value name="SR_TCF_0b0" value="0b0" description="Transfer not complete."/>
+      <bit_field_value name="SR_TCF_0b1" value="0b1" description="Transfer complete."/>
+    </bit_field>
+  </register>
+  <register offset="0x30" width="32" name="RSER" description="DMA/Interrupt Request Select and Enable Register">
+    <alias type="CMSIS" value="RSER"/>
+    <reserved_bit_field offset="0" width="14" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="RFDF_DIRS" access="RW" reset_value="0" description="Receive FIFO Drain DMA or Interrupt Request Select">
+      <alias type="CMSIS" value="SPI_RSER_RFDF_DIRS(x)"/>
+      <bit_field_value name="RSER_RFDF_DIRS_0b0" value="0b0" description="Interrupt request."/>
+      <bit_field_value name="RSER_RFDF_DIRS_0b1" value="0b1" description="DMA request."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="RFDF_RE" access="RW" reset_value="0" description="Receive FIFO Drain Request Enable">
+      <alias type="CMSIS" value="SPI_RSER_RFDF_RE(x)"/>
+      <bit_field_value name="RSER_RFDF_RE_0b0" value="0b0" description="RFDF interrupt or DMA requests are disabled."/>
+      <bit_field_value name="RSER_RFDF_RE_0b1" value="0b1" description="RFDF interrupt or DMA requests are enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <bit_field offset="19" width="1" name="RFOF_RE" access="RW" reset_value="0" description="Receive FIFO Overflow Request Enable">
+      <alias type="CMSIS" value="SPI_RSER_RFOF_RE(x)"/>
+      <bit_field_value name="RSER_RFOF_RE_0b0" value="0b0" description="RFOF interrupt requests are disabled."/>
+      <bit_field_value name="RSER_RFOF_RE_0b1" value="0b1" description="RFOF interrupt requests are enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TFFF_DIRS" access="RW" reset_value="0" description="Transmit FIFO Fill DMA or Interrupt Request Select">
+      <alias type="CMSIS" value="SPI_RSER_TFFF_DIRS(x)"/>
+      <bit_field_value name="RSER_TFFF_DIRS_0b0" value="0b0" description="TFFF flag generates interrupt requests."/>
+      <bit_field_value name="RSER_TFFF_DIRS_0b1" value="0b1" description="TFFF flag generates DMA requests."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="TFFF_RE" access="RW" reset_value="0" description="Transmit FIFO Fill Request Enable">
+      <alias type="CMSIS" value="SPI_RSER_TFFF_RE(x)"/>
+      <bit_field_value name="RSER_TFFF_RE_0b0" value="0b0" description="TFFF interrupts or DMA requests are disabled."/>
+      <bit_field_value name="RSER_TFFF_RE_0b1" value="0b1" description="TFFF interrupts or DMA requests are enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <bit_field offset="27" width="1" name="TFUF_RE" access="RW" reset_value="0" description="Transmit FIFO Underflow Request Enable">
+      <alias type="CMSIS" value="SPI_RSER_TFUF_RE(x)"/>
+      <bit_field_value name="RSER_TFUF_RE_0b0" value="0b0" description="TFUF interrupt requests are disabled."/>
+      <bit_field_value name="RSER_TFUF_RE_0b1" value="0b1" description="TFUF interrupt requests are enabled."/>
+    </bit_field>
+    <bit_field offset="28" width="1" name="EOQF_RE" access="RW" reset_value="0" description="Finished Request Enable">
+      <alias type="CMSIS" value="SPI_RSER_EOQF_RE(x)"/>
+      <bit_field_value name="RSER_EOQF_RE_0b0" value="0b0" description="EOQF interrupt requests are disabled."/>
+      <bit_field_value name="RSER_EOQF_RE_0b1" value="0b1" description="EOQF interrupt requests are enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <bit_field offset="31" width="1" name="TCF_RE" access="RW" reset_value="0" description="Transmission Complete Request Enable">
+      <alias type="CMSIS" value="SPI_RSER_TCF_RE(x)"/>
+      <bit_field_value name="RSER_TCF_RE_0b0" value="0b0" description="TCF interrupt requests are disabled."/>
+      <bit_field_value name="RSER_TCF_RE_0b1" value="0b1" description="TCF interrupt requests are enabled."/>
+    </bit_field>
+  </register>
+  <register offset="0x34" width="32" name="PUSHR_SLAVE" description="PUSH TX FIFO Register In Slave Mode">
+    <alias type="CMSIS" value="PUSHR_SLAVE"/>
+    <bit_field offset="0" width="32" name="TXDATA" access="RW" reset_value="0" description="Transmit Data">
+      <alias type="CMSIS" value="SPI_PUSHR_SLAVE_TXDATA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x34" width="32" name="PUSHR" description="PUSH TX FIFO Register In Master Mode">
+    <alias type="CMSIS" value="PUSHR"/>
+    <bit_field offset="0" width="16" name="TXDATA" access="RW" reset_value="0" description="Transmit Data">
+      <alias type="CMSIS" value="SPI_PUSHR_TXDATA(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="6" name="PCS" access="RW" reset_value="0" description="Select which PCS signals are to be asserted for the transfer. Refer to the chip-specific SPI information for the number of PCS signals used in this MCU.">
+      <alias type="CMSIS" value="SPI_PUSHR_PCS(x)"/>
+      <bit_field_value name="PUSHR_PCS_0b000000" value="0b000000" description="Negate the PCS[x] signal."/>
+      <bit_field_value name="PUSHR_PCS_0b000001" value="0b000001" description="Assert the PCS[x] signal."/>
+    </bit_field>
+    <reserved_bit_field offset="22" width="2" reset_value="0"/>
+    <reserved_bit_field offset="24" width="2" reset_value="0"/>
+    <bit_field offset="26" width="1" name="CTCNT" access="RW" reset_value="0" description="Clear Transfer Counter">
+      <alias type="CMSIS" value="SPI_PUSHR_CTCNT(x)"/>
+      <bit_field_value name="PUSHR_CTCNT_0b0" value="0b0" description="Do not clear the TCR[TCNT] field."/>
+      <bit_field_value name="PUSHR_CTCNT_0b1" value="0b1" description="Clear the TCR[TCNT] field."/>
+    </bit_field>
+    <bit_field offset="27" width="1" name="EOQ" access="RW" reset_value="0" description="End Of Queue">
+      <alias type="CMSIS" value="SPI_PUSHR_EOQ(x)"/>
+      <bit_field_value name="PUSHR_EOQ_0b0" value="0b0" description="The SPI data is not the last data to transfer."/>
+      <bit_field_value name="PUSHR_EOQ_0b1" value="0b1" description="The SPI data is the last data to transfer."/>
+    </bit_field>
+    <bit_field offset="28" width="3" name="CTAS" access="RW" reset_value="0" description="Clock and Transfer Attributes Select">
+      <alias type="CMSIS" value="SPI_PUSHR_CTAS(x)"/>
+      <bit_field_value name="PUSHR_CTAS_0b000" value="0b000" description="CTAR0"/>
+      <bit_field_value name="PUSHR_CTAS_0b001" value="0b001" description="CTAR1"/>
+      <bit_field_value name="PUSHR_CTAS_0b010" value="0b010" description="Reserved"/>
+      <bit_field_value name="PUSHR_CTAS_0b011" value="0b011" description="Reserved"/>
+      <bit_field_value name="PUSHR_CTAS_0b100" value="0b100" description="Reserved"/>
+      <bit_field_value name="PUSHR_CTAS_0b101" value="0b101" description="Reserved"/>
+      <bit_field_value name="PUSHR_CTAS_0b110" value="0b110" description="Reserved"/>
+      <bit_field_value name="PUSHR_CTAS_0b111" value="0b111" description="Reserved"/>
+    </bit_field>
+    <bit_field offset="31" width="1" name="CONT" access="RW" reset_value="0" description="Continuous Peripheral Chip Select Enable">
+      <alias type="CMSIS" value="SPI_PUSHR_CONT(x)"/>
+      <bit_field_value name="PUSHR_CONT_0b0" value="0b0" description="Return PCSn signals to their inactive state between transfers."/>
+      <bit_field_value name="PUSHR_CONT_0b1" value="0b1" description="Keep PCSn signals asserted between transfers."/>
+    </bit_field>
+  </register>
+  <register offset="0x38" width="32" name="POPR" description="POP RX FIFO Register">
+    <alias type="CMSIS" value="POPR"/>
+    <bit_field offset="0" width="32" name="RXDATA" access="RO" reset_value="0" description="Received Data">
+      <alias type="CMSIS" value="SPI_POPR_RXDATA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x3C" width="32" name="TXFR0" description="Transmit FIFO Registers">
+    <alias type="CMSIS" value="TXFR0"/>
+    <bit_field offset="0" width="16" name="TXDATA" access="RO" reset_value="0" description="Transmit Data">
+      <alias type="CMSIS" value="SPI_TXFR0_TXDATA(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="16" name="TXCMD_TXDATA" access="RO" reset_value="0" description="Transmit Command or Transmit Data">
+      <alias type="CMSIS" value="SPI_TXFR0_TXCMD_TXDATA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x40" width="32" name="TXFR1" description="Transmit FIFO Registers">
+    <alias type="CMSIS" value="TXFR1"/>
+    <bit_field offset="0" width="16" name="TXDATA" access="RO" reset_value="0" description="Transmit Data">
+      <alias type="CMSIS" value="SPI_TXFR1_TXDATA(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="16" name="TXCMD_TXDATA" access="RO" reset_value="0" description="Transmit Command or Transmit Data">
+      <alias type="CMSIS" value="SPI_TXFR1_TXCMD_TXDATA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x44" width="32" name="TXFR2" description="Transmit FIFO Registers">
+    <alias type="CMSIS" value="TXFR2"/>
+    <bit_field offset="0" width="16" name="TXDATA" access="RO" reset_value="0" description="Transmit Data">
+      <alias type="CMSIS" value="SPI_TXFR2_TXDATA(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="16" name="TXCMD_TXDATA" access="RO" reset_value="0" description="Transmit Command or Transmit Data">
+      <alias type="CMSIS" value="SPI_TXFR2_TXCMD_TXDATA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x48" width="32" name="TXFR3" description="Transmit FIFO Registers">
+    <alias type="CMSIS" value="TXFR3"/>
+    <bit_field offset="0" width="16" name="TXDATA" access="RO" reset_value="0" description="Transmit Data">
+      <alias type="CMSIS" value="SPI_TXFR3_TXDATA(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="16" name="TXCMD_TXDATA" access="RO" reset_value="0" description="Transmit Command or Transmit Data">
+      <alias type="CMSIS" value="SPI_TXFR3_TXCMD_TXDATA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x7C" width="32" name="RXFR0" description="Receive FIFO Registers">
+    <alias type="CMSIS" value="RXFR0"/>
+    <bit_field offset="0" width="32" name="RXDATA" access="RO" reset_value="0" description="Receive Data">
+      <alias type="CMSIS" value="SPI_RXFR0_RXDATA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x80" width="32" name="RXFR1" description="Receive FIFO Registers">
+    <alias type="CMSIS" value="RXFR1"/>
+    <bit_field offset="0" width="32" name="RXDATA" access="RO" reset_value="0" description="Receive Data">
+      <alias type="CMSIS" value="SPI_RXFR1_RXDATA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x84" width="32" name="RXFR2" description="Receive FIFO Registers">
+    <alias type="CMSIS" value="RXFR2"/>
+    <bit_field offset="0" width="32" name="RXDATA" access="RO" reset_value="0" description="Receive Data">
+      <alias type="CMSIS" value="SPI_RXFR2_RXDATA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x88" width="32" name="RXFR3" description="Receive FIFO Registers">
+    <alias type="CMSIS" value="RXFR3"/>
+    <bit_field offset="0" width="32" name="RXDATA" access="RO" reset_value="0" description="Receive Data">
+      <alias type="CMSIS" value="SPI_RXFR3_RXDATA(x)"/>
+    </bit_field>
+  </register>
+</regs:peripheral>

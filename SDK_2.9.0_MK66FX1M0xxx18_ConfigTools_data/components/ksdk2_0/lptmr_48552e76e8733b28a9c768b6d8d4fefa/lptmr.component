@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component:config_component
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-6.0.xsd"
+xmlns:component="http://swtools.freescale.net/XSD/component/1.0"
+id="lptmr" label="LPTMR" category="Peripheral driver" options="UI_COMPONENT_MODE_HIDDEN">
+
+   <sw_comp_ref name="platform.drivers.lptmr" version="2.1.1"/>
+   <description>Low-Power Timer (LPTMR)</description>
+   <mode id="LPTMR_GENERAL" label="General">
+      <description>General LPTMR initialization</description>
+      <config_set_refs>
+         <config_set_ref>fsl_lptmr</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>LPTMR</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="fsl_lptmr" label="General LPTMR configuration" from_source="fsl_lptmr.h">
+      <description>General LPTMR configuration</description>
+      <generated_types>
+         <enum id="lptmr_pin_select_t" label="LPTMR pin selection used in pulse counter mode." from="_lptmr_pin_select">
+            <item id="kLPTMR_PinSelectInput_0" label="Pulse counter input 0 is selected"/>
+            <item id="kLPTMR_PinSelectInput_1" label="Pulse counter input 1 is selected"/>
+            <item id="kLPTMR_PinSelectInput_2" label="Pulse counter input 2 is selected"/>
+            <item id="kLPTMR_PinSelectInput_3" label="Pulse counter input 3 is selected"/>
+         </enum>
+         <enum id="lptmr_pin_polarity_t" label="LPTMR pin polarity used in pulse counter mode." from="_lptmr_pin_polarity">
+            <item id="kLPTMR_PinPolarityActiveHigh" label="Pulse Counter input source is active-high"/>
+            <item id="kLPTMR_PinPolarityActiveLow" label="Pulse Counter input source is active-low"/>
+         </enum>
+         <enum id="lptmr_timer_mode_t" label="LPTMR timer mode selection." from="_lptmr_timer_mode">
+            <item id="kLPTMR_TimerModeTimeCounter" label="Time Counter mode"/>
+            <item id="kLPTMR_TimerModePulseCounter" label="Pulse Counter mode"/>
+         </enum>
+         <enum id="lptmr_prescaler_glitch_value_t" label="LPTMR prescaler/glitch filter values." from="_lptmr_prescaler_glitch_value">
+            <item id="kLPTMR_Prescale_Glitch_0" label="Prescaler divide 2, glitch filter does not support this setting"/>
+            <item id="kLPTMR_Prescale_Glitch_1" label="Prescaler divide 4, glitch filter 2"/>
+            <item id="kLPTMR_Prescale_Glitch_2" label="Prescaler divide 8, glitch filter 4"/>
+            <item id="kLPTMR_Prescale_Glitch_3" label="Prescaler divide 16, glitch filter 8"/>
+            <item id="kLPTMR_Prescale_Glitch_4" label="Prescaler divide 32, glitch filter 16"/>
+            <item id="kLPTMR_Prescale_Glitch_5" label="Prescaler divide 64, glitch filter 32"/>
+            <item id="kLPTMR_Prescale_Glitch_6" label="Prescaler divide 128, glitch filter 64"/>
+            <item id="kLPTMR_Prescale_Glitch_7" label="Prescaler divide 256, glitch filter 128"/>
+            <item id="kLPTMR_Prescale_Glitch_8" label="Prescaler divide 512, glitch filter 256"/>
+            <item id="kLPTMR_Prescale_Glitch_9" label="Prescaler divide 1024, glitch filter 512"/>
+            <item id="kLPTMR_Prescale_Glitch_10" label="Prescaler divide 2048 glitch filter 1024"/>
+            <item id="kLPTMR_Prescale_Glitch_11" label="Prescaler divide 4096, glitch filter 2048"/>
+            <item id="kLPTMR_Prescale_Glitch_12" label="Prescaler divide 8192, glitch filter 4096"/>
+            <item id="kLPTMR_Prescale_Glitch_13" label="Prescaler divide 16384, glitch filter 8192"/>
+            <item id="kLPTMR_Prescale_Glitch_14" label="Prescaler divide 32768, glitch filter 16384"/>
+            <item id="kLPTMR_Prescale_Glitch_15" label="Prescaler divide 65536, glitch filter 32768"/>
+         </enum>
+         <enum id="lptmr_prescaler_clock_select_t" label="LPTMR prescaler/glitch filter clock select." from="_lptmr_prescaler_clock_select">
+            <description>Clock connections are SoC-specific</description>
+            <item id="kLPTMR_PrescalerClock_0" label="Prescaler/glitch filter clock 0 selected."/>
+            <item id="kLPTMR_PrescalerClock_1" label="Prescaler/glitch filter clock 1 selected."/>
+            <item id="kLPTMR_PrescalerClock_2" label="Prescaler/glitch filter clock 2 selected."/>
+            <item id="kLPTMR_PrescalerClock_3" label="Prescaler/glitch filter clock 3 selected."/>
+         </enum>
+         <enum id="lptmr_interrupt_enable_t" label="List of the LPTMR interrupts." from="_lptmr_interrupt_enable">
+            <item id="kLPTMR_TimerInterruptEnable" label="Timer interrupt enable"/>
+         </enum>
+         <enum id="lptmr_status_flags_t" label="List of the LPTMR status flags." from="_lptmr_status_flags">
+            <item id="kLPTMR_TimerCompareFlag" label="Timer compare flag"/>
+         </enum>
+         <struct id="lptmr_config_t" label="LPTMR config structure." from="_lptmr_config">
+            <description>This structure holds the configuration settings for the LPTMR peripheral. To initialize this structure to reasonable defaults, call the LPTMR_GetDefaultConfig() function and pass a pointer to your configuration structure instance.The configuration struct can be made constant so it resides in flash.</description>
+            <reference id="timerMode" label="Time counter mode or pulse counter mode" type="lptmr_timer_mode_t">
+               <description>Time counter mode or pulse counter mode</description>
+            </reference>
+            <reference id="pinSelect" label="LPTMR pulse input pin select; used only in pulse counter mode" type="lptmr_pin_select_t">
+               <description>LPTMR pulse input pin select; used only in pulse counter mode</description>
+            </reference>
+            <reference id="pinPolarity" label="LPTMR pulse input pin polarity; used only in pulse counter mode" type="lptmr_pin_polarity_t">
+               <description>LPTMR pulse input pin polarity; used only in pulse counter mode</description>
+            </reference>
+            <bool id="enableFreeRunning" label="True: enable free running, counter is reset on overflow False: counter is reset when the compare flag is set">
+               <description>True: enable free running, counter is reset on overflow False: counter is reset when the compare flag is set</description>
+            </bool>
+            <bool id="bypassPrescaler" label="True: bypass prescaler; false: use clock from prescaler">
+               <description>True: bypass prescaler; false: use clock from prescaler</description>
+            </bool>
+            <reference id="prescalerClockSource" label="LPTMR clock source" type="lptmr_prescaler_clock_select_t">
+               <description>LPTMR clock source</description>
+            </reference>
+            <reference id="value" label="Prescaler or glitch filter value" type="lptmr_prescaler_glitch_value_t">
+               <description>Prescaler or glitch filter value</description>
+            </reference>
+         </struct>
+      </generated_types>
+      <user_types>
+         <enum id="lptmr_pin_polarity_t" label="LPTMR pin polarity used in pulse counter mode." from="_lptmr_pin_polarity">
+            <item id="kLPTMR_PinPolarityActiveHigh" label="Pulse Counter input source is active-high"/>
+            <item id="kLPTMR_PinPolarityActiveLow" label="Pulse Counter input source is active-low"/>
+         </enum>
+         <enum id="lptmr_timer_mode_t" label="LPTMR timer mode selection." from="_lptmr_timer_mode">
+            <item id="kLPTMR_TimerModeTimeCounter" label="Time Counter mode"/>
+            <item id="kLPTMR_TimerModePulseCounter" label="Pulse Counter mode"/>
+         </enum>
+         <enum id="lptmr_prescaler_glitch_value_t" label="LPTMR prescaler/glitch filter values." from="_lptmr_prescaler_glitch_value">
+            <item id="kLPTMR_Prescale_Glitch_0" label="Clock divided by 2, glitch filter disabled" value="2"/>
+            <item id="kLPTMR_Prescale_Glitch_1" label="Clock divided by 4, glitch filter 2 " value="4"/>
+            <item id="kLPTMR_Prescale_Glitch_2" label="Clock divided by 8, glitch filter 4" value="8"/>
+            <item id="kLPTMR_Prescale_Glitch_3" label="Clock divided by 16, glitch filter 8" value="16"/>
+            <item id="kLPTMR_Prescale_Glitch_4" label="Clock divided by 32, glitch filter 16" value="32"/>
+            <item id="kLPTMR_Prescale_Glitch_5" label="Clock divided by 64, glitch filter 32" value="64"/>
+            <item id="kLPTMR_Prescale_Glitch_6" label="Clock divided by 128, glitch filter 64" value="128"/>
+            <item id="kLPTMR_Prescale_Glitch_7" label="Clock divided by 256, glitch filter 128" value="256"/>
+            <item id="kLPTMR_Prescale_Glitch_8" label="Clock divided by 512, glitch filter 256" value="512"/>
+            <item id="kLPTMR_Prescale_Glitch_9" label="Clock divided by 1024, glitch filter 512" value="1024"/>
+            <item id="kLPTMR_Prescale_Glitch_10" label="Clock divided by 2048, glitch filter 1024" value="2048"/>
+            <item id="kLPTMR_Prescale_Glitch_11" label="Clock divided by 4096, glitch filter 2048" value="4096"/>
+            <item id="kLPTMR_Prescale_Glitch_12" label="Clock divided by 8192, glitch filter 4096" value="8192"/>
+            <item id="kLPTMR_Prescale_Glitch_13" label="Clock divided by 16384, glitch filter 8192" value="16384"/>
+            <item id="kLPTMR_Prescale_Glitch_14" label="Clock divided by 32768, glitch filter 16384" value="32768"/>
+            <item id="kLPTMR_Prescale_Glitch_15" label="Clock divided by 65536, glitch filter 32768" value="65536"/>
+         </enum>
+         <enum id="lptmr_prescaler_clock_select_t" label="LPTMR prescaler/glitch filter clock select" from="_lptmr_prescaler_clock_select">
+            <description>Clock connections are SoC-specific</description>
+            <item id="kLPTMR_PrescalerClock_0" label="Prescaler/glitch filter clock 0 selected" value="PrescalerGlitchFilterClock0">
+               <description>Prescaler/glitch filter clock 0 selected.</description>
+            </item>
+            <item id="kLPTMR_PrescalerClock_1" label="Prescaler/glitch filter clock 1 selected" value="PrescalerGlitchFilterClock1" available=" !(featureDefined(`FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_1_SUPPORT`) &amp;&amp; getFeature(`FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_1_SUPPORT`))">
+               <description>Prescaler/glitch filter clock 1 selected.</description>
+            </item>
+            <item id="kLPTMR_PrescalerClock_2" label="Prescaler/glitch filter clock 2 selected" value="PrescalerGlitchFilterClock2">
+               <description>Prescaler/glitch filter clock 2 selected.</description>
+            </item>
+            <item id="kLPTMR_PrescalerClock_3" label="Prescaler/glitch filter clock 3 selected" value="PrescalerGlitchFilterClock3" available=" !(featureDefined(`FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_3_SUPPORT`) &amp;&amp; getFeature(`FSL_FEATURE_LPTMR_HAS_NO_PRESCALER_CLOCK_SOURCE_3_SUPPORT`))">
+               <description>Prescaler/glitch filter clock 3 selected.</description>
+            </item>
+         </enum>
+
+         <struct id="lptmrConfig" label="LPTMR configuration" from="_lptmr_config">
+            <description>This structure holds the configuration settings for the LPTMR peripheral. To initialize this structure to reasonable defaults, call the LPTMR_GetDefaultConfig() function and pass a pointer to your configuration structure instance. The configuration struct can be made constant so it resides in flash.</description>
+            <variable value="getPeripheralSignals($instance.getPeripheral()).filter(x -> x.getValue().regexMatch(`.*tmr_clk.*`)).size()" id="lptmrSignalsCount"></variable>
+            <enum id="timerMode" label="Time or pulse counter mode" from="_lptmr_timer_mode">
+               <description>Time counter mode or pulse counter mode. In time counter mode, counter is being incremented by input clock pulses. In pulse counter mode, the counter is being incremented by input pin pulses.</description>
+               <item id="kLPTMR_TimerModeTimeCounter" label="Time Counter mode"/>
+               <item id="kLPTMR_TimerModePulseCounter" label="Pulse Counter mode" available="$parent.lptmrSignalsCount.value() &gt; 0"/>
+            </enum>
+            <dynamic_enum items="getPeripheralSignals($instance.getPeripheral()).filter(x -> x.getValue().regexMatch(`.*tmr_clk.*`))" id="pinSelect" label="LPTMR pulse input pin select" available="$parent.lptmrSignalsCount.value() &gt; 0" enable="$parent.timerMode.value() == `kLPTMR_TimerModePulseCounter`">
+               <description>LPTMR pulse input pin select; used only in pulse counter mode.</description>
+               <validation>
+                  <dependency when_expr="($parent.timerMode.value() == `kLPTMR_TimerModePulseCounter`) &amp;&amp; ($this.getEnumItemValue().regexMatch(`(.*)(tmr_clk..?)(.*)`))" resource_type="PeripheralUnifiedSignal" 
+                      resource_id_expr="$instance.getPeripheral() + `.` + $this.getEnumItemValue().regexSubstr(`(.*)(tmr_clk..?)(.*)`,2)" description_expr="`Timer pulse input ` + $this.getEnumItemLabel() + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <reference id="pinPolarity" label="Input pin polarity" type="lptmr_pin_polarity_t" enable="$parent.timerMode.value() == `kLPTMR_TimerModePulseCounter`">
+               <description>LPTMR pulse input pin polarity; used only in pulse counter mode.</description>
+            </reference>
+            <bool id="enableFreeRunning" label="Free running">
+               <description>If enabled, counter is reset on overflow. Else, counter is reset when the compare flag is set.</description>
+            </bool>
+            <bool id="bypassPrescaler" label="Bypass prescaler/glitch filter">
+               <description>In time counter mode, if enabled, prescaler is bypassed and counter is being incremented directly by its source clock's pulses. Else, prescaler clock output is used. In pulse counter mode, if enabled, glitch filter is bypassed and counter is being incremented with each pulse from the selected input pin. Else, counter is incremented by pulses from the output of the glitch filter (after defined count of source clock's rising edges).</description>
+            </bool>
+
+            <reference id="clockSelect" label="Clock source" type="lptmr_prescaler_clock_select_t" available="false"></reference>
+            <variable id="clockSourceUId" value="$parent.prescalerClockSource.getEnumItemValue()"/>
+            <dynamic_enum id="prescalerClockSource" label="Clock source" options="remove_from_struct_init" items="enumItemsOf($parent.clockSelect).arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> enumItem.getID(),
+               enumItem -> getPeripheralClock($instance.getPeripheral(), enumItem.getValue()),
+               enumItem -> enumItem.getValue())">
+               <description>LPTMR timer clock source selection.</description>
+               <validation>
+                  <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.clockSourceUId.getValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.clockSource.getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.clockSource.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <dynamic_enum id="clockSource" label="Clock source frequency" options="remove_from_struct_init" 
+               items="createArray().merge(getClockFunctionalGroups().arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> enumItem,
+               enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.prescalerClockSource.getEnumItemValue(), enumItem)) + ` (` + enumItem + `)`,
+               enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.prescalerClockSource.getEnumItemValue(), enumItem)))" >
+               <description>Selection of the clock source frequency (unless a different unit multiple is entered, Hertz is used by default).</description>
+               <validation>
+                  <constraint when_expr="!($this.value().contains(`custom`))" cond_expr="$this.getEnumItemValue() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+               </validation>
+               <custom_value_support default="1" validation_expr="x -> x.toHertz() &gt; 0"/>
+            </dynamic_enum>
+            <reference id="value" label="Prescaler or glitch filter value" type="lptmr_prescaler_glitch_value_t">
+               <description>
+                  Prescaler or glitch filter value.
+                  Numbers specifies, how the LPTMR input clock frequency is divided in time counter mode or how many rising clock edges would it take to recognize the change on input pin in Pulse Counter mode.
+                  Example: Prescaler divide 8, glitch filter 4 value means, that prescaler divides the prescaler clock by 8 or glitch filter recognizes change on input pin after 4 rising clock edges.
+               </description>
+            </reference>
+            <variable id="timerInputFreq" value="($parent.clockSource.getEnumItemValue() != `0`) ? (frequencyToString($parent.clockSource.getEnumItemValue().toHertz() / ($parent.bypassPrescaler.getValue() ? 1.0 : (1.0 * $parent.value.getEnumItemValue().toInt())))) : 0"
+                available="$parent.timerMode.value() == `kLPTMR_TimerModeTimeCounter`">
+                <description>Input frequency of the timer provided by the selected clock source and divided by the prescaler (or bypassed).</description>
+            </variable>
+            <info id="timerInputFreqPeriod" label="Timer input frequency/period" value="($parent.clockSource.getEnumItemValue() != `0`) ? (frequencyToString($parent.clockSource.getEnumItemValue().toHertz() / ($parent.bypassPrescaler.getValue() ? 1.0 : (1.0 * $parent.value.getEnumItemValue().toInt()))) + ` (` + timeToString(1.0 / ($parent.clockSource.getEnumItemValue().toHertz() / ($parent.bypassPrescaler.getValue() ? 1.0 : (1.0 * $parent.value.getEnumItemValue().toInt()))) * 1000000) + `)`) : 0"
+                available="$parent.timerMode.value() == `kLPTMR_TimerModeTimeCounter`">
+                <description>Input frequency of the timer provided by the selected clock source and divided by the prescaler (or bypassed).</description>
+            </info>
+            <variable id="decNumRegExpr" value="`(\d+)`" ></variable> 
+            <variable id="decHexTicksRegExpr" value="`((\d+)|(0x[0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,a,b,c,d,e,f]+))(\s*)ticks`" ></variable> 
+            <string id="timerPeriod" label="Timer frequency/period or offset"  
+               validation_expr="x -> (x.regexMatch($parent.decNumRegExpr.getValue())) ? 
+                   ((x.toHertz() &gt;= 1) &amp;&amp; (x.toHertz() &lt;= 0xFFFFFFFF)) 
+                   : (x.regexMatch($parent.decHexTicksRegExpr.getValue())) ? 
+                   ((x.regexSubstr($parent.decHexTicksRegExpr.getValue(),1).toInt() &gt;= 1) &amp;&amp; (x.regexSubstr($parent.decHexTicksRegExpr.getValue(),1).toInt()&lt;= 0xFFFF))
+                   : (x.isFreq()) || (x.isTime())"
+               available="$parent.timerMode.value() == `kLPTMR_TimerModeTimeCounter`">
+<!--               <description>Timer frequency/period in ticks, frequency units or time units that is used for generating of the output signal. An integer number is processed as a time in us, a number with the ticks unit  (range 1 ticks - 65535 ticks (0xFFFF) is processed as a value in ticks, a frequency value must be in format &quot;float_number [Hz, kHz, MHz or GHz]&quot;, a period value must be in format &quot;float_number [ns, us, ms, s, m, h or d]&quot;.&lt;br/&gt;
+                  Frequency units and time units can only be used when clock source frequency is selected (clock must not be disabled).&lt;br/&gt;
+                  In free running mode, this property represents offset (delay) between counter overflow and interrupt invocation.
+               </description>-->
+               <description>
+Timer frequency/period in ticks, frequency units or time units that is used for generating of the interrupt. Supported formats of values:
+* An integer number is processed as a time in us.
+* A number with the ticks unit (range 1 ticks - 65535 ticks (0xFFFF)) is processed as a value in ticks (the supported format is &quot;integer_number [ticks]&quot;)
+* A frequency value must be in format &quot;float_number [Hz, kHz, MHz or GHz]&quot;.
+* A period value must be in format &quot;float_number [ns, us, ms, s, m, h or d]&quot;.
+
+Frequency units and time units can only be used when clock source frequency is selected (clock must not be disabled).
+
+In free running mode, this property represents offset (delay) between counter overflow and interrupt invocation.
+               </description>
+               <validation>
+                  <constraint when_expr="$parent.timerPeriodInTicks.getValue() != `N/A`" cond_expr="($parent.timerPeriodInTicks.getValue().toInt() &lt;= 0xFFFF) &amp;&amp; ($parent.timerPeriodInTicks.getValue().toInt() &gt; 0)"  level="error" description="The timer period in ticks must be in range 1 - 0xFFFF (65535) because of the 16 bits width of the timer. Adjust the timer frequency/period and/or the timer input frequency."/>
+               </validation>
+            </string>
+           
+            <variable id="timerPeriodInTicks" value="
+               (($parent.timerPeriod.getValue() == ``) || ($parent.timerInputFreq.getValue().toHertz() == 0)) ?
+               `N/A`
+               : (($parent.timerPeriod.getValue().regexMatch($parent.decNumRegExpr.getValue())) ?
+                    ((($parent.timerInputFreq.isAvailable()) &amp;&amp; ($parent.timerInputFreq.getValue() != `0`)) ? toHertz($parent.timerPeriod.getValue().toHertz() / 1000000.0 / (1.0 / $parent.timerInputFreq.getValue().toHertz())) : `N/A`)
+                  : (($parent.timerPeriod.getValue().regexMatch($parent.decHexTicksRegExpr.getValue())) ?  
+                    $parent.timerPeriod.getValue().regexSubstr($parent.decHexTicksRegExpr.getValue(),1).toInt()
+                  : (($parent.timerPeriod.getValue().isFreq()) ? 
+                    ((($parent.timerInputFreq.isAvailable()) &amp;&amp; ($parent.timerInputFreq.getValue() != `0`)) ? toHertz($parent.timerInputFreq.getValue().toHertz() * 1.0 / $parent.timerPeriod.getValue().getFreq(`Hz`,`Hz`)) : `N/A`)
+                  : ((($parent.timerInputFreq.isAvailable()) &amp;&amp; ($parent.timerInputFreq.getValue() != `0`)) ? toHertz($parent.timerPeriod.getValue().getTime(`ns`,`Hz`) / 1000000000.0 / (1.0 / $parent.timerInputFreq.getValue().toHertz())) : `N/A`))))"
+               available="$parent.timerMode.value() == `kLPTMR_TimerModeTimeCounter`">
+               <description>The timer period in timer ticks value represents the period of the timer in timer ticks.</description>
+            </variable>
+            <info id="timerPeriodCalculated" label="Calculated real timer period/offfset"  value="
+               (($parent.timerPeriodInTicks.getValue() == `N/A`) || ($parent.timerPeriodInTicks.getValue() == `0`) || ($parent.timerInputFreq.getValue() == `0`) || ($parent.timerInputFreq.getValue() == `N/A`))?
+               `N/A`
+               : $parent.timerPeriodInTicks.getValue() + ` ticks (` + (timeToString(1.0 / $parent.timerInputFreq.getValue().toHertz() * $parent.timerPeriodInTicks.getValue() * 1000000)) + `; ` + frequencyToString(1.0 * $parent.timerInputFreq.getValue().toHertz() / $parent.timerPeriodInTicks.getValue()) + `)`"
+                available="$parent.timerMode.value() == `kLPTMR_TimerModeTimeCounter`">
+               <description>The timer period in timer ticks and time units that is calculated by using the timer input frequency and period/offset in timer ticks.</description>
+            </info>
+            <integer id="pulsesCount" label="Count of pulses to compare" type="uint32_t" available="$parent.timerMode.value() == `kLPTMR_TimerModePulseCounter`" min_expr="1">
+               <description>
+                  When LPTMR counter equals this value, the hardware trigger asserts until the next time the LPTMR counter increments.
+                  If set to 0, the hardware trigger will remain asserted until the LPTMR is disabled. The range is 0-65535.
+               </description>
+               <validation>
+                  <constraint cond_expr="($this.value() &lt;= 65535)" 
+                     level="error" 
+                     description="Can not generate compare value greater that 16-bit value,LPTMR compare register allows max. 16-bit values"/>
+               </validation>
+            </integer>
+<!--            <info available="($parent.timerMode.value() ==`kLPTMR_TimerModeTimeCounter`) &amp;&amp; ($parent.clockSource.getEnumItemValue() != ``)" value="frequencyToString($parent.bypassPrescaler.value() ? $parent.clockSource.getEnumItemValue().toHertz() : ($parent.clockSource.getEnumItemValue().toHertz() / $parent.value.getEnumItemValue().toInt()))" id="inputFrequencyInfo" label="Resulting input clock frequency">
+               <description>
+                  Frequency of the counter input clock signal calculated from input clock frequency and the prescaler value (if used).
+               </description>
+            </info>-->
+         </struct>
+      </user_types>
+      <settings>         
+         <reference id="lptmr_config" label="LPTMR configuration" type="lptmrConfig">
+            <description>LPTMR configuration</description>
+         </reference>
+         <bool id="enableDma" label="LPTMR timer DMA request" available="(featureDefined(`SOC_EDMA_COUNT`) &amp;&amp; getFeature(`SOC_EDMA_COUNT`) &amp;&amp; featureDefined(`FSL_FEATURE_LPTMR_HAS_CSR_TDRE`) &amp;&amp; getFeature(`FSL_FEATURE_LPTMR_HAS_CSR_TDRE`))">
+            <description>Enable DMA requests from LPTMR timer</description>
+         </bool>
+         <bool id="enableInterrupt" label="Enable interrupt vector" options="UI_LABEL_BOLD">
+            <description>Enable interrupt requests from LPTMR timer</description>
+         </bool>
+         <reference id="interrupt" label="Interrupt setting" type="interrupt_vector_t" options="UI_LABEL_HIDDEN" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enableInterrupt.value()">
+            <options_expr>
+               <option id="irq_handler_insert" expr="
+leftPadding(`uint32_t intStatus;`, 1) + `&#10;` +
+leftPadding(`/* Reading all interrupt flags of status register */`, 1) + `&#10;` +
+leftPadding(`intStatus = LPTMR_GetStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `);`, 1) + `&#10;` +
+leftPadding(`LPTMR_ClearStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `, intStatus);`, 1) + `&#10;&#10;` +
+leftPadding(`/* Place your code here */`, 1) + `&#10;`
+               "/>
+            </options_expr>
+         </reference>
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+         <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+         <def fragment="struct_field">
+            <expr>leftPadding(`.` + $this.getID() + ` = ` + $this.value() + ($this.getID() == `value` ? `` : `,`), $param.paddingLevel)</expr>
+            <br/>
+         </def>
+         <def fragment="lptmr_struct">
+            <expr>`const ` + $param.type + ` ` + $param.name + ` = {` </expr><br/>
+            <fragment id="struct_field" apply_to="$this.timerMode">
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <expr> leftPadding(`.pinSelect = kLPTMR_PinSelectInput_` + (($this.lptmrSignalsCount.value() == 0) ? 0 : (($this.pinSelect.isAvailable() &amp;&amp; $this.pinSelect.isEnabled()) ? $this.pinSelect.getCValue().extractChannelID() : 0)) + `,`, 1)</expr><br/>
+            <fragment id="struct_field" apply_to="$this.pinPolarity">
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <fragment id="struct_field" apply_to="$this.enableFreeRunning">
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <fragment id="struct_field" apply_to="$this.bypassPrescaler">
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <expr> leftPadding(`.prescalerClockSource = ` + $this.prescalerClockSource.getEnumItemId() + `,`, 1)</expr><br/>
+            <fragment id="struct_field" apply_to="$this.value">
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <text>};</text><br/>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">lptmr</param>
+               <param id="filename">fsl_lptmr.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <fragment id="comment">
+               <param id="content" expr="$instance.getFnGroupName() + ` defines for ` + $instance.getPeripheral()"></param>
+               <param id="paddingLevel" expr="0"></param>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)"/>
+               <param id="value" expr="$instance.getPeripheral()"/>
+               <param id="description">Definition of peripheral ID</param>
+            </fragment>
+            <!-- Clock source frequency -->
+            <fragment id="define">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLK_FREQ`)"/>
+               <param id="value" expr="$this.lptmr_config.clockSource.getEnumItemValue().toHertz() + `UL`"/> 
+               <param id="description">Definition of the clock source frequency</param>
+            </fragment>
+            <fragment id="define" if_expr="$this.lptmr_config.timerMode.value() == `kLPTMR_TimerModeTimeCounter`">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_INPUT_FREQ`)"/>
+               <param id="value" expr="($this.lptmr_config.bypassPrescaler.value() ? $this.lptmr_config.clockSource.getEnumItemValue().toHertz() : ($this.lptmr_config.clockSource.getEnumItemValue().toHertz() / $this.lptmr_config.value.getEnumItemValue().toInt())) + `UL`"/>
+               <param id="description">Definition of the prescaled clock source frequency</param>
+            </fragment>
+            <fragment id="define" if_expr="$this.lptmr_config.timerPeriod.isAvailable() 
+               &amp;&amp; ($this.lptmr_config.timerInputFreq.getValue().toHertz() &gt; 0) 
+               &amp;&amp; ($this.lptmr_config.timerPeriodInTicks.getValue() != `N/A`) 
+               &amp;&amp; ($this.lptmr_config.timerPeriodInTicks.getValue() != `0`) 
+               &amp;&amp; ($this.lptmr_config.timerMode.value() == `kLPTMR_TimerModeTimeCounter`)">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_USEC_COUNT`)"/>
+               <param id="value" expr="toInt(1.0 / $this.lptmr_config.timerInputFreq.getValue().toHertz() * $this.lptmr_config.timerPeriodInTicks.getValue() * 1000000) + `UL`"/>
+               <param id="description">Definition of the timer period in us</param>
+            </fragment>
+            <fragment id="define" if_expr="$this.lptmr_config.timerPeriod.isAvailable() 
+               &amp;&amp; ($this.lptmr_config.timerPeriodInTicks.getValue() != `N/A`) 
+               &amp;&amp; ($this.lptmr_config.timerPeriodInTicks.getValue() != `0`) 
+               &amp;&amp; ($this.lptmr_config.timerMode.value() == `kLPTMR_TimerModeTimeCounter`)
+               &amp;&amp; ($this.lptmr_config.timerPeriodInTicks.getValue() != `N/A`)">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_TICKS`)"/>
+               <param id="value" expr="$this.lptmr_config.timerPeriodInTicks.getValue() + `UL`"/>
+               <param id="description">Definition of the timer period in number of ticks</param>               
+            </fragment>
+            <fragment id="define" if_expr="$this.lptmr_config.pulsesCount.isAvailable() &amp;&amp; ($this.lptmr_config.pulsesCount.value() &gt; 0) &amp;&amp; ($this.lptmr_config.timerMode.value() == `kLPTMR_TimerModePulseCounter`)">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PULSES_COUNT`)"/>
+               <param id="value" expr="$this.lptmr_config.pulsesCount.value() + `UL`"/>
+               <param id="description">Definition of the pulses (ticks) count to compare</param>
+            </fragment>
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt" if_expr="$this.enableInterrupt.value()"></fragment>
+         </section>
+         <section target="global_vars">
+            <fragment id="lptmr_struct" apply_to="$this.lptmr_config">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`" />
+               <param id="type">lptmr_config_t</param>
+            </fragment>
+         </section>
+         <section target="global_vars_extern">
+            <fragment id="extern_const">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`" />
+               <param id="type">lptmr_config_t</param>
+            </fragment>
+         </section>
+         <section target="init_function_body">
+            <fragment id="init_line">
+               <param id="code" expr="`LPTMR_Init(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID()) + `_PERIPHERAL, &amp;` + $instance.getFnGroupPrefix() + $instance.getID() + `_config);`"></param>
+               <param id="description">Initialize the LPTMR</param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <fragment id="init_line" if_expr="$this.lptmr_config.timerPeriod.isAvailable() 
+               &amp;&amp; $this.lptmr_config.timerPeriodInTicks.getValue() != `0` 
+               &amp;&amp; ($this.lptmr_config.timerMode.value() == `kLPTMR_TimerModeTimeCounter`)
+               &amp;&amp; ($this.lptmr_config.timerPeriodInTicks.getValue() != `N/A`)"> 
+               <param id="code" expr="`LPTMR_SetTimerPeriod(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID()) + `_PERIPHERAL, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getId() + `_TICKS`) + `);`"></param>
+               <param id="description" expr="`Set LPTMR period`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <fragment id="init_line" if_expr="$this.lptmr_config.pulsesCount.isAvailable() 
+               &amp;&amp; ($this.lptmr_config.pulsesCount.value() &gt; 0) 
+               &amp;&amp; ($this.lptmr_config.timerMode.value() == `kLPTMR_TimerModePulseCounter`)">
+               <param id="code" expr="`LPTMR_SetTimerPeriod(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, ` + $instance.getFnGroupPrefix() + $instance.getID() + `_PULSES_COUNT);`)"></param>
+               <param id="description">Set ticks</param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <fragment id="init_line" if_expr="$this.enableInterrupt.value()">
+               <param id="code" expr="`LPTMR_EnableInterrupts(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID()) + `_PERIPHERAL, kLPTMR_TimerInterruptEnable);`"></param>
+               <param id="description">Configure timer interrupt</param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <fragment id="init_line" if_expr="($this.enableDma.isAvailable() &amp;&amp; $this.enableDma.value())">
+               <param id="code" expr="`LPTMR_EnableTimerDMA(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID()) + `_PERIPHERAL, ` + $this.enableDma.value() + `);`"></param>
+               <param id="description">Enable DMA requests from LPTMR</param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <fragment id="IRQn_set_priority_default" apply_to="$this.interrupt" if_expr="$this.interrupt.enable_priority.value()"/>
+            <fragment id="IRQn_enable_default" apply_to="$this.interrupt" if_expr="$this.enableInterrupt.value()"/>
+         </section>
+      </code>                 
+      <quick_selections>
+         <quick_selection id="QS_LPTMR_1" label="Default">
+            <description>Default setting for LPTMR.</description>
+            <set id="enableInterrupt">false</set>
+            <set id="enableDma">false</set>
+            <set id="lptmr_config.timerMode">kLPTMR_TimerModeTimeCounter</set>
+            <set id="lptmr_config.pinSelect">ALT.0</set>
+            <set id="lptmr_config.pinPolarity">kLPTMR_PinPolarityActiveHigh</set>
+            <set id="lptmr_config.enableFreeRunning">false</set>
+            <set id="lptmr_config.bypassPrescaler">true</set>
+            <set id="lptmr_config.prescalerClockSource">kLPTMR_PrescalerClock_1</set>
+            <set id="lptmr_config.value">kLPTMR_Prescale_Glitch_0</set>
+            <set id="lptmr_config.timerPeriod">1000000 us</set>
+         </quick_selection>
+         <default>QS_LPTMR_1</default>
+      </quick_selections>
+   </config_set>
+</component:config_component>

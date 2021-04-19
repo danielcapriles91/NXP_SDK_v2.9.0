@@ -1,0 +1,1251 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="flexcan" label="FlexCAN" category="Peripheral driver" global_only="false" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-5.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <sw_comp_ref name="platform.drivers.flexcan" version="2.4.0"/>
+   <description>Flexible Controller Area Network (FLEXCAN)</description>
+   <mode id="interrupts" label="Interrupts">
+      <description>FlexCAN operation using interrupts (interrupt routines are defined by users)</description>
+      <config_set_refs>
+         <config_set_ref>fsl_flexcan</config_set_ref>
+         <config_set_ref>interruptsCfg</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>CAN</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="transfer" label="Transfer">
+      <description>FlexCAN operation using transfer mode. This mode supports transactional APIs that provides asynchronous transfer (non-blocking API is provided; callback functions can be used).
+      </description>
+      <config_set_refs>
+         <config_set_ref>fsl_flexcan</config_set_ref>
+         <config_set_ref>transferCfg</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>CAN</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="fsl_flexcan" label="Flexcan general configuration" from_source="fsl_flexcan.h">
+      <description>FlexCAN general configuration of the device and timing.</description>
+      <generated_types>
+            <enum id="flexcan_frame_format_t" label="FlexCAN frame format" from="_flexcan_frame_format">
+                <description></description>
+                <item id="kFLEXCAN_FrameFormatStandard" label="Standard frame format attribute"/>
+                <item id="kFLEXCAN_FrameFormatExtend" label="Extend frame format attribute"/>
+            </enum>
+            <enum id="flexcan_frame_type_t" label="FlexCAN frame type" from="_flexcan_frame_type">
+                <description></description>
+                <item id="kFLEXCAN_FrameTypeData" label="Data frame type attribute"/>
+                <item id="kFLEXCAN_FrameTypeRemote" label="Remote frame type attribute"/>
+            </enum>
+            <enum id="flexcan_clock_source_t" label="FlexCAN clock source" from="_flexcan_clock_source">
+                <description></description>
+                <item id="kFLEXCAN_ClkSrcOsc" label="FlexCAN Protocol Engine clock from Oscillator"/>
+                <item id="kFLEXCAN_ClkSrcPeri" label="FlexCAN Protocol Engine clock from Peripheral Clock"/>
+            </enum>
+            <enum id="flexcan_wake_up_source_t" label="FlexCAN wake up source" from="_flexcan_wake_up_source">
+                <description></description>
+                <item id="kFLEXCAN_WakeupSrcUnfiltered" label="FlexCAN uses unfiltered Rx input to detect edge"/>
+                <item id="kFLEXCAN_WakeupSrcFiltered" label="FlexCAN uses filtered Rx input to detect edge"/>
+            </enum>
+            <enum id="flexcan_rx_fifo_filter_type_t" label="FlexCAN Rx Fifo Filter type" from="_flexcan_rx_fifo_filter_type">
+                <description></description>
+                <item id="kFLEXCAN_RxFifoFilterTypeA" label="One full ID (standard and extended) per ID Filter element"/>
+                <item id="kFLEXCAN_RxFifoFilterTypeB" label="Two full standard IDs or two partial 14-bit ID slices per ID Filter Table element"/>
+                <item id="kFLEXCAN_RxFifoFilterTypeC" label="Four partial 8-bit Standard or extended ID slices per ID Filter Table element"/>
+                <item id="kFLEXCAN_RxFifoFilterTypeD" label="All frames rejected"/>
+            </enum>
+            <enum id="flexcan_mb_size_t" label="FlexCAN Message Buffer Data Size" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))" from="_flexcan_mb_size">
+                <description></description>
+                <item id="kFLEXCAN_8BperMB" label="Selects 8 bytes per Message Buffer"/>
+                <item id="kFLEXCAN_16BperMB" label="Selects 16 bytes per Message Buffer"/>
+                <item id="kFLEXCAN_32BperMB" label="Selects 32 bytes per Message Buffer"/>
+                <item id="kFLEXCAN_64BperMB" label="Selects 64 bytes per Message Buffer"/>
+            </enum>
+            <enum id="flexcan_rx_fifo_priority_t" label="FlexCAN Rx FIFO priority" from="_flexcan_rx_fifo_priority">
+                <description>The matching process starts from the Rx MB(or Rx FIFO) with higher priority. If no MB(or Rx FIFO filter) is satisfied, the matching process goes on with the Rx FIFO(or Rx MB) with lower priority.</description>
+                <item id="kFLEXCAN_RxFifoPrioLow" label="Matching process start from Rx Message Buffer first"/>
+                <item id="kFLEXCAN_RxFifoPrioHigh" label="Matching process start from Rx FIFO first"/>
+            </enum>
+            <struct id="flexcan_frame_t" label="FlexCAN message frame structure" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))" from="_flexcan_frame">
+                <description></description>
+                <integer id="timestamp" label="FlexCAN internal Free-Running Counter Time Stamp" type="uint32_t">
+                    <description>FlexCAN internal Free-Running Counter Time Stamp.</description>
+                </integer>
+                <integer id="length" label="CAN frame payload length in bytes(Range: 0~8)" type="uint32_t">
+                    <description>CAN frame payload length in bytes(Range: 0~8).</description>
+                </integer>
+                <integer id="type" label="CAN Frame Type(DATA or REMOTE)" type="uint32_t">
+                    <description>CAN Frame Type(DATA or REMOTE).</description>
+                </integer>
+                <integer id="format" label="CAN Frame Identifier(STD or EXT format)" type="uint32_t">
+                    <description>CAN Frame Identifier(STD or EXT format).</description>
+                </integer>
+                <integer id="__pad0__" label="Reserved" type="uint32_t">
+                    <description>Reserved.</description>
+                </integer>
+                <integer id="idhit" label="CAN Rx FIFO filter hit id(This value is only used in Rx FIFO receive mode)" type="uint32_t">
+                    <description>CAN Rx FIFO filter hit id(This value is only used in Rx FIFO receive mode).</description>
+                </integer>
+                <fixme id="struct__flexcan__frame_1aad2016c425deb3f91a3bc4b2e41e7ab7" label="TBD" type="struct _flexcan_frame::@0">
+                    <description>TBD</description>
+                </fixme>
+                <integer id="id" label="CAN Frame Identifier, should be set using FLEXCAN_ID_EXT() or FLEXCAN_ID_STD() macro" type="uint32_t">
+                    <description>CAN Frame Identifier, should be set using FLEXCAN_ID_EXT() or FLEXCAN_ID_STD() macro.</description>
+                </integer>
+                <fixme id="struct__flexcan__frame_1a611d7a05196c196b4fc95e197099c719" label="TBD" type="struct _flexcan_frame::@2">
+                    <description>TBD</description>
+                </fixme>
+                <integer id="dataWord0" label="CAN Frame payload word0" type="uint32_t">
+                    <description>CAN Frame payload word0.</description>
+                </integer>
+                <integer id="dataWord1" label="CAN Frame payload word1" type="uint32_t">
+                    <description>CAN Frame payload word1.</description>
+                </integer>
+                <integer id="dataByte3" label="CAN Frame payload byte3" type="uint8_t">
+                    <description>CAN Frame payload byte3.</description>
+                </integer>
+                <integer id="dataByte2" label="CAN Frame payload byte2" type="uint8_t">
+                    <description>CAN Frame payload byte2.</description>
+                </integer>
+                <integer id="dataByte1" label="CAN Frame payload byte1" type="uint8_t">
+                    <description>CAN Frame payload byte1.</description>
+                </integer>
+                <integer id="dataByte0" label="CAN Frame payload byte0" type="uint8_t">
+                    <description>CAN Frame payload byte0.</description>
+                </integer>
+                <integer id="dataByte7" label="CAN Frame payload byte7" type="uint8_t">
+                    <description>CAN Frame payload byte7.</description>
+                </integer>
+                <integer id="dataByte6" label="CAN Frame payload byte6" type="uint8_t">
+                    <description>CAN Frame payload byte6.</description>
+                </integer>
+                <integer id="dataByte5" label="CAN Frame payload byte5" type="uint8_t">
+                    <description>CAN Frame payload byte5.</description>
+                </integer>
+                <integer id="dataByte4" label="CAN Frame payload byte4" type="uint8_t">
+                    <description>CAN Frame payload byte4.</description>
+                </integer>
+                <fixme id="struct__flexcan__frame_1a5503345e44abf919ca16478f94f77a2e" label="TBD" type="union _flexcan_frame::@4">
+                    <description>TBD</description>
+                </fixme>
+            </struct>
+            <struct id="flexcan_fd_frame_t" label="CAN FDmessage frame structure" available="((featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`)) &amp;&amp; (featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`)))" from="_flexcan_fd_frame">
+                <description></description>
+                <integer id="timestamp" label="FlexCAN internal Free-Running Counter Time Stamp" type="uint32_t">
+                    <description>FlexCAN internal Free-Running Counter Time Stamp.</description>
+                </integer>
+                <integer id="length" label="CAN frame payload length in bytes(Range: 0~8)" type="uint32_t">
+                    <description>CAN frame payload length in bytes(Range: 0~8).</description>
+                </integer>
+                <integer id="type" label="CAN Frame Type(DATA or REMOTE)" type="uint32_t">
+                    <description>CAN Frame Type(DATA or REMOTE).</description>
+                </integer>
+                <integer id="format" label="CAN Frame Identifier(STD or EXT format)" type="uint32_t">
+                    <description>CAN Frame Identifier(STD or EXT format).</description>
+                </integer>
+                <integer id="srr" label="Substitute Remote request" type="uint32_t">
+                    <description>Substitute Remote request.</description>
+                </integer>
+                <integer id="__pad0__" label="Reserved" type="uint32_t">
+                    <description>Reserved.</description>
+                </integer>
+                <integer id="code" label="Message Buffer Code" type="uint32_t">
+                    <description>Message Buffer Code.</description>
+                </integer>
+                <integer id="__pad1__" label="" type="uint32_t">
+                    <description></description>
+                </integer>
+                <integer id="esi" label="Error State Indicator" type="uint32_t">
+                    <description>Error State Indicator.</description>
+                </integer>
+                <integer id="brs" label="Bit Rate Switch" type="uint32_t">
+                    <description>Bit Rate Switch.</description>
+                </integer>
+                <integer id="edl" label="Extended Data Length" type="uint32_t">
+                    <description>Extended Data Length.</description>
+                </integer>
+                <fixme id="struct__flexcan__fd__frame_1a8a75e3d39bc80ca18a682e1032cb0b5a" label="TBD" type="struct _flexcan_fd_frame::@10">
+                    <description>TBD</description>
+                </fixme>
+                <integer id="id" label="CAN Frame Identifier, should be set using FLEXCAN_ID_EXT() or FLEXCAN_ID_STD() macro" type="uint32_t">
+                    <description>CAN Frame Identifier, should be set using FLEXCAN_ID_EXT() or FLEXCAN_ID_STD() macro.</description>
+                </integer>
+                <fixme id="struct__flexcan__fd__frame_1a5e9a020efa098a7c57b1310dfb1ec479" label="TBD" type="struct _flexcan_fd_frame::@12">
+                    <description>TBD</description>
+                </fixme>
+                <integer id="dataWord" label="CAN FD Frame payload, 16 double word maximum" type="uint32_t">
+                    <description>CAN FD Frame payload, 16 double word maximum.</description>
+                </integer>
+                <integer id="dataByte3" label="CAN Frame payload byte3" type="uint8_t">
+                    <description>CAN Frame payload byte3.</description>
+                </integer>
+                <integer id="dataByte2" label="CAN Frame payload byte2" type="uint8_t">
+                    <description>CAN Frame payload byte2.</description>
+                </integer>
+                <integer id="dataByte1" label="CAN Frame payload byte1" type="uint8_t">
+                    <description>CAN Frame payload byte1.</description>
+                </integer>
+                <integer id="dataByte0" label="CAN Frame payload byte0" type="uint8_t">
+                    <description>CAN Frame payload byte0.</description>
+                </integer>
+                <integer id="dataByte7" label="CAN Frame payload byte7" type="uint8_t">
+                    <description>CAN Frame payload byte7.</description>
+                </integer>
+                <integer id="dataByte6" label="CAN Frame payload byte6" type="uint8_t">
+                    <description>CAN Frame payload byte6.</description>
+                </integer>
+                <integer id="dataByte5" label="CAN Frame payload byte5" type="uint8_t">
+                    <description>CAN Frame payload byte5.</description>
+                </integer>
+                <integer id="dataByte4" label="CAN Frame payload byte4" type="uint8_t">
+                    <description>CAN Frame payload byte4.</description>
+                </integer>
+                <fixme id="struct__flexcan__fd__frame_1a7492032d0de3bfea2fa7cc40a60a2fb7" label="TBD" type="union _flexcan_fd_frame::@14">
+                    <description>TBD</description>
+                </fixme>
+            </struct>
+            <struct id="flexcan_timing_config_t" label="FlexCAN protocol timing characteristic configuration structure" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))" from="_flexcan_timing_config">
+                <description></description>
+                <integer id="preDivider" label="Clock Pre-scaler Division Factor" type="uint16_t">
+                    <description>Clock Pre-scaler Division Factor.</description>
+                </integer>
+                <integer id="rJumpwidth" label="Re-sync Jump Width" type="uint8_t">
+                    <description>Re-sync Jump Width.</description>
+                </integer>
+                <integer id="phaseSeg1" label="Phase Segment 1" type="uint8_t">
+                    <description>Phase Segment 1.</description>
+                </integer>
+                <integer id="phaseSeg2" label="Phase Segment 2" type="uint8_t">
+                    <description>Phase Segment 2.</description>
+                </integer>
+                <integer id="propSeg" label="Propagation Segment" type="uint8_t">
+                    <description>Propagation Segment.</description>
+                </integer>
+                <integer id="fpreDivider" label="Fast Clock Pre-scaler Division Factor" type="uint16_t">
+                    <description>Fast Clock Pre-scaler Division Factor.</description>
+                </integer>
+                <integer id="frJumpwidth" label="Fast Re-sync Jump Width" type="uint8_t">
+                    <description>Fast Re-sync Jump Width.</description>
+                </integer>
+                <integer id="fphaseSeg1" label="Fast Phase Segment 1" type="uint8_t">
+                    <description>Fast Phase Segment 1.</description>
+                </integer>
+                <integer id="fphaseSeg2" label="Fast Phase Segment 2" type="uint8_t">
+                    <description>Fast Phase Segment 2.</description>
+                </integer>
+                <integer id="fpropSeg" label="Fast Propagation Segment" type="uint8_t">
+                    <description>Fast Propagation Segment.</description>
+                </integer>
+            </struct>
+            <struct id="flexcan_config_t" label="FlexCAN module configuration structure" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))" from="_flexcan_config">
+                <description></description>
+                <integer id="baudRate" label="FlexCAN baud rate in bps" type="uint32_t">
+                    <description>FlexCAN baud rate in bps.</description>
+                </integer>
+                <integer id="baudRateFD" label="FlexCAN FD baud rate in bps" type="uint32_t">
+                    <description>FlexCAN FD baud rate in bps.</description>
+                </integer>
+                <reference id="clkSrc" label="Clock source for FlexCAN Protocol Engine" type="flexcan_clock_source_t">
+                    <description>Clock source for FlexCAN Protocol Engine.</description>
+                </reference>
+                <reference id="wakeupSrc" label="Wake up source selection" type="flexcan_wake_up_source_t">
+                    <description>Wake up source selection.</description>
+                </reference>
+                <integer id="maxMbNum" label="The maximum number of Message Buffers used by user" type="uint8_t">
+                    <description>The maximum number of Message Buffers used by user.</description>
+                </integer>
+                <bool id="enableLoopBack" label="Enable or Disable Loop Back Self Test Mode">
+                    <description>Enable or Disable Loop Back Self Test Mode.</description>
+                </bool>
+                <bool id="enableTimerSync" label="Enable or Disable Timer Synchronization">
+                    <description>Enable or Disable Timer Synchronization.</description>
+                </bool>
+                <bool id="enableSelfWakeup" label="Enable or Disable Self Wakeup Mode">
+                    <description>Enable or Disable Self Wakeup Mode.</description>
+                </bool>
+                <bool id="enableIndividMask" label="Enable or Disable Rx Individual Mask">
+                    <description>Enable or Disable Rx Individual Mask.</description>
+                </bool>
+                <bool id="enableDoze" label="Enable or Disable Doze Mode" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_DOZE_MODE_SUPPORT`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_DOZE_MODE_SUPPORT`))">
+                    <description>Enable or Disable Doze Mode.</description>
+                </bool>
+                <reference id="timingConfig" label="" type="flexcan_timing_config_t">
+                    <description></description>
+                </reference>
+            </struct>
+            <struct id="flexcan_rx_mb_config_t" label="FlexCAN Receive Message Buffer configuration structure" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))" from="_flexcan_rx_mb_config">
+                <description>This structure is used as the parameter of FLEXCAN_SetRxMbConfig() function. The FLEXCAN_SetRxMbConfig() function is used to configure FlexCAN Receive Message Buffer. The function abort previous receiving process, clean the Message Buffer and activate the Rx Message Buffer using given Message Buffer setting.</description>
+                <integer id="id" label="CAN Message Buffer Frame Identifier, should be set using FLEXCAN_ID_EXT() or FLEXCAN_ID_STD() macro" type="uint32_t">
+                    <description>CAN Message Buffer Frame Identifier, should be set using FLEXCAN_ID_EXT() or FLEXCAN_ID_STD() macro.</description>
+                </integer>
+                <reference id="format" label="CAN Frame Identifier format(Standard of Extend)" type="flexcan_frame_format_t">
+                    <description>CAN Frame Identifier format(Standard of Extend).</description>
+                </reference>
+                <reference id="type" label="CAN Frame Type(Data or Remote)" type="flexcan_frame_type_t">
+                    <description>CAN Frame Type(Data or Remote).</description>
+                </reference>
+            </struct>
+            <struct id="flexcan_rx_fifo_config_t" label="FlexCAN Rx FIFO configuration structure" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))" from="_flexcan_rx_fifo_config">
+                <description></description>
+                <fixme id="idFilterTable" label="Pointer to the FlexCAN Rx FIFO identifier filter table" type="uint32_t *">
+                    <description>Pointer to the FlexCAN Rx FIFO identifier filter table.</description>
+                </fixme>
+                <integer id="idFilterNum" label="The quantity of filter elements" type="uint8_t">
+                    <description>The quantity of filter elements.</description>
+                </integer>
+                <reference id="idFilterType" label="The FlexCAN Rx FIFO Filter type" type="flexcan_rx_fifo_filter_type_t">
+                    <description>The FlexCAN Rx FIFO Filter type.</description>
+                </reference>
+                <reference id="priority" label="The FlexCAN Rx FIFO receive priority" type="flexcan_rx_fifo_priority_t">
+                    <description>The FlexCAN Rx FIFO receive priority.</description>
+                </reference>
+            </struct>
+            <struct id="flexcan_mb_transfer_t" label="FlexCAN Message Buffer transfer" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))" from="_flexcan_mb_transfer">
+                <description></description>
+                <fixme id="framefd" label="" type="flexcan_fd_frame_t *">
+                    <description></description>
+                </fixme>
+                <fixme id="frame" label="The buffer of CAN Message to be transfer" type="flexcan_frame_t *">
+                    <description>The buffer of CAN Message to be transfer.</description>
+                </fixme>
+                <integer id="mbIdx" label="The index of Message buffer used to transfer Message" type="uint8_t">
+                    <description>The index of Message buffer used to transfer Message.</description>
+                </integer>
+            </struct>
+            <struct id="flexcan_fifo_transfer_t" label="FlexCAN Rx FIFO transfer" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))" from="_flexcan_fifo_transfer">
+                <description></description>
+                <fixme id="frame" label="The buffer of CAN Message to be received from Rx FIFO" type="flexcan_frame_t *">
+                    <description>The buffer of CAN Message to be received from Rx FIFO.</description>
+                </fixme>
+            </struct>
+            <struct id="flexcan_handle_t" label="FlexCAN handle structure definition" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))" from="_flexcan_handle">
+                <description></description>
+                <reference id="callback" label="Callback function" type="flexcan_transfer_callback_t">
+                    <description>Callback function.</description>
+                </reference>
+                <fixme id="userData" label="FlexCAN callback function parameter" type="void *">
+                    <description>FlexCAN callback function parameter.</description>
+                </fixme>
+                <fixme id="mbFrameBuf" label="" type="flexcan_frame_t *volatile">
+                    <description></description>
+                </fixme>
+                <fixme id="mbFDFrameBuf" label="" type="flexcan_fd_frame_t *volatile">
+                    <description></description>
+                </fixme>
+                <fixme id="rxFifoFrameBuf" label="&lt; The buffer for received data from Message Buffers" type="flexcan_frame_t *volatile">
+                    <description>&amp;gt; The buffer for received data from Message Buffers. The buffer for received data from Rx FIFO.</description>
+                </fixme>
+                <integer id="mbState" label="Message Buffer transfer state" type="uint8_t">
+                    <description>Message Buffer transfer state.</description>
+                </integer>
+                <integer id="rxFifoState" label="Rx FIFO transfer state" type="uint8_t">
+                    <description>Rx FIFO transfer state.</description>
+                </integer>
+            </struct>
+            <fixme id="flexcan_transfer_callback_t" label="FlexCAN transfer callback function" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))" type="void(*">
+                <description>The FlexCAN transfer callback returns a value from the underlying layer. If the status equals to kStatus_FLEXCAN_ErrorStatus, the result parameter is the Content of FlexCAN status register which can be used to get the working status(or error status) of FlexCAN module. If the status equals to other FlexCAN Message Buffer transfer status, the result is the index of Message Buffer that generate transfer event. If the status equals to other FlexCAN Message Buffer transfer status, the result is meaningless and should be Ignored.</description>
+            </fixme>
+        </generated_types>
+      <user_types>
+         <enum id="flexcan_clock_source_t" label="FlexCAN clock source" from="_flexcan_clock_source">
+            <item id="kFLEXCAN_ClkSrcOsc" label="FlexCAN Protocol Engine clock from Oscillator (functional clock)" value="OscillatorClock"/>
+            <!-- This clock is not available for some SoC - the FlexCAN functional clock is configured independently in the SCG, CCM or ... -->
+            <item id="kFLEXCAN_ClkSrcPeri" label="FlexCAN Protocol Engine clock from Peripheral Clock" value="BusInterfaceClock" available="(!featureDefined(`FSL_FEATURE_FLEXCAN_SUPPORT_ENGINE_CLK_SEL_REMOVE`) ||  !(getFeature(`FSL_FEATURE_FLEXCAN_SUPPORT_ENGINE_CLK_SEL_REMOVE`)==1))"/>
+         </enum>
+         <enum id="flexcan_rx_fifo_filter_type_t" label="FlexCAN Rx Fifo Filter type" from="_flexcan_rx_fifo_filter_type">
+            <item id="kFLEXCAN_RxFifoFilterTypeA" label="One full ID (standard and extended) per ID Filter element"/>
+            <item id="kFLEXCAN_RxFifoFilterTypeB" label="Two full standard IDs or two partial 14-bit ID slices per ID Filter Table element"/>
+            <item id="kFLEXCAN_RxFifoFilterTypeC" label="Four partial 8-bit Standard or extended ID slices per ID Filter Table element"/>
+            <item id="kFLEXCAN_RxFifoFilterTypeD" label="All frames rejected"/>
+         </enum>
+         <!-- Flexcan message buffer payload configuration -  the value represent the number of used bytes in the memory for the given payload size -->
+         <enum id="flexcan_mb_size_t" label="FlexCAN Message Buffer Data Size" from="_flexcan_mb_size" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+            <item id="kFLEXCAN_8BperMB" label="8 bytes payload" value="16"/>
+            <item id="kFLEXCAN_16BperMB" label="16 bytes payload" value="24"/>
+            <item id="kFLEXCAN_32BperMB" label="32 bytes payload" value="41"/>
+            <item id="kFLEXCAN_64BperMB" label="64 bytes payload" value="72"/>
+         </enum>
+         <enum id="flexcan_rx_fifo_priority_t" label="FlexCAN Rx FIFO priority" from="_flexcan_rx_fifo_priority">
+            <description>The matching process starts from the Rx MB(or Rx FIFO) with higher priority. If no MB(or Rx FIFO filter) is satisfied, the matching process goes on with the Rx FIFO(or Rx MB) with lower priority.</description>
+            <item id="kFLEXCAN_RxFifoPrioLow" label="Rx FIFO low"/>
+            <item id="kFLEXCAN_RxFifoPrioHigh" label="Rx FIFO high"/>
+         </enum>
+         <struct id="flexcan_timing_config_t" label="FlexCAN protocol timing characteristic configuration structure" from="_flexcan_timing_config">
+            <!-- Integer - range 0-255 (divider value 1 - 256), it define the Time-Quantum = one Sclock period. -->
+            <info id="preDivider" label="Clock Pre-scaler Division Factor" options="add_to_struct" value="(($parent.getParent().getSetting(`baudRate`).getValue() != 0) &amp;&amp; ($parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toHertz() != 0)) ? ($parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toHertz().toInt() / ($parent.getParent().getSetting(`baudRate`).getValue() * (1 + $parent.phaseSeg1.getValue() + $parent.phaseSeg2.getValue() + $parent.propSeg.getValue()))) : `N/A`">
+               <description>Clock Pre-scaler Division Factor. It defines the ratio between the PE clock frequency and the Serial Clock (Sclock) frequency. The Sclock period defines the time quantum of the CAN protocol. </description>
+               <validation>
+                  <constraint when_expr="$this.getValue() != `N/A`" cond_expr="($this.getValue().toInt() &gt; 0) &amp;&amp; ($this.getValue().toInt() &lt;= 256)" level="error" description_expr="`The Clock Pre-scaler Division Factor is out of range 1 - 256 (computed value is ` + $this.getValue() + `). Select different baudrate and/or CAN clock source frequency.`"/>
+               </validation>
+            </info>
+            <info id="timeQuantum" label="Time Quantum" value="(($parent.preDivider.getValue() != `N/A`) &amp;&amp; ($parent.preDivider.getValue() != 0)) ? timeToString(getTime((($parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toHertz().toInt() * 1.0) / $parent.preDivider.getValue()),`ns`,`Hz`)/1000.0) : `N/A`">
+               <description>The time quantum value that is used for calculation of time segments, propagation time and re-synchronization time.</description>
+            </info>
+            <info id="bitRate" label="Baud rate (nominal)" value="(($parent.preDivider.getValue() != `N/A`) &amp;&amp; ($parent.preDivider.getValue() != 0)) ? frequencyToString(getFreq((($parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toHertz().toInt() * 1.0) / $parent.preDivider.getValue() / (1 + $parent.phaseSeg1.getValue() + $parent.phaseSeg2.getValue() + $parent.propSeg.getValue())),`Hz`,`Hz`)) : `N/A`">
+               <description>The real value of the baud rate (nominal bit rate) that is used for for communication.&lt;br/&gt;&lt;b&gt;Note: The bit rate frequency can differ from the required baud rate because of limitation of the pre-scaler division factor.&lt;/b&gt;&lt;br/&gt;
+               The nominal baud rate (bit rate) = Clock source frequency / pre-scaler division factor / (synchronization segment + propagation segment + phase segment 1 + phase segment 2)
+               </description>
+            </info>
+            <info id="syncSeg" label="Synchronization segment" value="1">
+               <description>Synchronization segment length. It defines the length of the synchronization segment. It is always 1 (different value is not supported).</description>
+            </info>
+            <!-- Propagation Segment Time = (PROPSEG + 1) × Time-Quanta. value 0 - 7, range 1 - 8 Time-Quanta -->
+            <integer id="propSeg" label="Propagation segment" type="uint8_t" min_expr="1" max_expr="8">
+               <description>Propagation Segment length. It defines the length of the Propagation Segment in the bit time. The valid programmable values are 1–8</description>
+            </integer>
+            <!--  Phase Buffer Segment 1 = (PSEG1 + 1) × Time-Quanta. value 0 - 7, range  1 - 8 Time-Quanta -->
+            <integer id="phaseSeg1" label="Phase segment 1" type="uint8_t" min_expr="1" max_expr="8">
+               <description>Phase Segment 1 length. It defines the length of Phase Buffer Segment 1 in the bit time. The valid programmable values are 1–8.</description>
+            </integer>
+            <!--  Phase Buffer Segment 2 = (PSEG2 + 1) × Time-Quanta. value 1 - 7, range  2 - 8 Time-Quanta -->
+            <integer id="phaseSeg2" label="Phase segment 2" type="uint8_t" min_expr="2" max_expr="8">
+               <description>Phase Segment 2 length. It defines the length of Phase Buffer Segment 2 in the bit time. The valid programmable values are 2–8.</description>
+            </integer>
+            <!-- Resync Jump Width = RJW + 1. value 0 - 3 (range 1 - 4 time Time-Quanta) -->
+            <integer id="rJumpwidth" label="Re-sync jump width" type="uint8_t" min_expr="1" max_expr="4">
+               <description>Re-synchronization jump width. It defines the maximum number of time quanta that a bit time can be changed by one resynchronization.</description>
+            </integer>
+            <struct id="bitTime" label="Bit time" options="remove_from_struct_init">
+               <info id="syncSeg" label="Synchronization segment" value="$parent.getParent().getSetting(`timeQuantum`).getValue()" > 
+<!--                  value="($parent.getParent().getSetting(`preDivider`).getValue() != `N/A`) ? timeToString(getTime((($parent.getParent().getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toInt() * 1.0) / $parent.getParent().getSetting(`preDivider`).getValue()),`ns`,`Hz`)) : `N/A`">-->
+                  <description>Synchronization segment time based on the selected length.</description>
+               </info>
+               <info id="propSeg" label="Propagation segment" value="($parent.getParent().getSetting(`timeQuantum`).getValue() != `N/A`) ? timeToString(getTime($parent.getParent().getSetting(`timeQuantum`).getValue(),`ns`,`s`) / 1000.0 * $parent.getParent().getSetting(`propSeg`).getValue()): `N/A`" > 
+<!--                  value="($parent.getParent().getSetting(`preDivider`).getValue() != `N/A`) ? timeToString(getTime((($parent.getParent().getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toInt() * 1.0) / $parent.getParent().getSetting(`preDivider`).getValue()),`ns`,`Hz`)) : `N/A`">-->
+                  <description>Propagation segment time based on the selected length.</description>
+               </info>
+               <info id="phaseSeg1" label="Phase segment 1" value="($parent.getParent().getSetting(`timeQuantum`).getValue() != `N/A`) ? timeToString(getTime($parent.getParent().getSetting(`timeQuantum`).getValue(),`ns`,`s`) / 1000.0 * $parent.getParent().getSetting(`phaseSeg1`).getValue()): `N/A`" > 
+                  <description>Phase segment 1 time based on the selected length.</description>
+               </info>
+               <info id="phaseSeg2" label="Phase segment 2" value="($parent.getParent().getSetting(`timeQuantum`).getValue() != `N/A`) ? timeToString(getTime($parent.getParent().getSetting(`timeQuantum`).getValue(),`ns`,`s`) / 1000.0 * $parent.getParent().getSetting(`phaseSeg2`).getValue()): `N/A`" > 
+                  <description>Phase segment 2 time based on the selected length.</description>
+               </info>
+               <info id="bitTime" label="Nominal bit time" value="($parent.getParent().getSetting(`timeQuantum`).getValue() != `N/A`) ? timeToString(getTime($parent.getParent().getSetting(`timeQuantum`).getValue(),`ns`,`s`) / 1000.0 * (1 + $parent.getParent().getSetting(`propSeg`).getValue() + $parent.getParent().getSetting(`phaseSeg1`).getValue() + $parent.getParent().getSetting(`phaseSeg2`).getValue())): `N/A`" > 
+                  <description>Nominal bit time in time units.</description>
+               </info>
+            </struct>
+            <!-- Flexible Data Rate mode support -->
+            <!-- Integer - range 0-255 (divider value 1 - 256), it define the Time-Quantum = one Sclock period. -->
+            <info id="fpreDivider" label="Fast Clock Pre-scaler Division Factor" options="add_to_struct" value="(($parent.getParent().getSetting(`baudRateFD`).getValue() != 0) &amp;&amp; ($parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toHertz() != 0)) ? ($parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toHertz().toInt() / ($parent.getParent().getSetting(`baudRateFD`).getValue() * (1 + $parent.phaseSeg1.getValue() + $parent.phaseSeg2.getValue() + $parent.propSeg.getValue()))) : `N/A`" 
+               enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Clock Pre-scaler Division Factor of the fast mode. It defines the ratio between the PE clock frequency and the Serial Clock (Sclock) frequency. The Sclock period defines the time quantum of the CAN protocol. </description>
+               <validation>
+                  <constraint when_expr="$this.getValue() != `N/A`" cond_expr="($this.getValue().toInt() &gt; 0) &amp;&amp; ($this.getValue().toInt() &lt;= 1024)" level="error" description_expr="`The Clock Pre-scaler Division Factor is out of range 1 - 256 (computed value is ` + $this.getValue() + `). Select different baudRateFD and/or CAN clock source frequency.`"/>
+               </validation>
+            </info>
+            <info id="ftimeQuantum" label="Fast Time Quantum" value="(($parent.fpreDivider.getValue() != `N/A`) &amp;&amp; ($parent.fpreDivider.getValue() != 0)) ? timeToString(getTime((($parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toHertz().toInt() * 1.0) / $parent.fpreDivider.getValue()),`ns`,`Hz`)/1000.0) : `N/A`"
+               enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>The time quantum value of the fast mode that is used for calculation of time segments, propagation time and re-synchronization time.</description>
+            </info>
+            <info id="fbitRate" label="Fast baud rate (nominal)" value="(($parent.fpreDivider.getValue() != `N/A`) &amp;&amp; ($parent.fpreDivider.getValue() != 0)) ? frequencyToString(getFreq((($parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toHertz().toInt() * 1.0) / $parent.fpreDivider.getValue() / (1 + $parent.fphaseSeg1.getValue() + $parent.fphaseSeg2.getValue() + $parent.fpropSeg.getValue())),`Hz`,`Hz`)) : `N/A`"
+               enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>The real value of the fast baud rate (nominal bit rate) that is used for for communication.&lt;br/&gt;&lt;b&gt;Note: The bit rate frequency can differ from the required baud rate because of limitation of the pre-scaler division factor.&lt;/b&gt;&lt;br/&gt;
+               The nominal baud rate (bit rate) = Clock source frequency / pre-scaler division factor / (synchronization segment + propagation segment + phase segment 1 + phase segment 2)
+               </description>
+            </info>
+            <info id="fsyncSeg" label="Fast Synchronization segment" value="1"
+               enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Synchronization segment length of the fast mode. It defines the length of the synchronization segment. It is always 1 (different value is not supported).</description>
+            </info>
+<!--            <integer id="fpreDivider" label="Fast Clock Pre-scaler Division Factor" type="uint16_t" enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Fast Clock Pre-scaler Division Factor.</description>
+            </integer>-->
+            <!-- Fast Propagation Segment Time = (PROPSEG + 1) × Time-Quanta. value 0 - 31, range 1 - 32 Time-Quanta -->
+            <integer id="fpropSeg" label="Fast Propagation Segment" type="uint8_t" min_expr="1" max_expr="32" enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Fast Propagation Segment.</description>
+            </integer>
+            <!--  Fast Phase Buffer Segment 1 = (PSEG1 + 1) × Time-Quanta. value 0 - 7, range  1 - 8 Time-Quanta -->
+            <integer id="fphaseSeg1" label="Fast Phase Segment 1" type="uint8_t" min_expr="1" max_expr="8" enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Fast Phase Segment 1.</description>
+            </integer>
+            <!--  Fast Phase Buffer Segment 2 = (PSEG2 + 1) × Time-Quanta. value 1 - 7, range  2 - 8 Time-Quanta -->
+            <integer id="fphaseSeg2" label="Fast Phase Segment 2" type="uint8_t" min_expr="2" max_expr="8" enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Fast Phase Segment 2.</description>
+            </integer>
+            <!-- Fast Resync Jump Width = RJW + 1. value 0 - 7 (range 1 - 8 time Time-Quanta) -->
+            <integer id="frJumpwidth" label="Fast Re-sync Jump Width" type="uint8_t" min_expr="1" max_expr="8" enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Fast Re-sync Jump Width.</description>
+            </integer>
+            <struct id="fbitTime" label="Fast bit time" options="remove_from_struct_init" enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <info id="fsyncSeg" label="Fast synchronization segment" value="$parent.getParent().getSetting(`ftimeQuantum`).getValue()" > 
+<!--                  value="($parent.getParent().getSetting(`preDivider`).getValue() != `N/A`) ? timeToString(getTime((($parent.getParent().getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toInt() * 1.0) / $parent.getParent().getSetting(`preDivider`).getValue()),`ns`,`Hz`)) : `N/A`">-->
+                  <description>Fast synchronization segment time based on the selected length.</description>
+               </info>
+               <info id="fpropSeg" label="Fast propagation segment" value="($parent.getParent().getSetting(`ftimeQuantum`).getValue() != `N/A`) ? timeToString(getTime($parent.getParent().getSetting(`ftimeQuantum`).getValue(),`ns`,`s`) / 1000.0 * $parent.getParent().getSetting(`fpropSeg`).getValue()): `N/A`" > 
+<!--                  value="($parent.getParent().getSetting(`preDivider`).getValue() != `N/A`) ? timeToString(getTime((($parent.getParent().getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toInt() * 1.0) / $parent.getParent().getSetting(`preDivider`).getValue()),`ns`,`Hz`)) : `N/A`">-->
+                  <description>Fast propagation segment time based on the selected length.</description>
+               </info>
+               <info id="fphaseSeg1" label="Fast phase segment 1" value="($parent.getParent().getSetting(`ftimeQuantum`).getValue() != `N/A`) ? timeToString(getTime($parent.getParent().getSetting(`ftimeQuantum`).getValue(),`ns`,`s`) / 1000.0 * $parent.getParent().getSetting(`fphaseSeg1`).getValue()): `N/A`" > 
+                  <description>Fast phase segment 1 time based on the selected length.</description>
+               </info>
+               <info id="fphaseSeg2" label="Fast phase segment 2" value="($parent.getParent().getSetting(`ftimeQuantum`).getValue() != `N/A`) ? timeToString(getTime($parent.getParent().getSetting(`ftimeQuantum`).getValue(),`ns`,`s`) / 1000.0 * $parent.getParent().getSetting(`fphaseSeg2`).getValue()): `N/A`" > 
+                  <description>Fast phase segment 2 time based on the selected length.</description>
+               </info>
+               <info id="fbitTime" label="Fast nominal bit time" value="($parent.getParent().getSetting(`ftimeQuantum`).getValue() != `N/A`) ? timeToString(getTime($parent.getParent().getSetting(`ftimeQuantum`).getValue(),`ns`,`s`) / 1000.0 * (1 + $parent.getParent().getSetting(`fpropSeg`).getValue() + $parent.getParent().getSetting(`fphaseSeg1`).getValue() + $parent.getParent().getSetting(`fphaseSeg2`).getValue())): `N/A`" > 
+                  <description>Nominal bit time of the fast mode in time units.</description>
+               </info>
+            </struct>
+         </struct>
+         <enum id="flexcan_wake_up_source_t" label="FlexCAN wake up source" from="_flexcan_wake_up_source">
+            <description></description>
+            <item id="kFLEXCAN_WakeupSrcUnfiltered" label="Unfiltered Rx input"/>
+            <item id="kFLEXCAN_WakeupSrcFiltered" label="Filtered Rx input"/>
+         </enum>
+         <struct id="flexcan_config_t" label="FlexCAN module configuration structure" from="_flexcan_config">
+            <reference id="_clkSrc" label="Clock source for FlexCAN Protocol Engine" type="flexcan_clock_source_t" available="false">
+               <description>Clock source for FlexCAN Protocol Engine.</description>
+            </reference>
+            <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="enumItemsOf($parent._clkSrc).filter(i -> i.isAvailable()).arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> enumItem.getID(),
+               enumItem -> getPeripheralClock($instance.getPeripheral(), enumItem.getValue()),
+               enumItem -> enumItem.getValue())">
+               <description>FlexCAN clock source selection.</description>
+               <validation>
+<!--                  <dependency when_expr="$this.getEnumItemValue() == `ExternalClock`" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.` + getPeripheralClockSignal($instance.getPeripheral(), $this.getEnumItemValue())" description_expr="`External clock source signal ` +  getPeripheralClock($instance.getPeripheral(), $this.getEnumItemValue()) + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>-->
+                  <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.clockSource.getEnumItemValue()) == `INPUT_SIGNAL`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSource.getEnumItemValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSource.getEnumItemValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSource.getEnumItemValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSource.getEnumItemValue()) + `is inactive.`))"
+                     level="Warning">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.clockSource.getEnumItemValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSource.getEnumItemValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSource.getEnumItemValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSource.getEnumItemValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSource.getEnumItemValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" 
+               items="createArray().merge(getClockFunctionalGroups().arrayToEnumItems(
+                  enumItem -> true,
+                  enumItem -> enumItem,
+                  enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemValue(), enumItem)) + ` (` + enumItem + `)`,
+                  enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemValue(), enumItem)))" >
+               <description>Selection of the clock source frequency</description>
+               <validation>
+                  <constraint cond_expr="$this.getEnumItemValue().toHertz() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+            </dynamic_enum>
+            <!-- clkSrc is an element of the flexcan initialization structure on part of the SoC but the clock source selection (clockSource) is always provided (enabled) -->
+            <variable id="clkSrc" value="$parent.clockSource.getEnumItemId()" options="add_to_struct" available="(!featureDefined(`FLEXCAN_INSTANCE_SUPPORT_ENGINE_CLK_SEL_REMOVE`) ||  !getFeature(`FLEXCAN_INSTANCE_SUPPORT_ENGINE_CLK_SEL_REMOVE`))"></variable>
+            <reference id="wakeupSrc" label="Wake up source" type="flexcan_wake_up_source_t">
+               <description>Selection of the wake up source for detection of recessive to dominant edges on the CAN bus. Either filtered (low-pass filter) Rx input or unfiltered Rx input can be used.</description>
+            </reference>
+            <bool id="flexibleDataRate" label="Flexible data rate mode" options="remove_from_struct_init" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Enable/disable flexible data rate mode that allows usage of the fast mode settings. It also allows extended message frames and long payload.</description>
+            </bool>
+            <integer id="baudRate" label="Baud rate (required)" type="uint32_t" min_expr="1">
+               <description>FlexCAN baud rate in bps that is used for calculation of the pre-scaler division factor (time quantum). For the real baud rate value see the Timing configuration settings below.</description>
+            </integer>
+            <integer id="baudRateFD" label="Fast baud rate" type="uint32_t" min_expr="1" enable="$parent.flexibleDataRate.getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>FlexCAN fast baud rate in bps for the Flexible data rate. This setting is available nad used in the configuration when the Flexible data rate is enabled.</description>
+            </integer>
+            <bool id="enableBRS" label="Bit rate switch" options="remove_from_struct_init" enable="$parent.flexibleDataRate.getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Enables/disables the bit rate switch. It enables the effect of the Bit Rate Switch (BRS bit) during the data phase of Tx messages.</description>
+            </bool>
+            <reference id="dataSize" label="Message buffer payload" type="flexcan_mb_size_t" options="remove_from_struct_init" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Payload configuration of the message buffers (available when the Flexible data rate is enabled). This setting also impacts the maximum number of the message buffers, e.g. when the peripheral supports 64 message buffer (8 bytes payload) then there are 42 message buffers for 16 bytes payload, 24 message buffers for 32 bytes payload and 14 message buffer for 64 bytes payload.</description>
+            </reference>
+            <integer id="maxMbNum" label="Maximum number of Message Buffers" type="uint8_t" min_expr="1" max_expr="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`)) ? ((featureDefined(`FLEXCAN_HAS_MESSAGE_BUFFER_MAX_NUMBER`) ? getFeature(`FLEXCAN_HAS_MESSAGE_BUFFER_MAX_NUMBER`) : 64) * 16 / $parent.dataSize.getEnumItemValue().toInt()) : (featureDefined(`FLEXCAN_HAS_MESSAGE_BUFFER_MAX_NUMBER`) ? getFeature(`FLEXCAN_HAS_MESSAGE_BUFFER_MAX_NUMBER`) : 64)">
+               <description>The maximum number of Message Buffers used by user. The supported range of values is MCU specific.</description>
+            </integer>
+            <bool id="enableLoopBack" label="Loop Back Self Test Mode">
+               <description>Enable/Disable Loop Back Self Test Mode.</description>
+            </bool>
+            <bool id="enableTimerSync" label="Timer Synchronization">
+               <description>Enables/Disables the timer synchronization. It enables a mechanism that resets the free-running timer each time a message is received in Message Buffer 0. This feature provides means to synchronize multiple FlexCAN stations with a special “SYNC” message, that is, global network time.</description>
+            </bool>            
+            <bool id="enableSelfWakeup" label="Self Wakeup Mode">
+               <description>Enable/Disable Self Wakeup Mode.</description>
+            </bool>
+            <bool id="enableIndividMask" label="Rx Individual Mask">
+               <description>Enable/Disable Receiver Individual Mask.</description>
+            </bool>
+            <bool id="enableDoze" label="Doze Mode" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_DOZE_MODE_SUPPORT`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_DOZE_MODE_SUPPORT`))">
+               <description>Enable/Disable Doze Mode.</description>
+            </bool>
+            <!-- Dump variable for formatting generated data -->
+            <variable id="dump_var" value="`empty`" options="add_to_struct" available="false"/>
+            <reference id="timingConfig" label="Timing configuration" type="flexcan_timing_config_t" options="remove_from_struct_init"/>
+         </struct>
+         <!-- Messag Buffer configuration structures FIFO, RX and TX -->
+         <enum id="flexcan_frame_format_t" label="FlexCAN frame format" from="_flexcan_frame_format">
+            <item id="kFLEXCAN_FrameFormatStandard" label="Standard"/>
+            <item id="kFLEXCAN_FrameFormatExtend" label="Extended"/>
+         </enum>
+         <enum id="flexcan_frame_type_t" label="FlexCAN frame type" from="_flexcan_frame_type">
+            <item id="kFLEXCAN_FrameTypeData" label="Data"/>
+            <item id="kFLEXCAN_FrameTypeRemote" label="Remote request"/>
+         </enum>
+         <struct id="flexcan_rx_mb_config_t" label="FlexCAN Receive Message Buffer configuration structure" from="_flexcan_rx_mb_config">
+            <description>This structure is used as the parameter of FLEXCAN_SetRxMbConfig() function. The FLEXCAN_SetRxMbConfig() function is used to configure FlexCAN Receive Message Buffer. The function abort previous receiving process, clean the Message Buffer and activate the Rx Message Buffer using given Message Buffer setting.</description>
+<!--        The id parameter should be set using FLEXCAN_ID_EXT() or FLEXCAN_ID_STD() macro-->
+            <integer id="id" label="Frame ID" type="uint32_t">
+               <description>CAN Message Buffer Frame Identifier (the ID can be set in the hexadecimal format by using the 0x prefix, e.g. 0x123).</description>
+            </integer>
+            <reference id="format" label="Frame ID format" type="flexcan_frame_format_t">
+               <description>CAN Frame Identifier format (Standard of Extend).</description>
+            </reference>
+            <reference id="type" label="Frame Type" type="flexcan_frame_type_t">
+               <description>CAN Frame Type (Data or Remote).</description>
+            </reference>
+         </struct>
+         <enum id="flexcan_mb_type_confg"  label="FlexCAN message buffer type configuration" from="user_type" >
+            <item id="mbInactive" label="Inactive"/>
+            <item id="mbRx" label="Rx"/>
+            <item id="mbTx" label="Tx"/>
+         </enum>
+         <struct id="flexcan_mb_config" label="FlexCAN message buffer configuration">
+            <integer id="mbID" label="Buffer ID"  type="uint8_t">
+               <description>The message buffer ID represent the index of the message buffer in the FlexCAN memory device. The index must be in the range of the maximum number defined in the settings above.</description>
+               <validation>
+                  <!-- constraint for checking of duplicated message buffers -->
+                  <constraint cond_expr="($parent.getParent().searchInArray(item -> (($parent.getID() != item.getID()) &amp;&amp; 
+                                      ((item.getSetting(`mbID`).getValue())  ==  ($this.getValue())))) &lt; 0)" level="error" 
+                                      description_expr="`Duplicated message buffer (` + $this.getValue() + `) is selected. Select each message buffer once only.`"/>
+                  <constraint cond_expr="$this.getValue() &lt; $configSet.can_config.maxMbNum.getValue()" level="error" description_expr="`The message buffer ID must be in the range of the selected maximum number of message buffers, select a message buffer in the available range (` + $configSet.mbRange.getValue() + `).`"/>
+<!--                  <constraint cond_expr="$this.getValue() &gt; $configSet.rx_FIFO_max_MB_index.getValue().toInt()" level="error" description_expr="`The selected message buffer is allocated by the Rx FIFO. Please, select a message buffer in the available range (` + ($configSet.rx_FIFO_max_MB_index.getValue().toInt()+1) + ` - ` + ($configSet.can_config.maxMbNum.getValue() - 1) + `).`"/>-->
+                  <constraint cond_expr="$this.getValue() &gt; $configSet.rx_FIFO_max_MB_index.getValue().toInt()" level="error" description_expr="`The selected message buffer is allocated by the Rx FIFO. Please, select a message buffer in the available range (` + $configSet.mbRange.getValue() + `).`"/>
+               </validation>
+            </integer>
+            <reference id="mbType" label="MB Type" type="flexcan_mb_type_confg">
+               <description>Message Buffer type. Rx (receive) bufffer, Tx (transmit) or Inactive (this type is not initialized, it is the default state).</description>
+            </reference>
+            <reference id="rxMb" label="rxMbConfig" type="flexcan_rx_mb_config_t" enable="$parent.mbType.getValue() == `mbRx`"></reference>
+         </struct>
+         <enum id="rx_FIFO_filters" label="Number of Rx FIFO filters" from="user_type" >
+            <item id="num0" label="8" value="0"/>
+            <item id="num1" label="16" value="1"/>
+            <item id="num2" label="24" value="2"/>
+            <item id="num3" label="32" value="3"/>
+            <item id="num4" label="40" value="4"/>
+            <item id="num5" label="48" value="5"/>
+            <item id="num6" label="56" value="6"/>
+            <item id="num7" label="64" value="7"/>
+            <item id="num8" label="72" value="8"/>
+            <item id="num9" label="80" value="9"/>
+            <item id="numA" label="88" value="10"/>
+            <item id="numB" label="96" value="11"/>
+            <item id="numC" label="104" value="12"/>
+            <item id="numD" label="112" value="13"/>
+            <item id="numE" label="120" value="14"/>
+            <item id="numF" label="128" value="15"/>
+         </enum>
+         <struct id="flexcan_rx_fifo_config_t" label="FlexCAN Rx FIFO configuration structure" from="_flexcan_rx_fifo_config">
+            <string id="idFilterTable" label="Pointer to filter table identifier" options="remove_from_struct_init">
+               <description>Pointer to the FlexCAN Rx FIFO identifier filter table identifier ("uint32_t *" type). &lt;b&gt;Please note that the identifier must defined and must contain the filter values in the user code.&lt;/b&gt;</description>
+               <validation>
+                  <constraint cond_expr="$this.getValue().isCIdentifier()" level="error" description="An ANSI-C valid identifier is expected."/>
+               </validation>
+            </string>
+<!--            <integer id="idFilterNum" label="Number of filter elements" type="uint8_t">
+               <description>The quantity of filter elements.</description>
+            </integer>-->
+            <reference id="idFilterNum" label="Number of filter elements" type="rx_FIFO_filters" options="use_enum_value">
+               <description>The quantity of filter elements that are available. Note: Eight filter elements occupies two message buffers that are allocated by the Rx FIFO .</description>
+               <validation>
+                  <constraint cond_expr="($configSet.rx_FIFO_max_MB_index.getValue().toInt()) &lt;= ($configSet.can_config.maxMbNum.getValue() - 1)" level="error" description="The selected number of filter elements requires more message buffers than specified in the Maximum number of Message Buffers setting."/>
+               </validation>
+            </reference>
+            <reference id="idFilterType" label="FIFO Filter type" type="flexcan_rx_fifo_filter_type_t">
+               <description>The FlexCAN Rx FIFO Filter type.</description>
+            </reference>
+            <reference id="priority" label="FIFO receive priority" type="flexcan_rx_fifo_priority_t">
+               <description>The FlexCAN Rx FIFO receive priority. The &lt;b&gt;Rx FIFO high&lt;/i&gt; value - matching starts from Rx FIFO and continues on mailboxes (Rx message buffers); The &lt;i&gt;Rx FIFO low&lt;/i&gt; value - matching starts from mailboxes (Rx message buffers) and continues to Rx FIFO.</description>
+            </reference>
+         </struct>
+      </user_types>
+      <settings>
+         <reference id="can_config" label="FlexCAN configuration" type="flexcan_config_t">
+            <description>FlexCAN main configuration.</description>
+         </reference>
+         <bool id="enableRxFIFO" label="Enable Rx FIFO" enable="!($configSet.can_config.flexibleDataRate.isAvailable() &amp;&amp; $configSet.can_config.flexibleDataRate.getValue())">
+            <description>Enable/disable Rx FIFO configuration. When enabled a part of message buffers is allocated for the Rx FIFO and filters. Note: The Rx FIFO (legacy Rx FIFO) is not available when the Flexible data rate is enabled.</description>
+         </bool>
+         <variable id="enableRxFIFOStatus" value="$parent.enableRxFIFO.getValue() &amp;&amp; (!($configSet.can_config.flexibleDataRate.isAvailable() &amp;&amp; $configSet.can_config.flexibleDataRate.getValue()))" ></variable>
+         <reference id="rxFIFO" label="Rx FIFO" type="flexcan_rx_fifo_config_t" options="UI_LABEL_HIDDEN" enable="$parent.enableRxFIFOStatus.getValue()">
+            <description>Rx FIFO configuration.</description>
+         </reference>
+         <!-- Number of Message Buffers (MB) used for Rx FIFO = 8 + ((number_of_filters / 8 - 1) * 2) = 8 + (RFFN * 2); index of the last MB used for Rx FIFO = number_of_MB - 1 -->
+         <variable id="rx_FIFO_max_MB_index" value="$parent.enableRxFIFOStatus.getValue() ? (8 + ($parent.rxFIFO.idFilterNum.getEnumItemValue().toInt() * 2) - 1) : -1"></variable>
+         <info id="mbRange" label="Message buffers range" value="(($configSet.rx_FIFO_max_MB_index.getValue().toInt()) &lt; ($configSet.can_config.maxMbNum.getValue() - 1)) ? (($configSet.rx_FIFO_max_MB_index.getValue().toInt() + 1) + ` - ` + ($configSet.can_config.maxMbNum.getValue() - 1)) : `No message buffer available`">  
+            <description>The message buffer range is defined by the Maximum number of Message Buffers settings and usage of the Rx FIFO with filters (the Rx FIFO allocates (8 + ((number_of_filters / 8 - 1) * 2)) message buffers) </description>
+         </info>
+         <array id="channels" label="Message buffers initalization" type="flexcan_mb_config" options="ShowContentAs=Table;UI_ARRAY_INDICES_HIDDEN" key_selector_expr="x -> x.getSetting(`mbID`).getValue()">
+            <item_defaults>
+               <set_default id="mbID" value_expr="x -> (x.getID()==`0`) ? ($configSet.rx_FIFO_max_MB_index.getValue().toInt() + 1) : x.getParent().get(x.getID().toInt() - 1).getSetting(`mbID`).getValue() + 1"/>
+               <set_default id="mbType" value_expr="x -> `mbInactive`"/>
+               <set_default id="rxMb.id" value_expr="x -> 0"/>
+               <set_default id="rxMb.format" value_expr="x -> `kFLEXCAN_FrameFormatStandard`"/>
+               <set_default id="rxMb.type" value_expr="x -> `kFLEXCAN_FrameTypeData`"/>
+            </item_defaults>
+         </array>
+         <!-- IDs used for an instance of this component -->
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+         <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+         <variable id="inst_clock_src_ID" value="$parent.inst_ID_def.getValue() + `_CLOCK_SOURCE`"></variable>
+         <variable id="inst_mode_ID" value="$parent.inst_ID_def.getValue() + `_MODE`"></variable>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+         </import>
+         <def fragment="message_buffer_rx_config_struct">
+            <expr>`/* Message buffer ` + $this.mbID.getValue() + ` configuration structure */`</expr><br/>
+            <fragment id="const_struct" apply_to="$this.rxMb">
+               <param id="name" expr="$configSet.inst_ID.getValue() + `_rx_mb_config_` + $parent.mbID.getValue()" />
+               <param id="type" >flexcan_rx_mb_config_t</param>
+            </fragment>         
+         </def>
+         <def fragment="message_buffer_rx_config_struct_extern">
+            <expr>`/* Message buffer ` + $this.mbID.getValue() + ` configuration structure */`</expr><br/>
+            <fragment id="extern_const_var" apply_to="$this.rxMb">
+               <param id="name" expr="$configSet.inst_ID.getValue() + `_rx_mb_config_` + $parent.mbID.getValue()" />
+               <param id="type" >flexcan_rx_mb_config_t</param>
+            </fragment>         
+         </def>
+         <def fragment="message_buffer_rx_init">
+            <expr>leftPadding(`/* Message buffer ` + $this.mbID.getValue() + ` initialization */`,1)</expr><br/>
+            <expr if_expr="$this.mbType.getValue() == `mbRx`">
+               leftPadding(`FLEXCAN_SetRxMbConfig(` + $configSet.inst_peripheral_ID.getValue() + `, ` + $this.mbID.getValue() +`, &amp;` + $configSet.inst_ID.getValue() + `_rx_mb_config_` + $this.mbID.getValue() + `, ` + `true` + `);`, 1)
+            </expr>
+            <expr if_expr="$this.mbType.getValue() == `mbTx`">
+               leftPadding(`FLEXCAN_SetTxMbConfig(` + $configSet.inst_peripheral_ID.getValue() + `, ` + $this.mbID.getValue() +`, ` + `true` + `);`, 1)
+            </expr>
+            <br/>
+         </def>
+         <def fragment="flexcan_config_timing">
+            <expr>leftPadding(`.`, 2) + $this.getID() + ` = ` + ($this.getValue().toInt()-1)</expr>
+            <expr> ($param._last ? ``: `,`) </expr>
+            <br/>
+         </def>   
+         <def fragment="flexcan_config_struct">
+            <text>const </text>
+            <expr>$param.type + ` ` + $param.name</expr>
+            <text> = {</text>
+            <br/>
+            <fragment id="field" for_elements_of="$this.filter(item -> ((!item.hasOption(`remove_from_struct_init`)) &amp;&amp; 
+                                                                       ((getType(item) != `info`) || (item.hasOption(`transform_by_regex`)) || (item.hasOption(`add_to_struct`))) &amp;&amp; 
+                                                                       ((getType(item) != `variable`)  || (item.hasOption(`add_to_struct`)))))">
+               <param id="paddingLevel" expr="1"/>
+            </fragment>
+            <expr>leftPadding(`.timingConfig = {`, 1)</expr><br/>
+            <fragment id="flexcan_config_timing" for_elements_of="$this.timingConfig.filter(item -> (((!item.hasOption(`remove_from_struct_init`)) &amp;&amp; 
+                                                                       ((getType(item) != `info`) || (item.hasOption(`transform_by_regex`)) || (item.hasOption(`add_to_struct`))) &amp;&amp; 
+                                                                       ((getType(item) != `variable`)  || (item.hasOption(`add_to_struct`)))) &amp;&amp; item.isEnabled()))"></fragment>
+            <expr>leftPadding(`}`, 1)</expr><br/>
+            <!-- apply in context of each item in the set/structure/array -->
+            <text>};</text>
+            <br/>
+         </def>
+
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">flexcan</param>
+               <param id="filename">fsl_flexcan.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">clock</param>
+               <param id="filename">fsl_clock.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <fragment id="define">
+               <param id="name" expr="$this.inst_peripheral_ID.getValue()"/>
+               <param id="value" expr="$instance.getPeripheral()"/>
+               <param id="description">Definition of peripheral ID</param>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="$this.inst_clock_src_ID.getValue()"/>
+<!--               <param id="value" expr="($this.cmt_config.clockSourceFreq.getEnumItemId() == `GetFreq`) ? 
+                  (`CLOCK_GetFreq(` + $this.cmt_config.clockSourceSDKId.getValue() + `)`) 
+                  : ($this.cmt_config.clockSourceFreq.getEnumItemValue().toHertz() + `UL`)
+                  "/> -->
+               <param id="value" expr="$this.can_config.clockSourceFreq.getEnumItemValue().toHertz() + `UL`"/> 
+               <param id="description">Definition of the clock source frequency</param>
+            </fragment>
+         </section>            
+         <section target="global_vars">
+            <fragment id="flexcan_config_struct" apply_to="$this.can_config">
+               <param id="name" expr="$configSet.inst_ID.getValue() + `_config`" />
+               <param id="type" >flexcan_config_t</param>
+            </fragment>
+            <fragment id="message_buffer_rx_config_struct"  for_elements_of="$this.channels.filter(x -> (x.getSetting(`mbType`).getValue() == `mbRx`), false)"/>
+            <fragment id="global_struct" apply_to="$this.rxFIFO" if_expr="$this.enableRxFIFOStatus.getValue()">
+               <param id="name" expr="$configSet.inst_ID.getValue() + `_rx_fifo_config`" />
+               <param id="type" >flexcan_rx_fifo_config_t</param>
+            </fragment>
+<!--            <fragment id="global_struct" apply_to="$this.modulator_config" if_expr="$instance.getMode() != `kCMT_DirectIROCtl`">
+               <param id="name" expr="$configSet.inst_ID.getValue() + `_modulator_config`" />
+               <param id="type" >cmt_modulate_config_t</param>
+            </fragment>-->
+         </section>
+         <section target="global_vars_extern">
+            <fragment id="extern_const_var" apply_to="$this.can_config">
+               <param id="name" expr="$configSet.inst_ID.getValue() + `_config`" />
+               <param id="type" >flexcan_config_t</param>
+            </fragment>
+            <fragment id="message_buffer_rx_config_struct_extern" for_elements_of="$this.channels.filter(x -> (x.getSetting(`mbType`).getValue() == `mbRx`), false)"/>
+            <fragment id="extern_var" apply_to="$this.rxFIFO">
+               <param id="name" expr="$configSet.inst_ID.getValue() + `_rx_fifo_config`" />
+               <param id="type" >flexcan_rx_fifo_config_t</param>
+            </fragment>
+            <fragment id="extern_var" apply_to="$this.rxFIFO.idFilterTable" if_expr="$this.enableRxFIFOStatus.getValue()">
+               <param id="name" expr="$this.getValue()" />
+               <param id="type" >void *</param>
+            </fragment>
+         </section>
+         <section target="init_function_body">
+            <expr if_expr="!($configSet.can_config.flexibleDataRate.isAvailable() &amp;&amp; $configSet.can_config.flexibleDataRate.getValue())">leftPadding(`FLEXCAN_Init(` + $this.inst_peripheral_ID.getValue() + `, &amp;` + $this.inst_ID.getValue() + `_config, ` + $this.inst_clock_src_ID.getValue() + `);`, 1)</expr><br/>
+            <expr if_expr="($configSet.can_config.flexibleDataRate.isAvailable() &amp;&amp; $configSet.can_config.flexibleDataRate.getValue())">leftPadding(`FLEXCAN_FDInit(` + $this.inst_peripheral_ID.getValue() + `, &amp;` + $this.inst_ID.getValue() + `_config, ` + $this.inst_clock_src_ID.getValue() + `, `+ $this.can_config.dataSize.getCValue() + `, ` + $this.can_config.enableBRS.getCValue() +`);`, 1)</expr><br/>
+            <!-- Rx FIFO buffer initialization -->
+            <expr if_expr="$this.enableRxFIFOStatus.getValue()">
+               leftPadding($this.inst_ID.getValue() + `_rx_fifo_config.idFilterTable = ` + $this.rxFIFO.idFilterTable.getValue() +`;&#xA;`, 1) + 
+               leftPadding(`FLEXCAN_SetRxFifoConfig(` + $this.inst_peripheral_ID.getValue() + `, &amp;` + $this.inst_ID.getValue() + `_rx_fifo_config, ` + `true` + `);&#xA;`, 1)</expr>
+            <!-- Rx and Tx message buffer initialization -->
+            <fragment id="message_buffer_rx_init" for_elements_of="$this.channels.filter(x -> (x.getSetting(`mbType`).getValue() != `mbInactive`), false)"/>
+         </section>
+      </code>
+      <validation>
+         <!-- RX and TX pins are always used -->
+         <dependency  resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.can_rxd`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`RX`, $instance.getPeripheral())" level="Warning">
+             <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency  resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.can_txd`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`TX`, $instance.getPeripheral())" level="Warning">
+             <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+      </validation>      
+      <quick_selections>
+         <quick_selection id="default" label="Default" >
+            <description>Typical configuration of the FlexCAN</description>
+            <set id="can_config.baudRate">1000000</set>
+            <set id="can_config.baudRateFD">2000000</set>
+            <set id="can_config.maxMbNum">16</set>
+            <set id="can_config.enableLoopBack">false</set>
+            <set id="can_config.enableTimerSync">true</set>
+            <set id="can_config.enableSelfWakeup">false</set>
+            <set id="can_config.wakeupSrc">kFLEXCAN_WakeupSrcUnfiltered</set>
+            <set id="can_config.enableIndividMask">false</set>
+            <set id="can_config.enableDoze">false</set>
+            <set id="can_config.timingConfig.phaseSeg1">4</set>
+            <set id="can_config.timingConfig.phaseSeg2">3</set>
+            <set id="can_config.timingConfig.propSeg">2</set>
+            <set id="can_config.timingConfig.rJumpwidth">2</set>
+            <set id="can_config.timingConfig.fphaseSeg1">4</set>
+            <set id="can_config.timingConfig.fphaseSeg2">4</set>
+            <set id="can_config.timingConfig.fpropSeg">2</set>
+            <set id="can_config.timingConfig.frJumpwidth">2</set>
+            <set id="rxFIFO">false</set>
+            <set id="channels.0.mbID">0</set>
+            <set id="channels.0.mbType">mbRx</set>
+            <set id="channels.1.mbID">1</set>
+            <set id="channels.1.mbType">mbTx</set>
+         </quick_selection>
+         <default>default</default>
+      </quick_selections>
+   </config_set>
+   <config_set id="interruptsCfg" label="Interrupt configuration">
+      <description>FlexCAN interrupt mode configuration</description>
+      <generated_types/>
+      <user_types>
+<!--         <set id="messageBufferIrqs" label="Message Buffer Interrupts" >
+            <item id="msgBuf1" label="Message Buffer 1" value="1"/>
+            <item id="msgBuf2" label="Message Buffer 2" value="2"/>
+            <item id="msgBuf3" label="Message Buffer 3" value="4"/>
+            <item id="msgBuf4" label="Message Buffer 4" value="8"/>
+            <item id="msgBuf5" label="Message Buffer 5" value="0x10"/>
+            <item id="msgBuf1" label="Message Buffer 6" value="0x20"/>
+            <item id="msgBuf1" label="Message Buffer 7" value="0x40"/>
+            <item id="msgBuf1" label="Message Buffer 8" value="0x80"/>
+            <item id="msgBuf1" label="Message Buffer 9" value="0x100"/>
+            <item id="msgBuf1" label="Message Buffer 10" value="0x200"/>
+            <item id="msgBuf1" label="Message Buffer 11" value="0x400"/>
+            <item id="msgBuf1" label="Message Buffer 12" value="0x800"/>
+            <item id="msgBuf1" label="Message Buffer 13" value="0x1000"/>
+            <item id="msgBuf1" label="Message Buffer 14" value="0x2000"/>
+            <item id="msgBuf1" label="Message Buffer 15" value="0x4000"/>
+            <item id="msgBuf1" label="Message Buffer 16" value="0x8000"/>
+            <item id="msgBuf1" label="Message Buffer 17" value="1"/>
+            <item id="msgBuf1" label="Message Buffer 18" value="1"/>
+            <item id="msgBuf1" label="Message Buffer 19" value="1"/>
+            <item id="msgBuf1" label="Message Buffer 1" value="1"/>
+            <item id="msgBuf1" label="Message Buffer 1" value="1"/>
+            <item id="msgBuf1" label="Message Buffer 1" value="1"/>
+            <item id="msgBuf1" label="Message Buffer 1" value="1"/>
+            <item id="msgBuf1" label="Message Buffer 1" value="1"/>
+         </set>-->
+         <set id="_flexcan_interrupt_enable" label="Interrupt enable masks">
+            <item id="kFLEXCAN_BusOffInterruptEnable" label="Bus off interrupt"/>
+            <item id="kFLEXCAN_ErrorInterruptEnable" label="Error interrupt"/>
+            <item id="kFLEXCAN_RxWarningInterruptEnable" label="Rx warning interrupt"/>
+            <item id="kFLEXCAN_TxWarningInterruptEnable" label="Tx warning interrupt"/>
+            <item id="kFLEXCAN_WakeUpInterruptEnable" label="Wake up interrupt"/>
+         </set>
+      </user_types>
+      <settings>
+<!--         <integer id="messageBufferIrqs" label="Message buffer interrupt enable mask" type="int64_t">
+            <description>Message buffer interrupt mask that is used for enable of individual message buffer interrupts. Each bit represents the corresponding message buffer.</description>
+         </integer>-->
+         <integer id="messageBufferIrqs" label="Message buffers 0 - 31 interrupt enable mask" type="uint32_t">
+            <description>Message buffer interrupt mask that is used for enable of individual interrupts of message buffers 0 - 31 (IMASK1 register). Each bit represents the corresponding message buffer.</description>
+         </integer>
+         <integer id="messageBufferIrqs2" label="Message buffer 32 - 63 interrupt enable mask" type="uint32_t" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER`))">
+            <description>Message buffer interrupt mask that is used for enable of individual interrupts of message buffers 32 - 63 (IMASK2 register). Each bit represents the corresponding message buffer.</description>
+         </integer>
+         <reference  id="interruptsEnable" type="_flexcan_interrupt_enable" label="Interrupts">
+            <description>Selection of enabled interrupt of the FlexCAN device.</description>
+         </reference>
+         <!-- Check the interrupt resource if the CAN shared interrupt is defined (function == "flexcan") -->
+         <variable id="sharedInterrupt" value="getResource(`interrupts`, $instance.getCoreId()).countOccurrences(item -> (item.getSetting(`devices`).searchInArray(devItem -> (devItem.getSetting(`id`).getValue() == $instance.getPeripheral()) &amp;&amp; (devItem.getSetting(`function`).getValue() == `flexcan`)) >= 0), false) > 0"></variable>
+         <!-- Shared interrupt only on the SoC -->
+         <bool id="enable_irq" label="Enable interrupt" available="$parent.sharedInterrupt.getValue()">
+            <description>"Enable/disable shared interrupt for the CAN interrupt sources."</description>
+         </bool>
+         <reference id="interrupt_shared" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=flexcan" enable="$parent.enable_irq.getValue()" available="$parent.sharedInterrupt.getValue()"/>
+         <!-- Dedicated interrupts on the SoC -->
+         <bool id="enable_ored_mb_irq" label="Enable message buffers interrupt" available="!$parent.sharedInterrupt.getValue()"></bool>
+         <reference id="interrupt_ored_mb" label="Message buffers interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=can_ored_mb" enable="$parent.enable_ored_mb_irq.getValue()" available="!$parent.sharedInterrupt.getValue()"/>
+         <bool id="enable_busoff_irq" label="Enable bus off interrupt" available="!$parent.sharedInterrupt.getValue()"></bool>
+         <reference id="interrupt_busoff" label="Bus off interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=can_busoff" enable="$parent.enable_busoff_irq.getValue()" available="!$parent.sharedInterrupt.getValue()"/>
+         <bool id="enable_error_irq" label="Enable error interrupt" available="!$parent.sharedInterrupt.getValue()"></bool>
+         <reference id="interrupt_error" label="Error interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=can_error" enable="$parent.enable_error_irq.getValue()" available="!$parent.sharedInterrupt.getValue()"/>
+         <bool id="enable_tx_irq" label="Enable Tx warning interrupt" available="!$parent.sharedInterrupt.getValue()"></bool>
+         <reference id="interrupt_tx" label="Tx warning interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=can_tx" enable="$parent.enable_tx_irq.getValue()" available="!$parent.sharedInterrupt.getValue()"/>
+         <bool id="enable_rx_irq" label="Enable Rx warning interrupt" available="!$parent.sharedInterrupt.getValue()"></bool>
+         <reference id="interrupt_rx" label="Rx warning interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=can_rx" enable="$parent.enable_rx_irq.getValue()" available="!$parent.sharedInterrupt.getValue()"/>
+         <bool id="enable_wakeup_irq" label="Enable wake up interrupt" available="!$parent.sharedInterrupt.getValue()"></bool>
+         <reference id="interrupt_wakeup" label="Wake up interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=can_wakeup" enable="$parent.enable_wakeup_irq.getValue()" available="!$parent.sharedInterrupt.getValue()"/>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+            <from component_id="system" config_set_id="common_code_templates"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="defines">
+            <!-- Shared interrupt definitions -->
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_shared" if_expr="$this.enable_irq.getValue() &amp;&amp; $this.sharedInterrupt.getValue()" />
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_ored_mb" if_expr="$this.enable_ored_mb_irq.getValue() &amp;&amp; (!$this.sharedInterrupt.getValue())" />
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_busoff" if_expr="$this.enable_busoff_irq.getValue() &amp;&amp; (!$this.sharedInterrupt.getValue())" />
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_error" if_expr="$this.enable_error_irq.getValue() &amp;&amp; (!$this.sharedInterrupt.getValue())" />
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_tx" if_expr="$this.enable_tx_irq.getValue() &amp;&amp; (!$this.sharedInterrupt.getValue())" />
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_rx" if_expr="$this.enable_rx_irq.getValue() &amp;&amp; (!$this.sharedInterrupt.getValue())" />
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_wakeup" if_expr="$this.enable_wakeup_irq.getValue() &amp;&amp; (!$this.sharedInterrupt.getValue())" />
+         </section>                  
+         <section target="init_function_body">
+            <expr if_expr="$this.interruptsEnable.getCValue() != ``">leftPadding(`/* Enable FlexCAN interrupts */&#xA;`,1)</expr>
+            <expr if_expr="$this.interruptsEnable.getCValue() != ``">leftPadding(`FLEXCAN_EnableInterrupts(` + $instance.fsl_flexcan.inst_peripheral_ID.getValue() + `, ` + (($this.interruptsEnable.getCValue() == ``) ? `0` : $this.interruptsEnable.getCValue()) + `);&#xA;`, 1)</expr>
+            <expr if_expr="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER`)) ? (($this.messageBufferIrqs.getValue() != 0) || ($this.messageBufferIrqs2.getValue() != 0)) : ($this.messageBufferIrqs.getValue() != 0)">leftPadding(`/* Enable FlexCAN interrupts of message buffers */&#xA;`,1)</expr>
+            <!-- FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER disabled (32 MB)-->
+            <expr if_expr="(!(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER`))) &amp;&amp; ($this.messageBufferIrqs.getValue() != 0)">leftPadding(`FLEXCAN_EnableMbInterrupts(` + $instance.fsl_flexcan.inst_peripheral_ID.getValue() + `, ` + $this.messageBufferIrqs.getCValue() + `UL);&#xA;`, 1)</expr>
+            <!-- FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER enabled (64 MB)-->
+            <expr if_expr="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER`)) &amp;&amp; (($this.messageBufferIrqs.getValue() != 0) || ($this.messageBufferIrqs2.getValue() != 0))">leftPadding(`FLEXCAN_EnableMbInterrupts(` + $instance.fsl_flexcan.inst_peripheral_ID.getValue() + `, ` +  (($this.messageBufferIrqs2.getValue() != 0) ? `(` + $this.messageBufferIrqs2.getCValue() + `ULL &lt;&lt; 32) | ` : ``) + $this.messageBufferIrqs.getCValue() + `ULL);&#xA;`, 1)</expr>
+            <!-- Shared interrupt initialization -->
+            <fragment id="IRQn_set_priority_default" if_expr="$this.enable_irq.getValue() &amp;&amp; $this.sharedInterrupt.getValue()" apply_to="$this.interrupt_shared"/>
+            <fragment id="IRQn_enable_default" if_expr="$this.enable_irq.getValue() &amp;&amp; $this.sharedInterrupt.getValue()" apply_to="$this.interrupt_shared"/>
+            <!-- Dedicated interrupts initialization -->
+            <fragment id="IRQn_set_priority_default" if_expr="$this.enable_ored_mb_irq.getValue()  &amp;&amp; (!$this.sharedInterrupt.getValue())" apply_to="$this.interrupt_ored_mb"/>
+            <fragment id="IRQn_enable_default" if_expr="$this.enable_ored_mb_irq.getValue()  &amp;&amp; (!$this.sharedInterrupt.getValue())" apply_to="$this.interrupt_ored_mb"/>
+
+            <fragment id="IRQn_set_priority_default" if_expr="$this.enable_busoff_irq.getValue()  &amp;&amp; (!$this.sharedInterrupt.getValue())" apply_to="$this.interrupt_busoff"/>
+            <fragment id="IRQn_enable_default" if_expr="$this.enable_busoff_irq.getValue()  &amp;&amp; (!$this.sharedInterrupt.getValue())" apply_to="$this.interrupt_busoff"/>
+
+            <fragment id="IRQn_set_priority_default" if_expr="$this.enable_error_irq.getValue()  &amp;&amp; (!$this.sharedInterrupt.getValue())" apply_to="$this.interrupt_error"/>
+            <fragment id="IRQn_enable_default" if_expr="$this.enable_error_irq.getValue()  &amp;&amp; (!$this.sharedInterrupt.getValue())" apply_to="$this.interrupt_error"/>
+
+            <fragment id="IRQn_set_priority_default" if_expr="$this.enable_tx_irq.getValue()  &amp;&amp; (!$this.sharedInterrupt.getValue())" apply_to="$this.interrupt_tx"/>
+            <fragment id="IRQn_enable_default" if_expr="$this.enable_tx_irq.getValue()  &amp;&amp; (!$this.sharedInterrupt.getValue())" apply_to="$this.interrupt_tx"/>
+
+            <fragment id="IRQn_set_priority_default" if_expr="$this.enable_rx_irq.getValue()  &amp;&amp; (!$this.sharedInterrupt.getValue())" apply_to="$this.interrupt_wakeup"/>
+            <fragment id="IRQn_enable_default" if_expr="$this.enable_rx_irq.getValue()  &amp;&amp; (!$this.sharedInterrupt.getValue())" apply_to="$this.interrupt_wakeup"/>
+
+            <fragment id="IRQn_set_priority_default" if_expr="$this.enable_wakeup_irq.getValue()  &amp;&amp; (!$this.sharedInterrupt.getValue())" apply_to="$this.interrupt_ored_mb"/>
+            <fragment id="IRQn_enable_default" if_expr="$this.enable_wakeup_irq.getValue()  &amp;&amp; (!$this.sharedInterrupt.getValue())" apply_to="$this.interrupt_ored_mb"/>
+
+            <fragment id="IRQn_set_priority_default" if_expr="$this.enable_ored_mb_irq.getValue()  &amp;&amp; (!$this.sharedInterrupt.getValue())" apply_to="$this.interrupt_ored_mb"/>
+            <fragment id="IRQn_enable_default" if_expr="$this.enable_ored_mb_irq.getValue()  &amp;&amp; (!$this.sharedInterrupt.getValue())" apply_to="$this.interrupt_ored_mb"/>
+         </section>
+
+      </code>
+      <validation></validation>
+      <quick_selections></quick_selections>
+   </config_set>
+   <config_set id="transferCfg" label="Transfer configuration" from_source="src/fsl_flexcan.h">
+      <description>FlexCAN transfer mode configuration.</description>
+      <generated_types>
+      </generated_types>
+      <user_types>
+         <struct id="flexcan_mb_transfer_t" label="FlexCAN Message Buffer transfer" from="_flexcan_mb_transfer">
+            <!-- pointer to the type flexcan_fd_frame_t *  -->
+<!--            <string id="framefd" label="" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))"/>-->
+            <!-- pointer to the type flexcan_frame_t * -->
+            <string id="frame" label="Frame ID">
+               <description>The identifier name of the frame data. The frame is allocated into memory and the pointer on this frame is used in the initialization of the message buffer transfer structure.</description>
+               <validation>
+                  <constraint cond_expr="$this.getValue().isCIdentifier()" level="error" description="An ANSI-C valid identifier is expected."/>
+               </validation>
+            </string>
+            <integer id="mbIdx" label="Index of message buffer" type="uint8_t">
+               <description>The index of Message buffer used to transfer Message.</description>
+               <validation>
+                  <!-- Check initialization of the message buffer; when Rx FIFO is enabled the message buffer 0 is a valid value -->
+                  <constraint cond_expr="($instance.fsl_flexcan.channels.searchInArray(x -> (x.getSetting(`mbID`).getValue() == $this.getValue())) &gt; -1) || (($this.getValue() == 0) &amp;&amp; ($instance.fsl_flexcan.enableRxFIFOStatus.getValue()))" level="warning" description_expr="`Message buffer ` + $this.getValue() + ` is not initialized. See the Message buffer initialization settings.`"/>
+                  <constraint cond_expr="($instance.fsl_flexcan.channels.searchInArray(x -> (x.getSetting(`mbID`).getValue() == $this.getValue())) &gt; -1) ? 
+                                             ($instance.fsl_flexcan.channels.findFirst(x -> (x.getSetting(`mbID`).getValue() == $this.getValue())).getSetting(`mbType`).getValue() == $parent.optionValue(`mbType`))
+                                             : true" level="warning" description_expr="`Message buffer ` + $this.getValue() + ` is not initialized as the ` + (($parent.optionValue(`function`) == `rx`) ? `Rx` : `Tx`) + `. See the Message buffer initialization settings.`"/>
+               </validation>
+            </integer>
+         </struct>         
+<!--         <struct id="flexcan_transfer_cfg" label="FlexCAN transfer structure." from="_flexcan_transfer">
+            <info id="data" label="The ID of the buffer" value="$instance.getFnGroupPrefix() + $instance.getID() + `_` +  ($parent.hasOption(`function`) ? $parent.optionValue(`function`) : ``) + `Buffer`">
+               <description>The ID of data buffer to be transfered.</description>
+            </info>
+            <integer id="data_size" label="Buffer size in bytes" type="uint16_t" min_expr="1">
+               <description>The size of the buffer (number of bytes that are transfered.</description>
+            </integer>
+         </struct>-->
+         <struct id="transfer_config" label="Transfer configuration">
+            <info id="transfer_handle" label="Transfer handle ID" value="$instance.getFnGroupPrefix() + $instance.getID() + `_handle`"/>
+            <bool id="init_rx_transfer" label="Initialization of Rx transfer structure"></bool>
+            <reference id="rx_transfer" label="Rx transfer" type="flexcan_mb_transfer_t" options="function=rx;mbType=mbRx" enable="$parent.init_rx_transfer.getValue()"/>
+            <bool id="init_tx_transfer" label="Initialization of Tx transfer structure"></bool>
+            <reference id="tx_transfer" label="Tx transfer" type="flexcan_mb_transfer_t" options="function=tx;mbType=mbTx" enable="$parent.init_tx_transfer.getValue()"/>
+            <bool id="init_callback" label="Initialization of transfer callback"></bool>
+            <string id="callback_fcn" label="Transfer callback function name" enable="$parent.init_callback.getValue()">
+               <description>The callback function name that is used in the transfer initialization. User must provide the definition of this function. This item is optional for the transfer mode initialization.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="$this.getValue() != ``" level="error" description="The callback function shall be defined. If the callback function is not used uncheck the Initialization of transfer callback option."/> 
+                  <constraint when_expr="$parent.init_callback.getValue() &amp;&amp; ($this.getValue() != ``)" cond_expr="isCIdentifier($this.getValue())" level="error" description="The callback function name must be a valid identifier."/> 
+               </validation>
+            </string>
+            <string id="user_data" label="User data pointer" enable="$parent.init_callback.getValue()">
+<!--               <string id="user_data" label="User data pointer" enable="$parent.callback_fcn.getValue()!=``">-->
+                  <description>Definition of the user data pointer ID. When empty the NULL is provided in the initializaton function for the callback function.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="(($this.getValue() == ``) || isCIdentifier($this.getValue()))" level="error" description="The user data pointer is not valid C identifier."/>
+               </validation>
+            </string>
+         </struct>
+      </user_types>
+      <settings>
+         <reference id="transfer" label="Transfer" type="transfer_config"/>
+<!--         <variable id="rx_buffer_size_def" value="$instance.fsl_flexcan.inst_ID_def.getValue() + `_` + $parent.transfer.rx_transfer.optionValue(`function`) + `_BUFFER_SIZE` "></variable>
+         <variable id="tx_buffer_size_def" value="$instance.fsl_flexcan.inst_ID_def.getValue() + `_` + $parent.transfer.tx_transfer.optionValue(`function`) + `_BUFFER_SIZE` "></variable>-->
+         <variable id="rx_transfer_struct_id" value="$instance.fsl_flexcan.inst_ID_def.getValue() + `_rx_mb_transfer` "></variable>
+         <variable id="tx_transfer_struct_id" value="$instance.fsl_flexcan.inst_ID_def.getValue() + `_tx_mb_transfer` "></variable>
+<!--         <variable id="" value="$instance.fsl_flexcan.inst_ID_def.getValue() + "></variable>
+         <variable id="" value="$instance.fsl_flexcan.inst_ID_def.getValue() + "></variable>-->
+       <!-- All interrupts for priority setting -->
+          <struct id="interrupt_priority_settings" label="Interrupt priority settings">
+          <variable id="sharedInterrupt_transfer" value="getResource(`interrupts`, $instance.getCoreId()).countOccurrences(item -> (item.getSetting(`devices`).searchInArray(devItem -> (devItem.getSetting(`id`).getValue() == $instance.getPeripheral()) &amp;&amp; (devItem.getSetting(`function`).getValue() == `flexcan`)) >= 0), false) > 0"></variable>
+              <bool id="enable_irq" label="Enable shared interrupt" available="$parent.sharedInterrupt_transfer.getValue()"></bool>
+              <reference id="interrupt_shared" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=flexcan;irq_without_enable_control;without_handler_settings" enable="$parent.enable_irq.getValue()" available="$parent.sharedInterrupt_transfer.getValue()"/>
+              <reference id="interrupt_ored_mb" label="Message buffers interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=can_ored_mb;irq_without_enable_control;without_handler_settings" available="!$parent.sharedInterrupt_transfer.getValue()"/>
+              <reference id="interrupt_busoff" label="Bus off interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=can_busoff;irq_without_enable_control;without_handler_settings" available="!$parent.sharedInterrupt_transfer.getValue()"/>
+              <reference id="interrupt_error" label="Error interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=can_error;irq_without_enable_control;without_handler_settings" available="!$parent.sharedInterrupt_transfer.getValue()"/>
+              <reference id="interrupt_tx" label="Tx warning interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=can_tx;irq_without_enable_control;without_handler_settings" available="!$parent.sharedInterrupt_transfer.getValue()"/>
+              <reference id="interrupt_rx" label="Rx warning interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=can_rx;irq_without_enable_control;without_handler_settings" available="!$parent.sharedInterrupt_transfer.getValue()"/>
+              <reference id="interrupt_wakeup" label="Wake up interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=can_wakeup;irq_without_enable_control;without_handler_settings" available="!$parent.sharedInterrupt_transfer.getValue()"/>
+          </struct>
+      </settings>
+      <fragment_defs>
+         <import>
+             <from component_id="system" config_set_id="common_code_templates"/>
+             <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+         <def fragment="transfer_struct">
+            <text>const </text><expr>$param.type + ` ` + $param.name</expr><text> = {</text><br/>
+            <expr>`  .frame = ` + $param.frameID + `,`</expr><br/>
+            <expr>`  .mbIdx = ` + $param.mbIndex</expr><br/>  
+            <text>};</text><br/>
+         </def>
+<!--         <def fragment="rx_buffer_size">
+            <expr>toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $instance.transferCfg.transfer.rx_transfer.optionValue(`function`) + `_BUFFER_SIZE`)</expr>
+         </def>-->
+      </fragment_defs>
+      <code>
+         <!--         <code_template id="main_init">-->
+          <section target="defines">            
+              <!-- Interrupt priority definitions -->
+              <fragment id="IRQ_definitions" apply_to="$this.interrupt_priority_settings.interrupt_shared" if_expr="$this.interrupt_priority_settings.enable_irq.getValue() &amp;&amp; $this.interrupt_priority_settings.sharedInterrupt_transfer.getValue()"/>
+              <fragment id="IRQ_definitions" apply_to="$this.interrupt_priority_settings.interrupt_ored_mb" if_expr="$this.interrupt_priority_settings.interrupt_ored_mb.isAvailable()"/>
+              <fragment id="IRQ_definitions" apply_to="$this.interrupt_priority_settings.interrupt_busoff" if_expr="$this.interrupt_priority_settings.interrupt_busoff.isAvailable()"/>
+              <fragment id="IRQ_definitions" apply_to="$this.interrupt_priority_settings.interrupt_error" if_expr="$this.interrupt_priority_settings.interrupt_error.isAvailable()"/>
+              <fragment id="IRQ_definitions" apply_to="$this.interrupt_priority_settings.interrupt_tx" if_expr="$this.interrupt_priority_settings.interrupt_tx.isAvailable()"/>
+              <fragment id="IRQ_definitions" apply_to="$this.interrupt_priority_settings.interrupt_rx" if_expr="$this.interrupt_priority_settings.interrupt_rx.isAvailable()"/>
+              <fragment id="IRQ_definitions" apply_to="$this.interrupt_priority_settings.interrupt_wakeup" if_expr="$this.interrupt_priority_settings.interrupt_wakeup.isAvailable()"/>
+            <!-- RX/TX transfer buffer size -->
+<!--            <fragment id="define" if_expr="$this.transfer.init_rx_transfer.getValue()">
+               <param id="name" expr="$configSet.rx_buffer_size_def.getValue()"/>
+               <param id="value" expr="$this.transfer.rx_transfer.data_size.getCValue()"/> 
+               <param id="description">Rx transfer buffer size.</param>
+            </fragment>
+            <fragment id="define" if_expr="$this.transfer.init_tx_transfer.getValue()">
+               <param id="name" expr="$configSet.tx_buffer_size_def.getValue()"/>
+               <param id="value" expr="$this.transfer.tx_transfer.data_size.getCValue()"/> 
+               <param id="description">Tx transfer buffer size.</param>
+            </fragment>-->
+         </section> 
+         <section target="global_vars">
+            <!-- Transfer handle definition -->
+            <fragment id="global_var" apply_to="$this.transfer.transfer_handle">
+               <param id="name" expr="$this.getValue()" />
+               <param id="type">flexcan_handle_t</param>
+            </fragment>
+            <!-- Rx transfer message buffer definition -->
+            <fragment id="global_var" apply_to="$this.transfer.rx_transfer" if_expr="$this.transfer.init_rx_transfer.getValue()">
+               <param id="name" expr="$this.frame.getValue()" />
+               <param id="type">flexcan_frame_t</param>
+            </fragment>
+            <!-- RX transfer structures -->
+            <fragment id="transfer_struct" if_expr="$this.transfer.init_rx_transfer.getValue()">
+               <param id="name" expr="$configSet.rx_transfer_struct_id.getValue()"/>
+               <param id="type">flexcan_mb_transfer_t</param>
+               <param id="mbIndex" expr="$this.transfer.rx_transfer.mbIdx.getValue()"/>
+               <param id="frameID" expr="`&amp;` + $this.transfer.rx_transfer.frame.getValue()"/>
+            </fragment>
+            <!-- Tx transfer message buffer definition -->
+            <fragment id="global_var" apply_to="$this.transfer.tx_transfer" if_expr="$this.transfer.init_tx_transfer.getValue()">
+               <param id="name" expr="$this.frame.getValue()" />
+               <param id="type">flexcan_frame_t</param>
+            </fragment>
+            <!-- TX transfer structures -->
+            <fragment id="transfer_struct" if_expr="$this.transfer.init_tx_transfer.getValue()">
+               <param id="name" expr="$configSet.tx_transfer_struct_id.getValue()"/>
+               <param id="type">flexcan_mb_transfer_t</param>
+               <param id="mbIndex" expr="$this.transfer.tx_transfer.mbIdx.getValue()"/>
+               <param id="frameID" expr="`&amp;` + $this.transfer.tx_transfer.frame.getValue()"/>
+            </fragment>
+         </section>
+         <section target="global_vars_extern">
+            <!-- Transfer handle definition -->
+            <fragment id="extern_var" apply_to="$this.transfer.transfer_handle">
+               <param id="name" expr="$this.getValue()" />
+               <param id="type">flexcan_handle_t</param>
+            </fragment>
+            <!-- Rx transfer buffer definition -->
+            <fragment id="extern_var" apply_to="$this.transfer.rx_transfer" if_expr="$this.transfer.init_rx_transfer.getValue()">
+               <param id="name" expr="$this.frame.getValue()" />
+               <param id="type">flexcan_frame_t</param>
+            </fragment>
+            <!-- RX transfer structures -->
+            <fragment id="extern_const_var" if_expr="$this.transfer.init_rx_transfer.getValue()">
+               <param id="name" expr="$configSet.rx_transfer_struct_id.getValue()"/>
+               <param id="type">flexcan_mb_transfer_t</param>
+            </fragment>
+            <!-- Tx transfer buffer definition -->
+            <fragment id="extern_var" apply_to="$this.transfer.tx_transfer" if_expr="$this.transfer.init_tx_transfer.getValue()">
+               <param id="name" expr="$this.frame.getValue()" />
+               <param id="type">flexcan_frame_t</param>
+            </fragment>
+            <!-- TX transfer structures -->
+            <fragment id="extern_const_var" if_expr="$this.transfer.init_tx_transfer.getValue()">
+               <param id="name" expr="$configSet.tx_transfer_struct_id.getValue()"/>
+               <param id="type">flexcan_mb_transfer_t</param>
+            </fragment>
+            <!-- user data pointer of the callback function -->
+            <fragment id="extern_var" if_expr="$this.transfer.init_callback.getValue() &amp;&amp; ($this.transfer.user_data.getValue() != ``)">
+               <param id="name" expr="$this.transfer.user_data.getValue()"/>
+               <param id="type" expr="`void *`"/>
+            </fragment>
+         </section>
+         <section target="callback_function_extern">
+            <!-- Transfer callback function declaration -->
+            <!-- typedef void (*flexcan_transfer_callback_t)(CAN_Type *base, flexcan_handle_t *handle, status_t status, uint32_t result, void *userData); -->
+            <fragment id="extern_fcn_def" if_expr="$this.transfer.init_callback.getValue()">
+               <param id="name" expr="$this.transfer.callback_fcn.getValue()"/>
+               <param id="type">void</param>
+               <param id="params">CAN_Type *, flexcan_handle_t *, status_t, uint32_t, void *</param>
+               <param id="description" expr="`FlexCAN transfer callback function for the ` + $instance.getID() +` component (init. function `+ $instance.getFnGroupName() + `)` "/>
+            </fragment>
+         </section>
+         <section target="init_function_body">
+            <expr>leftPadding(`FLEXCAN_TransferCreateHandle(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, &amp;`) +  $this.transfer.transfer_handle.getValue() + `, ` + ($this.transfer.init_callback.getValue() ? $this.transfer.callback_fcn.getValue() : `NULL`   ) + `, ` + (($this.transfer.init_callback.getValue() &amp;&amp; ($this.transfer.user_data.getValue()!=``)) ? $this.transfer.user_data.getValue() : `NULL`)  + `);`, 1)</expr><br/>
+             <!-- Interrupt priority function definitions -->
+             <fragment id="IRQn_set_priority_default" if_expr="$this.interrupt_priority_settings.enable_irq.getValue() &amp;&amp; $this.interrupt_priority_settings.sharedInterrupt_transfer.getValue()" apply_to="$this.interrupt_priority_settings.interrupt_shared"/>
+             <fragment id="IRQn_set_priority_default" if_expr="$this.interrupt_priority_settings.interrupt_ored_mb.isAvailable()" apply_to="$this.interrupt_priority_settings.interrupt_ored_mb"/>
+             <fragment id="IRQn_set_priority_default" if_expr="$this.interrupt_priority_settings.interrupt_busoff.isAvailable()" apply_to="$this.interrupt_priority_settings.interrupt_busoff"/>
+             <fragment id="IRQn_set_priority_default" if_expr="$this.interrupt_priority_settings.interrupt_error.isAvailable()" apply_to="$this.interrupt_priority_settings.interrupt_error"/>
+             <fragment id="IRQn_set_priority_default" if_expr="$this.interrupt_priority_settings.interrupt_tx.isAvailable()" apply_to="$this.interrupt_priority_settings.interrupt_tx"/>
+             <fragment id="IRQn_set_priority_default" if_expr="$this.interrupt_priority_settings.interrupt_rx.isAvailable()" apply_to="$this.interrupt_priority_settings.interrupt_rx"/>
+             <fragment id="IRQn_set_priority_default" if_expr="$this.interrupt_priority_settings.interrupt_wakeup.isAvailable()" apply_to="$this.interrupt_priority_settings.interrupt_wakeup"/>
+         </section>
+      </code>
+      <quick_selections>
+         <quick_selection id="QuickSelection1" label="Rx/Tx transfer enabled">
+            <set id="transfer.init_rx_transfer">true</set>
+            <set id="transfer.rx_transfer.frame">FrameRx</set>
+            <set id="transfer.rx_transfer.mbIdx">0</set>
+            <set id="transfer.init_tx_transfer">true</set>
+            <set id="transfer.tx_transfer.frame">FrameTx</set>
+            <set id="transfer.tx_transfer.mbIdx">1</set>
+         </quick_selection>
+         <default>QuickSelection1</default>
+      </quick_selections>
+   </config_set>
+   <!-- FlexCAN edma mode is not supported yet
+   <config_set id="fsl_flexcan_edma" label="TBD" from_source="fsl_flexcan_edma.h">
+      <description>TBD</description>
+      <generated_types>
+         <struct id="flexcan_edma_handle_t" label="" from="_flexcan_edma_handle">
+            <reference id="callback" label="Callback function" type="flexcan_edma_transfer_callback_t">
+               <description>Callback function.</description>
+            </reference>
+            <fixme id="userData" label="FlexCAN callback function parameter" type="void *">
+               <description>FlexCAN callback function parameter.</description>
+            </fixme>
+            <fixme id="rxFifoEdmaHandle" label="The EDMA Rx FIFO channel used" type="edma_handle_t *">
+               <description>The EDMA Rx FIFO channel used.</description>
+            </fixme>
+            <integer id="rxFifoState" label="Rx FIFO transfer state" type="uint8_t">
+               <description>Rx FIFO transfer state.</description>
+            </integer>
+         </struct>
+         <fixme id="flexcan_edma_transfer_callback_t" label="FlexCAN transfer callback function" type="void(*"/>
+      </generated_types>
+      <user_types>
+         <integer id="TBD" label="TBD" type="uint32_t" available="TBD">
+            <description>TBD</description>
+         </integer>
+      </user_types>
+      <settings>
+<!-\-         <reference id="TBD" label="TBD" type="TBD" config_set_id="TBD" component_id="TBD" available="TBD">
+            <description>TBD</description>
+         </reference>-\->
+      </settings>
+      <fragment_defs>
+         
+      </fragment_defs>
+      <code>
+         
+      </code>
+      <validation/>
+      <quick_selections>
+         <quick_selection id="default" label="Default">
+            <description>Typical settings</description>
+<!-\-            <set id="TBD">TBD</set>-\->
+         </quick_selection>
+         <default>default</default>
+      </quick_selections>
+   </config_set>-->
+</component:config_component>

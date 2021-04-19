@@ -1,0 +1,637 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="32" name="CSAR0" description="Chip Select Address Register">
+    <alias type="CMSIS" value="CS[0].CSAR"/>
+    <reserved_bit_field offset="0" width="16" reset_value="0"/>
+    <bit_field offset="16" width="16" name="BA" access="RW" reset_value="0" description="Base Address">
+      <alias type="CMSIS" value="FB_CSAR_BA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x4" width="32" name="CSMR0" description="Chip Select Mask Register">
+    <alias type="CMSIS" value="CS[0].CSMR"/>
+    <bit_field offset="0" width="1" name="V" access="RW" reset_value="0" description="Valid">
+      <alias type="CMSIS" value="FB_CSMR_V(x)"/>
+      <bit_field_value name="CS_V_0b0" value="0b0" description="Chip-select is invalid."/>
+      <bit_field_value name="CS_V_0b1" value="0b1" description="Chip-select is valid."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="7" reset_value="0"/>
+    <bit_field offset="8" width="1" name="WP" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="FB_CSMR_WP(x)"/>
+      <bit_field_value name="CS_WP_0b0" value="0b0" description="Write accesses are allowed."/>
+      <bit_field_value name="CS_WP_0b1" value="0b1" description="Write accesses are not allowed. Attempting to write to the range of addresses for which the WP bit is set results in a bus error termination of the internal cycle and no external cycle."/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="7" reset_value="0"/>
+    <bit_field_array offset="16" width="16" item_width="1" name="BAM" access="RW" reset_value="0" description="Base Address Mask">
+      <alias type="CMSIS" value="FB_CSMR_BAM(x)"/>
+      <bit_field_value name="CS_BAM_0b0000000000000000" value="0b0" description="The corresponding address bit in CSAR is used in the chip-select decode."/>
+      <bit_field_value name="CS_BAM_0b0000000000000001" value="0b1" description="The corresponding address bit in CSAR is a don't care in the chip-select decode."/>
+    </bit_field_array>
+  </register>
+  <register offset="0x8" width="32" name="CSCR0" description="Chip Select Control Register">
+    <alias type="CMSIS" value="CS[0].CSCR"/>
+    <reserved_bit_field offset="0" width="3" reset_value="0"/>
+    <bit_field offset="3" width="1" name="BSTW" access="RW" reset_value="0" description="Burst-Write Enable">
+      <alias type="CMSIS" value="FB_CSCR_BSTW(x)"/>
+      <bit_field_value name="CS_BSTW_0b0" value="0b0" description="Disabled. Data exceeding the specified port size is broken into individual, port-sized, non-burst writes. For example, a 32-bit write to an 8-bit port takes four byte writes."/>
+      <bit_field_value name="CS_BSTW_0b1" value="0b1" description="Enabled. Enables burst write of data larger than the specified port size, including 32-bit writes to 8- and 16-bit ports, 16-bit writes to 8-bit ports, and line writes to 8-, 16-, and 32-bit ports."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="BSTR" access="RW" reset_value="0" description="Burst-Read Enable">
+      <alias type="CMSIS" value="FB_CSCR_BSTR(x)"/>
+      <bit_field_value name="CS_BSTR_0b0" value="0b0" description="Disabled. Data exceeding the specified port size is broken into individual, port-sized, non-burst reads. For example, a 32-bit read from an 8-bit port is broken into four 8-bit reads."/>
+      <bit_field_value name="CS_BSTR_0b1" value="0b1" description="Enabled. Enables data burst reads larger than the specified port size, including 32-bit reads from 8- and 16-bit ports, 16-bit reads from 8-bit ports, and line reads from 8-, 16-, and 32-bit ports."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="BEM" access="RW" reset_value="0" description="Byte-Enable Mode">
+      <alias type="CMSIS" value="FB_CSCR_BEM(x)"/>
+      <bit_field_value name="CS_BEM_0b0" value="0b0" description="FB_BE is asserted for data write only."/>
+      <bit_field_value name="CS_BEM_0b1" value="0b1" description="FB_BE is asserted for data read and write accesses."/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="PS" access="RW" reset_value="0" description="Port Size">
+      <alias type="CMSIS" value="FB_CSCR_PS(x)"/>
+      <bit_field_value name="CS_PS_0b00" value="0b00" description="32-bit port size. Valid data is sampled and driven on FB_D[31:0]."/>
+      <bit_field_value name="CS_PS_0b01" value="0b01" description="8-bit port size. Valid data is sampled and driven on FB_D[31:24] when BLS is 0b, or FB_D[7:0] when BLS is 1b."/>
+      <bit_field_value name="CS_PS_0b1x" value="0b1?" description="16-bit port size. Valid data is sampled and driven on FB_D[31:16] when BLS is 0b, or FB_D[15:0] when BLS is 1b."/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="AA" access="RW" reset_value="0" description="Auto-Acknowledge Enable">
+      <alias type="CMSIS" value="FB_CSCR_AA(x)"/>
+      <bit_field_value name="CS_AA_0b0" value="0b0" description="Disabled. No internal transfer acknowledge is asserted and the cycle is terminated externally."/>
+      <bit_field_value name="CS_AA_0b1" value="0b1" description="Enabled. Internal transfer acknowledge is asserted as specified by WS."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="BLS" access="RW" reset_value="0" description="Byte-Lane Shift">
+      <alias type="CMSIS" value="FB_CSCR_BLS(x)"/>
+      <bit_field_value name="CS_BLS_0b0" value="0b0" description="Not shifted. Data is left-aligned on FB_AD."/>
+      <bit_field_value name="CS_BLS_0b1" value="0b1" description="Shifted. Data is right-aligned on FB_AD."/>
+    </bit_field>
+    <bit_field offset="10" width="6" name="WS" access="RW" reset_value="0x3F" description="Wait States">
+      <alias type="CMSIS" value="FB_CSCR_WS(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="2" name="WRAH" access="RW" reset_value="0x3" description="Write Address Hold or Deselect">
+      <alias type="CMSIS" value="FB_CSCR_WRAH(x)"/>
+      <bit_field_value name="CS_WRAH_0b00" value="0b00" description="1 cycle (default for all but FB_CS0 )"/>
+      <bit_field_value name="CS_WRAH_0b01" value="0b01" description="2 cycles"/>
+      <bit_field_value name="CS_WRAH_0b10" value="0b10" description="3 cycles"/>
+      <bit_field_value name="CS_WRAH_0b11" value="0b11" description="4 cycles (default for FB_CS0 )"/>
+    </bit_field>
+    <bit_field offset="18" width="2" name="RDAH" access="RW" reset_value="0x3" description="Read Address Hold or Deselect">
+      <alias type="CMSIS" value="FB_CSCR_RDAH(x)"/>
+      <bit_field_value name="CS_RDAH_0b00" value="0b00" description="When AA is 1b, 1 cycle. When AA is 0b, 0 cycles."/>
+      <bit_field_value name="CS_RDAH_0b01" value="0b01" description="When AA is 1b, 2 cycles. When AA is 0b, 1 cycle."/>
+      <bit_field_value name="CS_RDAH_0b10" value="0b10" description="When AA is 1b, 3 cycles. When AA is 0b, 2 cycles."/>
+      <bit_field_value name="CS_RDAH_0b11" value="0b11" description="When AA is 1b, 4 cycles. When AA is 0b, 3 cycles."/>
+    </bit_field>
+    <bit_field offset="20" width="2" name="ASET" access="RW" reset_value="0x3" description="Address Setup">
+      <alias type="CMSIS" value="FB_CSCR_ASET(x)"/>
+      <bit_field_value name="CS_ASET_0b00" value="0b00" description="Assert FB_CSn on the first rising clock edge after the address is asserted (default for all but FB_CS0 )."/>
+      <bit_field_value name="CS_ASET_0b01" value="0b01" description="Assert FB_CSn on the second rising clock edge after the address is asserted."/>
+      <bit_field_value name="CS_ASET_0b10" value="0b10" description="Assert FB_CSn on the third rising clock edge after the address is asserted."/>
+      <bit_field_value name="CS_ASET_0b11" value="0b11" description="Assert FB_CSn on the fourth rising clock edge after the address is asserted (default for FB_CS0 )."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="EXTS" access="RW" reset_value="0" description="Extended Transfer Start/Extended Address Latch Enable Controls how long FB_TS /FB_ALE is asserted.">
+      <alias type="CMSIS" value="FB_CSCR_EXTS(x)"/>
+      <bit_field_value name="CS_EXTS_0b0" value="0b0" description="Disabled. FB_TS /FB_ALE asserts for one bus clock cycle."/>
+      <bit_field_value name="CS_EXTS_0b1" value="0b1" description="Enabled. FB_TS /FB_ALE remains asserted until the first positive clock edge after FB_CSn asserts."/>
+    </bit_field>
+    <bit_field offset="23" width="1" name="SWSEN" access="RW" reset_value="0" description="Secondary Wait State Enable">
+      <alias type="CMSIS" value="FB_CSCR_SWSEN(x)"/>
+      <bit_field_value name="CS_SWSEN_0b0" value="0b0" description="Disabled. A number of wait states (specified by WS) are inserted before an internal transfer acknowledge is generated for all transfers."/>
+      <bit_field_value name="CS_SWSEN_0b1" value="0b1" description="Enabled. A number of wait states (specified by SWS) are inserted before an internal transfer acknowledge is generated for burst transfer secondary terminations."/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="2" reset_value="0"/>
+    <bit_field offset="26" width="6" name="SWS" access="RW" reset_value="0" description="Secondary Wait States">
+      <alias type="CMSIS" value="FB_CSCR_SWS(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xC" width="32" name="CSAR1" description="Chip Select Address Register">
+    <alias type="CMSIS" value="CS[1].CSAR"/>
+    <reserved_bit_field offset="0" width="16" reset_value="0"/>
+    <bit_field offset="16" width="16" name="BA" access="RW" reset_value="0" description="Base Address">
+      <alias type="CMSIS" value="FB_CSAR_BA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x10" width="32" name="CSMR1" description="Chip Select Mask Register">
+    <alias type="CMSIS" value="CS[1].CSMR"/>
+    <bit_field offset="0" width="1" name="V" access="RW" reset_value="0" description="Valid">
+      <alias type="CMSIS" value="FB_CSMR_V(x)"/>
+      <bit_field_value name="CS_V_0b0" value="0b0" description="Chip-select is invalid."/>
+      <bit_field_value name="CS_V_0b1" value="0b1" description="Chip-select is valid."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="7" reset_value="0"/>
+    <bit_field offset="8" width="1" name="WP" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="FB_CSMR_WP(x)"/>
+      <bit_field_value name="CS_WP_0b0" value="0b0" description="Write accesses are allowed."/>
+      <bit_field_value name="CS_WP_0b1" value="0b1" description="Write accesses are not allowed. Attempting to write to the range of addresses for which the WP bit is set results in a bus error termination of the internal cycle and no external cycle."/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="7" reset_value="0"/>
+    <bit_field_array offset="16" width="16" item_width="1" name="BAM" access="RW" reset_value="0" description="Base Address Mask">
+      <alias type="CMSIS" value="FB_CSMR_BAM(x)"/>
+      <bit_field_value name="CS_BAM_0b0000000000000000" value="0b0" description="The corresponding address bit in CSAR is used in the chip-select decode."/>
+      <bit_field_value name="CS_BAM_0b0000000000000001" value="0b1" description="The corresponding address bit in CSAR is a don't care in the chip-select decode."/>
+    </bit_field_array>
+  </register>
+  <register offset="0x14" width="32" name="CSCR1" description="Chip Select Control Register">
+    <alias type="CMSIS" value="CS[1].CSCR"/>
+    <reserved_bit_field offset="0" width="3" reset_value="0"/>
+    <bit_field offset="3" width="1" name="BSTW" access="RW" reset_value="0" description="Burst-Write Enable">
+      <alias type="CMSIS" value="FB_CSCR_BSTW(x)"/>
+      <bit_field_value name="CS_BSTW_0b0" value="0b0" description="Disabled. Data exceeding the specified port size is broken into individual, port-sized, non-burst writes. For example, a 32-bit write to an 8-bit port takes four byte writes."/>
+      <bit_field_value name="CS_BSTW_0b1" value="0b1" description="Enabled. Enables burst write of data larger than the specified port size, including 32-bit writes to 8- and 16-bit ports, 16-bit writes to 8-bit ports, and line writes to 8-, 16-, and 32-bit ports."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="BSTR" access="RW" reset_value="0" description="Burst-Read Enable">
+      <alias type="CMSIS" value="FB_CSCR_BSTR(x)"/>
+      <bit_field_value name="CS_BSTR_0b0" value="0b0" description="Disabled. Data exceeding the specified port size is broken into individual, port-sized, non-burst reads. For example, a 32-bit read from an 8-bit port is broken into four 8-bit reads."/>
+      <bit_field_value name="CS_BSTR_0b1" value="0b1" description="Enabled. Enables data burst reads larger than the specified port size, including 32-bit reads from 8- and 16-bit ports, 16-bit reads from 8-bit ports, and line reads from 8-, 16-, and 32-bit ports."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="BEM" access="RW" reset_value="0" description="Byte-Enable Mode">
+      <alias type="CMSIS" value="FB_CSCR_BEM(x)"/>
+      <bit_field_value name="CS_BEM_0b0" value="0b0" description="FB_BE is asserted for data write only."/>
+      <bit_field_value name="CS_BEM_0b1" value="0b1" description="FB_BE is asserted for data read and write accesses."/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="PS" access="RW" reset_value="0" description="Port Size">
+      <alias type="CMSIS" value="FB_CSCR_PS(x)"/>
+      <bit_field_value name="CS_PS_0b00" value="0b00" description="32-bit port size. Valid data is sampled and driven on FB_D[31:0]."/>
+      <bit_field_value name="CS_PS_0b01" value="0b01" description="8-bit port size. Valid data is sampled and driven on FB_D[31:24] when BLS is 0b, or FB_D[7:0] when BLS is 1b."/>
+      <bit_field_value name="CS_PS_0b1x" value="0b1?" description="16-bit port size. Valid data is sampled and driven on FB_D[31:16] when BLS is 0b, or FB_D[15:0] when BLS is 1b."/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="AA" access="RW" reset_value="0" description="Auto-Acknowledge Enable">
+      <alias type="CMSIS" value="FB_CSCR_AA(x)"/>
+      <bit_field_value name="CS_AA_0b0" value="0b0" description="Disabled. No internal transfer acknowledge is asserted and the cycle is terminated externally."/>
+      <bit_field_value name="CS_AA_0b1" value="0b1" description="Enabled. Internal transfer acknowledge is asserted as specified by WS."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="BLS" access="RW" reset_value="0" description="Byte-Lane Shift">
+      <alias type="CMSIS" value="FB_CSCR_BLS(x)"/>
+      <bit_field_value name="CS_BLS_0b0" value="0b0" description="Not shifted. Data is left-aligned on FB_AD."/>
+      <bit_field_value name="CS_BLS_0b1" value="0b1" description="Shifted. Data is right-aligned on FB_AD."/>
+    </bit_field>
+    <bit_field offset="10" width="6" name="WS" access="RW" reset_value="0" description="Wait States">
+      <alias type="CMSIS" value="FB_CSCR_WS(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="2" name="WRAH" access="RW" reset_value="0" description="Write Address Hold or Deselect">
+      <alias type="CMSIS" value="FB_CSCR_WRAH(x)"/>
+      <bit_field_value name="CS_WRAH_0b00" value="0b00" description="1 cycle (default for all but FB_CS0 )"/>
+      <bit_field_value name="CS_WRAH_0b01" value="0b01" description="2 cycles"/>
+      <bit_field_value name="CS_WRAH_0b10" value="0b10" description="3 cycles"/>
+      <bit_field_value name="CS_WRAH_0b11" value="0b11" description="4 cycles (default for FB_CS0 )"/>
+    </bit_field>
+    <bit_field offset="18" width="2" name="RDAH" access="RW" reset_value="0" description="Read Address Hold or Deselect">
+      <alias type="CMSIS" value="FB_CSCR_RDAH(x)"/>
+      <bit_field_value name="CS_RDAH_0b00" value="0b00" description="When AA is 1b, 1 cycle. When AA is 0b, 0 cycles."/>
+      <bit_field_value name="CS_RDAH_0b01" value="0b01" description="When AA is 1b, 2 cycles. When AA is 0b, 1 cycle."/>
+      <bit_field_value name="CS_RDAH_0b10" value="0b10" description="When AA is 1b, 3 cycles. When AA is 0b, 2 cycles."/>
+      <bit_field_value name="CS_RDAH_0b11" value="0b11" description="When AA is 1b, 4 cycles. When AA is 0b, 3 cycles."/>
+    </bit_field>
+    <bit_field offset="20" width="2" name="ASET" access="RW" reset_value="0" description="Address Setup">
+      <alias type="CMSIS" value="FB_CSCR_ASET(x)"/>
+      <bit_field_value name="CS_ASET_0b00" value="0b00" description="Assert FB_CSn on the first rising clock edge after the address is asserted (default for all but FB_CS0 )."/>
+      <bit_field_value name="CS_ASET_0b01" value="0b01" description="Assert FB_CSn on the second rising clock edge after the address is asserted."/>
+      <bit_field_value name="CS_ASET_0b10" value="0b10" description="Assert FB_CSn on the third rising clock edge after the address is asserted."/>
+      <bit_field_value name="CS_ASET_0b11" value="0b11" description="Assert FB_CSn on the fourth rising clock edge after the address is asserted (default for FB_CS0 )."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="EXTS" access="RW" reset_value="0" description="Extended Transfer Start/Extended Address Latch Enable Controls how long FB_TS /FB_ALE is asserted.">
+      <alias type="CMSIS" value="FB_CSCR_EXTS(x)"/>
+      <bit_field_value name="CS_EXTS_0b0" value="0b0" description="Disabled. FB_TS /FB_ALE asserts for one bus clock cycle."/>
+      <bit_field_value name="CS_EXTS_0b1" value="0b1" description="Enabled. FB_TS /FB_ALE remains asserted until the first positive clock edge after FB_CSn asserts."/>
+    </bit_field>
+    <bit_field offset="23" width="1" name="SWSEN" access="RW" reset_value="0" description="Secondary Wait State Enable">
+      <alias type="CMSIS" value="FB_CSCR_SWSEN(x)"/>
+      <bit_field_value name="CS_SWSEN_0b0" value="0b0" description="Disabled. A number of wait states (specified by WS) are inserted before an internal transfer acknowledge is generated for all transfers."/>
+      <bit_field_value name="CS_SWSEN_0b1" value="0b1" description="Enabled. A number of wait states (specified by SWS) are inserted before an internal transfer acknowledge is generated for burst transfer secondary terminations."/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="2" reset_value="0"/>
+    <bit_field offset="26" width="6" name="SWS" access="RW" reset_value="0" description="Secondary Wait States">
+      <alias type="CMSIS" value="FB_CSCR_SWS(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x18" width="32" name="CSAR2" description="Chip Select Address Register">
+    <alias type="CMSIS" value="CS[2].CSAR"/>
+    <reserved_bit_field offset="0" width="16" reset_value="0"/>
+    <bit_field offset="16" width="16" name="BA" access="RW" reset_value="0" description="Base Address">
+      <alias type="CMSIS" value="FB_CSAR_BA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x1C" width="32" name="CSMR2" description="Chip Select Mask Register">
+    <alias type="CMSIS" value="CS[2].CSMR"/>
+    <bit_field offset="0" width="1" name="V" access="RW" reset_value="0" description="Valid">
+      <alias type="CMSIS" value="FB_CSMR_V(x)"/>
+      <bit_field_value name="CS_V_0b0" value="0b0" description="Chip-select is invalid."/>
+      <bit_field_value name="CS_V_0b1" value="0b1" description="Chip-select is valid."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="7" reset_value="0"/>
+    <bit_field offset="8" width="1" name="WP" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="FB_CSMR_WP(x)"/>
+      <bit_field_value name="CS_WP_0b0" value="0b0" description="Write accesses are allowed."/>
+      <bit_field_value name="CS_WP_0b1" value="0b1" description="Write accesses are not allowed. Attempting to write to the range of addresses for which the WP bit is set results in a bus error termination of the internal cycle and no external cycle."/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="7" reset_value="0"/>
+    <bit_field_array offset="16" width="16" item_width="1" name="BAM" access="RW" reset_value="0" description="Base Address Mask">
+      <alias type="CMSIS" value="FB_CSMR_BAM(x)"/>
+      <bit_field_value name="CS_BAM_0b0000000000000000" value="0b0" description="The corresponding address bit in CSAR is used in the chip-select decode."/>
+      <bit_field_value name="CS_BAM_0b0000000000000001" value="0b1" description="The corresponding address bit in CSAR is a don't care in the chip-select decode."/>
+    </bit_field_array>
+  </register>
+  <register offset="0x20" width="32" name="CSCR2" description="Chip Select Control Register">
+    <alias type="CMSIS" value="CS[2].CSCR"/>
+    <reserved_bit_field offset="0" width="3" reset_value="0"/>
+    <bit_field offset="3" width="1" name="BSTW" access="RW" reset_value="0" description="Burst-Write Enable">
+      <alias type="CMSIS" value="FB_CSCR_BSTW(x)"/>
+      <bit_field_value name="CS_BSTW_0b0" value="0b0" description="Disabled. Data exceeding the specified port size is broken into individual, port-sized, non-burst writes. For example, a 32-bit write to an 8-bit port takes four byte writes."/>
+      <bit_field_value name="CS_BSTW_0b1" value="0b1" description="Enabled. Enables burst write of data larger than the specified port size, including 32-bit writes to 8- and 16-bit ports, 16-bit writes to 8-bit ports, and line writes to 8-, 16-, and 32-bit ports."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="BSTR" access="RW" reset_value="0" description="Burst-Read Enable">
+      <alias type="CMSIS" value="FB_CSCR_BSTR(x)"/>
+      <bit_field_value name="CS_BSTR_0b0" value="0b0" description="Disabled. Data exceeding the specified port size is broken into individual, port-sized, non-burst reads. For example, a 32-bit read from an 8-bit port is broken into four 8-bit reads."/>
+      <bit_field_value name="CS_BSTR_0b1" value="0b1" description="Enabled. Enables data burst reads larger than the specified port size, including 32-bit reads from 8- and 16-bit ports, 16-bit reads from 8-bit ports, and line reads from 8-, 16-, and 32-bit ports."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="BEM" access="RW" reset_value="0" description="Byte-Enable Mode">
+      <alias type="CMSIS" value="FB_CSCR_BEM(x)"/>
+      <bit_field_value name="CS_BEM_0b0" value="0b0" description="FB_BE is asserted for data write only."/>
+      <bit_field_value name="CS_BEM_0b1" value="0b1" description="FB_BE is asserted for data read and write accesses."/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="PS" access="RW" reset_value="0" description="Port Size">
+      <alias type="CMSIS" value="FB_CSCR_PS(x)"/>
+      <bit_field_value name="CS_PS_0b00" value="0b00" description="32-bit port size. Valid data is sampled and driven on FB_D[31:0]."/>
+      <bit_field_value name="CS_PS_0b01" value="0b01" description="8-bit port size. Valid data is sampled and driven on FB_D[31:24] when BLS is 0b, or FB_D[7:0] when BLS is 1b."/>
+      <bit_field_value name="CS_PS_0b1x" value="0b1?" description="16-bit port size. Valid data is sampled and driven on FB_D[31:16] when BLS is 0b, or FB_D[15:0] when BLS is 1b."/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="AA" access="RW" reset_value="0" description="Auto-Acknowledge Enable">
+      <alias type="CMSIS" value="FB_CSCR_AA(x)"/>
+      <bit_field_value name="CS_AA_0b0" value="0b0" description="Disabled. No internal transfer acknowledge is asserted and the cycle is terminated externally."/>
+      <bit_field_value name="CS_AA_0b1" value="0b1" description="Enabled. Internal transfer acknowledge is asserted as specified by WS."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="BLS" access="RW" reset_value="0" description="Byte-Lane Shift">
+      <alias type="CMSIS" value="FB_CSCR_BLS(x)"/>
+      <bit_field_value name="CS_BLS_0b0" value="0b0" description="Not shifted. Data is left-aligned on FB_AD."/>
+      <bit_field_value name="CS_BLS_0b1" value="0b1" description="Shifted. Data is right-aligned on FB_AD."/>
+    </bit_field>
+    <bit_field offset="10" width="6" name="WS" access="RW" reset_value="0" description="Wait States">
+      <alias type="CMSIS" value="FB_CSCR_WS(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="2" name="WRAH" access="RW" reset_value="0" description="Write Address Hold or Deselect">
+      <alias type="CMSIS" value="FB_CSCR_WRAH(x)"/>
+      <bit_field_value name="CS_WRAH_0b00" value="0b00" description="1 cycle (default for all but FB_CS0 )"/>
+      <bit_field_value name="CS_WRAH_0b01" value="0b01" description="2 cycles"/>
+      <bit_field_value name="CS_WRAH_0b10" value="0b10" description="3 cycles"/>
+      <bit_field_value name="CS_WRAH_0b11" value="0b11" description="4 cycles (default for FB_CS0 )"/>
+    </bit_field>
+    <bit_field offset="18" width="2" name="RDAH" access="RW" reset_value="0" description="Read Address Hold or Deselect">
+      <alias type="CMSIS" value="FB_CSCR_RDAH(x)"/>
+      <bit_field_value name="CS_RDAH_0b00" value="0b00" description="When AA is 1b, 1 cycle. When AA is 0b, 0 cycles."/>
+      <bit_field_value name="CS_RDAH_0b01" value="0b01" description="When AA is 1b, 2 cycles. When AA is 0b, 1 cycle."/>
+      <bit_field_value name="CS_RDAH_0b10" value="0b10" description="When AA is 1b, 3 cycles. When AA is 0b, 2 cycles."/>
+      <bit_field_value name="CS_RDAH_0b11" value="0b11" description="When AA is 1b, 4 cycles. When AA is 0b, 3 cycles."/>
+    </bit_field>
+    <bit_field offset="20" width="2" name="ASET" access="RW" reset_value="0" description="Address Setup">
+      <alias type="CMSIS" value="FB_CSCR_ASET(x)"/>
+      <bit_field_value name="CS_ASET_0b00" value="0b00" description="Assert FB_CSn on the first rising clock edge after the address is asserted (default for all but FB_CS0 )."/>
+      <bit_field_value name="CS_ASET_0b01" value="0b01" description="Assert FB_CSn on the second rising clock edge after the address is asserted."/>
+      <bit_field_value name="CS_ASET_0b10" value="0b10" description="Assert FB_CSn on the third rising clock edge after the address is asserted."/>
+      <bit_field_value name="CS_ASET_0b11" value="0b11" description="Assert FB_CSn on the fourth rising clock edge after the address is asserted (default for FB_CS0 )."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="EXTS" access="RW" reset_value="0" description="Extended Transfer Start/Extended Address Latch Enable Controls how long FB_TS /FB_ALE is asserted.">
+      <alias type="CMSIS" value="FB_CSCR_EXTS(x)"/>
+      <bit_field_value name="CS_EXTS_0b0" value="0b0" description="Disabled. FB_TS /FB_ALE asserts for one bus clock cycle."/>
+      <bit_field_value name="CS_EXTS_0b1" value="0b1" description="Enabled. FB_TS /FB_ALE remains asserted until the first positive clock edge after FB_CSn asserts."/>
+    </bit_field>
+    <bit_field offset="23" width="1" name="SWSEN" access="RW" reset_value="0" description="Secondary Wait State Enable">
+      <alias type="CMSIS" value="FB_CSCR_SWSEN(x)"/>
+      <bit_field_value name="CS_SWSEN_0b0" value="0b0" description="Disabled. A number of wait states (specified by WS) are inserted before an internal transfer acknowledge is generated for all transfers."/>
+      <bit_field_value name="CS_SWSEN_0b1" value="0b1" description="Enabled. A number of wait states (specified by SWS) are inserted before an internal transfer acknowledge is generated for burst transfer secondary terminations."/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="2" reset_value="0"/>
+    <bit_field offset="26" width="6" name="SWS" access="RW" reset_value="0" description="Secondary Wait States">
+      <alias type="CMSIS" value="FB_CSCR_SWS(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x24" width="32" name="CSAR3" description="Chip Select Address Register">
+    <alias type="CMSIS" value="CS[3].CSAR"/>
+    <reserved_bit_field offset="0" width="16" reset_value="0"/>
+    <bit_field offset="16" width="16" name="BA" access="RW" reset_value="0" description="Base Address">
+      <alias type="CMSIS" value="FB_CSAR_BA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x28" width="32" name="CSMR3" description="Chip Select Mask Register">
+    <alias type="CMSIS" value="CS[3].CSMR"/>
+    <bit_field offset="0" width="1" name="V" access="RW" reset_value="0" description="Valid">
+      <alias type="CMSIS" value="FB_CSMR_V(x)"/>
+      <bit_field_value name="CS_V_0b0" value="0b0" description="Chip-select is invalid."/>
+      <bit_field_value name="CS_V_0b1" value="0b1" description="Chip-select is valid."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="7" reset_value="0"/>
+    <bit_field offset="8" width="1" name="WP" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="FB_CSMR_WP(x)"/>
+      <bit_field_value name="CS_WP_0b0" value="0b0" description="Write accesses are allowed."/>
+      <bit_field_value name="CS_WP_0b1" value="0b1" description="Write accesses are not allowed. Attempting to write to the range of addresses for which the WP bit is set results in a bus error termination of the internal cycle and no external cycle."/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="7" reset_value="0"/>
+    <bit_field_array offset="16" width="16" item_width="1" name="BAM" access="RW" reset_value="0" description="Base Address Mask">
+      <alias type="CMSIS" value="FB_CSMR_BAM(x)"/>
+      <bit_field_value name="CS_BAM_0b0000000000000000" value="0b0" description="The corresponding address bit in CSAR is used in the chip-select decode."/>
+      <bit_field_value name="CS_BAM_0b0000000000000001" value="0b1" description="The corresponding address bit in CSAR is a don't care in the chip-select decode."/>
+    </bit_field_array>
+  </register>
+  <register offset="0x2C" width="32" name="CSCR3" description="Chip Select Control Register">
+    <alias type="CMSIS" value="CS[3].CSCR"/>
+    <reserved_bit_field offset="0" width="3" reset_value="0"/>
+    <bit_field offset="3" width="1" name="BSTW" access="RW" reset_value="0" description="Burst-Write Enable">
+      <alias type="CMSIS" value="FB_CSCR_BSTW(x)"/>
+      <bit_field_value name="CS_BSTW_0b0" value="0b0" description="Disabled. Data exceeding the specified port size is broken into individual, port-sized, non-burst writes. For example, a 32-bit write to an 8-bit port takes four byte writes."/>
+      <bit_field_value name="CS_BSTW_0b1" value="0b1" description="Enabled. Enables burst write of data larger than the specified port size, including 32-bit writes to 8- and 16-bit ports, 16-bit writes to 8-bit ports, and line writes to 8-, 16-, and 32-bit ports."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="BSTR" access="RW" reset_value="0" description="Burst-Read Enable">
+      <alias type="CMSIS" value="FB_CSCR_BSTR(x)"/>
+      <bit_field_value name="CS_BSTR_0b0" value="0b0" description="Disabled. Data exceeding the specified port size is broken into individual, port-sized, non-burst reads. For example, a 32-bit read from an 8-bit port is broken into four 8-bit reads."/>
+      <bit_field_value name="CS_BSTR_0b1" value="0b1" description="Enabled. Enables data burst reads larger than the specified port size, including 32-bit reads from 8- and 16-bit ports, 16-bit reads from 8-bit ports, and line reads from 8-, 16-, and 32-bit ports."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="BEM" access="RW" reset_value="0" description="Byte-Enable Mode">
+      <alias type="CMSIS" value="FB_CSCR_BEM(x)"/>
+      <bit_field_value name="CS_BEM_0b0" value="0b0" description="FB_BE is asserted for data write only."/>
+      <bit_field_value name="CS_BEM_0b1" value="0b1" description="FB_BE is asserted for data read and write accesses."/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="PS" access="RW" reset_value="0" description="Port Size">
+      <alias type="CMSIS" value="FB_CSCR_PS(x)"/>
+      <bit_field_value name="CS_PS_0b00" value="0b00" description="32-bit port size. Valid data is sampled and driven on FB_D[31:0]."/>
+      <bit_field_value name="CS_PS_0b01" value="0b01" description="8-bit port size. Valid data is sampled and driven on FB_D[31:24] when BLS is 0b, or FB_D[7:0] when BLS is 1b."/>
+      <bit_field_value name="CS_PS_0b1x" value="0b1?" description="16-bit port size. Valid data is sampled and driven on FB_D[31:16] when BLS is 0b, or FB_D[15:0] when BLS is 1b."/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="AA" access="RW" reset_value="0" description="Auto-Acknowledge Enable">
+      <alias type="CMSIS" value="FB_CSCR_AA(x)"/>
+      <bit_field_value name="CS_AA_0b0" value="0b0" description="Disabled. No internal transfer acknowledge is asserted and the cycle is terminated externally."/>
+      <bit_field_value name="CS_AA_0b1" value="0b1" description="Enabled. Internal transfer acknowledge is asserted as specified by WS."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="BLS" access="RW" reset_value="0" description="Byte-Lane Shift">
+      <alias type="CMSIS" value="FB_CSCR_BLS(x)"/>
+      <bit_field_value name="CS_BLS_0b0" value="0b0" description="Not shifted. Data is left-aligned on FB_AD."/>
+      <bit_field_value name="CS_BLS_0b1" value="0b1" description="Shifted. Data is right-aligned on FB_AD."/>
+    </bit_field>
+    <bit_field offset="10" width="6" name="WS" access="RW" reset_value="0" description="Wait States">
+      <alias type="CMSIS" value="FB_CSCR_WS(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="2" name="WRAH" access="RW" reset_value="0" description="Write Address Hold or Deselect">
+      <alias type="CMSIS" value="FB_CSCR_WRAH(x)"/>
+      <bit_field_value name="CS_WRAH_0b00" value="0b00" description="1 cycle (default for all but FB_CS0 )"/>
+      <bit_field_value name="CS_WRAH_0b01" value="0b01" description="2 cycles"/>
+      <bit_field_value name="CS_WRAH_0b10" value="0b10" description="3 cycles"/>
+      <bit_field_value name="CS_WRAH_0b11" value="0b11" description="4 cycles (default for FB_CS0 )"/>
+    </bit_field>
+    <bit_field offset="18" width="2" name="RDAH" access="RW" reset_value="0" description="Read Address Hold or Deselect">
+      <alias type="CMSIS" value="FB_CSCR_RDAH(x)"/>
+      <bit_field_value name="CS_RDAH_0b00" value="0b00" description="When AA is 1b, 1 cycle. When AA is 0b, 0 cycles."/>
+      <bit_field_value name="CS_RDAH_0b01" value="0b01" description="When AA is 1b, 2 cycles. When AA is 0b, 1 cycle."/>
+      <bit_field_value name="CS_RDAH_0b10" value="0b10" description="When AA is 1b, 3 cycles. When AA is 0b, 2 cycles."/>
+      <bit_field_value name="CS_RDAH_0b11" value="0b11" description="When AA is 1b, 4 cycles. When AA is 0b, 3 cycles."/>
+    </bit_field>
+    <bit_field offset="20" width="2" name="ASET" access="RW" reset_value="0" description="Address Setup">
+      <alias type="CMSIS" value="FB_CSCR_ASET(x)"/>
+      <bit_field_value name="CS_ASET_0b00" value="0b00" description="Assert FB_CSn on the first rising clock edge after the address is asserted (default for all but FB_CS0 )."/>
+      <bit_field_value name="CS_ASET_0b01" value="0b01" description="Assert FB_CSn on the second rising clock edge after the address is asserted."/>
+      <bit_field_value name="CS_ASET_0b10" value="0b10" description="Assert FB_CSn on the third rising clock edge after the address is asserted."/>
+      <bit_field_value name="CS_ASET_0b11" value="0b11" description="Assert FB_CSn on the fourth rising clock edge after the address is asserted (default for FB_CS0 )."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="EXTS" access="RW" reset_value="0" description="Extended Transfer Start/Extended Address Latch Enable Controls how long FB_TS /FB_ALE is asserted.">
+      <alias type="CMSIS" value="FB_CSCR_EXTS(x)"/>
+      <bit_field_value name="CS_EXTS_0b0" value="0b0" description="Disabled. FB_TS /FB_ALE asserts for one bus clock cycle."/>
+      <bit_field_value name="CS_EXTS_0b1" value="0b1" description="Enabled. FB_TS /FB_ALE remains asserted until the first positive clock edge after FB_CSn asserts."/>
+    </bit_field>
+    <bit_field offset="23" width="1" name="SWSEN" access="RW" reset_value="0" description="Secondary Wait State Enable">
+      <alias type="CMSIS" value="FB_CSCR_SWSEN(x)"/>
+      <bit_field_value name="CS_SWSEN_0b0" value="0b0" description="Disabled. A number of wait states (specified by WS) are inserted before an internal transfer acknowledge is generated for all transfers."/>
+      <bit_field_value name="CS_SWSEN_0b1" value="0b1" description="Enabled. A number of wait states (specified by SWS) are inserted before an internal transfer acknowledge is generated for burst transfer secondary terminations."/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="2" reset_value="0"/>
+    <bit_field offset="26" width="6" name="SWS" access="RW" reset_value="0" description="Secondary Wait States">
+      <alias type="CMSIS" value="FB_CSCR_SWS(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x30" width="32" name="CSAR4" description="Chip Select Address Register">
+    <alias type="CMSIS" value="CS[4].CSAR"/>
+    <reserved_bit_field offset="0" width="16" reset_value="0"/>
+    <bit_field offset="16" width="16" name="BA" access="RW" reset_value="0" description="Base Address">
+      <alias type="CMSIS" value="FB_CSAR_BA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x34" width="32" name="CSMR4" description="Chip Select Mask Register">
+    <alias type="CMSIS" value="CS[4].CSMR"/>
+    <bit_field offset="0" width="1" name="V" access="RW" reset_value="0" description="Valid">
+      <alias type="CMSIS" value="FB_CSMR_V(x)"/>
+      <bit_field_value name="CS_V_0b0" value="0b0" description="Chip-select is invalid."/>
+      <bit_field_value name="CS_V_0b1" value="0b1" description="Chip-select is valid."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="7" reset_value="0"/>
+    <bit_field offset="8" width="1" name="WP" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="FB_CSMR_WP(x)"/>
+      <bit_field_value name="CS_WP_0b0" value="0b0" description="Write accesses are allowed."/>
+      <bit_field_value name="CS_WP_0b1" value="0b1" description="Write accesses are not allowed. Attempting to write to the range of addresses for which the WP bit is set results in a bus error termination of the internal cycle and no external cycle."/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="7" reset_value="0"/>
+    <bit_field_array offset="16" width="16" item_width="1" name="BAM" access="RW" reset_value="0" description="Base Address Mask">
+      <alias type="CMSIS" value="FB_CSMR_BAM(x)"/>
+      <bit_field_value name="CS_BAM_0b0000000000000000" value="0b0" description="The corresponding address bit in CSAR is used in the chip-select decode."/>
+      <bit_field_value name="CS_BAM_0b0000000000000001" value="0b1" description="The corresponding address bit in CSAR is a don't care in the chip-select decode."/>
+    </bit_field_array>
+  </register>
+  <register offset="0x38" width="32" name="CSCR4" description="Chip Select Control Register">
+    <alias type="CMSIS" value="CS[4].CSCR"/>
+    <reserved_bit_field offset="0" width="3" reset_value="0"/>
+    <bit_field offset="3" width="1" name="BSTW" access="RW" reset_value="0" description="Burst-Write Enable">
+      <alias type="CMSIS" value="FB_CSCR_BSTW(x)"/>
+      <bit_field_value name="CS_BSTW_0b0" value="0b0" description="Disabled. Data exceeding the specified port size is broken into individual, port-sized, non-burst writes. For example, a 32-bit write to an 8-bit port takes four byte writes."/>
+      <bit_field_value name="CS_BSTW_0b1" value="0b1" description="Enabled. Enables burst write of data larger than the specified port size, including 32-bit writes to 8- and 16-bit ports, 16-bit writes to 8-bit ports, and line writes to 8-, 16-, and 32-bit ports."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="BSTR" access="RW" reset_value="0" description="Burst-Read Enable">
+      <alias type="CMSIS" value="FB_CSCR_BSTR(x)"/>
+      <bit_field_value name="CS_BSTR_0b0" value="0b0" description="Disabled. Data exceeding the specified port size is broken into individual, port-sized, non-burst reads. For example, a 32-bit read from an 8-bit port is broken into four 8-bit reads."/>
+      <bit_field_value name="CS_BSTR_0b1" value="0b1" description="Enabled. Enables data burst reads larger than the specified port size, including 32-bit reads from 8- and 16-bit ports, 16-bit reads from 8-bit ports, and line reads from 8-, 16-, and 32-bit ports."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="BEM" access="RW" reset_value="0" description="Byte-Enable Mode">
+      <alias type="CMSIS" value="FB_CSCR_BEM(x)"/>
+      <bit_field_value name="CS_BEM_0b0" value="0b0" description="FB_BE is asserted for data write only."/>
+      <bit_field_value name="CS_BEM_0b1" value="0b1" description="FB_BE is asserted for data read and write accesses."/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="PS" access="RW" reset_value="0" description="Port Size">
+      <alias type="CMSIS" value="FB_CSCR_PS(x)"/>
+      <bit_field_value name="CS_PS_0b00" value="0b00" description="32-bit port size. Valid data is sampled and driven on FB_D[31:0]."/>
+      <bit_field_value name="CS_PS_0b01" value="0b01" description="8-bit port size. Valid data is sampled and driven on FB_D[31:24] when BLS is 0b, or FB_D[7:0] when BLS is 1b."/>
+      <bit_field_value name="CS_PS_0b1x" value="0b1?" description="16-bit port size. Valid data is sampled and driven on FB_D[31:16] when BLS is 0b, or FB_D[15:0] when BLS is 1b."/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="AA" access="RW" reset_value="0" description="Auto-Acknowledge Enable">
+      <alias type="CMSIS" value="FB_CSCR_AA(x)"/>
+      <bit_field_value name="CS_AA_0b0" value="0b0" description="Disabled. No internal transfer acknowledge is asserted and the cycle is terminated externally."/>
+      <bit_field_value name="CS_AA_0b1" value="0b1" description="Enabled. Internal transfer acknowledge is asserted as specified by WS."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="BLS" access="RW" reset_value="0" description="Byte-Lane Shift">
+      <alias type="CMSIS" value="FB_CSCR_BLS(x)"/>
+      <bit_field_value name="CS_BLS_0b0" value="0b0" description="Not shifted. Data is left-aligned on FB_AD."/>
+      <bit_field_value name="CS_BLS_0b1" value="0b1" description="Shifted. Data is right-aligned on FB_AD."/>
+    </bit_field>
+    <bit_field offset="10" width="6" name="WS" access="RW" reset_value="0" description="Wait States">
+      <alias type="CMSIS" value="FB_CSCR_WS(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="2" name="WRAH" access="RW" reset_value="0" description="Write Address Hold or Deselect">
+      <alias type="CMSIS" value="FB_CSCR_WRAH(x)"/>
+      <bit_field_value name="CS_WRAH_0b00" value="0b00" description="1 cycle (default for all but FB_CS0 )"/>
+      <bit_field_value name="CS_WRAH_0b01" value="0b01" description="2 cycles"/>
+      <bit_field_value name="CS_WRAH_0b10" value="0b10" description="3 cycles"/>
+      <bit_field_value name="CS_WRAH_0b11" value="0b11" description="4 cycles (default for FB_CS0 )"/>
+    </bit_field>
+    <bit_field offset="18" width="2" name="RDAH" access="RW" reset_value="0" description="Read Address Hold or Deselect">
+      <alias type="CMSIS" value="FB_CSCR_RDAH(x)"/>
+      <bit_field_value name="CS_RDAH_0b00" value="0b00" description="When AA is 1b, 1 cycle. When AA is 0b, 0 cycles."/>
+      <bit_field_value name="CS_RDAH_0b01" value="0b01" description="When AA is 1b, 2 cycles. When AA is 0b, 1 cycle."/>
+      <bit_field_value name="CS_RDAH_0b10" value="0b10" description="When AA is 1b, 3 cycles. When AA is 0b, 2 cycles."/>
+      <bit_field_value name="CS_RDAH_0b11" value="0b11" description="When AA is 1b, 4 cycles. When AA is 0b, 3 cycles."/>
+    </bit_field>
+    <bit_field offset="20" width="2" name="ASET" access="RW" reset_value="0" description="Address Setup">
+      <alias type="CMSIS" value="FB_CSCR_ASET(x)"/>
+      <bit_field_value name="CS_ASET_0b00" value="0b00" description="Assert FB_CSn on the first rising clock edge after the address is asserted (default for all but FB_CS0 )."/>
+      <bit_field_value name="CS_ASET_0b01" value="0b01" description="Assert FB_CSn on the second rising clock edge after the address is asserted."/>
+      <bit_field_value name="CS_ASET_0b10" value="0b10" description="Assert FB_CSn on the third rising clock edge after the address is asserted."/>
+      <bit_field_value name="CS_ASET_0b11" value="0b11" description="Assert FB_CSn on the fourth rising clock edge after the address is asserted (default for FB_CS0 )."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="EXTS" access="RW" reset_value="0" description="Extended Transfer Start/Extended Address Latch Enable Controls how long FB_TS /FB_ALE is asserted.">
+      <alias type="CMSIS" value="FB_CSCR_EXTS(x)"/>
+      <bit_field_value name="CS_EXTS_0b0" value="0b0" description="Disabled. FB_TS /FB_ALE asserts for one bus clock cycle."/>
+      <bit_field_value name="CS_EXTS_0b1" value="0b1" description="Enabled. FB_TS /FB_ALE remains asserted until the first positive clock edge after FB_CSn asserts."/>
+    </bit_field>
+    <bit_field offset="23" width="1" name="SWSEN" access="RW" reset_value="0" description="Secondary Wait State Enable">
+      <alias type="CMSIS" value="FB_CSCR_SWSEN(x)"/>
+      <bit_field_value name="CS_SWSEN_0b0" value="0b0" description="Disabled. A number of wait states (specified by WS) are inserted before an internal transfer acknowledge is generated for all transfers."/>
+      <bit_field_value name="CS_SWSEN_0b1" value="0b1" description="Enabled. A number of wait states (specified by SWS) are inserted before an internal transfer acknowledge is generated for burst transfer secondary terminations."/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="2" reset_value="0"/>
+    <bit_field offset="26" width="6" name="SWS" access="RW" reset_value="0" description="Secondary Wait States">
+      <alias type="CMSIS" value="FB_CSCR_SWS(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x3C" width="32" name="CSAR5" description="Chip Select Address Register">
+    <alias type="CMSIS" value="CS[5].CSAR"/>
+    <reserved_bit_field offset="0" width="16" reset_value="0"/>
+    <bit_field offset="16" width="16" name="BA" access="RW" reset_value="0" description="Base Address">
+      <alias type="CMSIS" value="FB_CSAR_BA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x40" width="32" name="CSMR5" description="Chip Select Mask Register">
+    <alias type="CMSIS" value="CS[5].CSMR"/>
+    <bit_field offset="0" width="1" name="V" access="RW" reset_value="0" description="Valid">
+      <alias type="CMSIS" value="FB_CSMR_V(x)"/>
+      <bit_field_value name="CS_V_0b0" value="0b0" description="Chip-select is invalid."/>
+      <bit_field_value name="CS_V_0b1" value="0b1" description="Chip-select is valid."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="7" reset_value="0"/>
+    <bit_field offset="8" width="1" name="WP" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="FB_CSMR_WP(x)"/>
+      <bit_field_value name="CS_WP_0b0" value="0b0" description="Write accesses are allowed."/>
+      <bit_field_value name="CS_WP_0b1" value="0b1" description="Write accesses are not allowed. Attempting to write to the range of addresses for which the WP bit is set results in a bus error termination of the internal cycle and no external cycle."/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="7" reset_value="0"/>
+    <bit_field_array offset="16" width="16" item_width="1" name="BAM" access="RW" reset_value="0" description="Base Address Mask">
+      <alias type="CMSIS" value="FB_CSMR_BAM(x)"/>
+      <bit_field_value name="CS_BAM_0b0000000000000000" value="0b0" description="The corresponding address bit in CSAR is used in the chip-select decode."/>
+      <bit_field_value name="CS_BAM_0b0000000000000001" value="0b1" description="The corresponding address bit in CSAR is a don't care in the chip-select decode."/>
+    </bit_field_array>
+  </register>
+  <register offset="0x44" width="32" name="CSCR5" description="Chip Select Control Register">
+    <alias type="CMSIS" value="CS[5].CSCR"/>
+    <reserved_bit_field offset="0" width="3" reset_value="0"/>
+    <bit_field offset="3" width="1" name="BSTW" access="RW" reset_value="0" description="Burst-Write Enable">
+      <alias type="CMSIS" value="FB_CSCR_BSTW(x)"/>
+      <bit_field_value name="CS_BSTW_0b0" value="0b0" description="Disabled. Data exceeding the specified port size is broken into individual, port-sized, non-burst writes. For example, a 32-bit write to an 8-bit port takes four byte writes."/>
+      <bit_field_value name="CS_BSTW_0b1" value="0b1" description="Enabled. Enables burst write of data larger than the specified port size, including 32-bit writes to 8- and 16-bit ports, 16-bit writes to 8-bit ports, and line writes to 8-, 16-, and 32-bit ports."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="BSTR" access="RW" reset_value="0" description="Burst-Read Enable">
+      <alias type="CMSIS" value="FB_CSCR_BSTR(x)"/>
+      <bit_field_value name="CS_BSTR_0b0" value="0b0" description="Disabled. Data exceeding the specified port size is broken into individual, port-sized, non-burst reads. For example, a 32-bit read from an 8-bit port is broken into four 8-bit reads."/>
+      <bit_field_value name="CS_BSTR_0b1" value="0b1" description="Enabled. Enables data burst reads larger than the specified port size, including 32-bit reads from 8- and 16-bit ports, 16-bit reads from 8-bit ports, and line reads from 8-, 16-, and 32-bit ports."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="BEM" access="RW" reset_value="0" description="Byte-Enable Mode">
+      <alias type="CMSIS" value="FB_CSCR_BEM(x)"/>
+      <bit_field_value name="CS_BEM_0b0" value="0b0" description="FB_BE is asserted for data write only."/>
+      <bit_field_value name="CS_BEM_0b1" value="0b1" description="FB_BE is asserted for data read and write accesses."/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="PS" access="RW" reset_value="0" description="Port Size">
+      <alias type="CMSIS" value="FB_CSCR_PS(x)"/>
+      <bit_field_value name="CS_PS_0b00" value="0b00" description="32-bit port size. Valid data is sampled and driven on FB_D[31:0]."/>
+      <bit_field_value name="CS_PS_0b01" value="0b01" description="8-bit port size. Valid data is sampled and driven on FB_D[31:24] when BLS is 0b, or FB_D[7:0] when BLS is 1b."/>
+      <bit_field_value name="CS_PS_0b1x" value="0b1?" description="16-bit port size. Valid data is sampled and driven on FB_D[31:16] when BLS is 0b, or FB_D[15:0] when BLS is 1b."/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="AA" access="RW" reset_value="0" description="Auto-Acknowledge Enable">
+      <alias type="CMSIS" value="FB_CSCR_AA(x)"/>
+      <bit_field_value name="CS_AA_0b0" value="0b0" description="Disabled. No internal transfer acknowledge is asserted and the cycle is terminated externally."/>
+      <bit_field_value name="CS_AA_0b1" value="0b1" description="Enabled. Internal transfer acknowledge is asserted as specified by WS."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="BLS" access="RW" reset_value="0" description="Byte-Lane Shift">
+      <alias type="CMSIS" value="FB_CSCR_BLS(x)"/>
+      <bit_field_value name="CS_BLS_0b0" value="0b0" description="Not shifted. Data is left-aligned on FB_AD."/>
+      <bit_field_value name="CS_BLS_0b1" value="0b1" description="Shifted. Data is right-aligned on FB_AD."/>
+    </bit_field>
+    <bit_field offset="10" width="6" name="WS" access="RW" reset_value="0" description="Wait States">
+      <alias type="CMSIS" value="FB_CSCR_WS(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="2" name="WRAH" access="RW" reset_value="0" description="Write Address Hold or Deselect">
+      <alias type="CMSIS" value="FB_CSCR_WRAH(x)"/>
+      <bit_field_value name="CS_WRAH_0b00" value="0b00" description="1 cycle (default for all but FB_CS0 )"/>
+      <bit_field_value name="CS_WRAH_0b01" value="0b01" description="2 cycles"/>
+      <bit_field_value name="CS_WRAH_0b10" value="0b10" description="3 cycles"/>
+      <bit_field_value name="CS_WRAH_0b11" value="0b11" description="4 cycles (default for FB_CS0 )"/>
+    </bit_field>
+    <bit_field offset="18" width="2" name="RDAH" access="RW" reset_value="0" description="Read Address Hold or Deselect">
+      <alias type="CMSIS" value="FB_CSCR_RDAH(x)"/>
+      <bit_field_value name="CS_RDAH_0b00" value="0b00" description="When AA is 1b, 1 cycle. When AA is 0b, 0 cycles."/>
+      <bit_field_value name="CS_RDAH_0b01" value="0b01" description="When AA is 1b, 2 cycles. When AA is 0b, 1 cycle."/>
+      <bit_field_value name="CS_RDAH_0b10" value="0b10" description="When AA is 1b, 3 cycles. When AA is 0b, 2 cycles."/>
+      <bit_field_value name="CS_RDAH_0b11" value="0b11" description="When AA is 1b, 4 cycles. When AA is 0b, 3 cycles."/>
+    </bit_field>
+    <bit_field offset="20" width="2" name="ASET" access="RW" reset_value="0" description="Address Setup">
+      <alias type="CMSIS" value="FB_CSCR_ASET(x)"/>
+      <bit_field_value name="CS_ASET_0b00" value="0b00" description="Assert FB_CSn on the first rising clock edge after the address is asserted (default for all but FB_CS0 )."/>
+      <bit_field_value name="CS_ASET_0b01" value="0b01" description="Assert FB_CSn on the second rising clock edge after the address is asserted."/>
+      <bit_field_value name="CS_ASET_0b10" value="0b10" description="Assert FB_CSn on the third rising clock edge after the address is asserted."/>
+      <bit_field_value name="CS_ASET_0b11" value="0b11" description="Assert FB_CSn on the fourth rising clock edge after the address is asserted (default for FB_CS0 )."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="EXTS" access="RW" reset_value="0" description="Extended Transfer Start/Extended Address Latch Enable Controls how long FB_TS /FB_ALE is asserted.">
+      <alias type="CMSIS" value="FB_CSCR_EXTS(x)"/>
+      <bit_field_value name="CS_EXTS_0b0" value="0b0" description="Disabled. FB_TS /FB_ALE asserts for one bus clock cycle."/>
+      <bit_field_value name="CS_EXTS_0b1" value="0b1" description="Enabled. FB_TS /FB_ALE remains asserted until the first positive clock edge after FB_CSn asserts."/>
+    </bit_field>
+    <bit_field offset="23" width="1" name="SWSEN" access="RW" reset_value="0" description="Secondary Wait State Enable">
+      <alias type="CMSIS" value="FB_CSCR_SWSEN(x)"/>
+      <bit_field_value name="CS_SWSEN_0b0" value="0b0" description="Disabled. A number of wait states (specified by WS) are inserted before an internal transfer acknowledge is generated for all transfers."/>
+      <bit_field_value name="CS_SWSEN_0b1" value="0b1" description="Enabled. A number of wait states (specified by SWS) are inserted before an internal transfer acknowledge is generated for burst transfer secondary terminations."/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="2" reset_value="0"/>
+    <bit_field offset="26" width="6" name="SWS" access="RW" reset_value="0" description="Secondary Wait States">
+      <alias type="CMSIS" value="FB_CSCR_SWS(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x60" width="32" name="CSPMCR" description="Chip Select port Multiplexing Control Register">
+    <alias type="CMSIS" value="CSPMCR"/>
+    <reserved_bit_field offset="0" width="12" reset_value="0"/>
+    <bit_field offset="12" width="4" name="GROUP5" access="RW" reset_value="0" description="FlexBus Signal Group 5 Multiplex control">
+      <alias type="CMSIS" value="FB_CSPMCR_GROUP5(x)"/>
+      <bit_field_value name="CSPMCR_GROUP5_0b0000" value="0b0000" description="FB_TA"/>
+      <bit_field_value name="CSPMCR_GROUP5_0b0001" value="0b0001" description="FB_CS3 . You must also write 1b to CSCR[AA]."/>
+      <bit_field_value name="CSPMCR_GROUP5_0b0010" value="0b0010" description="FB_BE_7_0 . You must also write 1b to CSCR[AA]."/>
+    </bit_field>
+    <bit_field offset="16" width="4" name="GROUP4" access="RW" reset_value="0" description="FlexBus Signal Group 4 Multiplex control">
+      <alias type="CMSIS" value="FB_CSPMCR_GROUP4(x)"/>
+      <bit_field_value name="CSPMCR_GROUP4_0b0000" value="0b0000" description="FB_TBST"/>
+      <bit_field_value name="CSPMCR_GROUP4_0b0001" value="0b0001" description="FB_CS2"/>
+      <bit_field_value name="CSPMCR_GROUP4_0b0010" value="0b0010" description="FB_BE_15_8"/>
+    </bit_field>
+    <bit_field offset="20" width="4" name="GROUP3" access="RW" reset_value="0" description="FlexBus Signal Group 3 Multiplex control">
+      <alias type="CMSIS" value="FB_CSPMCR_GROUP3(x)"/>
+      <bit_field_value name="CSPMCR_GROUP3_0b0000" value="0b0000" description="FB_CS5"/>
+      <bit_field_value name="CSPMCR_GROUP3_0b0001" value="0b0001" description="FB_TSIZ1"/>
+      <bit_field_value name="CSPMCR_GROUP3_0b0010" value="0b0010" description="FB_BE_23_16"/>
+    </bit_field>
+    <bit_field offset="24" width="4" name="GROUP2" access="RW" reset_value="0" description="FlexBus Signal Group 2 Multiplex control">
+      <alias type="CMSIS" value="FB_CSPMCR_GROUP2(x)"/>
+      <bit_field_value name="CSPMCR_GROUP2_0b0000" value="0b0000" description="FB_CS4"/>
+      <bit_field_value name="CSPMCR_GROUP2_0b0001" value="0b0001" description="FB_TSIZ0"/>
+      <bit_field_value name="CSPMCR_GROUP2_0b0010" value="0b0010" description="FB_BE_31_24"/>
+    </bit_field>
+    <bit_field offset="28" width="4" name="GROUP1" access="RW" reset_value="0" description="FlexBus Signal Group 1 Multiplex control">
+      <alias type="CMSIS" value="FB_CSPMCR_GROUP1(x)"/>
+      <bit_field_value name="CSPMCR_GROUP1_0b0000" value="0b0000" description="FB_ALE"/>
+      <bit_field_value name="CSPMCR_GROUP1_0b0001" value="0b0001" description="FB_CS1"/>
+      <bit_field_value name="CSPMCR_GROUP1_0b0010" value="0b0010" description="FB_TS"/>
+    </bit_field>
+  </register>
+</regs:peripheral>

@@ -1,0 +1,1035 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component:config_component
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-9.0.xsd"
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0" options="UI_COMPONENT_MODE_HIDDEN"
+   id="edma_reg" label="eDMA" category="Register init" registers_init="true">
+   <description>Enhanced Direct Memory Access (eDMA)</description>
+   <mode id="general" label="General">
+      <description>General eDMA initialization</description>
+      <config_set_refs>
+         <config_set_ref>edma</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>DMA</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="edma" label="General configuration">
+      <description>General configuration</description>
+      <generated_types/>
+       <user_types>
+           <enum id="edma_modulo_t">
+               <description>Circular buffer size</description>
+               <item id="0" label="Disable modulo"/>
+               <item id="1" label="2 B"/>
+               <item id="2" label="4 B"/>
+               <item id="3" label="8 B"/>
+               <item id="4" label="16 B"/>
+               <item id="5" label="32 B"/>
+               <item id="6" label="64 B"/>
+               <item id="7" label="128 B"/>
+               <item id="8" label="256 B"/>
+               <item id="9" label="512 B"/>
+               <item id="10" label="1 KB"/>
+               <item id="11" label="2 KB"/>
+               <item id="12" label="4 KB"/>
+               <item id="13" label="8 KB"/>
+               <item id="14" label="16 KB"/>
+               <item id="15" label="32 KB"/>
+               <item id="16" label="64 KB"/>
+               <item id="17" label="128 KB"/>
+               <item id="18" label="256 KB"/>
+               <item id="19" label="512 KB"/>
+               <item id="20" label="1 MB"/>
+               <item id="21" label="2 MB"/>
+               <item id="22" label="4 MB"/>
+               <item id="23" label="8 MB"/>
+               <item id="24" label="16 MB"/>
+               <item id="25" label="32 MB"/>
+               <item id="26" label="64 MB"/>
+               <item id="27" label="128 MB"/>
+               <item id="28" label="256 MB"/>
+               <item id="29" label="512 MB"/>
+               <item id="30" label="1 GB"/>
+               <item id="31" label="2 GB"/>
+           </enum>
+           <struct id="channelPriorities_t">
+               <variable id="channelPriority" value="$parent.getID()">
+                   <assign when="$configSet.mappedPriorities.getValue().size() != 0">
+                       <register name_expr="`DCHPRI` + $this.getValue()" bitfield="CHPRI" value="$configSet.mappedPriorities.getValue().size() == 0 ? 0 : $configSet.mappedPriorities.getValue().get($this.getValue().toInt()).toInt()"
+                        unknown_bits_expr="$configSet.mappedPriorities.getValue().size() == 0 ? 0xFF : 0 "/>
+                   </assign>
+               </variable>
+           </struct>
+           <struct id="tcd_t">
+               <variable id="tcdID" value="$parent.getParent().getSetting(`chIndex`).getValue()"></variable>
+               <!-- tcd control -->
+               <bool id="START" label="Transfer software start" options="REGISTERS_REFRESH">
+                   <description>
+Starts the configured transfer defined in TCD. If the START flag is set, the channel is requesting service. The eDMA hardware automatically clears this flag after the channel begins execution.  
+**Values:**  
+- **Disabled** - The channel is not explicitly started.  
+- **Enabled** - The channel is explicitly started via a software initiated service request.  
+                   </description>
+                   <assign when="true">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_CSR`" bitfield="START" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <bool id="DREQ" label="Auto stop request" options="REGISTERS_REFRESH">
+                   <description>
+**Auto stop request (Disable request)**
+If enabling the auto stop request, the eDMA hardware automatically disables the hardware channel request (clears the corresponding ERQ bit) when the current
+major iteration count reaches zero.  
+**Values:**  
+- **Disabled** - The channel's ERQ bit is not affected.  
+- **Enabled** - The channel's ERQ bit is cleared when the major loop is complete.  
+                   </description>
+                   <assign when="true">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_CSR`" bitfield="DREQ" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <!-- source address -->
+               <info value="`Source address configuration`" id="lineSrc" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+               <string id="SADDR" label="Address expression" options="REGISTERS_REFRESH">
+                   <options_expr>
+                       <option id="custom_assign" expr="$this.getValue()" available="!$this.getValue().isInt()"></option>
+                   </options_expr>
+                   <description>
+Source address expression used in TCD initialization. The **data address** in address expression and the **data size** must be consistent.
+For example, if the source data size is 4 bytes, the source address must be 4 bytes aligned, or it results in source address error (SAE).  
+Example use cases:  
+- Reference: `(uint32_t)((uint8_t *)(&amp;source_address[0]))`  
+- Variable: `(uint32_t)((uint8_t *)source_address_ptr)`  
+- Register name: `(uint32_t)((uint8_t *)(&amp;(QSCI0->DATA)))`  
+- Address register value: `0x00101000`  
+
+*NOTE:* The expression syntax is not validated.  
+*NOTE:* Only **Address register value** is displayed in *Registers view* correctly. The address reference is calculated during the project compilation and displayed as *register write 0*.
+                   </description>
+                   <validation>
+                       <constraint cond_expr="$this.getValue() != ``" level="error"  description="The source address expression is not defined."/>
+                       <constraint cond_expr="!($this.getValue().isInt() &amp;&amp; $this.getValue().toInt() &gt; 0xFFFFFFFF)" level="error"  description="Source address value must be lower than 32 Bytes (0xFFFFFFFF)."/>
+                   </validation>
+                   <assign when="true">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_SADDR`" bitfield="SADDR" value="$this.getValue().isInt() ? $this.getValue().toInt() : 0" reverse_value="x -> x.toString(16)"
+                           unknown_bits_expr="!$this.getValue().isInt() ? 0xFFFFFFFF : 0"/>
+                   </assign>
+               </string>
+               <string id="SADDR_ext" label="External definition">
+                   <description>
+Source address external definition (with its type) which is part of the generated code. This variable needs to be defined in user code.
+Example use cases:  
+- `uint8_t source_address[100]`  
+- `uint8_t * source_address_ptr`   
+  
+*NOTE:* The expression syntax is not validated.  
+                   </description>
+               </string>
+               <info id="SADDR_info" label="Code preview"
+                   value="$parent.SADDR_ext.getValue(``) != `` ? `extern `  + $parent.SADDR_ext.getValue(`N/A`) + `;` : `No source address external definition`">
+                   <description>Source address external definition</description>
+               </info>
+               <string id="SOFF" label="Offset expression" options="REGISTERS_REFRESH">
+                   <options_expr>
+                       <option id="custom_assign" expr="$this.getValue()" available="!$this.getValue().isInt()"></option>
+                   </options_expr>
+                   <description>
+Sign-extended offset (int16_t) applied to the current source address to form the next-state value as each source read is completed.
+The offset should be aligned with source **data size**. For example, if the source data size is 2 bytes, the source offset must be 2 bytes aligned,
+otherwise it causes source offset error (SOE).   
+Example use cases:   
+- Direct value: `-4`  
+- Register value: `0x20`  
+- Macro value: `DMA_SOFF_SOFF(8)`   
+- Variable: `sourceOffsetValue`     
+- Function: `sizeof(uint8_t)`  
+- Function: `sizeof(srcAddr[0])`    
+  
+*NOTE:* The expression syntax is not validated.  
+*NOTE:* Only **Offset register value** is displayed in *Registers view* correctly. The offset reference is calculated during the project compilation and displayed as *register write 0*.
+                   </description>
+                   <validation>
+                       <constraint cond_expr="$this.getValue() != ``" level="error"  description="The source address expression is not defined."/>
+                       <constraint cond_expr="!($this.getValue().isInt() &amp;&amp; $this.getValue().toInt() &gt; 0xFFFF)" level="error"  description="Source address value must be lower than 16 Bytes (0xFFFF)."/>
+                   </validation>
+                   <assign when="true">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_SOFF`" bitfield="SOFF" value="$this.getValue().isInt() ? system::signedToUnsignedInteger($this.getValue().toInt(),16) : 0" 
+                           reverse_value="x -> x.toString(16)" unknown_bits_expr="!$this.getValue().isInt() ? 0xFFFF : 0"/>
+                   </assign>
+               </string>
+               <string id="SOFF_ext" label="External definition">
+                   <description>
+Source offset external definition (with its type) which is part of the generated code. This variable needs to be defined in user code.  
+Example use cases:
+- `uint8_t * sourceOffsetValue`  
+  
+*NOTE:* The expression syntax is not validated.  
+                   </description>
+               </string>
+               <info id="SOFF_info" label="Code preview"
+                   value="$parent.SOFF_ext.getValue(``) != `` ? `extern `  + $parent.SOFF_ext.getValue(`N/A`) + `;` : `No offset external definition`">
+                   <description>Source address external definition</description>
+               </info>
+               <variable id="source_var" value="
+                   ($parent.SADDR_ext.getValue() != `` ? `/* `+$configSet.inst_ID.getValue() + ` TCD ` + $parent.tcdID.getValue() + ` source address */&#10;`
+                   + ($parent.SADDR_ext.getValue() + ` _attribute_((aligned(N_bytes)));&#10;`) : ``)
+                   + ($parent.SOFF_ext.getValue() != `` ? `/* `+$configSet.inst_ID.getValue() + ` TCD ` + $parent.tcdID.getValue() + ` source address offset */&#10;`
+                   + ($parent.SOFF_ext.getValue() + `;&#10;`) : ``)"/>
+               <enum id="SSIZE" label="Data size [Byte]">
+                   <description>Source address data transfer size</description>
+                   <assign when="true">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_ATTR`" bitfield="SSIZE" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="1" value="1"></item>
+                   <item id="1" label="2" value="2"></item>
+                   <item id="2" label="4" value="4"></item>
+                   <item id="3" label="8" value="8" available="featureDefined(`FSL_FEATURE_EDMA_SUPPORT_8_BYTES_TRANSFER`) &amp;&amp; (getFeature(`FSL_FEATURE_EDMA_SUPPORT_8_BYTES_TRANSFER`) == 1)"></item>
+                   <item id="4" label="16" value="16" available="featureDefined(`FSL_FEATURE_EDMA_SUPPORT_16_BYTES_TRANSFER`) &amp;&amp; (getFeature(`FSL_FEATURE_EDMA_SUPPORT_16_BYTES_TRANSFER`) == 1)"></item>
+                   <item id="5" label="32" value="32" available="featureDefined(`FSL_FEATURE_EDMA_SUPPORT_32_BYTES_TRANSFER`) &amp;&amp; (getFeature(`FSL_FEATURE_EDMA_SUPPORT_32_BYTES_TRANSFER`) == 1)"></item>
+               </enum>
+               <reference type="edma_modulo_t" id="SMOD" label="Modulo" options="REGISTERS_REFRESH">
+                   <description>
+This value defines a specific address range specified to be the value after SADDR + SOFF calculation is performed or the original register value. 
+The setting of this field provides the ability to implement a circular data queue easily. For data queues requiring power-of-2 size bytes, the queue should start at a 0-modulo-size address and the SMOD field should be set to the appropriate value for the queue, freezing the desired number of upper address bits. 
+The value programmed into this field specifies the number of lower address bits allowed to change. For a circular queue application, the SOFF is typically set to the transfer size to implement post-increment addressing with the SMOD function constraining the addresses to a 0-modulo-size range.
+                   </description>
+                   <assign when="true">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_ATTR`" bitfield="SMOD" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+               </reference>
+               <!-- destination address -->
+               <info value="`Destination address configuration`" id="lineDst" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+               <string id="DADDR" label="Address expression" options="REGISTERS_REFRESH">
+                   <options_expr>
+                       <option id="custom_assign" expr="$this.getValue()" available="!$this.getValue().isInt()"></option>
+                   </options_expr>
+                   <description>
+Destination address expression used in TCD initialization. The **data address** in address expression and the **data size** must be consistent.
+For example, if the destination data size is 4 bytes, the destination address must be 4 bytes aligned, or it results in destination address error (DAE).   
+Example use cases:  
+- Reference: `(uint32_t)((uint8_t *)(&amp;dest_address[0]))`  
+- Variable: `(uint32_t)((uint8_t *)dest_address_ptr)`  
+- Register name: `(uint32_t)((uint8_t *)(&amp;(QSCI0->DATA)))`  
+- Address register value: `0x00101000`   
+
+*NOTE:* The expression syntax is not validated.  
+*NOTE:* Only **Address register value** is displayed in *Registers view* correctly. The address reference is calculated during the project compilation and displayed as *register write 0*.
+                   </description>
+                   <validation>
+                       <constraint cond_expr="$this.getValue() != ``" level="error"  description="The destination address expression is not defined."/>
+                       <constraint cond_expr="!($this.getValue().isInt() &amp;&amp; $this.getValue().toInt() &gt; 0xFFFFFFFF)" level="error"  description="Destination address value must be lower than 32 Bytes (0xFFFFFFFF)."/>
+                   </validation>
+                   <assign when="true">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_DADDR`" bitfield="DADDR" value="$this.getValue().isInt() ? $this.getValue().toInt() : 0"
+                           reverse_value="x -> x.toString(16)" unknown_bits_expr="!$this.getValue().isInt() ? 0xFFFFFFFF : 0"/>
+                   </assign>
+               </string>
+               <string id="DADDR_ext" label="External definition">
+                   <description>
+Destination address external definition (with its type) which is part of the generated code. This variable needs to be defined in user code.  
+Example use cases:  
+- `uint8_t dest_address[100]`  
+- `uint8_t * dest_address_ptr`  
+
+*NOTE:* The expression syntax is not validated.  
+                   </description>
+               </string>
+               <info id="DADDR_info" label="Code preview"
+                   value="$parent.DADDR_ext.getValue(``) != `` ? `extern `  + $parent.DADDR_ext.getValue(`N/A`) + `;` : `No destination address external definition`">
+                   <description>Destination address external definition</description>
+               </info>
+               <string id="DOFF" label="Offset expression" options="REGISTERS_REFRESH">
+                   <options_expr>
+                       <option id="custom_assign" expr="$this.getValue()" available="!$this.getValue().isInt()"></option>
+                   </options_expr>
+                   <description>
+Sign-extended offset (int16_t) applied to the current destination address to form the next-state value as each destination read is completed.
+The offset should be aligned with destination **data size**. For example, if the destination data size is 2 bytes, the destination offset must be 2 bytes aligned,
+otherwise it causes source offset error (DOE).   
+Example use cases:  
+- Direct value: `-4`  
+- Register value: `0x20`  
+- Macro value: `DMA_DOFF_SOFF(8)`   
+- Variable: `destOffsetValue`  
+- Function: `sizeof(uint8_t)`  
+- Function: `sizeof(dstAddr[0])`  
+
+*NOTE:* The expression syntax is not validated.  
+*NOTE:* Only **Offset register value** is displayed in *Registers view* correctly. The offset reference is calculated during the project compilation and displayed as *register write 0*.
+                   </description>
+                   <validation>
+                       <constraint cond_expr="$this.getValue() != ``" level="error"  description="The source address expression is not defined."/>
+                       <constraint cond_expr="!($this.getValue().isInt() &amp;&amp; $this.getValue().toInt() &gt; 0xFFFF)" level="error"  description="Source address value must be lower than 16 Bytes (0xFFFF)."/>
+                   </validation>
+                   <assign when="true">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_DOFF`" bitfield="DOFF" value="$this.getValue().isInt() ? system::signedToUnsignedInteger($this.getValue().toInt(),16) : 0"
+                           reverse_value="x -> x.toString(16)" unknown_bits_expr="!$this.getValue().isInt() ? 0xFFFF : 0"/>
+                   </assign>
+               </string>
+               <string id="DOFF_ext" label="External definition">
+                   <description>
+Destination offset external definition (with its type) which is part of the generated code. This variable needs to be defined in user code.
+Example use cases:
+- `uint8_t * destOffsetValue`  
+
+*NOTE:* The expression syntax is not validated.  
+                   </description>
+               </string>
+               <info id="DOFF_info" label="Code preview"
+                   value="$parent.DOFF_ext.getValue(``) != `` ? `extern `  + $parent.DOFF_ext.getValue(`N/A`) + `;` : `No destination offset external definition`">
+                   <description>destination address external definition</description>
+               </info>
+               <variable id="dest_var" value="
+                   ($parent.DADDR_ext.getValue() != `` ? `/* `+$configSet.inst_ID.getValue() + ` TCD ` + $parent.tcdID.getValue() + ` destination address */&#10;`
+                   + ($parent.DADDR_ext.getValue() + ` _attribute_((aligned(N_bytes)));&#10;`) : ``)
+                   + ($parent.DOFF_ext.getValue() != `` ? `/* `+$configSet.inst_ID.getValue() + ` TCD ` + $parent.tcdID.getValue() + ` destination address offset */&#10;`
+                   + ($parent.DOFF_ext.getValue() + `;&#10;`) : ``)"/>
+               <enum id="DSIZE" label="Data size [Byte]">
+                   <description>Destination address data transfer size</description>
+                   <assign when="true">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_ATTR`" bitfield="DSIZE" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="1" value="1"></item>
+                   <item id="1" label="2" value="2"></item>
+                   <item id="2" label="4" value="4"></item>
+                   <item id="3" label="8" value="8" available="featureDefined(`FSL_FEATURE_EDMA_SUPPORT_8_BYTES_TRANSFER`) &amp;&amp; (getFeature(`FSL_FEATURE_EDMA_SUPPORT_8_BYTES_TRANSFER`) == 1)"></item>
+                   <item id="4" label="16" value="16" available="featureDefined(`FSL_FEATURE_EDMA_SUPPORT_16_BYTES_TRANSFER`) &amp;&amp; (getFeature(`FSL_FEATURE_EDMA_SUPPORT_16_BYTES_TRANSFER`) == 1)"></item>
+                   <item id="5" label="32" value="32" available="featureDefined(`FSL_FEATURE_EDMA_SUPPORT_32_BYTES_TRANSFER`) &amp;&amp; (getFeature(`FSL_FEATURE_EDMA_SUPPORT_32_BYTES_TRANSFER`) == 1)"></item>
+               </enum>
+               <reference type="edma_modulo_t" id="DMOD" label="Modulo" options="REGISTERS_REFRESH">
+                   <description>
+This value defines a specific address range specified to be the value after DADDR + DOFF calculation is performed or the original register value. 
+The setting of this field provides the ability to implement a circular data queue easily. For data queues requiring power-of-2 size bytes, the queue should start at a 0-modulo-size address and the DMOD field should be set to the appropriate value for the queue, freezing the desired number of upper address bits. 
+The value programmed into this field specifies the number of lower address bits allowed to change. For a circular queue application, the DOFF is typically set to the transfer size to implement post-increment addressing with the SMOD function constraining the addresses to a 0-modulo-size range.
+                   </description>
+                   <assign when="true">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_ATTR`" bitfield="DMOD" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+               </reference>
+               <!-- Minor loop -->
+               <info value="`Minor loop configuration`" id="lineMinL" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+               <bool id="SMLOE" label="Source offset apply" available="$configSet.generalConfig.EMLM.getValue()">
+                   <description>Selects whether the minor loop offset is applied to the source address (SADDR) upon minor loop completion.</description>
+                   <assign when="$configSet.generalConfig.EMLM.getValue() &amp;&amp; $parent.offsetEnable.getValue(false)">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_NBYTES_MLOFFYES`" bitfield="SMLOE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+                   <assign when="$configSet.generalConfig.EMLM.getValue() &amp;&amp; !$parent.offsetEnable.getValue(false)">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_NBYTES_MLOFFNO`" bitfield="SMLOE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <bool id="DMLOE" label="Destination offset apply" available="$configSet.generalConfig.EMLM.getValue()">
+                   <description>Selects whether the minor loop offset is applied to the destination address (DADDR) upon minor loop completion.</description>
+                   <assign when="$configSet.generalConfig.EMLM.getValue() &amp;&amp; $parent.offsetEnable.getValue(false)">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_NBYTES_MLOFFYES`" bitfield="DMLOE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+                   <assign when="$configSet.generalConfig.EMLM.getValue() &amp;&amp; !$parent.offsetEnable.getValue(false)">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_NBYTES_MLOFFNO`" bitfield="DMLOE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <variable id="offsetEnable" value="$parent.SMLOE.getValue() || $parent.DMLOE.getValue()" available="$configSet.generalConfig.EMLM.getValue()" options="REGISTERS_REFRESH">
+                   <description>Enable minor loop offset</description>
+               </variable>
+               <integer type="int32_t" id="MLOFF" label="Offset value" options="REGISTERS_REFRESH" min_expr="-524287" max_expr="0xFFFFF" available="$configSet.generalConfig.EMLM.getValue()" enable="$parent.offsetEnable.getValue(false)">
+                   <description>Sign-extended offset applied to the source or destination address to form the next-state value after the minor loop completes.</description>
+                  <validation>
+                      <constraint when_expr="!$this.getCValue().regexMatch(`0[xXbB][\da-fA-F]+`)" cond_expr="$this.getValue() &lt;= 0x7FFFF" level="info" description="Negative offset number"/>
+                  </validation>
+                   <assign when="$configSet.generalConfig.EMLM.getValue()">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_NBYTES_MLOFFYES`" bitfield="MLOFF" 
+                           value="($this.getValue() &gt;= 0) ? $this.getValue() : system::signedToUnsignedInteger($this.getValue(),20)" reverse_value="x -> x.toString(16)"/>
+                   </assign>
+               </integer>
+               <info id="MLOFF_info" label="Minor loop offset" value="`Minor loop mapping disabled`" available="!$configSet.generalConfig.EMLM.getValue()">
+                   <description>
+To allow minor loop offset settings, enable **Minor loop mapping** (CR[*EMLM*]) in eDMA component's **General configuration**.
+                   </description>
+               </info>
+               <variable id="nbytesSize" value="$configSet.generalConfig.EMLM.getValue() ? ($parent.offsetEnable.getValue(false) ? 0x3FF : 0x3FFFFFFF ) : 0xFFFFFFFF"></variable>
+               <integer type="uint32_t" id="NBYTES" label="Transfer size [Byte]" options="REGISTERS_REFRESH" max_expr="$parent.nbytesSize.getValue().toInt()">
+                   <description>
+Number of bytes to be transferred in each service request of the channel. As a channel activates, the
+appropriate TCD contents load into the eDMA engine, and the appropriate reads and writes perform until
+the minor byte transfer count has transferred. This is an indivisible operation and cannot be halted.
+(Although, it may be stalled by using the bandwidth control field, or via preemption.) After the minor count
+is exhausted, the SADDR and DADDR values are written back into the TCD memory, the major iteration
+count is decremented and restored to the TCD memory. If the major iteration count is completed,
+additional processing is performed.
+                   </description>
+                   <validation>
+                       <constraint cond_expr="($this.getValue() % $parent.SSIZE.getEnumItemValue().toInt() == 0) &amp;&amp; ($this.getValue() % $parent.DSIZE.getEnumItemValue().toInt() == 0)" level="warning"  description_expr="`The minor loop bytes have to be multiple of source and destination data size (` + system::max($parent.SSIZE.getEnumItemValue().toInt(), $parent.DSIZE.getEnumItemValue().toInt()) + `B).`"/>
+                   </validation>
+                   <assign when="!$configSet.generalConfig.EMLM.getValue()">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_NBYTES_MLNO`" bitfield="NBYTES" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <assign when="$configSet.generalConfig.EMLM.getValue() &amp;&amp; $parent.offsetEnable.getValue(false)">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_NBYTES_MLOFFYES`" bitfield="NBYTES" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <assign when="$configSet.generalConfig.EMLM.getValue() &amp;&amp; !$parent.offsetEnable.getValue(false)">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_NBYTES_MLOFFNO`" bitfield="NBYTES" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+               </integer>
+               <bool id="ELINK" label="Minor loop channel link" options="REGISTERS_REFRESH">
+                   <description>
+**Enable channel-to-channel linking on minor-loop complete**  
+As the channel completes the minor loop, this flag enables linking to another channel, defined by the Linked channel (LINKCH) field. 
+The link target channel initiates a channel service request via an internal mechanism that sets the TCDn_CSR[START] bit of the specified channel.  
+If channel linking is disabled, the CITER value is extended to 15 bits in place of a link channel number. If the major loop is exhausted, 
+this link mechanism is suppressed in favor of the MAJORELINK channel linking.  
+NOTE: This bit must be equal to the BITER[ELINK] bit; otherwise, a configuration error is reported.
+                   </description>
+                   <assign when="$this.getValue()">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_CITER_ELINKYES`" bitfield="ELINK" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+                   <assign when="!$this.getValue()">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_CITER_ELINKNO`" bitfield="ELINK" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+                   <assign when="$this.getValue()">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_BITER_ELINKYES`" bitfield="ELINK" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+                   <assign when="!$this.getValue()">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_BITER_ELINKNO`" bitfield="ELINK" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <integer type="uint8_t" id="LINKCH" label="Linked channel" options="REGISTERS_REFRESH" enable="$parent.ELINK.getValue()" max_expr="$configSet.maxChannel.getValue()">
+                   <description>
+Minor Loop Link Channel Number.
+If channel-to-channel linking is enabled (ELINK = 1), then after the minor loop is exhausted, the eDMA
+engine initiates a channel service request to the channel defined by these four bits by setting that
+channel’s TCDn_CSR[START] bit.
+                   </description>
+                   <assign when="$parent.ELINK.getValue()">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_CITER_ELINKYES`" bitfield="LINKCH" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <assign when="$parent.ELINK.getValue()">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_BITER_ELINKYES`" bitfield="LINKCH" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+               </integer>
+               <enum id="BWC" label="Bandwidth control" options="REGISTERS_REFRESH">
+                   <description>
+Throttles the amount of bus bandwidth consumed by the eDMA. In general, as the eDMA processes the minor loop, 
+it continuously generates read/write sequences until the minor count is exhausted. This field forces the eDMA to stall after the completion 
+of each read/write access to control the bus request bandwidth seen by the crossbar switch.  
+*NOTE:* If the source and destination sizes are equal, this field is ignored between the first and second transfers and after the last write of each minor loop.
+This behavior is a side effect of reducing start-up latency.
+                   </description>
+                   <assign when="true">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_CSR`" bitfield="BWC" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="No eDMA engine stalls" value="0"></item>
+                   <item id="2" label="4-cycle stall" value="2"><description>eDMA engine stalls for 4 cycles after each r/w</description></item>
+                   <item id="3" label="8-cycle stall" value="3"><description>eDMA engine stalls for 8 cycles after each r/w</description></item>
+               </enum>
+               <!-- Major loop -->
+               <info value="`Major loop configuration`" id="lineMajL" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+               <integer type="uint32_t" id="BITER_CITER" label="Major loop count" options="REGISTERS_REFRESH" max_expr="$parent.ELINK.getValue() ? 0x1FF : 0x7FFF">
+                   <description>
+**Major loop iteration Count**
+This 9-bit (enabled minor loop channel link) or 15-bit (disabled minor loop channel link) count represents the major loop count for the channel.
+It is decremented each time the minor loop is completed and updated in the transfer control descriptor memory. 
+After the major iteration count is exhausted, the channel performs a number of operations (e.g. final source and destination address calculations),
+optionally generating an interrupt to signal channel completion before reloading the CITER field from the beginning iteration count (BITER) field.  
+*NOTE:* If the channel is configured to execute a single service request, the initial values of BITER and CITER should be 0x0001.  
+                   </description>
+                   <assign when="$parent.ELINK.getValue()">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_CITER_ELINKYES`" bitfield="CITER" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <assign when="!$parent.ELINK.getValue()">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_CITER_ELINKNO`" bitfield="CITER" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <assign when="$parent.ELINK.getValue()">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_BITER_ELINKYES`" bitfield="BITER" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <assign when="!$parent.ELINK.getValue()">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_BITER_ELINKNO`" bitfield="BITER" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+               </integer>
+               <bool id="MAJORELINK" label="Major loop channel link" options="REGISTERS_REFRESH">
+                   <description>
+**Enable channel-to-channel linking on major-loop complete**  
+As the channel completes the major loop, this flag enables linking to another channel, defined by the Linked channel (MAJORLINKCH) field. 
+The link target channel initiates a channel service request via an internal mechanism that sets the TCDn_CSR[START] bit of the specified channel.  
+    
+*NOTE:* To support the dynamic linking coherency model, this field is forced to zero when written to while the TCDn_CSR[DONE] bit is set.
+                   </description>
+                   <assign when="true">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_CSR`" bitfield="MAJORELINK" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <integer type="uint8_t" id="MAJORLINKCH" label="Linked channel" options="REGISTERS_REFRESH" enable="$parent.MAJORELINK.getValue()" max_expr="$configSet.maxChannel.getValue()">
+                   <description>
+Major Loop Link Channel Number.
+If major channel-to-channel linking is enabled (MAJORELINK = 1), then after the major loop is exhausted, the eDMA
+engine initiates a channel service request to the channel defined by these four bits by setting that channel’s TCDn_CSR[START] bit.
+                   </description>
+                   <assign when="true">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_CSR`" bitfield="MAJORLINKCH" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+               </integer>
+               <integer type="int32_t" id="SLAST" label="Source last address adjustment" options="REGISTERS_REFRESH">
+                   <description>
+                       Last source address adjustment.
+                       Adjustment value added to the source address at the completion of the major iteration count. 
+                       This value can be applied to restore the source address to the initial value, or adjust the address to reference the next data structure.
+                       This register uses two's complement notation; the overflow bit is discarded.
+                   </description>
+                   <assign when="true">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_SLAST`" bitfield="SLAST"
+                           value="($this.getValue() &gt;= 0) ? $this.getValue() : system::signedToUnsignedInteger($this.getValue(),32)"  reverse_value="x -> x.toString(16)"/>
+                   </assign>
+               </integer>
+               <integer type="int32_t" id="DLAST" label="Destination last address adjustment" options="REGISTERS_REFRESH" available="!$parent.ESG.getValue()">
+                   <description>
+                       Last destination address adjustment.
+                       Adjustment value added to the destination address at the completion of the major iteration count. 
+                       This value can be applied to restore the destination address to the initial value, or adjust the address to reference the next data structure. 
+                       This register uses two's complement notation; the overflow bit is discarded.
+                   </description>
+                   <assign when="!$parent.ESG.getValue()">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_DLASTSGA`" bitfield="DLASTSGA"
+                           value="($this.getValue() &gt;= 0) ? $this.getValue() : system::signedToUnsignedInteger($this.getValue(),32)" reverse_value="x -> x.toString(16)"/>
+                   </assign>
+               </integer>
+               <info id="dlastInfo" label="Destination last address adjustment" value="`Disabled due to scatter-gather mode`" available="$parent.ESG.getValue()"></info>
+               <!-- Scatter gather -->
+               <info value="`Scatter-gather configuration`" id="lineSG" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+               <bool id="ESG" label="Scatter-gather enable" options="REGISTERS_REFRESH">
+                   <description>
+**Enable Scatter-Gather processing**  
+
+Scatter/gather is the process of automatically loading a new TCD into a channel. It allows a DMA channel to use multiple TCDs; this enables a DMA channel to scatter the DMA data to multiple destinations or gather it from multiple sources.
+When scatter/gather is enabled and the channel has finished its major loop, a new TCD is fetched from system memory and loaded into that channel’s descriptor location in DMA programmer’s model, thus replacing the current descriptor.
+
+*NOTE:* The last destination address adjustment is not available in this mode.  
+*NOTE:* To support the dynamic scatter/gather coherency model, this field is forced to zero when written to while the TCDn_CSR[DONE] bit is set.  
+                   </description>
+                   <assign when="true">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_CSR`" bitfield="ESG" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <string id="SGA" label="TCD address expression" options="REGISTERS_REFRESH" enable="$parent.ESG.getValue()">
+                   <options_expr>
+                       <option id="custom_assign" expr="$this.getValue()" available="!$this.getValue().isInt()"></option>
+                   </options_expr>
+                   <description>
+TCD address expression used in scatter-gather operation. This address points to the beginning of a 0-modulo-32-byte region containing the next transfer
+control descriptor to be loaded into this channel. 
+This channel reload is performed as the major iteration count completes. 
+Example use cases:  
+- Reference: `(uint32_t)((uint8_t *)&amp;next_tcd)`  
+- Reference to array item: `(uint32_t)((uint8_t *)&amp;next_tcd[0])`  
+- Pointer: `(uint32_t)((uint8_t *)next_tcd_ptr)`  
+- Address register value: `0x0001000`  
+
+*NOTE:* The expression syntax is not validated.  
+*NOTE:* The scatter/gather address must be *0-modulo-32-byte*, otherwise a configuration error is reported.  
+*NOTE:* Only **Address register value** is displayed in *Registers view* correctly. The address reference is calculated during the project compilation and displayed as *register write 0*.
+                   </description>
+                   <validation>
+                       <constraint cond_expr="$this.getValue() != ``" level="error"  description="The source address expression is not defined."/>
+                       <constraint cond_expr="!($this.getValue().isInt() &amp;&amp; $this.getValue().toInt() &gt; 0xFFFFFFFF)" level="error"  description="Source address value must be lower than 32 Bytes (0xFFFFFFFF)."/>
+                   </validation>
+                   <assign when="$parent.ESG.getValue()">
+                       <register name_expr="`TCD` + $parent.tcdID.getValue() +`_DLASTSGA`" bitfield="DLASTSGA" value="$this.getValue().isInt() ? $this.getValue().toInt() : 0"
+                           reverse_value="x -> x.toString(16)" unknown_bits_expr="!$this.getValue().isInt() ? 0xFFFFFFFF : 0"/>
+                   </assign>
+               </string>
+               <string id="SGA_ext" label="External definition" enable="$parent.ESG.getValue()">
+                   <description>
+Source address external definition (with its type) which is part of the generated code. This variable/array needs to be defined in user code.
+Example use cases:
+- `uint32_t next_tcd`
+- `uint32_t next_tcd[]`
+
+*NOTE:* The expression syntax is not validated.  
+                   </description>
+               </string>
+               <variable id="SGA_var" value="$parent.SGA_ext.getValue(`N/A`) + ` __attribute__((aligned(32U)));`"/>
+               <variable id="SGA_code_var" value="$parent.SGA_ext.getValue(``) == `` ? `` :
+                   `/* `+$configSet.inst_ID.getValue() +` TCD`+ $parent.tcdID.getValue() +` scatter-gather next TCD address */&#10;` + 
+                   $parent.SGA_ext.getValue(`N/A`) + ` __attribute__((aligned(32U)));&#10;`"/>
+               <info id="SGA_info" label="Code preview" enable="$parent.ESG.getValue()"
+                   value="$parent.SGA_ext.getValue(``) != `` ? `extern `  + $parent.SGA_var.getValue(): `No TCD address external definition`">
+                   <description>TCD address external definition</description>
+               </info>
+               <info value="`Definition template`" id="lineTmp" options="UI_LINE_BREAK;UI_LABEL_HIDDEN" available="!($parent.source_var.getValue(``) == `` &amp;&amp; $parent.dest_var.getValue(``) == `` &amp;&amp; $parent.SGA_ext.getValue(``) == ``)"></info>
+               <info id="cpy2clp" label="Definition template" value="$parent.source_var.getValue() + $parent.dest_var.getValue() + $parent.SGA_code_var.getValue()" options="UI_INFO_COPY_BUTTON" available="!($parent.source_var.getValue(``) == `` &amp;&amp; $parent.dest_var.getValue(``) == `` &amp;&amp; $parent.SGA_code_var.getValue(``) == ``)">
+                   <description>Copy variable names into your code and define them.</description>
+               </info> 
+               <info value="`Interrupt request configuration`" id="lineIRT" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+               <set id="interruptSources" label="Interrupt sources" options="REGISTERS_REFRESH">
+                   <item id="INTHALF" label="Major count half completion">
+                       <description>Enable an interrupt when major counter is half complete.
+                           The channel generates an interrupt request when the current major iteration count reaches the halfway point. Specifically, the comparison performed by the eDMA engine is (CITER == (BITER >> 1)). 
+                           This halfway point interrupt request is provided to support double-buffered, also known as ping-pong, schemes or other types of data movement
+                           where the processor needs an early indication of the transfer's progress.
+                           This request is associated with channel interrupt vector which is channel specific.
+                       </description>
+                       <assign when="true">
+                           <register name_expr="`TCD` + $parent.getParent().getSetting(`tcdID`).getValue() +`_CSR`" bitfield="INTHALF" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                       </assign>
+                   </item>
+                   <item id="INTMAJOR" label="Major count completion">
+                       <description>Enable an interrupt when major iteration count completes. The channel generates an interrupt request when the current major iteration count reaches zero.
+                           This request is associated with channel interrupt vector which is channel specific.
+                       </description>
+                       <assign when="true">
+                           <register name_expr="`TCD` + $parent.getParent().getSetting(`tcdID`).getValue() +`_CSR`" bitfield="INTMAJOR" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                       </assign>
+                   </item>
+               </set>
+           </struct>
+           <struct id="channel_t">
+               <integer type="uint8_t" id="chIndex" label="Channel number" options="REGISTERS_REFRESH;UI_REFRESH" max_expr="$configSet.maxChannel.getValue()">
+                   <description expr="`The eDMA channel number of the DMA device. Available channels are 0 - ` + $configSet.maxChannel.getValue() + `.`"></description>
+                   <validation>
+                       <constraint cond_expr="$parent.getParent().countOccurrences(x->(x.getSetting(`chIndex`).getValue() == $this.getValue()))==1"
+                           level="error" description_expr="`The eDMA channel ` + $this.getValue() + ` is used more than once in ` + $instance.getID() + ` instance.`"/>
+                       <constraint cond_expr="$components.system.#global.duplicit_edma_channels.getValue().countOccurrences(x->(x.getSetting(`eDMAn`).getValue() == $this.getValue())) == 0" 
+                           level="warning" description_expr="`The eDMA channel ` + $this.getValue() + ` is used more than once.`"/>
+                   </validation>
+               </integer>
+               <!-- DMAMUX settings -->
+               <bool id="enableDmamux" label="DMAMUX initialization" options="UI_LABEL_BOLD">
+                   <description expr="$parent.dmamux_settings.getSetting(`dmamux_instance`).getValue() + ` device interconnects the current eDMA peripheral (` + $instance.getPeripheral() + `) by routing the eDMA requests (sources) to any of the eDMA channels.`"></description>
+               </bool>
+               <struct id="dmamux_settings" options="UI_LABEL_HIDDEN" enable="$parent.enableDmamux.getValue()">
+                   <variable id="eDMA_handle" value="`N/A`"></variable>
+                   <variable id="dma_prefix_define" value="$configSet.inst_ID_def.getValue() + `_CH` + $parent.eDMAn.getValue()"></variable>
+                   <variable id="dma_channel_define" value="$configSet.inst_ID_def.getValue() + `_CH` + $parent.eDMAn.getValue() + `_DMA_CHANNEL`"></variable>
+                   <variable id="dmamux_instance" value="(featureDefined(`SOC_EDMA_COUNT`) &amp;&amp; getFeature(`SOC_EDMA_COUNT`)) ?
+                       ($parent.hasOption(`without_dmamux_init`) &amp;&amp; ($parent.optionValue(`without_dmamux_init`) != `false`)) ? `` : 
+                       (getResource(`dmamux`, $instance.getCoreId()).countOccurrences(item -> (item.getSetting(`id`).getValue() == $parent.eDMA_source.getCValue())) &lt;= 0)
+                       ?  getResource(`dmamux`, `dmaMuxInfo`).findFirst(item -> (item.getSetting(`dmaDevice`).getValue() == $parent.dma_instance.getValue())).getSetting(`muxDevice`).getValue()
+                       :  getResource(`dmamux`, $instance.getCoreId()).findFirst(item -> (item.getSetting(`id`).getValue() == $parent.eDMA_source.getCValue())).getSetting(`dmamux_dev`).getValue()
+                       : `N/A`" 
+                       available="!$parent.hasOption(`without_dmamux_init`) || ($parent.hasOption(`without_dmamux_init`) &amp;&amp; ($parent.optionValue(`without_dmamux_init`) == `false`))">
+                   </variable>
+                   <variable id="dma_instance" value="(featureDefined(`SOC_EDMA_COUNT`) &amp;&amp; getFeature(`SOC_EDMA_COUNT`)) ?
+                       getResource(`dmamux`, `dmaMuxInfo`).findFirst(item -> (($parent.hasOption(`without_dmamux_init`) &amp;&amp; ($parent.optionValue(`without_dmamux_init`) != `false`)) || (getResource(`dmamux`, $instance.getCoreId()).countOccurrences(item -> (item.getSetting(`id`).getValue() == $parent.eDMA_source.getCValue())) &lt;= 0) ? (item.getSetting(`cores`).getValue() == $instance.getCoreId()) : (item.getSetting(`muxDevice`).getValue() == $parent.dmamux_instance.getValue()))).getSetting(`dmaDevice`).getValue()
+                       : `N/A`">
+                   </variable>
+                   <variable id="eDMAn" value="$parent.getParent().getSetting(`chIndex`).getValue()"></variable>
+                   <bool id="ENBL" label="Channel enable" options="REGISTERS_REFRESH">
+                       <description>Enables DMA channel operation in DMAMUX</description>
+                       <assign when="true">
+                           <register peripheral_expr="$parent.dmamux_instance.getValue()" name_expr="`CHCFG` + $parent.eDMAn.getValue()" bitfield="ENBL" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                       </assign>
+                   </bool>
+                   <dynamic_enum id="eDMA_source" label="eDMA request" options="REGISTERS_REFRESH" items="
+                       (featureDefined(`SOC_EDMA_COUNT`) &amp;&amp; getFeature(`SOC_EDMA_COUNT`)) ?
+                       getResource(`dmamux`, $instance.getCoreId()).arrayToEnumItems(
+                       enumItem -> true, 
+                       enumItem -> enumItem.getSetting(`id`).getValue(),
+                       enumItem -> `#` + enumItem.getSetting(`requestNumber`).getValue() + `: `+ enumItem.getSetting(`label`).getValue(),  
+                       enumItem -> enumItem.getSetting(`requestNumber`).getValue())
+                       : createArray().addItemToList(`none`, `eDMA is not available`,`eDMA is not available`,true)">
+                       <description>
+eDMA source of the peripheral request *(#request number)* that is muxed through the DMAMUX device.
+                       </description>
+                       <validation>
+                           <constraint cond_expr="$this.getCValue() != ``" level="error" description="A DMAMUX channel must be selected. If there is not any value available the MCU does not support the DMA request of the selected peripheral."/>
+                           <constraint when_expr="$parent.ENBL.getValue()" cond_expr="$components.system.#global.duplicit_edma_requests.getValue().countOccurrences(x->(x.getSetting(`eDMA_source`).getEnumItemValue() == $this.getEnumItemValue())) == 0" 
+                               level="warning" description_expr="`The eDMA request #` + $this.getEnumItemValue() + ` is used more than once.`"/>
+                           <dependency when_expr="$this.getValue().regexMatch(`kDmaRequestMuxXBAR_DSC\d+`)"
+                               resource_type="PeripheralUnifiedSignal"
+                               resource_id_expr="$instance.getPeripheral() + `.xbar_dma_req.` + $this.getValue().regexSubstr(`kDmaRequestMuxXBAR_DSC(\d+)`,1)"
+                               description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage($this.getEnumItemLabel(), $instance.getPeripheral())" level="Warning">
+                               <feature name="routed">
+                                   <data expr="true"/>
+                               </feature>
+                           </dependency>
+                       </validation>
+                       <assign when="$this.getCValue() != `` &amp;&amp; !$configSet.isAnyChannelInvalid.getValue()">
+                           <register peripheral_expr="$parent.dmamux_instance.getValue()" name_expr="`CHCFG` + $parent.eDMAn.getValue()" bitfield="SOURCE" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                       </assign>
+                   </dynamic_enum>
+               </struct>
+               <!-- DMA Channel Settings -->
+               <enum id="ECP" label="Channel preemption">
+                   <description>
+Enables Channel Preemption  
+**Values:**  
+- **0** - the channel *cannot be suspended* by a higher priority channel's service request  
+- **1** - the channel *can be temporarily suspended* by the service request of a higher priority channel  
+                   </description>
+                   <assign when="true">
+                       <register name_expr="`DCHPRI` + $parent.chIndex.getValue()" bitfield="ECP" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label_expr="`CH` + $parent.chIndex.getValue() + ` cannot be suspended by a higher priority channel`" value="0"><description>The channel cannot be suspended by a higher priority channel's service request</description></item>
+                   <item id="1" label_expr="`CH` + $parent.chIndex.getValue() + ` can be suspended by a higher priority channel`" value="1"><description>The channel can be temporarily suspended by the service request of a higher priority channel.</description></item>
+               </enum>
+               <enum id="DPA" label="Preempt ability">
+                   <description>
+Enables channel preempt ablity  
+**Values:**  
+- **0** - the channel *can suspend* other channel with lower priority.  
+- **1** - the channel *cannot suspend* any channel, regardless of channel priority
+                   </description>
+                   <assign when="true">
+                       <register name_expr="`DCHPRI` + $parent.chIndex.getValue()" bitfield="DPA" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label_expr="`CH` + $parent.chIndex.getValue() + ` can suspend a lower priority channel`" value="0"><description>The channel can suspend other channel with lower priority</description></item>
+                   <item id="1" label_expr="`CH` + $parent.chIndex.getValue() + ` cannot suspend any channel`" value="1"><description>The channel cannot suspend any channel, regardless of channel priority</description></item>
+               </enum>
+               <integer id="CHPRI" label="Channel arbitration priority" type="uint8_t" max_expr="$configSet.maxChannel.getValue()">
+                   <description>
+Channel arbitration priority (fixed-priority arbitration, when round-robin arbitration is disabled).
+- the **highest** priority: **3**
+- the **lowest** priority : **0**
+                   </description>
+                   <validation>
+                       <constraint cond_expr="$parent.getParent().countOccurrences(x->x.getSetting(`CHPRI`).getValue()==$this.getValue()) &lt; 2" level="error" description_expr="`Channel arbitration priority ` + $this.getValue() + ` is used more than once.`"/>
+                   </validation>
+                   <!--assign when="true">
+                       <register name_expr="`DCHPRI` + $parent.chIndex.getValue()" bitfield="CHPRI" value="$configSet.DCHPRI.getValue().get($parent.chIndex.getValue()).toInt()" reverse_value="x -> x"/>
+                   </assign-->
+               </integer>
+               <!-- general channel settings -->
+               <bool id="ERQ" label="Peripheral request enable">
+                   <description>Enables hardware channel request. DMA request input signals and this enable request flag (ERQ) must be asserted before a channel’s hardware service request is accepted.
+                       The state of the DMA enable request flag does not affect a channel service request made explicitly through software or a linked channel request.
+                   </description>
+                   <assign when="true">
+                       <register name="ERQ" bitfield_expr="`ERQ` + $parent.chIndex.getValue()" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <bool id="EARS" label="Asynchronous peripheral request"  available="featureDefined(`FSL_FEATURE_EDMA_ASYNCHRO_REQUEST_CHANNEL_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_EDMA_ASYNCHRO_REQUEST_CHANNEL_COUNT`) != 0)">
+                   <description>Enables an asynchronous request for the eDMA transfer in stop mode</description>
+                   <assign when="true">
+                       <register name="EARS" bitfield_expr="`EDREQ_` + $parent.chIndex.getValue()" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <!-- Clear interrupts -->
+               <bool id="INT" label="Clear channel interrupt" options="REGISTERS_REFRESH">
+                   <description>If enabled, it clears the corresponding channel's interrupt request during the initialization.</description>
+                   <assign when="true">
+                       <register name="INT" bitfield_expr="`INT` + $parent.chIndex.getValue()" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <bool id="ERR" label="Clear channel error interrupt" options="REGISTERS_REFRESH">
+                   <description>If enabled, it clears the corresponding channel's error interrupt request during the initialization.</description>
+                   <assign when="true">
+                       <register name="ERR" bitfield_expr="`ERR` + $parent.chIndex.getValue()" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <variable id="DONE" options="REGISTERS_REFRESH" value="0">
+                   <assign when="true">
+                       <register name_expr="`TCD` + $parent.chIndex.getValue() + `_CSR`" bitfield="DONE" value="$this.getValue()"/>
+                   </assign>
+               </variable>
+               <!-- TCD Settings -->
+               <reference type="tcd_t" id="tcd" label="TCD configuration"></reference>
+               <bool id="EEI" label="Error interrupt source" options="REGISTERS_REFRESH">
+                   <description expr="`Enable interrupt request while channel CH`+ $parent.chIndex.getValue()+` error occurs.`"></description>                   
+                   <assign when="true">
+                       <register name="EEI" bitfield_expr="`EEI` + $parent.chIndex.getValue()" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <bool id="enableINT" label="Channel interrupt enable" options="UI_LABEL_BOLD">
+                   <description>Enable initialization of the channel interrupt vector</description>
+               </bool>
+               <reference id="interrupt_channel" label="Channel Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=DMA_CH_INT_DONE;UI_LABEL_HIDDEN;" enable="$parent.enableINT.getValue()">
+                   <options_expr>
+                       <option id="irq_channel" expr="$parent.chIndex.getValue()"/>
+                   </options_expr>
+               </reference>
+               <struct id="tcd_params" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+                   <variable id="PERIPHERAL" value="$instance.getPeripheral()"></variable>
+                   <variable id="VPREFIX" value="$configSet.inst_ID_def.getValue()"></variable>
+                   <variable id="CHANNEL" value="$parent.getParent().getSetting(`chIndex`).getValue()"></variable>
+               </struct>
+               <struct id="dmamux_params" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+                   <variable id="PERIPHERAL" value="`DMAMUX`"></variable>
+                   <variable id="VPREFIX" value="$configSet.inst_ID_def.getValue()"></variable>
+                   <variable id="CHANNEL" value="$parent.getParent().getSetting(`chIndex`).getValue()"></variable>
+               </struct>
+           </struct>
+           <struct id="generalConfig_t" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+               <bool id="EMLM" label="Minor loop mapping" options="REGISTERS_REFRESH">
+                   <description>
+Enables minor loop mapping.
+TCD word2 is redefined to include **individual enable** fields, an **offset** field, and the **NBYTES** field.
+The individual enable fields allow the minor loop offset to be applied to the *source address*, the *destination address*, or both (TCDn_NBYTES_MLOFFNO, TCDn_NBYTES_MLOFFYES).
+The NBYTES field is reduced when either offset is enabled.  
+When disabled TCD word2 is defined as a 32-bit NBYTES field (TCDn_NBYTES_MLNO).
+                   </description>
+                   <assign when="true">
+                       <register name="CR" bitfield="EMLM" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <bool id="CLM" label="Continuous link mode">
+                   <description>
+Continuous Link Mode  
+**Values:**  
+- **Disabled** - A minor loop channel link made to itself goes through channel arbitration before being activated again.  
+- **Enabled** - A minor loop channel link made to itself does not go through channel arbitration before being activated again.
+Upon minor loop completion, the channel activates again if that channel has a minor loop channel link enabled and the link channel is itself.
+This effectively applies the minor loop offsets and restarts the next minor loop.  
+
+*NOTE:* Do not use continuous link mode with a **channel linking to itself** if there is only one minor loop iteration per service request, 
+for example, if the channel's NBYTES value is the same as either the source or destination size. 
+The same data transfer profile can be achieved by simply increasing the NBYTES value, which provides more efficient, faster processing.
+                   </description>
+                   <assign when="true">
+                       <register name="CR" bitfield="CLM" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <bool id="HOE" label="Halt on error">
+                   <description>Enables transfer halt on error. Any error causes the HALT bit to set. Subsequently, all service requests are ignored until the HALT bit is cleared.</description>
+                   <assign when="true">
+                       <register name="CR" bitfield="HOE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <enum id="ERCA" label="Priority arbitration mode">
+                   <description>
+Sets channel priority arbitration mode.
+When the fixed-priority arbitration is used for channel selection the channel preemption settings are available.
+Channel preemption allows the executing channel’s data transfers to temporarily suspend in favor of starting a higher priority channel.
+The fixed priority for specific channel is set in **Channel arbitration priority** setting.
+When round-robin arbitration is used for channel selection the eDMA cycles through the channels in order 
+(from high to low channel number) without regard to priority (the channel **priorities are ignored**), checking for a pending request.
+                   </description>
+                   <assign when="true">
+                       <register name="CR" bitfield="ERCA" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="Fixed-priority" value="0"></item>
+                   <item id="1" label="Round-robin" value="1"></item>
+               </enum>
+               <bool id="EDBG" label="Debug mode enable">
+                   <description>When enabled, the eDMA stalls the start of a new channel when in debug mode, while executing channels are allowed to complete.
+                       When disabled, the DMA continues to operate in debug mode.
+                       Channel execution resumes when the system exits debug mode or the EDBG bit is cleared.
+                   </description>
+                   <assign when="true">
+                       <register name="CR" bitfield="EDBG" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <bool id="EBWR" label="Buffered writes enable">
+                   <description>Enables buffered writes.</description>
+                   <assign when="true">
+                       <register name="CR" bitfield="EBWR" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               
+           </struct>
+           <struct id="errIntConfig_t" label="Error interrupt configuration" available="featureDefined(`FSL_FEATURE_EDMA_HAS_ERROR_IRQ`) &amp;&amp; (getFeature(`FSL_FEATURE_EDMA_HAS_ERROR_IRQ`) != 0)" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+               <bool id="enableErrInterrupt" label="Error interrupt enable" options="UI_LABEL_BOLD">
+                   <description>Enable initialization of the error interrupt vector and providing definition of the interrupt routine name.</description>
+               </bool>
+               <reference id="errorInterrupt" type="interrupt_vector_t" enable="$parent.enableErrInterrupt.getValue(false)" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=DMA_INT_ERROR;UI_LABEL_HIDDEN;"></reference>
+           </struct>
+       </user_types>
+      <settings>
+          <variable id="maxChannel" value="(featureDefined(`FSL_FEATURE_EDMA_MODULE_CHANNEL`) ? (getFeature(`FSL_FEATURE_EDMA_MODULE_CHANNEL`).toInt() - 1) : 255)"></variable>
+          <variable id="INT_mask" value="$parent.channel.map(x->system::boolToInt(x.getSetting(`INT`).getValue()==true) &lt;&lt; x.getSetting(`chIndex`).getValue()).reduce(0,(x,y) -> x.toInt() + y.toInt()).toString(16)"></variable>
+          <variable id="ERR_mask" value="$parent.channel.map(x->system::boolToInt(x.getSetting(`ERR`).getValue()==true) &lt;&lt; x.getSetting(`chIndex`).getValue()).reduce(0,(x,y) -> x.toInt() + y.toInt()).toString(16)"></variable>
+          <variable id="EARS_mask" value="$parent.channel.map(x->system::boolToInt(x.getSetting(`EARS`).getValue()==true) &lt;&lt; x.getSetting(`chIndex`).getValue()).reduce(0,(x,y) -> x.toInt() + y.toInt()).toString(16)"></variable>
+          <variable id="EEI_mask" value="$parent.channel.map(x->system::boolToInt(x.getSetting(`EEI`).getValue()==true) &lt;&lt; x.getSetting(`chIndex`).getValue()).reduce(0,(x,y) -> x.toInt() + y.toInt()).toString(16)"></variable>
+          <variable id="ERQ_mask" value="$parent.channel.map(x->system::boolToInt(x.getSetting(`ERQ`).getValue()==true) &lt;&lt; x.getSetting(`chIndex`).getValue()).reduce(0,(x,y) -> x.toInt() + y.toInt()).toString(16)"></variable>
+          
+          <variable id="priorities" value="createArray(0, 1, $parent.maxChannel.getValue())"/>
+          <variable id="pUsed" value="$parent.channel.getChildren().map(x->x.getSetting(`CHPRI`).getValue().toInt())"/>
+          <variable id="pUnused" value="$parent.priorities.getValue().filter(p -> !$parent.pUsed.getValue().anyMatch(x -> x == p))"/>
+          <variable id="isAnyChannelInvalid" value="$parent.priorities.getValue().anyMatch(p -> ($parent.channel.filter(x -> x.getSetting(`chIndex`).getValue() == p).size() &gt; 1) ||
+              ($parent.channel.anyMatch(x -> x.getSetting(`chIndex`).getValue() &gt; $parent.maxChannel.getValue())))"></variable>
+          <variable id="mappedPriorities" value="$parent.isAnyChannelInvalid.getValue() ? createArray() :
+              $parent.priorities.getValue().map(
+              p -> $parent.channel.filter(x -> x.getSetting(`chIndex`).getValue() == p).size() == 1 
+              ? 
+              $parent.channel.get($parent.channel.searchInArray(x -> x.getSetting(`chIndex`).getValue() == p)).getSetting(`CHPRI`).getValue()
+              :
+              ($parent.channel.countOccurrences(x -> x.getSetting(`chIndex`).getValue() == p) == 1 ? p : $parent.pUnused.getValue().get(
+              $parent.priorities.getValue().filter(x -> (x &lt; p)).reduce(0,(last,i) -> (last + ($parent.channel.anyMatch(x -> x.getSetting(`chIndex`).getValue() == i) ? 0 : 1)))) ))"/>
+          <array type="channelPriorities_t" id="DCHPRIx" size="$parent.priorities.getValue().size()"></array>
+          <reference type="generalConfig_t" id="generalConfig"></reference>
+          <variable id="free_chnls" value="createArray(0, 1, $parent.maxChannel.getValue())
+              .filter(e -> $parent.channel.getChildren()
+              .map(x -> x.getSetting(`chIndex`).getValue())
+              .noneMatch(x -> x == e))
+              .sort((item1, item2) -> stringCompare(item1,item2))"/>
+          <array type="channel_t" id="channel" label="Channels" options="UI_SHOW_CONTENT_AS=TABS;UI_ARRAY_REORDER" 
+              max_expr="$parent.maxChannel.getValue()+1"  key_selector_expr="x -> `CH` + x.getSetting(`chIndex`).getValue()">
+              <item_defaults>
+                  <set_default id="enableDmamux" value_expr="x->true"/>
+                  <set_default id="chIndex" value_expr="x -> $parent.free_chnls.getValue().size() == 0 
+                      ? 0 
+                      : 
+                      ($parent.free_chnls.getValue().noneMatch(x -> x == 0) &amp;&amp; x.getParent().countOccurrences(y -> y.getSetting(`chIndex`).getValue() == 0) == 1 
+                      ? 0 
+                      : $parent.free_chnls.getValue().findFirst(i -> x.getParent().searchInArray(j -> j.getSetting(`chIndex`).getValue() == i) == -1))"/>
+                  <set_default id="INT" value_expr="x->true"/>
+                  <set_default id="ERR" value_expr="x->true"/>
+                  <set_default id="CHPRI" value_expr="x->x.getID()"/>
+                  <set_default id="tcd.SGA" value_expr="x->`(uint32_t)((uint8_t *)&amp;next_tcd[` +x.getID() + `])`"/>
+                  <set_default id="tcd.SGA_ext" value_expr="x->`uint8_t next_tcd[]`"/>
+                  <set_default id="tcd.SADDR" value_expr="x->`(uint32_t)((uint8_t *)&amp;srcAddr` +x.getID() + `[0])`"/>
+                  <set_default id="tcd.SADDR_ext" value_expr="x->`uint8_t srcAddr` + x.getID() + `[]`"/>
+                  <set_default id="tcd.SOFF" value_expr="x->`sizeof(srcAddr` + x.getID() + `[0])`"/>
+                  <set_default id="tcd.DADDR" value_expr="x->`(uint32_t)((uint8_t *)&amp;dstAddr` +x.getID() + `[0])`"/>
+                  <set_default id="tcd.DADDR_ext" value_expr="x->`uint8_t dstAddr` + x.getID() + `[]`"/>
+                  <set_default id="tcd.DOFF" value_expr="x->`sizeof(dstAddr` + x.getID() + `[0])`"/>
+                  <set_default id="tcd.NBYTES" value_expr="x->1"/>
+                  <set_default id="tcd.BITER_CITER" value_expr="x->1"/>
+              </item_defaults>
+          </array>
+          <reference type="errIntConfig_t" id="errIntConfig"></reference>
+          <!-- Fragment variables -->
+          <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+          <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+          <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+          <!-- Template parameters -->
+          <struct id="edma_params" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+              <variable id="PERIPHERAL" value="$instance.getPeripheral()"></variable>
+              <variable id="VPREFIX" value="$configSet.inst_ID_def.getValue()"></variable>
+          </struct>
+      </settings>
+       <fragment_defs>
+           <import>
+               <from component_id="system" config_set_id="common_code_templates"/>
+               <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+           </import>
+           <def fragment="channel_params">
+               <fragment id="template" if_expr="$this.enableDmamux.getValue()">
+                   <param id="file">dmamux.template</param>
+                   <param id="setting" expr="$this.dmamux_params"></param>
+                   <param id="separators"></param>
+                   <param id="description" expr="$configSet.inst_ID.getValue() + ` - `+ $this.dmamux_settings.dmamux_instance.getValue()+` channel ` + $this.chIndex.getValue()+ ` initialization`"></param>
+               </fragment>
+               <fragment id="template">
+                   <param id="file">edma_tcd.template</param>
+                   <param id="setting" expr="$this.tcd_params"></param>
+                   <param id="separators"></param>
+                   <param id="description" expr="$configSet.inst_ID.getValue() + ` channel ` + $this.getID()+ ` TCD initialization`"></param>
+               </fragment>
+           </def>
+           <def fragment="channel_defines">
+               <expr>`/* ` + $configSet.inst_ID_def.getValue() + ` TCD ` + $this.chIndex.getValue() +  ` definitions */`</expr><br/>
+               <fragment id="node_assigned_regs_init_all_peripherals">
+                   <param id="node" expr="$instance"></param>
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+                   <param id="filter" expr="`CHCFG` + $this.chIndex.getValue()"/>
+               </fragment>
+               <fragment id="filtered_assigned_regs_init">
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+                   <param id="filter" expr="`^(?=TCD` + $this.chIndex.getValue() + `)(?!.*_SADDR|.*_SOFF|.*_DADDR|.*_DOFF|.*_DLASTSGA).*`"/>
+               </fragment>
+               <fragment id="custom_reg_init">
+                   <param id="node" expr="$this.tcd.DLAST"/>
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               </fragment>
+               <fragment id="custom_reg_init">
+                   <param id="node" expr="$this.tcd.SGA"/>
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               </fragment>
+               <fragment id="custom_reg_init">
+                   <param id="node" expr="$this.tcd.SADDR"/>
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               </fragment>
+               <fragment id="custom_reg_init">
+                   <param id="node" expr="$this.tcd.SOFF"/>
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               </fragment>
+               <fragment id="custom_reg_init">
+                   <param id="node" expr="$this.tcd.DADDR"/>
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               </fragment>
+               <fragment id="custom_reg_init">
+                   <param id="node" expr="$this.tcd.DOFF"/>
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               </fragment>
+               <expr if_expr="$this.enableINT.getValue()">`/* ` + $configSet.inst_ID_def.getValue() + ` channel ` + $this.chIndex.getValue() +  ` interrupt vector */`</expr>
+               <fragment id="IRQ_definitions" apply_to="$this.interrupt_channel" if_expr="$this.enableINT.getValue()"/>
+           </def>
+           <def fragment="channel_externs">
+               <fragment id="extern_var" if_expr="$this.tcd.SADDR_ext.getValue(``) != ``">
+                   <param id="description" expr="$configSet.inst_ID_def.getValue()+ ` TCD ` + $this.chIndex.getValue() + ` source address`"></param>
+                   <param id="name" expr="$this.tcd.SADDR_ext.getValue()"/> 
+               </fragment>
+               <fragment id="extern_var" if_expr="$this.tcd.SOFF_ext.getValue(``) != ``">
+                   <param id="description" expr="$configSet.inst_ID_def.getValue()+ ` TCD ` + $this.chIndex.getValue() + ` source address offset`"></param>
+                   <param id="name" expr="$this.tcd.SOFF_ext.getValue()"/> 
+               </fragment>
+               <fragment id="extern_var" if_expr="$this.tcd.DADDR_ext.getValue(``) != ``">
+                   <param id="description" expr="$configSet.inst_ID_def.getValue()+ ` TCD ` + $this.chIndex.getValue() + ` destination address`"></param>
+                   <param id="name" expr="$this.tcd.DADDR_ext.getValue()"/> 
+               </fragment>
+               <fragment id="extern_var" if_expr="$this.tcd.DOFF_ext.getValue(``) != ``">
+                   <param id="description" expr="$configSet.inst_ID_def.getValue()+ ` TCD ` + $this.chIndex.getValue() + ` destination address offset`"></param>
+                   <param id="name" expr="$this.tcd.DOFF_ext.getValue()"/> 
+               </fragment>
+               <fragment id="extern_var" if_expr="$this.tcd.SGA_ext.getValue(``) != ``">
+                   <param id="description" expr="$configSet.inst_ID_def.getValue()+ ` channel ` + $this.chIndex.getValue() + ` next TCD address`"></param>
+                   <param id="name" expr="$this.tcd.SGA_ext.getValue() + ` __attribute__((aligned(32U)))`"/> 
+               </fragment>
+           </def>
+       </fragment_defs>
+       <code>
+           <section target="includes">
+               <fragment id="include">
+                   <param id="name">device_registers</param>
+                   <param id="filename">fsl_device_registers.h</param>
+               </fragment>
+           </section>
+           <section target="defines">
+               <fragment id="define">
+                   <param id="name" expr="$this.edma_params.VPREFIX.getValue() + `_INT_INIT_MASK`"/>
+                   <param id="value" expr="$configSet.INT_mask.getValue() + `U`"/>
+                   <param id="description" expr="`Mask for clearing channel interrupts`"></param>
+               </fragment>
+               <fragment id="define">
+                   <param id="name" expr="$this.edma_params.VPREFIX.getValue() + `_ERR_INIT_MASK`"/>
+                   <param id="value" expr="$configSet.ERR_mask.getValue() + `U`"/>
+                   <param id="description" expr="`Mask for clearing error interrupts`"></param>
+               </fragment>
+               <fragment id="define">
+                   <param id="name" expr="$this.edma_params.VPREFIX.getValue() + `_EARS_INIT_MASK`"/>
+                   <param id="value" expr="$configSet.EARS_mask.getValue() + `U`"/>
+                   <param id="description" expr="`Mask for enabling channel asynchronous peripheral request`"></param>
+               </fragment>
+               <fragment id="define">
+                   <param id="name" expr="$this.edma_params.VPREFIX.getValue() + `_EEI_INIT_MASK`"/>
+                   <param id="value" expr="$configSet.EEI_mask.getValue() + `U`"/>
+                   <param id="description" expr="`Mask for enabling error interrupt request`"></param>
+               </fragment>
+               <fragment id="define">
+                   <param id="name" expr="$this.edma_params.VPREFIX.getValue() + `_ERQ_INIT_MASK`"/>
+                   <param id="value" expr="$configSet.ERQ_mask.getValue() + `U`"/>
+                   <param id="description" expr="`Mask for enabling channel peripheral request`"></param>
+               </fragment>
+               <!-- common registers -->
+               <fragment id="filtered_assigned_regs_init">
+                   <param id="node" expr="$configSet"/>
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+                   <param id="filter" expr="`(?!.*TCD).*`"></param>
+               </fragment>
+               <fragment id="channel_defines" for_elements_of="$configSet.channel"></fragment>
+               <fragment id="IRQ_definitions" apply_to="$this.errIntConfig.errorInterrupt" if_expr="$this.errIntConfig.enableErrInterrupt.getValue()"/>
+           </section>
+           <section target="global_vars_extern">
+               <fragment id="channel_externs" for_elements_of="$configSet.channel"></fragment>
+           </section>
+           <section target="init_function_body">
+               <fragment id="template" apply_to="$configSet.edma_params">
+                   <param id="file">edma.template</param>
+                   <param id="setting" expr="$this"></param>
+                   <param id="separators"></param>
+                   <param id="description" expr="$configSet.inst_ID.getValue() + ` general initialization`"></param>
+               </fragment>
+               <fragment id="channel_params" for_elements_of="$configSet.channel"></fragment>
+               <fragment id="template" apply_to="$configSet.edma_params">
+                   <param id="file">edma_start.template</param>
+                   <param id="setting" expr="$this"></param>
+                   <param id="separators"></param>
+                   <param id="description" expr="$configSet.inst_ID.getValue() + ` start initialization`"></param>
+               </fragment>
+           </section>
+       </code> 
+      <quick_selections>
+         <quick_selection id="default" label="Default">
+            <description>Default configuration</description>
+             <set id="channel.0.chIndex">0</set>
+         </quick_selection>
+          <default>default</default>
+      </quick_selections>
+   </config_set>
+</component:config_component>

@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component:config_component
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd"
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0"
+   id="mcm_reg" label="MCM" category="Register init" registers_init="true" options="UI_COMPONENT_MODE_HIDDEN">
+   
+   <description>Miscellaneous Control Module (MCM)</description>
+   <mode id="General" label="General">
+      <description>General MCM initialization</description>
+      <config_set_refs>
+         <config_set_ref>general</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>MCM</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="general" label="General configuration" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+      <description>General MCM configuration</description>
+      <generated_types/>
+      <user_types>
+            <enum id="clock_source_t" label="Clock source selection" from="mine">            
+                <item id="kAltClock0" label="Bus clock" value="AltClock0"/> <!-- value = clock_unify_ID -->
+                <item id="kAltClock1" label="Source 1" value="AltClock1"/>               
+                <item id="kAltClock2" label="Source 2" value="AltClock2"/>               
+                <item id="kAltClock3" label="Source 3" value="AltClock3"/>                                       
+            </enum>  
+      </user_types>
+      <settings>
+        <struct id="mcm_template_params" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+          <variable id="PERIPHERAL" value="$instance.getPeripheral()"></variable>
+          <variable id="VPREFIX" value="$configSet.inst_ID_def.getValue()"></variable>
+        </struct> 
+        
+        <struct id="flash_controller" label="Flash controller configuration">
+          <description>Initialization of flash controller.</description>
+          <bool id="CPCR_FCCCLR" label="Clear flash controller cache" options="REGISTERS_REFRESH">
+            <description>Clears flash controller cache during initialization.</description>
+            <assign when="true">
+              <register name="CPCR" bitfield="FCCCLR" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+            </assign>
+          </bool>
+          <bool id="CPCR_FCDCDIS" label="Flash controller data caching" options="REGISTERS_REFRESH">
+            <description>Enables flash controller data caching</description>
+            <assign when="true">
+              <register name="CPCR" bitfield="FCDCDIS" value="$this.getValue() ? 0 : 1" reverse_value="x -> ((x == 1) ? false : true)"/>
+            </assign>
+          </bool>
+          <bool id="CPCR_FCICDIS" label="Flash controller instruction caching" options="REGISTERS_REFRESH">
+            <description>Enables flash controller data caching</description>
+            <assign when="true">
+              <register name="CPCR" bitfield="FCICDIS" value="$this.getValue() ? 0 : 1" reverse_value="x -> ((x == 1) ? false : true)"/>
+            </assign>
+          </bool>
+          <bool id="CPCR_FCCDIS" label="Flash controller cache" options="REGISTERS_REFRESH">
+            <description>Enables Flash controller cache.</description>
+            <assign when="true">
+              <register name="CPCR" bitfield="FCCDIS" value="$this.getValue() ? 0 : 1" reverse_value="x -> ((x == 1) ? false : true)"/>
+            </assign>
+          </bool>
+          <bool id="CPCR_FCDSPDIS" label="Flash controller data speculation" options="REGISTERS_REFRESH">
+            <description>Enables flash controller data speculation.</description>
+            <assign when="true">
+              <register name="CPCR" bitfield="FCDSPDIS" value="$this.getValue() ? 0 : 1" reverse_value="x -> ((x == 1) ? false : true)"/>
+            </assign>
+          </bool>
+          <bool id="CPCR_FCSPDIS" label="Flash controller speculation" options="REGISTERS_REFRESH">
+            <description>Enables flash controller speculation.</description>
+            <assign when="true">
+              <register name="CPCR" bitfield="FCSPDIS" value="$this.getValue() ? 0 : 1" reverse_value="x -> ((x == 1) ? false : true)"/>
+            </assign>
+          </bool>
+          <bool id="CPCR_FCSDIS" label="Flash memory controller stall" options="REGISTERS_REFRESH">
+            <description>
+Enables the Flash Memory Controller's ability to allow a flash memory access to initiate when a flash memory command is executing.
+              
+**Values:**
+- **Enabled** - Stall logic is enabled. While a flash memory command is executing, a flash memory access can occur without causing a bus error. The flash memory command completes execution, and then the flash memory access occurs.
+- **Disabled** - Stall logic is disabled. While a flash memory command is executing, an attempted flash memory access causes a bus error.</description>
+            <assign when="true">
+              <register name="CPCR" bitfield="FCSDIS" value="$this.getValue() ? 0 : 1" reverse_value="x -> ((x == 1) ? false : true)"/>
+            </assign>
+          </bool>
+        </struct>
+
+        <bool id="RPCR_RPE" label="Memory resource protection configuration" options="REGISTERS_REFRESH;UI_LABEL_BOLD">
+          <description>Enables memory resource protection intitialization.</description>
+          <assign when="true">
+            <register name="RPCR" bitfield="RPE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+          </assign>
+        </bool>
+        <struct id="protection" label="Memory resource protection" options="UI_LABEL_HIDDEN" available="$parent.RPCR_RPE.getValue()">
+          <description>Initialization of memory resource protection settigns.</description>
+          <bool id="RPCR_RL" label="Protection lock" options="REGISTERS_REFRESH">
+            <description>Register lock. Controls whether the values of the Flash base address, Program RAM base address, Boot ROM base address, Resource protection &quot;other&quot; SP, Resource protection illegal faulting PC and Resource protection misaligned faulting PC registers can be modified after initialization. When enabled, any attempted write to associated resource protection registers is ignored.</description>
+            <assign when="true">
+              <register name="RPCR" bitfield="RL" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+            </assign>
+          </bool>
+          <integer id="UFLASHBAR_FBA" label="Flash base address" type="uint32_t" min_expr="0x0" max_expr="0x3F000" options="REGISTERS_REFRESH">
+            <description>Flash base address for user region. Defines the size of the portion of flash memory that is used for supervisor space when resource protection is enabled. Addresses with 4096 byte granularity are supported.</description>
+            <validation>
+              <constraint cond_expr="$this.getValue() % 0x1000 == 0" level="error" description="This setting supports only 4096 byte granularity."/>
+            </validation>
+            <assign when="true">
+              <register name="UFLASHBAR" bitfield="FBA" value="$this.getValue()" reverse_value="x -> x"/>
+            </assign>
+          </integer>
+          <integer id="UPRAMBAR_RBA" label="Program RAM base address" type="uint16_t" min_expr="0x0" max_expr="0x7F00" options="REGISTERS_REFRESH">
+            <description>Program RAM base address for user region. Defines the size of the portion of program RAM that is used for supervisor space when resource protection is enabled. Addresses with 256 byte granularity are supported.</description>
+            <validation>
+              <constraint cond_expr="$this.getValue() % 0x100 == 0" level="error" description="This setting supports only 256 byte granularity."/>
+            </validation>
+            <assign when="true">
+              <register name="UPRAMBAR" bitfield="RBA" value="$this.getValue()" reverse_value="x -> x"/>
+            </assign>
+          </integer>
+          <integer id="UBROMBAR_RBA" label="Boot ROM base address" type="uint32_t" min_expr="0x0" max_expr="0xFFFFFFFF" options="REGISTERS_REFRESH">
+            <description>Boot ROM base address for user region. Defines the size of the portion of boot ROM that is used for supervisor space when resource protection is enabled.</description>
+            <assign when="true">
+              <register name="UBROMBAR" bitfield="RBA" value="$this.getValue()" reverse_value="x -> x"/>
+            </assign>
+          </integer>
+          <integer id="SRPOSP_SRPOSP" label="Resource protection &quot;other&quot; SP" type="uint32_t" min_expr="0" max_expr="0xFFFFFF" options="REGISTERS_REFRESH">
+            <description>Resource protection &quot;other&quot; stack pointer enable when resource protection is enabled.</description>
+            <assign when="true">
+              <register name="SRPOSP" bitfield="SRPOSP" value="$this.getValue()" reverse_value="x -> x"/>
+            </assign>
+          </integer>
+        </struct>
+        
+        <struct id="core" label="Core configuration">
+          <description>Inititalization of core-specific settings.</description>
+          <bool id="CPCR_INSDIS" label="DSP56800EX instructions" options="REGISTERS_REFRESH">
+            <description>Enables BFSC, 32-bit multiply and MAC instructions.</description>
+            <assign when="true">
+              <register name="CPCR" bitfield="INSDIS" value="$this.getValue() ? 0 : 1" reverse_value="x -> ((x == 1) ? false : true)"/>
+            </assign>
+          </bool>
+          <bool id="CPCR_RCDIS" label="Bit-reverse addressing mode" options="REGISTERS_REFRESH">
+            <description>Enables core support of bit-reverse addressing mode.</description>
+            <assign when="true">
+              <register name="CPCR" bitfield="RCDIS" value="$this.getValue() ? 0 : 1" reverse_value="x -> ((x == 1) ? false : true)"/>
+            </assign>
+          </bool>
+          <bool id="CPCR_SRDIS" label="DSP56800EX AGU shadow registers" options="REGISTERS_REFRESH">
+            <description>Enabels additional AGU shadow registers on the DSP56800EX core. When disabled, only shadow registers supported by the DSP56800E core are enabled.</description>
+            <assign when="true">
+              <register name="CPCR" bitfield="SRDIS" value="$this.getValue() ? 0 : 1" reverse_value="x -> ((x == 1) ? false : true)"/>
+            </assign>
+          </bool>
+          <bool id="CPCR_IBDIS" label="Core longword instruction buffer" options="REGISTERS_REFRESH">
+            <description>Eanbles core longword instruction buffer.</description>
+            <assign when="true">
+              <register name="CPCR" bitfield="IBDIS" value="$this.getValue() ? 0 : 1" reverse_value="x -> ((x == 1) ? false : true)"/>
+            </assign>
+          </bool>
+          <enum id="CPCR_XBARARB" label="DMA priority in AXBS crossbar switch" options="REGISTERS_REFRESH">
+            <description>Sets the priority of the DMA controller in the AXBS crossbar switch arbitration scheme. This device has 2 bus masters connected to the AXBS Crossbar Switch: the DMA Controller and the DSC core.</description>
+            <assign when="true">
+              <register name="CPCR" bitfield="XBARARB" value="$this.getEnumItemValue().toInt()" reverse_value="x -> (x == 1) ? `round_robin` : `fixed`"/>
+            </assign>
+            <item id="fixed" label="DSC core has priority" value="0">
+              <description>Fixed-priority arbitration: DSC core has a higher priority than the DMA Controller's priority.</description>
+            </item>
+            <item id="round_robin" label="Round-robin priority" value="1">
+              <description>Round-robin priority arbitration: DMA Controller and DSC core have equal priority.</description>
+            </item>
+          </enum>
+          <bool id="CFIER_ECFEI" label="Core fault error interrupt" options="REGISTERS_REFRESH">
+            <description>Enables core fault error interrupt.</description>
+            <assign when="true">
+              <register name="CFIER" bitfield="ECFEI" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+            </assign>
+          </bool>
+          <bool id="enable_irq" label="Enable interrupt vector" options="UI_LABEL_BOLD;REGISTERS_REFRESH">
+            <description>
+              Enable interrupts initialization, like priority and enablement in the INITC and SIM.
+            </description>
+            <validation>
+              <constraint when_expr="$this.value()"
+                cond_expr="$parent.CFIER_ECFEI.getValue()"
+                level="warning"
+                description_expr="`INTC settings are initialized, but Core fault error interrupt is disabled.`"/>
+            </validation>
+          </bool>
+          <reference id="interrupt" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_irq.getValue()" options="UI_LABEL_HIDDEN"/>
+        </struct>
+        
+        <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+        <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+        <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="defines">
+           <fragment id="IRQ_definitions" apply_to="$this.core.interrupt" if_expr="$this.core.enable_irq.value()"/>
+           <fragment id="all_assigned_regs_init">
+             <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+           </fragment>
+           <fragment id="define">
+             <param id="name" expr="$configSet.inst_ID_def.getValue() + `_RPCR_INIT_MASK`"/>
+             <param id="value" expr="replaceText(getBitFieldAliasValue($instance.getPeripheral(), `RPCR`, `RPE`, `CMSIS`), `(x)`, ``) + `_MASK`"/>
+             <param id="description" expr="`RPCR[RPE] bitfield mask`"/>
+           </fragment>
+         </section>
+         <section target="init_function_body">
+           <fragment id="template" apply_to="$configSet.mcm_template_params">
+             <param id="file">fsl_mcm.template</param>
+             <param id="setting" expr="$this"></param>
+             <param id="separators"></param>
+             <param id="description" expr="`MCM initialization`"></param>
+           </fragment>
+         </section>
+      </code> 
+      <quick_selections>
+         <quick_selection id="default" label="Default">
+           <description>Default configuration</description>
+           <set id="flash_controller.CPCR_FCCCLR">false</set>
+           <set id="flash_controller.CPCR_FCDCDIS">true</set>
+           <set id="flash_controller.CPCR_FCICDIS">true</set>
+           <set id="flash_controller.CPCR_FCCDIS">true</set>
+           <set id="flash_controller.CPCR_FCDSPDIS">true</set>
+           <set id="flash_controller.CPCR_FCSPDIS">true</set>
+           <set id="flash_controller.CPCR_FCSDIS">true</set>
+           <set id="RPCR_RPE">false</set>
+           <set id="protection.RPCR_RL">false</set>
+           <set id="protection.UFLASHBAR_FBA">0</set>
+           <set id="protection.UPRAMBAR_RBA">0</set>
+           <set id="protection.UBROMBAR_RBA">0</set>
+           <set id="protection.SRPOSP_SRPOSP">0</set>
+           <set id="core.CPCR_INSDIS">true</set>
+           <set id="core.CPCR_RCDIS">true</set>
+           <set id="core.CPCR_SRDIS">true</set>
+           <set id="core.CPCR_IBDIS">true</set>
+           <set id="core.CPCR_XBARARB">fixed</set>
+           <set id="core.CFIER_ECFEI">false</set>
+           <set id="core.enable_irq">false</set>          
+         </quick_selection>
+      </quick_selections>
+   </config_set>
+</component:config_component>

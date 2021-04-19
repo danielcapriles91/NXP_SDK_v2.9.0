@@ -1,0 +1,313 @@
+<?xml version="1.0"?>
+<clocks:component xmlns:clocks="http://apif.freescale.net/schemas/clocks/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://apif.freescale.net/schemas/clocks/1.1 http://apif.freescale.net/schemas/clocks/1.1/clocks.xsd" id="OSC">
+  <instance_header>
+    <instance_description>Clock model for the System Oscillator module (parameterized, shared accross all Kinetis parts)</instance_description>
+  </instance_header>
+  <interface>
+    <output_clock_signal id="OSCCLK" name="OSCCLK" description="System oscillator output clock for MCU system and MCG that is availbe in run mode only"/>
+    <output_clock_signal id="OSCERCLK" name="OSCERCLK" description="System oscillator external reference clock for MCU peripherals (gated by OSC_CR[ERCLKEN] and OSC_CR[EREFSTEN] in stop mode)"/>
+    <output_clock_signal id="OSCERCLK_UNDIV" name="OSCERCLK undivided" description="Unidvided system oscillator external reference clock for MCU peripherals (gated by OSC_CR[ERCLKEN] and OSC_CR[EREFSTEN] in stop mode)"/>
+    <output_clock_signal id="OSC32KCLK" name="OSC32KCLK" description="System oscillator 32K external reference clock"/>
+    <pin id="EXTAL0" name="EXTAL0" direction="in">
+      <peripheral_signal_ref signal="OSC.EXTAL0"/>
+    </pin>
+    <pin id="XTAL0" name="XTAL0" direction="out">
+      <peripheral_signal_ref signal="OSC.XTAL0"/>
+    </pin>
+  </interface>
+  <implementation>
+    <clock_source id="OSC" name="OSC (System Oscillator)" description="System Oscillator clock from the OSC module. External crystal oscillator or an external squarewave input on MCU pins. Configure the value of OSC according to connected crystal or external reference clock.">
+      <external_source>
+        <pin id="EXTAL0"/>
+        <pin id="XTAL0">
+          <enable cond_expr="(MCG::C2[EREFS0] == 1) "/>
+        </pin>
+        <conditional_range>
+          <case cond_expr="(MCG::C2[EREFS0] == 0) ">
+            <range min_freq="1 Hz" max_freq="50 MHZ" description="Up to 50 MHZ for external reference clock mode."/>
+          </case>
+          <otherwise>
+            <value_map expr="MCG::C2[RANGE0]">
+              <range min_freq="30 kHz" max_freq="40 kHz" description="Frequency must be within 30 kHz to 40 kHz for low-range crystal option is selected." ctrl_value="0"/>
+              <range min_freq="3 MHz" max_freq="8 MHz" description="Range 3-8 MHz for mid range crystal. The range depends on MCG_C2[RANGE] bitfield." ctrl_value="1"/>
+              <range min_freq="8 MHz" max_freq="32 MHz" description="Range 8-32 MHz for high range crystal. The range depends on MCG_C2[RANGE] bitfield. " ctrl_value="2"/>
+            </value_map>
+          </otherwise>
+        </conditional_range>
+      </external_source>
+      <conditional_block>
+        <case power_modes="HSRUN RUN WAIT">
+          <enable cond_expr="(CR[ERCLKEN]==1) || (MCG::C7[OSCSEL] == 0) || (SIM::SOPT1[OSC32KSEL] == 0)" description="Enabled when OSCCLK, OSCERCLK or OSC32KCLK signal is used"/>
+        </case>
+        <case power_modes="STOP">
+          <enable cond_expr="(CR[ERCLKEN]==1) &amp;&amp; (CR[EREFSTEN]==1) &amp;&amp; ((CR[ERCLKEN]==1) || (SIM::SOPT1[OSC32KSEL] == 0))" description="Enabled when OSCCLK, OSCERCLK or OSC32KCLK signal is used and the OSC is enabled in stop mode"/>
+        </case>
+        <case power_modes="VLPR VLPW">
+          <enable cond_expr="(CR[ERCLKEN]==1) || (MCG::C7[OSCSEL] == 0) || (SIM::SOPT1[OSC32KSEL] == 0)" description="Enabled when OSCCLK, OSCERCLK or OSC32KCLK signal is used"/>
+          <constraint max_freq="16 MHz" description="Maximum 16 MHz output frequency (VLPR and VLPW mode limitation)"/>
+        </case>
+        <case power_modes="VLPS">
+          <enable cond_expr="(CR[ERCLKEN]==1) &amp;&amp; (CR[EREFSTEN]==1) &amp;&amp; ((CR[ERCLKEN]==1) || (SIM::SOPT1[OSC32KSEL] == 0))" description="Enabled when OSCCLK, OSCERCLK or OSC32KCLK signal is used and the OSC is enabled in stop mode"/>
+          <constraint max_freq="16 MHz" description="Maximum 16 MHz output frequency (VLPR and VLPW mode limitation)"/>
+        </case>
+        <case power_modes="LLS VLLS1 VLLS2 VLLS3">
+          <enable cond_expr="(CR[ERCLKEN]==1) &amp;&amp; (CR[EREFSTEN]==1) &amp;&amp; (MCG::C2[HGO0] == 0) &amp;&amp; (MCG::C2[RANGE0] == 0) &amp;&amp; ((CR[ERCLKEN]==1) || (SIM::SOPT1[OSC32KSEL] == 0))" description="Enabled when OSCCLK, OSCERCLK or OSC32KCLK signal is used, the OSC is enabled in stop mode and the OSC runs in low power mode and low frequency range"/>
+          <constraint min_freq="30 kHz" max_freq="40 kHz" description="In LLS, VLLS1, VLLS2 and VLLS3 power modes the oscillator support low power low range external crystal only (30 - 40 kHz frequency range)"/>
+        </case>
+        <otherwise>
+          <disable description="In VLLS0, system oscillator is always disabled."/>
+        </otherwise>
+      </conditional_block>
+      <configuration_element id="MCG_C2_OSC_MODE_CFG" name="OSC mode" description="Oscillator mode of operation">
+        <default value="ModeOscExtClock"/>
+        <item id="ModeOscExtClock" description="Using external reference clock">
+          <long_description>
+            External reference clock is connected to the EXTAL0 pin of the MCU.
+          </long_description>
+          <assigns>
+            <assign register="MCG::C2" bit_field="EREFS0" value="0"/>
+            <assign register="MCG::C2" bit_field="HGO0" value="0"/>
+          </assigns>
+        </item>
+        <item id="ModeOscLowPower" description="Using oscillator with external crystal (low power)">
+          <long_description>
+            External crystal is connected to the EXTAL0 and XTAL0 pins. The crystal is used in the low power mode to minimize power consumption. See the reference manual for connection details of the crystal oscillator in this mode.
+          </long_description>
+          <assigns>
+            <assign register="MCG::C2" bit_field="EREFS0" value="1"/>
+            <assign register="MCG::C2" bit_field="HGO0" value="0"/>
+          </assigns>
+        </item>
+        <item id="ModeOscHighGain" description="Using oscillator with external crystal (high gain)">
+          <long_description>
+            External crystal is connected to the EXTAL0 and XTAL0 pins. The crystal is used in the high gain mode (resistant to interfere other signals). See the reference manual for connection details of the crystal oscillator in this mode.
+          </long_description>
+          <assigns>
+            <assign register="MCG::C2" bit_field="EREFS0" value="1"/>
+            <assign register="MCG::C2" bit_field="HGO0" value="1"/>
+          </assigns>
+        </item>
+      </configuration_element>
+      <configuration_element id="MCG_C2_RANGE0_CFG" name="Frequency Range" description="Frequency range of the system oscillator. The range impact the range of the crystal oscillator and also FRDIV divider range (1-128 for the low frequency range and 32-1536 for other ranges).">
+        <default value="Low"/>
+        <item id="Low" description="Low frequency range 30-40 kHz">
+          <assigns>
+            <assign register="MCG::C2" bit_field="RANGE0" value="0"/>
+          </assigns>
+        </item>
+        <item id="High" description="High frequency range 3-8 MHz">
+          <assigns>
+            <assign register="MCG::C2" bit_field="RANGE0" value="1"/>
+          </assigns>
+        </item>
+        <item id="Very_high" description="Very_high frequency range 8-32 MHz">
+          <assigns>
+            <assign register="MCG::C2" bit_field="RANGE0" value="2"/>
+          </assigns>
+        </item>
+      </configuration_element>
+      <configuration_element id="OSC_CR_SYS_OSC_CAP_LOAD_CFG" name="System Osc. Capacity Load">
+        <default value="SC0PF"/>
+        <item id="SC0PF" description="0 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="0"/>
+            <assign register="CR" bit_field="SC4P" value="0"/>
+            <assign register="CR" bit_field="SC8P" value="0"/>
+            <assign register="CR" bit_field="SC16P" value="0"/>
+          </assigns>
+        </item>
+        <item id="SC2PF" description="2 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="1"/>
+            <assign register="CR" bit_field="SC4P" value="0"/>
+            <assign register="CR" bit_field="SC8P" value="0"/>
+            <assign register="CR" bit_field="SC16P" value="0"/>
+          </assigns>
+        </item>
+        <item id="SC4PF" description="4 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="0"/>
+            <assign register="CR" bit_field="SC4P" value="1"/>
+            <assign register="CR" bit_field="SC8P" value="0"/>
+            <assign register="CR" bit_field="SC16P" value="0"/>
+          </assigns>
+        </item>
+        <item id="SC6PF" description="6 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="1"/>
+            <assign register="CR" bit_field="SC4P" value="1"/>
+            <assign register="CR" bit_field="SC8P" value="0"/>
+            <assign register="CR" bit_field="SC16P" value="0"/>
+          </assigns>
+        </item>
+        <item id="SC8PF" description="8 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="0"/>
+            <assign register="CR" bit_field="SC4P" value="0"/>
+            <assign register="CR" bit_field="SC8P" value="1"/>
+            <assign register="CR" bit_field="SC16P" value="0"/>
+          </assigns>
+        </item>
+        <item id="SC10PF" description="10 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="1"/>
+            <assign register="CR" bit_field="SC4P" value="0"/>
+            <assign register="CR" bit_field="SC8P" value="1"/>
+            <assign register="CR" bit_field="SC16P" value="0"/>
+          </assigns>
+        </item>
+        <item id="SC12PF" description="12 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="0"/>
+            <assign register="CR" bit_field="SC4P" value="1"/>
+            <assign register="CR" bit_field="SC8P" value="1"/>
+            <assign register="CR" bit_field="SC16P" value="0"/>
+          </assigns>
+        </item>
+        <item id="SC14PF" description="14 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="1"/>
+            <assign register="CR" bit_field="SC4P" value="1"/>
+            <assign register="CR" bit_field="SC8P" value="1"/>
+            <assign register="CR" bit_field="SC16P" value="0"/>
+          </assigns>
+        </item>
+        <item id="SC16PF" description="16 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="0"/>
+            <assign register="CR" bit_field="SC4P" value="0"/>
+            <assign register="CR" bit_field="SC8P" value="0"/>
+            <assign register="CR" bit_field="SC16P" value="1"/>
+          </assigns>
+        </item>
+        <item id="SC18PF" description="18 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="1"/>
+            <assign register="CR" bit_field="SC4P" value="0"/>
+            <assign register="CR" bit_field="SC8P" value="0"/>
+            <assign register="CR" bit_field="SC16P" value="1"/>
+          </assigns>
+        </item>
+        <item id="SC20PF" description="20 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="0"/>
+            <assign register="CR" bit_field="SC4P" value="1"/>
+            <assign register="CR" bit_field="SC8P" value="0"/>
+            <assign register="CR" bit_field="SC16P" value="1"/>
+          </assigns>
+        </item>
+        <item id="SC22PF" description="22 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="1"/>
+            <assign register="CR" bit_field="SC4P" value="1"/>
+            <assign register="CR" bit_field="SC8P" value="0"/>
+            <assign register="CR" bit_field="SC16P" value="1"/>
+          </assigns>
+        </item>
+        <item id="SC24PF" description="24 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="0"/>
+            <assign register="CR" bit_field="SC4P" value="0"/>
+            <assign register="CR" bit_field="SC8P" value="1"/>
+            <assign register="CR" bit_field="SC16P" value="1"/>
+          </assigns>
+        </item>
+        <item id="SC26PF" description="26 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="1"/>
+            <assign register="CR" bit_field="SC4P" value="0"/>
+            <assign register="CR" bit_field="SC8P" value="1"/>
+            <assign register="CR" bit_field="SC16P" value="1"/>
+          </assigns>
+        </item>
+        <item id="SC28PF" description="28 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="0"/>
+            <assign register="CR" bit_field="SC4P" value="1"/>
+            <assign register="CR" bit_field="SC8P" value="1"/>
+            <assign register="CR" bit_field="SC16P" value="1"/>
+          </assigns>
+        </item>
+        <item id="SC30PF" description="30 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="1"/>
+            <assign register="CR" bit_field="SC4P" value="1"/>
+            <assign register="CR" bit_field="SC8P" value="1"/>
+            <assign register="CR" bit_field="SC16P" value="1"/>
+          </assigns>
+        </item>
+      </configuration_element>
+    </clock_source>
+    <prescaler id="ERPS" name="OSCERCLK prescaler" description="OSCERCLK output clock prescaler">
+      <input signal="OSC.clk"/>
+      <divide expr="2**DIV[ERPS]"/>
+    </prescaler>
+    <map_output id="OSCERCLK">
+      <input signal="ERPS.clk"/>
+      <enable cond_expr="CR[ERCLKEN]==1" description="OSCERCLK is enabled by using the 'OSCERCLK output' setting. To control it's behavior in STOP power mode use the setting: 'OSCERCLK output in STOP mode'. In LLS and VLLSx power modes, the OSCERCLK is disabled."/>
+      <configuration_element id="OSC_CR_ERCLKEN_CFG" name="OSCERCLK output" description="Enable OSCERCLK clock output of the OSC (System Oscillator).">
+        <default value="Disabled"/>
+        <item id="Enabled" description="Enabled">
+          <assigns>
+            <assign register="CR" bit_field="ERCLKEN" value="1"/>
+          </assigns>
+        </item>
+        <item id="Disabled" description="Disabled">
+          <assigns>
+            <assign register="CR" bit_field="ERCLKEN" value="0"/>
+          </assigns>
+        </item>
+      </configuration_element>
+      <configuration_element id="OSC_CR_EREFSTEN_CFG" name="OSCERCLK output in Stop mode" description="Enable OSCERCLK clock output of the OSC (System oscillator) in the Stop mode">
+        <default value="Disabled"/>
+        <item id="Enabled" description="Enabled">
+          <assigns>
+            <assign register="CR" bit_field="EREFSTEN" value="1"/>
+          </assigns>
+        </item>
+        <item id="Disabled" description="Disabled">
+          <assigns>
+            <assign register="CR" bit_field="EREFSTEN" value="0"/>
+          </assigns>
+        </item>
+      </configuration_element>
+    </map_output>
+    <map_output id="OSCERCLK_UNDIV">
+      <input signal="OSC.clk"/>
+      <enable cond_expr="CR[ERCLKEN]==1" description="OSCERCLK_UNDIV is enabled by using the 'OSCERCLK(_UNDIV) output' setting. To control it's behavior in STOP power mode use the setting: 'OSCERCLK(_UNDIV) output in STOP mode'. In LLS and VLLSx power modes, the OSCERCLK_UNDIV is disabled."/>
+      <configuration_element id="OSC_CR_ERCLKEN_UNDIV_CFG" name="OSCERCLK(_UNDIV) output" description="Enable OSCERCLK and OSCERCLK_UNDIV clock output of the OSC (System Oscillator).">
+        <default value="Disabled"/>
+        <item id="Enabled" description="Enabled">
+          <assigns>
+            <assign register="CR" bit_field="ERCLKEN" value="1"/>
+          </assigns>
+        </item>
+        <item id="Disabled" description="Disabled">
+          <assigns>
+            <assign register="CR" bit_field="ERCLKEN" value="0"/>
+          </assigns>
+        </item>
+      </configuration_element>
+      <configuration_element id="OSC_CR_EREFSTEN_UNDIV_CFG" name="OSCERCLK(_UNDIV) output in Stop mode" description="Enable OSCERCLK and OSCERCLK_UNDIV clock output of the OSC (System oscillator) in the Stop mode">
+        <default value="Disabled"/>
+        <item id="Enabled" description="Enabled">
+          <assigns>
+            <assign register="CR" bit_field="EREFSTEN" value="1"/>
+          </assigns>
+        </item>
+        <item id="Disabled" description="Disabled">
+          <assigns>
+            <assign register="CR" bit_field="EREFSTEN" value="0"/>
+          </assigns>
+        </item>
+      </configuration_element>
+    </map_output>
+    <map_output id="OSCCLK">
+      <input signal="OSC.clk"/>
+    </map_output>
+    <map_output id="OSC32KCLK">
+      <input signal="OSC.clk"/>
+      <enable cond_expr="((MCG::C2[HGO0] == 0) &amp;&amp; (MCG::C2[RANGE0] == 0) &amp;&amp; (MCG::C2[EREFS0] == 1))" description="OSC32KCLK is enabled when low frequency range and low power mode of the OSC are selected and external oscillator is enabled (selected Using oscillator with external crystal (low power))."/>
+    </map_output>
+  </implementation>
+</clocks:component>

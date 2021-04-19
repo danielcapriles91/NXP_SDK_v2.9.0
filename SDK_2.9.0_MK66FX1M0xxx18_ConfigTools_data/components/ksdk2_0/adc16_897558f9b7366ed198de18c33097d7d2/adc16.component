@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component:config_component
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-9.0.xsd"
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0"
+   id="adc16" label="ADC16" category="Peripheral driver">
+   
+    <sw_comp_ref name="platform.drivers.adc16" version="2.2.0"/>
+    <description>Analog-to-Digital Converter (ADC)</description>
+    <mode id="ADC" label="General">
+        <description>Basic mode of ADC</description>
+        <config_set_refs>
+            <config_set_ref>fsl_adc16</config_set_ref>
+        </config_set_refs>
+        <master_peripheral> 
+            <peripheral_type>ADC</peripheral_type>
+        </master_peripheral>
+    </mode>
+    <config_set id="fsl_adc16" label="ADC16 configuration" from_source="fsl_adc16.h">
+        <description>ADC16 configuration</description>
+        <generated_types>
+            <enum id="adc16_channel_mux_mode_t" label="Channel multiplexer mode for each channel" from="_adc_channel_mux_mode" available="(featureDefined(`FSL_FEATURE_ADC16_HAS_MUX_SELECT`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_MUX_SELECT`))">
+                <description>For some ADC16 channels, there are two pin selections in channel multiplexer. For example, ADC0_SE4a and ADC0_SE4b are the different channels that share the same channel number</description>
+                <item id="kADC16_ChannelMuxA" label="Channels with channel mux a"/>
+                <item id="kADC16_ChannelMuxB" label="Channels with channel mux b"/>
+            </enum>
+            <enum id="adc16_clock_divider_t" label="Clock divider for the converter" from="_adc16_clock_divider">
+                <item id="kADC16_ClockDivider1" label="The module input clock divided by 1"/>
+                <item id="kADC16_ClockDivider2" label="The module input clock divided by 2"/>
+                <item id="kADC16_ClockDivider4" label="The module input clock divided by 4"/>
+                <item id="kADC16_ClockDivider8" label="The module input clock divided by 8"/>
+            </enum>
+            <enum id="adc16_resolution_t" label="Converter&apos;s resolution" from="_adc16_resolution">
+                <item id="kADC16_Resolution8or9Bit" label="Single End 8-bit or Differential Sample 9-bit"/>
+                <item id="kADC16_Resolution12or13Bit" label="Single End 12-bit or Differential Sample 13-bit"/>
+                <item id="kADC16_Resolution10or11Bit" label="Single End 10-bit or Differential Sample 11-bit"/>
+                <item id="kADC16_ResolutionSE8Bit" label="Single End 8-bit"/>
+                <item id="kADC16_ResolutionSE12Bit" label="Single End 12-bit"/>
+                <item id="kADC16_ResolutionSE10Bit" label="Single End 10-bit"/>
+                <item id="kADC16_ResolutionDF9Bit" label="Differential Sample 9-bit" available="(featureDefined(`FSL_FEATURE_ADC16_HAS_DIFF_MODE`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_DIFF_MODE`))"/>
+                <item id="kADC16_ResolutionDF13Bit" label="Differential Sample 13-bit" available="(featureDefined(`FSL_FEATURE_ADC16_HAS_DIFF_MODE`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_DIFF_MODE`))"/>
+                <item id="kADC16_ResolutionDF11Bit" label="Differential Sample 11-bit" available="(featureDefined(`FSL_FEATURE_ADC16_HAS_DIFF_MODE`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_DIFF_MODE`))"/>
+                <item id="kADC16_Resolution16Bit" label="Single End 16-bit or Differential Sample 16-bit" available="(featureDefined(`FSL_FEATURE_ADC16_MAX_RESOLUTION`) &amp;&amp; (getFeature(`FSL_FEATURE_ADC16_MAX_RESOLUTION`) &gt;= 16))"/>
+                <item id="kADC16_ResolutionSE16Bit" label="Single End 16-bit" available="(featureDefined(`FSL_FEATURE_ADC16_MAX_RESOLUTION`) &amp;&amp; (getFeature(`FSL_FEATURE_ADC16_MAX_RESOLUTION`) &gt;= 16))"/>
+                <item id="kADC16_ResolutionDF16Bit" label="Differential Sample 16-bit" available="(featureDefined(`FSL_FEATURE_ADC16_MAX_RESOLUTION`) &amp;&amp; (getFeature(`FSL_FEATURE_ADC16_MAX_RESOLUTION`) &gt;= 16)) &amp;&amp; (featureDefined(`FSL_FEATURE_ADC16_HAS_DIFF_MODE`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_DIFF_MODE`))"/>
+            </enum>
+            <enum id="adc16_clock_source_t" label="Clock source" from="_adc16_clock_source">
+                <item id="kADC16_ClockSourceAlt0" label="Selection 0 of the clock source"/>
+                <item id="kADC16_ClockSourceAlt1" label="Selection 1 of the clock source"/>
+                <item id="kADC16_ClockSourceAlt2" label="Selection 2 of the clock source"/>
+                <item id="kADC16_ClockSourceAlt3" label="Selection 3 of the clock source"/>
+                <item id="kADC16_ClockSourceAsynchronousClock" label="Using internal asynchronous clock"/>
+            </enum>
+            <enum id="adc16_long_sample_mode_t" label="Long sample mode" from="_adc16_long_sample_mode">
+                <item id="kADC16_LongSampleCycle24" label="20 extra ADCK cycles, 24 ADCK cycles total"/>
+                <item id="kADC16_LongSampleCycle16" label="12 extra ADCK cycles, 16 ADCK cycles total"/>
+                <item id="kADC16_LongSampleCycle10" label="6 extra ADCK cycles, 10 ADCK cycles total"/>
+                <item id="kADC16_LongSampleCycle6" label="2 extra ADCK cycles, 6 ADCK cycles total"/>
+                <item id="kADC16_LongSampleDisabled" label="Disable the long sample feature"/>
+            </enum>
+            <enum id="adc16_reference_voltage_source_t" label="Reference voltage source" from="_adc16_reference_voltage_source">
+                <item id="kADC16_ReferenceVoltageSourceVref" label="For external pins pair of VrefH and VrefL"/>
+                <item id="kADC16_ReferenceVoltageSourceValt" label="For alternate reference pair of ValtH and ValtL"/>
+            </enum>
+            <enum id="adc16_hardware_average_mode_t" label="Hardware average mode" from="_adc16_hardware_average_mode" available="(featureDefined(`ADC16_HAS_HW_AVERAGE`) &amp;&amp; getFeature(`ADC16_HAS_HW_AVERAGE`))">
+                <item id="kADC16_HardwareAverageCount4" label="4 samples"/>
+                <item id="kADC16_HardwareAverageCount8" label="8 samples"/>
+                <item id="kADC16_HardwareAverageCount16" label="16 samples"/>
+                <item id="kADC16_HardwareAverageCount32" label="32 samples"/>
+                <item id="kADC16_HardwareAverageDisabled" label="Disable the hardware average feature"/>
+            </enum>
+            <enum id="adc16_hardware_compare_mode_t" label="Hardware compare mode" from="_adc16_hardware_compare_mode">
+                <item id="kADC16_HardwareCompareMode0" label="x &lt; value1"/>
+                <item id="kADC16_HardwareCompareMode1" label="x &gt; value1"/>
+                <item id="kADC16_HardwareCompareMode2" label="if value1 &lt;= value2, then x &lt; value1 || x &gt; value2; else, value1 &gt; x &gt; value2"/>
+                <item id="kADC16_HardwareCompareMode3" label="if value1 &lt;= value2, then value1 &lt;= x &lt;= value2; else x &gt;= value1 || x &lt;= value2"/>
+            </enum>
+            <enum id="adc16_pga_gain_t" label="PGA&apos;s Gain mode" available="(featureDefined(`FSL_FEATURE_ADC16_HAS_PGA`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_PGA`))" from="_adc16_pga_gain">
+                <item id="kADC16_PGAGainValueOf1" label="For amplifier gain of 1"/>
+                <item id="kADC16_PGAGainValueOf2" label="For amplifier gain of 2"/>
+                <item id="kADC16_PGAGainValueOf4" label="For amplifier gain of 4"/>
+                <item id="kADC16_PGAGainValueOf8" label="For amplifier gain of 8"/>
+                <item id="kADC16_PGAGainValueOf16" label="For amplifier gain of 16"/>
+                <item id="kADC16_PGAGainValueOf32" label="For amplifier gain of 32"/>
+                <item id="kADC16_PGAGainValueOf64" label="For amplifier gain of 64"/>
+            </enum>
+            <struct id="adc16_config_t" label="ADC16 converter configuration" from="_adc16_config">
+                <reference id="referenceVoltageSource" label="Select the reference voltage source" type="adc16_reference_voltage_source_t">
+                    <description>Select the reference voltage source</description>
+                </reference>
+                <reference id="clockSource" label="Select the input clock source to converter" type="adc16_clock_source_t">
+                    <description>Select the input clock source to converter</description>
+                </reference>
+                <bool id="enableAsynchronousClock" label="Enable the asynchronous clock output">
+                    <description>Enable the asynchronous clock output</description>
+                </bool>
+                <reference id="clockDivider" label="Select the divider of input clock source" type="adc16_clock_divider_t">
+                    <description>Select the divider of input clock source</description>
+                </reference>
+                <reference id="resolution" label="Select the sample resolution mode" type="adc16_resolution_t">
+                    <description>Select the sample resolution mode</description>
+                </reference>
+                <reference id="longSampleMode" label="Select the long sample mode" type="adc16_long_sample_mode_t">
+                    <description>Select the long sample mode</description>
+                </reference>
+                <bool id="enableHighSpeed" label="Enable the high-speed mode">
+                    <description>Enable the high-speed mode</description>
+                </bool>
+                <bool id="enableLowPower" label="Enable low power">
+                    <description>Enable low power</description>
+                </bool>
+                <bool id="enableContinuousConversion" label="Enable continuous conversion mode">
+                    <description>Enable continuous conversion mode</description>
+                </bool>
+            </struct>
+            <struct id="adc16_hardware_compare_config_t" label="ADC16 Hardware comparison configuration" from="_adc16_hardware_compare_config">
+                <reference id="hardwareCompareMode" label="Select the hardware compare mode" type="adc16_hardware_compare_mode_t">
+                    <description>Select the hardware compare mode. See &quot;adc16_hardware_compare_mode_t&quot;</description>
+                </reference>
+                <integer id="value1" label="Setting value1 for hardware compare mode" type="int16_t">
+                    <description>Setting value1 for hardware compare mode</description>
+                </integer>
+                <integer id="value2" label="Setting value2 for hardware compare mode" type="int16_t">
+                    <description>Setting value2 for hardware compare mode</description>
+                </integer>
+            </struct>
+            <struct id="adc16_channel_config_t" label="ADC16 channel conversion configuration" from="_adc16_channel_config">
+                <integer id="channelNumber" label="Setting the conversion channel number" type="uint32_t">
+                    <description>Setting the conversion channel number. The available range is 0-31. See channel connection information for each chip in Reference Manual document</description>
+                </integer>
+                <bool id="enableInterruptOnConversionCompleted" label="Generate an interrupt request once the conversion is completed">
+                    <description>Generate an interrupt request once the conversion is completed</description>
+                </bool>
+                <bool id="enableDifferentialConversion" label="Using Differential sample mode" available="(featureDefined(`FSL_FEATURE_ADC16_HAS_DIFF_MODE`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_DIFF_MODE`))">
+                    <description>Using Differential sample mode</description>
+                </bool>
+            </struct>
+            <struct id="adc16_pga_config_t" label="ADC16 programmable gain amplifier configuration" available="(featureDefined(`FSL_FEATURE_ADC16_HAS_PGA`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_PGA`))" from="_adc16_pga_config">
+                <reference id="pgaGain" label="Setting PGA gain" type="adc16_pga_gain_t">
+                    <description>Setting PGA gain</description>
+                </reference>
+                <bool id="enableRunInNormalMode" label="Enable PGA working in normal mode, or low power mode by default">
+                    <description>Enable PGA working in normal mode, or low power mode by default</description>
+                </bool>
+                <bool id="disablePgaChopping" label="Disable the PGA chopping function" available="(featureDefined(`FSL_FEATURE_ADC16_HAS_PGA_CHOPPING`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_PGA_CHOPPING`))">
+                    <description>Disable the PGA chopping function. The PGA employs chopping to remove/reduce offset and 1/f noise and offers an offset measurement configuration that aids the offset calibration</description>
+                </bool>
+                <bool id="enableRunInOffsetMeasurement" label="Enable the PGA working in offset measurement mode" available="(featureDefined(`FSL_FEATURE_ADC16_HAS_PGA_OFFSET_MEASUREMENT`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_PGA_OFFSET_MEASUREMENT`))">
+                    <description>Enable the PGA working in offset measurement mode. When this feature is enabled, the PGA disconnects itself from the external inputs and auto-configures into offset measurement mode. With this field set, run the ADC in the recommended settings and enable the maximum hardware averaging to get the PGA offset number. The output is the (PGA offset * (64+1)) for the given PGA setting</description>
+                </bool>
+            </struct>
+        </generated_types>
+        <user_types>
+            <enum id="adc16_reference_voltage_source_t" label="Reference voltage source" from="_adc16_reference_voltage_source">
+                <item id="kADC16_ReferenceVoltageSourceVref" label="VrefH / VrefL">
+                    <description>External pins pair of VrefH and VrefL.</description>
+                </item>
+                <item id="kADC16_ReferenceVoltageSourceValt" label="ValtH / ValtL">
+                    <description>Alternate reference pair of ValtH and ValtL.</description>
+                </item>
+                <item id="kADC16_ReferenceVoltageSourceBandgap" label="Bandgap" available="(featureDefined(`FSL_FEATURE_ADC16_HAS_VREF_BANDGAP`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_VREF_BANDGAP`))">
+                    <description>Bandgap voltage from PMC.</description>
+                </item>
+            </enum>
+            <enum id="adc16_channel_mux_mode_t" label="Channel multiplexer mode for each channel" from="_adc_channel_mux_mode" available="(featureDefined(`FSL_FEATURE_ADC16_HAS_MUX_SELECT`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_MUX_SELECT`))">
+                <description>For some ADC16 channels, there are two pin selections in channel multiplexer. For example, ADC0_SE4a and ADC0_SE4b are the different channels that share the same channel number.</description>
+                <item id="kADC16_ChannelMuxA" label="Channels with channel mux a"/>
+                <item id="kADC16_ChannelMuxB" label="Channels with channel mux b"/>
+            </enum>
+            <enum id="adc16_hardware_average_mode_t" label="Hardware average mode" from="_adc16_hardware_average_mode" available="(featureDefined(`ADC16_HAS_HW_AVERAGE`) &amp;&amp; getFeature(`ADC16_HAS_HW_AVERAGE`))">
+                <item id="kADC16_HardwareAverageCount4" label="4 samples"/>
+                <item id="kADC16_HardwareAverageCount8" label="8 samples"/>
+                <item id="kADC16_HardwareAverageCount16" label="16 samples"/>
+                <item id="kADC16_HardwareAverageCount32" label="32 samples"/>
+                <item id="kADC16_HardwareAverageDisabled" label="Disable the hardware average feature"/>
+            </enum>
+            <enum id="adc16_pga_gain_t" label="PGA&apos;s Gain mode" available="(featureDefined(`FSL_FEATURE_ADC16_HAS_PGA`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_PGA`))" from="_adc16_pga_gain">
+                <item id="kADC16_PGAGainValueOf1" label="For amplifier gain of 1"/>
+                <item id="kADC16_PGAGainValueOf2" label="For amplifier gain of 2"/>
+                <item id="kADC16_PGAGainValueOf4" label="For amplifier gain of 4"/>
+                <item id="kADC16_PGAGainValueOf8" label="For amplifier gain of 8"/>
+                <item id="kADC16_PGAGainValueOf16" label="For amplifier gain of 16"/>
+                <item id="kADC16_PGAGainValueOf32" label="For amplifier gain of 32"/>
+                <item id="kADC16_PGAGainValueOf64" label="For amplifier gain of 64"/>
+            </enum>
+            <struct id="adc16_pga_config_t" label="ADC16 programmable gain amplifier configuration" available="(featureDefined(`FSL_FEATURE_ADC16_HAS_PGA`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_PGA`))" from="_adc16_pga_config">
+                <reference id="pgaGain" label="PGA gain" type="adc16_pga_gain_t">
+                    <description>Gain of programmable gain amplifier module.</description>
+                </reference>
+                <bool id="enableRunInNormalMode" label="Work in normal mode">
+                    <description>By default, PGA is working in low power mode. Enable this option to run PGA module in normal mode.</description>
+                </bool>
+                <bool id="disablePgaChopping" label="Disable the PGA chopping function" available="(featureDefined(`FSL_FEATURE_ADC16_HAS_PGA_CHOPPING`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_PGA_CHOPPING`))">
+                    <description>Disable the PGA chopping function. The PGA employs chopping to remove/reduce offset and 1/f noise and offers an offset measurement configuration that aids the offset calibration.</description>
+                </bool>
+                <bool id="enableRunInOffsetMeasurement" label="Enable the PGA working in offset measurement mode" available="(featureDefined(`FSL_FEATURE_ADC16_HAS_PGA_OFFSET_MEASUREMENT`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_PGA_OFFSET_MEASUREMENT`))">
+                    <description>Enable the PGA working in offset measurement mode. When this feature is enabled, the PGA disconnects itself from the external inputs and auto-configures into offset measurement mode. With this field set, run the ADC in the recommended settings and enable the maximum hardware averaging to get the PGA offset number. The output is the (PGA offset * (64+1)) for the given PGA setting.</description>
+                </bool>
+            </struct>
+            <struct id="adc16_config_t" label="ADC16 converter configuration" from="_adc16_config">
+                <reference id="referenceVoltageSource" label="Reference voltage source" type="adc16_reference_voltage_source_t">
+                    <description>Select the reference voltage source.</description>
+                </reference>
+                <reference id="_clockSource" label="Input clock source" type="adc16_clock_source_user_t" available="false">
+                    <description>Select the input clock source to converter.</description>
+                </reference>
+                <variable id="clockSourceUId" value="(getPeripheralClock($instance.getPeripheral(),$parent.clockSource.getEnumItemValue()).regexMatch(`.*Bus Clock divided by 2.*`)?`BusInterfaceClock_b00`:$parent.clockSource.getEnumItemValue())"/>
+                <dynamic_enum id="clockSource" label="Input clock source" items="enumItemsOf($parent._clockSource).arrayToEnumItems(
+                  enumItem -> true,
+                  enumItem -> enumItem.getID(),
+                  enumItem -> (getPeripheralClock($instance.getPeripheral(), enumItem.getValue()).regexMatch(`.*Bus Clock divided by 2.*`)? getPeripheralClock($instance.getPeripheral(),enumItem.getValue()) + ` - ` + getClockFunctionalGroups()
+                  .map(FGItem ->  FGItem + `: ` + frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), `BusInterfaceClock_b00`, FGItem).toInt() / 2)).join( + `,`)
+                     :getPeripheralClock($instance.getPeripheral(), enumItem.getValue())),
+                  enumItem -> enumItem.getValue())" >
+                    <description>Select the input clock source to converter.</description>
+                    <validation>
+                        <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.clockSourceUId.getValue()) == `INPUT_SIGNAL`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                            description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                            level="Warning">
+                            <feature name="frequency" evaluation="greaterThan">
+                                <data expr="0" unit="Hz" type="Frequency"/>
+                            </feature>
+                        </dependency>
+                    </validation>
+                </dynamic_enum>
+                <bool id="enableAsynchronousClock" label="Asynchronous clock output">
+                    <description>This allows the clock to be used even while the ADC is idle or operating from a different clock source.&lt;br/>
+                        Also, latency of initiating a single or first-continuous conversion with the asynchronous clock selected is reduced because the ADACK clock is already operational.
+                    </description>
+                </bool>
+                <reference id="clockDivider" label="Divide input clock source" type="adc16_clock_divider_t">
+                    <description>Select the divider of input clock source.</description>
+                </reference>
+                <reference id="resolution" label="Sample resolution mode" type="adc16_resolution_t">
+                    <description>Select the sample resolution mode.</description>
+                </reference>
+                <reference id="longSampleMode" label="Long sample mode" type="adc16_long_sample_mode_t">
+                    <description>Selects between different sample times based on the conversion mode selected. This field adjusts the 
+                        sample period to allow higher impedance inputs to be accurately sampled or to maximize conversion
+                        speed for lower impedance inputs. Longer sample times can also be used to lower overall power
+                        consumption if continuous conversions are enabled and high conversion rates are not required.</description>
+                </reference>
+                <reference id="hardwareAverageMode" label="Hardware average mode" type="adc16_hardware_average_mode_t" available="featureDefined(`FSL_FEATURE_ADC16_HAS_HW_AVERAGE`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_HW_AVERAGE`)">
+                    <description>Configure hardware average mode.&lt;br/>
+                        - Determines, how many ADC conversions will be averaged to create the ADC average result. &lt;br/>
+                        - If disabled, result of single conversion will be used.</description>
+                </reference>
+                <bool id="enableHighSpeed" label="High-speed mode">
+                    <description>Configures the ADC for very high-speed operation. The conversion sequence is altered with 2 ADCK cycles added to the conversion time to allow higher speed conversion clocks.</description>
+                </bool>
+                <bool id="enableLowPower" label="Low power mode">
+                    <description>This optimizes power consumption when higher sample rates are not required.</description>
+                </bool>
+                <bool id="enableContinuousConversion" label="Continuous conversion mode">
+                    <description>Enable continuous conversions or sets of conversions if the hardware average function is enabled.</description>
+                </bool>
+            </struct>
+            <enum id="adc16_clock_source_user_t" label="Clock source" from="_adc16_clock_source">
+              <item id="kADC16_ClockSourceAlt0" label="Selection 0 of the clock source" value="BusInterfaceClock_b00"/>
+              <item id="kADC16_ClockSourceAlt1" label="Selection 1 of the clock source" value="AlternateClock2_b01"/>
+              <item id="kADC16_ClockSourceAlt2" label="Selection 2 of the clock source" value="AlternateClock_b10"/>
+              <!--item id="kADC16_ClockSourceAlt3" label="Selection 3 of the clock source" Same as kADC16_ClockSourceAsynchronousClock/--> 
+              <item id="kADC16_ClockSourceAsynchronousClock" label="Using internal asynchronous clock" value="ADACK_b11"/>
+            </enum>
+            <enum id="adc16_hardware_compare_mode_t" label="Hardware compare mode" from="_adc16_hardware_compare_mode">
+                <item id="kADC16_HardwareCompareMode0" label="Less than threshold"/>
+                <item id="kADC16_HardwareCompareMode1" label="Greater than or equal to threshold"/>
+                <item id="kADC16_HardwareCompareMode2" label="Outside/Inside range, not inclusive"/>
+                <item id="kADC16_HardwareCompareMode3" label="Outside/Inside range, inclusive"/>
+            </enum>
+            <struct id="hardwareCompareSetting" label="Settings of hardware compare mode" from="_adc16_hardware_compare_config">
+                <reference id="hardwareCompareMode" label="Hardware compare mode" type="adc16_hardware_compare_mode_t">
+                    <description> Select the hardware compare mode. </description>
+                </reference>
+                <integer id="value1" label="First limit" type="int16_t">
+                    <description>Setting value1 for hardware compare mode.</description>
+                </integer>
+                <integer id="value2" label="Second limit" type="int16_t" enable="$parent.hardwareCompareMode.isAvailable() &amp;&amp; (($parent.hardwareCompareMode.value() == `kADC16_HardwareCompareMode2`) || ($parent.hardwareCompareMode.value() == `kADC16_HardwareCompareMode3`))">
+                    <description>Setting value2 for hardware compare mode.</description>
+                </integer>
+            </struct>
+            <struct id="adc16HardwareCompareConfig" label="ADC16 Hardware compare configuration" from="_adc16_hardware_compare_config">
+                <bool id="hardwareCompareModeEnable" label="Hardware compare mode">
+                    <description>In hardware compare mode ADC is working as a comparator in one of 4 modes.</description>
+                </bool>
+                <reference id="hardwareCompareConfiguration" label="Configure ADC hardware compare mode" type="hardwareCompareSetting" available="$parent.hardwareCompareModeEnable.value()">
+                    <description><![CDATA[
+                        Select the hardware compare mode. In this mode, the &quot;conversion complete&quot; flag will be set, when the compare condition is met.<br/><br/>
+                        - Less than threshold: True, if the result is less than the first limit,<br/>
+                        - Greater than or equal to threshold: True, if the result is greater than or equal to the first limit,<br/>
+                        - Outside range, not inclusive: True, if the first limit is less than or equal to the second limit and the result value is not between the first and the second limit (result &lt; first OR result &gt; second),<br/>
+                        - Inside range, not inclusive: True, if the first limit is greater than the second limit and the result value is between the first and the second limit (first &gt; result AND result &gt; second),<br/>
+                        - Outside range, inclusive: True, if the first limit is greater than the second limit and the result value is not between the first and the second limit (result &gt;= first OR result &lt;= second),<br/>
+                        - Inside range, inclusive: True, if the first limit is less than or equal to the second limit and the result value is between the first and the second limit (result &gt;= first AND result &lt;= second).
+                        ]]>
+                    </description>
+                </reference>
+            </struct>
+            <struct id="adc16PgaConfig" label="ADC16 Hardware compare configuration" available="(featureDefined(`FSL_FEATURE_ADC16_HAS_PGA`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_PGA`))" from="_adc16_pga_config">
+                <bool id="adc16PgaEnable" label="Programmable gain amplifier">
+                    <description>Enable the programmable gain amplifier module.</description>
+                </bool>
+                <reference id="adc16PgaConfiguration" label="Configure PGA module" type="adc16_pga_config_t" available="$parent.adc16PgaEnable.isAvailable() &amp;&amp; $parent.adc16PgaEnable.value()">
+                    <description>Configure PGA module.</description>
+                </reference>
+            </struct>
+            <struct id="adc16_channel_config" label="ADC16 channel conversion configuration" from="_adc16_channel_config">
+                <validation>
+                   <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.adc_` + $this.channelNumber.getCValue().extractSignalID().toLowerCase() + `.` + $this.channelNumber.getCValue().extractChannelID().toLowerCase()" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage($this.channelNumber.getCValue().extractSignalID(), $this.channelNumber.getCValue().extractChannelID() , $instance.getPeripheral())"  level="Warning">
+                        <feature name="routed">
+                            <data expr="true"></data>
+                        </feature>
+                    </dependency>
+                   <dependency when_expr="$this.enableDifferentialConversion.value() == true" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.adc_` + $this.channelNumber2.getCValue().extractSignalID().toLowerCase() + `.` + $this.channelNumber2.getCValue().extractChannelID().toLowerCase()" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage($this.channelNumber2.getCValue().extractSignalID(), $this.channelNumber2.getCValue().extractChannelID() , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"></data>
+                        </feature>
+                    </dependency>
+                    <constraint cond_expr="($this.enableDifferentialConversion.value() == false) || ($this.channelNumber.getCValue().extractChannelID() == $this.channelNumber2.getCValue().extractChannelID())" level="error" description_expr="`Conversion channels ` + $this.channelNumber.getCValue().extractSignalID() + $this.channelNumber.getCValue().extractChannelID() + ` and ` + $this.channelNumber2.getCValue().extractSignalID() + $this.channelNumber2.getCValue().extractChannelID() + ` do not correspond.`"/>
+                </validation>
+                <bool id="enableDifferentialConversion" label="Differential sample mode" available="(featureDefined(`FSL_FEATURE_ADC16_HAS_DIFF_MODE`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_DIFF_MODE`))">
+                    <description>Work in differential sample mode.</description>
+                </bool>
+                <dynamic_enum id="channelNumber" label="Channel number" items="getPeripheralSignals($instance.getPeripheral()).filter(item -> ($parent.enableDifferentialConversion.value() == true) ? item.regexMatch(`.*DP, \d+.*`) : (($instance.fsl_adc16.adc16_channel_mux_mode.getCValue() == `kADC16_ChannelMuxA`) ? item.regexMatch(`.*SE, \d+a? .*`) : item.regexMatch(`.*SE, \d+b? .*`)))" options="remove_from_struct_init"></dynamic_enum>
+                <dynamic_enum id="channelNumber2" label="Second channel number" items="getPeripheralSignals($instance.getPeripheral()).filter(item -> (item.regexMatch(`.*DM, \d+.*`)))" available="$parent.enableDifferentialConversion.value() == true" options="remove_from_struct_init"></dynamic_enum>
+                <bool id="enableInterruptOnConversionCompleted" label="Conversion complete interrupt">
+                    <description>Generate an interrupt request once the conversion is completed.</description>
+                    <validation>
+                        <constraint cond_expr="!$this.value() || $instance.fsl_adc16.enable_irq.value()" level="warning" description_expr="`Interrupt requests from ` + $instance.getPeripheral() + ` are not enabled.`" />
+                    </validation>
+                </bool>
+
+                <dynamic_enum options="remove_from_struct_init"
+                    available="featureDefined(`ADC16_CONVERSION_CONTROL_COUNT`)"
+                    id="channelGroup"
+                    label="Conversion control group"
+                    items="merge(toArray(0), toArray(1), toArray(2), toArray(3), toArray(4), toArray(5), toArray(6), toArray(7), toArray(8), toArray(9), toArray(10), toArray(11), toArray(12), toArray(13), toArray(14), toArray(15))
+                        .arrayToEnumItems(
+                            enumItem -> getFeature(`ADC16_CONVERSION_CONTROL_COUNT`) &gt; enumItem,
+                            enumItem -> enumItem,
+                            enumItem -> `Group ` + enumItem,
+                            enumItem -> enumItem
+                        )">
+                   <description>
+                      The conversion control group assigned to the channel. The group represents a set of registers related to conversion control (Status and Control 1 register and the Result register). Only one channel can be assigned to one conversion control group. Only conversion controlled by the control group 0 can be triggered by software trigger.
+                   </description>
+                </dynamic_enum>
+
+                <bool id="initializeChannel" label="Initialize channel" enable="(($parent.getParent().filter(item -> (item.getSetting(`channelGroup`).value() == $parent.getSetting(`channelGroup`).value()) &amp;&amp; (item.getSetting(`initializeChannel`).value())).length() == 0) || ($this.value()))" options="remove_from_struct_init">
+                    <description>Initialize channel. If software trigger is used, this will also trigger the conversion from the channel, if the channel is assigned to the conversion control group 0.</description>
+                    <validation>
+                        <constraint cond_expr="($parent.getParent().filter(item -> (item.getSetting(`channelGroup`).value() == $parent.getSetting(`channelGroup`).value()) &amp;&amp; (item.getSetting(`initializeChannel`).value())).length() &lt;= 1)" level="warning" description_expr="`Multiple ` + $instance.getPeripheral() + ` channels assigned to the same conversion control group are initialized.`"/>
+                    </validation>
+                </bool>
+            </struct>
+        </user_types>
+        <settings>
+            <reference id="adc16_config" label="ADC16 basic configuration" type="adc16_config_t">
+                <description>Configure ADC16 peripheral</description>
+            </reference>
+            <reference id="adc16_channel_mux_mode" label="Channel mux mode" type="adc16_channel_mux_mode_t"></reference>
+            <reference id="adc16_hardware_compare_config" label="ADC16 Hardware compare configuration" type="adc16HardwareCompareConfig">
+                <description>Configure ADC16 peripheral to work in hardware compare mode.</description>
+            </reference>
+            <bool id="doAutoCalibration" label="Perform auto calibration" available="featureDefined(`FSL_FEATURE_ADC16_HAS_CALIBRATION`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_CALIBRATION`)">
+                <description>
+                    If auto calibration is enabled, ADC module will perform self-calibration at startup (in order to work properly regardless of enviroment).
+                </description>
+            </bool>
+            <integer type="int16_t" id="offset" label="Conversion offset" available="!$parent.doAutoCalibration.value() &amp;&amp; featureDefined(`FSL_FEATURE_ADC16_HAS_OFFSET_CORRECTION`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_OFFSET_CORRECTION`)">
+                <description>
+                    If auto calibration is disabled, the offset correction can be configured manually. This number will be substracted from the result of a conversion before storing it in the result registers. If the result is greater than the maximum or less than the minimum result value, it is forced to the appropriate limit for the current mode of operation. The offset has to be in range -32768 to 32767 as signed 16-bit number.
+                </description>
+            </integer>
+            <bool id="trigger" label="Use hardware trigger">
+                <description>
+                    If hardware trigger is used, ADC conversion will be performed by an event on one of two hardware triggers (A or B) &lt;br/> - make sure, that at least one of the signals is routed.
+                </description>
+                <validation>
+                    <dependency resource_type="Peripheral" level="Warning" when_expr="$this.value() == true" resource_id_expr="$instance.getPeripheral()" description_expr="`At least one of ` + $instance.getPeripheral() + ` hardware triggers (A or B) needs to be routed.`" >		
+                        <feature name="routedUnifiedSignals" evaluation="includesAny">
+                            <data expr="getPeripheralSignals($instance.getPeripheral()).filter(item -> (item.regexMatch(`.*trigger.*`))).map(i -> $instance.getPeripheral() + `.` + i.value().regexSubstr(`.*?\[(.*?)\].*`, 1))">
+                            </data>
+                        </feature>
+                    </dependency>
+                </validation>
+            </bool>
+            <reference id="adc16_pga_config" label="ADC16 programmable gain amplifier configuration" type="adc16PgaConfig">
+                <description>Configure ADC16 programmable Gain Amplifier.</description>
+            </reference>
+            <bool id="enable_dma" label="DMA requests" available="featureDefined(`FSL_FEATURE_ADC16_HAS_DMA`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_DMA`)">
+                <description>Enable generating the DMA trigger when the conversion is complete.</description>
+            </bool>
+            <variable id="number_of_groups" value="getFeature(`ADC16_CONVERSION_CONTROL_COUNT`)" ></variable>
+            <variable id="interrupt_handler_code" value="`
+ /* Array of result values*/ &#10;
+ uint32_t result_values[` + $parent.number_of_groups.getValue() +  `] = {0}; &#10;
+ /* Get flags for each group */ &#10;
+ for ( int i=0; i&lt;` + $parent.number_of_groups.getValue() +`; i++){ &#10;
+ uint32_t status = ADC16_GetChannelStatusFlags(`+ $instance.getPeripheral() + `_PERIPHERAL, i); &#10;
+ &#009;if ( status == kADC16_ChannelConversionDoneFlag){ &#10;
+ &#009;&#009;result_values[i] = ADC16_GetChannelConversionValue(`+ $instance.getPeripheral() + `_PERIPHERAL, i); &#10;
+ &#009;} &#10;
+ }&#10;
+ &#10;
+ /* Place your code here */ &#10;`" />        
+            <bool id="enable_irq" label="Interrupt request">
+                <description>Enable interupt request in the NVIC (Nested Interrupt Vector Controller) of the CPU.</description>
+                <validation>
+                    <constraint cond_expr="(($parent.adc16_channels_config.countOccurrences(item -> item.getSetting(`enableInterruptOnConversionCompleted`).value()) &gt; 0) || !$this.value())" level="warning" description_expr="`None of configured signals of peripheral ` + $instance.getPeripheral() + ` has IRQ request enabled.`"/>
+				</validation>
+            </bool>
+            <reference id="adc_interrupt" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_irq.value()">
+                <options_expr>
+                    <option id="irq_handler_insert" expr="$parent.interrupt_handler_code.getValue()"/>
+                </options_expr>
+            </reference>
+            <array id="adc16_channels_config" label="ADC16 channels configuration" type="adc16_channel_config"  options="ShowContentAs=Table;UI_ARRAY_LAYOUT_HORIZONTAL;UI_TABLE_COLUMN_WIDTHS=-1,8">
+                <validation>
+                    <constraint cond_expr="$this.findDuplicates(item -> item.getSetting(`channelNumber`).value()).length() == 0"
+                        level="warning"
+                        description="There are some duplicated ADC channels in the configuration"/>
+                </validation>
+            </array>
+        </settings>
+        <fragment_defs>
+            <import>
+                <from component_id="system" config_set_id="common_code_templates"/>
+                <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+            </import>
+            <def fragment="channel_field">
+                <expr>leftPadding(`.` + $this.getID() + ` = ` + $this.getCValue().extractChannelID().regexSubstr(`.*?(\d+).*`, 1) + `U,`, 2)</expr>
+                <br/>
+            </def>
+            <def fragment="struct_array_item">
+                <expr>leftPadding(`{`, 1)</expr>
+                <br/>
+                <fragment id="channel_field" apply_to="$this.channelNumber"/>
+                <fragment id="field" for_elements_of="$this">
+                    <param id="paddingLevel" expr="2"></param>
+                </fragment>
+                <expr>leftPadding(`}`, 1)</expr>
+                <expr>$param._last ? `` : `,`</expr>
+                <br/>
+            </def>
+            <def fragment="structs_array">
+                <expr> $param.type + ` ` + $param.name + `[` + $this.length() + `]` </expr>
+                <text> = {</text>
+                <br/>
+                <fragment id="struct_array_item" for_elements_of="$this"/>
+                <text>};</text>
+                <br/>
+            </def>  
+            <def fragment="init_channel">
+                <fragment id="init_line" if_expr="$this.initializeChannel.isEnabled() &amp;&amp; $this.initializeChannel.value()">
+                    <param id="code" expr="`ADC16_SetChannelConfig(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, `) + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() +`_CH` +  $this.getID() + `_control_group`) + `, &amp;` + $instance.getFnGroupPrefix() + $instance.getID() + `_channelsConfig[` + $this.getId() + `]);`"></param>
+                    <param id="description" expr="`Initialize channel`"></param>
+                    <param id="paddingLevel" expr="1"></param>
+                </fragment>
+            </def>
+            <def fragment="control_group">
+                <fragment id="define">
+                    <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() +`_CH` +  $this.getID() + `_control_group`)"/>
+                    <param id="value" expr="$this.channelGroup.getValue()"/>
+                    <param id="description" expr="`Channel ` + $this.getID() + ` (`+ $this.channelNumber.getValue() + `) conversion control group.`"></param>
+                </fragment>
+            </def>
+        </fragment_defs>
+        
+        <code>
+            <section target="includes">
+                <fragment id="include">
+                    <param id="name">common</param>
+                    <param id="filename">fsl_common.h</param>
+                </fragment>
+                <fragment id="include">
+                    <param id="name">adc16</param>
+                    <param id="filename">fsl_adc16.h</param>
+                </fragment>
+            </section>
+            <section target="defines">
+                <fragment id="define">
+                    <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)"/>
+                    <param id="value" expr="$instance.getPeripheral()"/>
+                    <param id="description" expr="`Alias for ` + $instance.getPeripheral() + ` peripheral`"></param>
+                </fragment>
+                <fragment id="IRQ_definitions" apply_to="$this.adc_interrupt"></fragment>
+                <fragment id="control_group" for_elements_of="adc16_channels_config"/>
+            </section>
+            <section target="global_vars">
+                <fragment if_expr="$this.adc16_channels_config.length() &gt; 0" id="structs_array" apply_to="$this.adc16_channels_config">
+                    <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getId() + `_channelsConfig`" />
+                    <param id="type">adc16_channel_config_t</param>
+                </fragment>
+                <fragment id="const_struct" apply_to="$this.adc16_config">
+                    <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getId() + `_config`"/>
+                    <param id="type">adc16_config_t</param>
+                </fragment>
+                <fragment id="const_struct" if_expr="$this.adc16_hardware_compare_config.hardwareCompareModeEnable.value()" apply_to="$this.adc16_hardware_compare_config.hardwareCompareConfiguration">
+                    <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getId() + `_hardwareCompareConfig`" />
+                    <param id="type">adc16_hardware_compare_config_t</param>
+                </fragment>
+                <fragment if_expr="(featureDefined(`FSL_FEATURE_ADC16_HAS_MUX_SELECT`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_MUX_SELECT`))" id="const_var" apply_to="$this.adc16_channel_mux_mode">
+                    <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getId() + `_muxMode`" />
+                    <param id="type">adc16_channel_mux_mode_t</param>
+                </fragment>
+                <fragment id="const_struct" if_expr="(featureDefined(`FSL_FEATURE_ADC16_HAS_PGA`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_PGA`)) &amp;&amp; $this.adc16_pga_config.adc16PgaEnable.value()" apply_to="$this.adc16_pga_config.adc16PgaConfiguration">
+                    <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getId() + `_pgaConfig`" />
+                    <param id="type">adc16_pga_config_t</param>
+                </fragment>
+            </section>
+            <section target="global_vars_extern">
+                <fragment if_expr="$this.adc16_channels_config.length() &gt; 0" id="extern_var_array">
+                    <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getId() + `_channelsConfig`" />
+                    <param id="type">adc16_channel_config_t</param>
+                    <param id="size" expr="$this.adc16_channels_config.length()"></param>
+                </fragment>
+                <fragment id="extern_const">
+                    <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getId() + `_config`"/>
+                    <param id="type">adc16_config_t</param>
+                </fragment>
+                <fragment if_expr="(featureDefined(`FSL_FEATURE_ADC16_HAS_MUX_SELECT`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_MUX_SELECT`))" id="extern_const">
+                    <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getId() + `_muxMode`" />
+                    <param id="type">adc16_channel_mux_mode_t</param>
+                </fragment>
+                <fragment id="extern_const" if_expr="$this.adc16_hardware_compare_config.hardwareCompareModeEnable.value()">
+                    <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getId() + `_hardwareCompareConfig`" />
+                    <param id="type">adc16_hardware_compare_config_t</param>
+                </fragment>
+                <fragment id="extern_const" if_expr="(featureDefined(`FSL_FEATURE_ADC16_HAS_PGA`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_PGA`)) &amp;&amp; $this.adc16_pga_config.adc16PgaEnable.value()">
+                    <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getId() + `_pgaConfig`" />
+                    <param id="type">adc16_pga_config_t</param>
+                </fragment>
+            </section>
+            <section target="init_function_postinit0">
+                <fragment id="IRQn_set_priority_default" apply_to="$this.adc_interrupt" if_expr="$this.adc_interrupt.enable_priority.value()"/>
+                <fragment id="IRQn_enable_default" apply_to="$this.adc_interrupt" if_expr="$this.enable_irq.value()"/>
+            </section>
+            <section target="init_function_body">
+                <fragment id="init_line">
+                    <param id="code" expr="`ADC16_Init(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, &amp;`) + $instance.getFnGroupPrefix() + $instance.getId() + `_config);`"></param>
+                    <param id="description">Initialize ADC16 converter</param>
+                    <param id="paddingLevel" expr="1"></param>
+                </fragment>
+                <fragment id="init_line">
+                    <param id="code" expr="`ADC16_EnableHardwareTrigger(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, `) + $this.trigger.value() + `);`"></param>
+                    <param id="description" expr="`Make sure, that ` + ($this.trigger.value() ? `hardware` : `software`) + ` trigger is used`"></param>
+                    <param id="paddingLevel" expr="1"></param>
+                </fragment>
+                <fragment id="init_line" if_expr="$this.adc16_hardware_compare_config.hardwareCompareModeEnable.value()">
+                    <param id="code" expr="`ADC16_SetHardwareCompareConfig(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, &amp;`) + $instance.getFnGroupPrefix() + $instance.getId() + `_hardwareCompareConfig);`"></param>
+                    <param id="description">Configure hardware compare mode</param>
+                    <param id="paddingLevel" expr="1"></param>
+                </fragment>
+                <fragment id="init_line" if_expr="(featureDefined(`FSL_FEATURE_ADC16_HAS_MUX_SELECT`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_MUX_SELECT`))">
+                    <param id="code" expr="`ADC16_SetChannelMuxMode(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, `) + $instance.getFnGroupPrefix() + $instance.getId() + `_muxMode);`"></param>
+                    <param id="description">Configure channel multiplexing mode</param>
+                    <param id="paddingLevel" expr="1"></param>
+                </fragment>
+                <fragment id="init_line" if_expr="(featureDefined(`FSL_FEATURE_ADC16_HAS_PGA`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_PGA`)) &amp;&amp; $this.adc16_pga_config.adc16PgaEnable.value()">
+                    <param id="code" expr="`ADC16_SetPGAConfig(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, &amp;`) + $instance.getFnGroupPrefix() + $instance.getId() + `_pgaConfig);`"></param>
+                    <param id="description">Configure programmable gain amplifier</param>
+                    <param id="paddingLevel" expr="1"></param>
+                </fragment>
+                <fragment id="init_line" if_expr="(featureDefined(`FSL_FEATURE_ADC16_HAS_CALIBRATION`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_CALIBRATION`) &amp;&amp; ($this.doAutoCalibration.value()))">
+                    <param id="code" expr="`ADC16_DoAutoCalibration(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `);`"></param>
+                    <param id="description">Perform auto calibration</param>
+                    <param id="paddingLevel" expr="1"></param>
+                </fragment>
+                <fragment id="init_line" if_expr="$this.offset.isAvailable() &amp;&amp; ($this.offset.value() != 0)">
+                    <param id="code" expr="`ADC16_SetOffsetValue(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, `) + $this.offset.value() + `);`"></param>
+                    <param id="description" expr="`Substract ` + $this.offset.value() + ` value from conversion result`"/>
+                    <param id="paddingLevel" expr="1"></param>
+                </fragment>
+                <fragment id="init_line" if_expr="featureDefined(`FSL_FEATURE_ADC16_HAS_DMA`) &amp;&amp; getFeature(`FSL_FEATURE_ADC16_HAS_DMA`) &amp;&amp; $this.enable_dma.value()">
+                    <param id="code" expr="`ADC16_EnableDMA(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, true);`"></param>
+                    <param id="description" expr="`Enable DMA requests from ` + $instance.getPeripheral() + ` peripheral`"></param>
+                    <param id="paddingLevel" expr="1"></param>
+                </fragment>
+                <fragment id="init_channel" for_elements_of="$this.adc16_channels_config"></fragment>
+            </section>
+        </code>
+        <quick_selections>
+            <quick_selection id="QS_ADC16_1" label="Default">
+                <description>Default setting for ADC16</description>
+                <set id="adc16_config.referenceVoltageSource">kADC16_ReferenceVoltageSourceVref</set>
+                <set id="adc16_config.clockSource">kADC16_ClockSourceAsynchronousClock</set>
+                <set id="adc16_config.enableAsynchronousClock">true</set>
+                <set id="adc16_config.clockDivider">kADC16_ClockDivider8</set>
+                <set id="adc16_config.resolution">kADC16_ResolutionSE12Bit</set>
+                <set id="adc16_config.longSampleMode">kADC16_LongSampleDisabled</set>
+                <set id="adc16_config.enableHighSpeed">false</set>
+                <set id="adc16_config.enableLowPower">false</set>
+                <set id="adc16_config.enableContinuousConversion">false</set>
+                <set id="adc16_hardware_compare_config.hardwareCompareModeEnable">false</set>
+                <set id="adc16_config.hardwareAverageMode">kADC16_HardwareAverageDisabled</set>
+                <set id="adc16_pga_config.adc16PgaEnable">false</set>
+            </quick_selection>
+            <default>QS_ADC16_1</default>
+        </quick_selections>
+    </config_set>
+
+</component:config_component>

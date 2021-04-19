@@ -1,0 +1,467 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="8" name="BDH" description="UART Baud Rate Registers: High">
+    <alias type="CMSIS" value="BDH"/>
+    <bit_field offset="0" width="5" name="SBR" access="RW" reset_value="0" description="UART Baud Rate Bits">
+      <alias type="CMSIS" value="UART_BDH_SBR(x)"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="SBNS" access="RW" reset_value="0" description="Stop Bit Number Select">
+      <alias type="CMSIS" value="UART_BDH_SBNS(x)"/>
+      <bit_field_value name="BDH_SBNS_0b0" value="0b0" description="Data frame consists of a single stop bit."/>
+      <bit_field_value name="BDH_SBNS_0b1" value="0b1" description="Data frame consists of two stop bits."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="RXEDGIE" access="RW" reset_value="0" description="RxD Input Active Edge Interrupt Enable">
+      <alias type="CMSIS" value="UART_BDH_RXEDGIE(x)"/>
+      <bit_field_value name="BDH_RXEDGIE_0b0" value="0b0" description="Hardware interrupts from RXEDGIF disabled using polling."/>
+      <bit_field_value name="BDH_RXEDGIE_0b1" value="0b1" description="RXEDGIF interrupt request enabled."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="LBKDIE" access="RW" reset_value="0" description="LIN Break Detect Interrupt Enable">
+      <alias type="CMSIS" value="UART_BDH_LBKDIE(x)"/>
+      <bit_field_value name="BDH_LBKDIE_0b0" value="0b0" description="LBKDIF interrupt requests disabled."/>
+      <bit_field_value name="BDH_LBKDIE_0b1" value="0b1" description="LBKDIF interrupt requests enabled."/>
+    </bit_field>
+  </register>
+  <register offset="0x1" width="8" name="BDL" description="UART Baud Rate Registers: Low">
+    <alias type="CMSIS" value="BDL"/>
+    <bit_field offset="0" width="8" name="SBR" access="RW" reset_value="0x4" description="UART Baud Rate Bits">
+      <alias type="CMSIS" value="UART_BDL_SBR(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x2" width="8" name="C1" description="UART Control Register 1">
+    <alias type="CMSIS" value="C1"/>
+    <bit_field offset="0" width="1" name="PT" access="RW" reset_value="0" description="Parity Type">
+      <alias type="CMSIS" value="UART_C1_PT(x)"/>
+      <bit_field_value name="C1_PT_0b0" value="0b0" description="Even parity."/>
+      <bit_field_value name="C1_PT_0b1" value="0b1" description="Odd parity."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="PE" access="RW" reset_value="0" description="Parity Enable">
+      <alias type="CMSIS" value="UART_C1_PE(x)"/>
+      <bit_field_value name="C1_PE_0b0" value="0b0" description="Parity function disabled."/>
+      <bit_field_value name="C1_PE_0b1" value="0b1" description="Parity function enabled."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="ILT" access="RW" reset_value="0" description="Idle Line Type Select">
+      <alias type="CMSIS" value="UART_C1_ILT(x)"/>
+      <bit_field_value name="C1_ILT_0b0" value="0b0" description="Idle character bit count starts after start bit."/>
+      <bit_field_value name="C1_ILT_0b1" value="0b1" description="Idle character bit count starts after stop bit."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="WAKE" access="RW" reset_value="0" description="Receiver Wakeup Method Select">
+      <alias type="CMSIS" value="UART_C1_WAKE(x)"/>
+      <bit_field_value name="C1_WAKE_0b0" value="0b0" description="Idle line wakeup."/>
+      <bit_field_value name="C1_WAKE_0b1" value="0b1" description="Address mark wakeup."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="M" access="RW" reset_value="0" description="9-bit or 8-bit Mode Select">
+      <alias type="CMSIS" value="UART_C1_M(x)"/>
+      <bit_field_value name="C1_M_0b0" value="0b0" description="Normal-start + 8 data bits (MSB/LSB first as determined by MSBF) + stop."/>
+      <bit_field_value name="C1_M_0b1" value="0b1" description="Use-start + 9 data bits (MSB/LSB first as determined by MSBF) + stop."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="RSRC" access="RW" reset_value="0" description="Receiver Source Select">
+      <alias type="CMSIS" value="UART_C1_RSRC(x)"/>
+      <bit_field_value name="C1_RSRC_0b0" value="0b0" description="Selects internal loop back mode. The receiver input is internally connected to transmitter output."/>
+      <bit_field_value name="C1_RSRC_0b1" value="0b1" description="Single wire UART mode where the receiver input is connected to the transmit pin input signal."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="UARTSWAI" access="RW" reset_value="0" description="UART Stops in Wait Mode">
+      <alias type="CMSIS" value="UART_C1_UARTSWAI(x)"/>
+      <bit_field_value name="C1_UARTSWAI_0b0" value="0b0" description="UART clock continues to run in Wait mode."/>
+      <bit_field_value name="C1_UARTSWAI_0b1" value="0b1" description="UART clock freezes while CPU is in Wait mode."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="LOOPS" access="RW" reset_value="0" description="Loop Mode Select">
+      <alias type="CMSIS" value="UART_C1_LOOPS(x)"/>
+      <bit_field_value name="C1_LOOPS_0b0" value="0b0" description="Normal operation."/>
+      <bit_field_value name="C1_LOOPS_0b1" value="0b1" description="Loop mode where transmitter output is internally connected to receiver input. The receiver input is determined by RSRC."/>
+    </bit_field>
+  </register>
+  <register offset="0x3" width="8" name="C2" description="UART Control Register 2">
+    <alias type="CMSIS" value="C2"/>
+    <bit_field offset="0" width="1" name="SBK" access="RW" reset_value="0" description="Send Break">
+      <alias type="CMSIS" value="UART_C2_SBK(x)"/>
+      <bit_field_value name="C2_SBK_0b0" value="0b0" description="Normal transmitter operation."/>
+      <bit_field_value name="C2_SBK_0b1" value="0b1" description="Queue break characters to be sent."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="RWU" access="RW" reset_value="0" description="Receiver Wakeup Control">
+      <alias type="CMSIS" value="UART_C2_RWU(x)"/>
+      <bit_field_value name="C2_RWU_0b0" value="0b0" description="Normal operation."/>
+      <bit_field_value name="C2_RWU_0b1" value="0b1" description="RWU enables the wakeup function and inhibits further receiver interrupt requests. Normally, hardware wakes the receiver by automatically clearing RWU."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="RE" access="RW" reset_value="0" description="Receiver Enable">
+      <alias type="CMSIS" value="UART_C2_RE(x)"/>
+      <bit_field_value name="C2_RE_0b0" value="0b0" description="Receiver off."/>
+      <bit_field_value name="C2_RE_0b1" value="0b1" description="Receiver on."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="TE" access="RW" reset_value="0" description="Transmitter Enable">
+      <alias type="CMSIS" value="UART_C2_TE(x)"/>
+      <bit_field_value name="C2_TE_0b0" value="0b0" description="Transmitter off."/>
+      <bit_field_value name="C2_TE_0b1" value="0b1" description="Transmitter on."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="ILIE" access="RW" reset_value="0" description="Idle Line Interrupt Enable">
+      <alias type="CMSIS" value="UART_C2_ILIE(x)"/>
+      <bit_field_value name="C2_ILIE_0b0" value="0b0" description="IDLE interrupt requests disabled."/>
+      <bit_field_value name="C2_ILIE_0b1" value="0b1" description="IDLE interrupt requests enabled."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="RIE" access="RW" reset_value="0" description="Receiver Full Interrupt or DMA Transfer Enable">
+      <alias type="CMSIS" value="UART_C2_RIE(x)"/>
+      <bit_field_value name="C2_RIE_0b0" value="0b0" description="RDRF interrupt and DMA transfer requests disabled."/>
+      <bit_field_value name="C2_RIE_0b1" value="0b1" description="RDRF interrupt or DMA transfer requests enabled."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="TCIE" access="RW" reset_value="0" description="Transmission Complete Interrupt Enable">
+      <alias type="CMSIS" value="UART_C2_TCIE(x)"/>
+      <bit_field_value name="C2_TCIE_0b0" value="0b0" description="TC interrupt requests disabled."/>
+      <bit_field_value name="C2_TCIE_0b1" value="0b1" description="TC interrupt requests enabled."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="TIE" access="RW" reset_value="0" description="Transmitter Interrupt or DMA Transfer Enable.">
+      <alias type="CMSIS" value="UART_C2_TIE(x)"/>
+      <bit_field_value name="C2_TIE_0b0" value="0b0" description="TDRE interrupt and DMA transfer requests disabled."/>
+      <bit_field_value name="C2_TIE_0b1" value="0b1" description="TDRE interrupt or DMA transfer requests enabled."/>
+    </bit_field>
+  </register>
+  <register offset="0x4" width="8" name="S1" description="UART Status Register 1">
+    <alias type="CMSIS" value="S1"/>
+    <bit_field offset="0" width="1" name="PF" access="RO" reset_value="0" description="Parity Error Flag">
+      <alias type="CMSIS" value="UART_S1_PF(x)"/>
+      <bit_field_value name="S1_PF_0b0" value="0b0" description="No parity error detected since the last time this flag was cleared. If the receive buffer has a depth greater than 1, then there may be data in the receive buffer what was received with a parity error."/>
+      <bit_field_value name="S1_PF_0b1" value="0b1" description="At least one dataword was received with a parity error since the last time this flag was cleared."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="FE" access="RO" reset_value="0" description="Framing Error Flag">
+      <alias type="CMSIS" value="UART_S1_FE(x)"/>
+      <bit_field_value name="S1_FE_0b0" value="0b0" description="No framing error detected."/>
+      <bit_field_value name="S1_FE_0b1" value="0b1" description="Framing error."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="NF" access="RO" reset_value="0" description="Noise Flag">
+      <alias type="CMSIS" value="UART_S1_NF(x)"/>
+      <bit_field_value name="S1_NF_0b0" value="0b0" description="No noise detected since the last time this flag was cleared. If the receive buffer has a depth greater than 1 then there may be data in the receiver buffer that was received with noise."/>
+      <bit_field_value name="S1_NF_0b1" value="0b1" description="At least one dataword was received with noise detected since the last time the flag was cleared."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="OR" access="RO" reset_value="0" description="Receiver Overrun Flag">
+      <alias type="CMSIS" value="UART_S1_OR(x)"/>
+      <bit_field_value name="S1_OR_0b0" value="0b0" description="No overrun has occurred since the last time the flag was cleared."/>
+      <bit_field_value name="S1_OR_0b1" value="0b1" description="Overrun has occurred or the overrun flag has not been cleared since the last overrun occured."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="IDLE" access="RO" reset_value="0" description="Idle Line Flag">
+      <alias type="CMSIS" value="UART_S1_IDLE(x)"/>
+      <bit_field_value name="S1_IDLE_0b0" value="0b0" description="Receiver input is either active now or has never become active since the IDLE flag was last cleared."/>
+      <bit_field_value name="S1_IDLE_0b1" value="0b1" description="Receiver input has become idle or the flag has not been cleared since it last asserted."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="RDRF" access="RO" reset_value="0" description="Receive Data Register Full Flag">
+      <alias type="CMSIS" value="UART_S1_RDRF(x)"/>
+      <bit_field_value name="S1_RDRF_0b0" value="0b0" description="The number of datawords in the receive buffer is less than the number indicated by RXWATER."/>
+      <bit_field_value name="S1_RDRF_0b1" value="0b1" description="The number of datawords in the receive buffer is equal to or greater than the number indicated by RXWATER at some point in time since this flag was last cleared."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="TC" access="RO" reset_value="0x1" description="Transmit Complete Flag">
+      <alias type="CMSIS" value="UART_S1_TC(x)"/>
+      <bit_field_value name="S1_TC_0b0" value="0b0" description="Transmitter active (sending data, a preamble, or a break)."/>
+      <bit_field_value name="S1_TC_0b1" value="0b1" description="Transmitter idle (transmission activity complete)."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="TDRE" access="RO" reset_value="0x1" description="Transmit Data Register Empty Flag">
+      <alias type="CMSIS" value="UART_S1_TDRE(x)"/>
+      <bit_field_value name="S1_TDRE_0b0" value="0b0" description="The amount of data in the transmit buffer is greater than the value indicated by TWFIFO[TXWATER]."/>
+      <bit_field_value name="S1_TDRE_0b1" value="0b1" description="The amount of data in the transmit buffer is less than or equal to the value indicated by TWFIFO[TXWATER] at some point in time since the flag has been cleared."/>
+    </bit_field>
+  </register>
+  <register offset="0x5" width="8" name="S2" description="UART Status Register 2">
+    <alias type="CMSIS" value="S2"/>
+    <bit_field offset="0" width="1" name="RAF" access="RO" reset_value="0" description="Receiver Active Flag">
+      <alias type="CMSIS" value="UART_S2_RAF(x)"/>
+      <bit_field_value name="S2_RAF_0b0" value="0b0" description="UART receiver idle/inactive waiting for a start bit."/>
+      <bit_field_value name="S2_RAF_0b1" value="0b1" description="UART receiver active, RxD input not idle."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="LBKDE" access="RW" reset_value="0" description="LIN Break Detection Enable">
+      <alias type="CMSIS" value="UART_S2_LBKDE(x)"/>
+      <bit_field_value name="S2_LBKDE_0b0" value="0b0" description="Break character detection is disabled."/>
+      <bit_field_value name="S2_LBKDE_0b1" value="0b1" description="Break character is detected at length of 11 bit times if C1[M] = 0 or 12 bits time if C1[M] = 1."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="BRK13" access="RW" reset_value="0" description="Break Transmit Character Length">
+      <alias type="CMSIS" value="UART_S2_BRK13(x)"/>
+      <bit_field_value name="S2_BRK13_0b0" value="0b0" description="Break character is 10, 11, or 12 bits long."/>
+      <bit_field_value name="S2_BRK13_0b1" value="0b1" description="Break character is 13 or 14 bits long."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="RWUID" access="RW" reset_value="0" description="Receive Wakeup Idle Detect">
+      <alias type="CMSIS" value="UART_S2_RWUID(x)"/>
+      <bit_field_value name="S2_RWUID_0b0" value="0b0" description="S1[IDLE] is not set upon detection of an idle character."/>
+      <bit_field_value name="S2_RWUID_0b1" value="0b1" description="S1[IDLE] is set upon detection of an idle character."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="RXINV" access="RW" reset_value="0" description="Receive Data Inversion">
+      <alias type="CMSIS" value="UART_S2_RXINV(x)"/>
+      <bit_field_value name="S2_RXINV_0b0" value="0b0" description="Receive data is not inverted."/>
+      <bit_field_value name="S2_RXINV_0b1" value="0b1" description="Receive data is inverted."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="MSBF" access="RW" reset_value="0" description="Most Significant Bit First">
+      <alias type="CMSIS" value="UART_S2_MSBF(x)"/>
+      <bit_field_value name="S2_MSBF_0b0" value="0b0" description="LSB (bit0) is the first bit that is transmitted following the start bit. Further, the first bit received after the start bit is identified as bit0."/>
+      <bit_field_value name="S2_MSBF_0b1" value="0b1" description="MSB (bit8, bit7 or bit6) is the first bit that is transmitted following the start bit, depending on the setting of C1[M] and C1[PE]. Further, the first bit received after the start bit is identified as bit8, bit7, or bit6, depending on the setting of C1[M] and C1[PE]."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="RXEDGIF" access="W1C" reset_value="0" description="RxD Pin Active Edge Interrupt Flag">
+      <alias type="CMSIS" value="UART_S2_RXEDGIF(x)"/>
+      <bit_field_value name="S2_RXEDGIF_0b0" value="0b0" description="No active edge on the receive pin has occurred."/>
+      <bit_field_value name="S2_RXEDGIF_0b1" value="0b1" description="An active edge on the receive pin has occurred."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="LBKDIF" access="W1C" reset_value="0" description="LIN Break Detect Interrupt Flag">
+      <alias type="CMSIS" value="UART_S2_LBKDIF(x)"/>
+      <bit_field_value name="S2_LBKDIF_0b0" value="0b0" description="No LIN break character detected."/>
+      <bit_field_value name="S2_LBKDIF_0b1" value="0b1" description="LIN break character detected."/>
+    </bit_field>
+  </register>
+  <register offset="0x6" width="8" name="C3" description="UART Control Register 3">
+    <alias type="CMSIS" value="C3"/>
+    <bit_field offset="0" width="1" name="PEIE" access="RW" reset_value="0" description="Parity Error Interrupt Enable">
+      <alias type="CMSIS" value="UART_C3_PEIE(x)"/>
+      <bit_field_value name="C3_PEIE_0b0" value="0b0" description="PF interrupt requests are disabled."/>
+      <bit_field_value name="C3_PEIE_0b1" value="0b1" description="PF interrupt requests are enabled."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="FEIE" access="RW" reset_value="0" description="Framing Error Interrupt Enable">
+      <alias type="CMSIS" value="UART_C3_FEIE(x)"/>
+      <bit_field_value name="C3_FEIE_0b0" value="0b0" description="FE interrupt requests are disabled."/>
+      <bit_field_value name="C3_FEIE_0b1" value="0b1" description="FE interrupt requests are enabled."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="NEIE" access="RW" reset_value="0" description="Noise Error Interrupt Enable">
+      <alias type="CMSIS" value="UART_C3_NEIE(x)"/>
+      <bit_field_value name="C3_NEIE_0b0" value="0b0" description="NF interrupt requests are disabled."/>
+      <bit_field_value name="C3_NEIE_0b1" value="0b1" description="NF interrupt requests are enabled."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="ORIE" access="RW" reset_value="0" description="Overrun Error Interrupt Enable">
+      <alias type="CMSIS" value="UART_C3_ORIE(x)"/>
+      <bit_field_value name="C3_ORIE_0b0" value="0b0" description="OR interrupts are disabled."/>
+      <bit_field_value name="C3_ORIE_0b1" value="0b1" description="OR interrupt requests are enabled."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="TXINV" access="RW" reset_value="0" description="Transmit Data Inversion.">
+      <alias type="CMSIS" value="UART_C3_TXINV(x)"/>
+      <bit_field_value name="C3_TXINV_0b0" value="0b0" description="Transmit data is not inverted."/>
+      <bit_field_value name="C3_TXINV_0b1" value="0b1" description="Transmit data is inverted."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="TXDIR" access="RW" reset_value="0" description="Transmitter Pin Data Direction in Single-Wire mode">
+      <alias type="CMSIS" value="UART_C3_TXDIR(x)"/>
+      <bit_field_value name="C3_TXDIR_0b0" value="0b0" description="TXD pin is an input in single wire mode."/>
+      <bit_field_value name="C3_TXDIR_0b1" value="0b1" description="TXD pin is an output in single wire mode."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="T8" access="RW" reset_value="0" description="Transmit Bit 8">
+      <alias type="CMSIS" value="UART_C3_T8(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="R8" access="RO" reset_value="0" description="Received Bit 8">
+      <alias type="CMSIS" value="UART_C3_R8(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x7" width="8" name="D" description="UART Data Register">
+    <alias type="CMSIS" value="D"/>
+    <bit_field offset="0" width="8" name="RT" access="RW" reset_value="0" description="Reads return the contents of the read-only receive data register and writes go to the write-only transmit data register.">
+      <alias type="CMSIS" value="UART_D_RT(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x8" width="8" name="MA1" description="UART Match Address Registers 1">
+    <alias type="CMSIS" value="MA1"/>
+    <bit_field offset="0" width="8" name="MA" access="RW" reset_value="0" description="Match Address">
+      <alias type="CMSIS" value="UART_MA1_MA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x9" width="8" name="MA2" description="UART Match Address Registers 2">
+    <alias type="CMSIS" value="MA2"/>
+    <bit_field offset="0" width="8" name="MA" access="RW" reset_value="0" description="Match Address">
+      <alias type="CMSIS" value="UART_MA2_MA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xA" width="8" name="C4" description="UART Control Register 4">
+    <alias type="CMSIS" value="C4"/>
+    <bit_field offset="0" width="5" name="BRFA" access="RW" reset_value="0" description="Baud Rate Fine Adjust">
+      <alias type="CMSIS" value="UART_C4_BRFA(x)"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="M10" access="RW" reset_value="0" description="10-bit Mode select">
+      <alias type="CMSIS" value="UART_C4_M10(x)"/>
+      <bit_field_value name="C4_M10_0b0" value="0b0" description="The parity bit is the ninth bit in the serial transmission."/>
+      <bit_field_value name="C4_M10_0b1" value="0b1" description="The parity bit is the tenth bit in the serial transmission."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="MAEN2" access="RW" reset_value="0" description="Match Address Mode Enable 2">
+      <alias type="CMSIS" value="UART_C4_MAEN2(x)"/>
+      <bit_field_value name="C4_MAEN2_0b0" value="0b0" description="All data received is transferred to the data buffer if MAEN1 is cleared."/>
+      <bit_field_value name="C4_MAEN2_0b1" value="0b1" description="All data received with the most significant bit cleared, is discarded. All data received with the most significant bit set, is compared with contents of MA2 register. If no match occurs, the data is discarded. If a match occurs, data is transferred to the data buffer. This field must be cleared when C7816[ISO7816E] is set/enabled."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="MAEN1" access="RW" reset_value="0" description="Match Address Mode Enable 1">
+      <alias type="CMSIS" value="UART_C4_MAEN1(x)"/>
+      <bit_field_value name="C4_MAEN1_0b0" value="0b0" description="All data received is transferred to the data buffer if MAEN2 is cleared."/>
+      <bit_field_value name="C4_MAEN1_0b1" value="0b1" description="All data received with the most significant bit cleared, is discarded. All data received with the most significant bit set, is compared with contents of MA1 register. If no match occurs, the data is discarded. If match occurs, data is transferred to the data buffer. This field must be cleared when C7816[ISO7816E] is set/enabled."/>
+    </bit_field>
+  </register>
+  <register offset="0xB" width="8" name="C5" description="UART Control Register 5">
+    <alias type="CMSIS" value="C5"/>
+    <reserved_bit_field offset="0" width="4" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <bit_field offset="5" width="1" name="RDMAS" access="RW" reset_value="0" description="Receiver Full DMA Select">
+      <alias type="CMSIS" value="UART_C5_RDMAS(x)"/>
+      <bit_field_value name="C5_RDMAS_0b0" value="0b0" description="If C2[RIE] and S1[RDRF] are set, the RDFR interrupt request signal is asserted to request an interrupt service."/>
+      <bit_field_value name="C5_RDMAS_0b1" value="0b1" description="If C2[RIE] and S1[RDRF] are set, the RDRF DMA request signal is asserted to request a DMA transfer."/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <bit_field offset="7" width="1" name="TDMAS" access="RW" reset_value="0" description="Transmitter DMA Select">
+      <alias type="CMSIS" value="UART_C5_TDMAS(x)"/>
+      <bit_field_value name="C5_TDMAS_0b0" value="0b0" description="If C2[TIE] is set and the S1[TDRE] flag is set, the TDRE interrupt request signal is asserted to request interrupt service."/>
+      <bit_field_value name="C5_TDMAS_0b1" value="0b1" description="If C2[TIE] is set and the S1[TDRE] flag is set, the TDRE DMA request signal is asserted to request a DMA transfer."/>
+    </bit_field>
+  </register>
+  <register offset="0xC" width="8" name="ED" description="UART Extended Data Register">
+    <alias type="CMSIS" value="ED"/>
+    <reserved_bit_field offset="0" width="6" reset_value="0"/>
+    <bit_field offset="6" width="1" name="PARITYE" access="RO" reset_value="0" description="The current received dataword contained in D and C3[R8] was received with a parity error.">
+      <alias type="CMSIS" value="UART_ED_PARITYE(x)"/>
+      <bit_field_value name="ED_PARITYE_0b0" value="0b0" description="The dataword was received without a parity error."/>
+      <bit_field_value name="ED_PARITYE_0b1" value="0b1" description="The dataword was received with a parity error."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="NOISY" access="RO" reset_value="0" description="The current received dataword contained in D and C3[R8] was received with noise.">
+      <alias type="CMSIS" value="UART_ED_NOISY(x)"/>
+      <bit_field_value name="ED_NOISY_0b0" value="0b0" description="The dataword was received without noise."/>
+      <bit_field_value name="ED_NOISY_0b1" value="0b1" description="The data was received with noise."/>
+    </bit_field>
+  </register>
+  <register offset="0xD" width="8" name="MODEM" description="UART Modem Register">
+    <alias type="CMSIS" value="MODEM"/>
+    <bit_field offset="0" width="1" name="TXCTSE" access="RW" reset_value="0" description="Transmitter clear-to-send enable">
+      <alias type="CMSIS" value="UART_MODEM_TXCTSE(x)"/>
+      <bit_field_value name="MODEM_TXCTSE_0b0" value="0b0" description="CTS has no effect on the transmitter."/>
+      <bit_field_value name="MODEM_TXCTSE_0b1" value="0b1" description="Enables clear-to-send operation. The transmitter checks the state of CTS each time it is ready to send a character. If CTS is asserted, the character is sent. If CTS is deasserted, the signal TXD remains in the mark state and transmission is delayed until CTS is asserted. Changes in CTS as a character is being sent do not affect its transmission."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="TXRTSE" access="RW" reset_value="0" description="Transmitter request-to-send enable">
+      <alias type="CMSIS" value="UART_MODEM_TXRTSE(x)"/>
+      <bit_field_value name="MODEM_TXRTSE_0b0" value="0b0" description="The transmitter has no effect on RTS."/>
+      <bit_field_value name="MODEM_TXRTSE_0b1" value="0b1" description="When a character is placed into an empty transmitter data buffer , RTS asserts one bit time before the start bit is transmitted. RTS deasserts one bit time after all characters in the transmitter data buffer and shift register are completely sent, including the last stop bit. (FIFO) (FIFO)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="TXRTSPOL" access="RW" reset_value="0" description="Transmitter request-to-send polarity">
+      <alias type="CMSIS" value="UART_MODEM_TXRTSPOL(x)"/>
+      <bit_field_value name="MODEM_TXRTSPOL_0b0" value="0b0" description="Transmitter RTS is active low."/>
+      <bit_field_value name="MODEM_TXRTSPOL_0b1" value="0b1" description="Transmitter RTS is active high."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="RXRTSE" access="RW" reset_value="0" description="Receiver request-to-send enable">
+      <alias type="CMSIS" value="UART_MODEM_RXRTSE(x)"/>
+      <bit_field_value name="MODEM_RXRTSE_0b0" value="0b0" description="The receiver has no effect on RTS."/>
+      <bit_field_value name="MODEM_RXRTSE_0b1" value="0b1" description="RTS is deasserted if the number of characters in the receiver data register (FIFO) is equal to or greater than RWFIFO[RXWATER]. RTS is asserted when the number of characters in the receiver data register (FIFO) is less than RWFIFO[RXWATER]. See Hardware flow control"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="4" reset_value="0"/>
+  </register>
+  <register offset="0xE" width="8" name="IR" description="UART Infrared Register">
+    <alias type="CMSIS" value="IR"/>
+    <bit_field offset="0" width="2" name="TNP" access="RW" reset_value="0" description="Transmitter narrow pulse">
+      <alias type="CMSIS" value="UART_IR_TNP(x)"/>
+      <bit_field_value name="IR_TNP_0b00" value="0b00" description="3/16."/>
+      <bit_field_value name="IR_TNP_0b01" value="0b01" description="1/16."/>
+      <bit_field_value name="IR_TNP_0b10" value="0b10" description="1/32."/>
+      <bit_field_value name="IR_TNP_0b11" value="0b11" description="1/4."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="IREN" access="RW" reset_value="0" description="Infrared enable">
+      <alias type="CMSIS" value="UART_IR_IREN(x)"/>
+      <bit_field_value name="IR_IREN_0b0" value="0b0" description="IR disabled."/>
+      <bit_field_value name="IR_IREN_0b1" value="0b1" description="IR enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="5" reset_value="0"/>
+  </register>
+  <register offset="0x10" width="8" name="PFIFO" description="UART FIFO Parameters">
+    <alias type="CMSIS" value="PFIFO"/>
+    <bit_field offset="0" width="3" name="RXFIFOSIZE" access="RO" reset_value="0" description="Receive FIFO. Buffer Depth">
+      <alias type="CMSIS" value="UART_PFIFO_RXFIFOSIZE(x)"/>
+      <bit_field_value name="PFIFO_RXFIFOSIZE_0b000" value="0b000" description="Receive FIFO/Buffer depth = 1 dataword."/>
+      <bit_field_value name="PFIFO_RXFIFOSIZE_0b001" value="0b001" description="Receive FIFO/Buffer depth = 4 datawords."/>
+      <bit_field_value name="PFIFO_RXFIFOSIZE_0b010" value="0b010" description="Receive FIFO/Buffer depth = 8 datawords."/>
+      <bit_field_value name="PFIFO_RXFIFOSIZE_0b011" value="0b011" description="Receive FIFO/Buffer depth = 16 datawords."/>
+      <bit_field_value name="PFIFO_RXFIFOSIZE_0b100" value="0b100" description="Receive FIFO/Buffer depth = 32 datawords."/>
+      <bit_field_value name="PFIFO_RXFIFOSIZE_0b101" value="0b101" description="Receive FIFO/Buffer depth = 64 datawords."/>
+      <bit_field_value name="PFIFO_RXFIFOSIZE_0b110" value="0b110" description="Receive FIFO/Buffer depth = 128 datawords."/>
+      <bit_field_value name="PFIFO_RXFIFOSIZE_0b111" value="0b111" description="Reserved."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="RXFE" access="RW" reset_value="0" description="Receive FIFO Enable">
+      <alias type="CMSIS" value="UART_PFIFO_RXFE(x)"/>
+      <bit_field_value name="PFIFO_RXFE_0b0" value="0b0" description="Receive FIFO is not enabled. Buffer is depth 1. (Legacy support)"/>
+      <bit_field_value name="PFIFO_RXFE_0b1" value="0b1" description="Receive FIFO is enabled. Buffer is depth indicted by RXFIFOSIZE."/>
+    </bit_field>
+    <bit_field offset="4" width="3" name="TXFIFOSIZE" access="RO" reset_value="0" description="Transmit FIFO. Buffer Depth">
+      <alias type="CMSIS" value="UART_PFIFO_TXFIFOSIZE(x)"/>
+      <bit_field_value name="PFIFO_TXFIFOSIZE_0b000" value="0b000" description="Transmit FIFO/Buffer depth = 1 dataword."/>
+      <bit_field_value name="PFIFO_TXFIFOSIZE_0b001" value="0b001" description="Transmit FIFO/Buffer depth = 4 datawords."/>
+      <bit_field_value name="PFIFO_TXFIFOSIZE_0b010" value="0b010" description="Transmit FIFO/Buffer depth = 8 datawords."/>
+      <bit_field_value name="PFIFO_TXFIFOSIZE_0b011" value="0b011" description="Transmit FIFO/Buffer depth = 16 datawords."/>
+      <bit_field_value name="PFIFO_TXFIFOSIZE_0b100" value="0b100" description="Transmit FIFO/Buffer depth = 32 datawords."/>
+      <bit_field_value name="PFIFO_TXFIFOSIZE_0b101" value="0b101" description="Transmit FIFO/Buffer depth = 64 datawords."/>
+      <bit_field_value name="PFIFO_TXFIFOSIZE_0b110" value="0b110" description="Transmit FIFO/Buffer depth = 128 datawords."/>
+      <bit_field_value name="PFIFO_TXFIFOSIZE_0b111" value="0b111" description="Reserved."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="TXFE" access="RW" reset_value="0" description="Transmit FIFO Enable">
+      <alias type="CMSIS" value="UART_PFIFO_TXFE(x)"/>
+      <bit_field_value name="PFIFO_TXFE_0b0" value="0b0" description="Transmit FIFO is not enabled. Buffer is depth 1. (Legacy support)."/>
+      <bit_field_value name="PFIFO_TXFE_0b1" value="0b1" description="Transmit FIFO is enabled. Buffer is depth indicated by TXFIFOSIZE."/>
+    </bit_field>
+  </register>
+  <register offset="0x11" width="8" name="CFIFO" description="UART FIFO Control Register">
+    <alias type="CMSIS" value="CFIFO"/>
+    <bit_field offset="0" width="1" name="RXUFE" access="RW" reset_value="0" description="Receive FIFO Underflow Interrupt Enable">
+      <alias type="CMSIS" value="UART_CFIFO_RXUFE(x)"/>
+      <bit_field_value name="CFIFO_RXUFE_0b0" value="0b0" description="RXUF flag does not generate an interrupt to the host."/>
+      <bit_field_value name="CFIFO_RXUFE_0b1" value="0b1" description="RXUF flag generates an interrupt to the host."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="TXOFE" access="RW" reset_value="0" description="Transmit FIFO Overflow Interrupt Enable">
+      <alias type="CMSIS" value="UART_CFIFO_TXOFE(x)"/>
+      <bit_field_value name="CFIFO_TXOFE_0b0" value="0b0" description="TXOF flag does not generate an interrupt to the host."/>
+      <bit_field_value name="CFIFO_TXOFE_0b1" value="0b1" description="TXOF flag generates an interrupt to the host."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="RXOFE" access="RW" reset_value="0" description="Receive FIFO Overflow Interrupt Enable">
+      <alias type="CMSIS" value="UART_CFIFO_RXOFE(x)"/>
+      <bit_field_value name="CFIFO_RXOFE_0b0" value="0b0" description="RXOF flag does not generate an interrupt to the host."/>
+      <bit_field_value name="CFIFO_RXOFE_0b1" value="0b1" description="RXOF flag generates an interrupt to the host."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="3" reset_value="0"/>
+    <bit_field offset="6" width="1" name="RXFLUSH" access="WORZ" reset_value="0" description="Receive FIFO/Buffer Flush">
+      <alias type="CMSIS" value="UART_CFIFO_RXFLUSH(x)"/>
+      <bit_field_value name="CFIFO_RXFLUSH_0b0" value="0b0" description="No flush operation occurs."/>
+      <bit_field_value name="CFIFO_RXFLUSH_0b1" value="0b1" description="All data in the receive FIFO/buffer is cleared out."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="TXFLUSH" access="WORZ" reset_value="0" description="Transmit FIFO/Buffer Flush">
+      <alias type="CMSIS" value="UART_CFIFO_TXFLUSH(x)"/>
+      <bit_field_value name="CFIFO_TXFLUSH_0b0" value="0b0" description="No flush operation occurs."/>
+      <bit_field_value name="CFIFO_TXFLUSH_0b1" value="0b1" description="All data in the transmit FIFO/Buffer is cleared out."/>
+    </bit_field>
+  </register>
+  <register offset="0x12" width="8" name="SFIFO" description="UART FIFO Status Register">
+    <alias type="CMSIS" value="SFIFO"/>
+    <bit_field offset="0" width="1" name="RXUF" access="W1C" reset_value="0" description="Receiver Buffer Underflow Flag">
+      <alias type="CMSIS" value="UART_SFIFO_RXUF(x)"/>
+      <bit_field_value name="SFIFO_RXUF_0b0" value="0b0" description="No receive buffer underflow has occurred since the last time the flag was cleared."/>
+      <bit_field_value name="SFIFO_RXUF_0b1" value="0b1" description="At least one receive buffer underflow has occurred since the last time the flag was cleared."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="TXOF" access="W1C" reset_value="0" description="Transmitter Buffer Overflow Flag">
+      <alias type="CMSIS" value="UART_SFIFO_TXOF(x)"/>
+      <bit_field_value name="SFIFO_TXOF_0b0" value="0b0" description="No transmit buffer overflow has occurred since the last time the flag was cleared."/>
+      <bit_field_value name="SFIFO_TXOF_0b1" value="0b1" description="At least one transmit buffer overflow has occurred since the last time the flag was cleared."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="RXOF" access="W1C" reset_value="0" description="Receiver Buffer Overflow Flag">
+      <alias type="CMSIS" value="UART_SFIFO_RXOF(x)"/>
+      <bit_field_value name="SFIFO_RXOF_0b0" value="0b0" description="No receive buffer overflow has occurred since the last time the flag was cleared."/>
+      <bit_field_value name="SFIFO_RXOF_0b1" value="0b1" description="At least one receive buffer overflow has occurred since the last time the flag was cleared."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="3" reset_value="0"/>
+    <bit_field offset="6" width="1" name="RXEMPT" access="RO" reset_value="0x1" description="Receive Buffer/FIFO Empty">
+      <alias type="CMSIS" value="UART_SFIFO_RXEMPT(x)"/>
+      <bit_field_value name="SFIFO_RXEMPT_0b0" value="0b0" description="Receive buffer is not empty."/>
+      <bit_field_value name="SFIFO_RXEMPT_0b1" value="0b1" description="Receive buffer is empty."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="TXEMPT" access="RO" reset_value="0x1" description="Transmit Buffer/FIFO Empty">
+      <alias type="CMSIS" value="UART_SFIFO_TXEMPT(x)"/>
+      <bit_field_value name="SFIFO_TXEMPT_0b0" value="0b0" description="Transmit buffer is not empty."/>
+      <bit_field_value name="SFIFO_TXEMPT_0b1" value="0b1" description="Transmit buffer is empty."/>
+    </bit_field>
+  </register>
+  <register offset="0x13" width="8" name="TWFIFO" description="UART FIFO Transmit Watermark">
+    <alias type="CMSIS" value="TWFIFO"/>
+    <bit_field offset="0" width="8" name="TXWATER" access="RW" reset_value="0" description="Transmit Watermark">
+      <alias type="CMSIS" value="UART_TWFIFO_TXWATER(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x14" width="8" name="TCFIFO" description="UART FIFO Transmit Count">
+    <alias type="CMSIS" value="TCFIFO"/>
+    <bit_field offset="0" width="8" name="TXCOUNT" access="RO" reset_value="0" description="Transmit Counter">
+      <alias type="CMSIS" value="UART_TCFIFO_TXCOUNT(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x15" width="8" name="RWFIFO" description="UART FIFO Receive Watermark">
+    <alias type="CMSIS" value="RWFIFO"/>
+    <bit_field offset="0" width="8" name="RXWATER" access="RW" reset_value="0x1" description="Receive Watermark">
+      <alias type="CMSIS" value="UART_RWFIFO_RXWATER(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x16" width="8" name="RCFIFO" description="UART FIFO Receive Count">
+    <alias type="CMSIS" value="RCFIFO"/>
+    <bit_field offset="0" width="8" name="RXCOUNT" access="RO" reset_value="0" description="Receive Counter">
+      <alias type="CMSIS" value="UART_RCFIFO_RXCOUNT(x)"/>
+    </bit_field>
+  </register>
+</regs:peripheral>

@@ -1,0 +1,281 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="32" name="SC" description="Status and Control">
+    <alias type="CMSIS" value="SC"/>
+    <bit_field offset="0" width="3" name="PS" access="RW" reset_value="0" description="Prescale Factor Selection">
+      <alias type="CMSIS" value="TPM_SC_PS(x)"/>
+      <bit_field_value name="SC_PS_0b000" value="0b000" description="Divide by 1"/>
+      <bit_field_value name="SC_PS_0b001" value="0b001" description="Divide by 2"/>
+      <bit_field_value name="SC_PS_0b010" value="0b010" description="Divide by 4"/>
+      <bit_field_value name="SC_PS_0b011" value="0b011" description="Divide by 8"/>
+      <bit_field_value name="SC_PS_0b100" value="0b100" description="Divide by 16"/>
+      <bit_field_value name="SC_PS_0b101" value="0b101" description="Divide by 32"/>
+      <bit_field_value name="SC_PS_0b110" value="0b110" description="Divide by 64"/>
+      <bit_field_value name="SC_PS_0b111" value="0b111" description="Divide by 128"/>
+    </bit_field>
+    <bit_field offset="3" width="2" name="CMOD" access="RW" reset_value="0" description="Clock Mode Selection">
+      <alias type="CMSIS" value="TPM_SC_CMOD(x)"/>
+      <bit_field_value name="SC_CMOD_0b00" value="0b00" description="TPM counter is disabled"/>
+      <bit_field_value name="SC_CMOD_0b01" value="0b01" description="TPM counter increments on every TPM counter clock"/>
+      <bit_field_value name="SC_CMOD_0b10" value="0b10" description="TPM counter increments on rising edge of TPM_EXTCLK synchronized to the TPM counter clock"/>
+      <bit_field_value name="SC_CMOD_0b11" value="0b11" description="Reserved."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="CPWMS" access="RW" reset_value="0" description="Center-Aligned PWM Select">
+      <alias type="CMSIS" value="TPM_SC_CPWMS(x)"/>
+      <bit_field_value name="SC_CPWMS_0b0" value="0b0" description="TPM counter operates in up counting mode."/>
+      <bit_field_value name="SC_CPWMS_0b1" value="0b1" description="TPM counter operates in up-down counting mode."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="TOIE" access="RW" reset_value="0" description="Timer Overflow Interrupt Enable">
+      <alias type="CMSIS" value="TPM_SC_TOIE(x)"/>
+      <bit_field_value name="SC_TOIE_0b0" value="0b0" description="Disable TOF interrupts. Use software polling or DMA request."/>
+      <bit_field_value name="SC_TOIE_0b1" value="0b1" description="Enable TOF interrupts. An interrupt is generated when TOF equals one."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="TOF" access="W1C" reset_value="0" description="Timer Overflow Flag">
+      <alias type="CMSIS" value="TPM_SC_TOF(x)"/>
+      <bit_field_value name="SC_TOF_0b0" value="0b0" description="TPM counter has not overflowed."/>
+      <bit_field_value name="SC_TOF_0b1" value="0b1" description="TPM counter has overflowed."/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="DMA" access="RW" reset_value="0" description="DMA Enable">
+      <alias type="CMSIS" value="TPM_SC_DMA(x)"/>
+      <bit_field_value name="SC_DMA_0b0" value="0b0" description="Disables DMA transfers."/>
+      <bit_field_value name="SC_DMA_0b1" value="0b1" description="Enables DMA transfers."/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="23" reset_value="0"/>
+  </register>
+  <register offset="0x4" width="32" name="CNT" description="Counter">
+    <alias type="CMSIS" value="CNT"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RW" reset_value="0" description="Counter value">
+      <alias type="CMSIS" value="TPM_CNT_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x8" width="32" name="MOD" description="Modulo">
+    <alias type="CMSIS" value="MOD"/>
+    <bit_field offset="0" width="16" name="MOD" access="RW" reset_value="0xFFFF" description="Modulo value">
+      <alias type="CMSIS" value="TPM_MOD_MOD(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0xC" width="32" name="C0SC" description="Channel (n) Status and Control">
+    <alias type="CMSIS" value="CONTROLS[0].CnSC"/>
+    <bit_field offset="0" width="1" name="DMA" access="RW" reset_value="0" description="DMA Enable">
+      <alias type="CMSIS" value="TPM_CnSC_DMA(x)"/>
+      <bit_field_value name="CONTROLS_DMA_0b0" value="0b0" description="Disable DMA transfers."/>
+      <bit_field_value name="CONTROLS_DMA_0b1" value="0b1" description="Enable DMA transfers."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="1" name="ELSA" access="RW" reset_value="0" description="Edge or Level Select">
+      <alias type="CMSIS" value="TPM_CnSC_ELSA(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="ELSB" access="RW" reset_value="0" description="Edge or Level Select">
+      <alias type="CMSIS" value="TPM_CnSC_ELSB(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="MSA" access="RW" reset_value="0" description="Channel Mode Select">
+      <alias type="CMSIS" value="TPM_CnSC_MSA(x)"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="MSB" access="RW" reset_value="0" description="Channel Mode Select">
+      <alias type="CMSIS" value="TPM_CnSC_MSB(x)"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="CHIE" access="RW" reset_value="0" description="Channel Interrupt Enable">
+      <alias type="CMSIS" value="TPM_CnSC_CHIE(x)"/>
+      <bit_field_value name="CONTROLS_CHIE_0b0" value="0b0" description="Disable channel interrupts."/>
+      <bit_field_value name="CONTROLS_CHIE_0b1" value="0b1" description="Enable channel interrupts."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="CHF" access="W1C" reset_value="0" description="Channel Flag">
+      <alias type="CMSIS" value="TPM_CnSC_CHF(x)"/>
+      <bit_field_value name="CONTROLS_CHF_0b0" value="0b0" description="No channel event has occurred."/>
+      <bit_field_value name="CONTROLS_CHF_0b1" value="0b1" description="A channel event has occurred."/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="24" reset_value="0"/>
+  </register>
+  <register offset="0x10" width="32" name="C0V" description="Channel (n) Value">
+    <alias type="CMSIS" value="CONTROLS[0].CnV"/>
+    <bit_field offset="0" width="16" name="VAL" access="RW" reset_value="0" description="Channel Value">
+      <alias type="CMSIS" value="TPM_CnV_VAL(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x14" width="32" name="C1SC" description="Channel (n) Status and Control">
+    <alias type="CMSIS" value="CONTROLS[1].CnSC"/>
+    <bit_field offset="0" width="1" name="DMA" access="RW" reset_value="0" description="DMA Enable">
+      <alias type="CMSIS" value="TPM_CnSC_DMA(x)"/>
+      <bit_field_value name="CONTROLS_DMA_0b0" value="0b0" description="Disable DMA transfers."/>
+      <bit_field_value name="CONTROLS_DMA_0b1" value="0b1" description="Enable DMA transfers."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="1" name="ELSA" access="RW" reset_value="0" description="Edge or Level Select">
+      <alias type="CMSIS" value="TPM_CnSC_ELSA(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="ELSB" access="RW" reset_value="0" description="Edge or Level Select">
+      <alias type="CMSIS" value="TPM_CnSC_ELSB(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="MSA" access="RW" reset_value="0" description="Channel Mode Select">
+      <alias type="CMSIS" value="TPM_CnSC_MSA(x)"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="MSB" access="RW" reset_value="0" description="Channel Mode Select">
+      <alias type="CMSIS" value="TPM_CnSC_MSB(x)"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="CHIE" access="RW" reset_value="0" description="Channel Interrupt Enable">
+      <alias type="CMSIS" value="TPM_CnSC_CHIE(x)"/>
+      <bit_field_value name="CONTROLS_CHIE_0b0" value="0b0" description="Disable channel interrupts."/>
+      <bit_field_value name="CONTROLS_CHIE_0b1" value="0b1" description="Enable channel interrupts."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="CHF" access="W1C" reset_value="0" description="Channel Flag">
+      <alias type="CMSIS" value="TPM_CnSC_CHF(x)"/>
+      <bit_field_value name="CONTROLS_CHF_0b0" value="0b0" description="No channel event has occurred."/>
+      <bit_field_value name="CONTROLS_CHF_0b1" value="0b1" description="A channel event has occurred."/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="24" reset_value="0"/>
+  </register>
+  <register offset="0x18" width="32" name="C1V" description="Channel (n) Value">
+    <alias type="CMSIS" value="CONTROLS[1].CnV"/>
+    <bit_field offset="0" width="16" name="VAL" access="RW" reset_value="0" description="Channel Value">
+      <alias type="CMSIS" value="TPM_CnV_VAL(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x50" width="32" name="STATUS" description="Capture and Compare Status">
+    <alias type="CMSIS" value="STATUS"/>
+    <bit_field offset="0" width="1" name="CH0F" access="W1C" reset_value="0" description="Channel 0 Flag">
+      <alias type="CMSIS" value="TPM_STATUS_CH0F(x)"/>
+      <bit_field_value name="STATUS_CH0F_0b0" value="0b0" description="No channel event has occurred."/>
+      <bit_field_value name="STATUS_CH0F_0b1" value="0b1" description="A channel event has occurred."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="CH1F" access="W1C" reset_value="0" description="Channel 1 Flag">
+      <alias type="CMSIS" value="TPM_STATUS_CH1F(x)"/>
+      <bit_field_value name="STATUS_CH1F_0b0" value="0b0" description="No channel event has occurred."/>
+      <bit_field_value name="STATUS_CH1F_0b1" value="0b1" description="A channel event has occurred."/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="6" reset_value="0"/>
+    <bit_field offset="8" width="1" name="TOF" access="W1C" reset_value="0" description="Timer Overflow Flag">
+      <alias type="CMSIS" value="TPM_STATUS_TOF(x)"/>
+      <bit_field_value name="STATUS_TOF_0b0" value="0b0" description="TPM counter has not overflowed."/>
+      <bit_field_value name="STATUS_TOF_0b1" value="0b1" description="TPM counter has overflowed."/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="23" reset_value="0"/>
+  </register>
+  <register offset="0x64" width="32" name="COMBINE" description="Combine Channel Register">
+    <alias type="CMSIS" value="COMBINE"/>
+    <bit_field offset="0" width="1" name="COMBINE0" access="RW" reset_value="0" description="Combine Channels 0 and 1">
+      <alias type="CMSIS" value="TPM_COMBINE_COMBINE0(x)"/>
+      <bit_field_value name="COMBINE_COMBINE0_0b0" value="0b0" description="Channels 0 and 1 are independent."/>
+      <bit_field_value name="COMBINE_COMBINE0_0b1" value="0b1" description="Channels 0 and 1 are combined."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="COMSWAP0" access="RW" reset_value="0" description="Combine Channel 0 and 1 Swap">
+      <alias type="CMSIS" value="TPM_COMBINE_COMSWAP0(x)"/>
+      <bit_field_value name="COMBINE_COMSWAP0_0b0" value="0b0" description="Even channel is used for input capture and 1st compare."/>
+      <bit_field_value name="COMBINE_COMSWAP0_0b1" value="0b1" description="Odd channel is used for input capture and 1st compare."/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="6" reset_value="0"/>
+    <reserved_bit_field offset="8" width="24" reset_value="0"/>
+  </register>
+  <register offset="0x70" width="32" name="POL" description="Channel Polarity">
+    <alias type="CMSIS" value="POL"/>
+    <bit_field offset="0" width="1" name="POL0" access="RW" reset_value="0" description="Channel 0 Polarity">
+      <alias type="CMSIS" value="TPM_POL_POL0(x)"/>
+      <bit_field_value name="POL_POL0_0b0" value="0b0" description="The channel polarity is active high."/>
+      <bit_field_value name="POL_POL0_0b1" value="0b1" description="The channel polarity is active low."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="POL1" access="RW" reset_value="0" description="Channel 1 Polarity">
+      <alias type="CMSIS" value="TPM_POL_POL1(x)"/>
+      <bit_field_value name="POL_POL1_0b0" value="0b0" description="The channel polarity is active high."/>
+      <bit_field_value name="POL_POL1_0b1" value="0b1" description="The channel polarity is active low."/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="30" reset_value="0"/>
+  </register>
+  <register offset="0x78" width="32" name="FILTER" description="Filter Control">
+    <alias type="CMSIS" value="FILTER"/>
+    <bit_field offset="0" width="4" name="CH0FVAL" access="RW" reset_value="0" description="Channel 0 Filter Value">
+      <alias type="CMSIS" value="TPM_FILTER_CH0FVAL(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="4" name="CH1FVAL" access="RW" reset_value="0" description="Channel 1 Filter Value">
+      <alias type="CMSIS" value="TPM_FILTER_CH1FVAL(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="24" reset_value="0"/>
+  </register>
+  <register offset="0x80" width="32" name="QDCTRL" description="Quadrature Decoder Control and Status">
+    <alias type="CMSIS" value="QDCTRL"/>
+    <bit_field offset="0" width="1" name="QUADEN" access="RW" reset_value="0" description="Enables the quadrature decoder mode. In this mode, the channel 0 and channel 1 inputs control the TPM counter direction and can only be used for software compare. The quadrature decoder mode has precedence over the other modes.">
+      <alias type="CMSIS" value="TPM_QDCTRL_QUADEN(x)"/>
+      <bit_field_value name="QDCTRL_QUADEN_0b0" value="0b0" description="Quadrature decoder mode is disabled."/>
+      <bit_field_value name="QDCTRL_QUADEN_0b1" value="0b1" description="Quadrature decoder mode is enabled."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="TOFDIR" access="RO" reset_value="0" description="Indicates if the TOF bit was set on the top or the bottom of counting.">
+      <alias type="CMSIS" value="TPM_QDCTRL_TOFDIR(x)"/>
+      <bit_field_value name="QDCTRL_TOFDIR_0b0" value="0b0" description="TOF bit was set on the bottom of counting. There was an FTM counter decrement and FTM counter changes from its minimum value (zero) to its maximum value (MOD register)."/>
+      <bit_field_value name="QDCTRL_TOFDIR_0b1" value="0b1" description="TOF bit was set on the top of counting. There was an FTM counter increment and FTM counter changes from its maximum value (MOD register) to its minimum value (zero)."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="QUADIR" access="RO" reset_value="0" description="Counter Direction in Quadrature Decode Mode">
+      <alias type="CMSIS" value="TPM_QDCTRL_QUADIR(x)"/>
+      <bit_field_value name="QDCTRL_QUADIR_0b0" value="0b0" description="Counter direction is decreasing (counter decrement)."/>
+      <bit_field_value name="QDCTRL_QUADIR_0b1" value="0b1" description="Counter direction is increasing (counter increment)."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="QUADMODE" access="RW" reset_value="0" description="Quadrature Decoder Mode">
+      <alias type="CMSIS" value="TPM_QDCTRL_QUADMODE(x)"/>
+      <bit_field_value name="QDCTRL_QUADMODE_0b0" value="0b0" description="Phase encoding mode."/>
+      <bit_field_value name="QDCTRL_QUADMODE_0b1" value="0b1" description="Count and direction encoding mode."/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="28" reset_value="0"/>
+  </register>
+  <register offset="0x84" width="32" name="CONF" description="Configuration">
+    <alias type="CMSIS" value="CONF"/>
+    <reserved_bit_field offset="0" width="5" reset_value="0"/>
+    <bit_field offset="5" width="1" name="DOZEEN" access="RW" reset_value="0" description="Doze Enable">
+      <alias type="CMSIS" value="TPM_CONF_DOZEEN(x)"/>
+      <bit_field_value name="CONF_DOZEEN_0b0" value="0b0" description="Internal TPM counter continues in Doze mode."/>
+      <bit_field_value name="CONF_DOZEEN_0b1" value="0b1" description="Internal TPM counter is paused and does not increment during Doze mode. Trigger inputs and input capture events are also ignored."/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="DBGMODE" access="RW" reset_value="0" description="Debug Mode">
+      <alias type="CMSIS" value="TPM_CONF_DBGMODE(x)"/>
+      <bit_field_value name="CONF_DBGMODE_0b00" value="0b00" description="TPM counter is paused and does not increment during debug mode. Trigger inputs and input capture events are also ignored."/>
+      <bit_field_value name="CONF_DBGMODE_0b11" value="0b11" description="TPM counter continues in debug mode."/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="GTBSYNC" access="RW" reset_value="0" description="Global Time Base Synchronization">
+      <alias type="CMSIS" value="TPM_CONF_GTBSYNC(x)"/>
+      <bit_field_value name="CONF_GTBSYNC_0b0" value="0b0" description="Global timebase synchronization disabled."/>
+      <bit_field_value name="CONF_GTBSYNC_0b1" value="0b1" description="Global timebase synchronization enabled."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="GTBEEN" access="RW" reset_value="0" description="Global time base enable">
+      <alias type="CMSIS" value="TPM_CONF_GTBEEN(x)"/>
+      <bit_field_value name="CONF_GTBEEN_0b0" value="0b0" description="All channels use the internally generated TPM counter as their timebase"/>
+      <bit_field_value name="CONF_GTBEEN_0b1" value="0b1" description="All channels use an externally generated global timebase as their timebase"/>
+    </bit_field>
+    <reserved_bit_field offset="10" width="6" reset_value="0"/>
+    <bit_field offset="16" width="1" name="CSOT" access="RW" reset_value="0" description="Counter Start on Trigger">
+      <alias type="CMSIS" value="TPM_CONF_CSOT(x)"/>
+      <bit_field_value name="CONF_CSOT_0b0" value="0b0" description="TPM counter starts to increment immediately, once it is enabled."/>
+      <bit_field_value name="CONF_CSOT_0b1" value="0b1" description="TPM counter only starts to increment when it a rising edge on the selected input trigger is detected, after it has been enabled or after it has stopped due to overflow."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="CSOO" access="RW" reset_value="0" description="Counter Stop On Overflow">
+      <alias type="CMSIS" value="TPM_CONF_CSOO(x)"/>
+      <bit_field_value name="CONF_CSOO_0b0" value="0b0" description="TPM counter continues incrementing or decrementing after overflow"/>
+      <bit_field_value name="CONF_CSOO_0b1" value="0b1" description="TPM counter stops incrementing or decrementing after overflow."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="CROT" access="RW" reset_value="0" description="Counter Reload On Trigger">
+      <alias type="CMSIS" value="TPM_CONF_CROT(x)"/>
+      <bit_field_value name="CONF_CROT_0b0" value="0b0" description="Counter is not reloaded due to a rising edge on the selected input trigger"/>
+      <bit_field_value name="CONF_CROT_0b1" value="0b1" description="Counter is reloaded when a rising edge is detected on the selected input trigger"/>
+    </bit_field>
+    <bit_field offset="19" width="1" name="CPOT" access="RW" reset_value="0" description="Counter Pause On Trigger">
+      <alias type="CMSIS" value="TPM_CONF_CPOT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="2" reset_value="0"/>
+    <bit_field offset="22" width="1" name="TRGPOL" access="RW" reset_value="0" description="Trigger Polarity">
+      <alias type="CMSIS" value="TPM_CONF_TRGPOL(x)"/>
+      <bit_field_value name="CONF_TRGPOL_0b0" value="0b0" description="Trigger is active high."/>
+      <bit_field_value name="CONF_TRGPOL_0b1" value="0b1" description="Trigger is active low."/>
+    </bit_field>
+    <bit_field offset="23" width="1" name="TRGSRC" access="RW" reset_value="0" description="Trigger Source">
+      <alias type="CMSIS" value="TPM_CONF_TRGSRC(x)"/>
+      <bit_field_value name="CONF_TRGSRC_0b0" value="0b0" description="Trigger source selected by TRGSEL is external."/>
+      <bit_field_value name="CONF_TRGSRC_0b1" value="0b1" description="Trigger source selected by TRGSEL is internal (channel pin input capture)."/>
+    </bit_field>
+    <bit_field offset="24" width="4" name="TRGSEL" access="RW" reset_value="0" description="Trigger Select">
+      <alias type="CMSIS" value="TPM_CONF_TRGSEL(x)"/>
+      <bit_field_value name="CONF_TRGSEL_0b0001" value="0b0001" description="Channel 0 pin input capture"/>
+      <bit_field_value name="CONF_TRGSEL_0b0010" value="0b0010" description="Channel 1 pin input capture"/>
+      <bit_field_value name="CONF_TRGSEL_0b0011" value="0b0011" description="Channel 0 or Channel 1 pin input capture"/>
+    </bit_field>
+    <reserved_bit_field offset="28" width="4" reset_value="0"/>
+  </register>
+</regs:peripheral>

@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="cmp_reg" label="CMP" options="UI_COMPONENT_MODE_HIDDEN"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd" 
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="Register init" registers_init="true">
+   <!--<sw_comp_ref name="platform.drivers.cmp" version="2.1.0"/> -->
+   <description>Comparator (CMP)</description>
+   <mode id="general" label="General" available="true">
+      <description>Modes of the CMP peripheries are implemented as quick selection options.</description>
+      <config_set_refs>
+         <config_set_ref>fsl_cmp</config_set_ref>
+         <config_set_ref>fsl_dac</config_set_ref>
+         <config_set_ref>fsl_filter</config_set_ref>
+         <config_set_ref>interrupt</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>CMP</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="fsl_cmp" label="CMP configuration" from_source="fsl_cmp.h">
+      <description>Configuration of analog comparator</description>
+      <generated_types>
+         <enum id="cmp_hysteresis_mode_t" label="CMP Hysteresis mode." from="_cmp_hysteresis_mode">
+            <item id="kCMP_HysteresisLevel0" label="Hysteresis level 0."/>
+            <item id="kCMP_HysteresisLevel1" label="Hysteresis level 1."/>
+            <item id="kCMP_HysteresisLevel2" label="Hysteresis level 2."/>
+            <item id="kCMP_HysteresisLevel3" label="Hysteresis level 3."/>
+         </enum>
+         <enum id="cmp_reference_voltage_source_t" label="CMP Voltage Reference source." from="_cmp_reference_voltage_source">
+            <item id="kCMP_VrefSourceVin1" label="Vin1 is selected as a resistor ladder network supply reference Vin."/>
+            <item id="kCMP_VrefSourceVin2" label="Vin2 is selected as a resistor ladder network supply reference Vin."/>
+         </enum>
+         <struct id="cmp_config_t" label="Configures the comparator." from="_cmp_config">
+            <bool id="enableCmp" label="Enable the CMP module.">
+               <description>Enable the CMP module.</description>
+            </bool>
+            <reference id="hysteresisMode" label="CMP Hysteresis mode." type="cmp_hysteresis_mode_t">
+               <description>CMP Hysteresis mode.</description>
+            </reference>
+            <bool id="enableHighSpeed" label="Enable High-speed (HS) comparison mode.">
+               <description>Enable High-speed (HS) comparison mode.</description>
+            </bool>
+            <bool id="enableInvertOutput" label="Enable the inverted comparator output.">
+               <description>Enable the inverted comparator output.</description>
+            </bool>
+            <bool id="useUnfilteredOutput" label="Set the compare output(COUT) to equal COUTA(true) or COUT(false).">
+               <description>Set the compare output(COUT) to equal COUTA(true) or COUT(false).</description>
+            </bool>
+            <bool id="enablePinOut" label="The comparator output is available on the associated pin.">
+               <description>The comparator output is available on the associated pin.</description>
+            </bool>
+            <bool id="enableTriggerMode" label="Enable the trigger mode." available="(featureDefined(`FSL_FEATURE_CMP_HAS_TRIGGER_MODE`) &amp;&amp; getFeature(`FSL_FEATURE_CMP_HAS_TRIGGER_MODE`))">
+               <description>Enable the trigger mode.</description>
+            </bool>
+         </struct>
+         <struct id="cmp_filter_config_t" label="Configures the filter." from="_cmp_filter_config">
+            <bool id="enableSample" label="Using the external SAMPLE as a sampling clock input or using a divided bus clock." available="(featureDefined(`FSL_FEATURE_CMP_HAS_EXTERNAL_SAMPLE_SUPPORT`) &amp;&amp; getFeature(`FSL_FEATURE_CMP_HAS_EXTERNAL_SAMPLE_SUPPORT`))">
+               <description>Using the external SAMPLE as a sampling clock input or using a divided bus clock.</description>
+            </bool>
+            <integer id="filterCount" label="Filter Sample Count." type="uint8_t">
+               <description>Filter Sample Count. Available range is 1-7; 0 disables the filter.</description>
+            </integer>
+            <integer id="filterPeriod" label="Filter Sample Period." type="uint8_t">
+               <description>Filter Sample Period. The divider to the bus clock. Available range is 0-255.</description>
+            </integer>
+         </struct>
+         <struct id="cmp_dac_config_t" label="Configures the internal DAC." from="_cmp_dac_config">
+            <reference id="referenceVoltageSource" label="Supply voltage reference source." type="cmp_reference_voltage_source_t">
+               <description>Supply voltage reference source.</description>
+            </reference>
+            <integer id="DACValue" label="Value for the DAC Output Voltage." type="uint8_t">
+               <description>Value for the DAC Output Voltage. Available range is 0-63.</description>
+            </integer>
+         </struct>
+      </generated_types>
+      <user_types>
+         <struct id="cmp_config_t" label="Configures the comparator" from="_cmp_config">
+            <bool id="explicitEnableCmp" label="Enable CMP module" options="remove_from_struct_init">
+               <description>Enable the CMP module just from initialization.</description>
+               <assign when="true">
+                  <register name="CR1" bitfield="EN" value="$this.getValue()? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>            
+               </assign>
+            </bool>
+            <enum id="filterModes" label="Comparator modes">
+               <assign when="true">
+                  <register name="CR1" bitfield="SE" value="$this.getEnumItemValue() == 1 ? 1 : 0"/>
+                  <register name="CR1" bitfield="WE" value="$this.getEnumItemValue() == 2 ? 1 : 0"/>    
+               </assign>
+               <!-- SE = 0, WE = 0 -->
+               <item id="m0" label="No window, no external sampling" value="0">
+                  <description>Window is disabled, and the output is not sampled or filtered.</description>
+               </item>
+               <!-- SE=1, WE=0 -->
+               <item id="m1" label="External sampling without window" value="1">
+                  <description>Window is disabled, the output is sampled by the external signal from WINDOW/SAMPLE node.</description>
+               </item>
+               <!-- SE=0, WE=1 -->
+               <item id="m2" label="Window without external sampling" value="2">
+                  <description>Window is enabled, and the output can be filtered (or not) by internal clock.</description>
+               </item>  
+            </enum>
+            
+            <enum id="hysteresisMode" label="Hysteresis mode">
+               <description>CMP hysteresis mode, MCU specific, see Data Sheet for appropriate values of the levels. Typically Level 0 = 5 mV, 10 mV, 20 mV and  Level 3 = 30 mV.</description>
+               <assign when="true">
+                  <register name="CR0" bitfield="HYSTCTR" value="$this.getEnumItemValue().toInt()" reverse_value="x -> (`kCMP_HysteresisLevel` + x)"/>                 
+               </assign>
+               <item id="kCMP_HysteresisLevel0" label="Level 0" value="0"/>
+               <item id="kCMP_HysteresisLevel1" label="Level 1" value="1"/>
+               <item id="kCMP_HysteresisLevel2" label="Level 2" value="2"/>
+               <item id="kCMP_HysteresisLevel3" label="Level 3" value="3"/>
+            </enum>
+            <bool id="enableHighSpeed" label="High-speed mode">
+               <description>Enable High-speed (HS) comparison mode. Compare to the low power, propagation delay is up to 5 times shorter, like typically 50 ns instead of 250 ns.</description>
+               <assign when="true">
+                  <register name="CR1" bitfield="PMODE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+               </assign>
+            </bool>
+            <bool id="enableInvertOutput" label="Inverted output">
+               <description>Enable the inverted comparator output.</description>
+               <assign when="true">
+                  <register name="CR1" bitfield="INV" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+               </assign>
+            </bool>
+            <bool id="useUnfilteredOutput" label="Route unfiltered output to CMPO">
+               <description>Set the comparator output pin (CMPO) to be fed from signal entering filter block (checked) or from output signal of filter block (unchecked).</description>
+               <assign when="true">
+                  <register name="CR1" bitfield="COS" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+               </assign>
+            </bool>
+            <bool id="enablePinOut" label="Enable CMPO on output pin">
+               <description>The comparator output is available on the associated pin.</description>       
+               <validation>
+                  <dependency when_expr="$this.getValue()" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.cmp_out`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`Output`, $instance.getPeripheral())" level="Warning">
+                     <feature name="routed">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+               </validation>
+               <assign when="true">
+                  <register name="CR1" bitfield="OPE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>            
+               </assign>
+            </bool>
+            <bool id="enableTriggerMode" label="Trigger mode" available="(featureDefined(`FSL_FEATURE_CMP_HAS_TRIGGER_MODE`) &amp;&amp; getFeature(`FSL_FEATURE_CMP_HAS_TRIGGER_MODE`))">
+               <description>Enable the trigger mode.</description>
+            </bool>
+         </struct>
+      </user_types>
+      <settings>
+         <reference id="main_config" label="Main configuration" type="cmp_config_t" config_set_id="fsl_cmp" available="true" options="UI_LABEL_HIDDEN; UI_BORDER_HIDDEN">
+            <description>Main comparator configuration</description>
+         </reference>
+         <variable id="positiveChannelIndex" value="$parent.positiveChannel.getEnumItemValue().regexSubstr(`.*cmp_in.(\d+).*`,1)"/>
+         <dynamic_enum id="positiveChannel" label="Positive input" items="getPeripheralSignals($instance.getPeripheral()).filter(item -> item.getValue().regexMatch(`.*cmp_in.\d+.*`)).sort((item1, item2) -> stringCompare(item1,item2))" options="remove_from_struct_init">
+            <description>Positive side input of the comparator. Input number 7 is connected to the DAC sub-module.</description>            
+            <validation>
+               <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.cmp_in.` + $parent.positiveChannelIndex.getValue()" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`Input ` + $parent.positiveChannelIndex.getValue(), $instance.getPeripheral())" level="Warning">
+                  <feature name="routed">
+                     <data expr="true"/>
+                  </feature>
+               </dependency>
+            </validation>
+            <assign when="true">
+               <register name="MUXCR" bitfield="PSEL" value="$parent.positiveChannelIndex.getValue().toInt()" reverse_value="x -> (`IN.` + x)"/>                 
+            </assign>
+         </dynamic_enum>
+         <variable id="negativeChannelIndex" value="$parent.negativeChannel.getEnumItemValue().regexSubstr(`.*cmp_in.(\d+).*`,1)"/>
+         <dynamic_enum id="negativeChannel" label="Negative input" items="getPeripheralSignals($instance.getPeripheral()).filter(item -> item.getValue().regexMatch(`.*cmp_in.\d+.*`)).sort((item1, item2) -> stringCompare(item1,item2))" options="remove_from_struct_init">
+            <description>Negative side input of the comparator. Input number 7 is connected to the DAC sub-module.</description>
+            <validation>
+               <constraint cond_expr="$parent.negativeChannelIndex.getValue() != $parent.positiveChannelIndex.getValue()" level="warning" description="Positive and negative inputs should be fed from different signal."/>               
+               <dependency resource_type="PeripheralUnifiedSignal"  resource_id_expr="$instance.getPeripheral() + `.cmp_in.` + $parent.negativeChannelIndex.getValue()" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`Input ` + $parent.negativeChannelIndex.getValue(), $instance.getPeripheral())" level="Warning">
+                  <feature name="routed">
+                     <data expr="true"/>
+                  </feature>
+               </dependency>
+            </validation>
+            <assign when="true">
+               <register name="MUXCR" bitfield="MSEL" value="$parent.negativeChannelIndex.getValue().toInt()" reverse_value="x -> (`IN.` + x)"/>                 
+            </assign>
+         </dynamic_enum>
+    
+         <bool id="enablePassThroughMode" label="Pass through mode" available="(featureDefined(`FSL_FEATURE_CMP_HAS_PASS_THROUGH_MODE`) &amp;&amp; getFeature(`FSL_FEATURE_CMP_HAS_PASS_THROUGH_MODE`))">
+            <description>Enable the pass through mode. It is necessary to enable this option to get signals from the multiple options on the same ALT in the routing. This option is MCU specific available.</description>
+         </bool>
+         
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+         <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+
+         <struct id="cmpTemplateVariables" available="false">
+            <variable id="PERIPHERAL" value="$instance.getPeripheral()"/>
+            <variable id="VPREFIX" value="$configSet.inst_ID.getValue()"/>
+         </struct>
+
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">device_registers</param>
+               <param id="filename">fsl_device_registers.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <fragment id="define">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)"/>
+               <param id="value" expr="$instance.getPeripheral()"/>
+               <param id="description">Definition of peripheral ID</param>
+            </fragment>
+            <fragment id="all_assigned_regs_init">
+               <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+            </fragment>
+         </section>  
+ 
+         <section target="global_vars">
+         </section>
+         <section target="global_vars_extern">
+         </section>
+
+         <section target="init_function_body">
+            <fragment id="template">
+               <param id="file">fsl_cmp.template</param>
+               <param id="setting" expr="$configSet.cmpTemplateVariables"></param>
+            </fragment> 
+         </section>      
+      </code>
+      <validation/>
+      <quick_selections>
+         <quick_selection id="cmp_default" label="Default">
+            <description>Default configuration of the CMP sub-module same as CMP_GetDefaultConfig() function settings</description>
+            <set id="main_config.explicitEnableCmp">false</set>
+            <set id="main_config.hysteresisMode">kCMP_HysteresisLevel0</set>
+            <set id="main_config.enableHighSpeed">false</set>
+            <set id="main_config.enableInvertOutput">false</set>
+            <set id="main_config.useUnfilteredOutput">false</set>
+            <set id="main_config.enablePinOut">false</set>
+            <set id="main_config.enableTriggerMode">false</set>
+            <set id="enablePassThroughMode">true</set>
+            <set id="positiveChannel">IN.0</set>
+            <set id="negativeChannel">IN.0</set>
+         </quick_selection>
+         <default>cmp_default</default>
+      </quick_selections>      
+   </config_set>
+   <config_set id="fsl_dac" label="DAC configuration" from_source="fsl_cmp.h">
+      <description>Configuration of the DAC sub-module. The DAC output is interconnected with both comparator input multiplexor as input IN.7. DAC output can be also used by other peripheries as reference voltage, if it is interconnected.</description>
+      <generated_types>         
+      </generated_types>
+      <user_types>
+         <struct id="cmp_dac_config_t" label="DAC sub-module configuration" from="_cmp_dac_config">
+            <variable id="referenceDynListSize" value="getPeripheralSignals($instance.getPeripheral()).filter(item -> item.getValue().regexMatch(`.*cmp_dac_ref_\d+.*`)).size()"/>
+            <dynamic_enum id="referenceVoltageSource" label="VDD" items="getPeripheralSignals($instance.getPeripheral()).filter(item -> item.getValue().regexMatch(`.*cmp_dac_ref_\d+.*`)).addItemToList(`DAC_VIN1`,`DAC_VIN1`,`DAC_VIN1`, $parent.referenceDynListSize.getValue() == `0`).addItemToList(`DAC_VIN2`,`DAC_VIN2`,`DAC_VIN2`, $parent.referenceDynListSize.getValue() == `0`)" options="transform_by_regex=.*VIN(\d+).*;prefix=kCMP_VrefSourceVin">
+               <description>Supply voltage reference source. It defines range of the output voltage of the DAC sub-module.</description>
+               <assign when="true">
+                  <register name="MUXCR" bitfield="VRSEL" value="$this.getValue().contains(`VIN2`) ? 1 : 0" reverse_value="x -> (`kCMP_VrefSourceVin` + x)"/>                 
+               </assign>
+            </dynamic_enum>
+            <integer id="DACValue" label="Output level" type="uint16_t" min_expr="1" max_expr="256">
+               <description>Value for the DAC Output Voltage in Volts = Voltage reference * this Value/256. Available range is 1-256.</description>
+               <assign when="true">
+                  <register name="DACCR" bitfield="VOSEL" value="($this.getValue()-1)" reverse_value="x -> (x + 1)"/>                 
+               </assign>
+            </integer>
+         </struct>
+      </user_types>
+      <settings>         
+         <bool id="enableDAC" label="Enable 8bit DAC">
+             <description>Enable DAC block</description>
+             <validation>
+               <constraint cond_expr="($this.getValue() || (($instance.fsl_cmp.positiveChannelIndex.getValue() != `7`) &amp;&amp; ($instance.fsl_cmp.negativeChannelIndex.getValue() != `7`)))" level="warning" description="DAC sub-module output is chosen as Positive or Negative side input, so DAC sub-module should be also enabled and set up."/>
+            </validation>    
+            <assign when="true">
+               <register name="MUXCR" bitfield="DACEN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+            </assign>
+         </bool>
+         <reference id="dac_config" label="DAC sub-module configuration" type="cmp_dac_config_t" config_set_id="fsl_dac" available="$parent.enableDAC.value()" options="UI_LABEL_HIDDEN">
+            <description>DAC sub-module configuration</description>
+         </reference>
+      </settings>     
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="global_vars">
+         </section>
+         <section target="global_vars_extern">
+         </section>
+      </code>
+      <validation/>
+    <quick_selections></quick_selections>
+   </config_set>
+   <config_set id="fsl_filter" label="Filtering configuration" from_source="fsl_cmp.h">
+      <description>Filtering blocks configuration. Filtering modes can be selected in this quick selection and after that tuned to fully satisfy user requirement.</description>
+      <generated_types>
+      </generated_types>
+      <user_types>
+         <enum id="cmp_clock_source_t" label="Sample clock source selection" from="_cmp_clock_source">
+            <item id="SystemClock" label="System clock selected" value="BusInterfaceClock"/> <!-- value = clock_unify_ID -->               
+            <!-- <item id="ExternalClock" label="Window/sample clock signal" value="SampleClock"/> Maybe when the external clock addition to the module clocks will be applicable -->
+         </enum>
+         <struct id="cmp_filter_config_t" label="Configures the filtering options" from="_cmp_filter_config">
+
+            <bool id="cowz_reg" label="Force output to 0 when window signal goes from 1 to 0" available="$instance.fsl_cmp.main_config.filterModes.getEnumItemValue() == 2" options="remove_from_struct_init">
+               <description>Enable means when window signal changes from 1 to 0, windowed output is forced to 0. Disabled means when window signal changes from 1 to 0, output holds the last latched value value before window signal falls to 0.</description>
+               <assign when="true">
+                  <register name="CR1" bitfield="COWZ" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+               </assign>
+            </bool>
+            
+            <reference id="_clockSource" label="Clock source" type="cmp_clock_source_t" options="remove_from_struct_init" available="false"/> <!-- item used for clockSource dynamic enum implementation only -->
+            <variable id="clockSourceUId" value="$parent.clockSource.getEnumItemValue()" available="$instance.fsl_cmp.main_config.filterModes.getEnumItemValue() == 1"/>
+            <dynamic_enum id="clockSource" label="Sample clock source" options="remove_from_struct_init" items="enumItemsOf($parent._clockSource).arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> enumItem.getID(),
+               enumItem -> getPeripheralClock($instance.getPeripheral(), enumItem.getValue()),
+               enumItem -> enumItem.getValue())" available="false">
+               <description>Sample clock source selection.</description>
+               <validation>
+                  <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.clockSourceUId.getValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() == `GetFreq`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Warning">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.clockSourceUId.getValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>         
+            </dynamic_enum>
+            <dynamic_enum id="clockSourceFreq" label="Filter clock source frequency" options="remove_from_struct_init" available="$instance.fsl_cmp.main_config.filterModes.getEnumItemValue() != 1" 
+               items="(getClockFunctionalGroups().arrayToEnumItems(
+                  enumItem -> true,
+                  enumItem -> enumItem,
+                  enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemValue(), enumItem)) + ` (` + enumItem + `)`,
+                  enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemValue(), enumItem)))" >
+               <description>Selection of the clock source frequency</description>
+               <validation>
+                  <constraint cond_expr="(($this.getEnumItemValue() == `GetFreq`) || ($this.getEnumItemValue().toHertz() != 0))" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+               </validation>
+               <custom_value_support default="1" validation_expr="x -> x.toHertz() &gt; 0" />
+            </dynamic_enum> 
+   
+            <integer id="extClockFrequency" label="Sample clock frequency [Hz]" available="$parent.mode.getValue() == 1"  options="remove_from_struct_init" type="uint32_t">
+               <description>Frequency of the sample clock source taken directly from External sample clock (see Window/sample signal item) in case of using external sampling. Value from this settings is used only to calculate Filtering delay.</description>
+            </integer>
+
+            <dynamic_enum id="windowSample" label="Window/sample signal" items="getPeripheralSignals($instance.getPeripheral()).filter(item -> item.getValue().regexMatch(`.*cmp_winsmp.*`))" options="remove_from_struct_init" available="false">
+               <description>External signal (pin/ other peripheral output) used for external windowing or sampling.</description>
+            </dynamic_enum>
+            
+            <info id="windowSampleInfo" label="Window/sample signal" value="$parent.windowSample.getEnumItemLabel()" available="$instance.fsl_cmp.main_config.filterModes.getEnumItemValue() != 0">
+               <description>External signal (pin/ other peripheral output) used for external windowing or sampling.</description>
+            </info>
+
+            <integer id="filterPeriod" label="Filter clock divider" type="uint8_t" min_expr="0" max_expr="255" available="$instance.fsl_cmp.main_config.filterModes.getEnumItemValue() != 1" options="REGISTERS_REFRESH">
+               <description>Filter Sample Period in ticks of bus clock. The divider of the bus clock. Available range is 0-255.</description>
+               <assign when="$this.isAvailable()">
+                  <register name="FPR" bitfield="FILT_PER" value="$this.getValue()" reverse_value="x -> x"/>                 
+               </assign>
+            </integer>
+            <info id="filterClockFrequency" label="Filter clock frequency" 
+               value="system::calculateFreq($parent.filterPeriod.getValue(), $parent.clockSourceFreq.getEnumItemValue())"
+               available="$instance.fsl_cmp.main_config.filterModes.getEnumItemValue() != 1">
+               <description>
+                  Frequency of the sample filter clock calculated from Bus clock and divided by Filter clock divider value in case of using the internal sampling (Sample clock source item set to the Bus clock CR1[SE] = 0).
+               </description>
+            </info>
+            <!-- Filter clock frequency  - it is not used in the external sampling mode (external Window/sample signal is used) -->
+            <integer id="filterCount" label="Filter sample count" type="uint8_t" min_expr="1" max_expr="7" available="$instance.fsl_cmp.main_config.filterModes.getEnumItemValue() == 1">
+               <description>Filter Sample Count - number of consecutive samples that must agree to filter out glitches. Available range is 1-7.</description>
+               <assign when="$this.isAvailable()">
+                  <register name="CR0" bitfield="FILTER_CNT" value="$this.getValue()" reverse_value="x -> x"/>                 
+               </assign>
+            </integer>   
+           
+            <integer id="filterCount2" label="Filter sample count" type="uint8_t" min_expr="0" max_expr="7" available="$instance.fsl_cmp.main_config.filterModes.getEnumItemValue() != 1">
+               <description>Filter Sample Count - number of consecutive samples that must agree to filter out glitches. Available range is 0-7.</description>
+               <assign when="$this.isAvailable()">
+                  <register name="CR0" bitfield="FILTER_CNT" value="$this.getValue()" reverse_value="x -> x"/>                 
+               </assign>
+            </integer> 
+            
+            <variable id="filterCount3" value="$instance.fsl_cmp.main_config.filterModes.getEnumItemValue() == 1 ? $parent.filterCount.getValue() : $parent.filterCount2.getValue()"/>
+            
+            <variable id="mode" value="$instance.fsl_cmp.main_config.filterModes.getEnumItemValue()"/>
+            <variable id="busClockPeriod" value="1.0 / system::calculateRealFreq(1, $parent.clockSourceFreq.getEnumItemValue()) * 1000000"/>
+            
+            <info id="filteringDelay0" label="Filtering delay" value="($parent.filterCount3.getValue().toInt() == 0 || $parent.filterPeriod.getValue().toInt() == 0) ? `Not applicable` : 
+               timeToString(($parent.filterCount3.getValue().toInt() * $parent.filterPeriod.getValue().toInt() * $parent.busClockPeriod.getValue()) + $parent.busClockPeriod.getValue())"
+               available="$instance.fsl_cmp.main_config.filterModes.getEnumItemValue() == 0">
+               <description>
+                  Time which takes signal to go through the filtering/sampling block. 
+                  Delay of the filtering/sampling block is influenced by clock source frequency and the Sample clock divider in case of using the internal sampling, or Sample clock in case of using external sampling and Sample clock divider, Filter sample count and Bus clock frequency.
+                  Delay by hardware is not taken into consideration.
+               </description>
+            </info>
+
+            <info id="filteringDelay1" label="Sampling delay" value="$parent.extClockFrequency.getValue().toInt() &gt; 0 ? timeToString($parent.filterCount3.getValue().toInt() * (1.0 / $parent.extClockFrequency.getValue().toInt() * 1000000)):`Not applicable`" available="$instance.fsl_cmp.main_config.filterModes.getEnumItemValue() == 1">
+               <description>
+                  Time which takes signal to go through the filtering/sampling block. 
+                  Delay of the filtering/sampling block is influenced by clock source frequency and the Sample clock divider in case of using the internal sampling, or Sample clock in case of using external sampling and Sample clock divider, Filter sample count and Bus clock frequency.
+                  Delay by hardware is not taken into consideration.
+               </description>
+            </info>
+            
+            <info id="filteringDelay2" label="Filtering delay" value="($parent.filterCount3.getValue().toInt() == 0 || $parent.filterPeriod.getValue().toInt() == 0) ?  
+               timeToString($parent.busClockPeriod.getValue()) : timeToString($parent.filterCount3.getValue().toInt() * $parent.filterPeriod.getValue().toInt() * $parent.busClockPeriod.getValue() + 2*$parent.busClockPeriod.getValue())"
+               available="$instance.fsl_cmp.main_config.filterModes.getEnumItemValue() == 2">
+               <description>
+                  Time which takes signal to go through the filtering/sampling block. 
+                  Delay of the filtering/sampling block is influenced by clock source frequency and the Sample clock divider in case of using the internal sampling, or Sample clock in case of using external sampling and Sample clock divider, Filter sample count and Bus clock frequency.
+                  Delay by hardware is not taken into consideration.
+               </description>
+            </info>
+            
+         </struct>         
+      </user_types>
+      <settings>
+         <reference id="filter_config" label="Filter sub-module configuration" type="cmp_filter_config_t" config_set_id="fsl_filter" available="true" options="UI_LABEL_HIDDEN; UI_BORDER_HIDDEN">
+            <description>Comparator filtering options configuration</description>
+         </reference>      
+         
+         <variable id="clockGate" value="1">
+            <assign when="true">
+               <register peripheral_expr="system::getInstanceClockGatePeripheral()" name_expr="system::getInstanceClockGateRegister()" bitfield_expr="system::getInstanceClockGateBitfield()" value="system::getInstanceClockGateEnableValue()"/>
+            </assign>
+         </variable>
+         
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="global_vars">
+         </section>
+         <section target="global_vars_extern">
+         </section>
+         <section target="common_pre_init_function">
+            <fragment id="clock_gate_enable_init"></fragment>
+         </section>
+      </code>
+      <validation/>
+      <quick_selections>
+         <quick_selection id="cmp_default" label="Default">
+            <description>Default configuration of the CMP sub-module same as CMP_GetDefaultConfig() function settings</description>
+            <set id="filter_config.filterPeriod">0</set>
+            <set id="filter_config.filterCount">0</set>
+            <set id="filter_config.filterCount2">0</set>
+         </quick_selection>
+         <default>cmp_default</default>
+         
+      </quick_selections>
+   </config_set>   
+   <config_set id="interrupt" label="Interrupt configuration" from_source="fsl_common.h">
+      <description>Interrupt configuration</description> 
+      <generated_types/>
+      <user_types>
+         <set id="interrupt_types" label="Interrupt types">
+            <item id="kCMP_OutputRisingInterruptEnable" label="Rising edge" value="kCMP_OutputRisingInterruptEnable">
+               <assign when="true">
+                  <register name="SCR" bitfield="IER" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </item>
+            <item id="kCMP_OutputFallingInterruptEnable" label="Falling edge" value="kCMP_OutputFallingInterruptEnable">
+               <assign when="true">
+                  <register name="SCR" bitfield="IEF" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </item>            
+         </set>
+      </user_types>
+      <settings>
+         <reference id="interrupt_sel" label="Interrupt sources" type="interrupt_types"/>
+         <bool id="enableDma" label="DMA request instead of interrupt" available="(featureDefined(`FSL_FEATURE_CMP_HAS_DMA`) &amp;&amp; getFeature(`FSL_FEATURE_CMP_HAS_DMA`))">
+            <description>Enable DMA requests from CMP instead of interrupt, Rising edge interrupt or Falling edge interrupt or both should be enabled in this case.</description>
+            <validation>
+               <constraint cond_expr="!$this.getValue() || $parent.interrupt_sel.kCMP_OutputRisingInterruptEnable.getValue() || $parent.interrupt_sel.kCMP_OutputFallingInterruptEnable.getValue()" level="warning" description="Rising edge interrupt or Falling edge interrupt or both should be enabled to specify source of the DMA trigger."/>
+            </validation>
+            <assign when="true">
+               <register name="SCR" bitfield="DMAEN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+            </assign>
+         </bool>         
+         <bool id="enable_irq" label="Enable interrupt vector" options="UI_LABEL_BOLD;REGISTERS_REFRESH" available="!$parent.enableDma.getValue()">
+            <description>
+               Enable interrupts initialization, like priority and enablement in the INITC and SIM.
+            </description>
+         </bool>
+         <reference id="interrupt" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_irq.getValue()" available="!$parent.enableDma.getValue()" options="UI_LABEL_HIDDEN"/>
+         
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+      </fragment_defs>
+      <code>
+        <section target="defines">
+           <fragment id="IRQ_definitions" apply_to="$this.interrupt"/>
+        </section> 
+         <!-- INTC controller section and the IRQ enable fragment with available condition example -->
+         <section target="common_post_init_function">
+            <fragment id="IRQn_enable_default" apply_to="$configSet.interrupt" if_expr="$configSet.interrupt.isEnabled() &amp;&amp; $configSet.interrupt.isAvailable() &amp;&amp; $configSet.interrupt.intController.getValue() == `INTC`"/>
+         </section>
+       
+      </code>
+      <quick_selections>
+        
+      </quick_selections>
+   </config_set>
+</component:config_component>

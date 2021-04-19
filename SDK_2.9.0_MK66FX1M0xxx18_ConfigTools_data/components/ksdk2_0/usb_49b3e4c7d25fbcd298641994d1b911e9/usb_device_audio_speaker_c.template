@@ -1,0 +1,1159 @@
+#include "usb.h"
+#include <usb_device_config.h>
+#include "usb_device.h"
+#include "usb_device_class.h"
+#include "usb_device_audio.h"
+#include "usb_device_ch9.h"
+#include "fsl_device_registers.h"
+#include <usb_device_descriptor.h>
+#if (defined(FSL_FEATURE_SOC_SYSMPU_COUNT) && (FSL_FEATURE_SOC_SYSMPU_COUNT > 0U))
+#include "fsl_sysmpu.h"
+#endif /* FSL_FEATURE_SOC_SYSMPU_COUNT */
+
+#if ((defined FSL_FEATURE_SOC_USBPHY_COUNT) && (FSL_FEATURE_SOC_USBPHY_COUNT > 0U))
+#include "usb_phy.h"
+#endif
+
+#include "peripherals.h"
+#include "usb_device_${idLowerSnakeCase}$.h"
+
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+${<code>
+// Audio streaming and control parameters
+var AUDIO_FORMAT_BITS_VALUE = "";
+var AUDIO_FORMAT_CHANNELS_VALUE = "";
+var AUDIO_FORMAT_SIZE_VALUE = "";
+var USB_AUDIO_SPEAKER_FEEDBACK_ENDPOINT_VALUE = "";
+var USB_AUDIO_SPEAKER_STREAM_ENDPOINT_VALUE = "";
+var FS_ISO_FEEDBACK_ENDP_PACKET_SIZE_VALUE = "";
+var HS_ISO_FEEDBACK_ENDP_PACKET_SIZE_VALUE = "";
+var HS_ISO_OUT_ENDP_INTERVAL_VALUE = "";
+var FS_ISO_OUT_ENDP_INTERVAL_VALUE = "";
+var USB_INTERFACE_AUDIO_CONTROL_INDEX_VALUE = "USB_" + idSnakeCase + "_INDEX";
+// Class specific callback function names
+var USB_AudioControl_Callback_Name = "USB_Device" + idCamelCase + "Callback";
+var USB_AudioControlInit_Callback_Name = "USB_Device" + idCamelCase + "Init";
+// Audio speaker global variable
+var USB_AudioSpeaker_Name = "USB_" + idCamelCase + "AudioSpeaker";
+var USB_AudioPlayDataBuffer_Name = "USB_" + idCamelCase + "DataBuff";
+// Callback functions for interface settings
+var USB_AudioStreaming_SetInterface_Callback_Name = "";
+var USB_AudioControl_SetInterface_Callback_Name = "USB_Device" + idCamelCase + "SetInterface";
+var USB_AudioControl_SetConfiguration_Callback_Name = "USB_Device" + idCamelCase + "SetConfiguration";
+var USB_AudioControl_BusReset_Callback_Name = "USB_Device" + idCamelCase + "BusReset";
+var interfaceAudioControlHandle = idLowerCamelCase + "Handle";
+// callback function for processing data
+var USB_ProcessNextAudioData_Name = "USB_" + idCamelCase + "ProcessNextAudioData"; 
+// Interface implmentation task
+var InterfaceTask_Function = "USB_Device" + idCamelCase + "Task";
+// Audio version global variable
+var AudioVersion20 = interfaceProtocol == CONST.AUDIO_PROTOCOL_IPV20;
+
+/* Loops for finding the ID of required parameters - audio stream specific settings */
+dataInterfaces.forEach(function(interface) {
+    if ((interface.interfaceClass == CONST.USB_CLASS_AUDIO) && (interface.interfaceSubClass == CONST.AUDIO_SUBCLASS_AUDIOSTREAM)) {
+        USB_AudioStreaming_SetInterface_Callback_Name = "USB_Device" + interface.idCamelCase + "SetInterface";
+        interface.endpointsSettings.forEach(function (setting, index) {
+            if (setting.audioStreamSpecificSettings || setting.audio20StreamSpecificSettings) {
+                AUDIO_FORMAT_BITS_VALUE = "USB_" + interface.idSnakeCase + "_" + setting.idSnakeCase + "_BIT_RESOLUTION";
+                AUDIO_FORMAT_CHANNELS_VALUE = "USB_" + interface.idSnakeCase + "_" + setting.idSnakeCase + "_NUMBER_OF_CHANNEL";
+                if (setting.audio20StreamSpecificSettings){
+                    AUDIO_FORMAT_SIZE_VALUE = "USB_" + interface.idSnakeCase + "_" + setting.idSnakeCase + "_SUBSLOT_SIZE";
+                }
+                else{
+                    AUDIO_FORMAT_SIZE_VALUE = "USB_" + interface.idSnakeCase + "_" + setting.idSnakeCase + "_SUBFRAME_SIZE";
+                }
+                setting.endpoints.forEach(function (endpoint) {
+                    if ((endpoint.typeSnakeCase == "ISOCHRONOUS") && (endpoint.endpointUsage == "USB_ENDPOINT_ISOCHRONOUS_DATA") && (endpoint.directionSnakeCase == "OUT")) {
+                        USB_AUDIO_SPEAKER_STREAM_ENDPOINT_VALUE = "USB_" + endpoint.idSnakeCase;
+                        HS_ISO_OUT_ENDP_INTERVAL_VALUE = "HS_" + endpoint.idSnakeCase + "_INTERVAL";
+                        FS_ISO_OUT_ENDP_INTERVAL_VALUE = "FS_" + endpoint.idSnakeCase + "_INTERVAL";
+                    }
+                    if ((endpoint.typeSnakeCase == "ISOCHRONOUS") && (endpoint.endpointUsage == "USB_ENDPOINT_ISOCHRONOUS_FEEDBACK") && (endpoint.directionSnakeCase == "IN")) {
+                        USB_AUDIO_SPEAKER_FEEDBACK_ENDPOINT_VALUE = "USB_" + endpoint.idSnakeCase;
+                        FS_ISO_FEEDBACK_ENDP_PACKET_SIZE_VALUE = "FS_" + endpoint.idSnakeCase + "_PACKET_SIZE";
+                        HS_ISO_FEEDBACK_ENDP_PACKET_SIZE_VALUE = "HS_" + endpoint.idSnakeCase + "_PACKET_SIZE";
+                    }
+                });
+            }    
+        });
+    }
+});
+
+if(USB_AUDIO_SPEAKER_STREAM_ENDPOINT_VALUE == "")
+{
+scriptApi.logError("No endpoint suitable for USB audio speaker stream, Audio_stream_setting in Audio_streaming interface requires output isochronous endpoint with usage:data.");
+}
+if(USB_AUDIO_SPEAKER_FEEDBACK_ENDPOINT_VALUE == "")
+{
+scriptApi.logError("No endpoint suitable for USB audio speaker feedback, Audio_stream_setting in Audio_streaming interface requires input isochronous endpoint with usage:feedback.");
+}
+if(USB_INTERFACE_AUDIO_CONTROL_INDEX_VALUE == "")
+{
+scriptApi.logError("No interface suitable for USB audio speaker control, audio speaker control interface is required to have Subclass:Audio Control.");
+}
+</code>}$
+
+/* Audio data format */
+/* Definition of audio speaker demo application parameters based on the generated USB descriptor definition */
+#define AUDIO_FORMAT_BITS (${AUDIO_FORMAT_BITS_VALUE}$)
+#define AUDIO_FORMAT_CHANNELS (${AUDIO_FORMAT_CHANNELS_VALUE}$)
+#define AUDIO_FORMAT_SIZE (${AUDIO_FORMAT_SIZE_VALUE}$)
+#define USB_AUDIO_SPEAKER_FEEDBACK_ENDPOINT (${USB_AUDIO_SPEAKER_FEEDBACK_ENDPOINT_VALUE}$)
+#define USB_AUDIO_SPEAKER_STREAM_ENDPOINT (${USB_AUDIO_SPEAKER_STREAM_ENDPOINT_VALUE}$)
+#define AUDIO_OUT_TRANSFER_LENGTH_ONE_FRAME (AUDIO_SAMPLING_RATE_KHZ * AUDIO_FORMAT_CHANNELS * AUDIO_FORMAT_SIZE)
+#define HS_ISO_OUT_ENDP_INTERVAL (${HS_ISO_OUT_ENDP_INTERVAL_VALUE}$)
+#define FS_ISO_OUT_ENDP_INTERVAL (${FS_ISO_OUT_ENDP_INTERVAL_VALUE}$)
+
+#if (HS_ISO_OUT_ENDP_INTERVAL < 4)
+#if (HS_ISO_OUT_ENDP_INTERVAL == 1U)
+#define HS_ISO_OUT_ENDP_PACKET_SIZE ((AUDIO_OUT_TRANSFER_LENGTH_ONE_FRAME) / 8U)
+#elif (HS_ISO_OUT_ENDP_INTERVAL == 2U)
+#define HS_ISO_OUT_ENDP_PACKET_SIZE ((AUDIO_OUT_TRANSFER_LENGTH_ONE_FRAME) / 4U)
+#elif (HS_ISO_OUT_ENDP_INTERVAL == 3U)
+#define HS_ISO_OUT_ENDP_PACKET_SIZE ((AUDIO_OUT_TRANSFER_LENGTH_ONE_FRAME) / 2U)
+#endif
+#else
+#define HS_ISO_OUT_ENDP_PACKET_SIZE (AUDIO_OUT_TRANSFER_LENGTH_ONE_FRAME)
+#endif
+#define FS_ISO_OUT_ENDP_PACKET_SIZE (AUDIO_OUT_TRANSFER_LENGTH_ONE_FRAME)
+
+#define FS_ISO_FEEDBACK_ENDP_PACKET_SIZE (${FS_ISO_FEEDBACK_ENDP_PACKET_SIZE_VALUE}$)
+#define HS_ISO_FEEDBACK_ENDP_PACKET_SIZE (${HS_ISO_FEEDBACK_ENDP_PACKET_SIZE_VALUE}$)
+#define USB_AUDIO_SPEAKER_CONFIGURE_INDEX USB_COMPOSITE_CONFIGURATION_INDEX
+#define USB_AUDIO_SPEAKER_INTERFACE_COUNT USB_COMPOSITE_INTERFACE_COUNT
+#define AUDIO_PLAY_BUFFER_SIZE_ONE_FRAME AUDIO_OUT_TRANSFER_LENGTH_ONE_FRAME
+
+#define AUDIO_SAMPLING_RATE_TO_10_14 (AUDIO_SAMPLING_RATE_KHZ << 10)
+#define AUDIO_SAMPLING_RATE_TO_16_16 \\
+((AUDIO_SAMPLING_RATE_KHZ / (AUDIO_OUT_TRANSFER_LENGTH_ONE_FRAME / HS_ISO_OUT_ENDP_PACKET_SIZE)) << 13)
+
+${<code>
+if(AudioVersion20){ </code>}$
+/* audio 2.0 and high speed, use low latency, but IP3511HS controller do not have micro frame count */
+#if (defined(USB_DEVICE_CONFIG_LPCIP3511HS) && (USB_DEVICE_CONFIG_LPCIP3511HS > 0U))
+volatile static uint8_t s_microFrameCountIp3511HS = 0;
+#endif${<code>
+}
+
+if(AudioVersion20){ </code>}$
+/* Change unsigned fixed point 10.10 data format to 10.14 data format (Full Speed) or change usigned fixed point 12.13 data format to 16.16 data format (high speed). */
+#define AUDIO_UPDATE_FEEDBACK_DATA(m, n)                  \\
+    feedbackValueUpdating = 1;                            \\
+    if (USB_SPEED_HIGH == s_UsbDeviceComposite->speed)  \\
+    {                                                     \\
+        m[0] = (((n & 0x00001FFFu) << 3) & 0xFFu);        \\
+        m[1] = ((((n & 0x00001FFFu) << 3) >> 8) & 0xFFu); \\
+        m[2] = (((n & 0x01FFE000u) >> 13) & 0xFFu);       \\
+        m[3] = (((n & 0x01FFE000u) >> 21) & 0xFFu);       \\
+    }                                                     \\
+    else                                                  \\
+    {                                                     \\
+        m[0] = ((n << 4) & 0xFFU);                        \\
+        m[1] = (((n << 4) >> 8U) & 0xFFU);                \\
+        m[2] = (((n << 4) >> 16U) & 0xFFU);               \\
+    }                                                     \\
+    feedbackValueUpdating = 0;${<code>
+} else {</code>}$
+/* Change unsigned fixed point 10.10 data format to 10.14 data format. */
+#define AUDIO_UPDATE_FEEDBACK_DATA(m, n)                     \\
+    {                                                        \\
+        feedbackValueUpdating = 1;                           \\
+        m[0]                  = ((n << 4) & 0xFFU);          \\
+        m[1]                  = (((n << 4) >> 8U) & 0xFFU);  \\
+        m[2]                  = (((n << 4) >> 16U) & 0xFFU); \\
+        feedbackValueUpdating = 0;                           \\
+    }${<code>
+} </code>}$
+
+#define USB_AUDIO_ENTER_CRITICAL() \\
+                                   \\
+    OSA_SR_ALLOC();            \\
+                                   \\
+    OSA_ENTER_CRITICAL()
+
+#define USB_AUDIO_EXIT_CRITICAL() OSA_EXIT_CRITICAL()
+/*******************************************************************************
+ * Variables
+ ******************************************************************************/
+static usb_device_composite_struct_t *s_UsbDeviceComposite;
+
+USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
+uint8_t ${USB_AudioPlayDataBuffer_Name}$[AUDIO_SPEAKER_DATA_WHOLE_BUFFER_LENGTH * AUDIO_PLAY_BUFFER_SIZE_ONE_FRAME];
+USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
+uint8_t audioPlayPacket[FS_ISO_OUT_ENDP_PACKET_SIZE + AUDIO_FORMAT_CHANNELS * AUDIO_FORMAT_SIZE];
+USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
+uint8_t usbAudioFeedBackBuffer[4];
+USB_RAM_ADDRESS_ALIGNMENT(4) 
+uint8_t audioFeedBackBuffer[4];
+volatile uint8_t feedbackValueUpdating;
+
+/* Default value of audio generator device struct */
+usb_audio_speaker_struct_t ${USB_AudioSpeaker_Name}$ = {
+    .currentStreamOutMaxPacketSize = (FS_ISO_OUT_ENDP_PACKET_SIZE + AUDIO_FORMAT_CHANNELS * AUDIO_FORMAT_SIZE),
+    .currentFeedbackMaxPacketSize = FS_ISO_FEEDBACK_ENDP_PACKET_SIZE,
+    .copyProtect = 0x01U,
+    .curMute = 0x00U,
+    .curVolume = {0x00U, 0x1fU},
+    .minVolume = {0x00U, 0x00U},
+    .maxVolume = {0x00U, 0x43U},
+    .resVolume = {0x01U, 0x00U},
+    .curBass = 0x00U,
+    .minBass = 0x80U,
+    .maxBass = 0x7FU,
+    .resBass = 0x01U,
+    .curMid = 0x00U,
+    .minMid = 0x80U,
+    .maxMid = 0x7FU,
+    .resMid = 0x01U,
+    .curTreble = 0x01U,
+    .minTreble = 0x80U,
+    .maxTreble = 0x7FU,
+    .resTreble = 0x01U,
+    .curAutomaticGain = 0x01U,
+    .curDelay = {0x00U, 0x40U},
+    .minDelay = {0x00U, 0x00U},
+    .maxDelay = {0xFFU, 0xFFU},
+    .resDelay = {0x00U, 0x01U},
+    .curLoudness = 0x01U,
+    .curSamplingFrequency = {0x00U, 0x00U, 0x01U},
+    .minSamplingFrequency = {0x00U, 0x00U, 0x01U},
+    .maxSamplingFrequency = {0x00U, 0x00U, 0x01U},
+    .resSamplingFrequency = {0x00U, 0x00U, 0x01U},${<code>
+if(AudioVersion20){ </code>}$
+    .curMute20 = 0U,
+    .curClockValid = 1U,
+    .curVolume20 = {0x00U, 0x1FU},
+    .curSampleFrequency = 48000U, /* This should be changed to 48000 if sampling rate is 48k */
+    .freqControlRange = {1U, 48000U, 48000U, 0U},
+    .volumeControlRange = {1U, 0x8001U, 0x7FFFU, 1U}, ${<code> 
+} </code>}$
+    .tdReadNumberPlay = 0,
+    .tdWriteNumberPlay = 0,
+    .audioSendCount = 0,
+    .lastAudioSendCount = 0,
+    .usbRecvCount = 0,
+    .audioSendTimes = 0,
+    .usbRecvTimes = 0,
+    .startPlayFlag = 0,
+    .speakerIntervalCount = 0,
+    .speakerReservedSpace = 0,
+    .speakerDetachOrNoInput = 0,
+};
+/* Local pointer to USB device audio speaker structure */
+static usb_audio_speaker_struct_t* s_UsbDeviceAudioSpeaker = &${USB_AudioSpeaker_Name}$;
+
+/*******************************************************************************
+* Code
+******************************************************************************/
+
+/*!
+ * @brief This function returns the ring buffer size. 
+ *
+ * This function calculates and returns the used speaker ring buffer size.
+ *
+ * @return None.
+ */
+uint32_t USB_AudioSpeakerBufferSpaceUsed(void)
+{
+    if (s_UsbDeviceAudioSpeaker->tdWriteNumberPlay > s_UsbDeviceAudioSpeaker->tdReadNumberPlay)
+    {
+        s_UsbDeviceAudioSpeaker->speakerReservedSpace =
+            s_UsbDeviceAudioSpeaker->tdWriteNumberPlay - s_UsbDeviceAudioSpeaker->tdReadNumberPlay;
+    }
+    else /* vaild sync solution should make sure tdReadNumberPlay is not equal to tdWriteNumberPlay */
+    {
+        if ((s_UsbDeviceAudioSpeaker->tdWriteNumberPlay == 0U) && (s_UsbDeviceAudioSpeaker->tdReadNumberPlay == 0U))
+        {
+            return 0;
+        }
+        s_UsbDeviceAudioSpeaker->speakerReservedSpace = s_UsbDeviceAudioSpeaker->tdWriteNumberPlay +
+                                                       s_UsbDeviceAudioSpeaker->audioPlayBufferSize -
+                                                       s_UsbDeviceAudioSpeaker->tdReadNumberPlay;
+    }
+    return s_UsbDeviceAudioSpeaker->speakerReservedSpace;
+}
+
+/*!
+ * @brief This function calculates the feedback data. 
+ *
+ * This function calculates the feedback data that are provided to the host for synchronization.
+ *
+ * @return None.
+ */
+void USB_DeviceCalculateFeedback(void)
+{
+    volatile static uint64_t totalFrameValue = 0U;
+    volatile static uint32_t frameDistance   = 0U;
+    volatile static uint32_t feedbackValue   = 0U;
+
+    uint32_t audioSpeakerUsedSpace = 0U;
+
+    /* feedback interval is AUDIO_CALCULATE_Ff_INTERVAL */
+    if (USB_SPEED_HIGH == s_UsbDeviceComposite->speed)
+    {${<code> 
+if(AudioVersion20){ </code>}$
+/* high speed, feedback interval is AUDIO_CALCULATE_Ff_INTERVAL ms */
+        if (s_UsbDeviceAudioSpeaker->speakerIntervalCount !=
+            AUDIO_CALCULATE_Ff_INTERVAL *
+                (AUDIO_PLAY_BUFFER_SIZE_ONE_FRAME / s_UsbDeviceAudioSpeaker->audioPlayTransferSize))${<code> 
+} else {</code>}$
+        if (s_UsbDeviceAudioSpeaker->speakerIntervalCount != AUDIO_CALCULATE_Ff_INTERVAL)${<code> 
+}</code>}$
+        {
+            s_UsbDeviceAudioSpeaker->speakerIntervalCount++;
+            return;
+        }
+    }
+    else /* full speed, feedback interval is AUDIO_CALCULATE_Ff_INTERVAL ms */
+    {
+        if (s_UsbDeviceAudioSpeaker->speakerIntervalCount != AUDIO_CALCULATE_Ff_INTERVAL)
+        {
+            s_UsbDeviceAudioSpeaker->speakerIntervalCount++;
+            return;
+        }
+    }
+    if (0U == s_UsbDeviceAudioSpeaker->firstCalculateFeedback)
+    {
+        s_UsbDeviceAudioSpeaker->speakerIntervalCount = 0;
+        s_UsbDeviceAudioSpeaker->currentFrameCount    = 0;
+        s_UsbDeviceAudioSpeaker->audioSendCount       = 0;
+        totalFrameValue                               = 0;
+        frameDistance                                 = 0;
+        feedbackValue                                 = 0;
+        USB_DeviceClassGetCurrentFrameCount(USB_DEVICE_CONTROLLER_ID, (uint32_t *)&s_UsbDeviceAudioSpeaker->lastFrameCount);${<code> 
+if(AudioVersion20){ </code>}$
+#if (defined(USB_DEVICE_CONFIG_LPCIP3511HS) && (USB_DEVICE_CONFIG_LPCIP3511HS > 0U))
+        if (USB_SPEED_HIGH == s_UsbDeviceComposite->speed)
+        {
+            s_UsbDeviceAudioSpeaker->lastFrameCount += s_microFrameCountIp3511HS;
+        }
+#endif${<code> 
+} </code>}$
+        s_UsbDeviceAudioSpeaker->firstCalculateFeedback = 1U;
+        return;
+    }
+    s_UsbDeviceAudioSpeaker->speakerIntervalCount = 0;
+    USB_DeviceClassGetCurrentFrameCount(USB_DEVICE_CONTROLLER_ID, (uint32_t *)&s_UsbDeviceAudioSpeaker->currentFrameCount);${<code> 
+if(AudioVersion20){ </code>}$
+#if (defined(USB_DEVICE_CONFIG_LPCIP3511HS) && (USB_DEVICE_CONFIG_LPCIP3511HS > 0U))
+    if (USB_SPEED_HIGH == s_UsbDeviceComposite->speed)
+    {
+        s_UsbDeviceAudioSpeaker->currentFrameCount += s_microFrameCountIp3511HS;
+    }
+#endif${<code> 
+} </code>}$
+    frameDistance = ((s_UsbDeviceAudioSpeaker->currentFrameCount + USB_DEVICE_MAX_FRAME_COUNT + 1U -
+                      s_UsbDeviceAudioSpeaker->lastFrameCount) &
+                     USB_DEVICE_MAX_FRAME_COUNT);
+    s_UsbDeviceAudioSpeaker->lastFrameCount = s_UsbDeviceAudioSpeaker->currentFrameCount;
+
+    totalFrameValue += frameDistance;
+    if (USB_SPEED_HIGH == s_UsbDeviceComposite->speed)
+    {
+        feedbackValue = (uint32_t)(((uint64_t)s_UsbDeviceAudioSpeaker->audioSendCount) * 1024UL * 8UL / totalFrameValue /
+                                   (uint64_t)(AUDIO_FORMAT_CHANNELS * AUDIO_FORMAT_SIZE));
+    }
+    else
+    {
+        feedbackValue = (uint32_t)(((uint64_t)s_UsbDeviceAudioSpeaker->audioSendCount) * 1024UL / totalFrameValue /
+                                   (uint64_t)(AUDIO_FORMAT_CHANNELS * AUDIO_FORMAT_SIZE));
+    }
+    audioSpeakerUsedSpace = USB_AudioSpeakerBufferSpaceUsed();
+    if (audioSpeakerUsedSpace <=
+        (s_UsbDeviceAudioSpeaker->audioPlayTransferSize * USB_AUDIO_PLAY_BUFFER_TOLERANCE_THRESHOLD))
+    {
+        feedbackValue += AUDIO_ADJUST_MIN_STEP;
+    }
+    if ((audioSpeakerUsedSpace +
+         (s_UsbDeviceAudioSpeaker->audioPlayTransferSize * USB_AUDIO_PLAY_BUFFER_TOLERANCE_THRESHOLD)) >=
+        s_UsbDeviceAudioSpeaker->audioPlayBufferSize)
+    {
+        feedbackValue -= AUDIO_ADJUST_MIN_STEP;
+    }
+    AUDIO_UPDATE_FEEDBACK_DATA(audioFeedBackBuffer, feedbackValue);
+}
+
+/*!
+ * @brief Function for processing of next audio data. 
+ *
+ * Function for processing of next audio data from the data buffer. It can be used as a callback.
+ *
+ * @return None.
+ */
+void ${USB_ProcessNextAudioData_Name}$(void)
+{
+    if ((USB_AudioSpeakerBufferSpaceUsed() < (s_UsbDeviceAudioSpeaker->audioPlayTransferSize)) &&
+        (s_UsbDeviceAudioSpeaker->startPlayFlag == 1U))
+    {
+        s_UsbDeviceAudioSpeaker->startPlayFlag = 0;
+        s_UsbDeviceAudioSpeaker->speakerDetachOrNoInput = 1;
+    }
+    if (s_UsbDeviceAudioSpeaker->startPlayFlag)
+    {
+        USB_DeviceCalculateFeedback();
+        /*
+		 * size of data packet that can be sent = s_UsbDeviceAudioSpeaker->audioPlayTransferSize;
+		 * pointer to data = ${USB_AudioPlayDataBuffer_Name}$ + s_UsbDeviceAudioSpeaker->tdReadNumberPlay
+		 */
+        s_UsbDeviceAudioSpeaker->audioSendCount += s_UsbDeviceAudioSpeaker->audioPlayTransferSize;
+        s_UsbDeviceAudioSpeaker->audioSendTimes++;
+        s_UsbDeviceAudioSpeaker->tdReadNumberPlay += s_UsbDeviceAudioSpeaker->audioPlayTransferSize;
+        if (s_UsbDeviceAudioSpeaker->tdReadNumberPlay >=
+            s_UsbDeviceAudioSpeaker->audioPlayBufferSize)
+        {
+            s_UsbDeviceAudioSpeaker->tdReadNumberPlay = 0;
+        }
+    }
+    else
+    {
+      if (0U != s_UsbDeviceAudioSpeaker->audioPlayTransferSize)
+      {
+       /*
+        * size of data packet that can be sent = s_UsbDeviceAudioSpeaker->audioPlayTransferSize;
+        */
+      }
+      else
+      {
+       /*
+        * size of data packet that can be sent = AUDIO_PLAY_BUFFER_SIZE_ONE_FRAME / 8U;
+        */
+      }
+        /*
+		 * pointer to data = ${USB_AudioPlayDataBuffer_Name}$
+		 */
+    }
+}
+
+/*!
+ * @brief Audio class specific request function.
+ *
+ * This function handles the Audio class specific requests.
+ *
+ * @param handle		  The Audio class handle.
+ * @param event 		  The Audio class event type.
+ * @param param 		  The parameter of the class specific request.
+ *
+ * @return A USB error code or kStatus_USB_Success.
+ */
+static usb_status_t USB_DeviceAudioRequest(class_handle_t handle, uint32_t event, void *param)
+{
+    usb_device_control_request_struct_t *request = (usb_device_control_request_struct_t *)param;
+    usb_status_t error = kStatus_USB_Success;
+
+    switch (event)
+    {
+        case USB_DEVICE_AUDIO_FU_GET_CUR_MUTE_CONTROL:${<code>
+if(AudioVersion20){ </code>}$
+            request->buffer = (uint8_t *)&s_UsbDeviceAudioSpeaker->curMute20;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->curMute20); ${<code> 
+} else{</code>}$
+            request->buffer = &s_UsbDeviceAudioSpeaker->curMute;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->curMute); ${<code> 
+} </code>}$
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_CUR_VOLUME_CONTROL:${<code>
+if(AudioVersion20){ </code>}$
+            request->buffer = (uint8_t *)&s_UsbDeviceAudioSpeaker->curVolume20;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->curVolume20); ${<code> 
+} else{</code>}$
+            request->buffer = s_UsbDeviceAudioSpeaker->curVolume;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->curVolume); ${<code> 
+} </code>}$
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_CUR_BASS_CONTROL:
+            request->buffer = &s_UsbDeviceAudioSpeaker->curBass;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->curBass);
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_CUR_MID_CONTROL:
+            request->buffer = &s_UsbDeviceAudioSpeaker->curMid;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->curMid);
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_CUR_TREBLE_CONTROL:
+            request->buffer = &s_UsbDeviceAudioSpeaker->curTreble;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->curTreble);
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_CUR_AUTOMATIC_GAIN_CONTROL:
+            request->buffer = &s_UsbDeviceAudioSpeaker->curAutomaticGain;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->curAutomaticGain);
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_CUR_DELAY_CONTROL:
+            request->buffer = s_UsbDeviceAudioSpeaker->curDelay;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->curDelay);
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_MIN_VOLUME_CONTROL:
+            request->buffer = s_UsbDeviceAudioSpeaker->minVolume;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->minVolume);
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_MIN_BASS_CONTROL:
+            request->buffer = &s_UsbDeviceAudioSpeaker->minBass;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->minBass);
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_MIN_MID_CONTROL:
+            request->buffer = &s_UsbDeviceAudioSpeaker->minMid;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->minMid);
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_MIN_TREBLE_CONTROL:
+            request->buffer = &s_UsbDeviceAudioSpeaker->minTreble;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->minTreble);
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_MIN_DELAY_CONTROL:
+            request->buffer = s_UsbDeviceAudioSpeaker->minDelay;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->minDelay);
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_MAX_VOLUME_CONTROL:
+            request->buffer = s_UsbDeviceAudioSpeaker->maxVolume;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->maxVolume);
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_MAX_BASS_CONTROL:
+            request->buffer = &s_UsbDeviceAudioSpeaker->maxBass;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->maxBass);
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_MAX_MID_CONTROL:
+            request->buffer = &s_UsbDeviceAudioSpeaker->maxMid;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->maxMid);
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_MAX_TREBLE_CONTROL:
+            request->buffer = &s_UsbDeviceAudioSpeaker->maxTreble;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->maxTreble);
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_MAX_DELAY_CONTROL:
+            request->buffer = s_UsbDeviceAudioSpeaker->maxDelay;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->maxDelay);
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_RES_VOLUME_CONTROL:
+            request->buffer = s_UsbDeviceAudioSpeaker->resVolume;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->resVolume);
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_RES_BASS_CONTROL:
+            request->buffer = &s_UsbDeviceAudioSpeaker->resBass;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->resBass);
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_RES_MID_CONTROL:
+            request->buffer = &s_UsbDeviceAudioSpeaker->resMid;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->resMid);
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_RES_TREBLE_CONTROL:
+            request->buffer = &s_UsbDeviceAudioSpeaker->resTreble;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->resTreble);
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_RES_DELAY_CONTROL:
+            request->buffer = s_UsbDeviceAudioSpeaker->resDelay;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->resDelay);
+            break;${<code> 
+if(AudioVersion20){ </code>}$
+        case USB_DEVICE_AUDIO_CS_GET_CUR_SAMPLING_FREQ_CONTROL:
+            request->buffer = (uint8_t *)&s_UsbDeviceAudioSpeaker->curSampleFrequency;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->curSampleFrequency);
+            break;
+        case USB_DEVICE_AUDIO_CS_SET_CUR_SAMPLING_FREQ_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = (uint8_t *)&s_UsbDeviceAudioSpeaker->curSampleFrequency;
+            }
+            break;
+        case USB_DEVICE_AUDIO_CS_GET_CUR_CLOCK_VALID_CONTROL:
+            request->buffer = &s_UsbDeviceAudioSpeaker->curClockValid;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->curClockValid);
+            break;
+        case USB_DEVICE_AUDIO_CS_SET_CUR_CLOCK_VALID_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = &s_UsbDeviceAudioSpeaker->curClockValid;
+            }
+            break;
+        case USB_DEVICE_AUDIO_CS_GET_RANGE_SAMPLING_FREQ_CONTROL:
+            request->buffer = (uint8_t *)&s_UsbDeviceAudioSpeaker->freqControlRange;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->freqControlRange);
+            break;
+        case USB_DEVICE_AUDIO_FU_GET_RANGE_VOLUME_CONTROL:
+            request->buffer = (uint8_t *)&s_UsbDeviceAudioSpeaker->volumeControlRange;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->volumeControlRange);
+            break; ${<code> 
+} else{</code>}$
+        case USB_DEVICE_AUDIO_EP_GET_CUR_SAMPLING_FREQ_CONTROL:
+            request->buffer = s_UsbDeviceAudioSpeaker->curSamplingFrequency;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->curSamplingFrequency);
+            break;
+        case USB_DEVICE_AUDIO_EP_GET_MIN_SAMPLING_FREQ_CONTROL:
+            request->buffer = s_UsbDeviceAudioSpeaker->minSamplingFrequency;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->minSamplingFrequency);
+            break;
+        case USB_DEVICE_AUDIO_EP_GET_MAX_SAMPLING_FREQ_CONTROL:
+            request->buffer = s_UsbDeviceAudioSpeaker->maxSamplingFrequency;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->maxSamplingFrequency);
+            break;
+        case USB_DEVICE_AUDIO_EP_GET_RES_SAMPLING_FREQ_CONTROL:
+            request->buffer = s_UsbDeviceAudioSpeaker->resSamplingFrequency;
+            request->length = sizeof(s_UsbDeviceAudioSpeaker->resSamplingFrequency);
+            break;
+        case USB_DEVICE_AUDIO_EP_SET_CUR_SAMPLING_FREQ_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = s_UsbDeviceAudioSpeaker->curSamplingFrequency;
+            }
+            break;
+        case USB_DEVICE_AUDIO_EP_SET_RES_SAMPLING_FREQ_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = s_UsbDeviceAudioSpeaker->resSamplingFrequency;
+            }
+            break;
+        case USB_DEVICE_AUDIO_EP_SET_MAX_SAMPLING_FREQ_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = s_UsbDeviceAudioSpeaker->maxSamplingFrequency;
+            }
+            break;
+        case USB_DEVICE_AUDIO_EP_SET_MIN_SAMPLING_FREQ_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = s_UsbDeviceAudioSpeaker->minSamplingFrequency;
+            }
+            break;${<code> 
+}</code>}$
+        case USB_DEVICE_AUDIO_FU_SET_CUR_VOLUME_CONTROL:${<code> 
+if(AudioVersion20){ </code>}$
+            if (request->isSetup == 1U)
+            {
+                request->buffer = s_UsbDeviceAudioSpeaker->curVolume20;
+            }
+            else
+            {
+                s_UsbDeviceAudioSpeaker->codecTask |= VOLUME_CHANGE_TASK;
+            } ${<code> 
+} else{</code>}$
+            if (request->isSetup == 1U)
+            {
+                request->buffer = s_UsbDeviceAudioSpeaker->curVolume;
+            }
+            else
+            {
+                uint16_t volume = (uint16_t)((uint16_t)s_UsbDeviceAudioSpeaker->curVolume[1] << 8U);
+                volume |= (uint8_t)(s_UsbDeviceAudioSpeaker->curVolume[0]);
+                s_UsbDeviceAudioSpeaker->codecTask |= VOLUME_CHANGE_TASK;
+            } ${<code> 
+}</code>}$
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_CUR_MUTE_CONTROL:${<code> 
+if(AudioVersion20){ </code>}$
+            if (request->isSetup == 1U)
+            {
+                request->buffer = &s_UsbDeviceAudioSpeaker->curMute20;
+            }
+            else
+            {
+                if (s_UsbDeviceAudioSpeaker->curMute20)
+                {
+                    s_UsbDeviceAudioSpeaker->codecTask |= MUTE_CODEC_TASK;
+                }
+                else
+                {
+                    s_UsbDeviceAudioSpeaker->codecTask |= UNMUTE_CODEC_TASK;
+                }
+            }${<code> 
+} else {</code>}$
+            if (request->isSetup == 1U)
+            {
+                request->buffer = &s_UsbDeviceAudioSpeaker->curMute;
+            }
+            else
+            {
+                if (s_UsbDeviceAudioSpeaker->curMute)
+                {
+                    s_UsbDeviceAudioSpeaker->codecTask |= MUTE_CODEC_TASK;
+                }
+                else
+                {
+                    s_UsbDeviceAudioSpeaker->codecTask |= UNMUTE_CODEC_TASK;
+                }
+            }${<code> 
+} </code>}$
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_CUR_BASS_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = &s_UsbDeviceAudioSpeaker->curBass;
+            }
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_CUR_MID_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = &s_UsbDeviceAudioSpeaker->curMid;
+            }
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_CUR_TREBLE_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = &s_UsbDeviceAudioSpeaker->curTreble;
+            }
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_CUR_AUTOMATIC_GAIN_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = &s_UsbDeviceAudioSpeaker->curAutomaticGain;
+            }
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_CUR_DELAY_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = s_UsbDeviceAudioSpeaker->curDelay;
+            }
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_MIN_VOLUME_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = s_UsbDeviceAudioSpeaker->minVolume;
+            }
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_MIN_BASS_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = &s_UsbDeviceAudioSpeaker->minBass;
+            }
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_MIN_MID_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = &s_UsbDeviceAudioSpeaker->minMid;
+            }
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_MIN_TREBLE_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = &s_UsbDeviceAudioSpeaker->minTreble;
+            }
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_MIN_DELAY_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = s_UsbDeviceAudioSpeaker->minDelay;
+            }
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_MAX_VOLUME_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = s_UsbDeviceAudioSpeaker->maxVolume;
+            }
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_MAX_BASS_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = &s_UsbDeviceAudioSpeaker->maxBass;
+            }
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_MAX_MID_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = &s_UsbDeviceAudioSpeaker->maxMid;
+            }
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_MAX_TREBLE_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = &s_UsbDeviceAudioSpeaker->maxTreble;
+            }
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_MAX_DELAY_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = s_UsbDeviceAudioSpeaker->maxDelay;
+            }
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_RES_VOLUME_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = s_UsbDeviceAudioSpeaker->resVolume;
+            }
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_RES_BASS_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = &s_UsbDeviceAudioSpeaker->resBass;
+            }
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_RES_MID_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = &s_UsbDeviceAudioSpeaker->resMid;
+            }
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_RES_TREBLE_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = &s_UsbDeviceAudioSpeaker->resTreble;
+            }
+            break;
+        case USB_DEVICE_AUDIO_FU_SET_RES_DELAY_CONTROL:
+            if (request->isSetup == 1U)
+            {
+                request->buffer = s_UsbDeviceAudioSpeaker->resDelay;
+            }
+            break;
+        default:
+            error = kStatus_USB_InvalidRequest;
+            break;
+
+    }
+    return error;
+}
+
+/*!
+ * @brief This function fills the audio data. 
+ *
+ * This function fills the audioRecDataBuff with audioPlayPacket in every callback.
+ *
+ * @return None.
+ */
+static void USB_AudioSpeakerPutBuffer(uint8_t *buffer, uint32_t size)
+{
+    uint32_t remainBufferSpace;
+    uint32_t buffer_length = 0;
+    remainBufferSpace      = s_UsbDeviceAudioSpeaker->audioPlayBufferSize - USB_AudioSpeakerBufferSpaceUsed();
+    if (size >= remainBufferSpace) /* discard the overflow data */
+    {
+        if (remainBufferSpace > (AUDIO_FORMAT_CHANNELS * AUDIO_FORMAT_SIZE))
+        {
+            size = (remainBufferSpace - (AUDIO_FORMAT_CHANNELS * AUDIO_FORMAT_SIZE));
+        }
+        else
+        {
+            size = 0;
+        }
+    }
+    if (size > 0)
+    {
+        buffer_length = s_UsbDeviceAudioSpeaker->tdWriteNumberPlay + size;
+        if (buffer_length < s_UsbDeviceAudioSpeaker->audioPlayBufferSize)
+        {
+            memcpy((void *)(&${USB_AudioPlayDataBuffer_Name}$[s_UsbDeviceAudioSpeaker->tdWriteNumberPlay]), (void *)(&buffer[0]), size);
+            s_UsbDeviceAudioSpeaker->tdWriteNumberPlay += size;
+        }
+        else
+        {
+            uint32_t firstLength =
+                s_UsbDeviceAudioSpeaker->audioPlayBufferSize - s_UsbDeviceAudioSpeaker->tdWriteNumberPlay;
+            memcpy((void *)(&${USB_AudioPlayDataBuffer_Name}$[s_UsbDeviceAudioSpeaker->tdWriteNumberPlay]), (void *)(&buffer[0]),
+                   firstLength);
+            buffer_length = size - firstLength; /* the remain data length */
+            if ((buffer_length) > 0U)
+            {
+                memcpy((void *)(&${USB_AudioPlayDataBuffer_Name}$[0]), (void *)((uint8_t *)(&buffer[0]) + firstLength), buffer_length);
+                s_UsbDeviceAudioSpeaker->tdWriteNumberPlay = buffer_length;
+            }
+            else
+            {
+                s_UsbDeviceAudioSpeaker->tdWriteNumberPlay = 0;
+            }
+        }
+    }
+}
+
+/*!
+ * @brief Audio class specific callback function.
+ *
+ * This function handles the Audio class specific requests.
+ *
+ * @param handle		  The Audio class handle.
+ * @param event 		  The Audio class event type.
+ * @param param 		  The parameter of the class specific request.
+ *
+ * @return A USB error code or kStatus_USB_Success.
+ */
+usb_status_t ${USB_AudioControl_Callback_Name}$(class_handle_t handle, uint32_t event, void *param)
+{
+    usb_status_t error = kStatus_USB_Error;
+    usb_device_endpoint_callback_message_struct_t *ep_cb_param;
+    ep_cb_param = (usb_device_endpoint_callback_message_struct_t *)param;
+
+    switch (event)
+    {
+        case kUSB_DeviceAudioEventStreamSendResponse:
+            if ((s_UsbDeviceComposite->attach) && (ep_cb_param->length != (USB_CANCELLED_TRANSFER_LENGTH)))
+            {
+                if (ep_cb_param->length == s_UsbDeviceAudioSpeaker->currentFeedbackMaxPacketSize)
+                {
+                    if (!feedbackValueUpdating)
+                    {
+                        *((uint32_t *)&usbAudioFeedBackBuffer[0]) = *((uint32_t *)&audioFeedBackBuffer[0]);
+                    }
+
+                    error = USB_DeviceAudioSend(handle, USB_AUDIO_SPEAKER_FEEDBACK_ENDPOINT, audioFeedBackBuffer,
+                                                s_UsbDeviceAudioSpeaker->currentFeedbackMaxPacketSize);
+                }
+            }
+            break;
+        case kUSB_DeviceAudioEventStreamRecvResponse:
+            /* endpoint callback length is USB_CANCELLED_TRANSFER_LENGTH (0xFFFFFFFFU) when transfer is canceled */
+            if ((s_UsbDeviceComposite->attach) && (ep_cb_param->length != (USB_CANCELLED_TRANSFER_LENGTH)))
+            {${<code> 
+if(AudioVersion20){ </code>}$
+#if (defined(USB_DEVICE_CONFIG_EHCI) && (USB_DEVICE_CONFIG_EHCI > 0U)) || \\
+    (defined(USB_DEVICE_CONFIG_LPCIP3511HS) && (USB_DEVICE_CONFIG_LPCIP3511HS > 0U))
+                if (USB_SPEED_HIGH ==
+                    s_UsbDeviceComposite->speed) /* high speed and audio 2.0, use low latency solution  */
+                {
+                    if (s_UsbDeviceAudioSpeaker->tdWriteNumberPlay >=
+                        (s_UsbDeviceAudioSpeaker->audioPlayTransferSize * AUDIO_CLASS_2_0_HS_LOW_LATENCY_TRANSFER_COUNT))
+                    {
+                        s_UsbDeviceAudioSpeaker->startPlayFlag = 1;
+                    }
+#if (defined(USB_DEVICE_CONFIG_LPCIP3511HS) && (USB_DEVICE_CONFIG_LPCIP3511HS > 0U))
+                    if (s_microFrameCountIp3511HS < 7U)
+
+                    {
+                        s_microFrameCountIp3511HS++;
+                    }
+                    else
+                    {
+                        s_microFrameCountIp3511HS = 0U;
+                    }
+#endif
+                }
+                else
+                {
+                    if ((s_UsbDeviceAudioSpeaker->tdWriteNumberPlay >=
+                         (s_UsbDeviceAudioSpeaker->audioPlayBufferSize / 2U)) &&
+                        (s_UsbDeviceAudioSpeaker->startPlayFlag == 0))
+                    {
+                        s_UsbDeviceAudioSpeaker->startPlayFlag = 1;
+                    }
+                }
+#else
+                if ((s_UsbDeviceAudioSpeaker->tdWriteNumberPlay >= (s_UsbDeviceAudioSpeaker->audioPlayBufferSize / 2U)) &&
+                    (s_UsbDeviceAudioSpeaker->startPlayFlag == 0))
+                {
+                    s_UsbDeviceAudioSpeaker->startPlayFlag = 1;
+                }
+#endif /* USB_DEVICE_CONFIG_EHCI, USB_DEVICE_CONFIG_LPCIP3511HS */${<code> 
+} else{ </code>}$
+                if ((s_UsbDeviceAudioSpeaker->tdWriteNumberPlay >= (s_UsbDeviceAudioSpeaker->audioPlayBufferSize / 2U)) &&
+                    (s_UsbDeviceAudioSpeaker->startPlayFlag == 0))
+                {
+                    s_UsbDeviceAudioSpeaker->startPlayFlag = 1;
+                }${<code> 
+} </code>}$
+                USB_AudioSpeakerPutBuffer(audioPlayPacket, ep_cb_param->length);
+                s_UsbDeviceAudioSpeaker->usbRecvCount += ep_cb_param->length;
+                s_UsbDeviceAudioSpeaker->usbRecvTimes++;
+
+                error = USB_DeviceAudioRecv(handle, USB_AUDIO_SPEAKER_STREAM_ENDPOINT, &audioPlayPacket[0],
+                                            s_UsbDeviceAudioSpeaker->currentStreamOutMaxPacketSize);
+            }
+            break;
+
+        default:
+            if (param && (event > 0xFF))
+            {
+                error = USB_DeviceAudioRequest(handle, event, param);
+            }
+            break;
+    }
+    return error;
+}
+
+/*!
+ * @brief This function resets the audio speaker status. 
+ *
+ * This function resets the audio speaker status to the initialized status.
+ *
+ * @return None.
+ */
+static void USB_DeviceAudioSpeakerStatusReset(void)
+{
+    s_UsbDeviceAudioSpeaker->startPlayFlag = 0;
+    s_UsbDeviceAudioSpeaker->tdReadNumberPlay = 0;
+    s_UsbDeviceAudioSpeaker->tdWriteNumberPlay = 0;
+    s_UsbDeviceAudioSpeaker->audioSendCount = 0;
+    s_UsbDeviceAudioSpeaker->usbRecvCount = 0;
+    s_UsbDeviceAudioSpeaker->lastAudioSendCount = 0;
+    s_UsbDeviceAudioSpeaker->audioSendTimes = 0;
+    s_UsbDeviceAudioSpeaker->usbRecvTimes = 0;
+    s_UsbDeviceAudioSpeaker->speakerIntervalCount = 0;
+    s_UsbDeviceAudioSpeaker->speakerReservedSpace = 0;
+    s_UsbDeviceAudioSpeaker->speakerDetachOrNoInput = 0;
+}
+
+/*!
+ * @brief Set configuration event callback function of the audio control interface. 
+ *
+ * Empty implementation of the control configuration set (kUSB_DeviceEventSetConfiguration event).
+ *
+ * @return None.
+ */
+usb_status_t ${USB_AudioControl_SetConfiguration_Callback_Name}$(class_handle_t handle, uint8_t configuration_index) {
+	return kStatus_USB_Success;
+}
+
+/*!
+ * @brief Set interface event callback function of the audio control interface. 
+ *
+ * Empty implementation of the audio control interface set - there are not any alternate interfaces defined.
+ *
+ * @return None.
+ */
+usb_status_t ${USB_AudioControl_SetInterface_Callback_Name}$(class_handle_t handle, uint8_t alternateSetting) {
+    return kStatus_USB_Success;
+}
+
+/*!
+ * @brief Set interface event callback function of the audio streaming 
+ *
+ * Set interface event callbacks implementation of the audio streaming kUSB_DeviceEventSetInterface event.
+ *
+ * @return None.
+ */
+usb_status_t ${USB_AudioStreaming_SetInterface_Callback_Name}$(class_handle_t handle, uint8_t alternateSetting) {
+    if (s_UsbDeviceComposite->currentInterfaceAlternateSetting[${USB_INTERFACE_AUDIO_CONTROL_INDEX_VALUE}$] != alternateSetting)
+    {
+        if (alternateSetting == 1U)
+        {
+            USB_DeviceAudioSpeakerStatusReset();
+            USB_DeviceAudioRecv(s_UsbDeviceComposite->${interfaceAudioControlHandle}$, USB_AUDIO_SPEAKER_STREAM_ENDPOINT,
+                                &${USB_AudioPlayDataBuffer_Name}$[0],
+                                s_UsbDeviceAudioSpeaker->currentStreamOutMaxPacketSize);
+            if (!feedbackValueUpdating)
+            {
+                *((uint32_t *)&usbAudioFeedBackBuffer[0]) = *((uint32_t *)&audioFeedBackBuffer[0]);
+            }                              
+            USB_DeviceAudioSend(s_UsbDeviceComposite->${interfaceAudioControlHandle}$, USB_AUDIO_SPEAKER_FEEDBACK_ENDPOINT,
+                                usbAudioFeedBackBuffer, s_UsbDeviceAudioSpeaker->currentFeedbackMaxPacketSize);
+        }
+    }
+    return kStatus_USB_Success;
+}
+
+/*!
+ * @brief Bus reset event callback function` 
+ *
+ * Bus reset event callbacks implementation of the USB_DeviceCallback event.
+ *
+ * @return None.
+ */
+void ${USB_AudioControl_BusReset_Callback_Name}$(usb_device_composite_struct_t *deviceComposite) {
+#if (defined(USB_DEVICE_CONFIG_EHCI) && (USB_DEVICE_CONFIG_EHCI > 0U)) || \\
+(defined(USB_DEVICE_CONFIG_LPCIP3511HS) && (USB_DEVICE_CONFIG_LPCIP3511HS > 0U))
+    if (USB_SPEED_HIGH == s_UsbDeviceComposite->speed)
+    {
+        s_UsbDeviceAudioSpeaker->currentStreamOutMaxPacketSize =
+            (HS_ISO_OUT_ENDP_PACKET_SIZE + AUDIO_FORMAT_CHANNELS * AUDIO_FORMAT_SIZE);
+        s_UsbDeviceAudioSpeaker->currentFeedbackMaxPacketSize = HS_ISO_FEEDBACK_ENDP_PACKET_SIZE;${<code>
+if(AudioVersion20){ </code>}$
+        AUDIO_UPDATE_FEEDBACK_DATA(audioFeedBackBuffer, AUDIO_SAMPLING_RATE_TO_16_16);
+        /* high speed and audio 2.0, audio play interval is set by HS EP packet size */
+        s_UsbDeviceAudioSpeaker->audioPlayTransferSize = HS_ISO_OUT_ENDP_PACKET_SIZE;
+        /* use short play buffer size, only use two elements */
+        s_UsbDeviceAudioSpeaker->audioPlayBufferSize =
+            AUDIO_PLAY_BUFFER_SIZE_ONE_FRAME * AUDIO_CLASS_2_0_HS_LOW_LATENCY_BUFFER_COUNT;${<code>
+} else { </code>}$
+        /* high speed and audio 1.0, audio play interval is 1 ms using this play size */
+        s_UsbDeviceAudioSpeaker->audioPlayTransferSize = AUDIO_PLAY_BUFFER_SIZE_ONE_FRAME;
+        /* use the whole play buffer size */
+        s_UsbDeviceAudioSpeaker->audioPlayBufferSize =
+            AUDIO_SPEAKER_DATA_WHOLE_BUFFER_LENGTH * AUDIO_PLAY_BUFFER_SIZE_ONE_FRAME;
+        AUDIO_UPDATE_FEEDBACK_DATA(audioFeedBackBuffer, AUDIO_SAMPLING_RATE_TO_10_14);${<code>
+}</code>}$
+    }
+    else{
+        s_UsbDeviceAudioSpeaker->currentFeedbackMaxPacketSize = FS_ISO_FEEDBACK_ENDP_PACKET_SIZE;
+        AUDIO_UPDATE_FEEDBACK_DATA(audioFeedBackBuffer, AUDIO_SAMPLING_RATE_TO_10_14);    
+        /* full speed, audio play interval is 1 ms using this play size */
+        s_UsbDeviceAudioSpeaker->audioPlayTransferSize = AUDIO_PLAY_BUFFER_SIZE_ONE_FRAME;
+        /* use the whole play buffer size */
+        s_UsbDeviceAudioSpeaker->audioPlayBufferSize =
+            AUDIO_SPEAKER_DATA_WHOLE_BUFFER_LENGTH * AUDIO_PLAY_BUFFER_SIZE_ONE_FRAME;
+    }
+#else
+            s_UsbDeviceAudioSpeaker->currentFeedbackMaxPacketSize = FS_ISO_FEEDBACK_ENDP_PACKET_SIZE;
+            AUDIO_UPDATE_FEEDBACK_DATA(audioFeedBackBuffer, AUDIO_SAMPLING_RATE_TO_10_14);
+            /* full speed, audio play interval is 1 ms using this play size */
+            s_UsbDeviceAudioSpeaker->audioPlayTransferSize = AUDIO_PLAY_BUFFER_SIZE_ONE_FRAME;
+            /* use the whole play buffer size */
+            s_UsbDeviceAudioSpeaker->audioPlayBufferSize =
+                AUDIO_SPEAKER_DATA_WHOLE_BUFFER_LENGTH * AUDIO_PLAY_BUFFER_SIZE_ONE_FRAME;
+#endif /* USB_DEVICE_CONFIG_EHCI, USB_DEVICE_CONFIG_LPCIP3511HS */
+}
+
+/*!
+ * @brief Audio control interface` initialization function.
+ *
+ * This function initializes the audio speaker demo application.
+ *
+ * @return None.
+ */
+usb_status_t ${USB_AudioControlInit_Callback_Name}$(usb_device_composite_struct_t *deviceComposite)
+{
+    AUDIO_UPDATE_FEEDBACK_DATA(audioFeedBackBuffer, AUDIO_SAMPLING_RATE_TO_10_14);
+
+    s_UsbDeviceComposite = deviceComposite;
+    return kStatus_USB_Success;
+}
+
+/*!
+ * @brief Audio speaker codec task function.
+ *
+ * This function provide demo implementation of the audio codec task
+ *
+ * @return None.
+ */
+static void USB_AudioCodecTask(void)
+{
+    if (s_UsbDeviceAudioSpeaker->codecTask & MUTE_CODEC_TASK)
+    {${<code>
+if(AudioVersion20){ </code>}$
+        usb_echo("Set Cur Mute : %x\\r\\n", s_UsbDeviceAudioSpeaker->curMute20);${<code>
+}else{ </code>}$
+        usb_echo("Set Cur Mute : %x\\r\\n", s_UsbDeviceAudioSpeaker->curMute);${<code>
+} </code>}$
+        s_UsbDeviceAudioSpeaker->codecTask &= ~MUTE_CODEC_TASK;
+    }
+    if (s_UsbDeviceAudioSpeaker->codecTask & UNMUTE_CODEC_TASK)
+    {${<code>
+if(AudioVersion20){ </code>}$
+        usb_echo("Set Cur Mute : %x\\r\\n", s_UsbDeviceAudioSpeaker->curMute20);${<code>
+}else{ </code>}$
+        usb_echo("Set Cur Mute : %x\\r\\n", s_UsbDeviceAudioSpeaker->curMute);${<code>
+} </code>}$
+        s_UsbDeviceAudioSpeaker->codecTask &= ~UNMUTE_CODEC_TASK;
+    }
+    if (s_UsbDeviceAudioSpeaker->codecTask & VOLUME_CHANGE_TASK)
+    {${<code>
+if(AudioVersion20){ </code>}$
+        usb_echo("Set Cur Volume : %x\\r\\n",
+                 (uint16_t)(s_UsbDeviceAudioSpeaker->curVolume20[1] << 8U) | s_UsbDeviceAudioSpeaker->curVolume20[0]);${<code>
+}else{ </code>}$
+        usb_echo("Set Cur Volume : %x\\r\\n",
+                 (uint16_t)(s_UsbDeviceAudioSpeaker->curVolume[1] << 8U) | s_UsbDeviceAudioSpeaker->curVolume[0]);${<code>
+} </code>}$
+        s_UsbDeviceAudioSpeaker->codecTask &= ~VOLUME_CHANGE_TASK;
+    }
+}
+
+/*!
+ * @brief Audio speaker reset task function.
+ *
+ * This function provides implementation of the audio speaker status reset task.
+ *
+ * @return None.
+ */
+static void USB_AudioSpeakerResetTask(void)
+{
+    if (s_UsbDeviceAudioSpeaker->speakerDetachOrNoInput)
+    {
+        USB_DeviceAudioSpeakerStatusReset();
+    }
+}
+
+/*!
+ * @brief Audio speaker demo task function.
+ *
+ * This function provies implementation of the audio speaker demo tasks.
+ *
+ * @return None.
+ */
+void ${InterfaceTask_Function}$(void) {
+	USB_AudioSpeakerResetTask();
+	USB_AudioCodecTask();
+}

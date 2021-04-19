@@ -1,0 +1,28 @@
+/*
+ * Copyright ${(new Date()).getFullYear()}$ NXP
+ * All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#ifndef _STARTUP_BOOTLOADER_CONFIG_H_
+#define _STARTUP_BOOTLOADER_CONFIG_H_
+
+/* Entry point of ROM code, don\'t change it */
+#define BOOTLOADER_ENTRY_POINT 0x78147
+
+/* Choose if enable bootloader */
+#define _ENTER_BOOTLOADER_AT_STARTUP ${_ENTER_BOOTLOADER_AT_STARTUP}$
+
+/*
+ * _ENTER_BOOTLOADER_RESET_TYPE, reset type bit mask
+ *    BIT2: Power on reset
+ *    BIT3: External pin reset
+ *    BIT4: COP loss of reference reset
+ *    BIT5: COP time-out reset
+ *    BIT8: COP window time-out reset
+ *    Others: Reserved, should be set to 0
+ */
+#define _ENTER_BOOTLOADER_RESET_TYPE ${_ENTER_BOOTLOADER_RESET_TYPE}$
+
+#endif /* _STARTUP_BOOTLOADER_CONFIG_H_ */

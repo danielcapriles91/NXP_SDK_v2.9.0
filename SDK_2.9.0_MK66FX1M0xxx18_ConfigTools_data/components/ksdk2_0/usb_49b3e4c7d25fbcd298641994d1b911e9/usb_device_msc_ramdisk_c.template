@@ -1,0 +1,189 @@
+#include "usb_device_config.h"
+#include "usb.h"
+#include "usb_device.h"
+
+#include "usb_device_class.h"${<code>
+if(interfaceClass == 0x08){ // if MSC class
+</code>}$
+#include "usb_device_msc.h"
+${<code>
+}
+</code>}$
+#include "usb_device_ch9.h"
+#include "usb_device_descriptor.h"
+
+#include "usb_device_composite.h"
+
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+
+/* Length of Each Logical Address Block */
+#define LENGTH_OF_EACH_LBA (512U)
+/* total number of logical blocks present */
+#define TOTAL_LOGICAL_ADDRESS_BLOCKS_NORMAL (48U)
+/* Net Disk Size, the default disk is 48*512 = 24kBytes, however the disk recognized by PC only has 4kBytes after format,
+   since the file system also needs some space */
+#define DISK_SIZE_NORMAL (TOTAL_LOGICAL_ADDRESS_BLOCKS_NORMAL * LENGTH_OF_EACH_LBA)
+/* Application define logical unit number, if LOGICAL_UNIT_SUPPORTED > USB_DEVICE_MSC_MAX_LUN, update USB_DEVICE_MSC_MAX_LUN in class driver usb_device_msc.h*/
+#define LOGICAL_UNIT_SUPPORTED (1U)
+
+/*******************************************************************************
+ * Variables
+ ******************************************************************************/
+
+/* refer to UFI inquiry data format structure */
+USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
+static usb_device_inquiry_data_fromat_struct_t g_InquiryInfo = {
+    (USB_DEVICE_MSC_UFI_PERIPHERAL_QUALIFIER << USB_DEVICE_MSC_UFI_PERIPHERAL_QUALIFIER_SHIFT) |
+        USB_DEVICE_MSC_UFI_PERIPHERAL_DEVICE_TYPE, /*!< Peripheral Device Type*/
+    (uint8_t)(USB_DEVICE_MSC_UFI_REMOVABLE_MEDIUM_BIT << USB_DEVICE_MSC_UFI_REMOVABLE_MEDIUM_BIT_SHIFT), /*!< Removable Media Bit*/
+    USB_DEVICE_MSC_UFI_VERSIONS,                   /*!< ISO Version, ECMA Version, ANSI Version*/
+    0x02,                                          /*!< Response Data Format*/
+    USB_DEVICE_MSC_UFI_ADDITIONAL_LENGTH,          /*!< The length in bytes of the parameters*/
+    {0x00, 0x00, 0x00},                            /*!< reserved*/
+    {\'N\', \'X\', \'P\', \' \', \'S\', \'E\', \'M\', \'I\'},      /*!< Vendor Identification*/
+    {\'N\', \'X\', \'P\', \' \', \'M\', \'A\', \'S\', \'S\', \' \', \'S\', \'T\', \'O\', \'R\', \'A\', \'G\', \'E\'}, /*!< Product Identification*/
+    {\'0\', \'0\', \'0\', \'1\'}};                         /*!< Product Revision Level*/
+/* refer to UFI mode parameters header structure */
+USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
+static usb_device_mode_parameters_header_struct_t g_ModeParametersHeader = {
+    0x0000,                  /*!< Mode Data Length*/
+    0x00,                    /*!< The Medium Type Code field specifies the inserted medium type*/
+    0x00,                    /*!< WP and DPOFUA bit: MODE SENSE command, a Write Protected bit of zero indicates the medium is write enabled*/
+    {0x00, 0x00, 0x00, 0x00} /*!< Reserved*/
+};
+/* RAM disk data */
+USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static uint8_t s_StorageDisk[DISK_SIZE_NORMAL];
+/* pointer to the first byte of the RAM disk data */
+USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static uint8_t *storageDisk = &s_StorageDisk[0];
+
+/*******************************************************************************
+ * Code
+ ******************************************************************************/
+
+/*!
+ * @brief MSC device event function.
+ *
+ * This function handles MSC class-specific events.
+ *
+ * @param handle The device handle.
+ * @param event The event codes. Please refer to the enumeration usb_device_event_t.
+ * @param param The param type is determined by the event code.
+ * @return A USB error code or kStatus_USB_Success.
+ */
+usb_status_t USB_Device${idCamelCase}$Callback(class_handle_t handle, uint32_t event, void *param)
+{
+    usb_status_t error = kStatus_USB_Error;
+    usb_device_lba_information_struct_t *lbaInformationStructure;
+    usb_device_lba_app_struct_t *lbaData;
+    usb_device_ufi_app_struct_t *ufi;
+    usb_device_capacity_information_struct_t *capacityInformation;
+
+    switch (event)
+    {
+        case kUSB_DeviceMscEventReadResponse:
+            lbaData = (usb_device_lba_app_struct_t *)param;
+            break;
+        case kUSB_DeviceMscEventWriteResponse:
+            lbaData = (usb_device_lba_app_struct_t *)param;
+            break;
+        case kUSB_DeviceMscEventWriteRequest:
+            lbaData = (usb_device_lba_app_struct_t *)param;
+            /*offset is the write start address get from write command, refer to class driver*/
+            lbaData->buffer = storageDisk + lbaData->offset * LENGTH_OF_EACH_LBA;
+            break;
+        case kUSB_DeviceMscEventReadRequest:
+            lbaData = (usb_device_lba_app_struct_t *)param;
+            /*offset is the read start address get from read command, refer to class driver*/
+            lbaData->buffer = storageDisk + lbaData->offset * LENGTH_OF_EACH_LBA;
+            break;
+        case kUSB_DeviceMscEventGetLbaInformation:
+            lbaInformationStructure = (usb_device_lba_information_struct_t *)param;                        
+            lbaInformationStructure->logicalUnitNumberSupported = LOGICAL_UNIT_SUPPORTED;                     
+            lbaInformationStructure->logicalUnitInformations[0].lengthOfEachLba = LENGTH_OF_EACH_LBA;
+            lbaInformationStructure->logicalUnitInformations[0].totalLbaNumberSupports = TOTAL_LOGICAL_ADDRESS_BLOCKS_NORMAL;
+            lbaInformationStructure->logicalUnitInformations[0].bulkInBufferSize = DISK_SIZE_NORMAL;
+            lbaInformationStructure->logicalUnitInformations[0].bulkOutBufferSize = DISK_SIZE_NORMAL;
+            break;
+        case kUSB_DeviceMscEventTestUnitReady:
+            /*change the test unit ready command\'s sense data if need, be careful to modify*/
+            ufi = (usb_device_ufi_app_struct_t *)param;
+            break;
+        case kUSB_DeviceMscEventInquiry:
+            ufi = (usb_device_ufi_app_struct_t *)param;
+            ufi->size = sizeof(usb_device_inquiry_data_fromat_struct_t);
+            ufi->buffer = (uint8_t *)&g_InquiryInfo;
+            break;
+        case kUSB_DeviceMscEventModeSense:
+            ufi = (usb_device_ufi_app_struct_t *)param;
+            ufi->size = sizeof(usb_device_mode_parameters_header_struct_t);
+            ufi->buffer = (uint8_t *)&g_ModeParametersHeader;
+            break;
+        case kUSB_DeviceMscEventModeSelect:
+            break;
+        case kUSB_DeviceMscEventModeSelectResponse:
+            ufi = (usb_device_ufi_app_struct_t *)param;
+            break;
+        case kUSB_DeviceMscEventFormatComplete:
+            break;
+        case kUSB_DeviceMscEventRemovalRequest:
+            break;
+        case kUSB_DeviceMscEventRequestSense:
+            break;
+        case kUSB_DeviceMscEventReadCapacity:
+            capacityInformation                         = (usb_device_capacity_information_struct_t *)param;
+            capacityInformation->lengthOfEachLba        = LENGTH_OF_EACH_LBA;
+            capacityInformation->totalLbaNumberSupports = TOTAL_LOGICAL_ADDRESS_BLOCKS_NORMAL;
+            break;
+        case kUSB_DeviceMscEventReadFormatCapacity:
+            capacityInformation                         = (usb_device_capacity_information_struct_t *)param;
+            capacityInformation->lengthOfEachLba        = LENGTH_OF_EACH_LBA;
+            capacityInformation->totalLbaNumberSupports = TOTAL_LOGICAL_ADDRESS_BLOCKS_NORMAL;
+            break;
+        default:
+            break;
+    }
+    return error;
+}
+
+/*!
+ * @brief MSC device reconfiguration function.
+ *
+ * This function handles MSC class-specific configuration change.
+ *
+ * @param handle The device handle.
+ * @param configuration_idx The configuration index.
+ * @return kStatus_USB_Success.
+ */
+usb_status_t USB_Device${idCamelCase}$SetConfiguration(class_handle_t handle, uint8_t configuration_idx)
+{
+   return kStatus_USB_Success;
+}
+
+/*!
+ * @brief MSC device interface selection function.
+ *
+ * This function handles MSC class-specific interface selection.
+ *
+ * @param handle The device handle.
+ * @param alternateSetting The alternate interface to select.
+ * @return kStatus_USB_Success.
+ */
+usb_status_t USB_Device${idCamelCase}$SetInterface(class_handle_t handle, uint8_t alternateSetting)
+{
+   return kStatus_USB_Success;
+}
+
+/*!
+ * @brief MSC device initialization function.
+ *
+ * This function handles MSC class-specific setup.
+ *
+ * @param deviceComposite The data structure of the MSC device, stores the device information, such as class handle.
+ * @return kStatus_USB_Success.
+ */
+usb_status_t USB_Device${idCamelCase}$Init(usb_device_composite_struct_t *deviceComposite)
+{
+    return kStatus_USB_Success;
+}

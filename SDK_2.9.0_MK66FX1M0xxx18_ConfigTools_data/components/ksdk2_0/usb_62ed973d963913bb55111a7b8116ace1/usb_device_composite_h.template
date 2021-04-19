@@ -1,0 +1,59 @@
+#ifndef __USB_DEVICE_COMPOSITE_H__
+#define __USB_DEVICE_COMPOSITE_H__
+
+#include "usb_device_config.h"
+#include "usb.h"
+#include "usb_device.h"
+
+#include "usb_device_class.h"
+#include "usb_device_ch9.h"
+#include "usb_device_descriptor.h"
+
+#if (defined(USB_DEVICE_CHARGER_DETECT_ENABLE) && (USB_DEVICE_CHARGER_DETECT_ENABLE > 0U))
+#include "usb_device_hid.h"
+#endif
+
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+
+ /*! @brief USB controller ID */
+#define USB_DEVICE_CONTROLLER_ID kUSB_Controller${controllerNameCamelCase + controllerIdx}$
+/*! @brief USB interrupt priority ID */
+#define USB_DEVICE_INTERRUPT_PRIORITY (3U)
+
+/*!
+ * @brief Initialize USB module hardware and software.
+ */
+void USB_DeviceApplicationInit(void);
+
+/*!
+ * @brief Structure containing device handle, hadle of interfaces and information on curren configuration, alternate setting, speed and attachment status.
+ *
+ */
+typedef struct _usb_device_composite_struct
+{
+    usb_device_handle deviceHandle;${<code>
+interfaces.forEach(function(interface){
+    if (!isSubordinateInterface(interface, interfaces)) {</code>}$
+    class_handle_t ${interface.idLowerCamelCase}$Handle;${<code>
+    }
+});</code>}$
+    uint8_t currentConfiguration; /*Current configuration number*/
+    uint8_t currentInterfaceAlternateSetting[USB_COMPOSITE_INTERFACE_COUNT]; /*alternate setting number*/
+    uint8_t speed;    /*USB speed code, one of the following: USB_SPEED_FULL(0x00U),USB_SPEED_LOW(0x01U),USB_SPEED_HIGH(0x02U)*/
+    uint8_t attach;    /*status of device attachment*/
+#if (defined(USB_DEVICE_CHARGER_DETECT_ENABLE) && (USB_DEVICE_CHARGER_DETECT_ENABLE > 0U))
+    volatile uint8_t vReginInterruptDetected;
+    volatile uint8_t vbusValid;
+    volatile usb_device_dcd_port_type_t dcdPortType;
+    volatile usb_device_dcd_dev_status_t dcdDevStatus;
+#endif
+} usb_device_composite_struct_t;
+
+/*!
+ * @brief USB device tasks function.
+ */
+void USB_DeviceTasks(void);
+
+#endif /* __USB_DEVICE_COMPOSITE_H__ */

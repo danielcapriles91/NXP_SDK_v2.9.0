@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="intc_reg"  label="Interrupt controller" auto_add_instances="1" category="Register init" registers_init="true" options="UI_COMPONENT_MODE_HIDDEN" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-9.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <description>Interrupt Controller (INTC)</description>
+   <mode id="general" label="General" >
+      <description>Common mode</description>
+      <config_set_refs>
+         <config_set_ref>intc</config_set_ref>
+      </config_set_refs>
+      <master_peripheral exclusive="true">
+         <peripheral_type>INTC</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="intc" label="Interrupt controller configuration">
+      <description>General interrupt controller configuration</description>
+      <generated_types></generated_types>
+      <user_types>
+         <struct id="interrupt_table_t">
+            <info id="interrupt_vector" label="#" value="$configSet.all_interrupt_cfg.getValue().get($parent.getID().toInt()).getSetting(`vectorNumber`).getValue()" >
+               <description>The interrupt vector number that is used.</description>
+            </info>
+            <info id="interrupt_source" label="Interrupt" value="$configSet.all_interrupt_cfg.getValue().get($parent.getID().toInt()).getSetting(`IRQn`).getEnumItemLabel()" >
+               <description>The interrupt vector that is used.</description>
+            </info>
+            <info id="interrupt_priority" label="Priority" value="$configSet.all_interrupt_cfg.getValue().get($parent.getID().toInt()).getSetting(`dsc_enable_interrrupt`).getEnumItemLabel()" >
+               <description>The interrupt vector that is used.</description>
+            </info>
+            <info id="interrupt_handle" label="Handle ID" value="$configSet.all_interrupt_cfg.getValue().get($parent.getID().toInt()).getSetting(`IRQhandler`).getValue()" >
+               <description>The interrupt handle identifier that is used for definition of the interrupt subroutine.</description>
+            </info>
+            <info id="instance" label="Component" value="$configSet.all_interrupt_cfg.getValue().get($parent.getID().toInt()).getSetting(`$instance`).getID()" >
+               <description>Instance of the component where the interrupt is used.</description>
+            </info>
+            <info id="reference" label="Setting reference" value="$configSet.all_interrupt_cfg.getValue().get($parent.getID().toInt()).getSetting(`$instance`).getID() + ` setting`">
+               <options_expr>
+                  <option id="UI_SETTING_LINK" expr="$configSet.all_interrupt_cfg.getValue().get($parent.getID().toInt())"/>
+               </options_expr>
+               <description>
+A link to the component's settings where the interrupt is used and configured. 
+
+Please note that switching to a component that is instantiated in different functional group will cause closing of this component window (the diferenct functional group's compopnents will be displayed). Switch to the current functional group for restoring of view of these components.
+               </description>
+            </info>
+            <info id="func_group" label="Functional group" value="$configSet.all_interrupt_cfg.getValue().get($parent.getID().toInt()).getSetting(`$group`).getID()" >
+               <description>Name of the functional group where the component is instantiated.</description>
+            </info>
+         </struct>
+         <reference id="interrupt_t" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="all_devices"/>
+         <struct id="interrupt_channel_t">
+            <string id="channelId" label="Interrupt label">
+               <description>The identifier of the interrupt that will be used as a prefix in the generated definition of interrupt.</description>
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description="Interrupt lable (prefix name) is not valid C identifier."/>
+                  <constraint cond_expr="$parent.getParent().countOccurrences(item -> (item.getSetting(`channelId`).getValue() == $this.getValue())) == 1" level="error" description_expr="`The interrupt label ` + $this.getValue() + ` is a duplicate. Use different label.`"/>
+               </validation>            
+            </string>
+            <reference id="interrupt_t" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="all_devices;UI_BORDER_HIDDEN">
+               <options_expr>
+                  <option id="irq_custom_name" expr="toUpperCase($instance.getFnGroupPrefix() + $parent.channelId.getValue())"/>
+               </options_expr>
+            </reference>
+            
+         </struct>
+         <enum id="dsc_core_interrupt_level_t">
+            <item id="all_levels" label="All interrupts enabled" value="0">
+               <description>Enable all priority levels of interrupts in DSC core.</description>
+            </item>
+            <item id="mask_level_0" label="Mask priority level 0" value="1">
+               <description>Mask the priority level 0 in the CPU core. Interrupt priority levels 1,2 and 3 will be enabled in the DSC core only.</description>
+            </item>
+            <item id="mask_level_0_1" label="Mask priority level 0 and 1" value="2">
+               <description>Mask the priority level 0 and 1 in the CPU core. Interrupt priority levels 2 and 3 will be enabled in the DSC core only.</description>
+            </item>
+            <item id="mask_level_0_1_2" label="Mask priority level 0,1 and 2" value="3">
+               <description>Mask the priority level 0, 1 and 2 in the CPU core. Interrupt priority level 3 will be enabled in the DSC core only.</description>
+            </item>
+         </enum>
+      </user_types>
+      <settings>
+         <reference id="dsc_core_int_level" label="DSC core interrupts initialization" type="dsc_core_interrupt_level_t" >
+            <description>Configuration of four interrupt priority levels of the DSC core. This setting allows initialization of DSC core interrupt masks.</description>
+         </reference>
+         <!-- All interrupts for processing common initialization -->
+         <!-- update for v9
+         <variable id="all_interrupt_cfg" value="$components.system.#global.all_interrupt_config.getValue()"></variable-->
+         <variable id="all_interrupt_cfg" value="$root.filter(item -> ((item.getType() == `struct`) &amp;&amp; (item.nodeExists(`IRQn`)) &amp;&amp; (item.getSetting(`IRQn`).hasOption(`system_irqn`)) &amp;&amp;  item.isAvailable() &amp;&amp; item.isEnabled()),true)"></variable>
+         <variable id="IRQ_devices" value="$configSet.interrupts.reduce(createArray(),(last, i) -> last.merge(i.getSetting(`interrupt_t.irqData`).getValue().getSetting(`devices`).filter(x -> x.getID() == `id`,true))).reduce(createArray(),(last, i) -> last.merge(toArray(i.getValue())))">
+            <validation>
+               <dependency_response resource_id_expr="`INTC.IRQ_devices`" value="$this.getValue()"/>
+            </validation>
+         </variable>
+         <!-- All interrupts of the current functional group -->
+         <variable id="functional_group_interrupt_cfg" value="$group.filter(item -> ((item.getType() == `struct`) &amp;&amp; (item.nodeExists(`IRQn`)) &amp;&amp; (item.getSetting(`IRQn`).hasOption(`system_irqn`)) &amp;&amp; item.isAvailable() &amp;&amp; item.isEnabled()),true)"></variable>
+         <array id="interrupt_table" label="Interrupt overview table" type="interrupt_table_t" size="$parent.all_interrupt_cfg.getValue().size()" options="ShowContentAs=Table;UI_BORDER_HIDDEN;UI_ARRAY_INDICES_HIDDEN;UI_TABLE_COLUMN_WIDTHS=2,14,10,11,8,11,14">
+            <description>Interrupt overview table shows all interrupts that are initialized and used in the all functional groups (see the Functional group column).</description>
+         </array>
+         <!-- configuration settings of DMA channels -->
+         <array id="interrupts" label="Initialization of interrupts" type="interrupt_channel_t"  options="ShowContentAs=MasterDetail" key_selector_expr="(x) -> (x.getSetting(`channelId`).getValue() == ``) ? (`&lt;empty ID (` + x.getId() + `)&gt;`) : x.getSetting(`channelId`).getValue()">
+            <description>Settings for initialization of interrupts in the INTC peripheral. The initialization is provided independently on other configuration components.</description>
+            <item_defaults>
+               <set_default id="channelId" value_expr="x -> `int_` + x.getID()"/>
+            </item_defaults>
+         </array>
+         <!-- Variable for assignment of the FIM0 register value from an interrupt. -->
+         <variable id="fast0IntVectorNumber" value="($parent.functional_group_interrupt_cfg.getValue()
+            .countOccurrences(i -> i.getSetting(`dsc_enable_interrrupt`).getEnumItemId() == `fastInt0`) == 0) 
+            ? 0
+            : $parent.functional_group_interrupt_cfg.getValue().findFirst(i -> i.getSetting(`dsc_enable_interrrupt`).getEnumItemId() == `fastInt0`)
+            .getSetting(`vectorNumber`).getValue()" >
+            <assign when="true">
+               <register peripheral="INTC" name="FIM0" bitfield="FAST_INTERRUPT_0" value="$parent.fast0IntVectorNumber.getValue().toInt()"/>
+            </assign>
+         </variable>
+         <!-- Variable for assignment of the FIM1 register value from an interrupt. -->
+         <variable id="fast1IntVectorNumber" value="($parent.functional_group_interrupt_cfg.getValue()
+            .countOccurrences(i -> i.getSetting(`dsc_enable_interrrupt`).getEnumItemId() == `fastInt1`) == 0) 
+            ? 0
+            : $parent.functional_group_interrupt_cfg.getValue().findFirst(i -> i.getSetting(`dsc_enable_interrrupt`).getEnumItemId() == `fastInt1`)
+            .getSetting(`vectorNumber`).getValue()" >
+            <assign when="true">
+               <register peripheral="INTC" name="FIM1" bitfield="FAST_INTERRUPT_1" value="$parent.fast1IntVectorNumber.getValue().toInt()"/>
+            </assign>
+         </variable>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">fsl_device_registers</param>
+               <param id="filename">fsl_device_registers.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">Cpu</param>
+               <param id="filename">Cpu.h</param>
+            </fragment>
+         </section>         
+         <section target="defines">
+            <fragment id="IRQ_definitions" for_elements_of="$this.interrupts.map(x -> x.getSetting(`interrupt_t`))"/>
+         </section>
+         <!-- Global pre-initialization section that is used in the default initialization group only. -->
+         <section target="common_pre_init_function" >
+            <text>  /* Disable all interrupts to prevent invoking of any interrupt during initialization of peripherals. */</text><br/>
+            <text>  INTC->CTRL |= INTC_CTRL_INT_DIS_MASK;</text><br/>
+         </section>
+         <section target="global_preinit1">
+         </section>
+         <!-- Global post-initialization section that is used in the default initialization group only. -->
+         <section target="common_post_init_function" >
+            <!-- Disable all interrupt -->
+            <!-- All interrupts from the current function group-->
+            <fragment id="INTC_IRQn_enable_default" for_elements_of="$this.functional_group_interrupt_cfg.getValue()"/>
+            <text>  /* Enable all interrupts after initialization of peripherals. */</text><br/>
+            <text>  INTC->CTRL &amp;= ~INTC_CTRL_INT_DIS_MASK;</text><br/>
+            <text>  /* Initialization of masked/enabled DSC core interrupt levels. */</text><br/>
+            <expr>`  __EI(` + $this.dsc_core_int_level.getEnumItemValue() + `);`</expr><br/>
+         </section>         
+      </code>
+      <quick_selections></quick_selections>
+   </config_set>
+</component:config_component>

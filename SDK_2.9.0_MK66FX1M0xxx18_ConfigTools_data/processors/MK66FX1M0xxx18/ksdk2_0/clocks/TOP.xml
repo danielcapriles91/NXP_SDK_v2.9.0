@@ -1,0 +1,242 @@
+<?xml version="1.0"?>
+<clocks:top_level xmlns:clocks="http://apif.freescale.net/schemas/clocks/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://apif.freescale.net/schemas/clocks/1.1 http://apif.freescale.net/schemas/clocks/1.1/clocks.xsd">
+  <diagram file="CLOCKS_DIAGRAM.dsn"/>
+  <power_modes file="POWER_MODES.xml"/>
+  <component id="kinetis_k_top_level">
+    <instance_header>
+      <instance_description>Clock model for the MCG module (parameterized, shared accross all Kinetis parts)</instance_description>
+    </instance_header>
+    <interface>
+      <output_clock_signal id="Core_clock" name="Core clock" description="ARM Cortex M4 core clock" group="system"/>
+      <output_clock_signal id="System_clock" name="System clock" description="Clocks the crossbar switch and bus masters directly connected to the crossbar." group="system"/>
+      <output_clock_signal id="Bus_clock" name="Bus clock" description="Clocks bus slaves and peripheral (excluding memories)" group="system"/>
+      <output_clock_signal id="FlexBus_clock" name="FlexBus clock" description="Clocks the external external FlexBus interface" available="hasPeripheral(`FB`)" group="system"/>
+      <output_clock_signal id="Flash_clock" name="Flash clock" description="Clocks the flash memory." group="system"/>
+      <output_clock_signal id="MCGIRCLK" name="MCGIRCLK" description="MCG Internal reference clock." group="peripheral"/>
+      <output_clock_signal id="MCGFFCLK" name="MCGFFCLK" description="MCG Fixed Frequency clock output of the slow reference clock or a divided MCG external reference clock. Note: Clock is valid only when its frequency is not more than 1/8 of the MCGOUTCLK frequency. When it is not valid, it is disabled and held high. The MCGFFCLK is not available when the MCG is in BLPI mode. This clock is also disabled in Stop mode." group="peripheral"/>
+      <output_clock_signal id="OSCERCLK" name="OSCERCLK" description="External reference clock" group="peripheral"/>
+      <output_clock_signal id="OSCERCLK_UNDIV" name="OSCERCLK undivided" description="Undivided system Oscillator External Reference output clock" group="peripheral"/>
+      <output_clock_signal id="ERCLK32K" name="ERCLK32K" description="External reference clock 32k (or 1kHz LPO). Clock source for some modules." group="peripheral"/>
+      <output_clock_signal id="RTC_CLKOUT" name="RTC_CLKOUT" description="RTC oscillator output for the RTC module." available="hasPeripheral(`RTC`)" group="peripheral"/>
+      <output_clock_signal id="PLLFLLCLK" name="MCG PLL/FLL/IRC48M/USB1PFD clock" description="Selected clock signal, either MCGPLLCLK, MCGFLLCLK, IRC48M or USB1PFD clock (if supported)." group="peripheral"/>
+      <output_clock_signal id="LPO_clock" name="LPO clock" description="Low Power Oscillator clock 1kHz" group="peripheral"/>
+      <output_clock_signal id="IRC48MCLK" name="IRC48MCLK" description="Internal clock 48MHz" group="peripheral"/>
+      <output_clock_signal id="USB48MCLK" name="USB FS clock" description="USB 48MHz clock for USB Full Speed device." available="hasPeripheral(`USB0`)" group="peripheral"/>
+      <output_clock_signal id="TRACECLKIN" name="Trace clock input" group="peripheral"/>
+      <output_clock_signal id="ENET1588TSCLK" name="ENET IEEE 1588 timestamp clock" available="hasPeripheral(`ENET`)" group="peripheral"/>
+      <output_clock_signal id="RMIICLK" name="ENET RMII clock" available="hasPeripheral(`ENET`)" group="peripheral"/>
+      <output_clock_signal id="SDHCCLK" name="SDHC clock" available="hasPeripheral(`SDHC`)" group="peripheral"/>
+      <output_clock_signal id="CLKOUT" name="CLKOUT(FB_CLK)" description="Clock output or FlexBus device clock output. Please note that when it is used as FlexBus device clock output the FlexBus clock must be selected by the CLKOUTSEL clock selector." group="peripheral"/>
+      <output_clock_signal id="LPUARTCLK" name="LPUART clock" available="hasPeripheral(`LPUART0`)" group="peripheral"/>
+      <output_clock_signal id="TPMCLK" name="TPM clock" available="hasPeripheral(`TPM0`) || hasPeripheral(`TPM1`) || hasPeripheral(`TPM2`)" group="peripheral"/>
+      <output_clock_signal id="USBSLCLK" name="USB slow clock" available="hasPeripheral(`USBPHY`)" group="peripheral"/>
+      <output_clock_signal id="USBPHYPLLCLK" name="USBPHYPLLCLK" description="USBPHY PLL output clock (480MHz)" available="hasPeripheral(`USBPHY`)" group="peripheral"/>
+    </interface>
+    <implementation>
+      <component_instance id="OSC" name="System Oscillator" component="OSC" peripheral="OSC" file="OSC.xml">
+        <signal_map/>
+      </component_instance>
+      <component_instance id="RTC" name="RTC Oscillator" available="hasPeripheral(`RTC`)" component="RTC" peripheral="RTC" file="RTC.xml">
+        <signal_map/>
+      </component_instance>
+      <component_instance id="MCG" name="MCG" component="MCG" peripheral="MCG" file="MCG.xml">
+        <signal_map>
+          <input signal="SIM.OSCCLK" component_signal="OSCCLK_IN"/>
+          <input signal="SIM.RTC32KCLK" component_signal="RTC32kHzCLK_IN"/>
+          <input signal="SIM.IRC48MCLK" component_signal="IRC48MCLK_IN"/>
+          <input signal="USBPHY.USB1PFDCLK" component_signal="EXT_PLL_IN"/>
+        </signal_map>
+      </component_instance>
+      <component_instance id="IRC48M" name="IRC48M Internal Oscillator" component="IRC48M" peripheral="USB0" file="IRC48M.xml">
+        <signal_map/>
+      </component_instance>
+      <component_instance id="PMC" name="PMC" component="PMC" peripheral="PMC" file="PMC.xml">
+        <signal_map/>
+      </component_instance>
+      <component_instance id="SIM" name="SIM" component="SIM" peripheral="SIM" file="SIM.xml">
+        <signal_map>
+          <input signal="OSC.OSCCLK" component_signal="OSCCLK_IN"/>
+          <input signal="OSC.OSCERCLK" component_signal="OSCERCLK_IN"/>
+          <input signal="OSC.OSCERCLK_UNDIV" component_signal="OSCERCLK_UNDIV_IN"/>
+          <input signal="OSC.OSC32KCLK" component_signal="OSC32KCLK_IN"/>
+          <input signal="RTC.RTC32KCLK" component_signal="RTC32KCLK_IN"/>
+          <input signal="RTC.RTC1HzCLK" component_signal="RTC1HzCLK_IN"/>
+          <input signal="IRC48M.IRC48MCLK" component_signal="IRC48MCLK_IN"/>
+          <input signal="MCG.MCGIRCLK" component_signal="MCGIRCLK_IN"/>
+          <input signal="MCG.MCGFFCLK" component_signal="MCGFFCLK_IN"/>
+          <input signal="MCG.MCGOUTCLK" component_signal="MCGOUTCLK_IN"/>
+          <input signal="MCG.MCGFLLCLK" component_signal="MCGFLLCLK_IN"/>
+          <input signal="MCG.MCGPLLCLK" component_signal="MCGPLLCLK_IN"/>
+          <input signal="PMC.LPOCLK" component_signal="LPOCLK_IN"/>
+          <input signal="USBPHY.USB1PFDCLK" component_signal="USBPFDCLK_IN"/>
+        </signal_map>
+      </component_instance>
+      <component_instance id="USBPHY" name="USB1 (HS) PHY" available="hasPeripheral(`USBPHY`)" component="USBPHY" peripheral="USBPHY" file="USBPHY.xml">
+        <signal_map>
+          <input signal="OSC.OSCERCLK_UNDIV" component_signal="CLK_XTAL_IN"/>
+        </signal_map>
+      </component_instance>
+      <map_output id="Core_clock">
+        <input signal="SIM.CORECLK"/>
+        <constraint max_freq="180 MHz" when="powerMode==`HSRUN`"/>
+        <constraint max_freq="120 MHz" when="powerMode==`RUN`"/>
+        <constraint max_freq="4 MHz" when="powerMode==`VLPR`"/>
+      </map_output>
+      <map_output id="System_clock">
+        <input signal="SIM.SYSTEMCLK"/>
+        <constraint max_freq="180 MHz" when="powerMode==`HSRUN`"/>
+        <constraint max_freq="120 MHz" when="powerMode==`RUN` || powerMode==`WAIT`"/>
+        <constraint max_freq="4 MHz" when="powerMode==`VLPR`"/>
+      </map_output>
+      <map_output id="Bus_clock">
+        <input signal="SIM.BUSCLK"/>
+        <constraint max_freq="60 MHz" when="powerMode==`HSRUN`"/>
+        <constraint max_freq="60 MHz" when="powerMode==`RUN` || powerMode==`WAIT`"/>
+        <constraint max_freq="4 MHz" when="powerMode==`VLPR` || powerMode==`VLPW`"/>
+      </map_output>
+      <map_output id="FlexBus_clock" available="hasPeripheral(`FB`)">
+        <input signal="SIM.FLEXBUSCLK"/>
+        <constraint max_freq="60 MHz" when="powerMode==`HSRUN`"/>
+        <constraint max_freq="60 MHz" when="powerMode==`RUN` || powerMode==`WAIT`"/>
+        <constraint max_freq="4 MHz" when="powerMode==`VLPR` || powerMode==`VLPW`"/>
+      </map_output>
+      <map_output id="Flash_clock">
+        <input signal="SIM.FLASHCLK"/>
+        <constraint max_freq="28 MHz" when="powerMode==`HSRUN`"/>
+        <constraint max_freq="28 MHz" when="powerMode==`RUN` || powerMode==`WAIT`"/>
+        <constraint max_freq="1 MHz" when="(powerMode==`VLPR` || powerMode==`VLPW`) &amp;&amp; (MCGMode == `BLPE`)"/>
+        <constraint max_freq="800 kHz" when="(powerMode==`VLPR` || powerMode==`VLPW`) &amp;&amp; (MCGMode == `BLPI`)"/>
+      </map_output>
+      <map_output id="MCGIRCLK">
+        <input signal="SIM.MCGIRCLK"/>
+      </map_output>
+      <map_output id="MCGFFCLK">
+        <input signal="SIM.MCGFFCLK"/>
+      </map_output>
+      <map_output id="OSCERCLK">
+        <input signal="SIM.OSCERCLK"/>
+      </map_output>
+      <map_output id="OSCERCLK_UNDIV">
+        <input signal="SIM.OSCERCLK_UNDIV"/>
+      </map_output>
+      <map_output id="ERCLK32K">
+        <input signal="SIM.ERCLK32K"/>
+      </map_output>
+      <map_output id="RTC_CLKOUT" available="hasPeripheral(`RTC`)">
+        <input signal="SIM.RTCCLKOUT"/>
+        <enable cond_expr="RTCCLKOUTConfig == `yes`" description="Output is enabled by the Initialize RTC_CLKOUT clock property settings."/>
+        <configuration_element id="RTCCLKOUTConfig" name="Initialize RTC_CLKOUT" description="The RTC_CLKOUT clock selector initialization">
+          <default value="no"/>
+          <item id="yes" description="yes"/>
+          <item id="no" description="no"/>
+        </configuration_element>
+      </map_output>
+      <map_output id="PLLFLLCLK">
+        <input signal="SIM.PLLFLLCLK"/>
+      </map_output>
+      <map_output id="LPO_clock">
+        <input signal="PMC.LPOCLK"/>
+      </map_output>
+      <map_output id="IRC48MCLK">
+        <input signal="IRC48M.IRC48MCLK"/>
+      </map_output>
+      <map_output id="USB48MCLK" available="hasPeripheral(`USB0`)">
+        <input signal="SIM.USB48MCLK"/>
+        <enable cond_expr="USBClkConfig == `yes`" description="Output is enabled by the Initialize USB clock property settings."/>
+        <constraint freq="48 MHz" accuracy="0.0025" when="powerMode==`HSRUN`"/>
+        <constraint freq="48 MHz" accuracy="0.0025" when="powerMode==`RUN` || powerMode==`WAIT`"/>
+        <configuration_element id="USBClkConfig" name="Initialize USB clock" description="The USB clock fractional prescaler and clock selector initialization">
+          <default value="no"/>
+          <item id="yes" description="yes"/>
+          <item id="no" description="no"/>
+        </configuration_element>
+      </map_output>
+      <map_output id="USBSLCLK" available="hasPeripheral(`USBPHY`)">
+        <input signal="SIM.USBSLCLK"/>
+        <enable cond_expr="(USBSLClkConfig == `yes`) || (USBPHYConfig != `no`)" description="Output is enabled by the Initialize USBPHY/HS slow clock property settings or Initialize USBPHY settings."/>
+        <constraint min_freq="32 kHz" when="USBPHYConfig != `no`" description="When the USBPHY is enabled the USB slow clock must be provided (32 kHz clock)"/>
+        <configuration_element id="USBSLClkConfig" name="Initialize USBPHY/HS slow clock" description="The USBPHY/HS slow clock selector initialization">
+          <default value="no"/>
+          <item id="yes" description="yes"/>
+          <item id="no" description="no"/>
+        </configuration_element>
+      </map_output>
+      <map_output id="TRACECLKIN">
+        <input signal="SIM.TRACECLKIN"/>
+        <constraint max_freq="120 MHz" when="powerMode==`HSRUN`"/>
+        <constraint max_freq="120 MHz" when="powerMode==`RUN` || powerMode==`WAIT`"/>
+        <constraint max_freq="4 MHz" when="powerMode==`VLPR` || powerMode==`VLPW`"/>
+        <configuration_element id="TraceClkConfig" name="Initialize Trace clock" description="The Trace clock selector initialization">
+          <default value="no"/>
+          <item id="yes" description="yes"/>
+          <item id="no" description="no"/>
+        </configuration_element>
+      </map_output>
+      <map_output id="ENET1588TSCLK" available="hasPeripheral(`ENET`)">
+        <input signal="SIM.ENET1588TSCLK"/>
+        <enable cond_expr="ENETTimeSrcConfig == `yes`" description="Output is enabled by the Initialize ENET 1588 clock property settings."/>
+        <constraint max_freq="180 MHz" when="powerMode==`HSRUN`"/>
+        <constraint max_freq="120 MHz" when="powerMode==`RUN` || powerMode==`WAIT`"/>
+        <configuration_element id="ENETTimeSrcConfig" name="Initialize ENET 1588 clock" description="The ENET 1588 clock selector initialization">
+          <default value="no"/>
+          <item id="yes" description="yes"/>
+          <item id="no" description="no"/>
+        </configuration_element>
+      </map_output>
+      <map_output id="RMIICLK" available="hasPeripheral(`ENET`)">
+        <input signal="SIM.RMIICLK"/>
+        <enable cond_expr="RMIISrcConfig == `yes`" description="Output is enabled by the Initialize RMII clock property settings."/>
+        <constraint freq="50 MHz" accuracy="0.000050" when="powerMode==`HSRUN`"/>
+        <constraint freq="50 MHz" accuracy="0.000050" when="powerMode==`RUN` || powerMode==`WAIT`"/>
+        <configuration_element id="RMIISrcConfig" name="Initialize RMII clock" description="The RMII clock selector initialization">
+          <default value="no"/>
+          <item id="yes" description="yes"/>
+          <item id="no" description="no"/>
+        </configuration_element>
+      </map_output>
+      <map_output id="SDHCCLK" available="hasPeripheral(`SDHC`)">
+        <input signal="SIM.SDHCCLK"/>
+        <enable cond_expr="SDHCClkConfig == `yes`" description="Output is enabled by the Initialize CLKOUT property settings."/>
+        <constraint max_freq="50 MHz" when="powerMode==`HSRUN`"/>
+        <constraint max_freq="50 MHz" when="powerMode==`RUN` || powerMode==`WAIT` || powerMode==`STOP`"/>
+        <constraint max_freq="4 MHz" when="powerMode==`VLPR` || powerMode==`VLPW` || powerMode==`VLPS`"/>
+        <configuration_element id="SDHCClkConfig" name="Initialize SDHC clock" description="The SDHC clock selector initialization">
+          <default value="no"/>
+          <item id="yes" description="yes"/>
+          <item id="no" description="no"/>
+        </configuration_element>
+      </map_output>
+      <map_output id="CLKOUT">
+        <input signal="SIM.CLKOUT"/>
+        <enable cond_expr="CLKOUTConfig == `yes`" description="Output is enabled by the Initialize CLKOUT property settings."/>
+        <configuration_element id="CLKOUTConfig" name="Initialize CLKOUT" description="The CLKOUT clock selector initialization">
+          <default value="no"/>
+          <item id="yes" description="yes"/>
+          <item id="no" description="no"/>
+        </configuration_element>
+      </map_output>
+      <map_output id="LPUARTCLK" available="hasPeripheral(`LPUART0`)">
+        <input signal="SIM.LPUARTCLK"/>
+        <enable cond_expr="LPUARTClkConfig == `yes`" description="Output is enabled by the Initialize LPUART clock property settings."/>
+        <configuration_element id="LPUARTClkConfig" name="Initialize LPUART clock" description="The LPUART clock selector initialization">
+          <default value="no"/>
+          <item id="yes" description="yes"/>
+          <item id="no" description="no"/>
+        </configuration_element>
+      </map_output>
+      <map_output id="TPMCLK" available="hasPeripheral(`TPM0`) || hasPeripheral(`TPM1`) || hasPeripheral(`TPM2`)">
+        <input signal="SIM.TPMCLK"/>
+        <enable cond_expr="TPMClkConfig == `yes`" description="Output is enabled by the Initialize TPM clock property settings."/>
+        <configuration_element id="TPMClkConfig" name="Initialize TPM clock" description="The TPM clock selector initialization">
+          <default value="no"/>
+          <item id="yes" description="yes"/>
+          <item id="no" description="no"/>
+        </configuration_element>
+      </map_output>
+      <map_output id="USBPHYPLLCLK" available="hasPeripheral(`USBPHY`)">
+        <input signal="USBPHY.USBPHYPLLCLK"/>
+        <enable power_modes="HSRUN RUN" cond_expr="(USBPHYConfig != `no`) &amp;&amp; (USBPHYConfig != `PFD`)" description="Enabled in Run and High speed run modes only"/>
+      </map_output>
+    </implementation>
+  </component>
+</clocks:top_level>

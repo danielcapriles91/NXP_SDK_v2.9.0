@@ -1,0 +1,44 @@
+#ifndef __USB_HOST_APP_H__
+#define __USB_HOST_APP_H__
+#include "usb_host_config.h"
+#include "usb_host.h"
+#include "fsl_device_registers.h"
+
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+
+#define USB_HOST_CONTROLLER_ID kUSB_Controller${controllerNameCamelCase + controllerIdx}$
+
+#if defined(__GIC_PRIO_BITS)
+#define USB_HOST_INTERRUPT_PRIORITY (25U)
+#else
+#define USB_HOST_INTERRUPT_PRIORITY (3U)
+#endif
+
+/*! @brief host app device attach/detach status */
+typedef enum _usb_host_app_state
+{
+    kStatus_DEV_Idle = 0, /*!< there is no device attach/detach */
+    kStatus_DEV_Attached, /*!< device is attached */
+    kStatus_DEV_Detached, /*!< device is detached */
+} usb_host_app_state_t;
+
+/*!
+ * @brief Initialize USB module hardware and software.
+ *
+ * @retval kStatus_USB_Success              The host is initialized successfully.
+ * @retval kStatus_USB_InvalidHandle        The hostHandle is a NULL pointer.
+ * @retval kStatus_USB_ControllerNotFound   Cannot find the controller according to the controller ID.
+ * @retval kStatus_USB_AllocFail            Allocation memory fail.
+ * @retval kStatus_USB_Error                Host mutex create fail; KHCI/EHCI mutex or KHCI/EHCI event create fail,
+ *                                          or, KHCI/EHCI IP initialize fail.
+ */
+usb_status_t USB_HostApplicationInit(void);
+
+/*!
+ * @brief USB host tasks function.
+ */
+void USB_HostTasks(void);
+
+#endif /* __USB_HOST_APP_H__ */

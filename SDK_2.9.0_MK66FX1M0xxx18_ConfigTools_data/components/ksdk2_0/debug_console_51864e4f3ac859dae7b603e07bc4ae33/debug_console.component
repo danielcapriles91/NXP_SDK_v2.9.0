@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="debug_console" label="DebugConsole" category="Utility"
+   global_only="false" hidden="false" auto_add="false"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd"
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <sw_comp_ref name="utility.debug_console" version="1.0.0"/>
+   <description>Debug console</description>
+   <mode id="general" label="General">
+      <description>Debug console configuration</description>
+      <config_set_refs>
+         <config_set_ref>fsl_debug_console</config_set_ref>
+      </config_set_refs>
+   </mode>
+   <script file="debug_console_codegenerator.js"/>
+   <user_functions>
+      <function_def id="boolToInt">x -> ((x != `false`) ? ((x == `true`) ? 1 : -1) : 0)</function_def>
+   </user_functions>
+   <config_set id="fsl_debug_console" label="General configuration" from_source="fsl_debug_console.h">
+      <description>General configuration of the Debug console utility</description>
+      <generated_types/>
+      <user_types>
+         <enum id="serial_port_type_t" label="Serial port type">
+            <item id="kSerialPort_Uart" label="Serial port UART" value="component.serial_manager_uart" available="isSdkComponentDefined(`component.serial_manager_uart`)"/>
+            <item id="kSerialPort_UsbCdc" label="Serial port USB CDC" value="component.serial_manager_usb_cdc" available="isSdkComponentDefined(`component.serial_manager_usb_cdc`) &amp;&amp; false"/><!-- The USB hasn't been supported yet. -->
+            <item id="kSerialPort_UsbCdcVirtual" label="Serial port USB CDC Virtual" value="component.serial_manager_usb_cdc_virtual" available="isSdkComponentDefined(`component.serial_manager_usb_cdc_virtual`) &amp;&amp; false"/><!-- The USB hasn't been supported yet. -->
+            <item id="kSerialPort_Swo" label="Serial port SWO" value="component.serial_manager_swo" available="isSdkComponentDefined(`component.serial_manager_swo`)"/>  
+         </enum>
+         <struct id="swo_peripheral_config_t">
+            <quick_selections>
+               <quick_selection id="QuickSelection1" label="Default">
+                  <set id="baudRate_Bps">100000</set>
+               </quick_selection>
+               <default>QuickSelection1</default>
+            </quick_selections>
+            <!-- SWO Type -->
+            <variable id="SWO_peripherals" value="       toArray(          `ARM`,           `SWD`,       `TPIU`,       `JTAG`, `CoreDebug`)"/>
+            <variable id="SWO_unified_signals" value="   toArray(`arm_trace_swo`,       `swd_out`,   `tpiu_swo`,   `tpiu_swo`, `tpiu_swo` )"/>
+            <variable id="SWO_signals" value="           toArray(          `SWO`,           `SWO`,        `SWO`,   `TPIU_SWO`, `TRACE_SWO`)"/>
+            <variable id="SWO_Clock_peripheral" value="  toArray(          `ARM`,           `SWD`,       `TPIU`,       `TPIU`, `CoreDebug`)"/>
+            <variable id="SWO_unified_clock" value="     toArray(   `TraceClock`, `FunctionClock`, `TraceClock`, `TraceClock`, `TraceClock`)"/>
+            <variable id="SWO_unified_ids" value="createArray(0,1,$parent.SWO_peripherals.getValue().size()-1).map(x -> ($parent.SWO_peripherals.getValue().get(toInt(x)) + `.` + $parent.SWO_unified_signals.getValue().get(toInt(x))))"></variable>
+            <variable id="SWO_signals_exist" value="createArray(0,1,$parent.SWO_peripherals.getValue().size()-1).map(x -> queryFeature(`PeripheralUnifiedSignal`, $parent.SWO_peripherals.getValue().get(toInt(x)) + `.` + $parent.SWO_unified_signals.getValue().get(toInt(x)) ,`Exists`))"/>
+            <variable id="SWO_peripheral_index" value="($parent.SWO_signals_exist.getValue().reduce(false, (lastResult, x) -> ((lastResult == false) ? (x==true) : true)) ? $parent.SWO_signals_exist.getValue().searchInArray(x -> x) : -1 )"/>
+            <variable id="isPeripheraSWOIndexValid" value="toInt($parent.SWO_peripheral_index.getValue()) &gt; -1"></variable>
+            <variable id="serial_port_swo_peripherals" value="$parent.isPeripheraSWOIndexValid.getValue() ?
+                                                   createArray().addItemToList($parent.SWO_peripherals.getValue().get($parent.SWO_peripheral_index.getValue().toInt()),
+                                                   $parent.SWO_peripherals.getValue().get($parent.SWO_peripheral_index.getValue().toInt()),
+                                                   $parent.SWO_peripherals.getValue().get($parent.SWO_peripheral_index.getValue().toInt()),
+                                                   true,
+                                                   $parent.SWO_peripherals.getValue().get($parent.SWO_peripheral_index.getValue().toInt())) :
+                                                   createArray()"/>
+            <dynamic_enum id="peripheralSWO" label="Peripheral" items="$parent.serial_port_swo_peripherals.getValue()">
+               <description>Serial port peripheral selection</description>
+               <validation>
+                  <dependency resource_type="PeripheralUnifiedSignal" when_expr="!$this.getEnumItemLabel().regexMatch(``)" 
+                              resource_id_expr="$parent.SWO_unified_ids.getValue().get($parent.SWO_peripheral_index.getValue().toInt())"
+                              description_expr="msg::message(`err_routed_signal`,$parent.SWO_signals.getValue().get($parent.SWO_peripheral_index.getValue().toInt()), $parent.SWO_peripherals.getValue().get($parent.SWO_peripheral_index.getValue().toInt()))"  level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            
+            <!-- Clock sources -->
+            <variable id="swo_peripheral" value="$parent.peripheralSWO.getEnumItemId()" available="$parent.isPeripheraSWOIndexValid.getValue()"/>
+            <variable id="swo_peripheral_clock" value="$parent.isPeripheraSWOIndexValid.getValue() ? $parent.SWO_Clock_peripheral.getValue().get($parent.SWO_peripheral_index.getValue().toInt()) : `N/A`" available="$parent.isPeripheraSWOIndexValid.getValue()"/>
+            <variable id="clockSourceUId" value="$parent.isPeripheraSWOIndexValid.getValue() ? $parent.SWO_unified_clock.getValue().get($parent.SWO_peripheral_index.getValue().toInt()) : `N/A`" available="$parent.isPeripheraSWOIndexValid.getValue()"/>
+            <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="createArray().addItemToList(`genericSWOClockSource`, ($parent.isPeripheraSWOIndexValid.getValue() ? getPeripheralClock($parent.swo_peripheral_clock.getValue(), $parent.clockSourceUId.getValue()): ``), $parent.clockSourceUId.getValue(),true)" available="$parent.isPeripheraSWOIndexValid.getValue()">
+               <description>Clock source.</description>
+               <validation>
+                  <dependency when_expr="$parent.swo_peripheral_clock.isAvailable() &amp;&amp; $parent.clockSourceFreq.getEnumItemId() != `custom`" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($parent.swo_peripheral_clock.getValue(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($parent.swo_peripheral_clock.getValue(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`) ? (getPeripheralClock($parent.swo_peripheral_clock.getValue(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($parent.swo_peripheral_clock.getValue(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" available="$parent.isPeripheraSWOIndexValid.getValue()"
+               items="
+               getClockFunctionalGroups().arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> enumItem,
+               enumItem -> ($parent.isPeripheraSWOIndexValid.getValue() ? frequencyToString(getPeripheralClockFrequency($parent.swo_peripheral_clock.getValue(), $parent.clockSource.getEnumItemValue(), enumItem)) : ``) + ` (` + enumItem + `)`,
+               enumItem -> ($parent.isPeripheraSWOIndexValid.getValue() ? getPeripheralClockFrequency($parent.swo_peripheral_clock.getValue(), $parent.clockSource.getEnumItemValue(), enumItem) : 0))" >
+               <description>Selection of the clock source frequency</description>
+               <validation>
+                  <constraint cond_expr="$this.getEnumItemValue().toHertz() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+            </dynamic_enum>
+            
+            <!-- Baudrate -->
+            <integer id="baudRate_Bps" label="Baud rate [bps]" type="uint32_t"  min_expr="1" available="$parent.isPeripheraSWOIndexValid.getValue(false)">
+               <description>Baud rate selection [bps].</description>
+            </integer>
+            
+         </struct>
+         <struct id="peripheral_config_t" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+            <!-- Serial port Type -->
+            <reference id="serial_port_type" type="serial_port_type_t">
+               <description>Serial port type selection.</description>
+               <validation>
+                  <dependency resource_type="SWComponent"
+                     resource_id_expr="$this.getEnumItemValue()" level="Warning"
+                     description_expr="msg::message(`err_missing_driver`, $parent.serialTypeDriverName.getValue() , ` (required for the Debug console initialization)`)">
+                     <feature name="enabled" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <constraint when_expr="$parent.serial_port_type.getValue()==`kSerialPort_Uart`" cond_expr="$parent.uart_config.isPeripheralUARTIndexValid.getValue()" level="error" description="Any UART peripheral is not supported"/>
+                  <dependency resource_type="SWComponent"
+                     when_expr="$parent.uart_config.generic_uart_sdk_serial_manager_driver_id.isAvailable() &amp;&amp; ($parent.uart_config.generic_uart_sdk_serial_manager_driver_id.getValue() != -1)"
+                     resource_id_expr="$parent.uart_config.generic_uart_sdk_serial_manager_driver_id.getValue()" level="Warning"
+                     description_expr="msg::message(`err_missing_driver`, ($parent.uart_config.generic_uart_sdk_serial_manager_driver_id.getValue().regexMatch(`component\.(.*)`) ? $parent.uart_config.generic_uart_sdk_serial_manager_driver_id.getValue().regexSubstr(`component\.(.*)`,1) :`serial port adapter`) , ` (required for the serial port initialization)`)">
+                     <feature name="enabled" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <constraint when_expr="$parent.serial_port_type.getValue()==`kSerialPort_Swo`" cond_expr="$parent.swo_config.isPeripheraSWOIndexValid.getValue()" level="error" description="Any SWO peripheral is not supported"/>
+               </validation>
+            </reference>
+            <variable id="serialTypeDriverName" value="(($parent.serial_port_type.getEnumItemValue() == `component.serial_manager_swo`) ? `serial_port_swo` : (($parent.serial_port_type.getEnumItemValue() == `component.serial_manager_usb_cdc_virtual`) ? `` : (($parent.serial_port_type.getEnumItemValue() == `component.serial_manager_usb_cdc`) ? `serial_port_usb` : `serial_port_uart` )))"/>
+            <info id="SERIAL_PORT_TYPE_UART_temp" label="SERIAL_PORT_TYPE_UART template" value="`SERIAL_PORT_TYPE_UART=1`" options="UI_INFO_COPY_BUTTON" available="$parent.serial_port_type.getValue()==`kSerialPort_Uart`">
+               <description expr="
+                  `&#10;Define &quot;SERIAL\_PORT\_TYPE\_UART=1&quot; at project setting. This define is shared for all peripherals using serial\_manager SDK component.  &#10;  &#10;` +
+                  `For **IAR**, right click project and select &quot;Options&quot;, define it in &quot;C/C++ Compiler\-&gt;Preprocessor\-&gt;Defined symbols&quot;  &#10;  &#10;`+
+                  `For **KEIL**, click &quot;Options for Target...&quot;, define it in &quot;C/C++\-&gt;Preprocessor Symbols\-&gt;Define&quot;  &#10;  &#10;`+
+                  `For **ARMGCC**, open CmakeLists.txt and add the following lines,&#10;&#10;`+
+                  `* For debug target: SET(CMAKE\_C\_FLAGS\_DEBUG &quot;${CMAKE\_C\_FLAGS\_DEBUG} \-DSERIAL\_PORT\_TYPE\_UART=1&quot;)&#10;&#10;`+
+                  `* For release target: SET(CMAKE\_C\_FLAGS\_RELEASE &quot;${CMAKE\_C\_FLAGS\_RELEASE} \-DSERIAL\_PORT\_TYPE\_UART=1&quot;)&#10;&#10;`+
+                  `For **MCUXpresso**, right click project and select &quot;Properties&quot;, define it in &quot;C/C++ Build\-&gt;Settings\-&gt;MCU C Compiler\-&gt;Preprocessor.&quot;  &#10;  &#10;`+
+                  `For **CodeWarrior**, right click project and select &quot;Properties&quot;, define it in &quot;C/C++ Build\-&gt;Settings\-&gt;DSC Compiler\-&gt;Input.&quot;`"/>
+            </info>
+            <info id="SERIAL_PORT_TYPE_USBCDC_temp" label="SERIAL_PORT_TYPE_USBCDC template" value="`SERIAL_PORT_TYPE_USBCDC=1`" options="UI_INFO_COPY_BUTTON" available="$parent.serial_port_type.getValue()==`kSerialPort_UsbCdc`">
+               <description expr="
+                  `&#10;Define &quot;SERIAL\_PORT\_TYPE\_USBCDC=1&quot; at project setting. This define is shared for all peripherals using serial\_manager SDK component.  &#10;  &#10;` +
+                  `For **IAR**, right click project and select &quot;Options&quot;, define it in &quot;C/C++ Compiler\-&gt;Preprocessor\-&gt;Defined symbols&quot;  &#10;  &#10;`+
+                  `For **KEIL**, click &quot;Options for Target...&quot;, define it in &quot;C/C++\-&gt;Preprocessor Symbols\-&gt;Define&quot;  &#10;  &#10;`+
+                  `For **ARMGCC**, open CmakeLists.txt and add the following lines,&#10;&#10;`+
+                  `* For debug target: SET(CMAKE\_C\_FLAGS\_DEBUG &quot;${CMAKE\_C\_FLAGS\_DEBUG} \-DSERIAL\_PORT\_TYPE\_USBCDC=1&quot;)&#10;&#10;`+
+                  `* For release target: SET(CMAKE\_C\_FLAGS\_RELEASE &quot;${CMAKE\_C\_FLAGS\_RELEASE} \-DSERIAL\_PORT\_TYPE\_USBCDC=1&quot;)&#10;&#10;`+
+                  `For **MCUXpresso**, right click project and select &quot;Properties&quot;, define it in &quot;C/C++ Build\-&gt;Settings\-&gt;MCU C Compiler\-&gt;Preprocessor.&quot;  &#10;  &#10;`+
+                  `For **CodeWarrior**, right click project and select &quot;Properties&quot;, define it in &quot;C/C++ Build\-&gt;Settings\-&gt;DSC Compiler\-&gt;Input.&quot;`"/>
+            </info>
+            <info id="SERIAL_PORT_TYPE_SWO_temp" label="SERIAL_PORT_TYPE_SWO template" value="`SERIAL_PORT_TYPE_SWO=1`" options="UI_INFO_COPY_BUTTON" available="$parent.serial_port_type.getValue()==`kSerialPort_Swo`">
+               <description expr="
+                  `&#10;Define &quot;SERIAL\_PORT\_TYPE\_SWO=1&quot; at project setting. This define is shared for all peripherals using serial\_manager SDK component.  &#10;  &#10;` +
+                  `For **IAR**, right click project and select &quot;Options&quot;, define it in &quot;C/C++ Compiler\-&gt;Preprocessor\-&gt;Defined symbols&quot;  &#10;  &#10;`+
+                  `For **KEIL**, click &quot;Options for Target...&quot;, define it in &quot;C/C++\-&gt;Preprocessor Symbols\-&gt;Define&quot;  &#10;  &#10;`+
+                  `For **ARMGCC**, open CmakeLists.txt and add the following lines,&#10;&#10;`+
+                  `* For debug target: SET(CMAKE\_C\_FLAGS\_DEBUG &quot;${CMAKE\_C\_FLAGS\_DEBUG} \-DSERIAL\_PORT\_TYPE\_SWO=1&quot;)&#10;&#10;`+
+                  `* For release target: SET(CMAKE\_C\_FLAGS\_RELEASE &quot;${CMAKE\_C\_FLAGS\_RELEASE} \-DSERIAL\_PORT\_TYPE\_SWO=1&quot;)&#10;&#10;`+
+                  `For **MCUXpresso**, right click project and select &quot;Properties&quot;, define it in &quot;C/C++ Build\-&gt;Settings\-&gt;MCU C Compiler\-&gt;Preprocessor.&quot;  &#10;  &#10;`+
+                  `For **CodeWarrior**, right click project and select &quot;Properties&quot;, define it in &quot;C/C++ Build\-&gt;Settings\-&gt;DSC Compiler\-&gt;Input.&quot;`"/>
+            </info>
+            <info id="SERIAL_PORT_TYPE_USBCDC_VIRTUAL_temp" label="SERIAL_PORT_TYPE_USBCDC_VIRTUAL template" value="`SERIAL_PORT_TYPE_USBCDC_VIRTUAL=1`" options="UI_INFO_COPY_BUTTON" available="$parent.serial_port_type.getValue()==`kSerialPort_UsbCdcVirtual`">
+               <description expr="
+                  `&#10;Define &quot;SERIAL\_PORT\_TYPE\_USBCDC\_VIRTUAL=1&quot; at project setting. This define is shared for all peripherals using serial\_manager SDK component.  &#10;  &#10;` +
+                  `For **IAR**, right click project and select &quot;Options&quot;, define it in &quot;C/C++ Compiler\-&gt;Preprocessor\-&gt;Defined symbols&quot;  &#10;  &#10;`+
+                  `For **KEIL**, click &quot;Options for Target...&quot;, define it in &quot;C/C++\-&gt;Preprocessor Symbols\-&gt;Define&quot;  &#10;  &#10;`+
+                  `For **ARMGCC**, open CmakeLists.txt and add the following lines,&#10;&#10;`+
+                  `* For debug target: SET(CMAKE\_C\_FLAGS\_DEBUG &quot;${CMAKE\_C\_FLAGS\_DEBUG} \-DSERIAL\_PORT\_TYPE\_USBCDC\_VIRTUAL=1&quot;)&#10;&#10;`+
+                  `* For release target: SET(CMAKE\_C\_FLAGS\_RELEASE &quot;${CMAKE\_C\_FLAGS\_RELEASE} \-DSERIAL\_PORT\_TYPE\_USBCDC\_VIRTUAL=1&quot;)&#10;&#10;`+
+                  `For **MCUXpresso**, right click project and select &quot;Properties&quot;, define it in &quot;C/C++ Build\-&gt;Settings\-&gt;MCU C Compiler\-&gt;Preprocessor.&quot;  &#10;  &#10;`+
+                  `For **CodeWarrior**, right click project and select &quot;Properties&quot;, define it in &quot;C/C++ Build\-&gt;Settings\-&gt;DSC Compiler\-&gt;Input.&quot;`"/>
+            </info>
+            <!-- Select each peripheral -->
+            <variable id="isIRQInitInsideDriver" value="$parent.uart_config.isAvailable() &amp;&amp; $parent.uart_config.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; ($parent.uart_config.generic_uart_sdk_driver_id_short.getValue() == `qsci`)"/>
+            <reference id="uart_config" label="UART configuration" type="peripheral_config_t" config_set_id="global_uart" component_id="generic_uart" available="$parent.serial_port_type.getValue()==`kSerialPort_Uart`">
+               <options_expr>
+                  <!--option id="genericUartUseQuickSelection"/-->
+                  <option id="genericUartPeripheralIuartNotSupported"/>
+                  <option id="genericUartPeripheralSelect"/>
+                  <option id="genericUartRxPinDependencyPeripheralSetting" available="$configSet.config.DEBUG_CONSOLE_RX_ENABLE.getValue(false)"/>
+                  <option id="genericUartTxPinDependencyPeripheralSetting"/>
+                  <option id="genericUartClocks"/>
+                  <option id="genericUartBaudrate"/>
+                  <option id="genericUartInterruptSources" available="$configSet.config.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.isEnabled() &amp;&amp; $configSet.config.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.getValue() &amp;&amp; !$parent.isIRQInitInsideDriver.getValue()"/>
+                  <option id="genericUartInterruptSourcesFifo" available="$configSet.config.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.isEnabled() &amp;&amp; $configSet.config.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.getValue() &amp;&amp; !$parent.isIRQInitInsideDriver.getValue()"/>
+                  <option id="genericUartInterruptRxTxVectors" available="$configSet.config.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.isEnabled() &amp;&amp; $configSet.config.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.getValue() &amp;&amp; !$parent.isIRQInitInsideDriver.getValue()"/>
+                  <option id="genericUartInterruptErrorVector" available="$configSet.config.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.isEnabled() &amp;&amp; $configSet.config.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.getValue() &amp;&amp; !$parent.isIRQInitInsideDriver.getValue()"/>
+                  <option id="genericUartDriverDependencyPeripheralSetting" available="$configSet.config.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.isEnabled() &amp;&amp; $configSet.config.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.getValue() &amp;&amp; !$parent.isIRQInitInsideDriver.getValue()"/>
+                  <option id="genericUartInterruptRxTx_without_handler_settings"/>
+                  <option id="genericUartInterruptRx_without_handler_settings"/>
+                  <option id="genericUartInterruptTx_without_handler_settings"/>
+                  <option id="genericUartInterruptError_without_handler_settings"/>
+               </options_expr>
+            </reference>
+            <reference id="swo_config" label="SWO configuration"  type="swo_peripheral_config_t" available="$parent.serial_port_type.getValue()==`kSerialPort_Swo`"/>
+            <!-- Peripheral settings -->
+            <variable id="peripheral" value="(($parent.uart_config.isAvailable() &amp;&amp; $parent.uart_config.generic_uart_peripheral.isAvailable())? $parent.uart_config.generic_uart_peripheral.getValue() :($parent.swo_config.isAvailable() ? $parent.swo_config.peripheralSWO.getEnumItemId() :  ``))" /> <!--  -->
+            <variable id="peripheralValue" value="(($parent.uart_config.isAvailable() &amp;&amp; $parent.uart_config.generic_uart_peripheral_alias.isAvailable()) ? $parent.uart_config.generic_uart_peripheral_alias.getValue() :($parent.swo_config.isAvailable() ? $parent.swo_config.peripheralSWO.getEnumItemValue() :  ``))" />
+            <variable id="peripheralInstance" value="($parent.peripheralValue.getValue().regexMatch(`.*(\d+)`)? $parent.peripheralValue.getValue().regexSubstr(`.*(\d+)`,1)  : (getPeriphInstanceIndex($parent.peripheralValue.getValue()) == -1 ? 0 : getPeriphInstanceIndex($parent.peripheralValue.getValue())))"/>
+            <variable id="peripheralClockSourceFreq" value="(($parent.uart_config.isAvailable() &amp;&amp; $parent.uart_config.clockSourceFreq.isAvailable())? $parent.uart_config.clockSourceFreq.getEnumItemValue().toHertz() :($parent.swo_config.isAvailable() &amp;&amp; $parent.swo_config.clockSourceFreq.isAvailable()? $parent.swo_config.clockSourceFreq.getEnumItemValue().toHertz() :  0))"/>
+            <variable id="peripheralBaudRate_Bps" value="(($parent.uart_config.isAvailable() &amp;&amp; $parent.uart_config.baudRate_Bps.isAvailable()) ? $parent.uart_config.baudRate_Bps.getValue() : (($parent.uart_config.isAvailable() &amp;&amp; $parent.uart_config.u32BaudRateBps.isAvailable()) ? $parent.uart_config.u32BaudRateBps.getValue() : ($parent.swo_config.isAvailable() &amp;&amp; $parent.swo_config.baudRate_Bps.isAvailable() ? $parent.swo_config.baudRate_Bps.getValue() :  0)))"/>
+            <info id="noteInitDebugConsole" label="Note"  value="`In the imported SDK example projects the BOARD_InitDebugConsole() function must be removed from the main function to use this configuration.`"/>
+         </struct>
+         <struct id="config_t" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+            <enum id="SDK_DEBUGCONSOLE" label="Debug console functions type">
+               <description>
+Macro: **SDK_DEBUGCONSOLE**  
+Select sdk or toolchain printf, scanf function or disable the debug console (redirect PRINTF and SCANF debug console functions).  
+               </description>
+               <item id="DEBUGCONSOLE_REDIRECT_TO_TOOLCHAIN" label="Toolchain" value="0">
+                  <description>The debug console functions PRINTF and SCANF use toolchain printf and scanf function. SDK debug console uses Toolchain debug console setting see below.</description>
+               </item>
+               <item id="DEBUGCONSOLE_REDIRECT_TO_SDK" label="SDK" value="1">
+                  <description>The debug console functions PRINTF and SCANF uses SDK printf and scanf function. SDK debug console uses serial port protocol for commnunication.</description>
+               </item>
+               <item id="DEBUGCONSOLE_DISABLE" label="Disable debug console" value="2">
+                  <description>Disable debug console functions PRINTF and SCANF.</description>
+               </item>
+            </enum>
+            <info id="SDK_DEBUGCONSOLE_templ" label="SDK_DEBUGCONSOLE template" value="`SDK_DEBUGCONSOLE=1`" options="UI_INFO_COPY_BUTTON">
+               <description expr="
+                  `&#10;Define &quot;SDK\_DEBUGCONSOLE=` + $parent.SDK_DEBUGCONSOLE.getEnumItemValue() + `&quot; at project setting. This define is shared for all peripherals using serial\_manager SDK component.  &#10;  &#10;` +
+                  `For **IAR**, right click project and select &quot;Options&quot;, define it in &quot;C/C++ Compiler\-&gt;Preprocessor\-&gt;Defined symbols&quot;  &#10;  &#10;`+
+                  `For **KEIL**, click &quot;Options for Target...&quot;, define it in &quot;C/C++\-&gt;Preprocessor Symbols\-&gt;Define&quot;  &#10;  &#10;`+
+                  `For **ARMGCC**, open CmakeLists.txt and add the following lines,&#10;&#10;`+
+                  `* For debug target: SET(CMAKE\_C\_FLAGS\_DEBUG &quot;${CMAKE\_C\_FLAGS\_DEBUG} \-DSDK\_DEBUGCONSOLE=` + $parent.SDK_DEBUGCONSOLE.getEnumItemValue() + `&quot;)&#10;&#10;`+
+                  `* For release target: SET(CMAKE\_C\_FLAGS\_RELEASE &quot;${CMAKE\_C\_FLAGS\_RELEASE} \-DSDK\_DEBUGCONSOLE=` + $parent.SDK_DEBUGCONSOLE.getEnumItemValue() + `&quot;)&#10;&#10;`+
+                  `For **MCUXpresso**, right click project and select &quot;Properties&quot;, define it in &quot;C/C++ Build\-&gt;Settings\-&gt;MCU C Compiler\-&gt;Preprocessor.&quot;  &#10;  &#10;`+
+                  `For **CodeWarrior**, right click project and select &quot;Properties&quot;, define it in &quot;C/C++ Build\-&gt;Settings\-&gt;DSC Compiler\-&gt;Input.&quot;`"/>
+            </info>
+            <enum id="SDK_DEBUGCONSOLE_UART" label="Toolchain communication protocol">
+               <description>
+Macro: **SDK_DEBUGCONSOLE_UART**  
+Select semihost or serial port protocol for communitation.  
+               </description>
+               <item id="semihost" label="Semihost" value="false">
+                  <description>The toolchain printf and scanf function use semihost communication protocol.</description>
+               </item>
+               <item id="serial_port" label="Serial port" value="true">
+                  <description>The toolchain printf and scanf function use serial port communication protocol.</description>
+               </item>
+            </enum>
+            <info id="SDK_DEBUGCONSOLE_UART_templ" label="SDK_DEBUGCONSOLE_UART template" value="`SDK_DEBUGCONSOLE_UART`" options="UI_INFO_COPY_BUTTON" enable="$parent.SDK_DEBUGCONSOLE_UART.getEnumItemId() == `serial_port`">
+               <description expr="
+                  `&#10;Define &quot;SDK\_DEBUGCONSOLE\_UART&quot; at project setting. This define is shared for all peripherals using serial\_manager SDK component.  &#10;  &#10;` +
+                  `For **IAR**, right click project and select &quot;Options&quot;, define it in &quot;C/C++ Compiler\-&gt;Preprocessor\-&gt;Defined symbols&quot;  &#10;  &#10;`+
+                  `For **KEIL**, click &quot;Options for Target...&quot;, define it in &quot;C/C++\-&gt;Preprocessor Symbols\-&gt;Define&quot;  &#10;  &#10;`+
+                  `For **ARMGCC**, open CmakeLists.txt and add the following lines,&#10;&#10;`+
+                  `* For debug target: SET(CMAKE\_C\_FLAGS\_DEBUG &quot;${CMAKE\_C\_FLAGS\_DEBUG} \-DSDK\_DEBUGCONSOLE\_UART&quot;)&#10;&#10;`+
+                  `* For release target: SET(CMAKE\_C\_FLAGS\_RELEASE &quot;${CMAKE\_C\_FLAGS\_RELEASE} \-DSDK\_DEBUGCONSOLE\_UART&quot;)&#10;&#10;`+
+                  `For **MCUXpresso**, right click project and select &quot;Properties&quot;, define it in &quot;C/C++ Build\-&gt;Settings\-&gt;MCU C Compiler\-&gt;Preprocessor.&quot;  &#10;  &#10;`+
+                  `For **CodeWarrior**, right click project and select &quot;Properties&quot;, define it in &quot;C/C++ Build\-&gt;Settings\-&gt;DSC Compiler\-&gt;Input.&quot;`"/>
+            </info>
+            <variable id="serialPortInitWanted" value="($parent.SDK_DEBUGCONSOLE_UART.getEnumItemValue() == `true`) || ($parent.SDK_DEBUGCONSOLE.getEnumItemId() == `DEBUGCONSOLE_REDIRECT_TO_SDK`)"></variable>
+            <bool id="DEBUG_CONSOLE_RX_ENABLE" label="Enable Rx function" options="boolNumber">
+               <description>
+Macro: **DEBUG_CONSOLE_RX_ENABLE**  
+Enable the receive function of the debug console. 
+               </description>
+            </bool>
+            <integer id="DEBUG_CONSOLE_PRINTF_MAX_LOG_LEN" min_expr="1" type="uint16_t" label="Maximal PRINTF log length [chars]">
+               <description>
+Macro: **DEBUG_CONSOLE_PRINTF_MAX_LOG_LEN**  
+Define the maximal printf log length for debug console support. When calling `printf("log", x);` function, the buffer length can not bigger than this value.
+               </description>
+            </integer>
+            <integer id="DEBUG_CONSOLE_SCANF_MAX_LOG_LEN" min_expr="1" type="uint16_t" label="Maximal SCANF log length [chars]">
+               <description>
+Macro: **DEBUG_CONSOLE_SCANF_MAX_LOG_LEN**  
+Define the maximal scanf log length. When calling `scanf("log", &amp;x);`, the buffer length can not bigger than this value.
+               </description>
+            </integer>
+            <bool id="DEBUG_CONSOLE_ENABLE_ECHO" label="Enable echo function" options="boolNumber">
+               <description>
+Macro: **DEBUG_CONSOLE_ENABLE_ECHO**  
+Enable the echo function of the debug console.
+               </description>
+            </bool>
+            <bool id="PRINTF_FLOAT_ENABLE" label="Enable printf float number" options="boolNumber">
+               <description>
+Macro: **PRINTF_FLOAT_ENABLE**  
+Enable printf the float number.
+               </description>
+            </bool>
+            <bool id="SCANF_FLOAT_ENABLE" label="Enable scanf float number" options="boolNumber">
+               <description>
+Macro: **SCANF_FLOAT_ENABLE**  
+Enable scanf the float number.
+               </description>
+            </bool>
+            <bool id="PRINTF_ADVANCED_ENABLE" label="Enable advanced printf format specifier" options="boolNumber">
+               <description>
+Macro: **PRINTF_ADVANCED_ENABLE**  
+Enable support of the advanced format specifier for printf.
+               </description>
+            </bool>
+            <bool id="SCANF_ADVANCED_ENABLE" label="Enable advanced scanf format specifier" options="boolNumber">
+               <description>
+Macro: **SCANF_ADVANCED_ENABLE**  
+Enable support of the advanced format specifier for scanf.
+               </description>
+            </bool>
+            <bool id="DEBUG_CONSOLE_TRANSFER_NON_BLOCKING" label="Enable Non-blocking mode" options="boolDefOnly" enable="!$configSet.peripheral_config.isAvailable() || $configSet.peripheral_config.serial_port_type.getEnumItemId()!=`kSerialPort_Swo`">
+               <description>
+Macro: **DEBUG_CONSOLE_TRANSFER_NON_BLOCKING**  
+Enable Non-blocking mode if it is needed. Otherwise blocking mode is the default transfer mode. 
+               </description>
+            </bool>
+            <info id="DEBUG_CONSOLE_TRANSFER_NON_BLOCKING_templ" label="TRANSFER_NON_BLOCKING template" value="`DEBUG_CONSOLE_TRANSFER_NON_BLOCKING`" options="UI_INFO_COPY_BUTTON" enable="$parent.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.getValue(false)">
+               <description expr="
+                  `&#10;Define &quot;DEBUG\_CONSOLE\_TRANSFER\_NON\_BLOCKING&quot; at project setting. This define is shared for all peripherals using serial\_manager SDK component.  &#10;  &#10;` +
+                  `For **IAR**, right click project and select &quot;Options&quot;, define it in &quot;C/C++ Compiler\-&gt;Preprocessor\-&gt;Defined symbols&quot;  &#10;  &#10;`+
+                  `For **KEIL**, click &quot;Options for Target...&quot;, define it in &quot;C/C++\-&gt;Preprocessor Symbols\-&gt;Define&quot;  &#10;  &#10;`+
+                  `For **ARMGCC**, open CmakeLists.txt and add the following lines,&#10;&#10;`+
+                  `* For debug target: SET(CMAKE\_C\_FLAGS\_DEBUG &quot;${CMAKE\_C\_FLAGS\_DEBUG} \-DDEBUG\_CONSOLE\_TRANSFER\_NON\_BLOCKING&quot;)&#10;&#10;`+
+                  `* For release target: SET(CMAKE\_C\_FLAGS\_RELEASE &quot;${CMAKE\_C\_FLAGS\_RELEASE} \-DDEBUG\_CONSOLE\_TRANSFER\_NON\_BLOCKING&quot;)&#10;&#10;`+
+                  `For **MCUXpresso**, right click project and select &quot;Properties&quot;, define it in &quot;C/C++ Build\-&gt;Settings\-&gt;MCU C Compiler\-&gt;Preprocessor.&quot;  &#10;  &#10;`+
+                  `For **CodeWarrior**, right click project and select &quot;Properties&quot;, define it in &quot;C/C++ Build\-&gt;Settings\-&gt;DSC Compiler\-&gt;Input.&quot;`"/>
+            </info>
+            <integer id="DEBUG_CONSOLE_TRANSMIT_BUFFER_LEN" min_expr="4" type="uint16_t" label="Transmit buffer length [bytes]" enable="$parent.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.isEnabled() &amp;&amp; $parent.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.getValue()">
+               <description>
+Macro: **DEBUG_CONSOLE_TRANSMIT_BUFFER_LEN**  
+Define the transmit buffer length which is used to store the multi task log, buffer is enabled automatically when non-blocking transfer is used. 
+               </description>
+               <validation>
+                  <constraint cond_expr="($this.getValue() % 4) == 0" level="error" description="The transmit buffer length value must be divisible by 4."/>
+               </validation>
+            </integer>
+            <integer id="DEBUG_CONSOLE_RECEIVE_BUFFER_LEN" min_expr="4" type="uint16_t" label="Receive buffer lenght [bytes]" enable="$parent.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.isEnabled() &amp;&amp; $parent.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.getValue()">
+               <description>
+Macro: **DEBUG_CONSOLE_RECEIVE_BUFFER_LEN**  
+Define the receive buffer length which is used to store the user input, buffer is enabled automatically when non-blocking transfer is used. 
+               </description>
+               <validation>
+                  <constraint cond_expr="($this.getValue() % 4) == 0" level="error" description="The receive buffer length value must be divisible by 4."/>
+               </validation>
+            </integer>
+            <bool id="DEBUG_CONSOLE_TX_RELIABLE_ENABLE" label="TX reliable function enable" enable="$parent.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.isEnabled() &amp;&amp; $parent.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.getValue()" options="boolNumber">
+               <description>
+Macro: **DEBUG_CONSOLE_TX_RELIABLE_ENABLE**  
+When the DEBUG_CONSOLE_TX_RELIABLE_ENABLE is false (zero), the string of PRINTF will be thrown away after the transmit buffer is full. 
+               </description>
+            </bool>
+            <!--bool id="BOARD_USE_VIRTUALCOM" label="Use virtual com" options="boolNumber">
+               <description>
+Macro: **BOARD_USE_VIRTUALCOM**  
+Use virtual com(USB CDC) as the debug console.
+               </description>
+            </bool-->
+            <bool id="DEBUG_CONSOLE_DISABLE_RTOS_SYNCHRONIZATION" label="Disable RTOS synchronization" options="boolDefOnly">
+               <description>  
+**RTOS synchronization mechanism disable**
+ * False: The mechanism avoids multitask log printing mess.
+ * True: The log may be messed on terminal.
+               </description>
+            </bool>
+         </struct>
+      </user_types>
+      <settings>
+         <info value="`Debug console configuration`" id="line_DC_cfg" options="UI_LINE_BREAK;UI_LABEL_HIDDEN">
+            <description>The debug console configuration (see fsl_debug_console_conf.h).</description>
+         </info>
+         <reference id="config" label="Debug console configuration" type="config_t">
+            <description>The debug console configuration (see fsl_debug_console_conf.h).</description>            
+         </reference>
+         <info value="`Serial peripheral configuration`" id="line_SP_cfg" options="UI_LINE_BREAK;UI_LABEL_HIDDEN" available="$parent.config.serialPortInitWanted.getValue()">
+            <description>The serial peripheral configuration.</description>
+         </info>
+         <reference id="peripheral_config" label="Serial peripheral configuration" type="peripheral_config_t" available="$parent.config.serialPortInitWanted.getValue()">
+            <description>The serial peripheral configuration.</description>
+         </reference>
+         
+         <struct id="debug_console_codegenerator" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+            <variable id="instanceID" value="$instance.getID()"/>
+            <variable id="isPeripheralConfigAvailable" value="$configSet.peripheral_config.isAvailable()"/>
+            <variable id="SDK_DEBUGCONSOLE" value="$configSet.config.SDK_DEBUGCONSOLE.getEnumItemValue(`1`)"/>
+            <variable id="SDK_DEBUGCONSOLE_UART" value="$configSet.config.SDK_DEBUGCONSOLE_UART.getEnumItemValue(`false`) == `true`"/>
+            <variable id="SERIAL_PORT_TYPE_UART" value="boolToInt($configSet.peripheral_config.serial_port_type.getValue(`kSerialPort_Uart`) == `kSerialPort_Uart`)"/>
+            <variable id="SERIAL_PORT_TYPE_USBCDC" value="boolToInt($configSet.peripheral_config.serial_port_type.getValue(`kSerialPort_Uart`) == `kSerialPort_UsbCdc`)"/>
+            <variable id="SERIAL_PORT_TYPE_USBCDC_VIRTUAL" value="boolToInt($configSet.peripheral_config.serial_port_type.getValue(`kSerialPort_Uart`) == `kSerialPort_UsbCdcVirtual`)"/>
+            <variable id="SERIAL_PORT_TYPE_SWO" value="boolToInt($configSet.peripheral_config.serial_port_type.getValue(`kSerialPort_Uart`) == `kSerialPort_Swo`)"/>            
+            <variable id="DEBUG_CONSOLE_RX_ENABLE" value="$configSet.config.DEBUG_CONSOLE_RX_ENABLE.getValue(`false`).boolToInt() + `U`"/>
+            <variable id="DEBUG_CONSOLE_PRINTF_MAX_LOG_LEN" value="$configSet.config.DEBUG_CONSOLE_PRINTF_MAX_LOG_LEN.getValue(`0`) + `U`"/>
+            <variable id="DEBUG_CONSOLE_SCANF_MAX_LOG_LEN" value="$configSet.config.DEBUG_CONSOLE_SCANF_MAX_LOG_LEN.getValue(`0`) + `U`"/>
+            <variable id="DEBUG_CONSOLE_ENABLE_ECHO" value="$configSet.config.DEBUG_CONSOLE_ENABLE_ECHO.getValue(false)"/>
+            <variable id="PRINTF_FLOAT_ENABLE" value="$configSet.config.PRINTF_FLOAT_ENABLE.getValue(`false`).boolToInt() + `U`"/>
+            <variable id="SCANF_FLOAT_ENABLE" value="$configSet.config.SCANF_FLOAT_ENABLE.getValue(`false`).boolToInt() + `U`"/>
+            <variable id="PRINTF_ADVANCED_ENABLE" value="$configSet.config.PRINTF_ADVANCED_ENABLE.getValue(`false`).boolToInt() + `U`"/>
+            <variable id="SCANF_ADVANCED_ENABLE" value="$configSet.config.SCANF_ADVANCED_ENABLE.getValue(`false`).boolToInt() + `U`"/>
+            <variable id="DEBUG_CONSOLE_TRANSFER_NON_BLOCKING" value="$configSet.config.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.getValue(false)"/>
+            <variable id="DEBUG_CONSOLE_TRANSMIT_BUFFER_LEN" value="$configSet.config.DEBUG_CONSOLE_TRANSMIT_BUFFER_LEN.getValue(`0`) + `U`"/>
+            <variable id="DEBUG_CONSOLE_RECEIVE_BUFFER_LEN" value="$configSet.config.DEBUG_CONSOLE_RECEIVE_BUFFER_LEN.getValue(`0`) + `U`"/>
+            <variable id="DEBUG_CONSOLE_TX_RELIABLE_ENABLE" value="$configSet.config.DEBUG_CONSOLE_TX_RELIABLE_ENABLE.getValue(`false`).boolToInt() + `U`"/>
+            <variable id="BOARD_USE_VIRTUALCOM" value="`0U`"/> <!-- USB is not supported. -->
+            <variable id="DEBUG_CONSOLE_DISABLE_RTOS_SYNCHRONIZATION" value="$configSet.config.DEBUG_CONSOLE_DISABLE_RTOS_SYNCHRONIZATION.getValue(false)"/>
+         </struct>
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"/>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"/>
+         <variable id="inst_ID_def_peripheral" value="$parent.inst_ID_def.getValue() + `_SERIAL_PERIPHERAL`"/>
+         <variable id="inst_ID_def_peripheral_instance" value="$parent.inst_ID_def.getValue() + `_INSTANCE`"/>
+         <variable id="inst_ID_def_peripheral_baudrate" value="$parent.inst_ID_def.getValue() + `_BAUDRATE`"/>
+         <variable id="inst_ID_def_peripheral_type" value="$parent.inst_ID_def.getValue() + `_TYPE`"/>
+         <variable id="inst_ID_def_peripheral_clock" value="$parent.inst_ID_def.getValue() + `_CLK_FREQ`"/>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="generic_uart" config_set_id="global_uart"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+            <from component_id="system" config_set_id="common_code_templates"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include" if_expr="$this.peripheral_config.isAvailable()">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include" if_expr="$this.peripheral_config.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.isPeripheralFLEXCOMMType.getValue(false)">
+               <param id="name">reset</param>
+               <param id="filename">fsl_reset.h</param>
+            </fragment>
+            <fragment id="include" if_expr="$this.peripheral_config.isAvailable()">
+               <param id="name" expr="`debug_console`"/>
+               <param id="filename" expr="`fsl_debug_console.h`"/>
+            </fragment>
+            <fragment id="include" if_expr="$configSet.peripheral_config.uart_config.isAvailable() 
+                                          &amp;&amp; $configSet.peripheral_config.uart_config.isPeripheralUARTIndexValid.getValue(false) 
+                                          &amp;&amp; $configSet.config.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.isEnabled() 
+                                          &amp;&amp; $configSet.config.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.getValue()
+                                          &amp;&amp; !$configSet.peripheral_config.isIRQInitInsideDriver.getValue()">
+               <param id="name" expr="$this.peripheral_config.uart_config.generic_uart_sdk_driver_id_short.getValue()"/>
+               <param id="filename" expr="$this.peripheral_config.uart_config.generic_uart_sdk_driver_filename.getValue()"/>
+            </fragment>
+            <fragment id="include" if_expr="$this.peripheral_config.isAvailable()">
+               <param id="name">clock</param>
+               <param id="filename">fsl_clock.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            
+            <fragment id="define">
+               <param id="name" expr="`BOARD_INIT_DEBUG_CONSOLE_PERIPHERAL`"/>
+               <param id="value" expr="``"/>
+               <param id="description">Debug console is initialized in the peripheral tool</param>
+            </fragment>
+            <fragment id="define" if_expr="$configSet.peripheral_config.uart_config.isAvailable() 
+                                       &amp;&amp; $configSet.peripheral_config.uart_config.isPeripheralUARTIndexValid.getValue(false) 
+                                       &amp;&amp; $configSet.config.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.isEnabled() 
+                                       &amp;&amp; $configSet.config.DEBUG_CONSOLE_TRANSFER_NON_BLOCKING.getValue()">
+               <param id="name" expr="$configSet.inst_ID_def_peripheral.getValue()"/>
+               <param id="value" expr="$this.peripheral_config.peripheralValue.getValue()"/>
+               <param id="description">Definition of serial peripheral</param>
+            </fragment>
+            <fragment id="define" if_expr="$this.peripheral_config.isAvailable()">
+               <param id="name" expr="$configSet.inst_ID_def_peripheral_instance.getValue()"/>
+               <param id="value" expr="$this.peripheral_config.peripheralInstance.getValue() + `U`"/>
+               <param id="description">Definition of serial peripheral instance</param>
+            </fragment>
+            <fragment id="define" if_expr="$this.peripheral_config.isAvailable()">
+               <param id="name" expr="$configSet.inst_ID_def_peripheral_type.getValue()"/>
+               <param id="value" expr="$this.peripheral_config.serial_port_type.getEnumItemId()"/>
+               <param id="description">Definition of serial peripheral type</param>
+            </fragment>
+            <fragment id="define" if_expr="$this.peripheral_config.isAvailable()">
+               <param id="name" expr="$configSet.inst_ID_def_peripheral_baudrate.getValue()"/>
+               <param id="value" expr="$this.peripheral_config.peripheralBaudRate_Bps.getValue().toString(10) + `UL`"/> 
+               <param id="description">Definition of the Baud rate</param>
+            </fragment>
+            <fragment id="define" if_expr="$this.peripheral_config.isAvailable()">
+               <param id="name" expr="$configSet.inst_ID_def_peripheral_clock.getValue()"/>
+               <param id="value" expr="($this.peripheral_config.peripheralClockSourceFreq.getValue().toString(10) + `UL`)"/> 
+               <param id="description">Definition of the clock source frequency</param>
+            </fragment>
+            
+
+            <fragment id="IRQ_definitions" apply_to="$this.peripheral_config.uart_config.interrupt_rx_tx"
+               if_expr="$this.peripheral_config.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_rx_tx.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_rx_tx.isEnabled()"/>
+            <fragment id="IRQ_definitions" apply_to="$this.peripheral_config.uart_config.interrupt_rx"
+               if_expr="$this.peripheral_config.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_rx.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_rx.isEnabled()"/>
+            <fragment id="IRQ_definitions" apply_to="$this.peripheral_config.uart_config.interrupt_tx"
+               if_expr="$this.peripheral_config.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_tx.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_tx.isEnabled()"/>
+            <fragment id="IRQ_definitions" apply_to="$this.peripheral_config.uart_config.interrupt_error"
+               if_expr="$this.peripheral_config.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_error.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_error.isEnabled()"/>
+         </section>                  
+         <section target="init_function_body">
+            <if expr="$this.peripheral_config.isAvailable()"> 
+               <expr>leftPadding(`/* Debug console initialization */`,1)</expr><br/>
+               <expr>leftPadding(`status_t result;`,1)</expr><br/>
+               <fragment id="generic_uart_enable_interrupt_sources" apply_to="$this.peripheral_config.uart_config"/>
+               <fragment id="generic_uart_enable_interrupt_sources_fifo" apply_to="$this.peripheral_config.uart_config"/>
+               <expr>leftPadding(`result = DbgConsole_Init(`    + $configSet.inst_ID_def_peripheral_instance.getValue()
+                                                         + `, ` + $configSet.inst_ID_def_peripheral_baudrate.getValue() 
+                                                         + `, ` + $configSet.inst_ID_def_peripheral_type.getValue() 
+                                                         + `, ` + $configSet.inst_ID_def_peripheral_clock.getValue() + `);`,1)</expr><br/>
+               <expr>leftPadding(`assert(kStatus_Success == result);`,1)</expr><br/>
+            </if>
+         </section>
+         <section target="init_function_postinit0">
+            <fragment id="IRQn_set_priority_default"
+               if_expr="$this.peripheral_config.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_rx_tx.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_rx_tx.isEnabled()"
+               apply_to="$this.peripheral_config.uart_config.interrupt_rx_tx"/>
+            <fragment id="IRQn_enable_default"
+               if_expr="$this.peripheral_config.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_rx_tx.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_rx_tx.isEnabled()"
+               apply_to="$this.peripheral_config.uart_config.interrupt_rx_tx"/>
+            
+            <fragment id="IRQn_set_priority_default"
+               if_expr="$this.peripheral_config.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_rx.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_rx.isEnabled()"
+               apply_to="$this.peripheral_config.uart_config.interrupt_rx"/>
+            <fragment id="IRQn_enable_default"
+               if_expr="$this.peripheral_config.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_rx.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_rx.isEnabled()"
+               apply_to="$this.peripheral_config.uart_config.interrupt_rx"/>
+            
+            <fragment id="IRQn_set_priority_default"
+               if_expr="$this.peripheral_config.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_tx.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_tx.isEnabled()"
+               apply_to="$this.peripheral_config.uart_config.interrupt_tx"/>
+            <fragment id="IRQn_enable_default"
+               if_expr="$this.peripheral_config.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_tx.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_tx.isEnabled()"
+               apply_to="$this.peripheral_config.uart_config.interrupt_tx"/>
+            
+            <fragment id="IRQn_set_priority_default"
+               if_expr="$this.peripheral_config.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_error.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_error.isEnabled()"
+               apply_to="$this.peripheral_config.uart_config.interrupt_error"/>
+            <fragment id="IRQn_enable_default"
+               if_expr="$this.peripheral_config.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_error.isAvailable() &amp;&amp; $this.peripheral_config.uart_config.interrupt_error.isEnabled()"
+               apply_to="$this.peripheral_config.uart_config.interrupt_error"/>
+         </section>
+      </code>
+      <validation>
+         <constraint level="error" description_expr="msg::message(`err_component_instance`, `Debug console`)"
+            cond_expr="$components.system.#global.all_enabled_instances.getValue().countOccurrences(i -> (i.getType() == $instance.getType()), false) == 1"/>
+      </validation>
+      <quick_selections>
+         <quick_selection id="default" label="Default">
+            <set id="config.SDK_DEBUGCONSOLE">DEBUGCONSOLE_REDIRECT_TO_SDK</set>
+            <set id="config.DEBUG_CONSOLE_TRANSMIT_BUFFER_LEN">512</set>
+            <set id="config.DEBUG_CONSOLE_RECEIVE_BUFFER_LEN">1024</set>
+            <set id="config.DEBUG_CONSOLE_TX_RELIABLE_ENABLE">true</set>
+            <set id="config.DEBUG_CONSOLE_RX_ENABLE">true</set>
+            <set id="config.DEBUG_CONSOLE_PRINTF_MAX_LOG_LEN">128</set>
+            <set id="config.DEBUG_CONSOLE_SCANF_MAX_LOG_LEN">20</set>
+         </quick_selection>
+         <default>default</default>
+      </quick_selections>
+   </config_set>
+</component:config_component>

@@ -1,0 +1,1197 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="generic_uart" label="Generic_uart" auto_add="true" category="System" global_only="true" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <config_set id="global_uart" label="Global Generic UART definitions" from_source="fsl_common.h">
+      <description>Global Generic UART definitions</description>
+      <generated_types></generated_types>
+      <user_types>
+         <!-- User initialization -->
+         <struct id="user_init_t">
+            <!-- Variable section -->
+            <variable id="deviceName" value="$parent.getParent().getSetting(`generic_uart_sdk_driver_prefix`).getValue(``)"></variable>
+            <variable id="deviceBase" value="$parent.getParent().getSetting(`generic_uart_peripheral_alias`).getValue(``)"></variable>
+            <variable id="deviceFreqDef" value="$parent.getParent().getSetting(`generic_uart_peripheral_clock_ID`).getValue(``)"></variable>
+            <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+            <variable id="inst_ID_def" value="toUpperCase($instance.getFnGroupPrefix() + $instance.getID())"></variable>
+            <variable id="serialConfigDef" value="$parent.inst_ID.getValue(``) + `_serial_config`"></variable>
+            <!-- Function -->
+            <variable id="serialInitFcn" value="
+               leftPadding(`&#10;/* Serial communication interface init example */ &#10;&#10;`,1) +
+               leftPadding(`// ` + toUpperCase($parent.deviceName.getValue(``)) + ` module initialization ;&#10;`,1) +
+               leftPadding(toLowerCase($parent.deviceName.getValue(``) + `_config_t `) + $parent.serialConfigDef.getValue(``) + `;&#10;&#10;`,1) +
+               leftPadding(`// Use ` + toUpperCase($parent.deviceName.getValue(``)) + ` default configuration and modify it;&#10;`,1) +
+               leftPadding(toUpperCase($parent.deviceName.getValue(``))+`_GetDefaultConfig(&amp;`+ $parent.serialConfigDef.getValue(``) +`);&#10;&#10;`,1) +
+               leftPadding($parent.serialConfigDef.getValue(``) + `.baudRate_Bps = 115200UL;` + `&#10;&#10;`,1) + 
+               leftPadding(`// Initialize ` + toUpperCase($parent.deviceName.getValue(``)) + ` module, define the required clock frequency: #define `+ $parent.deviceFreqDef.getValue(``) + `&#10;`,1) +
+               leftPadding(toUpperCase($parent.deviceName.getValue(``))+`_Init(`+ $parent.deviceBase.getValue(``) +`, &amp;` + $parent.serialConfigDef.getValue(``) + `, ` + $parent.deviceFreqDef.getValue(``) +`);`,1)">
+            </variable>
+            <variable id="serialInitFcnDsc" value="
+               leftPadding(`&#10;/* Serial communication interface init example */ &#10;&#10;`,1) +
+               leftPadding(`// ` + toUpperCase($parent.deviceName.getValue(``)) + ` module initialization ;&#10;`,1) +
+               leftPadding(toLowerCase($parent.deviceName.getValue(``) + `_config_t `) + $parent.serialConfigDef.getValue(``) + `;&#10;&#10;`,1) +
+               leftPadding(`// Use ` + toUpperCase($parent.deviceName.getValue(``)) + ` default configuration and modify it. &#10;`,1) +
+               leftPadding(`// Define the required clock frequency: #define `+ $parent.deviceFreqDef.getValue(``) + `&#10;`,1) +
+               leftPadding(toUpperCase($parent.deviceName.getValue(``))+`_GetDefaultConfig(&amp;`+ $parent.serialConfigDef.getValue(``) +`, 115200UL, ` + $parent.deviceFreqDef.getValue(``) + `);&#10;&#10;`,1) +
+               leftPadding($parent.serialConfigDef.getValue(``) + `.u32BaudRateBps = 115200UL;` + `&#10;&#10;`,1) + 
+               leftPadding(`// Initialize ` + toUpperCase($parent.deviceName.getValue(``)) + ` module &#10;`,1) +
+               leftPadding(toUpperCase($parent.deviceName.getValue(``))+`_Init(`+ $parent.deviceBase.getValue(``) +`, &amp;` + $parent.serialConfigDef.getValue(``) +`);`,1)">
+            </variable>
+            <!-- Template -->
+            <variable id="functionBody" value="$parent.hasOption(`genericUartDefaultUserInit`) ? `&#10;` + leftPadding(`/* Place your code here */`,1) + `&#10;` : ($parent.getParent().getSetting(`isPeripheralQSCIType`).getValue(false) ? $parent.serialInitFcnDsc.getValue() : $parent.serialInitFcn.getValue()) "></variable>
+            <variable id="templateText" value="`void ` + $parent.initFunctionID.getValue(``) + `(void){&#10;` + $parent.functionBody.getValue(``) + `&#10;};`"></variable>
+            <string id="initFunctionID" label="User init function">
+               <description expr="`Set extern initialization function ID of serial communication interface. Define following function in your code: ` + ($this.getValue(``)==`` ? `N/A` : (`void ` + $this.getValue(``) + `(void)`)) "></description>
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error"  description_expr="$this.getValue() + ` is not a valid C identifier!`"/>
+               </validation>
+            </string>
+            <info id="functionTemplate" label="Function template" options="UI_INFO_COPY_BUTTON" value="$parent.templateText.getValue(``)">
+               <description>Copy this template of user init function into your code and define it.</description>
+            </info>
+         </struct>
+         <!-- Parity mode enums -->
+         <enum id="uart_parity_mode_t" label="UART parity mode" from="_uart_parity_mode">
+            <item id="kUART_ParityDisabled" label="Parity disabled">
+               <description>Parity disabled.</description>
+            </item>
+            <item id="kUART_ParityEven" label="Even parity">
+               <description>Even parity enabled.</description>
+            </item>
+            <item id="kUART_ParityOdd" label="Odd parity">
+               <description>Odd parity enabled.</description>
+            </item>
+         </enum>
+         
+         <enum id="lpsci_parity_mode_t" label="LPSCI parity mode." from="_lpsci_parity_mode">
+            <item id="kLPSCI_ParityDisabled" label="Parity disabled">
+               <description>Parity disabled.</description>
+            </item>
+            <item id="kLPSCI_ParityEven" label="Even parity">
+               <description>Even parity enabled.</description>
+            </item>
+            <item id="kLPSCI_ParityOdd" label="Odd parity">
+               <description>Odd parity enabled.</description>
+            </item>
+         </enum>
+         
+         <enum id="lpuart_parity_mode_t" label="LPUART parity mode." from="_lpuart_parity_mode">
+            <item id="kLPUART_ParityDisabled" label="Parity disabled">
+               <description>Parity disabled.</description>
+            </item>
+            <item id="kLPUART_ParityEven" label="Even parity">
+               <description>Even parity enabled.</description>
+            </item>
+            <item id="kLPUART_ParityOdd" label="Odd parity">
+               <description>Odd parity enabled.</description>
+            </item>
+         </enum>
+         
+         <enum id="usart_parity_mode_t" label="USART parity mode" from="_usart_parity_mode">
+            <description/>
+            <item id="kUSART_ParityDisabled" label="Parity disabled">
+               <description>Parity disabled.</description>
+            </item>
+            <item id="kUSART_ParityEven" label="Even parity">
+               <description>Even parity enabled.</description>
+            </item>
+            <item id="kUSART_ParityOdd" label="Odd parity">
+               <description>Odd parity enabled.</description>
+            </item>
+         </enum>
+         <enum id="qsci_parity_mode_t" label="QSCI parity mode" from="_qsci_parity_mode">
+            <description/>
+            <item id="kQSCI_ParityDisabled" label="Parity disabled">
+               <description>Parity disabled.</description>
+            </item>
+            <item id="kQSCI_ParityEven" label="Even parity">
+               <description>Even parity enabled.</description>
+            </item>
+            <item id="kQSCI_ParityOdd" label="Odd parity">
+               <description>Odd parity enabled.</description>
+            </item>
+         </enum>
+                 
+         <!-- Stop bit count enums -->
+         <enum id="uart_stop_bit_count_t" label="UART stop bit count" from="_uart_stop_bit_count">
+            <item id="kUART_OneStopBit" label="One">
+               <description>One stop bit.</description>
+            </item>
+            <item id="kUART_TwoStopBit" label="Two">
+               <description>Two stop bits.</description>
+            </item>
+         </enum>
+         
+         <enum id="lpsci_stop_bit_count_t" label="LPSCI stop bit count" from="_lpsci_stop_bit_count">
+            <item id="kLPSCI_OneStopBit" label="One">
+               <description>One stop bit.</description>
+            </item>
+            <item id="kLPSCI_TwoStopBit" label="Two">
+               <description>Two stop bits.</description>
+            </item>
+         </enum>
+         
+         <enum id="lpuart_stop_bit_count_t" label="LPUART stop bit count" from="_lpuart_stop_bit_count">
+            <item id="kLPUART_OneStopBit" label="One">
+               <description>One stop bit.</description>
+            </item>
+            <item id="kLPUART_TwoStopBit" label="Two">
+               <description>Two stop bits.</description>
+            </item>
+         </enum>
+         
+         <enum id="usart_stop_bit_count_t" label="USART stop bit count" from="_usart_stop_bit_count">
+            <item id="kUSART_OneStopBit" label="One">
+               <description>One stop bit.</description>
+            </item>
+            <item id="kUSART_TwoStopBit" label="Two">
+               <description>Two stop bits.</description>
+            </item>
+         </enum>
+        
+         <!-- Data size enum -->     
+         <enum id="lpuart_data_bits_t" label="LPUART data size" from="_lpuart_data_bits">
+            <item id="kLPUART_EightDataBits" label="Eight">
+               <description>Seven bit data width mode.</description>
+            </item>
+            <item id="kLPUART_SevenDataBits" label="Seven" available="(peripheralFeatureDefined(`FSL_FEATURE_LPUART_HAS_7BIT_DATA_SUPPORT`, $parent.getSetting(`generic_uart_peripheral`).getValue()) &amp;&amp; getPeripheralFeature(`FSL_FEATURE_LPUART_HAS_7BIT_DATA_SUPPORT`,  $parent.getSetting(`generic_uart_peripheral`).getValue()))">
+               <description>Seven bit data width mode.</description>
+            </item>
+         </enum>
+         
+         <enum id="qsci_data_bit_mode_t" label="QSCI data bit count">
+            <description></description>
+            <item id="kQSCI_Data8Bit" label="8" value="0">
+               <description>Data format: 1 start bit, 8 data bits, 1 stop bit</description>
+            </item>
+            <item id="kQSCI_Data9Bit" label="9" value="1">
+               <description>Data format: 1 start bit, 9 data bits, 1 stop bit.</description>
+            </item>
+         </enum>
+         
+         <enum id="usart_data_len_t" label="USART data size" from="_usart_data_len">
+            <item id="kUSART_7BitsPerChar" label="Seven">
+               <description>Seven bit data width mode.</description>
+            </item>
+            <item id="kUSART_8BitsPerChar" label="Eight">
+               <description>Eight bit data width mode.</description>
+            </item>
+         </enum>
+         
+         <!-- Polarity mode  -->
+
+         <enum id="qsci_polarity_mode_t" label="QSCI signal polarity mode" from="_qsci_polarity_mode">
+            <item id="kQSCI_PolarityNormal" label="Normal">
+               <description>Normal mode of the transmitter and receiver - no inversion.</description>
+            </item>
+            <item id="kQSCI_PolarityInvert" label="Inverted">
+               <description>Inverted mode of the transmitter and receiver signals.</description>
+            </item>
+         </enum>
+
+         <!-- Interrupt sources uart -->
+         <set id="interrupt_sources_uart_t" label="Interrupt sources">
+            <item id="kUART_RxActiveEdgeInterruptEnable" label="RX active edge"/>
+            <item id="kUART_TxDataRegEmptyInterruptEnable" label="Transmit data register empty"/>
+            <item id="kUART_TransmissionCompleteInterruptEnable" label="Transmission complete"/>
+            <item id="kUART_RxDataRegFullInterruptEnable" label="Receiver data register full"/>
+            <item id="kUART_IdleLineInterruptEnable" label="Idle line"/>
+            <item id="kUART_RxOverrunInterruptEnable" label="Receiver overrun"/>
+            <item id="kUART_NoiseErrorInterruptEnable" label="Noise error flag"/>
+            <item id="kUART_FramingErrorInterruptEnable" label="Framing error flag"/>
+            <item id="kUART_ParityErrorInterruptEnable" label="Parity error flag"/>
+            <item id="kUART_RxFifoOverflowInterruptEnable" label="RX FIFO overflow" available="peripheralFeatureDefined(`FSL_FEATURE_UART_HAS_FIFO`, $parent.getParent().getSetting(`generic_uart_peripheral`).getValue()) &amp;&amp; getPeripheralFeature(`FSL_FEATURE_UART_HAS_FIFO`, $parent.getParent().getSetting(`generic_uart_peripheral`).getValue())"/>
+            <item id="kUART_TxFifoOverflowInterruptEnable" label="TX FIFO overflow" available="peripheralFeatureDefined(`FSL_FEATURE_UART_HAS_FIFO`, $parent.getParent().getSetting(`generic_uart_peripheral`).getValue()) &amp;&amp; getPeripheralFeature(`FSL_FEATURE_UART_HAS_FIFO`, $parent.getParent().getSetting(`generic_uart_peripheral`).getValue())"/>
+            <item id="kUART_RxFifoUnderflowInterruptEnable" label="RX FIFO underflow" available="peripheralFeatureDefined(`FSL_FEATURE_UART_HAS_FIFO`, $parent.getParent().getSetting(`generic_uart_peripheral`).getValue()) &amp;&amp; getPeripheralFeature(`FSL_FEATURE_UART_HAS_FIFO`, $parent.getParent().getSetting(`generic_uart_peripheral`).getValue())"/>
+         </set>
+         
+         
+         <!-- Interrupt sources lpsci -->
+         <set id="interrupt_sources_lpsci_t" label="Interrupt sources">
+            <item id="kLPSCI_LinBreakInterruptEnable" label="LIN break detect" available="peripheralFeatureDefined(`FSL_FEATURE_LPSCI_HAS_LIN_BREAK_DETECT`, $parent.getParent().getSetting(`generic_uart_peripheral`).getValue()) &amp;&amp; getPeripheralFeature(`FSL_FEATURE_LPSCI_HAS_LIN_BREAK_DETECT`, $parent.getParent().getSetting(`generic_uart_peripheral`).getValue())"/>
+            <item id="kLPSCI_RxActiveEdgeInterruptEnable" label="RX active edge"/>
+            <item id="kLPSCI_TxDataRegEmptyInterruptEnable" label="Transmit data register empty"/>
+            <item id="kLPSCI_TransmissionCompleteInterruptEnable" label="Transmission complete"/>
+            <item id="kLPSCI_RxDataRegFullInterruptEnable" label="Receiver data register full"/>
+            <item id="kLPSCI_IdleLineInterruptEnable" label="Idle line"/>
+            <item id="kLPSCI_RxOverrunInterruptEnable" label="Receiver overrun"/>
+            <item id="kLPSCI_NoiseErrorInterruptEnable" label="Noise error flag"/>
+            <item id="kLPSCI_FramingErrorInterruptEnable" label="Framing error flag"/>
+            <item id="kLPSCI_ParityErrorInterruptEnable" label="Parity error flag"/>
+         </set>
+         
+         <!-- Interrupt sources lpuart -->
+         <set id="interrupt_sources_lpuart_t" label="Interrupt sources">
+            <item id="kLPUART_LinBreakInterruptEnable" label="LIN break detect" available="peripheralFeatureDefined(`FSL_FEATURE_LPUART_HAS_LIN_BREAK_DETECT`, $parent.getParent().getSetting(`generic_uart_peripheral`).getValue()) &amp;&amp; getPeripheralFeature(`FSL_FEATURE_LPUART_HAS_LIN_BREAK_DETECT`, $parent.getParent().getSetting(`generic_uart_peripheral`).getValue())"/>
+            <item id="kLPUART_RxActiveEdgeInterruptEnable" label="RX active edge"/>
+            <item id="kLPUART_TxDataRegEmptyInterruptEnable" label="Transmit data register empty"/>
+            <item id="kLPUART_TransmissionCompleteInterruptEnable" label="Transmission complete"/>
+            <item id="kLPUART_RxDataRegFullInterruptEnable" label="Receiver data register full"/>
+            <item id="kLPUART_IdleLineInterruptEnable" label="Idle line"/>
+            <item id="kLPUART_RxOverrunInterruptEnable" label="Receiver overrun"/>
+            <item id="kLPUART_NoiseErrorInterruptEnable" label="Noise error flag"/>
+            <item id="kLPUART_FramingErrorInterruptEnable" label="Framing error flag"/>
+            <item id="kLPUART_ParityErrorInterruptEnable" label="Parity error flag"/>
+            <item id="kLPUART_TxFifoOverflowInterruptEnable" label="RX FIFO overflow" available="peripheralFeatureDefined(`FSL_FEATURE_LPUART_HAS_FIFO`, $parent.getParent().getSetting(`generic_uart_peripheral`).getValue()) &amp;&amp; getPeripheralFeature(`FSL_FEATURE_LPUART_HAS_FIFO`,$parent.getParent().getSetting(`generic_uart_peripheral`).getValue())"/>
+            <item id="kLPUART_RxFifoUnderflowInterruptEnable" label="RX FIFO underflow" available="peripheralFeatureDefined(`FSL_FEATURE_LPUART_HAS_FIFO`, $parent.getParent().getSetting(`generic_uart_peripheral`).getValue()) &amp;&amp; getPeripheralFeature(`FSL_FEATURE_LPUART_HAS_FIFO`,$parent.getParent().getSetting(`generic_uart_peripheral`).getValue())"/>
+         </set>
+         
+         <!-- Interrupt sources lpc_miniusart  -->
+         <set id="interrupt_sources_lpc_miniusart_t" label="Interrupt sources">
+            <description></description>
+            <item id="kUSART_RxReadyInterruptEnable" label="Rx ready">
+               <description>Receive ready interrupt source is invoked when there is a received character available to be read from the receive data register.</description>
+            </item>
+            <item id="kUSART_TxReadyInterruptEnable" label="Tx ready">
+               <description>Transmit ready interrupt is invoked when the transmit data register is available to take another character to transmit.</description>
+            </item>
+            <item id="kUSART_TxIdleInterruptEnable" label="Tx idle" available="peripheralFeatureDefined(`FSL_FEATURE_USART_HAS_INTENSET_TXIDLEEN`, $parent.getParent().getSetting(`generic_uart_peripheral`).getValue()) &amp;&amp; getPeripheralFeature(`FSL_FEATURE_USART_HAS_INTENSET_TXIDLEEN`, $parent.getParent().getSetting(`generic_uart_peripheral`).getValue())">
+               <description>Transmit idle interrupt is invoked when the transmitter becomes idle.</description>
+            </item>
+            <item id="kUSART_DeltaCtsInterruptEnable" label="CTS pin change">
+               <description>CTS pin change interrupt is invoked when there is a change in the state of the CTS input.</description>
+            </item>
+            <item id="kUSART_TxDisableInterruptEnable" label="Tx disable">
+               <description>Transmit disable interrupt is invoked when the transmitter is fully disabled (the transmitter was disabled by TXDIS bit and the last character was send).</description>
+            </item>
+            <item id="kUSART_HardwareOverRunInterruptEnable" label="Hardware overrun">
+               <description>Hardware overrun interrupt is invoked when a new character is received while the receiver buffer is still in use. If this occurs, the newly received character in the shift register is lost.</description>
+            </item>
+            <item id="kUSART_RxBreakInterruptEnable" label="Rx break">
+               <description>Receive break interrupt is invoked when a change of state has occurred in the detection of a received break condition (break condition asserted or deasserted).</description>
+            </item>
+            <item id="kUSART_RxStartInterruptEnable" label="Rx start">
+               <description>Receive start interrupt is invoked when a received start bit has been detected.</description>
+            </item>
+            <item id="kUSART_FramErrorInterruptEnable" label="Frame error">
+               <description>Receive start interrupt is invoked when a framing error has been detected.</description>
+            </item>
+            <item id="kUSART_ParityErrorInterruptEnable" label="Parity error">
+               <description>Parity error interrupt is invoked when a parity error has been detected.</description>
+            </item>
+            <item id="kUSART_RxNoiseInterruptEnable" label="Rx noise error">
+               <description>Receive noise error interrupt is invoked when noise is detected detected on the Rx input.</description>
+            </item>
+            <item id="kUSART_AutoBaudErrorInterruptEnable" label="Auto baud error" available="peripheralFeatureDefined(`FSL_FEATURE_USART_HAS_ABERR_CHECK`, $parent.getParent().getSetting(`generic_uart_peripheral`).getValue()) &amp;&amp; getPeripheralFeature(`FSL_FEATURE_USART_HAS_ABERR_CHECK`, $parent.getParent().getSetting(`generic_uart_peripheral`).getValue())">
+               <description>Receive auto baud error interrupt is invoked when the Baud generator register counts to its limit before the end of the start bit that is being measured (an auto-baud function time-out).</description>
+            </item>
+         </set>
+         
+         <!-- Interrupt sources flexcomm usart  -->
+         <set id="interrupt_sources_flexcomm_usart_t" label="Interrupt sources">
+            <item id="kUSART_TxErrorInterruptEnable" label="Tx Error"/>       
+            <item id="kUSART_RxErrorInterruptEnable" label="Rx Error"/>
+            <item id="kUSART_TxLevelInterruptEnable" label="Tx"/>
+            <item id="kUSART_RxLevelInterruptEnable" label="Rx"/>
+         </set>
+         
+         <!-- Interrupt sources flexcomm usart  -->
+         <set id="interrupt_sources_vusart_t" label="USART interrupt configuration">
+            <description></description>
+            <item id="kUSART_RxReadyInterruptEnable" label="Rx ready">
+               <description>Receive ready interrupt source is invoked when there is a received character available to be read from the receive data register.</description>
+            </item>
+            <item id="kUSART_TxReadyInterruptEnable" label="Tx ready">
+               <description>Transmit ready interrupt is invoked when the transmit data register is available to take another character to transmit..</description>
+            </item>
+            <item id="kUSART_TxIdleInterruptEnable" label="Tx idle">
+               <description>Transmit idle interrupt is invoked when the transmitter becomes idle.</description>
+            </item>
+            <item id="kUSART_DeltaCtsInterruptEnable" label="CTS pin change">
+               <description>CTS pin change interrupt is invoked when there is a change in the state of the CTS input.</description>
+            </item>
+            <item id="kUSART_TxDisableInterruptEnable" label="Tx disable">
+               <description>Transmit disable interrupt is invoked when the transmitter is fully disabled (the transmitter was disabled by TXDIS bit and the last character was send).</description>
+            </item>
+            <item id="kUSART_HardwareOverRunInterruptEnable" label="Hardware overrun">
+               <description>Hardware overrun interrupt is invoked when a new character is received while the receiver buffer is still in use. If this occurs, the newly received character in the shift register is lost.</description>
+            </item>
+            <item id="kUSART_RxBreakInterruptEnable" label="Rx break">
+               <description>Receive break interrupt is invoked when a change of state has occurred in the detection of a received break condition (break condition asserted or deasserted).</description>
+            </item>
+            <item id="kUSART_RxStartInterruptEnable" label="Rx start">
+               <description>Receive start interrupt is invoked when a received start bit has been detected.</description>
+            </item>
+            <item id="kUSART_FramErrorInterruptEnable" label="Frame error">
+               <description>Receive start interrupt is invoked when a framing error has been detected.</description>
+            </item>
+            <item id="kUSART_ParityErrorInterruptEnable" label="Parity error">
+               <description>Parity error interrupt is invoked when a parity error has been detected.</description>
+            </item>
+            <item id="kUSART_RxNoiseInterruptEnable" label="Rx noise error">
+               <description>Receive noise error interrupt is invoked when noise is detected detected on the Rx input.</description>
+            </item>
+            <item id="kUSART_AutoBaudErrorInterruptEnable" label="Rx auto baud error">
+               <description>Receive auto baud error interrupt is invoked when the Baud generator register counts to its limit before the end of the start bit that is being measured (an auto-baud function time-out).</description>
+            </item>
+         </set>
+         <set id="interrupt_sources_vusart_fifo_t"
+            label="System FIFO interrupt configuration structure for USART, default settings all disabled">
+            <description/>
+            <item id="kUSART_RxFifoThresholdInterruptEnable"
+               label="Rx FIFO threshold">
+               <description>Receive FIFO threshold interrupt is invoked when the number of entries in the receive FIFO is greater than the selected value.</description>
+            </item>
+            <item id="kUSART_TxFifoThresholdInterruptEnable"
+               label="Tx FIFO threshold">
+               <description>Transmit FIFO threshold interrupt is invoked when the number of free entries in the transmit FIFO is less than or equal to the selected value.</description>
+            </item>
+            <item id="kUSART_RxFifoTimeOutInterruptEnable"
+               label="Rx FIFO timeout">
+               <description>Receive FIFO timeout interrupt is invoked when the receive transmit take longer than the selected timeout value.</description>
+            </item>
+         </set>
+         <!-- Interrupt sources qsci -->
+         <set id="interrupt_sources_qsci_t" label="Interrupt sources">
+            <item id="kQSCI_TxEmptyInterruptEnable" 
+               label="Tx data register empty">
+               <description>Transmit data register empty interrupt.</description>
+            </item>                
+            <item id="kQSCI_TxIdleInterruptEnable" 
+               label="Tx idle line">
+               <description>Transmission idle interrupt.</description>
+            </item>
+            <item id="kQSCI_RxFullInterruptEnable" 
+               label="Rx data register full">
+               <description>Receive data register full interrupt.</description>
+            </item>
+            <item id="kQSCI_RxErrorInterruptEnable" 
+               label="Rx error">
+               <description>Receive error interrupt.</description>
+            </item>
+            <item id="kQSCI_RxInputEdgeInterruptEnable" 
+               label="Rx input active edge">
+               <description>Receive input edge interrupt.</description>
+            </item>
+            <item id="kQSCI_RxIdleLineInterruptEnable" 
+               label="Rx idle line">
+               <description>Receive idle interrupt.</description>
+            </item>
+         </set>
+
+         <!-- 
+         #Config section#
+         Peripheral selection is always enabled.
+         
+         Options example:
+         
+         <options_expr>
+            <option id="UI_REFRESH"/>
+            <option id="genericUartClocks"/>
+            <option id="genericUartBaudrate"/>
+         </options_expr>
+         
+         Peripheral LPSCI is not supported: <option id="genericUartPeripheralLpsciNotSupported"/>
+         Peripheral IUART is not supported: <option id="genericUartPeripheralIuartNotSupported"/>
+         Peripheral UART is not supported: <option id="genericUartPeripheralUartNotSupported"/>
+         Peripheral LPUART is not supported: <option id="genericUartPeripheralLpuartNotSupported"/>
+         Peripheral LPC_MINIUSART is not supported: <option id="genericUartPeripheralLpcMiniusartNotSupported"/>
+         Peripheral FLEXCOMM USART is not supported: <option id="genericUartPeripheralFlexcommUsartNotSupported"/>
+         Peripheral VUSART is not supported: <option id="genericUartPeripheralVusartNotSupported"/>
+         Peripheral QSCI is not supported: <option id="genericUartPeripheralQsciNotSupported"/>
+         
+         Use Quick selection in the structure (not supported in the tool): <option id="genericUartUseQuickSelection"/> 
+         The warning text if any peripheral is not supported: <option id="genericUartPeripheralNotAvailableText" expr="`Any peripheral is not available.`"/>
+         The warning text if the peripheral is not supported: <option id="genericUartPeripheralUnsupportedText"  expr="`Peripheral is not supported.`"/>
+         Enable selection of the peripheral: <option id="genericUartPeripheralSelect"/>
+         Enable RX pin dependency in the peripheral setting: <option id="genericUartRxPinDependencyPeripheralSetting"/>
+         Enable TX pin dependency in the peripheral setting: <option id="genericUartTxPinDependencyPeripheralSetting"/>
+         Enable SDK driver dependency in the peripheral setting: <option id="genericUartDriverDependencyPeripheralSetting"/>
+         Enable SDK driver versions setting: <option id="genericUartDriverVersions"/>
+         Enable clock settings: <option id="genericUartClocks"/>
+         Enable baudrate setting: <option id="genericUartBaudrate"/>
+         Enable parity mode setting: <option id="genericUartParityMode"/>
+         Enable Stop bit count setting: <option id="genericUartStopBitCount"/>
+         Enable data bit count setting: <option id="genericUartDataBitCount"/>
+         Enable signal polarity mode setting: <option id="genericUartPolarityMode"/>
+         Enable data length setting: <option id="genericUartDataLength"/>
+         Enable RX setting and pin dependency: <option id="genericUartEnableRx"/>
+         Enable TX setting and pin dependency: <option id="genericUartEnableTx"/>
+         
+         #Init function section#
+         Enable user init function: <option id="genericUartUserInit"/>
+         Enable and use default user init function: <option id="genericUartDefaultUserInit"/>
+         Disable driver include (for customm initialization): <option id="genericUartInlcudeDriverDisable"/>
+         
+         #Interrupt section#
+         Enable Interrput sources: <option id="genericUartInterruptSources"/>
+         Enable Interrput sources FIFO(VUSART only ): <option id="genericUartInterruptSourcesFifo"/>
+         Enable Rx/Tx interrupt vectors: <option id="genericUartInterruptRxTxVectors"/>
+         Disable bool setting of the Rx/Tx vectors: <option id="genericUartInterruptRxTxVectorsDisable"/>
+         Rx/Tx interrupt vector handler text: <option id="genericUartInterruptRxTx_irq_handler_insert" expr="`Handler function example`"/>
+         Rx/Tx interrupt vector remove errata 838869: <option id="genericUartInterruptRxTx_irq_handler_remove_arm_errata_838869"/>
+         Rx/Tx interrupt vector without handler settings: <option id="genericUartInterruptRxTx_without_handler_settings"/>
+         Rx/Tx interrupt handler generation: <option id="irq_generate_handler" available="$parent.hasOption(`genericUartInterruptRxTx_irq_generate_handler`)"/>
+         Rx interrupt vector handler text: <option id="genericUartInterruptRx_irq_handler_insert" expr="`Handler function example`"/>
+         Rx interrupt vector remove errata 838869: <option id="genericUartInterruptRx_irq_handler_remove_arm_errata_838869"/>
+         Rx interrupt vector without handler settings: <option id="genericUartInterruptRx_without_handler_settings"/>
+         Rx interrupt handler generation: <option id="irq_generate_handler" available="$parent.hasOption(`genericUartInterruptRx_irq_generate_handler`)"/>
+         Tx interrupt vector handler text: <option id="genericUartInterruptTx_irq_handler_insert" expr="`Handler function example`"/>
+         Tx interrupt vector remove errata 838869: <option id="genericUartInterruptTx_irq_handler_remove_arm_errata_838869"/>
+         Tx interrupt vector without handler settings: <option id="genericUartInterruptTx_without_handler_settings"/>
+         Tx interrupt handler generation: <option id="irq_generate_handler" available="$parent.hasOption(`genericUartInterruptTx_irq_generate_handler`)"/>
+         Enable Error vector: <option id="genericUartInterruptErrorVector"/>
+         Disable bool setting of the Error vectors: <option id="genericUartInterruptErrorVectorsDisable"/>
+         Error interrupt vector handler text: <option id="genericUartInterruptError_irq_handler_insert" expr="`Handler function example`"/>
+         Error interrupt vector remove errata 838869: <option id="genericUartInterruptError_irq_handler_remove_arm_errata_838869"/>
+         Error interrupt vector without handler settings: <option id="genericUartInterruptError_without_handler_settings"/>
+         Error interrupt handler generation: <option id="irq_generate_handler" available="$parent.hasOption(`genericUartInterruptError_irq_generate_handler`)"/>
+         
+         #Test section#
+         Zero peripheral: <option id="genericUartTestZeroPeripheral"/>
+         Unknown peripheral type: <option id="genericUartTestUnknownPeripheralType"/>
+         
+         #Fragments
+         Add enable interrupt sources to the init function: <option id="genericUartInterruptSourcesInitFnc"/>
+         
+         Fragment_defs - items are relative to peripheral_config_t structure (apply_to="peripheral_config structure")
+         generic_uart_includes
+         generic_uart_defines
+         generic_uart_global_vars
+         generic_uart_global_vars_extern
+         generic_uart_init_function_body
+         generic_uart_enable_interrupt_sources
+         generic_uart_enable_interrupt_sources_fifo
+         generic_uart_irq_handler_functions
+         -->
+         <struct id="peripheral_config_t" public="true">
+            <!-- quick selection is not available -->
+            <quick_selections>
+               <quick_selection id="QuickSelection1" label="Default">
+                  <set id="user_init.initFunctionID">SERIAL_communication_init</set>
+                  <set id="baudRate_Bps">115200</set>
+                  <set id="u32BaudRateBps">115200</set>
+                  <set id="bitCountPerChar">kUSART_8BitsPerChar</set>
+                  <set id="enableTx">true</set>
+                  <set id="enableRx">true</set>
+                  
+                  <set id="interrupt_sources_lpsci.kLPSCI_TxDataRegEmptyInterruptEnable">true</set>
+                  <set id="interrupt_sources_lpsci.kLPSCI_TransmissionCompleteInterruptEnable">true</set>
+                  <set id="interrupt_sources_lpsci.kLPSCI_RxDataRegFullInterruptEnable">true</set>
+                  <set id="interrupt_sources_lpsci.kLPSCI_RxOverrunInterruptEnable">true</set>
+                  
+                  <set id="interrupt_sources_uart.kUART_TxDataRegEmptyInterruptEnable">true</set>
+                  <set id="interrupt_sources_uart.kUART_TransmissionCompleteInterruptEnable">true</set>
+                  <set id="interrupt_sources_uart.kUART_RxDataRegFullInterruptEnable">true</set>
+                  <set id="interrupt_sources_uart.kUART_RxOverrunInterruptEnable">true</set>
+                  
+                  <set id="interrupt_sources_lpuart.kLPUART_TxDataRegEmptyInterruptEnable">true</set>
+                  <set id="interrupt_sources_lpuart.kLPUART_TransmissionCompleteInterruptEnable">true</set>
+                  <set id="interrupt_sources_lpuart.kLPUART_RxDataRegFullInterruptEnable">true</set>
+                  <set id="interrupt_sources_lpuart.kLPUART_RxOverrunInterruptEnable">true</set>
+                  
+                  <set id="interrupt_sources_lpc_miniusart.kUSART_RxReadyInterruptEnable">true</set>
+                  <set id="interrupt_sources_lpc_miniusart.kUSART_TxReadyInterruptEnable">true</set>
+                  <set id="interrupt_sources_lpc_miniusart.kUSART_TxIdleInterruptEnable">true</set>
+                  <set id="interrupt_sources_lpc_miniusart.kUSART_RxBreakInterruptEnable">true</set>
+                  <set id="interrupt_sources_lpc_miniusart.kUSART_RxStartInterruptEnable">true</set>
+                  
+                  <set id="interrupt_sources_flexcomm_usart.kUSART_TxLevelInterruptEnable">true</set>
+                  <set id="interrupt_sources_flexcomm_usart.kUSART_RxLevelInterruptEnable">true</set>
+                  
+                  <set id="interrupt_sources_vusart.kUSART_RxReadyInterruptEnable">true</set>
+                  <set id="interrupt_sources_vusart.kUSART_TxReadyInterruptEnable">true</set>
+                  <set id="interrupt_sources_vusart.kUSART_TxIdleInterruptEnable">true</set>
+                  <set id="interrupt_sources_vusart.kUSART_RxBreakInterruptEnable">true</set>
+                  <set id="interrupt_sources_vusart.kUSART_RxStartInterruptEnable">true</set>
+                  
+                  <set id="interrupt_sources_qsci.kQSCI_TxDataRegEmptyInterrupt">true</set>
+                  <set id="interrupt_sources_qsci.kQSCI_TxIdleInterrupt">true</set>
+                  <set id="interrupt_sources_qsci.kQSCI_RxDataRegFullInterrupt">true</set>
+                  <set id="interrupt_sources_qsci.kQSCI_RxErrorInterrupt">true</set>
+                  <set id="interrupt_sources_qsci.kQSCI_RxInputEdgeInterrupt">true</set>
+                  <set id="interrupt_sources_qsci.kQSCI_RxIdleLineInterrupt">true</set>
+                               
+                  <set id="enable_rx_tx_irq">true</set>
+                  <set id="interrupt_rx_tx.useDefaultISR">true</set>
+                  <set id="enable_rx_irq">true</set>
+                  <set id="interrupt_rx.useDefaultISR">true</set>
+                  <set id="enable_tx_irq">true</set>
+                  <set id="interrupt_tx.useDefaultISR">true</set>
+                  <set id="enable_err_irq">true</set>
+                  <set id="interrupt_error.useDefaultISR">true</set>
+                  <set id="enable_tridle_irq">true</set>
+                  <set id="interrupt_tridle.useDefaultISR">true</set>
+               </quick_selection>
+               <default>QuickSelection1</default>
+            </quick_selections>
+
+            <!-- UART Type -->
+            <variable id="uart_type_table" value="getResource(`generic_uart`,`uartList`,`generic_uart`)"/>
+            <variable id="UART_Type_peripherals" value="getPeripherals(`UART`).sort((item1, item2) -> stringCompare(item1,item2))"/>
+            <variable id="UART_Type_peripherals_size" value="$parent.UART_Type_peripherals.getValue().size()"/>
+            <variable id="UART0_Type_peripherals" value="getPeripherals(`UART0`).sort((item1, item2) -> stringCompare(item1,item2))"/>
+            <variable id="UART0_Type_peripherals_size" value="$parent.UART0_Type_peripherals.getValue().size()"/>
+            <variable id="LPUART_Type_peripherals" value="getPeripherals(`LPUART`).sort((item1, item2) -> stringCompare(item1,item2))"/>
+            <variable id="LPUART_Type_peripherals_size" value="$parent.LPUART_Type_peripherals.getValue().size()"/>
+            <variable id="USART_Type_peripherals" value="getPeripherals(`USART`).sort((item1, item2) -> stringCompare(item1,item2))"/>
+            <variable id="USART_Type_peripherals_size" value="$parent.USART_Type_peripherals.getValue().size()"/>
+            <variable id="FLEXCOMM_Type_peripherals" value="getPeripherals(`FLEXCOMM`).sort((item1, item2) -> stringCompare(item1,item2))"/>
+            <variable id="FLEXCOMM_Type_peripherals_size" value="$parent.FLEXCOMM_Type_peripherals.getValue().size()"/>
+            <variable id="QSCI_Type_peripherals" value="getPeripherals(`QSCI`).sort((item1, item2) -> stringCompare(item1,item2))"/>
+            <variable id="QSCI_Type_peripherals_size" value="$parent.QSCI_Type_peripherals.getValue().size()"/>
+            <variable id="USART_Type_peripherals_Filtred" value="($parent.FLEXCOMM_Type_peripherals_size.getValue() &lt;= 0 ? $parent.USART_Type_peripherals.getValue(): ( 
+               $parent.FLEXCOMM_Type_peripherals.getValue().arrayToEnumItems(
+               enumItem -> peripheralFeatureDefined(enumItem + `_USART_INDEX`, enumItem),
+               enumItem -> enumItem,
+               enumItem -> enumItem,
+               enumItem -> peripheralFeatureDefined(enumItem + `_USART_INDEX`, enumItem) ? `USART` + getPeripheralFeature(enumItem + `_USART_INDEX`, enumItem) : `USART0`)))"/>
+            <variable id="USART_Type_peripherals_Filtred_size" value="$parent.USART_Type_peripherals_Filtred.getValue().size()"/>            
+            
+            <variable id="serial_port_uart_peripherals" value="$parent.UART0_Type_peripherals.getValue()
+               .merge($parent.UART_Type_peripherals.getValue())
+               .merge($parent.LPUART_Type_peripherals.getValue())
+               .merge($parent.USART_Type_peripherals_Filtred.getValue())
+               .merge($parent.QSCI_Type_peripherals.getValue())"/>
+            
+            <variable id="serial_port_uart_peripherals_size" value="$parent.hasOption(`genericUartTestZeroPeripheral`) ? 0 : $parent.serial_port_uart_peripherals.getValue().size()"/>
+
+            <!-- Selected peripheral -->
+            <dynamic_enum id="peripheralUART" label="Peripheral" items="$parent.serial_port_uart_peripherals.getValue()" available="$parent.serial_port_uart_peripherals_size.getValue() &gt; 0">
+               <options_expr>
+                  <option id="FEATURE_PERIPHERAL_SELECT" available="$parent.isAvailable() &amp;&amp; $parent.hasOption(`genericUartPeripheralSelect`)"/>
+                  <option id="UI_REFRESH"/>
+                  <option id="remove_from_struct_init"/>
+               </options_expr>
+               <description>Serial port peripheral selection</description>
+               <validation>
+                  <dependency when_expr="$parent.hasOption(`genericUartRxPinDependencyPeripheralSetting`) &amp;&amp; $parent.isPeripheralUARTIndexValid.getValue(false)"
+                     resource_type="PeripheralUnifiedSignal"
+                     resource_id_expr="$parent.peripheralUART.getEnumItemId() + `.` + $parent.generic_uart_rx_signal_unified_id.getValue()"
+                     description_expr="msg::message(`err_routed_signal`, $parent.generic_uart_rx_signal_description.getValue() , $parent.peripheralUART.getEnumItemId())"
+                     level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="$parent.hasOption(`genericUartTxPinDependencyPeripheralSetting`) &amp;&amp; $parent.isPeripheralUARTIndexValid.getValue(false)"
+                     resource_type="PeripheralUnifiedSignal"
+                     resource_id_expr="$parent.peripheralUART.getEnumItemId() + `.` + $parent.generic_uart_tx_signal_unified_id.getValue()"
+                     description_expr="msg::message(`err_routed_signal`, $parent.generic_uart_tx_signal_description.getValue() , $parent.peripheralUART.getEnumItemId())"
+                     level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="$parent.hasOption(`genericUartDriverDependencyPeripheralSetting`) &amp;&amp; $parent.isPeripheralUARTIndexValid.getValue(false)"
+                     resource_type="SWComponent" resource_id_expr="$parent.generic_uart_sdk_driver_id.getValue(``)"
+                     description_expr="msg::message(`err_missing_driver`, $parent.generic_uart_sdk_driver_filename_name.getValue(``) , ` (required for ` + $instance.getID() + `)`)"
+                     level="Warning">
+                     <feature name="enabled" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            
+            
+            <variable id="peripheralUARTIndex" value="$parent.peripheralUART.enumItemsOf().searchInArray(x -> (x.getID() == $parent.peripheralUART.getEnumItemId()))"/>
+            
+            <variable id="uart_type_table_index" value="((!$parent.hasOption(`genericUartTestUnknownPeripheralType`) &amp;&amp; ($parent.serial_port_uart_peripherals_size.getValue() &gt; 0))? 
+               (($parent.peripheralUARTIndex.getValue().toInt() &lt;  ($parent.UART0_Type_peripherals_size.getValue())) ?      
+                  ((isSdkComponentDefined(`platform.drivers.lpsci`) &amp;&amp; !$parent.hasOption(`genericUartPeripheralLpsciNotSupported`)) ? 0 : -1)
+               :
+               (($parent.peripheralUARTIndex.getValue().toInt() &lt;  ($parent.UART_Type_peripherals_size.getValue() + $parent.UART0_Type_peripherals_size.getValue())) ?
+                  ((isSdkComponentDefined(`platform.drivers.iuart`) &amp;&amp; !$parent.hasOption(`genericUartPeripheralIuartNotSupported`)) ? 7 : ((isSdkComponentDefined(`platform.drivers.uart`)&amp;&amp; !$parent.hasOption(`genericUartPeripheralUartNotSupported`)) ? 1 : -1))
+               :                  
+               (($parent.peripheralUARTIndex.getValue().toInt() &lt;  ($parent.UART_Type_peripherals_size.getValue() + $parent.UART0_Type_peripherals_size.getValue() + $parent.LPUART_Type_peripherals_size.getValue())) ?
+                  ((isSdkComponentDefined(`platform.drivers.lpuart`) &amp;&amp; !$parent.hasOption(`genericUartPeripheralLpuartNotSupported`)) ? 2 : -1)
+               :
+               (($parent.peripheralUARTIndex.getValue().toInt() &lt;  ($parent.UART_Type_peripherals_size.getValue() + $parent.UART0_Type_peripherals_size.getValue() + $parent.LPUART_Type_peripherals_size.getValue() + $parent.USART_Type_peripherals_Filtred_size.getValue())) ?               
+               ($parent.FLEXCOMM_Type_peripherals_size.getValue() &lt;= 0 ? ((isSdkComponentDefined(`platform.drivers.lpc_miniusart`) &amp;&amp; !$parent.hasOption(`genericUartPeripheralLpcMiniusartNotSupported`)) ? 3 : ((isSdkComponentDefined(`platform.drivers.vusart`) &amp;&amp; !$parent.hasOption(`genericUartPeripheralVusartNotSupported`))  ? 5 : -1 )) :  ((isSdkComponentDefined(`platform.drivers.flexcomm_usart`) &amp;&amp; !$parent.hasOption(`genericUartPeripheralFlexcommUsartNotSupported`)) ? 4 : - 1))               
+               :
+               (($parent.peripheralUARTIndex.getValue().toInt() &lt;  ($parent.UART_Type_peripherals_size.getValue() + $parent.UART0_Type_peripherals_size.getValue() + $parent.LPUART_Type_peripherals_size.getValue() + $parent.USART_Type_peripherals_Filtred_size.getValue() + $parent.QSCI_Type_peripherals_size.getValue())) ?
+               ((isSdkComponentDefined(`platform.drivers.qsci`) &amp;&amp; !$parent.hasOption(`genericUartPeripheralQsciNotSupported`)) ? 6 : -1)
+               :
+                  -1
+               ))))): -1)" />
+            
+            <variable id="isPeripheralUARTIndexValid" value="($parent.uart_type_table_index.getValue() &gt; - 1)"/>
+            
+            <info id="peripheralWarning" label="Note:"  value="($parent.isPeripheralUARTIndexValid.getValue(false) ? `` :(($parent.serial_port_uart_peripherals_size.getValue(0) &gt; 0) ?  ($parent.hasOption(`genericUartPeripheralUnsupportedText`) ? $parent.optionValue(`genericUartPeripheralUnsupportedText`) : $parent.peripheralUART.getEnumItemId() + ` peripheral is not supported.`) : ($parent.hasOption(`genericUartPeripheralNotAvailableText`) ? $parent.optionValue(`genericUartPeripheralNotAvailableText`) :`Any peripheral is not available.`)))" available="!$parent.isPeripheralUARTIndexValid.getValue(false)"/>
+            
+            <variable id="isPeripheralUARTType" value="($parent.uart_type_table_index.getValue() == 1) || ($parent.uart_type_table_index.getValue() == 7)"/> <!-- UART and IUART -->
+            <variable id="isPeripheralUART0Type" value="($parent.uart_type_table_index.getValue() == 0)"/> <!-- LPSCI -->
+            <variable id="isPeripheralLPUARTType" value="($parent.uart_type_table_index.getValue() == 2)"/> <!-- LPUART-->
+            <variable id="isPeripheralFLEXCOMMType" value="($parent.uart_type_table_index.getValue() == 4)"/> <!-- FLEXCOMM USART -->
+            <variable id="isPeripheralUSARTType" value="($parent.uart_type_table_index.getValue() == 3) || ($parent.uart_type_table_index.getValue() == 5)"/> <!-- MINIUSART and VUSART -->
+            <variable id="isPeripheralQSCIType" value="($parent.uart_type_table_index.getValue() == 6)"/> <!-- QSCI -->
+            
+            <!-- Resource table date for UART peripheral -->
+            <variable id="generic_uart_peripheral_type"                  value="$parent.isPeripheralUARTIndexValid.getValue() &amp;&amp; ($parent.uart_type_table.getValue().size() &gt; 0)? $parent.uart_type_table.getValue().get($parent.uart_type_table_index.getValue().toInt()).getSetting(`peripheral_type`).getValue():-1"/>
+            <variable id="generic_uart_peripheral_description"           value="$parent.isPeripheralUARTIndexValid.getValue() &amp;&amp; ($parent.uart_type_table.getValue().size() &gt; 0) ? $parent.uart_type_table.getValue().get($parent.uart_type_table_index.getValue().toInt()).getSetting(`peripheral_description`).getValue():-1"/>
+            <variable id="generic_uart_sdk_driver_id"                    value="$parent.isPeripheralUARTIndexValid.getValue() &amp;&amp; ($parent.uart_type_table.getValue().size() &gt; 0) ? $parent.uart_type_table.getValue().get($parent.uart_type_table_index.getValue().toInt()).getSetting(`sdk_driver_id`).getValue():-1"/>
+            <variable id="generic_uart_sdk_driver_id_short"              value="$parent.generic_uart_sdk_driver_id.getValue().regexMatch(`platform\.drivers\.(.*)`) ? $parent.generic_uart_sdk_driver_id.getValue().regexSubstr(`platform\.drivers\.(.*)`,1)  : -1"/>
+            <variable id="generic_uart_sdk_driver_filename"              value="$parent.isPeripheralUARTIndexValid.getValue() &amp;&amp; ($parent.uart_type_table.getValue().size() &gt; 0) ? $parent.uart_type_table.getValue().get($parent.uart_type_table_index.getValue().toInt()).getSetting(`sdk_driver_filename`).getValue():-1"/>
+            <variable id="generic_uart_sdk_driver_filename_name"         value="$parent.generic_uart_sdk_driver_filename.getValue().regexMatch(`(.*)\.h`) ? $parent.generic_uart_sdk_driver_filename.getValue().regexSubstr(`(.*)\.h`,1)  : -1"/>
+            <variable id="generic_uart_sdk_driver_prefix"                value="$parent.isPeripheralUARTIndexValid.getValue() &amp;&amp; ($parent.uart_type_table.getValue().size() &gt; 0) ? $parent.uart_type_table.getValue().get($parent.uart_type_table_index.getValue().toInt()).getSetting(`sdk_driver_prefix`).getValue():-1"/>
+            <variable id="generic_uart_sdk_serial_manager_driver_id"     value="$parent.isPeripheralUARTIndexValid.getValue() &amp;&amp; ($parent.uart_type_table.getValue().size() &gt; 0) ? $parent.uart_type_table.getValue().get($parent.uart_type_table_index.getValue().toInt()).getSetting(`sdk_serial_manager_driver_id`).getValue():-1"/>
+            <variable id="generic_uart_sdk_serial_freemaster_id"         value="$parent.isPeripheralUARTIndexValid.getValue() &amp;&amp; ($parent.uart_type_table.getValue().size() &gt; 0) ? $parent.uart_type_table.getValue().get($parent.uart_type_table_index.getValue().toInt()).getSetting(`sdk_serial_freemaster_id`).getValue():-1"/>
+            <variable id="generic_uart_sdk_serial_freemaster_filename"   value="$parent.isPeripheralUARTIndexValid.getValue() &amp;&amp; ($parent.uart_type_table.getValue().size() &gt; 0) ? $parent.uart_type_table.getValue().get($parent.uart_type_table_index.getValue().toInt()).getSetting(`sdk_freemaster_driver_filename`).getValue():-1"/>
+            <variable id="generic_uart_rx_signal_unified_id"             value="$parent.isPeripheralUARTIndexValid.getValue() &amp;&amp; ($parent.uart_type_table.getValue().size() &gt; 0) ? $parent.uart_type_table.getValue().get($parent.uart_type_table_index.getValue().toInt()).getSetting(`rx_signal_unified_id`).getValue():-1"/>
+            <variable id="generic_uart_rx_signal_description"            value="$parent.isPeripheralUARTIndexValid.getValue() &amp;&amp; ($parent.uart_type_table.getValue().size() &gt; 0) ? $parent.uart_type_table.getValue().get($parent.uart_type_table_index.getValue().toInt()).getSetting(`rx_signal_description`).getValue():-1"/>
+            <variable id="generic_uart_tx_signal_unified_id"             value="$parent.isPeripheralUARTIndexValid.getValue() &amp;&amp; ($parent.uart_type_table.getValue().size() &gt; 0) ? $parent.uart_type_table.getValue().get($parent.uart_type_table_index.getValue().toInt()).getSetting(`tx_signal_unified_id`).getValue():-1"/>
+            <variable id="generic_uart_tx_signal_description"            value="$parent.isPeripheralUARTIndexValid.getValue() &amp;&amp; ($parent.uart_type_table.getValue().size() &gt; 0) ? $parent.uart_type_table.getValue().get($parent.uart_type_table_index.getValue().toInt()).getSetting(`tx_signal_description`).getValue():-1"/>
+            <variable id="generic_uart_peripheral_clock_unified_id"      value="$parent.isPeripheralUARTIndexValid.getValue() &amp;&amp; ($parent.uart_type_table.getValue().size() &gt; 0) ? $parent.uart_type_table.getValue().get($parent.uart_type_table_index.getValue().toInt()).getSetting(`peripheral_clock_unified_id`).getValue():-1"/>
+            <variable id="generic_uart_peripheral_alias_prefix"                 value="$parent.isPeripheralUARTIndexValid.getValue() &amp;&amp; ($parent.uart_type_table.getValue().size() &gt; 0) ? $parent.uart_type_table.getValue().get($parent.uart_type_table_index.getValue().toInt()).getSetting(`peripheral_alias`).getValue():-1"/>
+            <variable id="generic_uart_peripheral_alias_index_feature_postfix" value="$parent.isPeripheralUARTIndexValid.getValue() &amp;&amp; ($parent.uart_type_table.getValue().size() &gt; 0) ? $parent.uart_type_table.getValue().get($parent.uart_type_table_index.getValue().toInt()).getSetting(`peripheral_alias_index_feature_postfix`).getValue():-1"/>
+            
+            <!-- Driver version -->
+            <variable id="projectDriverVersion" value="queryFeatureAdvanced(`SWComponent`, $parent.generic_uart_sdk_driver_id.getValue(), `version`,false).regexSubstr(`\[(.*)\]`,1)"/>
+            <variable id="isProjectDriverVersionAvailable" value="$parent.projectDriverVersion.getValue() != ``"/>
+            <dynamic_enum id="generic_uart_driver_version" label="Driver version" available="$parent.hasOption(`genericUartDriverVersions`) &amp;&amp; $parent.isPeripheralUARTIndexValid.getValue()"
+               items="getDefinedSdkComponentVersions($parent.generic_uart_sdk_driver_id.getValue()).arrayToEnumItems(
+                  enumItem -> (!$parent.isProjectDriverVersionAvailable.getValue(false)) || ($parent.projectDriverVersion.getValue(``) == enumItem),
+                  enumItem -> enumItem,
+                  enumItem -> enumItem,
+                  enumItem -> enumItem)">
+               <description expr="`Version of the ` + ($parent.isPeripheralUARTIndexValid.getValue(false) ? $parent.generic_uart_sdk_driver_filename.getValue(`N/A`) : `N/A`) + ` SDK driver`"/>
+               <custom_value_support default="2.0.0" validation_expr="x -> x.regexMatch(`\d+\.\d+\.\d+`)"/>
+            </dynamic_enum>
+            <!-- Clock sources -->
+            <variable id="generic_uart_peripheral" value="$parent.peripheralUART.getEnumItemId()" available="$parent.isPeripheralUARTIndexValid.getValue()"/>
+            <variable id="generic_uart_peripheral_alias" value="$parent.peripheralUART.getEnumItemValue()" available="$parent.isPeripheralUARTIndexValid.getValue()"/>
+            <variable id="clockSourceUId" value="$parent.generic_uart_peripheral_clock_unified_id.getValue()" available="$parent.isPeripheralUARTIndexValid.getValue()"/>
+            <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="createArray().addItemToList(`genericUartClockSource`, ($parent.isPeripheralUARTIndexValid.getValue() ? getPeripheralClock($parent.generic_uart_peripheral.getValue(), $parent.clockSourceUId.getValue()): ``), $parent.clockSourceUId.getValue(),true)" available="$parent.hasOption(`genericUartClocks`) &amp;&amp; $parent.isPeripheralUARTIndexValid.getValue()">
+               <description>Clock source</description>
+               <validation>
+                  <dependency when_expr="$parent.generic_uart_peripheral.isAvailable() &amp;&amp; $parent.clockSourceFreq.getEnumItemId() != `custom`" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($parent.generic_uart_peripheral.getValue(``),$parent.clockSourceUId.getValue(``))"
+                     description_expr="(getPeripheralClock($parent.generic_uart_peripheral.getValue(``), $parent.clockSourceUId.getValue(``)).regexMatch(`.*-.*`) ? (getPeripheralClock($parent.generic_uart_peripheral.getValue(``), $parent.clockSourceUId.getValue(``)).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($parent.generic_uart_peripheral.getValue(``), $parent.clockSourceUId.getValue(``)) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" available="$parent.hasOption(`genericUartClocks`) &amp;&amp; $parent.isPeripheralUARTIndexValid.getValue()"
+               items="
+               getClockFunctionalGroups().arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> enumItem,
+               enumItem -> ($parent.isPeripheralUARTIndexValid.getValue() ? frequencyToString(getPeripheralClockFrequency($parent.generic_uart_peripheral.getValue(), $parent.clockSource.getEnumItemValue(), enumItem)) : ``) + ` (` + enumItem + `)`,
+               enumItem -> ($parent.isPeripheralUARTIndexValid.getValue() ? getPeripheralClockFrequency($parent.generic_uart_peripheral.getValue(), $parent.clockSource.getEnumItemValue(), enumItem) : 0))" >
+               <description>Selection of the clock source frequency</description>
+               <validation>
+                  <constraint cond_expr="$this.getEnumItemValue().toHertz() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+            </dynamic_enum>
+            
+            <!-- Baudrate -->
+            <integer id="baudRate_Bps" label="Baud rate [bps]" type="uint32_t"  min_expr="1" available="$parent.hasOption(`genericUartBaudrate`) &amp;&amp; $parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; !$parent.isPeripheralQSCIType.getValue(false)">
+               <description>Baud rate selection [bps].</description>
+            </integer>
+            <integer id="u32BaudRateBps" label="Baud rate [bps]" type="uint32_t"  min_expr="1" available="$parent.hasOption(`genericUartBaudrate`) &amp;&amp; $parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $parent.isPeripheralQSCIType.getValue(false)">
+               <description>Baud rate selection [bps].</description>
+            </integer>
+            
+            <!-- Parity mode -->
+            <reference id="parityMode_uart" label="Parity mode" type="uart_parity_mode_t" config_set_id="global_uart" options="remove_from_struct_init" available="$parent.hasOption(`genericUartParityMode`) &amp;&amp; $parent.isPeripheralUARTType.getValue(false)">
+               <description>Parity mode selection - disabled (default), even and odd.</description>
+            </reference>
+            <reference id="parityMode_lpsci" label="Parity mode" type="lpsci_parity_mode_t" config_set_id="global_uart" options="remove_from_struct_init" available="$parent.hasOption(`genericUartParityMode`) &amp;&amp; $parent.isPeripheralUART0Type.getValue(false)">
+               <description>Parity mode selection - disabled (default), even and odd.</description>
+            </reference>
+            <reference id="parityMode_lpuart" label="Parity mode" type="lpuart_parity_mode_t" config_set_id="global_uart" options="remove_from_struct_init" available="$parent.hasOption(`genericUartParityMode`) &amp;&amp; $parent.isPeripheralLPUARTType.getValue(false)">
+               <description>Parity mode selection - disabled (default), even and odd.</description>
+            </reference>
+            <reference id="parityMode_usart" label="Parity mode" type="usart_parity_mode_t" config_set_id="global_uart" options="remove_from_struct_init" available="$parent.hasOption(`genericUartParityMode`) &amp;&amp; ($parent.isPeripheralFLEXCOMMType.getValue(false) || $parent.isPeripheralUSARTType.getValue(false))">
+               <description>Parity mode selection - disabled (default), even and odd.</description>
+            </reference>
+            <reference id="parityMode_qsci" label="Parity mode" type="qsci_parity_mode_t" config_set_id="global_uart" options="remove_from_struct_init" available="$parent.hasOption(`genericUartParityMode`) &amp;&amp; $parent.isPeripheralQSCIType.getValue(false)">
+               <description>Parity mode selection - disabled (default), even and odd.</description>
+            </reference>
+            
+            <variable id="parityMode" 
+               value="$parent.parityMode_uart.isAvailable()? $parent.parityMode_uart.getEnumItemId() : $parent.parityMode_lpsci.isAvailable()? $parent.parityMode_lpsci.getEnumItemId() :  $parent.parityMode_lpuart.isAvailable()? $parent.parityMode_lpuart.getEnumItemId() : $parent.parityMode_usart.isAvailable()? $parent.parityMode_usart.getEnumItemId() : `` "  
+               options="add_to_struct" 
+               available="$parent.parityMode_uart.isAvailable() || $parent.parityMode_lpsci.isAvailable() || $parent.parityMode_lpuart.isAvailable() || $parent.parityMode_usart.isAvailable()"/>
+            <variable id="eParityMode"
+               value="$parent.parityMode_qsci.isAvailable() ? $parent.parityMode_qsci.getEnumItemId() : ``"
+               options="add_to_struct"
+               available="$parent.parityMode_qsci.isAvailable()"
+               />
+            
+            <!-- Stop bit count -->
+            <reference id="stopBitCount_uart" label="Number of stop bits" type="uart_stop_bit_count_t" config_set_id="global_uart" options="remove_from_struct_init" 
+               available="peripheralFeatureDefined(`FSL_FEATURE_UART_HAS_STOP_BIT_CONFIG_SUPPORT`, $parent.getSetting(`generic_uart_peripheral`).getValue()) &amp;&amp; getPeripheralFeature(`FSL_FEATURE_UART_HAS_STOP_BIT_CONFIG_SUPPORT`, $parent.getSetting(`generic_uart_peripheral`).getValue()) &amp;&amp; $parent.hasOption(`genericUartStopBitCount`) &amp;&amp; $parent.isPeripheralUARTType.getValue(false)">
+               <description>Number of stop bits - 1 stop bit (default) or 2 stop bits.</description>
+            </reference> 
+            <reference id="stopBitCount_lpsci" label="Number of stop bits" type="lpsci_stop_bit_count_t" config_set_id="global_uart" options="remove_from_struct_init" 
+               available="(peripheralFeatureDefined(`FSL_FEATURE_LPSCI_HAS_LIN_BREAK_DETECT`, $parent.getSetting(`generic_uart_peripheral`).getValue()) &amp;&amp; getPeripheralFeature(`FSL_FEATURE_LPSCI_HAS_LIN_BREAK_DETECT`, $parent.getSetting(`generic_uart_peripheral`).getValue())) &amp;&amp; $parent.hasOption(`genericUartStopBitCount`) &amp;&amp; $parent.isPeripheralUART0Type.getValue(false)">
+               <description>Number of stop bits - 1 stop bit (default) or 2 stop bits</description>
+            </reference>
+            <reference id="stopBitCount_lpuart" label="Number of stop bits" type="lpuart_stop_bit_count_t" config_set_id="global_uart" options="remove_from_struct_init"
+               available="(peripheralFeatureDefined(`FSL_FEATURE_LPUART_HAS_STOP_BIT_CONFIG_SUPPORT`, $parent.getSetting(`generic_uart_peripheral`).getValue()) &amp;&amp; getPeripheralFeature(`FSL_FEATURE_LPUART_HAS_STOP_BIT_CONFIG_SUPPORT`, $parent.getSetting(`generic_uart_peripheral`).getValue())) &amp;&amp; $parent.hasOption(`genericUartStopBitCount`) &amp;&amp; $parent.isPeripheralLPUARTType.getValue(false)">
+               <description>Number of stop bits - 1 stop bit (default) or 2 stop bits</description>
+            </reference>
+            <reference id="stopBitCount_usart" label="Number of stop bits" type="usart_stop_bit_count_t" config_set_id="global_uart" options="remove_from_struct_init"
+               available="$parent.hasOption(`genericUartStopBitCount`) &amp;&amp; ($parent.isPeripheralFLEXCOMMType.getValue(false) || $parent.isPeripheralUSARTType.getValue(false))">
+               <description>Number of stop bits - 1 stop bit (default) or 2 stop bits.</description>
+            </reference>
+            
+            <variable id="stopBitCount" 
+               value="$parent.stopBitCount_uart.isAvailable()? $parent.stopBitCount_uart.getEnumItemId() : $parent.stopBitCount_lpsci.isAvailable()? $parent.stopBitCount_lpsci.getEnumItemId() :  $parent.stopBitCount_lpuart.isAvailable()? $parent.stopBitCount_lpuart.getEnumItemId() : $parent.stopBitCount_usart.isAvailable()? $parent.stopBitCount_usart.getEnumItemId() : `` "  
+               options="add_to_struct" 
+               available="$parent.stopBitCount_uart.isAvailable() || $parent.stopBitCount_lpsci.isAvailable() || $parent.stopBitCount_lpuart.isAvailable() || $parent.stopBitCount_usart.isAvailable()"/>
+                        
+            <!-- data Bits count -->   
+            <reference id="dataBitsCount" label="Data size" type="lpuart_data_bits_t" config_set_id="global_uart" options="remove_from_struct_init"
+               available="$parent.hasOption(`genericUartDataLength`) &amp;&amp; $parent.isPeripheralLPUARTType.getValue(false)">
+               <description>Data size in bits. There is supported eight (default) and seven (it is MCU specific)</description>
+            </reference>
+            <reference id="dataBitCount_qsci" label="Data bits count" type="qsci_data_bit_mode_t" config_set_id="global_uart" options="remove_from_struct_init"
+               available="$parent.hasOption(`genericUartDataLength`) &amp;&amp; ($parent.isPeripheralQSCIType.getValue(false))">
+               <description>Number of data bits transmitted in one word.</description>
+            </reference>
+            
+            <variable id="eDataBitMode" 
+               value="$parent.dataBitCount_qsci.isAvailable()? $parent.dataBitCount_qsci.getEnumItemId() : `` "  
+               options="add_to_struct" 
+               available="$parent.dataBitCount_qsci.isAvailable()"/>
+            
+            <!-- Signal polarity mode -->
+            
+            <reference id="polarityMode_qsci" label="Tx/Rx signal polarity" type="qsci_polarity_mode_t" config_set_id="global_uart" options="remove_from_struct_init"
+               available="$parent.hasOption(`genericUartPolarityMode`) &amp;&amp; ($parent.isPeripheralQSCIType.getValue(false))">
+               <description>Polarity of the transmitter and receiver signal.</description>
+            </reference>
+            
+            <variable id="ePolarityMode" 
+               value="$parent.polarityMode_qsci.isAvailable()? $parent.polarityMode_qsci.getEnumItemId() : `` "  
+               options="add_to_struct" 
+               available="$parent.polarityMode_qsci.isAvailable()"/>
+            
+            <!-- Bit count Per Char -->   
+            <reference id="bitCountPerChar" label="Data length" type="usart_data_len_t" config_set_id="global_uart" options="remove_from_struct_init"
+               available="$parent.hasOption(`genericUartDataLength`) &amp;&amp; ($parent.isPeripheralFLEXCOMMType.getValue(false) || $parent.isPeripheralUSARTType.getValue(false))">
+               <description>Data length - 7 bits, 8 bits.</description>
+            </reference>   
+
+            <!-- Enable Rx -->
+            <bool id="enableRx" label="Enable Rx" available="$parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $parent.hasOption(`genericUartEnableRx`)">
+               <description expr="`Enable receiver.` + ($parent.isPeripheralFLEXCOMMType.getValue(false) ? ` The receiver FIFO is enabled and emptied, receiver FIFO watermark trigger interrupt is enabled and watermark level set according to Rx FIFO watermark setting.` : ``)"/>
+               <validation>
+                  <dependency when_expr="$parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $this.getValue()"
+                     resource_type="PeripheralUnifiedSignal"
+                     resource_id_expr="$parent.peripheralUART.getEnumItemId() + `.` + $parent.generic_uart_rx_signal_unified_id.getValue()"
+                     description_expr="msg::message(`err_routed_signal`, $parent.generic_uart_rx_signal_description.getValue() , $parent.peripheralUART.getEnumItemId())"
+                     level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </bool>
+            
+            <!-- Enable Tx -->
+            <bool id="enableTx" label="Enable Tx" available="$parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $parent.hasOption(`genericUartEnableTx`)">
+               <description expr="`Enable transmitter.` + ($parent.isPeripheralFLEXCOMMType.getValue(false) ? ` The transmitter FIFO is enabled and emptied, transmitter FIFO watermark trigger interrupt is enabled and watermark level set according to Tx FIFO watermark setting.` : ``)"/>
+               <validation>
+                  <dependency when_expr="$parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $this.getValue()"
+                     resource_type="PeripheralUnifiedSignal"
+                     resource_id_expr="$parent.peripheralUART.getEnumItemId() + `.` + $parent.generic_uart_tx_signal_unified_id.getValue()"
+                     description_expr="msg::message(`err_routed_signal`, $parent.generic_uart_tx_signal_description.getValue() , $parent.peripheralUART.getEnumItemId())"
+                     level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </bool>
+            
+            <!-- User init function -->
+            <bool id="enableUserInit" label="Enable custom initialization" options="UI_LABEL_BOLD" available="($parent.hasOption(`genericUartUserInit`) || $parent.hasOption(`genericUartDefaultUserInit`))">
+               <description expr="`Enable custom initialization of the serial peripheral. If disabled, use peripherals tool component for initialization of ` + $parent.peripheralUART.getValue() + `.`"></description>
+            </bool>
+            <reference type="user_init_t" id="user_init" options="UI_LABEL_HIDDEN" enable="$parent.enableUserInit.getValue(false)" available="($parent.hasOption(`genericUartUserInit`) || $parent.hasOption(`genericUartDefaultUserInit`))">
+               <options_expr>
+                  <option id="genericUartUserInit" available="$parent.isPeripheralUARTIndexValid.getValue(false) ? $parent.hasOption(`genericUartUserInit`) : false"></option>
+                  <option id="genericUartDefaultUserInit" available="$parent.isPeripheralUARTIndexValid.getValue(false) ? $parent.hasOption(`genericUartDefaultUserInit`) : true"></option>
+               </options_expr>
+            </reference>
+            
+            <info value="`Interrupt configuration`" id="line_Irq_cfg" options="UI_LINE_BREAK;UI_LABEL_HIDDEN" available="$parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; ($parent.hasOption(`genericUartInterruptSources`)|| $parent.hasOption(`genericUartInterruptSourcesFifo`) || $parent.hasOption(`genericUartInterruptRxTxVectors`) || $parent.hasOption(`genericUartInterruptErrorVector`))"/>
+            <!-- Interrupt sources -->
+            <reference id="interrupt_sources_uart" type="interrupt_sources_uart_t" label="Interrupt sources" config_set_id="global_uart" options="remove_from_struct_init"
+               available="$parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $parent.hasOption(`genericUartInterruptSources`) &amp;&amp; ($parent.generic_uart_sdk_driver_id_short.getValue() == `uart`)">
+               <description>Selection of peripheral interrupt requests sources.</description>
+            </reference>
+            <reference id="interrupt_sources_lpsci" type="interrupt_sources_lpsci_t" label="Interrupt sources" config_set_id="global_uart" options="remove_from_struct_init"
+               available="$parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $parent.hasOption(`genericUartInterruptSources`) &amp;&amp; ($parent.generic_uart_sdk_driver_id_short.getValue() == `lpsci`)">
+               <description>Selection of peripheral interrupt requests sources.</description>
+            </reference>
+            <reference id="interrupt_sources_lpuart" type="interrupt_sources_lpuart_t" label="Interrupt sources" config_set_id="global_uart" options="remove_from_struct_init"
+               available="$parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $parent.hasOption(`genericUartInterruptSources`) &amp;&amp; ($parent.generic_uart_sdk_driver_id_short.getValue() == `lpuart`)">
+               <description>Selection of peripheral interrupt requests sources.</description>
+            </reference>
+            <reference id="interrupt_sources_lpc_miniusart" type="interrupt_sources_lpc_miniusart_t" label="Interrupt sources" config_set_id="global_uart" options="remove_from_struct_init"
+               available="$parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $parent.hasOption(`genericUartInterruptSources`) &amp;&amp; ($parent.generic_uart_sdk_driver_id_short.getValue() == `lpc_miniusart`)">
+               <description>Selection of peripheral interrupt requests sources.</description>
+            </reference>
+            <reference id="interrupt_sources_flexcomm_usart" type="interrupt_sources_flexcomm_usart_t" label="Interrupt sources" config_set_id="global_uart" options="remove_from_struct_init"
+               available="$parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $parent.hasOption(`genericUartInterruptSources`) &amp;&amp; ($parent.generic_uart_sdk_driver_id_short.getValue() == `flexcomm_usart`)">
+               <description>Selection of peripheral interrupt requests sources.</description>
+            </reference>
+            <reference id="interrupt_sources_vusart" type="interrupt_sources_vusart_t" label="Interrupt sources" config_set_id="global_uart" options="remove_from_struct_init"
+               available="$parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $parent.hasOption(`genericUartInterruptSources`) &amp;&amp; ($parent.generic_uart_sdk_driver_id_short.getValue() == `vusart`)">
+               <description>Selection of peripheral interrupt common requests sources.</description>
+            </reference>
+            <reference id="interrupt_sources_qsci" type="interrupt_sources_qsci_t" label="Interrupt sources" config_set_id="global_uart" options="remove_from_struct_init"
+               available="$parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $parent.hasOption(`genericUartInterruptSources`) &amp;&amp; ($parent.generic_uart_sdk_driver_id_short.getValue() == `qsci`)">
+               <description>Selection of peripheral interrupt common requests sources.</description>
+            </reference>
+                       
+            <variable  id="interrupt_sources" value="$parent.isPeripheralUARTIndexValid.getValue(false) ? $parent.getSetting(`interrupt_sources_` + $parent.generic_uart_sdk_driver_id_short.getValue()).getCValue() != `` ? $parent.getSetting(`interrupt_sources_` + $parent.generic_uart_sdk_driver_id_short.getValue()).getCValue() : 0 : 0"
+               available="$parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $parent.hasOption(`genericUartInterruptSources`)">
+            </variable>
+            
+            
+            <reference id="interrupt_sources_vusart_fifo" type="interrupt_sources_vusart_fifo_t" label="Interrupt sources FIFO" config_set_id="global_uart" options="remove_from_struct_init"
+               available="$parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $parent.hasOption(`genericUartInterruptSourcesFifo`) &amp;&amp; ($parent.generic_uart_sdk_driver_id_short.getValue() == `vusart`)">
+               <description>Selection of peripheral interrupt FIFO requests sources.</description>
+            </reference>
+            
+            <variable  id="interrupt_sources_fifo" value="$parent.isPeripheralUARTIndexValid.getValue(false) ? $parent.getSetting(`interrupt_sources_vusart_fifo`).getCValue() != `` ? $parent.getSetting(`interrupt_sources_vusart_fifo`).getCValue() : 0 : 0"
+               available="$parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $parent.hasOption(`genericUartInterruptSourcesFifo`) &amp;&amp; ($parent.generic_uart_sdk_driver_id_short.getValue() == `vusart`)">
+            </variable>
+
+            <!-- Interrupt vectors -->
+            <variable id="uart_irq_number" value="getResource(`interrupts`, $instance.getCoreId()).countOccurrences(item -> (item.getSetting(`devices`).searchInArray(devItem -> devItem.getSetting(`id`).getValue() == $parent.peripheralUART.getEnumItemId()) >= 0), false)" 
+               available="($parent.generic_uart_sdk_driver_id_short.getValue() == `uart`) || ($parent.generic_uart_sdk_driver_id_short.getValue() == `qsci`)"/>
+            <variable id="shared_IRQn_rx_tx" value="getResource(`interrupts`, $instance.getCoreId()).searchInArray
+               ( varItem -> 
+                  (
+                     ((varItem.getSetting(`devices`).searchInArray
+                        (
+                        item -> (item.getSetting(`function`).getValue() == `serial_rx` &amp;&amp; (item.getSetting(`id`).getValue() == $parent.peripheralUART.getEnumItemId()))
+                        )
+                     ) >=0
+                  &amp;&amp;
+                     (varItem.getSetting(`devices`).searchInArray
+                        (
+                        item -> (item.getSetting(`function`).getValue() == `serial_tx` &amp;&amp; (item.getSetting(`id`).getValue() == $parent.peripheralUART.getEnumItemId()))
+                        )
+                     ) >=0)
+                  ||
+                     (varItem.getSetting(`devices`).searchInArray
+                        (
+                        item -> (item.getSetting(`function`).getValue() == `serial_rx_tx` &amp;&amp; (item.getSetting(`id`).getValue() == $parent.peripheralUART.getEnumItemId()))
+                        )
+                      ) >=0
+                  )
+                  ) >=0" 
+                  available="$parent.hasOption(`genericUartInterruptRxTxVectors`) &amp;&amp; ($parent.isPeripheralLPUARTType.getValue(false) || $parent.isPeripheralQSCIType.getValue(false))"/>
+            <variable id="intControllerName" value="(featureDefined(`SOC_INTC_COUNT`) &amp;&amp; getFeature(`SOC_INTC_COUNT`)) ? `INTC (Interrupt Controller peripheral)` : `NVIC (Nested Vectored Interrupt Controller peripheral)`"/>
+            <bool id="enable_rx_tx_irq" label="Rx/Tx interrupt vector" options="remove_from_struct_init;UI_LABEL_BOLD" enable="$parent.hasOption(`genericUartInterruptRxTxVectorsDisable`) ? false : true"
+               available="$parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $parent.hasOption(`genericUartInterruptRxTxVectors`) &amp;&amp; (!$parent.shared_IRQn_rx_tx.isAvailable() || $parent.shared_IRQn_rx_tx.value() == `true`)
+               &amp;&amp;
+               getResource(`interrupts`, $instance.getCoreId()).anyMatch(item -> (
+               (item.getSetting(`devices`).searchInArray(
+               devItem -> (devItem.getSetting(`id`).getValue() == $parent.getSetting(`peripheralUART`).getEnumItemId()) &amp;&amp;
+               (devItem.getSetting(`function`).getValue() == ($parent.isPeripheralFLEXCOMMType.getValue() ? `flexcomm` : ($parent.isPeripheralUSARTType.getValue(false) ? `usart` : `serial_rx_tx`)))
+               ) >= 0)
+               ))">
+               <description expr="`Enable initialization of the Rx/Tx interrupt vector in the ` + $parent.intControllerName.getValue() + ` and definition of the interrupt routine name.`"></description>
+            </bool>
+            <reference id="interrupt_rx_tx" label="Rx/Tx interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_rx_tx_irq.isEnabled() &amp;&amp; $parent.enable_rx_tx_irq.getValue(false)" available="$parent.enable_rx_tx_irq.isAvailable()">
+               <options_expr>
+                  <option id="irq_device" expr="$parent.peripheralUART.getEnumItemId()"/>
+                  <option id="irq_function" expr="($parent.isPeripheralFLEXCOMMType.getValue() ? `flexcomm` : ($parent.isPeripheralUSARTType.getValue(false) ? `usart` : `serial_rx_tx`))"/>
+                  <option id="irq_generate_handler" available="$parent.hasOption(`genericUartInterruptRxTx_irq_generate_handler`)"/>
+                  <option id="irq_handler_insert" expr="$parent.hasOption(`genericUartInterruptRxTx_irq_handler_insert`) ? $parent.optionValue(`genericUartInterruptRxTx_irq_handler_insert`) : ``" available="$parent.hasOption(`genericUartInterruptRxTx_irq_handler_insert`) &amp;&amp; ($parent.optionValue(`genericUartInterruptRxTx_irq_handler_insert`) != ``)"/>
+                  <option id="irq_handler_remove_arm_errata_838869" available="$parent.hasOption(`genericUartInterruptRxTx_irq_handler_remove_arm_errata_838869`)"/>
+                  <option id="without_handler_settings" available="$parent.hasOption(`genericUartInterruptRxTx_without_handler_settings`)"/>
+                  <option id="remove_from_struct_init"/>
+                  <option id="UI_LABEL_HIDDEN"/>
+               </options_expr>
+            </reference>
+            <bool id="enable_rx_irq" label="Rx interrupt vector" options="remove_from_struct_init;UI_LABEL_BOLD" enable="$parent.hasOption(`genericUartInterruptRxTxVectorsDisable`)? false : true"
+               available="$parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $parent.hasOption(`genericUartInterruptRxTxVectors`) &amp;&amp; !$parent.enable_rx_tx_irq.isAvailable() &amp;&amp; (!$parent.shared_IRQn_rx_tx.isAvailable() || $parent.shared_IRQn_rx_tx.value() == `false`)
+               &amp;&amp;
+               getResource(`interrupts`, $instance.getCoreId()).anyMatch(item -> (
+               (item.getSetting(`devices`).searchInArray(
+               devItem -> (devItem.getSetting(`id`).getValue() == $parent.getSetting(`peripheralUART`).getEnumItemId()) &amp;&amp;
+               (devItem.getSetting(`function`).getValue() == `serial_rx`)
+               ) >= 0)
+               ))">
+               <description expr="`Enable initialization of the Rx interrupt vector in the ` + $parent.intControllerName.getValue() + ` and definition of the interrupt routine name.`"></description>
+            </bool>
+            <reference id="interrupt_rx" label="Rx interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_rx_irq.isEnabled() &amp;&amp; $parent.enable_rx_irq.getValue(false)" available="$parent.enable_rx_irq.isAvailable() &amp;&amp; !$parent.enable_rx_tx_irq.isAvailable()">
+               <options_expr>
+                  <option id="irq_device" expr="$parent.peripheralUART.getEnumItemId()"/>
+                  <option id="irq_function" expr="`serial_rx`"/>
+                  <option id="irq_generate_handler" available="$parent.hasOption(`genericUartInterruptRx_irq_generate_handler`)"/>
+                  <option id="irq_handler_insert" expr="$parent.hasOption(`genericUartInterruptRx_irq_handler_insert`) ? $parent.optionValue(`genericUartInterruptRx_irq_handler_insert`) : ``" available="$parent.hasOption(`genericUartInterruptRx_irq_handler_insert`) &amp;&amp; ($parent.optionValue(`genericUartInterruptRx_irq_handler_insert`) != ``)"/>
+                  <option id="irq_handler_remove_arm_errata_838869" available="$parent.hasOption(`genericUartInterruptRx_irq_handler_remove_arm_errata_838869`)"/>
+                  <option id="without_handler_settings" available="$parent.hasOption(`genericUartInterruptRx_without_handler_settings`)"/>
+                  <option id="remove_from_struct_init"/>
+                  <option id="UI_LABEL_HIDDEN"/>
+               </options_expr>
+            </reference>
+            <bool id="enable_tx_irq" label="Tx interrupt vector" options="remove_from_struct_init;UI_LABEL_BOLD" enable="$parent.hasOption(`genericUartInterruptRxTxVectorsDisable`)? false : true" available="$parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $parent.hasOption(`genericUartInterruptRxTxVectors`) &amp;&amp; !$parent.enable_rx_tx_irq.isAvailable() &amp;&amp; (!$parent.shared_IRQn_rx_tx.isAvailable() || $parent.shared_IRQn_rx_tx.value() == `false`)
+               &amp;&amp;
+               getResource(`interrupts`, $instance.getCoreId()).anyMatch(item -> (
+               (item.getSetting(`devices`).searchInArray(
+               devItem -> (devItem.getSetting(`id`).getValue() == $parent.getSetting(`peripheralUART`).getEnumItemId()) &amp;&amp;
+               (devItem.getSetting(`function`).getValue() == `serial_tx`)
+               ) >= 0)
+               ))">
+               <description expr="`Enable initialization of the Tx interrupt vector in the ` + $parent.intControllerName.getValue() + ` and definition of the interrupt routine name.`"></description>            </bool>
+            <reference id="interrupt_tx" label="Tx interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_tx_irq.isEnabled() &amp;&amp; $parent.enable_tx_irq.getValue(false)" available="$parent.enable_tx_irq.isAvailable() &amp;&amp; !$parent.enable_rx_tx_irq.isAvailable()">
+               <options_expr>
+                  <option id="irq_device" expr="$parent.peripheralUART.getEnumItemId()"/>
+                  <option id="irq_function" expr="`serial_tx`"/>
+                  <option id="irq_generate_handler" available="$parent.hasOption(`genericUartInterruptTx_irq_generate_handler`)"/>
+                  <option id="irq_handler_insert" expr="$parent.hasOption(`genericUartInterruptTx_irq_handler_insert`) ? $parent.optionValue(`genericUartInterruptTx_irq_handler_insert`) : ``" available="$parent.hasOption(`genericUartInterruptTx_irq_handler_insert`) &amp;&amp; ($parent.optionValue(`genericUartInterruptTx_irq_handler_insert`) != ``)"/>
+                  <option id="irq_handler_remove_arm_errata_838869" available="$parent.hasOption(`genericUartInterruptTx_irq_handler_remove_arm_errata_838869`)"/>
+                  <option id="without_handler_settings" available="$parent.hasOption(`genericUartInterruptTx_without_handler_settings`)"/>
+                  <option id="remove_from_struct_init"/>
+                  <option id="UI_LABEL_HIDDEN"/>
+               </options_expr>
+            </reference>
+            <bool id="enable_err_irq" label="Error interrupt vector" options="remove_from_struct_init;UI_LABEL_BOLD" enable="$parent.hasOption(`genericUartInterruptErrorVectorsDisable`)? false : true"
+               available="$parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $parent.hasOption(`genericUartInterruptErrorVector`) &amp;&amp; $parent.uart_irq_number.isAvailable() &amp;&amp; ($parent.uart_irq_number.getValue() &gt; 1)
+               &amp;&amp;
+               getResource(`interrupts`, $instance.getCoreId()).anyMatch(item -> (
+               (item.getSetting(`devices`).searchInArray(
+               devItem -> (devItem.getSetting(`id`).getValue() == $parent.getSetting(`peripheralUART`).getEnumItemId()) &amp;&amp;
+               (devItem.getSetting(`function`).getValue() == ($parent.isPeripheralQSCIType.getValue() ? `serial_rx_err` : `serial_error`))
+               ) >= 0)
+               ))">
+               <description expr="`Enable initialization of the error interrupt vector in the ` + $parent.intControllerName.getValue() + ` and definition of the interrupt routine name.`"></description>
+            </bool>
+            <reference id="interrupt_error" label="Error interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_err_irq.isEnabled() &amp;&amp; $parent.enable_err_irq.getValue(false)" available="$parent.enable_err_irq.isAvailable()">
+               <options_expr>
+                  <option id="irq_device" expr="$parent.peripheralUART.getEnumItemId()"/>
+                  <option id="irq_function" expr="$parent.isPeripheralQSCIType.getValue() ? `serial_rx_err` : `serial_error`"/>
+                  <option id="irq_generate_handler" available="$parent.hasOption(`genericUartInterruptError_irq_generate_handler`)"/>
+                  <option id="irq_handler_insert" expr="$parent.hasOption(`genericUartInterruptError_irq_handler_insert`) ? $parent.optionValue(`genericUartInterruptError_irq_handler_insert`) : ``" available="$parent.hasOption(`genericUartInterruptError_irq_handler_insert`) &amp;&amp; ($parent.optionValue(`genericUartInterruptError_irq_handler_insert`) != ``)"/>
+                  <option id="irq_handler_remove_arm_errata_838869" available="$parent.hasOption(`genericUartInterruptError_irq_handler_remove_arm_errata_838869`)"/>
+                  <option id="without_handler_settings" available="$parent.hasOption(`genericUartInterruptError_without_handler_settings`)"/>
+                  <option id="remove_from_struct_init"/>
+                  <option id="UI_LABEL_HIDDEN"/>
+               </options_expr>
+            </reference>
+            <bool id="enable_tridle_irq" label="Tx/Rx idle interrupt vector" options="remove_from_struct_init;UI_LABEL_BOLD" enable="$parent.hasOption(`genericUartInterruptTridleVectorsDisable`)? false : true"
+               available="$parent.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $parent.hasOption(`genericUartInterruptTridleVector`) &amp;&amp; $parent.isPeripheralQSCIType.getValue(false) &amp;&amp; $parent.uart_irq_number.isAvailable() &amp;&amp; ($parent.uart_irq_number.getValue() &gt; 1)
+               &amp;&amp;
+               getResource(`interrupts`, $instance.getCoreId()).anyMatch(item -> (
+               (item.getSetting(`devices`).searchInArray(
+               devItem -> (devItem.getSetting(`id`).getValue() == $parent.getSetting(`peripheralUART`).getEnumItemId()) &amp;&amp;
+               (devItem.getSetting(`function`).getValue() == `serial_tridle`)
+               ) >= 0)
+               ))">
+               <description expr="`Enable initialization of the Tx/Rx idle interrupt vector in the ` + $parent.intControllerName.getValue() + ` and definition of the interrupt routine name.`"></description>            
+            </bool>
+            <reference id="interrupt_tridle" label="Tx/Rx idle interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_tridle_irq.isEnabled() &amp;&amp; $parent.enable_tridle_irq.getValue(false)" available="$parent.enable_tridle_irq.isAvailable()">
+               <options_expr>
+                  <option id="irq_device" expr="$parent.peripheralUART.getEnumItemId()"/>
+                  <option id="irq_function" expr="`serial_tridle`"/>
+                  <option id="irq_generate_handler" available="$parent.hasOption(`genericUartInterruptTridle_irq_generate_handler`)"/>
+                  <option id="irq_handler_insert" expr="$parent.hasOption(`genericUartInterruptTridle_irq_handler_insert`) ? $parent.optionValue(`genericUartInterruptTridle_irq_handler_insert`) : ``" available="$parent.hasOption(`genericUartInterruptTridle_irq_handler_insert`) &amp;&amp; ($parent.optionValue(`genericUartInterruptTridle_irq_handler_insert`) != ``)"/>
+                  <option id="irq_handler_remove_arm_errata_838869" available="$parent.hasOption(`genericUartInterruptTridle_irq_handler_remove_arm_errata_838869`)"/>
+                  <option id="without_handler_settings" available="$parent.hasOption(`genericUartInterruptTridle_without_handler_settings`)"/>
+                  <option id="remove_from_struct_init"/>
+                  <option id="UI_LABEL_HIDDEN"/>
+               </options_expr>
+            </reference>
+            
+            <!-- Code and frafment_defs variables -->
+            <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+            <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue(``))"></variable>
+            <variable id="generic_uart_config_ID" value="$parent.inst_ID.getValue(``) + `_serial_config`"/>
+            <variable id="generic_uart_peripheral_ID" value="$parent.inst_ID_def.getValue(``) + `_SERIAL_PERIPHERAL`"/>
+            <variable id="generic_uart_peripheral_clock_ID" value="$parent.inst_ID_def.getValue(``) + `_SERIAL_PERIPHERAL_CLK_FREQ`"/>
+            <variable id="generic_uart_peripheral_baudrate_ID" value="$parent.inst_ID_def.getValue(``) + `_SERIAL_PERIPHERAL_BAUDRATE`"/>
+            <variable id="generic_uart_config_values_are_set" value="($parent.baudRate_Bps.isAvailable() || $parent.u32BaudRateBps.isAvailable() || $parent.parityMode.isAvailable() || $parent.stopBitCount.isAvailable() || $parent.dataBitsCount.isAvailable() || $parent.eDataBitMode.isAvailable() || $parent.bitCountPerChar.isAvailable() || $parent.ePolarityMode.isAvailable() || $parent.enableTx.isAvailable() || $parent.enableTx.isAvailable())"/>
+            <!-- Init function -->
+            <variable id="generic_uart_init_function" value="  
+               ($parent.isPeripheralFLEXCOMMType.getValue(false) ? leftPadding(`/* Reset FLEXCOMM device */&#10;`, 1) : ``) +
+               ($parent.isPeripheralFLEXCOMMType.getValue(false) ? leftPadding(`RESET_PeripheralReset(kFC` + $parent.generic_uart_peripheral.getValue().regexSubstr(`.*FLEXCOMM(\d+)`, 1) + `_RST_SHIFT_RSTn);&#10;&#10;`, 1) : ``) +
+               
+               leftPadding(`/* Serial communication peripheral initialization */&#10;&#10;`,1) +
+               leftPadding(`/* Get ` + toUpperCase($parent.generic_uart_sdk_driver_prefix.getValue(``)) + ` default configuration and modify it */&#10;`,1) +
+               ($parent.isPeripheralQSCIType.getValue(false) ? 
+               leftPadding(toUpperCase($parent.generic_uart_sdk_driver_prefix.getValue(``))+`_GetDefaultConfig(&amp;`+ $parent.generic_uart_config_ID.getValue(``) + `, `+ $parent.generic_uart_peripheral_baudrate_ID.getValue() +`, `+ $parent.generic_uart_peripheral_clock_ID.getValue() + `);&#10;&#10;`,1) :
+               leftPadding(toUpperCase($parent.generic_uart_sdk_driver_prefix.getValue(``))+`_GetDefaultConfig(&amp;`+ $parent.generic_uart_config_ID.getValue(``) +`);&#10;&#10;`,1)) +
+               
+               ($parent.baudRate_Bps.isAvailable() ? leftPadding($parent.generic_uart_config_ID.getValue(``) + `.baudRate_Bps = ` + $parent.generic_uart_peripheral_baudrate_ID.getValue() + `;&#10;`,1): ``) +
+               ($parent.parityMode.isAvailable() ? leftPadding($parent.generic_uart_config_ID.getValue(``) + `.parityMode = ` + $parent.parityMode.getValue() + `;&#10;`,1): ``) +
+               ($parent.eParityMode.isAvailable() ? leftPadding($parent.generic_uart_config_ID.getValue(``) + `.eParityMode = ` + $parent.eParityMode.getValue() + `;&#10;`,1): ``) +
+               ($parent.stopBitCount.isAvailable() ? leftPadding($parent.generic_uart_config_ID.getValue(``) + `.stopBitCount = ` + $parent.stopBitCount.getValue() + `;&#10;`,1): ``) +
+               ($parent.dataBitsCount.isAvailable() ? leftPadding($parent.generic_uart_config_ID.getValue(``) + `.dataBitsCount = ` + $parent.dataBitsCount.getValue() + `;&#10;`,1): ``) +
+               ($parent.eDataBitMode.isAvailable() ? leftPadding($parent.generic_uart_config_ID.getValue(``) + `.eDataBitMode = ` + $parent.eDataBitMode.getValue() + `;&#10;`,1): ``) +
+               ($parent.ePolarityMode.isAvailable() ? leftPadding($parent.generic_uart_config_ID.getValue(``) + `.ePolarityMode = ` + $parent.ePolarityMode.getValue() + `;&#10;`,1): ``) +
+               ($parent.bitCountPerChar.isAvailable() ? leftPadding($parent.generic_uart_config_ID.getValue(``) + `.bitCountPerChar = ` + $parent.bitCountPerChar.getValue() + `;&#10;`,1): ``) +
+               ($parent.enableRx.isAvailable() ? leftPadding($parent.generic_uart_config_ID.getValue(``) + `.enableRx = ` + $parent.enableRx.getValue() + `;&#10;`,1): ``) +
+               ($parent.enableTx.isAvailable() ? leftPadding($parent.generic_uart_config_ID.getValue(``) + `.enableTx = ` + $parent.enableTx.getValue() + `;&#10;`,1): ``) +
+               ($parent.generic_uart_config_values_are_set.getValue(false) ? `&#10;`:``) +
+
+               leftPadding(`/* Initialize ` + toUpperCase($parent.generic_uart_sdk_driver_prefix.getValue(``)) + ` module. ` + ($parent.clockSource.isAvailable() ? `` : `Define the required clock frequency: #define `+ $parent.generic_uart_peripheral_clock_ID.getValue(``)) + `*/&#10;`,1) +
+               ($parent.isPeripheralQSCIType.getValue(false) ?
+               leftPadding(toUpperCase($parent.generic_uart_sdk_driver_prefix.getValue(``))+`_Init(`+ $parent.generic_uart_peripheral_ID.getValue(``) +`, &amp;` + $parent.generic_uart_config_ID.getValue(``) + `);`,1) :
+               leftPadding(toUpperCase($parent.generic_uart_sdk_driver_prefix.getValue(``))+`_Init(`+ $parent.generic_uart_peripheral_ID.getValue(``) +`, &amp;` + $parent.generic_uart_config_ID.getValue(``) + `, ` + $parent.generic_uart_peripheral_clock_ID.getValue(``) +`);`,1)) +
+               ($parent.hasOption(`genericUartInterruptSourcesInitFnc`) &amp;&amp; $parent.generic_uart_enable_interrupt_sources.isAvailable() ? `&#10;&#10;` + $parent.generic_uart_enable_interrupt_sources.getValue() : ``) +
+               ($parent.hasOption(`genericUartInterruptSourcesInitFnc`) &amp;&amp; $parent.generic_uart_enable_interrupt_sources_fifo.isAvailable() ? `&#10;&#10;` + $parent.generic_uart_enable_interrupt_sources_fifo.getValue() : ``)"/>               
+            
+            <!-- Enable Interrupt sources -->
+            <variable id="generic_uart_enable_interrupt_sources" available="$parent.interrupt_sources.isAvailable() &amp;&amp; ($parent.interrupt_sources.getValue() != 0)" value="
+               leftPadding(`/* Enable ` + toUpperCase($parent.generic_uart_sdk_driver_prefix.getValue(``)) + ` interrupt sources */&#10;`,1) +
+               leftPadding(toUpperCase($parent.generic_uart_sdk_driver_prefix.getValue(``))+`_EnableInterrupts(` + $parent.generic_uart_peripheral_ID.getValue(``) + `, (` + $parent.interrupt_sources.getValue(0) +`));`,1)"/>
+            
+            <variable id="generic_uart_enable_interrupt_sources_fifo" available="$parent.interrupt_sources_fifo.isAvailable() &amp;&amp; ($parent.interrupt_sources_fifo.getValue() != 0)" value="
+               leftPadding(`/* Enable ` + toUpperCase($parent.generic_uart_sdk_driver_prefix.getValue(``)) + ` FIFO interrupt sources */&#10;`,1) +
+               leftPadding(toUpperCase($parent.generic_uart_sdk_driver_prefix.getValue(``))+`_EnableFifoInterrupts(`+ $parent.generic_uart_peripheral_ID.getValue(``) + `, (` + $parent.interrupt_sources_fifo.getValue(0) +`));`,1)"/>
+         </struct>
+      </user_types>
+      <settings/>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+         <!-- The every def items are relative to peripheral_config_t structure (apply_to="peripheral_config structure"), there is used prefix generic_uart_ in the def items  -->
+         <def fragment="generic_uart_includes" public="true">
+            <fragment id="include">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include" if_expr="$this.isPeripheralFLEXCOMMType.getValue(false)">
+               <param id="name">reset</param>
+               <param id="filename">fsl_reset.h</param>
+            </fragment>
+            <fragment id="include" if_expr="$this.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; !$this.hasOption(`genericUartIncludeDriverDisable`)">
+               <param id="name" expr="$this.generic_uart_sdk_driver_id_short.getValue()"/>
+               <param id="filename" expr="$this.generic_uart_sdk_driver_filename.getValue()"/>
+            </fragment>
+            <fragment id="include">
+               <param id="name">clock</param>
+               <param id="filename">fsl_clock.h</param>
+            </fragment>
+         </def>
+         <def fragment="generic_uart_defines" public="true">
+            <fragment id="define" if_expr="$this.isPeripheralUARTIndexValid.getValue(false)">
+               <param id="name" expr="$this.generic_uart_peripheral_ID.getValue()"/>
+               <param id="value" expr="(($this.isPeripheralFLEXCOMMType.getValue(false) || $this.isPeripheralUSARTType.getValue(false)) ?  `((USART_Type *)` + $this.generic_uart_peripheral.getValue() + `)` : $this.generic_uart_peripheral.getValue())"/>
+               <param id="description">Definition of peripheral ID</param>
+            </fragment>
+            <fragment id="define" if_expr="$this.clockSourceFreq.isAvailable()">
+               <param id="name" expr="$this.generic_uart_peripheral_clock_ID.getValue()"/>
+               <param id="value" expr="($this.clockSourceFreq.getEnumItemValue().toHertz() + `UL`)"/> 
+               <param id="description">Definition of the clock source frequency</param>
+            </fragment>
+            <fragment id="define" if_expr="$this.baudRate_Bps.isAvailable()">
+               <param id="name" expr="$this.generic_uart_peripheral_baudrate_ID.getValue()"/>
+               <param id="value" expr="($this.baudRate_Bps.getValue().toString(10) + `UL`)"/> 
+               <param id="description">Definition of the Baud rate</param>
+            </fragment>
+            <fragment id="define" if_expr="$this.u32BaudRateBps.isAvailable()">
+               <param id="name" expr="$this.generic_uart_peripheral_baudrate_ID.getValue()"/>
+               <param id="value" expr="($this.u32BaudRateBps.getValue().toString(10) + `UL`)"/> 
+               <param id="description">Definition of the Baud rate</param>
+            </fragment>
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_rx_tx"
+               if_expr="$this.interrupt_rx_tx.isAvailable() &amp;&amp; $this.interrupt_rx_tx.isEnabled()"/>
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_rx"
+               if_expr="$this.interrupt_rx.isAvailable() &amp;&amp; $this.interrupt_rx.isEnabled()"/>
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_tx"
+               if_expr="$this.interrupt_tx.isAvailable() &amp;&amp; $this.interrupt_tx.isEnabled()"/>
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_error"
+               if_expr="$this.interrupt_error.isAvailable() &amp;&amp; $this.interrupt_error.isEnabled()"/>
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_tridle"
+               if_expr="$this.interrupt_tridle.isAvailable() &amp;&amp; $this.interrupt_tridle.isEnabled()"/>
+         </def>
+         <def fragment="generic_uart_global_vars" public="true">
+            <fragment id="global_var" if_expr="$this.isPeripheralUARTIndexValid.getValue(false)">
+               <param id="name" expr="$this.generic_uart_config_ID.getValue(``)" />
+               <param id="type" expr="toLowerCase($this.generic_uart_sdk_driver_prefix.getValue(``)) + `_config_t`"/>
+               <param id="description" expr="toUpperCase($this.generic_uart_sdk_driver_prefix.getValue(``)) + ` configuration structure`"/>
+            </fragment>
+         </def>
+         <def fragment="generic_uart_global_vars_extern" public="true">
+            <fragment id="extern_var" if_expr="$this.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; $this.hasOption(`genericUartUserInit`)">
+               <param id="name" expr="$this.user_init.initFunctionID.getValue() + `(void)`" />
+               <param id="type" expr="`void`"/>
+               <param id="description" expr="toUpperCase($this.generic_uart_sdk_driver_prefix.getValue(``)) + ` communication initialization function`"/>
+            </fragment>
+            <fragment id="extern_var" if_expr="$this.isPeripheralUARTIndexValid.getValue(false) &amp;&amp; !$this.hasOption(`genericUartUserInit`)">
+               <param id="name" expr="$this.generic_uart_config_ID.getValue(``)" />
+               <param id="type" expr="toLowerCase($this.generic_uart_sdk_driver_prefix.getValue(``)) + `_config_t`"/>
+               <param id="description" expr="toUpperCase($this.generic_uart_sdk_driver_prefix.getValue(``)) + ` configuration structure`"/>
+            </fragment>
+         </def>
+         <def fragment="generic_uart_init_function_body" public="true">
+            <if expr="$this.generic_uart_init_function.isAvailable() &amp;&amp; $this.isPeripheralUARTIndexValid.getValue(false)">
+               <expr>$this.hasOption(`genericUartUserInit`) &amp;&amp; $this.enableUserInit.getValue(false)
+                  ? (leftPadding(`/* Custom serial communication interface initalization */&#10;`,1) + leftPadding($this.user_init.initFunctionID.getValue() + `();`,1))
+                  : $this.generic_uart_init_function.getValue()</expr><br/>
+            </if>
+         </def>
+         <def fragment="generic_uart_enable_interrupt_sources" public="true">
+            <if expr="$this.generic_uart_enable_interrupt_sources.isAvailable() &amp;&amp; $this.isPeripheralUARTIndexValid.getValue(false)">
+               <expr>$this.generic_uart_enable_interrupt_sources.getValue()</expr><br/>
+            </if>
+         </def>
+         <def fragment="generic_uart_enable_interrupt_sources_fifo" public="true">
+            <if expr="$this.generic_uart_enable_interrupt_sources_fifo.isAvailable() &amp;&amp; $this.isPeripheralUARTIndexValid.getValue(false)">
+               <expr>$this.generic_uart_enable_interrupt_sources_fifo.getValue()</expr><br/>
+            </if>
+         </def>
+         <def fragment="generic_uart_irq_vectors" public="true">
+            <fragment id="IRQn_set_priority_default"
+               if_expr="$this.interrupt_rx_tx.isAvailable() &amp;&amp; $this.interrupt_rx_tx.isEnabled()"
+               apply_to="$this.interrupt_rx_tx"/>
+            <fragment id="IRQn_enable_default"
+               if_expr="$this.interrupt_rx_tx.isAvailable() &amp;&amp; $this.interrupt_rx_tx.isEnabled()"
+               apply_to="$this.interrupt_rx_tx"/>
+            
+            <fragment id="IRQn_set_priority_default"
+               if_expr="$this.interrupt_rx.isAvailable() &amp;&amp; $this.interrupt_rx.isEnabled()"
+               apply_to="$this.interrupt_rx"/>
+            <fragment id="IRQn_enable_default"
+               if_expr="$this.interrupt_rx.isAvailable() &amp;&amp; $this.interrupt_rx.isEnabled()"
+               apply_to="$this.interrupt_rx"/>
+            
+            <fragment id="IRQn_set_priority_default"
+               if_expr="$this.interrupt_tx.isAvailable() &amp;&amp; $this.interrupt_tx.isEnabled()"
+               apply_to="$this.interrupt_tx"/>
+            <fragment id="IRQn_enable_default"
+               if_expr="$this.interrupt_tx.isAvailable() &amp;&amp; $this.interrupt_tx.isEnabled()"
+               apply_to="$this.interrupt_tx"/>
+            
+            <fragment id="IRQn_set_priority_default"
+               if_expr="$this.interrupt_error.isAvailable() &amp;&amp; $this.interrupt_error.isEnabled()"
+               apply_to="$this.interrupt_error"/>
+            <fragment id="IRQn_enable_default"
+               if_expr="$this.interrupt_error.isAvailable() &amp;&amp; $this.interrupt_error.isEnabled()"
+               apply_to="$this.interrupt_error"/>
+            
+            <fragment id="IRQn_set_priority_default"
+               if_expr="$this.interrupt_tridle.isAvailable() &amp;&amp; $this.interrupt_tridle.isEnabled()"
+               apply_to="$this.interrupt_tridle"/>
+            <fragment id="IRQn_enable_default"
+               if_expr="$this.interrupt_tridle.isAvailable() &amp;&amp; $this.interrupt_tridle.isEnabled()"
+               apply_to="$this.interrupt_tridle"/>
+         </def>
+         <def fragment="generic_uart_irq_handler_functions" public="true">
+            <!-- Rx/Tx -->
+            <fragment id="IRQn_handler_function" apply_to="$this.interrupt_rx_tx"
+               if_expr="$this.interrupt_rx_tx.isAvailable() &amp;&amp; $this.interrupt_rx_tx.isEnabled()"/>
+            <!-- Rx -->
+            <fragment id="IRQn_handler_function"  apply_to="$this.interrupt_rx"
+               if_expr="$this.interrupt_rx.isAvailable() &amp;&amp; $this.interrupt_rx.isEnabled()"/>
+            <!-- Tx -->
+            <fragment id="IRQn_handler_function"  apply_to="$this.interrupt_tx"
+               if_expr="$this.interrupt_tx.isAvailable() &amp;&amp; $this.interrupt_tx.isEnabled()"/>
+            <!-- Error -->
+            <fragment id="IRQn_handler_function"  apply_to="$this.interrupt_error"
+               if_expr="$this.interrupt_error.isAvailable() &amp;&amp; $this.interrupt_error.isEnabled()"/>
+            <!-- Tridle -->
+            <fragment id="IRQn_handler_function"  apply_to="$this.interrupt_tridle"
+               if_expr="$this.interrupt_tridle.isAvailable() &amp;&amp; $this.interrupt_tridle.isEnabled()"/>
+         </def>
+      </fragment_defs>
+      <quick_selections></quick_selections>
+   </config_set>
+   <global_config_set_ref>global_uart</global_config_set_ref>
+</component:config_component>

@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="rtc" label="RTC" category="Peripheral driver" options="UI_COMPONENT_MODE_HIDDEN" global_only="false" hidden="false" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-6.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <sw_comp_ref name="platform.drivers.rtc" version="2.2.0"/>
+    <description>Real Time Clock (RTC)</description>
+    <mode id="general" label="General">
+        <description>General mode</description>
+        <config_set_refs>
+            <config_set_ref>fsl_rtc</config_set_ref>
+        </config_set_refs>
+        <master_peripheral>
+            <peripheral_type>RTC</peripheral_type>
+        </master_peripheral>
+    </mode>
+    <config_set id="fsl_rtc" label="General configuration" from_source="fsl_rtc.h">
+        <description>General configuration of RTC</description>
+        <generated_types>
+            <enum id="rtc_interrupt_enable_t" label="List of RTC interrupts" from="_rtc_interrupt_enable">
+                <description></description>
+                <item id="kRTC_TimeInvalidInterruptEnable" label="Time invalid interrupt">
+                    <description>Time invalid interrupt.</description>
+                </item>
+                <item id="kRTC_TimeOverflowInterruptEnable" label="Time overflow interrupt">
+                    <description>Time overflow interrupt.</description>
+                </item>
+                <item id="kRTC_AlarmInterruptEnable" label="Alarm interrupt">
+                    <description>Alarm interrupt.</description>
+                </item>
+                <item id="kRTC_SecondsInterruptEnable" label="Seconds interrupt">
+                    <description>Seconds interrupt.</description>
+                </item>
+                <item id="kRTC_MonotonicOverflowInterruptEnable" label="Monotonic Overflow Interrupt Enable" available="(featureDefined(`FSL_FEATURE_RTC_HAS_MONOTONIC`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_MONOTONIC`))">
+                    <description>Monotonic Overflow Interrupt Enable</description>
+                </item>
+                <item id="kRTC_TestModeInterruptEnable" label="" available="(featureDefined(`FSL_FEATURE_RTC_HAS_MONOTONIC`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_MONOTONIC`))">
+                    <description></description>
+                </item>
+                <item id="kRTC_FlashSecurityInterruptEnable" label="" available="(featureDefined(`FSL_FEATURE_RTC_HAS_MONOTONIC`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_MONOTONIC`))">
+                    <description></description>
+                </item>
+                <item id="kRTC_TamperPinInterruptEnable" label="" available="(featureDefined(`FSL_FEATURE_RTC_HAS_MONOTONIC`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_MONOTONIC`))">
+                    <description></description>
+                </item>
+                <item id="kRTC_SecurityModuleInterruptEnable" label="" available="(featureDefined(`FSL_FEATURE_RTC_HAS_TIR_SIE`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_TIR_SIE`))">
+                    <description></description>
+                </item>
+                <item id="kRTC_LossOfClockInterruptEnable" label="" available="(featureDefined(`FSL_FEATURE_RTC_HAS_TIR_SIE`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_TIR_SIE`))">
+                    <description></description>
+                </item>
+            </enum>
+            <enum id="rtc_status_flags_t" label="List of RTC flags" from="_rtc_status_flags">
+                <description></description>
+                <item id="kRTC_TimeInvalidFlag" label="Time invalid flag">
+                    <description>Time invalid flag</description>
+                </item>
+                <item id="kRTC_TimeOverflowFlag" label="Time overflow flag">
+                    <description>Time overflow flag</description>
+                </item>
+                <item id="kRTC_AlarmFlag" label="Alarm flag">
+                    <description>Alarm flag</description>
+                </item>
+                <item id="kRTC_MonotonicOverflowFlag" label="Monotonic Overflow Flag">
+                    <description>Monotonic Overflow Flag</description>
+                </item>
+                <item id="kRTC_TamperInterruptDetectFlag" label="Tamper interrupt detect flag" available="(featureDefined(`FSL_FEATURE_RTC_HAS_SR_TIDF`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_SR_TIDF`))">
+                    <description>Tamper interrupt detect flag</description>
+                </item>
+                <item id="kRTC_TestModeFlag" label="" available="(featureDefined(`FSL_FEATURE_RTC_HAS_SR_TIDF`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_SR_TIDF`))">
+                    <description></description>
+                </item>
+                <item id="kRTC_FlashSecurityFlag" label="" available="(featureDefined(`FSL_FEATURE_RTC_HAS_SR_TIDF`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_SR_TIDF`))">
+                    <description></description>
+                </item>
+                <item id="kRTC_TamperPinFlag" label="" available="(featureDefined(`FSL_FEATURE_RTC_HAS_SR_TIDF`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_SR_TIDF`))">
+                    <description></description>
+                </item>
+                <item id="kRTC_SecurityTamperFlag" label="" available="(featureDefined(`FSL_FEATURE_RTC_HAS_TDR_STF`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_TDR_STF`))">
+                    <description></description>
+                </item>
+                <item id="kRTC_LossOfClockTamperFlag" label="" available="(featureDefined(`FSL_FEATURE_RTC_HAS_TDR_STF`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_TDR_STF`))">
+                    <description></description>
+                </item>
+            </enum>
+            <enum id="rtc_osc_cap_load_t" label="List of RTC Oscillator capacitor load settings" available="(featureDefined(`FSL_FEATURE_RTC_HAS_OSC_SCXP`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_OSC_SCXP`))" from="_rtc_osc_cap_load">
+                <description></description>
+                <item id="kRTC_Capacitor_2p" label="2 pF capacitor load">
+                    <description>2 pF capacitor load</description>
+                </item>
+                <item id="kRTC_Capacitor_4p" label="4 pF capacitor load">
+                    <description>4 pF capacitor load</description>
+                </item>
+                <item id="kRTC_Capacitor_8p" label="8 pF capacitor load">
+                    <description>8 pF capacitor load</description>
+                </item>
+                <item id="kRTC_Capacitor_16p" label="16 pF capacitor load">
+                    <description>16 pF capacitor load</description>
+                </item>
+            </enum>
+            <struct id="rtc_datetime_t" label="Structure is used to hold the date and time" from="_rtc_datetime">
+                <description></description>
+                <integer id="year" label="Range from 1970 to 2099" type="uint16_t">
+                    <description>Range from 1970 to 2099.</description>
+                </integer>
+                <integer id="month" label="Range from 1 to 12" type="uint8_t">
+                    <description>Range from 1 to 12.</description>
+                </integer>
+                <integer id="day" label="Range from 1 to 31 (depending on month)" type="uint8_t">
+                    <description>Range from 1 to 31 (depending on month).</description>
+                </integer>
+                <integer id="hour" label="Range from 0 to 23" type="uint8_t">
+                    <description>Range from 0 to 23.</description>
+                </integer>
+                <integer id="minute" label="Range from 0 to 59" type="uint8_t">
+                    <description>Range from 0 to 59.</description>
+                </integer>
+                <integer id="second" label="Range from 0 to 59" type="uint8_t">
+                    <description>Range from 0 to 59.</description>
+                </integer>
+            </struct>
+            <struct id="rtc_pin_config_t" label="RTC pin config structure" available="(featureDefined(`FSL_FEATURE_RTC_HAS_PCR`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_PCR`))" from="_rtc_pin_config">
+                <description></description>
+                <bool id="inputLogic" label="true: Tamper pin input data is logic one">
+                    <description>true: Tamper pin input data is logic one. false: Tamper pin input data is logic zero.</description>
+                </bool>
+                <bool id="pinActiveLow" label="true: Tamper pin is active low">
+                    <description>true: Tamper pin is active low. false: Tamper pin is active high.</description>
+                </bool>
+                <bool id="filterEnable" label="true: Input filter is enabled on the tamper pin">
+                    <description>true: Input filter is enabled on the tamper pin. false: Input filter is disabled on the tamper pin.</description>
+                </bool>
+                <bool id="pullSelectNegate" label="true: Tamper pin pull resistor direction will negate the tamper pin">
+                    <description>true: Tamper pin pull resistor direction will negate the tamper pin. false: Tamper pin pull resistor direction will assert the tamper pin.</description>
+                </bool>
+                <bool id="pullEnable" label="true: Pull resistor is enabled on tamper pin">
+                    <description>true: Pull resistor is enabled on tamper pin. false: Pull resistor is disabled on tamper pin.</description>
+                </bool>
+            </struct>
+            <struct id="rtc_config_t" label="RTC config structure" from="_rtc_config">
+                <description>This structure holds the configuration settings for the RTC peripheral. To initialize this structure to reasonable defaults, call the RTC_GetDefaultConfig() function and pass a pointer to your config structure instance.The config struct can be made const so it resides in flash</description>
+                <bool id="wakeupSelect" label="true: Wakeup pin outputs the 32 KHz clock; false:Wakeup pin used to wakeup the chip">
+                    <description>true: Wakeup pin outputs the 32 KHz clock; false:Wakeup pin used to wakeup the chip</description>
+                </bool>
+                <bool id="updateMode" label="true: Registers can be written even when locked under certain conditions, false: No writes allowed when registers are locked">
+                    <description>true: Registers can be written even when locked under certain conditions, false: No writes allowed when registers are locked</description>
+                </bool>
+                <bool id="supervisorAccess" label="true: Non-supervisor accesses are allowed; false: Non-supervisor accesses are not supported">
+                    <description>true: Non-supervisor accesses are allowed; false: Non-supervisor accesses are not supported</description>
+                </bool>
+                <integer id="compensationInterval" label="Compensation interval that is written to the CIR field in RTC TCR Register" type="uint32_t">
+                    <description>Compensation interval that is written to the CIR field in RTC TCR Register</description>
+                </integer>
+                <integer id="compensationTime" label="Compensation time that is written to the TCR field in RTC TCR Register" type="uint32_t">
+                    <description>Compensation time that is written to the TCR field in RTC TCR Register</description>
+                </integer>
+            </struct>
+        </generated_types>
+        <user_types>
+            <set id="rtc_interrupt_enable_t" label="Interrupt sources">
+                <description>RTC interrupt sources.</description>
+                <item id="kRTC_SecondsInterruptEnable" label="Seconds" value="kRTC_SecondsInterruptEnable">
+                    <description>Enable seconds interrupt.</description>
+                </item>
+                <item id="kRTC_AlarmInterruptEnable" label="Time alarm" value="kRTC_AlarmInterruptEnable">
+                    <description>Time alarm flag does generate an interrupt.</description>
+                </item>
+                <item id="kRTC_TimeInvalidInterruptEnable" label="Time invalid" value="kRTC_TimeInvalidInterruptEnable">
+                    <description>Time invalid flag does generate an interrupt.</description>
+                </item>
+                <item id="kRTC_TimeOverflowInterruptEnable" label="Time overflow" value="kRTC_TimeOverflowInterruptEnable">
+                    <description>Time overflow flag does generate an interrupt.</description>
+                </item>
+                <item id="kRTC_MonotonicOverflowInterruptEnable" label="Monotonic overflow" value="kRTC_MonotonicOverflowInterruptEnable" available="(featureDefined(`FSL_FEATURE_RTC_HAS_MONOTONIC`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_MONOTONIC`))">
+                    <description>Monotonic overflow flag does generate an interrupt.</description>
+                </item>
+                <item id="kRTC_TestModeInterruptEnable" label="Test mode" value="kRTC_TestModeInterruptEnable" available="(featureDefined(`FSL_FEATURE_RTC_HAS_TIR`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_TIR`))">
+                    <description>Test mode flag does generate an interrupt.</description>
+                </item>
+                <item id="kRTC_FlashSecurityInterruptEnable" label="Flash security" value="kRTC_FlashSecurityInterruptEnable" available="(featureDefined(`FSL_FEATURE_RTC_HAS_TIR`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_TIR`))">
+                    <description>Flash security flag does generate an interrupt.</description>
+                </item>
+                <item id="kRTC_TamperPinInterruptEnable" label="Tamper pin" value="kRTC_TamperPinInterruptEnable" available="(featureDefined(`FSL_FEATURE_RTC_HAS_TIR`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_TIR`)) &amp;&amp; (featureDefined(`FSL_FEATURE_RTC_HAS_TIR_TPIE`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_TIR_TPIE`))">
+                    <description>Tamper pin flag does generate an interrupt.</description>
+                </item>
+                <item id="kRTC_SecurityModuleInterruptEnable" label="Security module" value="kRTC_SecurityModuleInterruptEnable" available="(featureDefined(`FSL_FEATURE_RTC_HAS_TIR`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_TIR`)) &amp;&amp; (featureDefined(`FSL_FEATURE_RTC_HAS_TIR_SIE`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_TIR_SIE`))">
+                    <description>Security module flag does generate an interrupt.</description>
+                </item>
+                <item id="kRTC_LossOfClockInterruptEnable" label="Loss of clock" value="kRTC_LossOfClockInterruptEnable" available="(featureDefined(`FSL_FEATURE_RTC_HAS_TIR`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_TIR`)) &amp;&amp;(featureDefined(`FSL_FEATURE_RTC_HAS_TIR_LCIE`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_TIR_LCIE`))">
+                    <description>Loss of clock flag does generate an interrupt.</description>
+                </item>
+            </set>
+            <struct id="rtc_datetime_t" label="The date and time structure" from="_rtc_datetime">
+                <integer id="year" label="Year" type="uint16_t" min_expr="1970" max_expr="2099">
+                    <description>Range from 1970 to 2099.</description>
+                </integer>
+                <integer id="month" label="Month" type="uint8_t" min_expr="1" max_expr="12">
+                    <description>Range from 1 to 12.</description>
+                </integer>
+                <integer id="day" label="Day" type="uint8_t" min_expr="1" max_expr="31">
+                    <description>Range from 1 to 31 (depending on month).</description>
+                </integer>
+                <integer id="hour" label="Hour" type="uint8_t" min_expr="0" max_expr="23">
+                    <description>Range from 0 to 23.</description>
+                </integer>
+                <integer id="minute" label="Minute" type="uint8_t" min_expr="0" max_expr="59">
+                    <description>Range from 0 to 59.</description>
+                </integer>
+                <integer id="second" label="Second" type="uint8_t" min_expr="0" max_expr="59">
+                    <description>Range from 0 to 59.</description>
+                </integer>
+            </struct>
+            <struct id="rtc_config_t" label="RTC config structure" from="_rtc_config">
+                <description>This structure holds the configuration settings for the RTC peripheral.</description>
+                <variable id="wakeupSelect" value="((featureDefined(`FSL_FEATURE_RTC_HAS_WAKEUP_PIN_SELECTION`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_WAKEUP_PIN_SELECTION`) &amp;&amp;  queryFeature(`PeripheralUnifiedSignal`,$instance.getPeripheral() + `.rtc_wakeup`,`Exists`))? $parent.wakeupSelectEnum.getEnumItemValue() : `false`)" options="add_to_struct"/>
+                <enum id="wakeupSelectEnum" label="Wakeup pin mode" available="(featureDefined(`FSL_FEATURE_RTC_HAS_WAKEUP_PIN_SELECTION`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_WAKEUP_PIN_SELECTION`) &amp;&amp; queryFeature(`PeripheralUnifiedSignal`,$instance.getPeripheral() + `.rtc_wakeup`,`Exists`))" options="remove_from_struct_init">
+                    <description>
+RTC wakeup pin is an open drain, active low input/output that allows the RTC to wakeup the chip via an external device or to wakeup external devices. 
+
+The wakeup pin can be set to two modes: 
+
+* Wakeup mode where the wakeup pin asserts when the wakeup pin enable is set and either the RTC common interrupt is asserted or the WPON register bit is set by software. 
+
+* 32kHz clock output mode where the wakeup pin outputs the RTC 32kHz clock.
+                    </description>
+                    <validation>
+                        <dependency when_expr="$this.getEnumItemValue() == `true`" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.rtc_wakeup`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`WAKEUP` , $instance.getPeripheral())"  level="Warning">
+                            <feature name="routed">
+                                <data expr="true"/>
+                            </feature>
+                        </dependency>
+                    </validation>
+                    <item id="false" label="Wakeup" value="false">
+                        <description>Wakeup pin asserts (active low, open drain) if the RTC common interrupt asserts or the WPON register bit is set by software. The wakeup functionality can be enabled by the Enable wakeup pin setting.</description>
+                    </item>
+                    <item id="true" label="32kHz clock output" value="true">
+                        <description>Wakeup pin outputs the RTC 32kHz clock, i.e. the wakeup pin is enabled and the pin is used as 32kHz clock output.</description>
+                    </item>
+                </enum>
+                <bool id="enableWakeupPin" label="Enable wakeup pin" available="(featureDefined(`FSL_FEATURE_RTC_HAS_WAKEUP_PIN`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_WAKEUP_PIN`) &amp;&amp; queryFeature(`PeripheralUnifiedSignal`,$instance.getPeripheral() + `.rtc_wakeup`,`Exists`))" options="remove_from_struct_init">
+                    <description>
+                        Enable the wakeup pin funcionality in the wakeup mode (see Wakeup pin mode setting).
+                    </description>
+                    <validation>
+                        <dependency when_expr="$this.getValue() &amp;&amp; ($parent.wakeupSelectEnum.getEnumItemValue() == `false`)" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.rtc_wakeup`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`WAKEUP` , $instance.getPeripheral())"  level="Warning">
+                            <feature name="routed">
+                                <data expr="true"/>
+                            </feature>
+                        </dependency>
+                    </validation>
+                </bool>
+                <bool id="updateMode" label="Enable update mode">
+                    <description>
+Disabled: No writes allowed when registers are locked
+
+Enabled: Registers can be written even when locked under certain conditions
+                    </description>
+                </bool>
+                <bool id="supervisorAccess" label="Enable non-supervisor accesses">
+                    <description>
+Disabled: Non-supervisor accesses are not supported
+
+Enabled: Non-supervisor accesses are allowed
+                    </description>
+                </bool>
+                <variable id="compensationInterval" value="toString(($parent.compensationIntervalInt.getValue() - 1), 16) + `U`"  options="add_to_struct"/>
+                <integer id="compensationIntervalInt" label="Compensation interval [s]" type="uint32_t" min_expr="1" max_expr="256" options="remove_from_struct_init">
+                    <description>Compensation interval can be set from 1 to 256 seconds. This interval determines how often the time compensation is used.</description>
+                </integer>
+                <variable id="compensationTime" value="toString((($parent.compensationTimeInt.getValue() &lt;= 0)? -$parent.compensationTimeInt.getValue(): 256-$parent.compensationTimeInt.getValue()),16) + `U`"  options="add_to_struct"/>
+                <integer id="compensationTimeInt" label="Compensation time [cycles]" type="int32_t" min_expr="-127" max_expr="128"  options="remove_from_struct_init">
+                    <description>Compensation time item configures the number of 32.768 kHz clock cycles in each second. The time compensation can be set from -127 cycles to +128 cycles (Time Prescaler Register overflows from 32641 clock cycles to 32896 clock cycles).</description>
+                </integer>
+                <bool id="setDateTime" label="Initialize date and time" options="remove_from_struct_init">
+                    <description>Enable/disable the initialization of date and time setting, i.e. when enabled the selected date and time is set into RTC registers.</description>
+                </bool>
+                <reference id="rtc_datetime" label="Date and time" type="rtc_datetime_t" options="remove_from_struct_init" available="$parent.setDateTime.getValue()">
+                    <description>Date and time setting allows to create date and time structure and set the RTC time.</description>
+                </reference>
+                <bool id="setAlarm" label="Initialize alarm date and time" options="remove_from_struct_init">
+                    <description>Enable/disable the initialization of alarm date and time setting, i.e. when enabled the selected alarm date and time is set into RTC registers.</description>
+                </bool>
+                <reference id="alarm_datetime" label="Alarm date and time" type="rtc_datetime_t" options="remove_from_struct_init" available="$parent.setAlarm.getValue()">
+                    <description>Alarm date and time setting allows to create date and time structure and set the RTC alarm.</description>
+                </reference>
+                <bool id="start" label="Start timer" options="remove_from_struct_init">
+                    <description>Start RTC timer</description>
+                    <validation>
+                        <constraint when_expr="$parent.setDateTime.getValue()" cond_expr="(!(queryFeature(`ClockOutput`, `RTC_CLKOUT`, `Exists`) &amp;&amp; queryFeature(`ClockOutput`, `RTC_CLKOUT`, `Enabled`)) || $this.getValue())" description_expr="$instance.getID() + `: The RTC_CLKOUT is used in the Clocks tool but the timer is not stared, i.e. the RTC_CLKOUT is not clocked due to stopped RTC timer.`" level="warning"/>
+                    </validation>
+                </bool>
+                <struct id="mc" label="Monotonic counter initial value"  options="remove_from_struct_init" available="(featureDefined(`FSL_FEATURE_RTC_HAS_MONOTONIC`) &amp;&amp; getFeature(`FSL_FEATURE_RTC_HAS_MONOTONIC`))">
+                    <description>The 64-bit Monotonic counter is a counter that cannot be exhausted or return to any previous value, once it has been initialized.</description>
+                    <bool id="init" label="Initialize value">
+                        <description>Enable/disable the initialization of the monotonic counter value</description>
+                    </bool>
+                    <variable id="counter" value="$parent.MCHR.getValue().toString(16) + toString(($parent.MCLR.getValue() + (1 &lt;&lt; 32)), 16).regexSubstr(`0x1(.*)`,1) + `ULL`"/>
+                    <integer id="MCHR" label="High part"  type="uint32_t" enable="$parent.init.isAvailable() &amp;&amp; $parent.init.getValue()">
+                        <description>High part of the value (Bit 63-32)</description>
+                    </integer>
+                    <integer id="MCLR" label="Low part"  type="uint32_t"  enable="$parent.init.isAvailable() &amp;&amp; $parent.init.getValue()">
+                        <description>Low part of the value (Bit 31-0)</description>
+                    </integer>
+                </struct> 
+            </struct>
+        </user_types>
+        <settings>
+            <struct id="clockConfig_t" label="Clock configuration" from="clock">
+                <info id="note" label="Note:" value="`The clock configuration of the RTC peripheral is a part of the clock tool.`"/>
+            </struct>
+            <reference id="rtc_config" label="RTC configuration" type="rtc_config_t"/>
+            <struct id="interruptsCfg" label="Interrupt configuration">
+                <reference id="interruptSources" label="Interrupts sources" type="rtc_interrupt_enable_t" options="remove_from_struct_init">
+                    <validation>
+                        <constraint when_expr="$parent.isSecondsInterruptEnabled.isAvailable() &amp;&amp; $parent.isSecondsInterruptEnabled.getValue()" cond_expr="(($this.getCValue() != ``) &amp;&amp; ($this.getCValue().regexMatch(`.*kRTC_SecondsInterruptEnable.*`))) " level="info" description="The seconds interrupt is enabled (in the interrupt controller) but the interrupt request (Seconds) of the RTC are disabled (interrupt will not be invoked)."/>
+                        <constraint when_expr="$parent.isInterruptEnabled.isAvailable() &amp;&amp; $parent.isInterruptEnabled.getValue()" cond_expr="(($this.getCValue() != ``) &amp;&amp; (($this.getCValue() != `kRTC_SecondsInterruptEnable`) || !($parent.isSecondsInterruptEnabled.isAvailable())))" level="info" description="The common interrupt are enabled (in the interrupt controller) but the interrupt requests of the RTC are disabled (interrupt will not be invoked)."/>
+                    </validation>
+                </reference>
+                <variable id="interrupt_handler_code" value="
+                    leftPadding(`/* Get status flags */`, 1) + `&#10;` + 
+                    leftPadding(`uint32_t status_flags = RTC_GetStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `);`, 1) + `&#10;` + 
+                    `&#10;` + 
+                    leftPadding(`/* Place your interrupt code here */`, 1)  + `&#10;` + 
+                    `&#10;` + 
+                    leftPadding(`/* Clear status flags */`, 1)  + `&#10;` + 
+                    leftPadding(`RTC_ClearStatusFlags(`+ $configSet.inst_peripheral_ID.getValue() + `, status_flags);`, 1)  + `&#10;`
+                    " />
+                <bool id="isSecondsInterruptEnabled" label="Enable seconds interrupt" available="$configSet.isSecondsInterrupt.getValue()">
+                    <description>Enabling of the seconds interrupt in NVIC.</description>
+                </bool>
+                
+                <reference id="secondsInterrupt" label="Seconds interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;remove_from_struct_init;irq_function=SecondsInterrupt;irq_function_replace=Seconds" enable="$parent.isSecondsInterruptEnabled.isAvailable() &amp;&amp; $parent.isSecondsInterruptEnabled.getValue()" available="$configSet.isSecondsInterrupt.getValue()">
+                    <options_expr>
+                        <option id="irq_handler_insert" expr="$parent.interrupt_handler_code.getValue()"/>
+                    </options_expr>
+                </reference>
+                
+                <bool id="isInterruptEnabled" label="Enable common interrupt">
+                    <description expr="`Enabling of the common interrupt in NVIC. Interrupt sources are ` + toLowerCase($parent.interruptSources.filter(x -> (x.isAvailable() &amp;&amp; (x.getID() != `kRTC_SecondsInterruptEnable`))).reduce(``, (lastResult, x) -> (lastResult + x.getLabel() + ((x.getID()==$parent.interruptSources.filter(x -> (x.isAvailable() &amp;&amp; (x.getID() != `kRTC_SecondsInterruptEnable`))).getLast().getID())?`.`:`, `))))"/>
+                </bool>
+                
+                <reference id="commonInterrupt" label="Common interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;remove_from_struct_init;irq_function=timer_reference;irq_function_replace=Common" enable="$parent.isInterruptEnabled.isAvailable() &amp;&amp; $parent.isInterruptEnabled.getValue()">
+                    <options_expr>
+                        <option id="irq_handler_insert" expr="$parent.interrupt_handler_code.getValue()"/>
+                    </options_expr>
+                </reference>
+            </struct>
+            <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+            <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+            <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+            <variable id="isSecondsInterrupt" value="system::countInterrupts($instance.getPeripheral(),`SecondsInterrupt`,``) &gt; 0"/>
+        </settings>
+        <quick_selections>
+            <quick_selection id="QuickSelection1" label="Default">
+                <set id="rtc_config.wakeupSelectEnum">false</set>
+                <set id="rtc_config.updateMode">false</set>
+                <set id="rtc_config.supervisorAccess">false</set>
+                <set id="rtc_config.compensationIntervalInt">1</set>
+                <set id="rtc_config.compensationTimeInt">0</set>
+                <set id="interruptsCfg.commonInterrupt.priority">0</set>
+                <set id="interruptsCfg.secondsInterrupt.priority">1</set>
+                <set id="rtc_config.rtc_datetime.year">1970</set>
+                <set id="rtc_config.rtc_datetime.month">1</set>
+                <set id="rtc_config.rtc_datetime.day">1</set>
+                <set id="rtc_config.rtc_datetime.hour">0</set>
+                <set id="rtc_config.rtc_datetime.minute">0</set>
+                <set id="rtc_config.rtc_datetime.second">0</set>
+                <set id="rtc_config.alarm_datetime.year">1970</set>
+                <set id="rtc_config.alarm_datetime.month">1</set>
+                <set id="rtc_config.alarm_datetime.day">1</set>
+                <set id="rtc_config.alarm_datetime.hour">0</set>
+                <set id="rtc_config.alarm_datetime.minute">0</set>
+                <set id="rtc_config.alarm_datetime.second">0</set>
+            </quick_selection>
+            <default>QuickSelection1</default>
+        </quick_selections>
+        <fragment_defs>
+            <import>
+                <from component_id="system" config_set_id="common_code_templates"/>
+                <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+            </import>
+        </fragment_defs>
+        <code>
+            <section target="includes">
+                <fragment id="include">
+                    <param id="name">common</param>
+                    <param id="filename">fsl_common.h</param>
+                </fragment>
+                <fragment id="include">
+                    <param id="name">fsl_rtc</param>
+                    <param id="filename">fsl_rtc.h</param>
+                </fragment>
+            </section>
+            <section target="defines">
+                <fragment id="define">
+                    <param id="name" expr="$this.inst_peripheral_ID.getValue()"/>
+                    <param id="value" expr="$instance.getPeripheral()"/>  
+                    <param id="description">Definition of peripheral ID</param>             
+                </fragment>
+                <fragment id="IRQ_definitions" apply_to="$this.interruptsCfg.commonInterrupt" if_expr="$this.interruptsCfg.isInterruptEnabled.isAvailable() &amp;&amp; $this.interruptsCfg.isInterruptEnabled.value()"/>
+                <fragment id="IRQ_definitions" apply_to="$this.interruptsCfg.secondsInterrupt" if_expr="$this.interruptsCfg.isSecondsInterruptEnabled.isAvailable() &amp;&amp; $this.interruptsCfg.isSecondsInterruptEnabled.value()"/>
+            </section>
+            <section target="global_vars">
+                <fragment id="const_struct" apply_to="$this.rtc_config">
+                    <param id="name" expr="$configSet.inst_ID.getValue() + `_config`"/>
+                    <param id="type">rtc_config_t</param>
+                    <param id="description">RTC configuration</param>
+                </fragment>
+                <fragment id="global_struct" apply_to="$this.rtc_config.rtc_datetime" if_expr="$this.rtc_config.setDateTime.getValue()">
+                    <param id="name" expr="$configSet.inst_ID.getValue() + `_dateTimeStruct`"/>
+                    <param id="type">rtc_datetime_t</param>
+                    <param id="description">Date and time structure</param>
+                </fragment>
+                <fragment id="global_struct" apply_to="$this.rtc_config.alarm_datetime" if_expr="$this.rtc_config.setAlarm.getValue()">
+                    <param id="name" expr="$configSet.inst_ID.getValue() + `_alarmDateTimeStruct`"/>
+                    <param id="type">rtc_datetime_t</param>
+                    <param id="description">Alarm date and time structure</param>
+                </fragment>
+            </section>
+            <section target="global_vars_extern">
+                <fragment id="extern_const" apply_to="$this.rtc_config">
+                    <param id="name" expr="$configSet.inst_ID.getValue() + `_config`"/>
+                    <param id="type">rtc_config_t</param>
+                    <param id="description">RTC configuration</param>
+                </fragment>
+                <fragment id="extern_var" apply_to="$this.rtc_config.rtc_datetime" if_expr="$this.rtc_config.setDateTime.getValue()">
+                    <param id="name" expr="$configSet.inst_ID.getValue() + `_dateTimeStruct`"/>
+                    <param id="type">rtc_datetime_t</param>
+                    <param id="description">Date and time structure</param>
+                </fragment>
+                <fragment id="extern_var" apply_to="$this.rtc_config.alarm_datetime" if_expr="$this.rtc_config.setAlarm.getValue()">
+                    <param id="name" expr="$configSet.inst_ID.getValue() + `_alarmDateTimeStruct`"/>
+                    <param id="type">rtc_datetime_t</param>
+                    <param id="description">Alarm date and time structure</param>
+                </fragment>
+            </section>
+            <section target="init_function_body">
+                
+                <expr>leftPadding(`/* RTC initialization */`,1)</expr><br/>
+                <expr>leftPadding(`RTC_Init(` + $configSet.inst_peripheral_ID.getValue() + `, &amp;` + $configSet.inst_ID.getValue() + `_config` + `);`, 1)</expr><br/>
+                <if expr="$this.rtc_config.enableWakeupPin.isAvailable() &amp;&amp; $this.rtc_config.enableWakeupPin.getValue()">
+                    <expr>leftPadding(`/* Enable wakeup pin */`,1)</expr><br/>
+                    <expr>leftPadding(`RTC_EnableWakeUpPin(` + $configSet.inst_peripheral_ID.getValue() + `, true);`, 1)</expr><br/>
+                </if>
+                <if expr="$this.rtc_config.setDateTime.getValue()">
+                    <expr>leftPadding(`/* Stop RTC timer */`,1)</expr><br/>
+                    <expr>leftPadding(`RTC_StopTimer(` + $configSet.inst_peripheral_ID.getValue() + `);`, 1)</expr><br/>
+                    <expr>leftPadding(`/* Date and time initialization */`,1)</expr><br/>
+                    <expr>leftPadding(`RTC_SetDatetime(` + $configSet.inst_peripheral_ID.getValue() + `, &amp;` + $configSet.inst_ID.getValue() + `_dateTimeStruct` + `);`, 1)</expr><br/>
+                </if>
+                <if expr="$this.rtc_config.setAlarm.getValue()">
+                    <expr>leftPadding(`/* Alarm initialization */`,1)</expr><br/>
+                    <expr>leftPadding(`RTC_SetAlarm(` + $configSet.inst_peripheral_ID.getValue() + `, &amp;` + $configSet.inst_ID.getValue() + `_alarmDateTimeStruct` + `);`, 1)</expr><br/>
+                </if>
+                <if expr="($this.rtc_config.mc.init.isAvailable() &amp;&amp; $this.rtc_config.mc.init.getValue())">
+                    <expr>leftPadding(`/* Set monotonic counter value*/`,1)</expr><br/>
+                    <expr>leftPadding(`RTC_SetMonotonicCounter(` + $configSet.inst_peripheral_ID.getValue() + `, ` + $this.rtc_config.mc.counter.getValue() +  `);`, 1)</expr><br/>
+                </if>
+                <if expr="$this.rtc_config.start.getValue()">
+                    <expr>leftPadding(`/* Start RTC timer */`,1)</expr><br/>
+                    <expr>leftPadding(`RTC_StartTimer(` + $configSet.inst_peripheral_ID.getValue() + `);`, 1)</expr><br/>
+                </if>
+                <if expr="$this.interruptsCfg.isAvailable() &amp;&amp; $this.interruptsCfg.interruptSources.getCValue() != ``">
+                    <expr>leftPadding(`/* Enable interrupts */`,1)</expr><br/>
+                    <expr>leftPadding(`RTC_EnableInterrupts(` + $configSet.inst_peripheral_ID.getValue() +`, (` + $this.interruptsCfg.interruptSources.getCValue() + `));`,1)</expr><br/>
+                </if>
+                <fragment id="IRQn_set_priority_default" apply_to="$this.interruptsCfg.commonInterrupt" if_expr="$this.interruptsCfg.isInterruptEnabled.isAvailable() &amp;&amp; $this.interruptsCfg.isInterruptEnabled.value() &amp;&amp; $this.interruptsCfg.commonInterrupt.enable_priority.value()"/>
+                <fragment id="IRQn_enable_default" apply_to="$this.interruptsCfg.commonInterrupt" if_expr="$this.interruptsCfg.isInterruptEnabled.isAvailable() &amp;&amp; $this.interruptsCfg.isInterruptEnabled.value()"/>
+                <fragment id="IRQn_set_priority_default" apply_to="$this.interruptsCfg.secondsInterrupt" if_expr="$this.interruptsCfg.isSecondsInterruptEnabled.isAvailable() &amp;&amp; $this.interruptsCfg.isSecondsInterruptEnabled.value() &amp;&amp; $this.interruptsCfg.secondsInterrupt.enable_priority.value()"/>
+                <fragment id="IRQn_enable_default" apply_to="$this.interruptsCfg.secondsInterrupt" if_expr="$this.interruptsCfg.isSecondsInterruptEnabled.isAvailable() &amp;&amp; $this.interruptsCfg.isSecondsInterruptEnabled.value()"/>
+            </section>
+        </code>
+        <validation/>
+    </config_set>
+</component:config_component>

@@ -1,0 +1,681 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component:config_component
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd"
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0" options="UI_COMPONENT_MODE_HIDDEN"
+   id="evtg_reg" label="EVTG" category="Register init" registers_init="true">
+   <description>Event Generator (EVTG)</description>
+   <mode id="general" label="General">
+      <description>General EVTG initialization</description>
+      <config_set_refs>
+         <config_set_ref>generalConfig</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>EVTG</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="generalConfig" label="General configuration">
+      <description>General configuration</description>
+      <generated_types/>
+       <user_types>
+           <dynamic_enum id="input_t" options="REGISTERS_REFRESH" items="createArray().addItemToList(
+               `0`, `0`, `false`, true, `Input: Logic 0 (low)`).addItemToList(
+               `3`, `1`, `true`, true, `Input: Logic 1 (high)`).merge(
+               getPeripheralSignals($instance.getPeripheral()).filter(x -> (x.getID() == toUpperCase($this.getOptionValue(`signal_id`)))).arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> `1`,
+               enumItem -> $this.getID(),
+               enumItem -> $this.getID(),
+               enumItem -> `Input: signal ` + enumItem.getLabel()
+               )).merge(
+               getPeripheralSignals($instance.getPeripheral()).filter(x -> (x.getID() == toUpperCase($this.getOptionValue(`signal_id`)))).arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> `2`,
+               enumItem -> `~`+$this.getID(),
+               enumItem -> `~`+$this.getID(),
+               enumItem -> `Input: inverted signal ` + enumItem.getLabel()
+               ))">
+               <description>Event input signal. The input can be represented by logic values (low-0/high-1), routed signal (Pins tool) or inverted (complement) value of the routed signal.</description>
+               <validation>
+                   <dependency when_expr="$this.getValue() == `1` || $this.getValue() == `2`"
+                       resource_type="PeripheralUnifiedSignal"
+                       resource_id_expr="$instance.getPeripheral() + `.` +  $this.getOptionValue(`signal_id`)"
+                       description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`Input ` + toUpperCase($this.getOptionValue(`signal_id`)), $instance.getPeripheral())" level="Warning">
+                       <feature name="routed">
+                           <data expr="true"/>
+                       </feature>
+                   </dependency>
+               </validation>
+               <assign when="true">
+                   <register name="" name_expr="`EVTG`+ $parent.eventIndex.getValue() +`_AOI`+ $parent.aoiIndex.getValue() +`_BFT` + $parent.bftRegID.getValue()" 
+                       bitfield="" bitfield_expr="`PT` + $parent.bftIndex.getValue() + `_` + $this.getID()+`C`" 
+                       value="$this.getEnumItemId().toInt()" reverse_value="x -> x"/>
+               </assign>
+           </dynamic_enum>
+           <struct id="bft_t">
+               <description>
+Boolean Function Term.   
+This 2-bit field defines the Boolean evaluation associated with the selected INPUT in product term.  
+  
+**BFT** = **Input A** AND **Input B** AND **Input C** AND **Input D**  
+**AOI** = **BFT0** OR **BFT1** OR **BFT2** OR **BFT3**  
+               </description>
+               <variable id="eventIndex" value="$parent.getParent().getParent().getSetting(`eventIndex`).getValue()"></variable>
+               <variable id="aoiIndex" value="$parent.getParent().getParent().getSetting(`aoiIndex`).getValue()"></variable>
+               <variable id="bftIndex" value="$parent.getID()"></variable>
+               <variable id="bftRegID" value="($parent.bftIndex.getValue()==`0` || $parent.bftIndex.getValue()==`1`) ? `01` : 
+                   (($parent.bftIndex.getValue()==`2` || $parent.bftIndex.getValue()==`3`) ? `23` : ``)"></variable>
+               <reference type="input_t" id="A" label="Input A">
+                   <options_expr>
+                       <option id="signal_id" expr="`evtg` + $parent.eventIndex.getValue() + `.a`"></option>
+                   </options_expr>
+               </reference>
+               <reference type="input_t" id="B" label="Input B">
+                   <options_expr>
+                       <option id="signal_id" expr="`evtg` + $parent.eventIndex.getValue() + `.b`"></option>
+                   </options_expr>
+               </reference>
+               <reference type="input_t" id="C" label="Input C">
+                   <options_expr>
+                       <option id="signal_id" expr="`evtg` + $parent.eventIndex.getValue() + `.c`"></option>
+                   </options_expr>
+               </reference>
+               <reference type="input_t" id="D" label="Input D">
+                   <options_expr>
+                       <option id="signal_id" expr="`evtg` + $parent.eventIndex.getValue() + `.d`"></option>
+                   </options_expr>
+               </reference>
+               <info id="bftResult" label="BFT result" value="
+                   $parent.A.getEnumItemValue()==`false` ? `Logic 0` : (
+                   $parent.B.getEnumItemValue()==`false` ? `Logic 0` : (
+                   $parent.C.getEnumItemValue()==`false` ? `Logic 0` : (
+                   $parent.D.getEnumItemValue()==`false` ? `Logic 0` : (
+                   ($parent.A.getEnumItemValue()==`true` &amp;&amp; $parent.B.getEnumItemValue()==`true` &amp;&amp; $parent.C.getEnumItemValue()==`true` &amp;&amp; $parent.D.getEnumItemValue()==`true` ? `Logic 1` : (
+                   ($parent.A.getEnumItemValue()==`true` ? `` : $parent.A.getEnumItemValue()) + 
+                   ($parent.B.getEnumItemValue()==`true` ? `` : (($parent.A.getEnumItemValue()==`true` ? ``: ` &amp; `) + $parent.B.getEnumItemValue())) + 
+                   ($parent.C.getEnumItemValue()==`true` ? `` : (($parent.A.getEnumItemValue()==`true` &amp;&amp; $parent.B.getEnumItemValue()==`true`  ? `` : ` &amp; `) + $parent.C.getEnumItemValue())) + 
+                   ($parent.D.getEnumItemValue()==`true` ? `` : (($parent.A.getEnumItemValue()==`true` &amp;&amp; $parent.B.getEnumItemValue()==`true` &amp;&amp; $parent.C.getEnumItemValue()==`true`  ? `` : ` &amp; `) + $parent.D.getEnumItemValue()))
+                   ))))))
+                   ">
+                   <description>BFT = Input A &amp; Input B &amp; Input C &amp; Input D</description>
+               </info>
+           </struct>
+           <struct id="aoi_t">
+               <description>And-Or-Invert (AOI) module.
+                   Configuration of the AOI module includes programmable filter to remove input glitch. All logics are synchronous in bus clk domain.
+               </description>
+               <quick_selections>
+                   <quick_selection id="reset" label="Reset AOI">
+                       <description>Logic 0 configuration (default)</description>
+                       <set id="bfts.0.A">0</set>
+                       <set id="bfts.0.B">0</set>
+                       <set id="bfts.0.C">0</set>
+                       <set id="bfts.0.D">0</set>
+                       <set id="bfts.1.A">0</set>
+                       <set id="bfts.1.B">0</set>
+                       <set id="bfts.1.C">0</set>
+                       <set id="bfts.1.D">0</set>
+                       <set id="bfts.2.A">0</set>
+                       <set id="bfts.2.B">0</set>
+                       <set id="bfts.2.C">0</set>
+                       <set id="bfts.2.D">0</set>
+                       <set id="bfts.3.A">0</set>
+                       <set id="bfts.3.B">0</set>
+                       <set id="bfts.3.C">0</set>
+                       <set id="bfts.3.D">0</set>
+                   </quick_selection>
+                   <quick_selection id="set" label="Set AOI">
+                       <description>Logic 1 configuration</description>
+                       <set id="bfts.0.A">3</set>
+                       <set id="bfts.0.B">3</set>
+                       <set id="bfts.0.C">3</set>
+                       <set id="bfts.0.D">3</set>
+                       <set id="bfts.1.A">3</set>
+                       <set id="bfts.1.B">3</set>
+                       <set id="bfts.1.C">3</set>
+                       <set id="bfts.1.D">3</set>
+                       <set id="bfts.2.A">3</set>
+                       <set id="bfts.2.B">3</set>
+                       <set id="bfts.2.C">3</set>
+                       <set id="bfts.2.D">3</set>
+                       <set id="bfts.3.A">3</set>
+                       <set id="bfts.3.B">3</set>
+                       <set id="bfts.3.C">3</set>
+                       <set id="bfts.3.D">3</set>
+                   </quick_selection>
+                   <quick_selection id="twoInputsAnd" label="A &amp; B">
+                       <description>A AND B</description>
+                       <set id="bfts.0.A">1</set>
+                       <set id="bfts.0.B">1</set>
+                       <set id="bfts.0.C">3</set>
+                       <set id="bfts.0.D">3</set>
+                       <set id="bfts.1.A">0</set>
+                       <set id="bfts.1.B">0</set>
+                       <set id="bfts.1.C">0</set>
+                       <set id="bfts.1.D">0</set>
+                       <set id="bfts.2.A">0</set>
+                       <set id="bfts.2.B">0</set>
+                       <set id="bfts.2.C">0</set>
+                       <set id="bfts.2.D">0</set>
+                       <set id="bfts.3.A">0</set>
+                       <set id="bfts.3.B">0</set>
+                       <set id="bfts.3.C">0</set>
+                       <set id="bfts.3.D">0</set>
+                   </quick_selection>
+                   <quick_selection id="threeInputsAnd" label="A &amp; B &amp; ~C">
+                       <description>A AND B AND NOT C</description>
+                       <set id="bfts.0.A">1</set>
+                       <set id="bfts.0.B">1</set>
+                       <set id="bfts.0.C">2</set>
+                       <set id="bfts.0.D">3</set>
+                       <set id="bfts.1.A">0</set>
+                       <set id="bfts.1.B">0</set>
+                       <set id="bfts.1.C">0</set>
+                       <set id="bfts.1.D">0</set>
+                       <set id="bfts.2.A">0</set>
+                       <set id="bfts.2.B">0</set>
+                       <set id="bfts.2.C">0</set>
+                       <set id="bfts.2.D">0</set>
+                       <set id="bfts.3.A">0</set>
+                       <set id="bfts.3.B">0</set>
+                       <set id="bfts.3.C">0</set>
+                       <set id="bfts.3.D">0</set>
+                   </quick_selection>
+                   <quick_selection id="fourInputsAndOr" label="(A &amp; B &amp; C) | D">
+                       <description>A AND B AND C OR D</description>
+                       <set id="bfts.0.A">1</set>
+                       <set id="bfts.0.B">1</set>
+                       <set id="bfts.0.C">1</set>
+                       <set id="bfts.0.D">3</set>
+                       <set id="bfts.1.A">3</set>
+                       <set id="bfts.1.B">3</set>
+                       <set id="bfts.1.C">3</set>
+                       <set id="bfts.1.D">1</set>
+                       <set id="bfts.2.A">0</set>
+                       <set id="bfts.2.B">0</set>
+                       <set id="bfts.2.C">0</set>
+                       <set id="bfts.2.D">0</set>
+                       <set id="bfts.3.A">0</set>
+                       <set id="bfts.3.B">0</set>
+                       <set id="bfts.3.C">0</set>
+                       <set id="bfts.3.D">0</set>
+                   </quick_selection>
+                   <quick_selection id="fourInputsOr" label="(A | B | C | D)">
+                       <description>A OR B OR C OR D</description>
+                       <set id="bfts.0.A">1</set>
+                       <set id="bfts.0.B">3</set>
+                       <set id="bfts.0.C">3</set>
+                       <set id="bfts.0.D">3</set>
+                       <set id="bfts.1.A">3</set>
+                       <set id="bfts.1.B">1</set>
+                       <set id="bfts.1.C">3</set>
+                       <set id="bfts.1.D">3</set>
+                       <set id="bfts.2.A">3</set>
+                       <set id="bfts.2.B">3</set>
+                       <set id="bfts.2.C">1</set>
+                       <set id="bfts.2.D">3</set>
+                       <set id="bfts.3.A">3</set>
+                       <set id="bfts.3.B">3</set>
+                       <set id="bfts.3.C">3</set>
+                       <set id="bfts.3.D">1</set>
+                   </quick_selection>
+                   <quick_selection id="twoInputsNeg" label="(A &amp; ~B) | (~A &amp; B)">
+                       <description>(A AND NOT B) OR (NOT A AND B)</description>
+                       <set id="bfts.0.A">1</set>
+                       <set id="bfts.0.B">2</set>
+                       <set id="bfts.0.C">3</set>
+                       <set id="bfts.0.D">3</set>
+                       <set id="bfts.1.A">2</set>
+                       <set id="bfts.1.B">1</set>
+                       <set id="bfts.1.C">3</set>
+                       <set id="bfts.1.D">3</set>
+                       <set id="bfts.2.A">0</set>
+                       <set id="bfts.2.B">0</set>
+                       <set id="bfts.2.C">0</set>
+                       <set id="bfts.2.D">0</set>
+                       <set id="bfts.3.A">0</set>
+                       <set id="bfts.3.B">0</set>
+                       <set id="bfts.3.C">0</set>
+                       <set id="bfts.3.D">0</set>
+                   </quick_selection>
+                   <quick_selection id="jkff" label="(A &amp; ~B) | (B &amp; ~C)">
+                       <description>(A AND NOT B) OR (B AND NOT C)</description>
+                       <set id="bfts.0.A">1</set>
+                       <set id="bfts.0.B">2</set>
+                       <set id="bfts.0.C">3</set>
+                       <set id="bfts.0.D">3</set>
+                       <set id="bfts.1.A">3</set>
+                       <set id="bfts.1.B">1</set>
+                       <set id="bfts.1.C">2</set>
+                       <set id="bfts.1.D">3</set>
+                       <set id="bfts.2.A">0</set>
+                       <set id="bfts.2.B">0</set>
+                       <set id="bfts.2.C">0</set>
+                       <set id="bfts.2.D">0</set>
+                       <set id="bfts.3.A">0</set>
+                       <set id="bfts.3.B">0</set>
+                       <set id="bfts.3.C">0</set>
+                       <set id="bfts.3.D">0</set>
+                   </quick_selection>
+                   <quick_selection id="d" label="D">
+                       <description>D</description>
+                       <set id="bfts.0.A">3</set>
+                       <set id="bfts.0.B">3</set>
+                       <set id="bfts.0.C">3</set>
+                       <set id="bfts.0.D">1</set>
+                       <set id="bfts.1.A">0</set>
+                       <set id="bfts.1.B">0</set>
+                       <set id="bfts.1.C">0</set>
+                       <set id="bfts.1.D">0</set>
+                       <set id="bfts.2.A">0</set>
+                       <set id="bfts.2.B">0</set>
+                       <set id="bfts.2.C">0</set>
+                       <set id="bfts.2.D">0</set>
+                       <set id="bfts.3.A">0</set>
+                       <set id="bfts.3.B">0</set>
+                       <set id="bfts.3.C">0</set>
+                       <set id="bfts.3.D">0</set>
+                   </quick_selection>
+                   <default>reset</default>
+               </quick_selections>
+               <variable id="eventIndex" value="$parent.getParent().getParent().getSetting(`eventIndex`).getValue()"></variable>
+               <variable id="aoiIndex" value="$parent.getID()"></variable>
+               <array type="bft_t" id="bfts" size="4" options="UI_LABEL_HIDDEN;UI_SHOW_CONTENT_AS=TABLE;UI_TABLE_COLUMN_WIDTHS=5,6,6,6,6,15" key_selector_expr="x -> `BFT` + x.getID() + `:`">
+                   <item_defaults>
+                       <set_default id="A" value_expr="x->0"/>
+                       <set_default id="B" value_expr="x->0"/>
+                       <set_default id="C" value_expr="x->0"/>
+                       <set_default id="D" value_expr="x->0"/>
+                   </item_defaults>
+               </array>
+               <info id="aoiResult" label="Output result term" value="
+                   $parent.bfts.anyMatch(x->x.getSetting(`bftResult`).getValue()==`Logic 1`) ? `Logic 1` : (
+                   $parent.bfts.allMatch(x->x.getSetting(`bftResult`).getValue()==`Logic 0`) ? `Logic 0` : (
+                   ($parent.getSetting(`bfts.0.bftResult`).getValue()==`Logic 0` ? `` : `(` + $parent.getSetting(`bfts.0.bftResult`).getValue() + `)`) + 
+                   ($parent.getSetting(`bfts.1.bftResult`).getValue()==`Logic 0` ? `` : ($parent.getSetting(`bfts.0.bftResult`).getValue()==`Logic 0` ? `(` : ` | (`) + $parent.getSetting(`bfts.1.bftResult`).getValue() + `)`) + 
+                   ($parent.getSetting(`bfts.2.bftResult`).getValue()==`Logic 0` ? `` : (($parent.getSetting(`bfts.0.bftResult`).getValue()==`Logic 0` &amp;&amp; $parent.getSetting(`bfts.1.bftResult`).getValue()==`Logic 0`) ? `(` : ` | (`) + $parent.getSetting(`bfts.2.bftResult`).getValue() + `)`) +
+                   ($parent.getSetting(`bfts.3.bftResult`).getValue()==`Logic 0` ? `` : (($parent.getSetting(`bfts.0.bftResult`).getValue()==`Logic 0` &amp;&amp; $parentgetSetting(`bfts.1.bftResult`).getValue()==`Logic 0` &amp;&amp; $parent.getSetting(`bfts.2.bftResult`).getValue()==`Logic 0`) ? `(` : ` | (`) + $parent.getSetting(`bfts.3.bftResult`).getValue() + `)`)
+                   ))">
+                   <description expr="`AOI `+ $parent.getID() +` (EVTG`+ $parent.eventIndex.getValue() + `_OUT` + ($parent.getID()==0 ? `A` : ($parent.getID()==1 ? `B` : ``))+ `) = BFT0 | BFT1 | BFT2 | BFT3`"></description>
+               </info>
+               <struct id="aoiFilt" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+                   <integer type="uint8_t" id="FILT_PER" label="Output filter sample period" options="REGISTERS_REFRESH">
+                       <description>
+AOI Output Filter Sample Period  
+These bits represent the sampling period (in IP bus clock cycles) of the input signals. 
+Each input is sampled multiple times at the rate specified by this field. 
+If this value (*FILT_PER*) is 0x00 (default), then the input filter is bypassed. The value of *FILT_PER* affects the input latency.
+When changing values for *FILT_PER* from one non-zero value to another non-zero value, write a value of zero first to clear the filter.
+                       </description>
+                       <assign when="true">
+                           <register name="" name_expr="`EVTG`+ $parent.getParent().getSetting(`eventIndex`).getValue()+`_AOI` + $parent.getParent().getSetting(`aoiIndex`).getValue() + `_FILT`" 
+                               bitfield="FILT_PER" value="$this.getValue()" reverse_value="x -> x"/>
+                       </assign>
+                   </integer>
+                   <enum id="FILT_CNT" label="Output filter sample count" options="REGISTERS_REFRESH">
+                       <description>
+AOI output filter sample count  
+These bits represent the number of consecutive samples that must agree prior to the input filter accepting an input transition. 
+A value of 0x0 represents 3 samples. A value of 0x7 represents 10 samples. The value of *FILT_CNT* affects the input latency.
+                       </description>
+                       <assign when="true">
+                           <register name="" name_expr="`EVTG`+ $parent.getParent().getSetting(`eventIndex`).getValue()+`_AOI` + $parent.getParent().getSetting(`aoiIndex`).getValue() + `_FILT`" 
+                               bitfield="FILT_CNT" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                       </assign>
+                       <item id="0" label="3 samples" value="0"></item>
+                       <item id="1" label="4 samples" value="1"></item>
+                       <item id="2" label="5 samples" value="2"></item>
+                       <item id="3" label="6 samples" value="3"></item>
+                       <item id="4" label="7 samples" value="4"></item>
+                       <item id="5" label="8 samples" value="5"></item>
+                       <item id="6" label="9 samples" value="6"></item>
+                       <item id="7" label="10 samples" value="7"></item>
+                   </enum>
+                   <variable id="filterDelayClk" value="$parent.FILT_PER.getValue() != 0 ? (($parent.FILT_CNT.getValue().toInt() + 3) * $parent.FILT_PER.getValue().toInt() + 2) : 0"></variable>
+                   <info id="filterDelay" label="Output filter delay" value="$configSet.clkConfig.calculatedFreq.getValue()!=`N/A` ? 
+                       ($parent.FILT_PER.getValue() != 0 ? 
+                           timeToString($parent.filterDelayClk.getValue() * 1000000.0/$configSet.clkConfig.calculatedFreq.getValue()) + 
+                           ` (` + $parent.filterDelayClk.getValue() + ` bus clock cycles)`
+                           : `Filter is disabled`)
+                       : `N/A`">
+                       <description>If the filter period is 0 the filter is disabled and has no delay. Otherwise the output filter delay is calculated as (FILT_CNT + 3) x FILT_PER + 2</description>
+                   </info>
+               </struct>
+           </struct>
+           <struct id="evtg_t">
+               <description>Event generatior instance</description>
+               <quick_selections>
+                   <quick_selection id="reset" label="Reset event">
+                       <set id="aois.0">reset</set>
+                       <set id="aois.1">reset</set>
+                   </quick_selection>
+                   <quick_selection id="jkff" label="JK-FF mode">
+                   <set id="aois.0">jkff</set>
+                   <set id="aois.1">d</set>
+                   <set id="evtgCtrl.MODE_SEL">4</set>
+                   <set id="evtgCtrl.FB_OVRD">1</set>
+                   <set id="SYNC_CTRL.sync0">true</set>
+                   <set id="SYNC_CTRL.sync1">true</set>
+                   <set id="SYNC_CTRL.sync2">true</set>
+                   <set id="SYNC_CTRL.sync3">true</set>
+               </quick_selection>
+                   <default>reset</default>
+               </quick_selections>
+               <variable value="$parent.getID()" id="eventIndex"></variable>
+               <info id="signals" value="`Routed input signals overview`" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+               <info id="inputA" label="Input A" value="getPeripheralSignals($instance.getPeripheral()).findFirst(x -> (x.getID() == toUpperCase(`evtg`+$parent.eventIndex.getValue()+`.a`))).getLabel()" options="UI_LABEL_HIDDEN">
+                   <description>Routed EVTG input signal A by the Pins tool.</description>
+               </info>
+               <info id="inputB" label="Input B" value="getPeripheralSignals($instance.getPeripheral()).findFirst(x -> (x.getID() == toUpperCase(`evtg`+$parent.eventIndex.getValue()+`.b`))).getLabel()" options="UI_LABEL_HIDDEN">
+                   <description>Routed EVTG input signal B by the Pins tool.</description>
+               </info>
+               <info id="inputC" label="Input C" value="getPeripheralSignals($instance.getPeripheral()).findFirst(x -> (x.getID() == toUpperCase(`evtg`+$parent.eventIndex.getValue()+`.c`))).getLabel()" options="UI_LABEL_HIDDEN"> 
+                   <description>Routed EVTG input signal C by the Pins tool.</description>
+               </info>
+               <info id="inputD" label="Input D" value="getPeripheralSignals($instance.getPeripheral()).findFirst(x -> (x.getID() == toUpperCase(`evtg`+$parent.eventIndex.getValue()+`.d`))).getLabel()" options="UI_LABEL_HIDDEN">
+                   <description>Routed EVTG input signal D by the Pins tool.</description>
+               </info>
+               <info id="endline" value="``" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+               <struct id="SYNC_CTRL" label="Sync inputs" options="UI_MULTI_COLUMN=4">
+                   <description>Four EVTG inputs synchronous with bus clk. Input sync feature makes evtg input sync
+                       for two bus_clk cycles. Any glitch whose width is less than a bus clk period will be removed.
+                   </description>
+                   <reference id="sync0" label="Sync A" type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                       <options_expr>
+                           <option id="register" expr="`EVTG`+ $parent.getParent().getSetting(`eventIndex`).getValue()+`_CTRL`"></option>
+                           <option id="bitfield" expr="`SYNC_CTRL`"/>
+                           <option id="mask" expr="1&lt;&lt;0"/>
+                           <option id="REGISTERS_REFRESH"/>
+                       </options_expr>
+                       <description>EVTG input A will be synced by two bus clk cycles.</description>
+                   </reference>
+                   <reference id="sync1" label="Sync B" type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                       <options_expr>
+                           <option id="register" expr="`EVTG`+ $parent.getParent().getSetting(`eventIndex`).getValue()+`_CTRL`"></option>
+                           <option id="bitfield" expr="`SYNC_CTRL`"></option>
+                           <option id="mask" expr="1&lt;&lt;1"></option>
+                           <option id="REGISTERS_REFRESH"/>
+                       </options_expr>
+                       <description>EVTG input B will be synced by two bus clk cycles.</description>
+                   </reference>
+                   <reference id="sync2" label="Sync C" type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                       <options_expr>
+                           <option id="register" expr="`EVTG`+ $parent.getParent().getSetting(`eventIndex`).getValue()+`_CTRL`"></option>
+                           <option id="bitfield" expr="`SYNC_CTRL`"></option>
+                           <option id="mask" expr="1&lt;&lt;2"></option>
+                           <option id="REGISTERS_REFRESH"/>
+                       </options_expr>
+                       <description>EVTG input C will be synced by two bus clk cycles.</description>
+                   </reference>
+                   <reference id="sync3" label="Sync D" type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                       <options_expr>
+                           <option id="register" expr="`EVTG`+ $parent.getParent().getSetting(`eventIndex`).getValue()+`_CTRL`"></option>
+                           <option id="bitfield" expr="`SYNC_CTRL`"></option>
+                           <option id="mask" expr="1&lt;&lt;3"></option>
+                           <option id="REGISTERS_REFRESH"/>
+                       </options_expr>
+                       <description>EVTG input D will be synced by two bus clk cycles.</description>
+                   </reference>
+               </struct>
+               <array type="aoi_t" id="aois" size="2" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN;UI_TABLE_COLUMN_WIDTHS=5,8" key_selector_expr="x -> `AOI ` + x.getID()"></array>
+               <struct  id="evtgCtrl" label="Trigger configuration">
+                   <description>
+Each EVTG has 2 AOI modules to generate two combinational expressions (outputs).
+The two outputs can operate as hardware trigger signals or for other purpose - can be used as inputs to the one flexible flip-flop and configured as RS, D-FF, T-FF, JK-FF or Latch.
+                   </description>
+                   <bool id="INIT_EN" label="Enable flip-flop initial output control" options="REGISTERS_REFRESH">
+                       <description>
+**Flip-flop initial output enable control**  
+Force the value of flip-flop positive output (*FF_INIT*) to be present on the flip-flop positive output. Reading this bit returns always "0".  
+**0** - Enable pulse is not generated  
+**1** - Enable pulse is generated  
+                       </description>
+                       <assign when="true">
+                           <register name="" name_expr="`EVTG`+ $parent.getParent().getSetting(`eventIndex`).getValue()+`_CTRL`" bitfield="INIT_EN" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                       </assign>
+                   </bool>
+                   <enum id="FF_INIT" label="Flip-flop positive output initial value" enable="$parent.INIT_EN.getValue()" options="REGISTERS_REFRESH;UI_SHOW_CONTENT_AS=RADIO_GROUP;UI_RADIO_GROUP_HORIZONTAL">
+                       <description>
+**Configure flip-flop initial value**   
+Note: This value (*FF_INIT*) does not take effect until flip-flop output control (*INIT_EN*) is enabled  
+**0** - Configure the positive output of flip-flop as *Logical 0*  
+**1** - Configure the positive output of flip-flop as *Logical 1*             
+                       </description>
+                       <assign when="true">
+                           <register name_expr="`EVTG`+ $parent.getParent().getSetting(`eventIndex`).getValue()+`_CTRL`" bitfield="FF_INIT" value="$this.getEnumItemValue().toInt()" reverse_value="x -> `v` + x"/>
+                       </assign>
+                       <item id="v0" label="Low" value="0"><description>Logical 0</description></item>
+                       <item id="v1" label="High" value="1"><description>Logical 1</description></item>
+                   </enum>
+                   <enum id="MODE_SEL" label="Flip-flop mode" options="REGISTERS_REFRESH">
+                       <description>Flip-Flop mode configuration (see documentation)</description>
+                       <assign when="true">
+                           <register name="" name_expr="`EVTG`+ $parent.getParent().getSetting(`eventIndex`).getValue()+`_CTRL`" bitfield="MODE_SEL" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                       </assign>
+                       <item id="0" label="Bypass mode" value="0">
+                           <description>
+AOI 0 - EVTG_OUTA  
+AOI 1 - EVTG_OUTB  
+  
+In this mode, filp-flop will be passed. The two AOI expressions (AOI 0 and AOI 1) will be directly assigned to EVTG outputs (*EVTG_OUTA* and *EVTG_OUTB*).  
+In this mode, user can configure input sync logic and filter function.
+                           </description>
+                       </item>
+                       <item id="1" label="RS trigger mode" value="1">
+                           <description>
+AOI 0 - R  
+AOI 1 - S  
+EVTG_OUTA - Q  
+EVTG_OUTB - \~Q  
+  
+In this mode, AOI 0 expression is Reset port, and AOI 1 is Set port. Both are active high.
+When "R"(Reset) is high, whatever "S"(Set) is, EVTG_OUTA will be "0". When "R" is low and "S" is high, EVTG_OUTA will be "1".
+If both "R" and "S" are low, EVTG output will be kept. EVTG_OUTB is always the complement of EVTG_OUTA.  
+In this mode, user can configure input sync logic and filter function.
+                           </description>
+                       </item>
+                       <item id="2" label="T-FF mode" value="2">
+                           <description>
+AOI 0 - T  
+AOI 1 - CLK    
+EVTG_OUTA - Q  
+EVTG_OUTB - \~Q  
+  
+In this mode, AOI 0 expression is T port of T-FF, AOI 1 is CLK port. When T assert, the Q port (EVTG_OUTA) will turnover at the rising edge of "CLK". 
+When T dis-assert, Q(EVTG_OUTA) will be kept. EVTG_OUTB is always the complement of EVTG_OUTA.  
+In this mode, input sync or filter has to be enabled to remove the possible glitch.
+                           </description>
+                       </item>
+                       <item id="3" label="D-FF mode" value="3">
+                           <description>
+AOI 0 - D  
+AOI 1 - CLK  
+EVTG_OUTA - Q  
+EVTG_OUTB - \~Q  
+  
+In this mode, AOI 0 expression is D port of D-FF, AOI 1 expression is CLK port.
+At the rising edge of CLK, D will be captured to Q (EVTG_OUTA). EVTG_OUTB is always the complement of EVTG_OUTA.  
+In this mode, input sync or filter has to be enabled to remove the possible glitch.
+                           </description>
+                       </item>
+                       <item id="4" label="JK-FF mode" value="4">
+                           <description>
+AOI 0 - JK - (A &amp; \~B) | (B &amp; \~C)   
+AOI 1 - CLK - (D)  
+EVTG_OUTA - Q  
+EVTG_OUTB - \~Q  
+  
+In general, JK Flip-Flop have four input ports: J, K , Q and CLK (Q is output of FlipFlop) and the logical expression is (J &amp; \~Q) | (\~K &amp; Q).
+Here we implement the logic expression by AOI so that we can reuse the D-FF to implement JK-FF. 
+Suppose we set EVTG input "A" as "J" port, "C" as "K" port, "D"
+as "CLK" port, and "Q" port of FF feed back and override "B".  According to the JK logic expression, the AOI 0 expression will be
+"(A &amp; \~B) | (B &amp; \~C)", AOI 1 expression will be "D".  
+In this mode, input sync or filter has to be enabled to remove the possible glitch.
+                           </description>
+                       </item>
+                       <item id="5" label="Latch mode" value="5">
+                           <description>
+AOI 0 - D  
+AOI 1 - CLK  
+EVTG_OUTA - Q  
+EVTG_OUTB - \~Q  
+  
+In this mode, AOI 0 expression is D port, AOI 1 is CLK port. Different from D-FF
+mode, in Latch mode, D port will be passed only when CLK is high, and output will be
+kept when CLK is low. EVTG_OUTB is always the complement of EVTG_OUTA.  
+In this mode, input sync or filter has to be enabled to remove the possible glitch.
+                           </description>
+                       </item>
+                   </enum>
+                   <set id="FORCE_BYPASS" label="Force trigger bypass" options="REGISTERS_REFRESH" 
+                       available="bitfieldExists($instance.getPeripheral(), `EVTG`+ $parent.getParent().getSetting(`eventIndex`).getValue()+`_CTRL`,`FORCE_BYPASS`)">
+                       <description>
+Force bypass flip-flop (trigger) and route:
+- the **AOI_0** (Filter_0) value to the output **EVTG_OUTA**  
+- the **AOI_1** (Filter_1) value to the output **EVTG_OUTB**  
+  
+*Note:* If bypass is enabled, the output will be bypassed regardless of the **Flip-flop mode** (MODE_SEL) value. When **Flip-flop mode** is set as *JK-FF mode*, **Force bypass** should be disabled, becasue the **Output feedback override** (FB_OVRD) will affect output.
+                       </description>
+                       <validation>
+                           <constraint when_expr="$parent.MODE_SEL.getValue()==`4`" cond_expr="!($this.aoi0.getValue() || $this.aoi1.getValue())" level="warning" description="The output of JK-FF mode is affected by the feedback override, disable force trigger bypass."/>
+                       </validation>
+                       <item id="aoi0" label="AIO 0" value="0">
+                           <description>Force bypass Flip-Flop (trigger) and route the AOI_0 (Filter_0) value directly to EVTG_OUTA</description>
+                           <assign when="true">
+                               <register name_expr="`EVTG`+ $parent.getParent().getParent().getSetting(`eventIndex`).getValue()+`_CTRL`" bitfield="FORCE_BYPASS"
+                                   value="$this.getValue().system::maskBitfield(`EVTG`+ $parent.getParent().getParent().getSetting(`eventIndex`).getValue()+`_CTRL`, `FORCE_BYPASS`, (1 &lt;&lt; $this.getSetItemValue().toInt()))" 
+                                   reverse_value="x -> ((x &amp; (1 &lt;&lt; $this.getSetItemValue().toInt())) != 0)"/>
+                           </assign>
+                       </item>
+                       <item id="aoi1" label="AIO 1" value="1">
+                           <description>Force bypass Flip-Flop (trigger) and route the AOI_1 (Filter_1) value directly to EVTG_OUTB</description>
+                           <assign when="true">
+                               <register name_expr="`EVTG`+ $parent.getParent().getParent().getSetting(`eventIndex`).getValue()+`_CTRL`" bitfield="FORCE_BYPASS"
+                                   value="$this.getValue().system::maskBitfield(`EVTG`+ $parent.getParent().getParent().getSetting(`eventIndex`).getValue()+`_CTRL`, `FORCE_BYPASS`, (1 &lt;&lt; $this.getSetItemValue().toInt()))" 
+                                   reverse_value="x -> ((x &amp; (1 &lt;&lt; $this.getSetItemValue().toInt())) != 0)"/>
+                           </assign>
+                       </item>
+                   </set>
+                   <enum id="FB_OVRD" label="Output feedback override" enable="$parent.MODE_SEL.getValue()==4" options="REGISTERS_REFRESH">
+                       <description>EVTG output feedback override control
+                           When "MODE_SEL" is configured as JK-FF mode, need EVTG_OUTA feedback to EVTG input and replace one of the four inputs.
+                       </description>
+                       <assign when="true">
+                           <register name="" name_expr="`EVTG`+ $parent.getParent().getSetting(`eventIndex`).getValue()+`_CTRL`" bitfield="FB_OVRD" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                       </assign>
+                       <item id="0" label="Replace inputs A" value="0">
+                           <description>A inputs will be replaced</description>
+                       </item>
+                       <item id="1" label="Replace inputs B" value="1">
+                           <description>B inputs will be replaced</description>
+                       </item>
+                       <item id="2" label="Replace inputs C" value="2">
+                           <description>C inputs will be replaced</description>
+                       </item>
+                       <item id="3" label="Replace inputs D" value="3">
+                           <description>D inputs will be replaced</description>
+                       </item>
+                   </enum>
+               </struct>
+               <variable id="syncDelay" value="$parent.SYNC_CTRL.countOccurrences(x->x.getValue()==true)==0 ? 0 : 2"></variable>
+               <variable id="flipflopDelay" value="$parent.evtgCtrl.MODE_SEL.getValue()==`0` || $parent.evtgCtrl.MODE_SEL.getValue()==`1` ? 0 : 1"></variable>
+               <variable id="maxFilterDelay" value="$parent.aois.reduce(0 ,(x,y) -> system::max(x, y.getSetting(`aoiFilt.filterDelayClk`).getValue()))"></variable>
+               <variable id="totalDelay" value="$parent.syncDelay.getValue() + $parent.flipflopDelay.getValue() + $parent.maxFilterDelay.getValue()"></variable>
+               <info id="eventDelay" label="Event delay" options="UI_LABEL_BOLD"
+                   value="$configSet.clkConfig.calculatedFreq.getValue()!=`N/A` ? 
+                   ($parent.totalDelay.getValue()!=0 ?
+                   (timeToString($parent.totalDelay.getValue() * 1000000.0/$configSet.clkConfig.calculatedFreq.getValue()) + 
+                   ` (` + $parent.totalDelay.getValue() + ` bus clock cycles)`)
+                   : `No delay`)
+                   : `N/A`">
+                   <description>Resulting event delay between inputs and outputs calculated as
+                       max(AOI[n]_Filter_delay) + Sync_delay + FF_delay
+                   </description>
+               </info>
+           </struct>
+           <struct id="evtg_params_t" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+               <variable id="PERIPHERAL" value="$instance.getPeripheral()"></variable>
+               <variable id="VPREFIX" value="$configSet.inst_ID_def.getValue()"></variable>
+               <variable id="SUBMODULE" value="$parent.getID()"></variable>
+           </struct>
+           <struct id="clkConfig_t">
+               <variable id="clockSourceUId" value="`BusInterfaceClock`"/>
+               <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="createArray().addItemToList($parent.clockSourceUId.getValue(), getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()), ($instance.getPeripheral() + `_CLK_SRC`),true)" >
+                   <description>Clock source</description>
+                   <validation>
+                       <dependency resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                           description_expr="getPeripheralClockSignal($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + ` is inactive.`"
+                           level="Error">
+                           <feature name="frequency" evaluation="greaterThan">
+                               <data expr="0" unit="Hz" type="Frequency"/>
+                           </feature>
+                       </dependency>
+                   </validation>
+               </dynamic_enum>
+               <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" 
+                   items="createArray().merge(
+                   getClockFunctionalGroups().arrayToEnumItems(
+                   enumItem -> true,
+                   enumItem -> enumItem,
+                   enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)) + ` (` + enumItem + `)`,
+                   enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)))" >
+                   <description>Selection of the clock source frequency</description>
+                   <validation>
+                       <constraint cond_expr="$this.getEnumItemValue().toHertz() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+                   </validation>
+                   <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+               </dynamic_enum>
+               <info id="calculateFreqPeriod" label="Clock frequency/period" 
+                   value="system::calculateFreqPeriod(1,$parent.clockSourceFreq.getEnumItemValue())">
+                   <description>Clock frequency and period of one tick (in time units).</description>
+               </info>
+               <!-- Calculated real timer counter input frequency - one tick of timer-->
+               <variable id="calculatedFreq" value="system::calculateRealFreq(1, $parent.clockSourceFreq.getEnumItemValue())"/>
+           </struct>
+       </user_types>
+      <settings>
+          <reference type="clkConfig_t" id="clkConfig" label="Clock configuration"></reference>
+          <array type="evtg_t" id="events" label="Event generators" options="UI_SHOW_CONTENT_AS=TABS" key_selector_expr="x->`Event `+x.getID()" min_expr="1" max_expr="4"></array>
+          <!-- Fragment variables -->
+          <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+          <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+          <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+          <!-- Template parameters -->
+          <array type="evtg_params_t" id="evtg_params" size="$parent.events.size()"></array>
+      </settings>
+       <fragment_defs>
+           <import>
+               <from component_id="system" config_set_id="common_code_templates"/>
+           </import>
+       </fragment_defs>
+       <code>
+           <section target="includes">
+               <fragment id="include">
+                   <param id="name">device_registers</param>
+                   <param id="filename">fsl_device_registers.h</param>
+               </fragment>
+           </section>
+           <section target="defines">
+               <fragment id="filtered_regs_init" for_elements_of="$configSet.events">
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+                   <param id="filter" expr="`EVTG`+ $this.getID() +`.*`"/>
+               </fragment>
+           </section>
+           <section target="init_function_body">
+               <fragment id="template" for_elements_of="$configSet.evtg_params">
+                   <param id="file">evtg.template</param>
+                   <param id="setting" expr="$this"></param>
+                   <param id="separators"></param>
+                   <param id="description" expr="`Event ` + $this.SUBMODULE.getValue() + ` initialization`"></param>
+               </fragment>
+           </section>
+       </code> 
+      <quick_selections>
+         <quick_selection id="default" label="Default">
+            <description>Default configuration</description>
+             <set id="events.0">reset</set>
+         </quick_selection>
+          <default>default</default>
+      </quick_selections>
+   </config_set>
+</component:config_component>

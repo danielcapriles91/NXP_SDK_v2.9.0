@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="i2c_cmsis_common" label="I2C_CMSIS" category="System" global_only="true" hidden="false" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-9.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+   <description>Inter-Integrated Circuit (I2C) - CMSIS</description>
+   <config_set id="fsl_i2c_cmsis_common" label="General configuration"  from_source="fsl_i2c_cmsis.h">
+      <description>Configuration of CMSIS I2C</description>
+      <generated_types/>
+      <user_types>
+         <enum id="mode_user" label="I2C mode (master or slave)" from="_i2c_mode">
+            <item id="kMaster" label="Master mode">
+               <description>
+**Master mode**  
+The I2C peripheral generates I2C clock signal and drives communication. The tranfer functions are MasterTransmit and MasterReceive.
+               </description>
+            </item>
+            <item id="kSlave" label="Slave mode">
+               <description>
+**Slave mode**  
+The I2C peripheral is using generated I2C clock from Master device and communication is also driven by Master device. The tranfer functions are SlaveTransmit and SlaveReceive.
+               </description>
+            </item>
+         </enum>
+         <enum id="busSpeedUser" label="Bus speed">
+            <item id="ARM_I2C_BUS_SPEED_STANDARD" label="Standard" value="ARM_I2C_BUS_SPEED_STANDARD">
+               <description>100 kHz - Standard Speed</description>
+            </item>
+            <item id="ARM_I2C_BUS_SPEED_FAST" label="Fast" value="ARM_I2C_BUS_SPEED_FAST">
+               <description>400 kHz - Fast Speed</description>
+            </item>
+            <item id="ARM_I2C_BUS_SPEED_FAST_PLUS" label="Fast+" value="ARM_I2C_BUS_SPEED_FAST_PLUS">
+               <description>1 MHz - Fast+ Speed</description>
+            </item>
+            <item id="ARM_I2C_BUS_SPEED_HIGH" label="High" value="ARM_I2C_BUS_SPEED_HIGH" available="$configSet.hasOption(`hasARM_I2C_BUS_SPEED_HIGH`)"> <!-- Not supported in the NXP drivers -->
+               <description>3.4 MHz - High Speed</description>
+            </item>
+         </enum>
+      </user_types>
+      <settings>
+         <!-- Options 
+              driver - driver id
+              clockSourceUId - Unified ID of the clock source
+              peripheralIndex - this index is used as index of the peripheral - Default the index is choosen directly from peripheral name and 0 if there is not index in the peripheral name)
+              peripheralPrefixLowerCase - a prefix of the peripheral (small letters) - Default i2c
+              peripheralPrefixUpperCase - a prefix of the peripheral (big letters) - Default I2C
+              hasARM_I2C_ADDRESS_10BIT - 10bit address is available
+              hasARM_I2C_BUS_SPEED_HIGH - Bus speed high is available
+              interruptModeFunction - if it is available, the interrupt mode is set. The value is function of the interrupt vector. If value is `` the function is not used.
+              dmaModeType - if it is available, the dma mode is set. The types of the dma mode are dma, edma and lpc_dma.
+              hasEDMA_RX_TX_REQ - driver has edma Rx and Tx channel
+              hasEDMA_SEPARATE_RX_TX_REQ - the peripheral has both edma Rx and Tx channels
+              includeName - Name in the include fragment - Default fsl_i2c_cmsis
+              includeFilename - Filename in the include fragment - Default fsl_i2c_cmsis.h
+         -->
+         <reference id="mode" label="Communication mode" type="mode_user">
+            <description>Peripheral communication mode.</description>
+            <validation>
+               <constraint cond_expr="!($configSet.hasOption(`dmaModeType`) &amp;&amp; ($this.value() == `kSlave`))" level="error" description_expr="(($configSet.hasOption(`dmaModeType`) &amp;&amp; ($configSet.optionValue(`dmaModeType`) == `edma`))? `e` : ``) + `DMA mode is not available for the I2C slave mode.`"/>
+            </validation>
+         </reference>
+         <variable id="driverId" value="($configSet.hasOption(`driver`) ? $configSet.optionValue(`driver`) : ``)"/>
+         <variable id="peripheralIndex" value="($configSet.hasOption(`peripheralIndex`) ? toInt($configSet.optionValue(`peripheralIndex`)) :($instance.getPeripheral().regexMatch(`.*(\d+)`) ? toInt($instance.getPeripheral().regexSubstr(`.*(\d+)`,1)) : 0 ))"/>
+         <variable id="isPeripheralAvailable" value="$parent.peripheralIndex.getValue() &gt;= 0"/>
+         <variable id="getFreqFunctionID" value="($configSet.hasOption(`peripheralPrefixUpperCase`) ? $configSet.optionValue(`peripheralPrefixUpperCase`) : `I2C`) + (($configSet.peripheralIndex.getValue() &gt;= 0) ? $configSet.peripheralIndex.getValue() : ``) + `_GetFreq`"/>
+         <variable id="clockSourceUId" value="($configSet.hasOption(`clockSourceUId`) ? $configSet.optionValue(`clockSourceUId`) : ``)"/>
+         <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="createArray().addItemToList($parent.clockSourceUId.getValue(), getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()), ($instance.getPeripheral() + `_CLK_SRC`),true)">
+            <description>Clock source of the peripheral.</description>
+            <validation>
+               <dependency when_expr="($parent.clockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                  description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                  level="Error">
+                  <feature name="frequency" evaluation="greaterThan">
+                     <data expr="0" unit="Hz" type="Frequency"/>
+                  </feature>
+               </dependency>
+            </validation>
+         </dynamic_enum>
+         <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" items="createArray()
+            .merge(getClockFunctionalGroups().arrayToEnumItems(
+            enumItem -> true,
+            enumItem -> enumItem,
+            enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSourceUId.getValue(), enumItem)) + ` (`+ enumItem + `)`,
+            enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSourceUId.getValue() , enumItem)))">
+            <description>Selection of the clock source frequency</description>
+            <validation>
+               <constraint cond_expr="$this.getEnumItemValue().toHertz() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+            </validation>
+            <custom_value_support default="0" validation_expr="x -> toHertz(x) >= 0" />
+         </dynamic_enum>
+         <info id="peripheraIsNotAvailable" label="Note:"  value="`The I2C functionality is not available on ` + $instance.getPeripheral() + ` peripheral.`" available="!$parent.isPeripheralAvailable.getValue()">
+            <validation>
+               <constraint cond_expr="$parent.isPeripheralAvailable.getValue()" level="error" description_expr="`The I2C functionality is not available on ` + $instance.getPeripheral() + ` peripheral.`"/>
+            </validation>
+         </info>
+         
+         <info value="``" id="line_mode_CMSIS" label=" " options="UI_LINE_BREAK;UI_LABEL_HIDDEN"/>
+         <!-- CMSIS Settings -->
+         <reference id="ARM_I2C_BUS_SPEED" label="Bus speed" type="busSpeedUser" available="$parent.isPeripheralAvailable.getValue() &amp;&amp; ($parent.mode.getValue() == `kMaster`)">
+            <description>Communication bus speed.</description>
+         </reference>
+         <bool id="ARM_I2C_ADDRESS_GC" label="General call" available="$parent.isPeripheralAvailable.getValue() &amp;&amp; ($parent.mode.getValue() == `kSlave`)">
+            <description>When this option is enabled, the slave accepts a General Call.</description>
+         </bool>
+         <bool id="ARM_I2C_ADDRESS_10BIT" label="10-bit address" available="$configSet.hasOption(`hasARM_I2C_ADDRESS_10BIT`) &amp;&amp; $parent.isPeripheralAvailable.getValue() &amp;&amp; ($parent.mode.getValue() == `kSlave`) ">
+            <description>When this option is enabled, the slave address is 10-bit address. When this option is disabled, the slave address is 7-bit address.</description>
+         </bool>
+         <integer id="ARM_I2C_ADDRESS" label="Slave address" type="uint16_t" min_expr="0" max_expr="($parent.ARM_I2C_ADDRESS_10BIT.getValue(false)?1023:127)" available="$parent.isPeripheralAvailable.getValue() &amp;&amp; ($parent.mode.getValue() == `kSlave`)">
+            <description>Slave 7-bit or 10-bit address.</description>
+         </integer>
+         <variable id="ARM_I2C_OWN_ADDRESS" value="(($parent.ARM_I2C_ADDRESS_10BIT.getValue(false) || $parent.ARM_I2C_ADDRESS_GC.getValue(false))? `(`:``) + toUpperCase($configSet.inst_ID_def.getValue() + `_SLAVE_ADDRESS`) + ($parent.ARM_I2C_ADDRESS_10BIT.getValue(false) ? `|ARM_I2C_ADDRESS_10BIT` : ``) + ($parent.ARM_I2C_ADDRESS_GC.getValue(false) ? `|ARM_I2C_ADDRESS_GC` : ``) + (($parent.ARM_I2C_ADDRESS_10BIT.getValue(false) || $parent.ARM_I2C_ADDRESS_GC.getValue(false))? `)`:``)" available="$parent.isPeripheralAvailable.getValue() &amp;&amp; ($parent.mode.getValue() == `kSlave`)"/>
+         <string id="signalEventFunctionId" label="Signal event callback function id" validation_expr="x -> (isCIdentifier(x) || (x == `NULL`))" available="$parent.isPeripheralAvailable.getValue()">
+            <description>Signal event callback function is called if the event is occured. If ID is NULL, the callback function is not called.</description>
+         </string>
+         <variable id="copyToClipBoardTextSEFI" enable="$parent.signalEventFunctionId.getValue() != `NULL`"
+            value="`/* ` + $instance.getID() + ` signal event callback function */&#10;` + 
+            `void ` + $parent.signalEventFunctionId.getValue() + `(uint32_t event) {&#10;` + 
+            (leftPadding(`/* Master/Slave Transmit/Receive finished */&#10;`,1)) +
+            (leftPadding(`if (event &amp; ARM_I2C_EVENT_TRANSFER_DONE) {&#10;`,1)) +
+            (leftPadding(`/* Place your code here */&#10;`,2)) +
+            (leftPadding(`}&#10;`,1)) +
+            (leftPadding(`/* Master/Slave Transmit/Receive incomplete transfer */&#10;`,1)) +
+            (leftPadding(`if (event &amp; ARM_I2C_EVENT_TRANSFER_INCOMPLETE) {&#10;`,1)) +
+            (leftPadding(`/* Place your code here */&#10;`,2)) +
+            (leftPadding(`}&#10;`,1)) +
+            (($parent.mode.getValue() == `kMaster`)? 
+            (leftPadding(`/* Address not acknowledged from Slave */&#10;`,1)) +
+            (leftPadding(`if (event &amp; ARM_I2C_EVENT_ADDRESS_NACK) {&#10;`,1)) +
+            (leftPadding(`/* Place your code here */&#10;`,2)) +
+            (leftPadding(`}&#10;`,1)) +
+            (leftPadding(`/* Master lost arbitration */&#10;`,1)) +
+            (leftPadding(`if (event &amp; ARM_I2C_EVENT_ARBITRATION_LOST) {&#10;`,1)) +
+            (leftPadding(`/* Place your code here */&#10;`,2)) +
+            (leftPadding(`}&#10;`,1)) :
+            (leftPadding(`/* Slave addressed with general call address */&#10;`,1)) +
+            (leftPadding(`if (event &amp; ARM_I2C_EVENT_GENERAL_CALL) {&#10;`,1)) +
+            (leftPadding(`/* Place your code here */&#10;`,2)) +
+            (leftPadding(`}&#10;`,1))) +
+            `}&#10;` 
+            ">   
+         </variable>
+         <info id="copyToClipBoardSEFI" label="Callback function template" value="$parent.copyToClipBoardTextSEFI.getValue()" enable="$parent.signalEventFunctionId.getValue() != `NULL`" options="UI_INFO_COPY_BUTTON" available="$parent.isPeripheralAvailable.getValue()">
+            <description>Copy template of the signal event callback function.</description>
+         </info>
+         <bool id="enableGetFreqFnCustomName" label="Enable custom get frequency function" available="$parent.isPeripheralAvailable.getValue()">
+            <description>When this option is enabled, the custom get frequency (getFreq) function is called during setting of the communication baudrate. The ID of the function is set in the "Custom get frequency function id" setting. This function is created by user in the Pins tool or in the user code. Example of the function uint32_t userId(void).</description>
+         </bool>
+         <string id="getFreqFunctionCustomID" label="Custom get frequency function id" validation_expr="x -> isCIdentifier(x)" enable="$parent.enableGetFreqFnCustomName.getValue()" available="$parent.isPeripheralAvailable.getValue()">
+            <description expr="`Get frequency function id. The uint32_t ` + $this.getValue() + `(void) function is created by user in the user code. If custom ID is equal to ` + $parent.getFreqFunctionID.getValue() + `, the function is not called in peripherals.c file and the function is directly used in the I2C CMSIS driver.`"/>
+         </string>
+         <variable id="initPinFunctionID" value="($configSet.hasOption(`peripheralPrefixUpperCase`) ? $configSet.optionValue(`peripheralPrefixUpperCase`) : `I2C`) + (($configSet.peripheralIndex.getValue() &gt;= 0) ? $configSet.peripheralIndex.getValue() : ``) + `_InitPins`"/>
+         <variable id="deinitPinFunctionID" value="($configSet.hasOption(`peripheralPrefixUpperCase`) ? $configSet.optionValue(`peripheralPrefixUpperCase`) : `I2C`) + (($configSet.peripheralIndex.getValue() &gt;= 0) ? $configSet.peripheralIndex.getValue() : ``) + `_DeinitPins`"/>
+         <bool id="enableInitPinsFnCustomName" label="Enable pins initialization function" available="$parent.isPeripheralAvailable.getValue()">
+            <description>When this option is enabled, the initialization function is called during initialization of the driver. The ID of the function is set in the "Pins initialization function id" setting. This function is created by user in the Pins tool or in the user code. Example of the function void userId(void).</description>
+         </bool>
+         <string id="initPinFunctionCustomID" label="Pins initialization function id" validation_expr="x -> isCIdentifier(x)" enable="$parent.enableInitPinsFnCustomName.getValue()" available="$parent.isPeripheralAvailable.getValue()">
+            <description expr="`The pins initialization function ID. The void ` + $this.getValue() + `(void) function is created by user in the Pins tool or in the user code. The function is used in the I2C CMSIS driver during initialization of the peripheral.`"/>
+         </string>
+         <bool id="enableDeinitPinsFnCustomName" label="Enable pins deinitialization function" available="$parent.isPeripheralAvailable.getValue()">
+            <description>When this option is enabled, the deinitialization function is called during deinitialization of the driver. The ID of the function is set in the "Pins deinitialization function id" setting. This function is created by user in the Pins tool or in the user code. Example of the function void userId(void).</description>
+         </bool>
+         <string id="deinitPinFunctionCustomID" label="Pins deinitialization function id" validation_expr="x -> isCIdentifier(x)" enable="$parent.enableDeinitPinsFnCustomName.getValue()" available="$parent.isPeripheralAvailable.getValue()">
+            <description expr="`The pins deinitialization function ID. The void ` + $this.getValue() + `(void) function is created by user in the Pins tool or in the user code. The function is used in the I2C CMSIS driver during deinitialization of the peripheral.`"/>
+         </string>
+         
+         <info value="``" id="line_mode_irq_dma" label=" " options="UI_LINE_BREAK;UI_LABEL_HIDDEN"/>
+         <!-- Interrupt setting -->
+         <reference id="interrupt" label="Interrupt setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" available="$configSet.hasOption(`interruptModeFunction`) &amp;&amp; $parent.isPeripheralAvailable.getValue()">
+            <options_expr>
+               <option id="without_handler_settings"/>
+               <option id="irq_without_enable_control"/>
+               <option id="without_periodic_trigger" expr="true"/>
+               <option id="irq_function" expr="($configSet.hasOption(`interruptModeFunction`) ? $configSet.optionValue(`interruptModeFunction`) :``)" available="$configSet.hasOption(`interruptModeFunction`) &amp;&amp; ($configSet.optionValue(`interruptModeFunction`) != ``)"/>
+            </options_expr>
+         </reference>
+         
+         <!-- DMA settings -->
+         <variable id="HAS_EDMA_RX_TX_REQ" value="$configSet.hasOption(`hasEDMA_RX_TX_REQ`)"/>
+         <variable id="HAS_EDMA_SEPARATE_RX_TX_REQ" value="$configSet.hasOption(`hasEDMA_SEPARATE_RX_TX_REQ`)"/>
+         <variable id="RETYPE_EDMA_REQ_UINT8_T" value="$configSet.hasOption(`retypeEDMA_REQ_UINT8_T`)"/>
+         
+         <reference id="edma_channel" label_expr="($parent.HAS_EDMA_RX_TX_REQ.getValue() ? `eDMA receive channel` :`eDMA channel`)" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" available="($configSet.hasOption(`dmaModeType`) &amp;&amp; ($configSet.optionValue(`dmaModeType`) == `edma`)) &amp;&amp; ($parent.mode.value() == `kMaster`) &amp;&amp; $parent.isPeripheralAvailable.getValue()">
+            <options_expr>
+               <option id="without_handle" expr="true"/>
+               <option id="without_priority" expr="true"/>
+               <option id="without_periodic_trigger" expr="true"/>
+               <option id="dma_function" expr="`RX`" available="$parent.HAS_EDMA_SEPARATE_RX_TX_REQ.getValue()"/>
+            </options_expr>
+         </reference>
+         <reference id="edma_channel_tx" label="eDMA transmit channel" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" available="($configSet.hasOption(`dmaModeType`) &amp;&amp; ($configSet.optionValue(`dmaModeType`) == `edma`)) &amp;&amp; ($parent.mode.value() == `kMaster`) &amp;&amp; $parent.isPeripheralAvailable.getValue() &amp;&amp; $parent.HAS_EDMA_RX_TX_REQ.getValue()">
+            <options_expr>
+               <option id="without_handle" expr="true"/>
+               <option id="without_priority" expr="true"/>
+               <option id="without_periodic_trigger" expr="true"/>
+               <option id="dma_function" expr="`TX`"/>
+               <option id="without_dmamux_init" expr="true" available="!$parent.HAS_EDMA_SEPARATE_RX_TX_REQ.getValue()"/>
+            </options_expr>
+         </reference>
+         
+         <reference id="dma_channel" label="DMA channel" type="dma_channel_t" config_set_id="fsl_dma_peripheral" component_id="system" available="($configSet.hasOption(`dmaModeType`) &amp;&amp; ($configSet.optionValue(`dmaModeType`) == `dma`)) &amp;&amp; ($parent.mode.value() == `kMaster`) &amp;&amp; $parent.isPeripheralAvailable.getValue()">
+            <options_expr>
+               <option id="without_handle" expr="true"/>
+               <option id="without_priority" expr="true"/>
+               <option id="without_periodic_trigger" expr="true"/>
+            </options_expr>
+         </reference>
+         
+         <reference id="dma_channel_lpc" label="DMA channel" type="dma_channel_t" config_set_id="fsl_lpc_dma_peripheral" component_id="system" available="(($configSet.hasOption(`dmaModeType`) &amp;&amp; ($configSet.optionValue(`dmaModeType`) == `lpc_dma`)) &amp;&amp; ($parent.mode.value() == `kMaster`) &amp;&amp; $parent.isPeripheralAvailable.getValue())">
+            <options_expr>
+               <option id="without_handle" expr="true"/>
+               <option id="without_priority" expr="true"/>
+               <option id="without_periodic_trigger" expr="true"/>
+               <option id="dma_function" expr="`I2CMaster`"/>
+            </options_expr>
+         </reference>
+         
+         <info label="Note:" value="(($configSet.hasOption(`dmaModeType`) &amp;&amp; ($configSet.optionValue(`dmaModeType`) == `edma`))? `e` : ``) + `DMA mode is not available for the I2C slave mode.`" id="slaveMode" available="($configSet.hasOption(`dmaModeType`) &amp;&amp; ($parent.mode.value() == `kSlave`))">
+         </info>
+         
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+         <variable id="inst_CMSIS_DRIVER_ID" value="$parent.inst_ID_def.getValue() + `_CMSIS_DRIVER`"></variable>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+         <def fragment="function">
+            <expr>leftPadding(`/* ` + $param.fnComment + ` */`,0)</expr><br/>
+            <expr>leftPadding($param.fnRetType + ` ` + $param.fnID + `(` + $param.fnParams + `){`,0)</expr><br/>
+            <expr>leftPadding($param.fnBody,1)</expr><br/>
+            <expr>leftPadding(`};`,0)</expr><br/>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name" expr="($configSet.hasOption(`includeName`) ? $configSet.optionValue(`includeName`) : `fsl_i2c_cmsis`)"/>
+               <param id="filename" expr="($configSet.hasOption(`includeFilename`) ? $configSet.optionValue(`includeFilename`) : `fsl_i2c_cmsis.h`)"/>
+            </fragment>
+         </section>
+         <section target="defines">
+            <expr>`/* `+ $instance.getPeripheral() +` defines */`</expr><br/>
+            <fragment id="define" if_expr="$configSet.isPeripheralAvailable.getValue(false)">
+               <param id="name" expr="$configSet.inst_CMSIS_DRIVER_ID.getValue()"/>
+               <param id="value" expr="`Driver_I2C` + $configSet.peripheralIndex.getValue()"/>
+               <!-- get current peripheral -->
+               <param id="description">Definition of peripheral driver</param>
+            </fragment>
+            <fragment id="define" if_expr="$configSet.isPeripheralAvailable.getValue(false)">
+               <param id="name" expr="toUpperCase($configSet.inst_ID_def.getValue() + `_CLOCK_SOURCE_FREQ`)"/>
+               <param id="value" expr="$this.clockSourceFreq.getEnumItemValue().toHertz() + `UL`"/>
+               <param id="description">Definition of the clock source frequency</param>
+            </fragment>
+            <fragment id="define" if_expr="$configSet.ARM_I2C_ADDRESS.isAvailable()">
+               <param id="name" expr="toUpperCase($configSet.inst_ID_def.getValue() + `_SLAVE_ADDRESS`)"/>
+               <param id="value" expr="toString($configSet.ARM_I2C_ADDRESS.getValue(0),16) + `U`"/>
+               <param id="description">Definition of the I2C slave address</param>
+            </fragment>
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt" if_expr="$this.interrupt.enable_priority.getValue(false)"/>
+         </section>
+         <section target="driver_name_map_defines">
+            <fragment id="define" if_expr="$configSet.isPeripheralAvailable.getValue(false)">
+               <param id="name" expr="`RTE_I2C` + $configSet.peripheralIndex.getValue()"/>
+               <param id="value" expr="`1`"/>
+               <param id="description">Enable peripheral</param>
+            </fragment>
+            <fragment id="define" if_expr="$configSet.isPeripheralAvailable.getValue(false)">
+               <param id="name" expr="`RTE_I2C` + $configSet.peripheralIndex.getValue() + `_DMA_EN`"/>
+               <param id="value" expr="(($configSet.hasOption(`dmaModeType`) &amp;&amp; ($configSet.mode.value() == `kMaster`)) ? `1`:`0`)"/>
+               <param id="description">Enable I2C DMA</param>
+            </fragment>
+         </section>
+         <section target="driver_config_defines">
+            <if expr="$configSet.isPeripheralAvailable.getValue(false) &amp;&amp; ($configSet.enableInitPinsFnCustomName.getValue(false) || $configSet.enableDeinitPinsFnCustomName.getValue(false) || ($configSet.hasOption(`dmaModeType`) &amp;&amp; ($configSet.mode.value() == `kMaster`)))">
+               <expr if_expr="">`/* I2C`+ $configSet.peripheralIndex.getValue() + ` configuration */`</expr><br/>
+            </if>
+            <fragment id="define" if_expr="$configSet.enableInitPinsFnCustomName.getValue(false)">
+               <param id="name" expr="`RTE_I2C` + $configSet.peripheralIndex.getValue() + `_PIN_INIT`"/>
+               <param id="value" expr="$configSet.initPinFunctionCustomID.getValue()"/>
+               <param id="description" expr="`Pins initialization function`"/>
+            </fragment>
+            <fragment id="define" if_expr="$configSet.enableDeinitPinsFnCustomName.getValue(false)">
+               <param id="name" expr="`RTE_I2C` + $configSet.peripheralIndex.getValue() + `_PIN_DEINIT`"/>
+               <param id="value" expr="$configSet.deinitPinFunctionCustomID.getValue()"/>
+               <param id="description" expr="`Pins deinitialization function`"/>
+            </fragment> 
+            <fragment id="define" if_expr="$configSet.isPeripheralAvailable.getValue(false) &amp;&amp; $configSet.hasOption(`dmaModeType`) &amp;&amp; ($configSet.mode.value() == `kMaster`)">
+               <param id="name" expr="`RTE_I2C` + $configSet.peripheralIndex.getValue() + ($configSet.HAS_EDMA_RX_TX_REQ.getValue() ? `_DMA_RX_DMA_BASE` :`_Master_DMA_BASE`)"/>
+               <param id="value" expr="
+                  ($configSet.edma_channel.isAvailable() ? 
+                     $configSet.edma_channel.dma_cmsis_instance.getValue()           
+                     :
+                  ($configSet.dma_channel.isAvailable() ?
+                     $configSet.dma_channel.dma_cmsis_instance.getValue()
+                     :
+                  ($configSet.dma_channel_lpc.isAvailable() ?
+                     $configSet.dma_channel_lpc.dma_instance.getValue()
+                     : 
+                     ``)))"/>
+               <param id="description" expr="`Used DMA device`"/>
+            </fragment>
+            <fragment id="define" if_expr="$configSet.isPeripheralAvailable.getValue(false) &amp;&amp; $configSet.hasOption(`dmaModeType`) &amp;&amp; ($configSet.mode.value() == `kMaster`)">
+               <param id="name" expr="`RTE_I2C` + $configSet.peripheralIndex.getValue() + ($configSet.HAS_EDMA_RX_TX_REQ.getValue() ? `_DMA_RX_CH` :`_Master_DMA_CH`)"/>
+               <param id="value" expr="
+                  ($configSet.edma_channel.isAvailable() ? 
+                     $configSet.edma_channel.eDMAn.getValue()           
+                     :
+                  ($configSet.dma_channel.isAvailable() ?
+                     $configSet.dma_channel.DMAn.getValue()
+                     :
+                  ($configSet.dma_channel_lpc.isAvailable() ?
+                     $configSet.dma_channel_lpc.DMAn.getValue()
+                     : 
+                     ``)))"/>
+               <param id="description" expr="`Selected ` + ($configSet.HAS_EDMA_RX_TX_REQ.getValue() ? `Rx ` :` `) + `DMA channel number`"/>
+            </fragment>
+            <fragment id="define" if_expr="$configSet.isPeripheralAvailable.getValue(false) &amp;&amp; $configSet.hasOption(`dmaModeType`) &amp;&amp; (featureDefined(`FSL_FEATURE_SOC_DMAMUX_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SOC_DMAMUX_COUNT`) &gt; 0)) &amp;&amp; ($configSet.mode.value() == `kMaster`)">
+               <param id="name" expr="`RTE_I2C` + $configSet.peripheralIndex.getValue() + ($configSet.HAS_EDMA_RX_TX_REQ.getValue() ? `_DMA_RX_DMAMUX_BASE` :`_Master_DMAMUX_BASE`)"/>
+               <param id="value" expr="
+                  ($configSet.edma_channel.isAvailable() ? 
+                     $configSet.edma_channel.dmamux_instance.getValue()           
+                     :
+                  ($configSet.dma_channel.isAvailable() ?
+                     $configSet.dma_channel.dmamux_instance.getValue()
+                     :
+                     ``))"/>
+               <param id="description" expr="`DMAMUX device that is used for muxing of the ` + ($configSet.HAS_EDMA_RX_TX_REQ.getValue() ? `Rx ` :` `) + `request`"/>
+            </fragment>
+            <fragment id="define" if_expr="$configSet.isPeripheralAvailable.getValue(false) &amp;&amp; $configSet.hasOption(`dmaModeType`) &amp;&amp; (featureDefined(`FSL_FEATURE_SOC_DMAMUX_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SOC_DMAMUX_COUNT`) &gt; 0)) &amp;&amp; ($configSet.mode.value() == `kMaster`)">
+               <param id="name" expr="`RTE_I2C` + $configSet.peripheralIndex.getValue() + ($configSet.HAS_EDMA_RX_TX_REQ.getValue() ? `_DMA_RX_PERI_SEL` :`_Master_PERI_SEL`)"/>
+               <param id="value" expr="($configSet.RETYPE_EDMA_REQ_UINT8_T.getValue() ? `(uint8_t) `:``) +
+                  ($configSet.edma_channel.isAvailable() ? 
+                     $configSet.edma_channel.eDMA_source.getEnumItemId()           
+                     :
+                  ($configSet.dma_channel.isAvailable() ?
+                     $configSet.dma_channel.DMA_source.getEnumItemId()
+                     : 
+                     ``))"/>
+               <param id="description" expr="($configSet.HAS_EDMA_RX_TX_REQ.getValue() ? `Rx ` :``) + `DMA source request`"/>
+            </fragment>
+            <fragment id="define" if_expr="$configSet.isPeripheralAvailable.getValue(false) &amp;&amp; $configSet.edma_channel_tx.isAvailable()">
+               <param id="name" expr="`RTE_I2C` + $configSet.peripheralIndex.getValue() + `_DMA_TX_DMA_BASE`"/>
+               <param id="value" expr="$configSet.edma_channel_tx.dma_cmsis_instance.getValue()"/>
+               <param id="description" expr="`Used DMA device`"/>
+            </fragment>
+            <fragment id="define" if_expr="$configSet.isPeripheralAvailable.getValue(false) &amp;&amp; $configSet.edma_channel_tx.isAvailable()">
+               <param id="name" expr="`RTE_I2C` + $configSet.peripheralIndex.getValue() +  `_DMA_TX_CH`"/>
+               <param id="value" expr="$configSet.edma_channel_tx.eDMAn.getValue()"/>
+               <param id="description" expr="`Selected ` + ($configSet.HAS_EDMA_RX_TX_REQ.getValue() ? `Tx ` :` `) + `DMA channel number`"/>
+            </fragment>
+            <fragment id="define" if_expr="$configSet.isPeripheralAvailable.getValue(false) &amp;&amp; $configSet.edma_channel_tx.isAvailable() &amp;&amp; (featureDefined(`FSL_FEATURE_SOC_DMAMUX_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SOC_DMAMUX_COUNT`) &gt; 0))">
+               <param id="name" expr="`RTE_I2C` + $configSet.peripheralIndex.getValue() + `_DMA_TX_DMAMUX_BASE`"/>
+               <param id="value" expr="
+                  ($configSet.edma_channel_tx.hasOption(`without_dmamux_init`) ? 
+                     $configSet.edma_channel.dmamux_instance.getValue()           
+                     :
+                     $configSet.edma_channel_tx.dmamux_instance.getValue()
+                     )"/>
+               <param id="description" expr="`DMAMUX device that is used for muxing of the ` + ($configSet.HAS_EDMA_RX_TX_REQ.getValue() ? `Tx ` :` `) + `request`"/>
+            </fragment>
+            <fragment id="define" if_expr="$configSet.isPeripheralAvailable.getValue(false) &amp;&amp; $configSet.edma_channel_tx.isAvailable() &amp;&amp; (featureDefined(`FSL_FEATURE_SOC_DMAMUX_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SOC_DMAMUX_COUNT`) &gt; 0))">
+               <param id="name" expr="`RTE_I2C` + $configSet.peripheralIndex.getValue() + `_DMA_TX_PERI_SEL`"/>
+               <param id="value" expr="($configSet.RETYPE_EDMA_REQ_UINT8_T.getValue() ? `(uint8_t) `:``) +
+                  ($configSet.edma_channel_tx.hasOption(`without_dmamux_init`) ? 
+                     $configSet.edma_channel.eDMA_source.getEnumItemId()           
+                     :
+                     $configSet.edma_channel_tx.eDMA_source.getEnumItemId()
+                     )"/>
+               <param id="description" expr="($configSet.HAS_EDMA_RX_TX_REQ.getValue() ? `Tx ` :``) + `DMA source request`"/>
+            </fragment>
+         </section>
+         <section target="global_vars">
+            <fragment id="function" if_expr="!($configSet.enableGetFreqFnCustomName.getValue(false) &amp;&amp; ($configSet.getFreqFunctionID.getValue(``) == $configSet.getFreqFunctionCustomID.getValue(``)))">
+               <param id="fnRetType">uint32_t</param>
+               <param id="fnID" expr="$configSet.getFreqFunctionID.getValue()"/>
+               <param id="fnParams">void</param>
+               <param id="fnBody" expr="`return ` + ($configSet.enableGetFreqFnCustomName.getValue(false) ? $configSet.getFreqFunctionCustomID.getValue(``) + `()` : toUpperCase($configSet.inst_ID_def.getValue() + `_CLOCK_SOURCE_FREQ`)) + `;`"/>
+               <param id="fnComment" expr="`Get clock source frequency`"/>
+            </fragment>
+         </section>
+         <section target="global_functions_extern">
+            <fragment id="extern_fcn_def" if_expr="($configSet.signalEventFunctionId.getValue() != `NULL`)">
+               <param id="name" expr="$configSet.signalEventFunctionId.getValue()"/>
+               <param id="type">void</param>
+               <param id="params" expr="`uint32_t event`"/>
+               <param id="description" expr="`Signal event function for component ` + $instance.getID()"/>
+            </fragment>
+            <fragment id="global_fcn_def" if_expr="!($configSet.enableGetFreqFnCustomName.getValue(false) &amp;&amp; ($configSet.getFreqFunctionID.getValue(``) == $configSet.getFreqFunctionCustomID.getValue(``)))">
+               <param id="name" expr="$configSet.getFreqFunctionID.getValue()"/>
+               <param id="type">uint32_t</param>
+               <param id="params" expr="`void`"/>
+               <param id="description" expr="`Get clock source frequency function for component ` + $instance.getID()"/>
+            </fragment>
+            <fragment id="extern_fcn_def" if_expr="$configSet.enableGetFreqFnCustomName.getValue(false)">
+               <param id="name" expr="$configSet.getFreqFunctionCustomID.getValue()"/>
+               <param id="type">uint32_t</param>
+               <param id="params" expr="`void`"/>
+               <param id="description" expr="`User get clock source frequency function for component ` + $instance.getID()"/>
+            </fragment> 
+         </section>
+         <section target="driver_functions_extern">
+            <fragment id="extern_fcn_def" if_expr="$configSet.enableInitPinsFnCustomName.getValue(false)">
+               <param id="name" expr="$configSet.initPinFunctionCustomID.getValue()"/>
+               <param id="type">void</param>
+               <param id="params" expr="`void`"/>
+               <param id="description" expr="`Pins initialization function for component ` + $instance.getID()"/>
+            </fragment>
+            <fragment id="extern_fcn_def" if_expr="$configSet.enableDeinitPinsFnCustomName.getValue(false)">
+               <param id="name" expr="$configSet.deinitPinFunctionCustomID.getValue()"/>
+               <param id="type">void</param>
+               <param id="params" expr="`void`"/>
+               <param id="description" expr="`Pins deinitialization function for component ` + $instance.getID()"/>
+            </fragment>
+         </section>
+         <section target="init_function_body">
+            <fragment id="IRQn_set_priority_default" apply_to="$this.interrupt" if_expr="$this.interrupt.isAvailable()"/>
+            <expr>leftPadding(`/* Initialization function */`,1)</expr><br/>
+            <expr>leftPadding(`assert(` + $configSet.inst_CMSIS_DRIVER_ID.getValue() + `.Initialize(` +$configSet.signalEventFunctionId.getValue() + `) == ARM_DRIVER_OK);`,1)</expr><br/>
+            <expr>leftPadding(`/* Power control function */`,1)</expr><br/>
+            <expr>leftPadding(`assert(` + $configSet.inst_CMSIS_DRIVER_ID.getValue() + `.PowerControl(ARM_POWER_FULL) == ARM_DRIVER_OK);`,1)</expr><br/>
+            <expr>leftPadding(`/* ` + (($configSet.mode.getValue() == `kMaster`) ? `Configuration of the I2C communication speed` : `Configuration of the I2C slave address` )  + ` */`,1)</expr><br/>
+            <expr if_expr="$configSet.ARM_I2C_BUS_SPEED.isAvailable()">leftPadding(`assert(` + $configSet.inst_CMSIS_DRIVER_ID.getValue() + `.Control(ARM_I2C_BUS_SPEED, ` + $configSet.ARM_I2C_BUS_SPEED.getEnumItemValue() + `) == ARM_DRIVER_OK);`,1)</expr>
+            <expr if_expr="$configSet.ARM_I2C_OWN_ADDRESS.isAvailable()">leftPadding(`assert(` + $configSet.inst_CMSIS_DRIVER_ID.getValue() + `.Control(ARM_I2C_OWN_ADDRESS, ` + $configSet.ARM_I2C_OWN_ADDRESS.getValue() + `) == ARM_DRIVER_OK);`,1)</expr><br/>
+         </section>
+      </code>
+      <validation>
+         <constraint
+            cond_expr="$root.countOccurrences(item -> (item.isAvailable() &amp;&amp; item.isEnabled() &amp;&amp; (item.getType() == $configSet.driverId.getValue()) &amp;&amp; (item.getPeripheral() == $instance.getPeripheral())), true) == 1"
+            level="error"
+            description_expr="`Only one instance of the I2C CMSIS component should be present in the project for ` + $instance.getPeripheral() +` peripheral.`"
+         />
+         <dependency resource_type="PeripheralUnifiedSignal"
+            resource_id_expr="$instance.getPeripheral()+`.`+ ($configSet.hasOption(`peripheralPrefixLowerCase`) ? $configSet.optionValue(`peripheralPrefixLowerCase`) : `i2c`) + `_scl`"
+            description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(($configSet.hasOption(`peripheralPrefixUpperCase`) ? $configSet.optionValue(`peripheralPrefixUpperCase`) : `I2C`) + ` serial clock`, $instance.getPeripheral())"
+            level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="PeripheralUnifiedSignal"
+            resource_id_expr="$instance.getPeripheral()+`.`+ ($configSet.hasOption(`peripheralPrefixLowerCase`) ? $configSet.optionValue(`peripheralPrefixLowerCase`) : `i2c`) + `_sda`"
+            description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(($configSet.hasOption(`peripheralPrefixUpperCase`) ? $configSet.optionValue(`peripheralPrefixUpperCase`) : `I2C`) + ` serial data`, $instance.getPeripheral())"
+            level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+      </validation>     
+      <quick_selections>
+         <quick_selection id="qs_default" label="Default">
+            <description>Default settings</description>
+            <set id="getFreqFunctionCustomID" from_resource="$configSet.getFreqFunctionID.getValue()"/>
+            <set id="signalEventFunctionId" from_resource="($configSet.hasOption(`peripheralPrefixUpperCase`) ? $configSet.optionValue(`peripheralPrefixUpperCase`) : `I2C`) + (($configSet.peripheralIndex.getValue() &gt;= 0) ? $configSet.peripheralIndex.getValue() : ``) + `_SignalEvent`"/>            
+            <set id="enableInitPinsFnCustomName">true</set>
+            <set id="initPinFunctionCustomID" from_resource="$configSet.initPinFunctionID.getValue()"/>
+            <set id="enableDeinitPinsFnCustomName">true</set>
+            <set id="deinitPinFunctionCustomID" from_resource="$configSet.deinitPinFunctionID.getValue()"/>
+            <set id="edma_channel_tx.eDMAn">1</set>
+         </quick_selection>
+         <default>qs_default</default>
+      </quick_selections>  
+   </config_set>
+   <config_set id="Driver_I2C" label="Driver_I2C" from_source="Driver_I2C.h">
+      <description>Driver_I2C</description>
+      <generated_types>
+         <struct id="ARM_I2C_STATUS" label="I2C Status" from="_ARM_I2C_STATUS">
+            <description></description>
+            <integer id="busy" label="Busy flag" type="uint32_t">
+               <description></description>
+            </integer>
+            <integer id="mode" label="Mode: 0=Slave, 1=Master" type="uint32_t">
+               <description></description>
+            </integer>
+            <integer id="direction" label="Direction: 0=Transmitter, 1=Receiver" type="uint32_t">
+               <description></description>
+            </integer>
+            <integer id="general_call" label="General Call indication (cleared on start of next Slave operation)" type="uint32_t">
+               <description></description>
+            </integer>
+            <integer id="arbitration_lost" label="Master lost arbitration (cleared on start of next Master operation)" type="uint32_t">
+               <description></description>
+            </integer>
+            <integer id="bus_error" label="Bus error detected (cleared on start of next Master/Slave operation)" type="uint32_t">
+               <description></description>
+            </integer>
+            <integer id="reserved" label="" type="uint32_t">
+               <description></description>
+            </integer>
+         </struct>
+         <fixme id="ARM_I2C_SignalEvent_t" label="Pointer to ARM_I2C_SignalEvent : Signal I2C Event" type="void(*">
+            <description></description>
+         </fixme>
+         <struct id="ARM_I2C_CAPABILITIES" label="I2C Driver Capabilities" from="_ARM_I2C_CAPABILITIES">
+            <description></description>
+            <integer id="address_10_bit" label="supports 10-bit addressing" type="uint32_t">
+               <description></description>
+            </integer>
+            <integer id="reserved" label="Reserved (must be zero)" type="uint32_t">
+               <description></description>
+            </integer>
+         </struct>
+         <struct id="ARM_DRIVER_I2C" label="Access structure of the I2C Driver" from="_ARM_DRIVER_I2C">
+            <description></description>
+            <fixme id="GetVersion" label="Pointer to ARM_I2C_GetVersion : Get driver version" type="ARM_DRIVER_VERSION(*">
+               <description></description>
+            </fixme>
+            <fixme id="GetCapabilities" label="Pointer to ARM_I2C_GetCapabilities : Get driver capabilities" type="ARM_I2C_CAPABILITIES(*">
+               <description></description>
+            </fixme>
+            <fixme id="Initialize" label="Pointer to ARM_I2C_Initialize : Initialize I2C Interface" type="int32_t(*">
+               <description></description>
+            </fixme>
+            <fixme id="Uninitialize" label="Pointer to ARM_I2C_Uninitialize : De-initialize I2C Interface" type="int32_t(*">
+               <description></description>
+            </fixme>
+            <fixme id="PowerControl" label="Pointer to ARM_I2C_PowerControl : Control I2C Interface Power" type="int32_t(*">
+               <description></description>
+            </fixme>
+            <fixme id="MasterTransmit" label="Pointer to ARM_I2C_MasterTransmit : Start transmitting data as I2C Master" type="int32_t(*">
+               <description></description>
+            </fixme>
+            <fixme id="MasterReceive" label="Pointer to ARM_I2C_MasterReceive : Start receiving data as I2C Master" type="int32_t(*">
+               <description></description>
+            </fixme>
+            <fixme id="SlaveTransmit" label="Pointer to ARM_I2C_SlaveTransmit : Start transmitting data as I2C Slave" type="int32_t(*">
+               <description></description>
+            </fixme>
+            <fixme id="SlaveReceive" label="Pointer to ARM_I2C_SlaveReceive : Start receiving data as I2C Slave" type="int32_t(*">
+               <description></description>
+            </fixme>
+            <fixme id="GetDataCount" label="Pointer to ARM_I2C_GetDataCount : Get transferred data count" type="int32_t(*">
+               <description></description>
+            </fixme>
+            <fixme id="Control" label="Pointer to ARM_I2C_Control : Control I2C Interface" type="int32_t(*">
+               <description></description>
+            </fixme>
+            <fixme id="GetStatus" label="Pointer to ARM_I2C_GetStatus : Get I2C status" type="ARM_I2C_STATUS(*">
+               <description></description>
+            </fixme>
+         </struct>
+      </generated_types>
+      <user_types/>
+      <settings/>
+      <fragment_defs/>
+      <code/>
+      <validation/>
+      <quick_selections/>
+   </config_set> 
+</component:config_component>

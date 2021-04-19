@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<clocks:component xmlns:clocks="http://apif.freescale.net/schemas/clocks/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://apif.freescale.net/schemas/clocks/1.1 http://apif.freescale.net/schemas/clocks/1.1/clocks.xsd" id="USBPHY">
+  <instance_header>
+    <instance_description>Clock model for the USB PHY PLL module (parameterized, shared accross K-family parts)</instance_description>
+  </instance_header>
+  <interface>
+    <input_clock_signal id="CLK_XTAL_IN" name="CLK_XTAL" description="Clock source from crystal (12MHz, 16MHz or 24MHz)"/>
+    <output_clock_signal id="USB1PFDCLK" name="USB1PFDCLK" description="PFD output clock (up to 180MHz)"/>
+    <output_clock_signal id="USBPHYPLLCLK" name="USBPHYPLLCLK" description="USBPHY PLL output clock (480MHz)"/>
+  </interface>
+  <implementation>
+    <configuration_element id="USBPHYConfig" name="Initialize USBPHY clock" description="The USBPHY PFD clock initialization. When the USBPHY is enabled the OSCERCLK outputs are also enabled to provide USB PHY clock source.">
+      <default value="no"/>
+      <item id="no" description="no"/>
+      <item id="PLL" description="PLL only (480MHz for USB HS)">
+        <long_description>
+          Enable the USB PHY PLL initialization (480MHz) for the USB HS.    
+          This value also enables the OSCERCLK and OSCERCLK_UNDIV output by setting of the ERCLKEN bit in the OSC control register.
+        </long_description>
+        <assigns>
+          <assign register="OSC::CR" bit_field="ERCLKEN" value="1"/>
+        </assigns>
+      </item>
+      <item id="PFD" description="PFD clock only">
+        <long_description>
+          Enable the USB PFD clock initialization without the PLL (USBPHY PLL is disabled).    
+          This value also enables the OSCERCLK and OSCERCLK_UNDIV output by setting of the ERCLKEN bit in the OSC control register.
+        </long_description>
+        <assigns>
+          <assign register="OSC::CR" bit_field="ERCLKEN" value="1"/>
+        </assigns>
+      </item>
+      <item id="PLL_PFD" description="PLL and PFD clock">
+        <long_description>
+          Enable the full initialization of the USBPHY PLL and USB PFD clock.    
+          This value also enables the OSCERCLK and OSCERCLK_UNDIV output by setting of the ERCLKEN bit in the OSC control register.
+        </long_description>
+        <assigns>
+          <assign register="OSC::CR" bit_field="ERCLKEN" value="1"/>
+        </assigns>
+      </item>
+      <item id="User_PLL_PFD" description="User code (PLL and PFD clock)">
+        <long_description>
+          Enable the configuration of the USBPHY PLL and USB PFD clock but the initialization subroutine must be implemented by the user code (declaration of the initialization functions is provided only). See the generated code.    
+          This value also enables the OSCERCLK and OSCERCLK_UNDIV output by setting of the ERCLKEN bit in the OSC control register.
+        </long_description>
+        <assigns>
+          <assign register="OSC::CR" bit_field="ERCLKEN" value="1"/>
+        </assigns>
+      </item>
+    </configuration_element>
+    <pll id="PLL" name="PLL" description="USB PHY PLL 480MHz (it support 12 MHz, 16 MHz and 24 MHz input frequencies only)">
+      <input signal="CLK_XTAL_IN"/>
+      <enable power_modes="HSRUN RUN" cond_expr="(USBPHYConfig != `no`) &amp;&amp; (USBPHYConfig != `PFD`)" description="Enabled in Run and High speed run modes only"/>
+      <prescaler id="NO_DIV" name="NO_DIV" description="No divider">
+        <divide expr="1"/>
+      </prescaler>
+      <prescaler id="DIV" name="DIV" description="PLL clock">
+        <value_map expr="PLL_SIC[PLL_DIV_SEL]">
+          <multiply expr="20" ctrl_value="0b00">
+            <constraint freq="480 MHz"/>
+            <constraint relates_to="input" freq="24 MHz"/>
+          </multiply>
+          <multiply expr="30" ctrl_value="0b01">
+            <constraint freq="480 MHz"/>
+            <constraint relates_to="input" freq="16 MHz"/>
+          </multiply>
+          <multiply expr="40" ctrl_value="0b10">
+            <constraint freq="480 MHz"/>
+            <constraint relates_to="input" freq="12 MHz"/>
+          </multiply>
+        </value_map>
+        <constraint freq="480 MHz"/>
+      </prescaler>
+    </pll>
+    <prescaler id="PFD_FRAC_MUL" name="PFD_FRAC_MUL" description="PFD fractional divider - multiplier part (fixed)">
+      <input signal="PLL.clk"/>
+      <multiply expr="18"/>
+      <enable cond_expr="(USBPHYConfig != `no`) &amp;&amp; (USBPHYConfig != `PLL`)"/>
+    </prescaler>
+    <prescaler id="PFD_FRAC_DIV" name="PFD_FRAC_DIV" description="PFD fractional divider - divider part" min="18" max="35">
+      <input signal="PFD_FRAC_MUL.clk"/>
+      <divide expr="ANACTRL[PFD_FRAC]"/>
+      <enable cond_expr="(USBPHYConfig != `no`) &amp;&amp; (USBPHYConfig != `PLL`)"/>
+    </prescaler>
+    <prescaler id="PFD_CLK_DIV2" name="PFD_CLK_DIV2" description="PFD divider by 2 for the clock selector">
+      <input signal="PFD_FRAC_DIV.clk"/>
+      <divide expr="2"/>
+      <enable cond_expr="(USBPHYConfig != `no`) &amp;&amp; (USBPHYConfig != `PLL`)"/>
+    </prescaler>
+    <prescaler id="PFD_CLK_DIV4" name="PFD_CLK_DIV4" description="PFD divider by 4 for the clock selector">
+      <input signal="PFD_FRAC_DIV.clk"/>
+      <divide expr="4"/>
+      <enable cond_expr="(USBPHYConfig != `no`) &amp;&amp; (USBPHYConfig != `PLL`)"/>
+    </prescaler>
+    <clock_select id="PFD_CLK_SEL" name="PFD_CLK_SEL" description="PFD clock selector for output clock signal">
+      <value_map expr="ANACTRL[PFD_CLK_SEL]">
+        <input ctrl_value="0" signal="CLK_XTAL_IN" name="Bypass of the PLL" description="USB1PFDCLK is the same frequency as the xtal clock (Default)"/>
+        <input ctrl_value="1" signal="PFD_CLK_DIV4.clk" name="PLL (pfd_clk) clock divided by 4" description="USB1PFDCLK frequency is pfd_clk divided by 4"/>
+        <input ctrl_value="2" signal="PFD_CLK_DIV2.clk" name="PLL (pfd_clk) clock divided by 2" description="USB1PFDCLK frequency is pfd_clk divided by 2"/>
+        <input ctrl_value="3" signal="PFD_FRAC_DIV.clk" name="PLL (pfd_clk) clock" description="USB1PFDCLK frequency is the same as pfd_clk frequency"/>
+      </value_map>
+      <enable cond_expr="(USBPHYConfig != `no`) &amp;&amp; (USBPHYConfig != `PLL`)"/>
+    </clock_select>
+    <map_output id="USB1PFDCLK">
+      <input signal="PFD_CLK_SEL.clk"/>
+      <enable power_modes="HSRUN RUN" cond_expr="(USBPHYConfig != `no`) &amp;&amp; (USBPHYConfig != `PLL`)" description="Enabled in Run and High speed run modes only"/>
+      <constraint max_freq="180 MHz" when="powerMode==`HSRUN`"/>
+      <constraint max_freq="180 MHz" when="powerMode==`RUN` || powerMode==`WAIT`"/>
+    </map_output>
+    <map_output id="USBPHYPLLCLK">
+      <input signal="PLL.clk"/>
+      <enable power_modes="HSRUN RUN" cond_expr="(USBPHYConfig != `no`) &amp;&amp; (USBPHYConfig != `PFD`)" description="Enabled in Run and High speed run modes only"/>
+    </map_output>
+    <control_and_constraints/>
+  </implementation>
+</clocks:component>

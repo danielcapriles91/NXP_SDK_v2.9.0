@@ -1,0 +1,240 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="8" name="A1" description="I2C Address Register 1">
+    <alias type="CMSIS" value="A1"/>
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <bit_field offset="1" width="7" name="AD" access="RW" reset_value="0" description="Address">
+      <alias type="CMSIS" value="I2C_A1_AD(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x1" width="8" name="F" description="I2C Frequency Divider register">
+    <alias type="CMSIS" value="F"/>
+    <bit_field offset="0" width="6" name="ICR" access="RW" reset_value="0" description="ClockRate">
+      <alias type="CMSIS" value="I2C_F_ICR(x)"/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="MULT" access="RW" reset_value="0" description="Multiplier Factor">
+      <alias type="CMSIS" value="I2C_F_MULT(x)"/>
+      <bit_field_value name="F_MULT_0b00" value="0b00" description="mul = 1"/>
+      <bit_field_value name="F_MULT_0b01" value="0b01" description="mul = 2"/>
+      <bit_field_value name="F_MULT_0b10" value="0b10" description="mul = 4"/>
+      <bit_field_value name="F_MULT_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+  </register>
+  <register offset="0x2" width="8" name="C1" description="I2C Control Register 1">
+    <alias type="CMSIS" value="C1"/>
+    <bit_field offset="0" width="1" name="DMAEN" access="RW" reset_value="0" description="DMA Enable">
+      <alias type="CMSIS" value="I2C_C1_DMAEN(x)"/>
+      <bit_field_value name="C1_DMAEN_0b0" value="0b0" description="All DMA signalling disabled."/>
+      <bit_field_value name="C1_DMAEN_0b1" value="0b1" description="DMA transfer is enabled. While SMB[FACK] = 0, the following conditions trigger the DMA request: a data byte is received, and either address or data is transmitted. (ACK/NACK is automatic) the first byte received matches the A1 register or is a general call address. If any address matching occurs, S[IAAS] and S[TCF] are set. If the direction of transfer is known from master to slave, then it is not required to check S[SRW]. With this assumption, DMA can also be used in this case. In other cases, if the master reads data from the slave, then it is required to rewrite the C1 register operation. With this assumption, DMA cannot be used. When FACK = 1, an address or a data byte is transmitted."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WUEN" access="RW" reset_value="0" description="Wakeup Enable">
+      <alias type="CMSIS" value="I2C_C1_WUEN(x)"/>
+      <bit_field_value name="C1_WUEN_0b0" value="0b0" description="Normal operation. No interrupt generated when address matching in low power mode."/>
+      <bit_field_value name="C1_WUEN_0b1" value="0b1" description="Enables the wakeup function in low power mode."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="RSTA" access="WORZ" reset_value="0" description="Repeat START">
+      <alias type="CMSIS" value="I2C_C1_RSTA(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="TXAK" access="RW" reset_value="0" description="Transmit Acknowledge Enable">
+      <alias type="CMSIS" value="I2C_C1_TXAK(x)"/>
+      <bit_field_value name="C1_TXAK_0b0" value="0b0" description="An acknowledge signal is sent to the bus on the following receiving byte (if FACK is cleared) or the current receiving byte (if FACK is set)."/>
+      <bit_field_value name="C1_TXAK_0b1" value="0b1" description="No acknowledge signal is sent to the bus on the following receiving data byte (if FACK is cleared) or the current receiving data byte (if FACK is set)."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="TX" access="RW" reset_value="0" description="Transmit Mode Select">
+      <alias type="CMSIS" value="I2C_C1_TX(x)"/>
+      <bit_field_value name="C1_TX_0b0" value="0b0" description="Receive"/>
+      <bit_field_value name="C1_TX_0b1" value="0b1" description="Transmit"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="MST" access="RW" reset_value="0" description="Master Mode Select">
+      <alias type="CMSIS" value="I2C_C1_MST(x)"/>
+      <bit_field_value name="C1_MST_0b0" value="0b0" description="Slave mode"/>
+      <bit_field_value name="C1_MST_0b1" value="0b1" description="Master mode"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="IICIE" access="RW" reset_value="0" description="I2C Interrupt Enable">
+      <alias type="CMSIS" value="I2C_C1_IICIE(x)"/>
+      <bit_field_value name="C1_IICIE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="C1_IICIE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="IICEN" access="RW" reset_value="0" description="I2C Enable">
+      <alias type="CMSIS" value="I2C_C1_IICEN(x)"/>
+      <bit_field_value name="C1_IICEN_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="C1_IICEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+  </register>
+  <register offset="0x3" width="8" name="S" description="I2C Status register">
+    <alias type="CMSIS" value="S"/>
+    <bit_field offset="0" width="1" name="RXAK" access="RO" reset_value="0" description="Receive Acknowledge">
+      <alias type="CMSIS" value="I2C_S_RXAK(x)"/>
+      <bit_field_value name="S_RXAK_0b0" value="0b0" description="Acknowledge signal was received after the completion of one byte of data transmission on the bus"/>
+      <bit_field_value name="S_RXAK_0b1" value="0b1" description="No acknowledge signal detected"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="IICIF" access="W1C" reset_value="0" description="Interrupt Flag">
+      <alias type="CMSIS" value="I2C_S_IICIF(x)"/>
+      <bit_field_value name="S_IICIF_0b0" value="0b0" description="No interrupt pending"/>
+      <bit_field_value name="S_IICIF_0b1" value="0b1" description="Interrupt pending"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SRW" access="RO" reset_value="0" description="Slave Read/Write">
+      <alias type="CMSIS" value="I2C_S_SRW(x)"/>
+      <bit_field_value name="S_SRW_0b0" value="0b0" description="Slave receive, master writing to slave"/>
+      <bit_field_value name="S_SRW_0b1" value="0b1" description="Slave transmit, master reading from slave"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="RAM" access="RW" reset_value="0" description="Range Address Match">
+      <alias type="CMSIS" value="I2C_S_RAM(x)"/>
+      <bit_field_value name="S_RAM_0b0" value="0b0" description="Not addressed"/>
+      <bit_field_value name="S_RAM_0b1" value="0b1" description="Addressed as a slave"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="ARBL" access="W1C" reset_value="0" description="Arbitration Lost">
+      <alias type="CMSIS" value="I2C_S_ARBL(x)"/>
+      <bit_field_value name="S_ARBL_0b0" value="0b0" description="Standard bus operation."/>
+      <bit_field_value name="S_ARBL_0b1" value="0b1" description="Loss of arbitration."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="BUSY" access="RO" reset_value="0" description="Bus Busy">
+      <alias type="CMSIS" value="I2C_S_BUSY(x)"/>
+      <bit_field_value name="S_BUSY_0b0" value="0b0" description="Bus is idle"/>
+      <bit_field_value name="S_BUSY_0b1" value="0b1" description="Bus is busy"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="IAAS" access="RW" reset_value="0" description="Addressed As A Slave">
+      <alias type="CMSIS" value="I2C_S_IAAS(x)"/>
+      <bit_field_value name="S_IAAS_0b0" value="0b0" description="Not addressed"/>
+      <bit_field_value name="S_IAAS_0b1" value="0b1" description="Addressed as a slave"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="TCF" access="RO" reset_value="0x1" description="Transfer Complete Flag">
+      <alias type="CMSIS" value="I2C_S_TCF(x)"/>
+      <bit_field_value name="S_TCF_0b0" value="0b0" description="Transfer in progress"/>
+      <bit_field_value name="S_TCF_0b1" value="0b1" description="Transfer complete"/>
+    </bit_field>
+  </register>
+  <register offset="0x4" width="8" name="D" description="I2C Data I/O register">
+    <alias type="CMSIS" value="D"/>
+    <bit_field offset="0" width="8" name="DATA" access="RW" reset_value="0" description="Data">
+      <alias type="CMSIS" value="I2C_D_DATA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x5" width="8" name="C2" description="I2C Control Register 2">
+    <alias type="CMSIS" value="C2"/>
+    <bit_field offset="0" width="3" name="AD" access="RW" reset_value="0" description="Slave Address">
+      <alias type="CMSIS" value="I2C_C2_AD(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="RMEN" access="RW" reset_value="0" description="Range Address Matching Enable">
+      <alias type="CMSIS" value="I2C_C2_RMEN(x)"/>
+      <bit_field_value name="C2_RMEN_0b0" value="0b0" description="Range mode disabled. No address matching occurs for an address within the range of values of the A1 and RA registers."/>
+      <bit_field_value name="C2_RMEN_0b1" value="0b1" description="Range mode enabled. Address matching occurs when a slave receives an address within the range of values of the A1 and RA registers."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="SBRC" access="RW" reset_value="0" description="Slave Baud Rate Control">
+      <alias type="CMSIS" value="I2C_C2_SBRC(x)"/>
+      <bit_field_value name="C2_SBRC_0b0" value="0b0" description="The slave baud rate follows the master baud rate and clock stretching may occur"/>
+      <bit_field_value name="C2_SBRC_0b1" value="0b1" description="Slave baud rate is independent of the master baud rate"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="HDRS" access="RW" reset_value="0" description="High Drive Select">
+      <alias type="CMSIS" value="I2C_C2_HDRS(x)"/>
+      <bit_field_value name="C2_HDRS_0b0" value="0b0" description="Normal drive mode"/>
+      <bit_field_value name="C2_HDRS_0b1" value="0b1" description="High drive mode"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="ADEXT" access="RW" reset_value="0" description="Address Extension">
+      <alias type="CMSIS" value="I2C_C2_ADEXT(x)"/>
+      <bit_field_value name="C2_ADEXT_0b0" value="0b0" description="7-bit address scheme"/>
+      <bit_field_value name="C2_ADEXT_0b1" value="0b1" description="10-bit address scheme"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="GCAEN" access="RW" reset_value="0" description="General Call Address Enable">
+      <alias type="CMSIS" value="I2C_C2_GCAEN(x)"/>
+      <bit_field_value name="C2_GCAEN_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="C2_GCAEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+  </register>
+  <register offset="0x6" width="8" name="FLT" description="I2C Programmable Input Glitch Filter Register">
+    <alias type="CMSIS" value="FLT"/>
+    <bit_field offset="0" width="4" name="FLT" access="RW" reset_value="0" description="I2C Programmable Filter Factor">
+      <alias type="CMSIS" value="I2C_FLT_FLT(x)"/>
+      <bit_field_value name="FLT_FLT_0b0000" value="0b0000" description="No filter/bypass"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="STARTF" access="W1C" reset_value="0" description="I2C Bus Start Detect Flag">
+      <alias type="CMSIS" value="I2C_FLT_STARTF(x)"/>
+      <bit_field_value name="FLT_STARTF_0b0" value="0b0" description="No start happens on I2C bus"/>
+      <bit_field_value name="FLT_STARTF_0b1" value="0b1" description="Start detected on I2C bus"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="SSIE" access="RW" reset_value="0" description="I2C Bus Stop or Start Interrupt Enable">
+      <alias type="CMSIS" value="I2C_FLT_SSIE(x)"/>
+      <bit_field_value name="FLT_SSIE_0b0" value="0b0" description="Stop or start detection interrupt is disabled"/>
+      <bit_field_value name="FLT_SSIE_0b1" value="0b1" description="Stop or start detection interrupt is enabled"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="STOPF" access="W1C" reset_value="0" description="I2C Bus Stop Detect Flag">
+      <alias type="CMSIS" value="I2C_FLT_STOPF(x)"/>
+      <bit_field_value name="FLT_STOPF_0b0" value="0b0" description="No stop happens on I2C bus"/>
+      <bit_field_value name="FLT_STOPF_0b1" value="0b1" description="Stop detected on I2C bus"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="SHEN" access="RW" reset_value="0" description="Stop Hold Enable">
+      <alias type="CMSIS" value="I2C_FLT_SHEN(x)"/>
+      <bit_field_value name="FLT_SHEN_0b0" value="0b0" description="Stop holdoff is disabled. The MCU's entry to stop mode is not gated."/>
+      <bit_field_value name="FLT_SHEN_0b1" value="0b1" description="Stop holdoff is enabled."/>
+    </bit_field>
+  </register>
+  <register offset="0x7" width="8" name="RA" description="I2C Range Address register">
+    <alias type="CMSIS" value="RA"/>
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <bit_field offset="1" width="7" name="RAD" access="RW" reset_value="0" description="Range Slave Address">
+      <alias type="CMSIS" value="I2C_RA_RAD(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x8" width="8" name="SMB" description="I2C SMBus Control and Status register">
+    <alias type="CMSIS" value="SMB"/>
+    <bit_field offset="0" width="1" name="SHTF2IE" access="RW" reset_value="0" description="SHTF2 Interrupt Enable">
+      <alias type="CMSIS" value="I2C_SMB_SHTF2IE(x)"/>
+      <bit_field_value name="SMB_SHTF2IE_0b0" value="0b0" description="SHTF2 interrupt is disabled"/>
+      <bit_field_value name="SMB_SHTF2IE_0b1" value="0b1" description="SHTF2 interrupt is enabled"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="SHTF2" access="W1C" reset_value="0" description="SCL High Timeout Flag 2">
+      <alias type="CMSIS" value="I2C_SMB_SHTF2(x)"/>
+      <bit_field_value name="SMB_SHTF2_0b0" value="0b0" description="No SCL high and SDA low timeout occurs"/>
+      <bit_field_value name="SMB_SHTF2_0b1" value="0b1" description="SCL high and SDA low timeout occurs"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SHTF1" access="RO" reset_value="0" description="SCL High Timeout Flag 1">
+      <alias type="CMSIS" value="I2C_SMB_SHTF1(x)"/>
+      <bit_field_value name="SMB_SHTF1_0b0" value="0b0" description="No SCL high and SDA high timeout occurs"/>
+      <bit_field_value name="SMB_SHTF1_0b1" value="0b1" description="SCL high and SDA high timeout occurs"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="SLTF" access="W1C" reset_value="0" description="SCL Low Timeout Flag">
+      <alias type="CMSIS" value="I2C_SMB_SLTF(x)"/>
+      <bit_field_value name="SMB_SLTF_0b0" value="0b0" description="No low timeout occurs"/>
+      <bit_field_value name="SMB_SLTF_0b1" value="0b1" description="Low timeout occurs"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="TCKSEL" access="RW" reset_value="0" description="Timeout Counter Clock Select">
+      <alias type="CMSIS" value="I2C_SMB_TCKSEL(x)"/>
+      <bit_field_value name="SMB_TCKSEL_0b0" value="0b0" description="Timeout counter counts at the frequency of the I2C module clock / 64"/>
+      <bit_field_value name="SMB_TCKSEL_0b1" value="0b1" description="Timeout counter counts at the frequency of the I2C module clock"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="SIICAEN" access="RW" reset_value="0" description="Second I2C Address Enable">
+      <alias type="CMSIS" value="I2C_SMB_SIICAEN(x)"/>
+      <bit_field_value name="SMB_SIICAEN_0b0" value="0b0" description="I2C address register 2 matching is disabled"/>
+      <bit_field_value name="SMB_SIICAEN_0b1" value="0b1" description="I2C address register 2 matching is enabled"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="ALERTEN" access="RW" reset_value="0" description="SMBus Alert Response Address Enable">
+      <alias type="CMSIS" value="I2C_SMB_ALERTEN(x)"/>
+      <bit_field_value name="SMB_ALERTEN_0b0" value="0b0" description="SMBus alert response address matching is disabled"/>
+      <bit_field_value name="SMB_ALERTEN_0b1" value="0b1" description="SMBus alert response address matching is enabled"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="FACK" access="RW" reset_value="0" description="Fast NACK/ACK Enable">
+      <alias type="CMSIS" value="I2C_SMB_FACK(x)"/>
+      <bit_field_value name="SMB_FACK_0b0" value="0b0" description="An ACK or NACK is sent on the following receiving data byte"/>
+      <bit_field_value name="SMB_FACK_0b1" value="0b1" description="Writing 0 to TXAK after receiving a data byte generates an ACK. Writing 1 to TXAK after receiving a data byte generates a NACK."/>
+    </bit_field>
+  </register>
+  <register offset="0x9" width="8" name="A2" description="I2C Address Register 2">
+    <alias type="CMSIS" value="A2"/>
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <bit_field offset="1" width="7" name="SAD" access="RW" reset_value="0x61" description="SMBus Address">
+      <alias type="CMSIS" value="I2C_A2_SAD(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xA" width="8" name="SLTH" description="I2C SCL Low Timeout Register High">
+    <alias type="CMSIS" value="SLTH"/>
+    <bit_field offset="0" width="8" name="SSLT" access="RW" reset_value="0" description="SSLT[15:8]">
+      <alias type="CMSIS" value="I2C_SLTH_SSLT(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xB" width="8" name="SLTL" description="I2C SCL Low Timeout Register Low">
+    <alias type="CMSIS" value="SLTL"/>
+    <bit_field offset="0" width="8" name="SSLT" access="RW" reset_value="0" description="SSLT[7:0]">
+      <alias type="CMSIS" value="I2C_SLTL_SSLT(x)"/>
+    </bit_field>
+  </register>
+</regs:peripheral>

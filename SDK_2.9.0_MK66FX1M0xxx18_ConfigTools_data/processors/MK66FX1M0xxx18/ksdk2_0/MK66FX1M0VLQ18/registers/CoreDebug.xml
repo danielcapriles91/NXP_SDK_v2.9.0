@@ -1,0 +1,208 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="32" name="DHCSR_Read" description="Debug Halting Control and Status Register">
+    <bit_field offset="0" width="1" name="C_DEBUGEN" access="RW" reset_value="0" description="Halting debug enable bit. If a debugger writes to DHCSR to change the value of this bit from 0 to 1, it must also write 0 to the C_MASKINTS bit, otherwise behavior is UNPREDICTABLE. This bit can only be set to 1 from the DAP, it cannot be set to 1 under software control. This bit is 0 after a Power-on reset.">
+      <bit_field_value name="DHCSR_Read_C_DEBUGEN_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="DHCSR_Read_C_DEBUGEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="C_HALT" access="RW" reset_value="0" description="Processor halt bit. This bit is UNKNOWN after a Power-on reset.">
+      <bit_field_value name="DHCSR_Read_C_HALT_0b0" value="0b0" description="No effect."/>
+      <bit_field_value name="DHCSR_Read_C_HALT_0b1" value="0b1" description="Halt the processor."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="C_STEP" access="RW" reset_value="0" description="Processor step bit. This bit is UNKNOWN after a Power-on reset.">
+      <bit_field_value name="DHCSR_Read_C_STEP_0b0" value="0b0" description="No effect."/>
+      <bit_field_value name="DHCSR_Read_C_STEP_0b1" value="0b1" description="Step the processor."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="C_MASKINTS" access="RW" reset_value="0" description="C_MASKINTS bit. When debug is enabled, the debugger can write to this bit to mask PendSV, SysTick and external configurable interrupts. The effect of any attempt to change the value of this bit is UNPREDICTABLE unless both: - before the write to DHCSR, the value of the C_HALT bit is 1. - the write to the DHCSR that changes the C_MASKINTS bit also writes 1 to the C_HALT bit. This means that a single write to DHCSR cannot set the C_HALT to 0 and change the value of the C_MASKINTS bit. The bit does not affect NMI. When DHCSR.C_DEBUGEN is set to 0, the value of this bit is UNKNOWN. This bit is UNKNOWN after a Power-on reset.">
+      <bit_field_value name="DHCSR_Read_C_MASKINTS_0b0" value="0b0" description="Do not mask."/>
+      <bit_field_value name="DHCSR_Read_C_MASKINTS_0b1" value="0b1" description="Mask PenSV, SysTick and external configurable interrupts."/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <bit_field offset="5" width="1" name="C_SNAPSTALL" access="RW" reset_value="0" description="C_SNAPSTALL bit. If the processor is stalled on a load or store operation, a debugger can set this bit to 1 to attempt to break the stall. The effect of setting this bit to 1 is UNPREDICTABLE unless the DHCSR write also sets C_DEBUGEN and C_HALT to 1. This means that if the processor is not already in Debug statea it enters Debug state when the stalled instruction completes. Writing 1 to this bit makes the state of the memory system UNPREDICTABLE. Therefore, if a debugger writes 1 to this bit it must reset the processor before leaving Debug state. A Power-on reset sets this bit to 0.">
+      <bit_field_value name="DHCSR_Read_C_SNAPSTALL_0b0" value="0b0" description="No action."/>
+      <bit_field_value name="DHCSR_Read_C_SNAPSTALL_0b1" value="0b1" description="Attempt to force any stalled load or store instruction to complete."/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="S_REGRDY" access="RO" reset_value="0" description="S_REGRDY bit. A handshake flag for transfers through the DCRDR: - Writing to DCRSR clears the bit to 0. - Completion of the DCRDR transfer then sets the bit to 1. This bit is valid only when the processor is in Debug state, otherwise the bit is UNKNOWN.">
+      <bit_field_value name="DHCSR_Read_S_REGRDY_0b0" value="0b0" description="There has been a write to the DCRDR, but the transfer is not complete."/>
+      <bit_field_value name="DHCSR_Read_S_REGRDY_0b1" value="0b1" description="The transfer to or from the DCRDR is complete."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="S_HALT" access="RO" reset_value="0" description="S_HALT bit. Indicates whether the processor is in Debug state.">
+      <bit_field_value name="DHCSR_Read_S_HALT_0b0" value="0b0" description="Not in Debug state."/>
+      <bit_field_value name="DHCSR_Read_S_HALT_0b1" value="0b1" description="In Debug state."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="S_SLEEP" access="RO" reset_value="0" description="S_SLEEP bit. Indicates whether the processor is sleeping. The debugger must set the C_HALT bit to 1 to gain control, or wait for an interrupt or other wakeup event to wakeup the system.">
+      <bit_field_value name="DHCSR_Read_S_SLEEP_0b0" value="0b0" description="Not sleeping."/>
+      <bit_field_value name="DHCSR_Read_S_SLEEP_0b1" value="0b1" description="Sleeping."/>
+    </bit_field>
+    <bit_field offset="19" width="1" name="S_LOCKUP" access="RO" reset_value="0" description="S_LOCKUP bit. Indicates whether the processor is locked up because of an unrecoverable exception. This bit can only be read as 1 by a remote debugger, using the DAP. The value of 1 indicates that the processor is running but locked up. The bit clears to 0 when the processor enters Debug state.">
+      <bit_field_value name="DHCSR_Read_S_LOCKUP_0b0" value="0b0" description="Not locked up"/>
+      <bit_field_value name="DHCSR_Read_S_LOCKUP_0b1" value="0b1" description="Locked up"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="S_RETIRE_ST" access="RO" reset_value="0" description="S_RETIRE_ST bit. Indicates whether the processor has completed the execution of an instruction since the last read of DHCSR. This is a sticky bit, that clears to 0 on a read of DHCSR. A debugger can check this bit to determine if the processor is stalled on a load, store or fetch access. This bit is UNKNOWN after a Power-on or Local reset, but then is set to 1 as soon as the processor executes and retires an instruction.">
+      <bit_field_value name="DHCSR_Read_S_RETIRE_ST_0b0" value="0b0" description="No instruction retired since last DHCSR read."/>
+      <bit_field_value name="DHCSR_Read_S_RETIRE_ST_0b1" value="0b1" description="At least one instruction retired since last DHCSR read."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="S_RESET_ST" access="RO" reset_value="0" description="S_RESET_ST bit. Indicates whether the processor has been reset since the last read of DHCSR. This is a sticky bit, that clears to 0 on a read of DHCSR.">
+      <bit_field_value name="DHCSR_Read_S_RESET_ST_0b0" value="0b0" description="No reset since last DHCSR read."/>
+      <bit_field_value name="DHCSR_Read_S_RESET_ST_0b1" value="0b1" description="At least one reset since last DHCSR read."/>
+    </bit_field>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0" width="32" name="DHCSR_Write" description="Debug Halting Control and Status Register">
+    <bit_field offset="0" width="1" name="C_DEBUGEN" access="RW" reset_value="0" description="Halting debug enable bit. If a debugger writes to DHCSR to change the value of this bit from 0 to 1, it must also write 0 to the C_MASKINTS bit, otherwise behavior is UNPREDICTABLE. This bit can only be set to 1 from the DAP, it cannot be set to 1 under software control. This bit is 0 after a Power-on reset.">
+      <bit_field_value name="DHCSR_Write_C_DEBUGEN_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="DHCSR_Write_C_DEBUGEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="C_HALT" access="RW" reset_value="0" description="Processor halt bit. This bit is UNKNOWN after a Power-on reset.">
+      <bit_field_value name="DHCSR_Write_C_HALT_0b0" value="0b0" description="No effect."/>
+      <bit_field_value name="DHCSR_Write_C_HALT_0b1" value="0b1" description="Halt the processor."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="C_STEP" access="RW" reset_value="0" description="Processor step bit. This bit is UNKNOWN after a Power-on reset.">
+      <bit_field_value name="DHCSR_Write_C_STEP_0b0" value="0b0" description="No effect."/>
+      <bit_field_value name="DHCSR_Write_C_STEP_0b1" value="0b1" description="Step the processor."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="C_MASKINTS" access="RW" reset_value="0" description="C_MASKINTS bit. When debug is enabled, the debugger can write to this bit to mask PendSV, SysTick and external configurable interrupts. The effect of any attempt to change the value of this bit is UNPREDICTABLE unless both: - before the write to DHCSR, the value of the C_HALT bit is 1. - the write to the DHCSR that changes the C_MASKINTS bit also writes 1 to the C_HALT bit. This means that a single write to DHCSR cannot set the C_HALT to 0 and change the value of the C_MASKINTS bit. The bit does not affect NMI. When DHCSR.C_DEBUGEN is set to 0, the value of this bit is UNKNOWN. This bit is UNKNOWN after a Power-on reset.">
+      <bit_field_value name="DHCSR_Write_C_MASKINTS_0b0" value="0b0" description="Do not mask."/>
+      <bit_field_value name="DHCSR_Write_C_MASKINTS_0b1" value="0b1" description="Mask PenSV, SysTick and external configurable interrupts."/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <bit_field offset="5" width="1" name="C_SNAPSTALL" access="RW" reset_value="0" description="C_SNAPSTALL bit. If the processor is stalled on a load or store operation, a debugger can set this bit to 1 to attempt to break the stall. The effect of setting this bit to 1 is UNPREDICTABLE unless the DHCSR write also sets C_DEBUGEN and C_HALT to 1. This means that if the processor is not already in Debug statea it enters Debug state when the stalled instruction completes. Writing 1 to this bit makes the state of the memory system UNPREDICTABLE. Therefore, if a debugger writes 1 to this bit it must reset the processor before leaving Debug state. A Power-on reset sets this bit to 0.">
+      <bit_field_value name="DHCSR_Write_C_SNAPSTALL_0b0" value="0b0" description="No action."/>
+      <bit_field_value name="DHCSR_Write_C_SNAPSTALL_0b1" value="0b1" description="Attempt to force any stalled load or store instruction to complete."/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="16" name="DBGKEY" access="WO" reset_value="0" description="Debug key: Software must write 0xA05F to this field to enable write accesses to bits [15:0], otherwise the processor ignores the write access."/>
+  </register>
+  <register offset="0x4" width="32" name="DCRSR" description="Debug Core Register Selector Register">
+    <bit_field offset="0" width="7" name="REGSEL" access="WO" reset_value="0" reset_mask="0" description="REGSEL bits. Specifies the ARM core register, special-purpose register, or Floating-point extension register, to transfer."/>
+    <reserved_bit_field offset="7" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0" reset_mask="0"/>
+    <bit_field offset="16" width="1" name="REGWnR" access="WO" reset_value="0" reset_mask="0" description="REGWnR bit. Specifies the access type for the transfer.">
+      <bit_field_value name="DCRSR_REGWnR_0b0" value="0b0" description="Read"/>
+      <bit_field_value name="DCRSR_REGWnR_0b1" value="0b1" description="Write"/>
+    </bit_field>
+    <reserved_bit_field offset="17" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0" reset_mask="0"/>
+  </register>
+  <register offset="0x8" width="32" name="DCRDR" description="Debug Core Register Data Register">
+    <bit_field offset="0" width="32" name="DBGTMP" access="RW" reset_value="0" reset_mask="0" description="DBGTMP bits. Data temporary cache, for reading and writing the ARM core registers, special-purpose registers, and Floating-point extension registers. The value of this register is UNKNOWN: - on reset - if the processor is in Debug state, the debugger has written to DCRSR since entering Debug state and DHCSR.S_REGRDY is set to 0."/>
+  </register>
+  <register offset="0xC" width="32" name="DEMCR" description="Debug Exception and Monitor Control Register">
+    <bit_field offset="0" width="1" name="VC_CORERESET" access="RW" reset_value="0" description="VC_CORERESET bit. Enable Reset Vector Catch. This causes a Local reset to halt a running system. If DHCSR.C_DEBUGEN is set to 0, the processor ignores the value of this bit.">
+      <bit_field_value name="DEMCR_VC_CORERESET_0b0" value="0b0" description="Reset Vector Catch disabled."/>
+      <bit_field_value name="DEMCR_VC_CORERESET_0b1" value="0b1" description="Reset Vector Catch enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="VC_MMERR" access="RW" reset_value="0" description="VC_MMERR bit. Enable halting debug trap on a MemManage exception. If DHCSR.C_DEBUGEN is set to 0, the processor ignores the value of this bit.">
+      <bit_field_value name="DEMCR_VC_MMERR_0b0" value="0b0" description="Halting debug trap disabled."/>
+      <bit_field_value name="DEMCR_VC_MMERR_0b1" value="0b1" description="Halting debug trap enabled."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="VC_NOCPERR" access="RW" reset_value="0" description="VC_NOCPERR bit. Enable halting debug trap on a UsageFault caused by an access to a Coprocessor. If DHCSR.C_DEBUGEN is set to 0, the processor ignores the value of this bit.">
+      <bit_field_value name="DEMCR_VC_NOCPERR_0b0" value="0b0" description="Halting debug trap disabled."/>
+      <bit_field_value name="DEMCR_VC_NOCPERR_0b1" value="0b1" description="Halting debug trap enabled."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="VC_CHKERR" access="RW" reset_value="0" description="VC_CHKERR bit. Enable halting debug trap on a UsageFault exception caused by a checking error, for example an alignment check error. If DHCSR.C_DEBUGEN is set to 0, the processor ignores the value of this bit.">
+      <bit_field_value name="DEMCR_VC_CHKERR_0b0" value="0b0" description="Halting debug trap disabled."/>
+      <bit_field_value name="DEMCR_VC_CHKERR_0b1" value="0b1" description="Halting debug trap enabled."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="VC_STATERR" access="RW" reset_value="0" description="VC_STATERR bit. Enable halting debug trap on a UsageFault exception caused by a state information error, for example an Undefined Instruction exception. If DHCSR.C_DEBUGEN is set to 0, the processor ignores the value of this bit.">
+      <bit_field_value name="DEMCR_VC_STATERR_0b0" value="0b0" description="Halting debug trap disabled."/>
+      <bit_field_value name="DEMCR_VC_STATERR_0b1" value="0b1" description="Halting debug trap enabled."/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="VC_BUSERR" access="RW" reset_value="0" description="VC_BUSERR bit. Enable halting debug trap on a BusFault exception. If DHCSR.C_DEBUGEN is set to 0, the processor ignores the value of this bit.">
+      <bit_field_value name="DEMCR_VC_BUSERR_0b0" value="0b0" description="Halting debug trap disabled."/>
+      <bit_field_value name="DEMCR_VC_BUSERR_0b1" value="0b1" description="Halting debug trap enabled."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="VC_INTERR" access="RW" reset_value="0" description="VC_INTERR bit. Enable halting debug trap on a fault occurring during exception entry or exception return. If DHCSR.C_DEBUGEN is set to 0, the processor ignores the value of this bit.">
+      <bit_field_value name="DEMCR_VC_INTERR_0b0" value="0b0" description="Halting debug trap disabled."/>
+      <bit_field_value name="DEMCR_VC_INTERR_0b1" value="0b1" description="Halting debug trap enabled."/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="VC_HARDERR" access="RW" reset_value="0" description="VC_HARDERR bit. Enable halting debug trap on a HardFault exception. If DHCSR.C_DEBUGEN is set to 0, the processor ignores the value of this bit.">
+      <bit_field_value name="DEMCR_VC_HARDERR_0b0" value="0b0" description="Halting debug trap disabled."/>
+      <bit_field_value name="DEMCR_VC_HARDERR_0b1" value="0b1" description="Halting debug trap enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="MON_EN" access="RW" reset_value="0" description="MON_EN bit. Enable the DebugMonitor exception. If DHCSR.C_DEBUGEN is set to 1, the processor ignores the value of this bit.">
+      <bit_field_value name="DEMCR_MON_EN_0b0" value="0b0" description="DebugMonitor exception disabled."/>
+      <bit_field_value name="DEMCR_MON_EN_0b1" value="0b1" description="DebugMonitor exception enabled."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="MON_PEND" access="RW" reset_value="0" description="MON_PEND bit. Sets or clears the pending state of the DebugMonitor exception. When the DebugMonitor exception is pending it becomes active subject to the exception priority rules. A debugger can use this bit to wakeup the monitor using the DAP. The effect of setting this bit to 1 is not affected by the value of the MON_EN bit. A debugger can set MON_PEND to 1, and force the processor to take a DebugMonitor exception, even when MON_EN is set to 0.">
+      <bit_field_value name="DEMCR_MON_PEND_0b0" value="0b0" description="Clear the status of the DebugMonitor exception to not pending."/>
+      <bit_field_value name="DEMCR_MON_PEND_0b1" value="0b1" description="Set the status of the DebugMonitor exception to pending."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="MON_STEP" access="RW" reset_value="0" description="MON_STEP bit. When MON_EN is set to 0, this feature is disabled and the processor ignores MON_STEP. When MON_EN is set to 1, the meaning of MON_STEP is: 0 = Do not step the processor. 1 = Step the processor. Setting this bit to 1 makes the step request pending. The request becomes active when the processor returns from the DebugMonitor handler to the code being debugged. The effect of setting this bit to 1 is UNPREDICTABLE if the code being debugged is executing at an execution priority that is lower than the priority of the DebugMonitor exception. This is the debug monitor equivalent of DHCSR.C_STEP in Debug state.">
+      <bit_field_value name="DEMCR_MON_STEP_0b0" value="0b0" description="Do not step the processor."/>
+      <bit_field_value name="DEMCR_MON_STEP_0b1" value="0b1" description="Step the processor."/>
+    </bit_field>
+    <bit_field offset="19" width="1" name="MON_REQ" access="RW" reset_value="0" description="DebugMonitor semaphore bit. The processor does not use this bit. The monitor software defines the meaning and use of this bit."/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TRCENA" access="RW" reset_value="0" description="TRCENA bit. Global enable for all DWT and ITM features. If the DWT and ITM blocks are not implemented, this bit is UNK/SBZP. When TRCENA is set to 0: - DWT registers return UNKNOWN values on reads. Whether the processor ignores writes to the DWT unit is IMPLEMENTATION DEFINED. - ITM registers return UNKNOWN values on reads. Whether the processor ignores writes to the ITM unit is IMPLEMENTATION DEFINED. Setting this bit to 0 might not stop all events. To ensure all events are stopped, software must set all DWT and ITM feature enable bits to 0, and then set this bit to 0. The effect of this bit on the TPIU, ETM, and other system trace components is IMPLEMENTATION DEFINED.">
+      <bit_field_value name="DEMCR_TRCENA_0b0" value="0b0" description="DWT and ITM blocks disabled."/>
+      <bit_field_value name="DEMCR_TRCENA_0b1" value="0b1" description="DWT and ITM blocks enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+</regs:peripheral>

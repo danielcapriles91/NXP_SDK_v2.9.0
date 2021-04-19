@@ -1,0 +1,1147 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="flexbus" label="FlexBus" category="Peripheral driver" options="UI_COMPONENT_MODE_HIDDEN" global_only="false" hidden="false" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-5.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <sw_comp_ref name="platform.drivers.flexbus" version="2.1.0"/>
+    <description>External Bus Interface (FlexBus)</description>
+    <mode id="general" label="General">
+        <description>General mode</description>
+        <config_set_refs>
+            <config_set_ref>fsl_flexbus</config_set_ref>
+        </config_set_refs>
+        <master_peripheral exclusive="false">
+            <peripheral_type>FB</peripheral_type>
+        </master_peripheral>
+    </mode>
+    <config_set label="General configuration" id="fsl_flexbus" from_source="fsl_flexbus.h">
+        <description>General configuration of FlexBus</description>
+        <generated_types>
+            <enum id="flexbus_port_size_t" label="Defines port size for FlexBus peripheral" from="_flexbus_port_size">
+                <description></description>
+                <item id="kFLEXBUS_4Bytes" label="32-bit port size"/>
+                <item id="kFLEXBUS_1Byte" label="8-bit port size"/>
+                <item id="kFLEXBUS_2Bytes" label="16-bit port size"/>
+            </enum>
+            <enum id="flexbus_write_address_hold_t" label="Defines number of cycles to hold address and attributes for FlexBus peripheral" from="_flexbus_write_address_hold">
+                <description></description>
+                <item id="kFLEXBUS_Hold1Cycle" label="Hold address and attributes one cycles after FB_CSn negates on writes"/>
+                <item id="kFLEXBUS_Hold2Cycles" label="Hold address and attributes two cycles after FB_CSn negates on writes"/>
+                <item id="kFLEXBUS_Hold3Cycles" label="Hold address and attributes three cycles after FB_CSn negates on writes"/>
+                <item id="kFLEXBUS_Hold4Cycles" label="Hold address and attributes four cycles after FB_CSn negates on writes"/>
+            </enum>
+            <enum id="flexbus_read_address_hold_t" label="Defines number of cycles to hold address and attributes for FlexBus peripheral" from="_flexbus_read_address_hold">
+                <description></description>
+                <item id="kFLEXBUS_Hold1Or0Cycles" label="Hold address and attributes 1 or 0 cycles on reads"/>
+                <item id="kFLEXBUS_Hold2Or1Cycles" label="Hold address and attributes 2 or 1 cycles on reads"/>
+                <item id="kFLEXBUS_Hold3Or2Cycle" label="Hold address and attributes 3 or 2 cycles on reads"/>
+                <item id="kFLEXBUS_Hold4Or3Cycle" label="Hold address and attributes 4 or 3 cycles on reads"/>
+            </enum>
+            <enum id="flexbus_address_setup_t" label="Address setup for FlexBus peripheral" from="_flexbus_address_setup">
+                <description></description>
+                <item id="kFLEXBUS_FirstRisingEdge" label="Assert FB_CSn on first rising clock edge after address is asserted"/>
+                <item id="kFLEXBUS_SecondRisingEdge" label="Assert FB_CSn on second rising clock edge after address is asserted"/>
+                <item id="kFLEXBUS_ThirdRisingEdge" label="Assert FB_CSn on third rising clock edge after address is asserted"/>
+                <item id="kFLEXBUS_FourthRisingEdge" label="Assert FB_CSn on fourth rising clock edge after address is asserted"/>
+            </enum>
+            <enum id="flexbus_bytelane_shift_t" label="Defines byte-lane shift for FlexBus peripheral" from="_flexbus_bytelane_shift">
+                <description></description>
+                <item id="kFLEXBUS_NotShifted" label="Not shifted"/>
+                <item id="kFLEXBUS_Shifted" label="Shifted"/>
+            </enum>
+            <enum id="flexbus_multiplex_group1_t" label="Defines multiplex group1 valid signals" from="_flexbus_multiplex_group1_signal">
+                <description></description>
+                <item id="kFLEXBUS_MultiplexGroup1_FB_ALE" label="FB_ALE"/>
+                <item id="kFLEXBUS_MultiplexGroup1_FB_CS1" label="FB_CS1"/>
+                <item id="kFLEXBUS_MultiplexGroup1_FB_TS" label="FB_TS"/>
+            </enum>
+            <enum id="flexbus_multiplex_group2_t" label="Defines multiplex group2 valid signals" from="_flexbus_multiplex_group2_signal">
+                <description></description>
+                <item id="kFLEXBUS_MultiplexGroup2_FB_CS4" label="FB_CS4"/>
+                <item id="kFLEXBUS_MultiplexGroup2_FB_TSIZ0" label="FB_TSIZ0"/>
+                <item id="kFLEXBUS_MultiplexGroup2_FB_BE_31_24" label="FB_BE_31_24"/>
+            </enum>
+            <enum id="flexbus_multiplex_group3_t" label="Defines multiplex group3 valid signals" from="_flexbus_multiplex_group3_signal">
+                <description></description>
+                <item id="kFLEXBUS_MultiplexGroup3_FB_CS5" label="FB_CS5"/>
+                <item id="kFLEXBUS_MultiplexGroup3_FB_TSIZ1" label="FB_TSIZ1"/>
+                <item id="kFLEXBUS_MultiplexGroup3_FB_BE_23_16" label="FB_BE_23_16"/>
+            </enum>
+            <enum id="flexbus_multiplex_group4_t" label="Defines multiplex group4 valid signals" from="_flexbus_multiplex_group4_signal">
+                <description></description>
+                <item id="kFLEXBUS_MultiplexGroup4_FB_TBST" label="FB_TBST"/>
+                <item id="kFLEXBUS_MultiplexGroup4_FB_CS2" label="FB_CS2"/>
+                <item id="kFLEXBUS_MultiplexGroup4_FB_BE_15_8" label="FB_BE_15_8"/>
+            </enum>
+            <enum id="flexbus_multiplex_group5_t" label="Defines multiplex group5 valid signals" from="_flexbus_multiplex_group5_signal">
+                <description></description>
+                <item id="kFLEXBUS_MultiplexGroup5_FB_TA" label="FB_TA"/>
+                <item id="kFLEXBUS_MultiplexGroup5_FB_CS3" label="FB_CS3"/>
+                <item id="kFLEXBUS_MultiplexGroup5_FB_BE_7_0" label="FB_BE_7_0"/>
+            </enum>
+            <struct id="flexbus_config_t" label="Configuration structure that the user needs to set" from="_flexbus_config">
+                <description></description>
+                <integer id="chip" label="Chip FlexBus for validation" type="uint8_t">
+                    <description>Chip FlexBus for validation</description>
+                </integer>
+                <integer id="waitStates" label="Value of wait states" type="uint8_t">
+                    <description>Value of wait states</description>
+                </integer>
+                <integer id="secondaryWaitStates" label="Value of secondary wait states" type="uint8_t">
+                    <description>Value of secondary wait states</description>
+                </integer>
+                <integer id="chipBaseAddress" label="Chip base address for using FlexBus" type="uint32_t">
+                    <description>Chip base address for using FlexBus</description>
+                </integer>
+                <integer id="chipBaseAddressMask" label="Chip base address mask" type="uint32_t">
+                    <description>Chip base address mask</description>
+                </integer>
+                <bool id="writeProtect" label="Write protected">
+                    <description>Write protected</description>
+                </bool>
+                <bool id="burstWrite" label="Burst-Write enable">
+                    <description>Burst-Write enable</description>
+                </bool>
+                <bool id="burstRead" label="Burst-Read enable">
+                    <description>Burst-Read enable</description>
+                </bool>
+                <bool id="byteEnableMode" label="Byte-enable mode support">
+                    <description>Byte-enable mode support</description>
+                </bool>
+                <bool id="autoAcknowledge" label="Auto acknowledge setting">
+                    <description>Auto acknowledge setting</description>
+                </bool>
+                <bool id="extendTransferAddress" label="Extend transfer start/extend address latch enable">
+                    <description>Extend transfer start/extend address latch enable</description>
+                </bool>
+                <bool id="secondaryWaitStatesEnable" label="Enable secondary wait states number">
+                    <description>Enable secondary wait states number</description>
+                </bool>
+                <reference id="portSize" label="Port size of transfer" type="flexbus_port_size_t">
+                    <description>Port size of transfer</description>
+                </reference>
+                <reference id="byteLaneShift" label="Byte-lane shift enable" type="flexbus_bytelane_shift_t">
+                    <description>Byte-lane shift enable</description>
+                </reference>
+                <reference id="writeAddressHold" label="Write control interval" type="flexbus_write_address_hold_t">
+                    <description>Write address hold or deselect option</description>
+                </reference>
+                <reference id="readAddressHold" label="Read control interval" type="flexbus_read_address_hold_t">
+                    <description>Read address hold or deselect option</description>
+                </reference>
+                <reference id="addressSetup" label="Address setup setting" type="flexbus_address_setup_t">
+                    <description>Address setup setting</description>
+                </reference>
+                <reference id="group1MultiplexControl" label="FlexBus Signal Group 1 Multiplex control" type="flexbus_multiplex_group1_t">
+                    <description>FlexBus Signal Group 1 Multiplex control</description>
+                </reference>
+                <reference id="group2MultiplexControl" label="FlexBus Signal Group 2 Multiplex control" type="flexbus_multiplex_group2_t">
+                    <description>FlexBus Signal Group 2 Multiplex control</description>
+                </reference>
+                <reference id="group3MultiplexControl" label="FlexBus Signal Group 3 Multiplex control" type="flexbus_multiplex_group3_t">
+                    <description>FlexBus Signal Group 3 Multiplex control</description>
+                </reference>
+                <reference id="group4MultiplexControl" label="FlexBus Signal Group 4 Multiplex control" type="flexbus_multiplex_group4_t">
+                    <description>FlexBus Signal Group 4 Multiplex control</description>
+                </reference>
+                <reference id="group5MultiplexControl" label="FlexBus Signal Group 5 Multiplex control" type="flexbus_multiplex_group5_t">
+                    <description>FlexBus Signal Group 5 Multiplex control</description>
+                </reference>
+            </struct>
+        </generated_types>
+        <user_types>
+            <enum id="chipSelect" label="Chip-select" from="user">
+                <item id="FB_CS0" label="FB_CS0" value="0" available="$parent.getID() == `0`">
+                    <description>FB_CS0</description>
+                </item>
+                <item id="FB_CS1" label="FB_CS1" value="1" available="$parent.getID() != `0`">
+                    <description>FB_CS1</description>
+                </item>
+                <item id="FB_CS2" label="FB_CS2" value="2" available="$parent.getID() != `0`">
+                    <description>FB_CS2</description>
+                </item>
+                <item id="FB_CS3" label="FB_CS3" value="3" available="$parent.getID() != `0`">
+                    <description>FB_CS3</description>
+                </item>
+                <item id="FB_CS4" label="FB_CS4" value="4" available="$parent.getID() != `0`">
+                    <description>FB_CS4</description>
+                </item>
+                <item id="FB_CS5" label="FB_CS5" value="5" available="$parent.getID() != `0`">
+                    <description>FB_CS5</description>
+                </item>
+            </enum>
+            <enum id="flexbus_port_size_t" label="Port size [bit]" from="_flexbus_port_size">
+                <description>
+Specifies the data port width of the associated chip-select, and determines where the data is driven during the write cycles and where the data is sampled during the read cycles.
+                </description>
+                <item id="kFLEXBUS_1Byte" label_expr="(`8-bit ` + (($parent.byteLaneShift.getValue() == `kFLEXBUS_Shifted`)?`(FB_D[7:0])`:`(FB_D[31:24])`))" value="kFLEXBUS_1Byte">
+                    <description>8-bit port size. Valid data is sampled and driven on FB_D[31:24] when BLS (Byte-Lane Shift) is 0 or on FB_D[7:0] when BLS is 1.</description>
+                </item>
+                <item id="kFLEXBUS_2Bytes" label_expr="(`16-bit ` + (($parent.byteLaneShift.getValue() == `kFLEXBUS_Shifted`) ?`(FB_D[15:0])`:`(FB_D[31:16])`))" value="kFLEXBUS_2Bytes">
+                    <description>16-bit port size. Valid data is sampled and driven on FB_D[31:16] when BLS (Byte-Lane Shift) is 0 or on FB_D[15:0] when BLS is 1.</description>
+                </item>
+                <item id="kFLEXBUS_4Bytes" label_expr="`32-bit`" value="kFLEXBUS_4Bytes">
+                    <description>32-bit port size. Valid data is sampled and driven on FB_D[31:0].</description>
+                </item>
+            </enum>
+            <enum id="flexbus_write_address_hold_t" label="Write control interval" from="_flexbus_write_address_hold">
+                <description>
+Controls the **address**, **data**, and **attribute hold time** after the termination of a **write cycle** that hits in the associated chip-select's address space.
+  *NOTE*:  
+  The hold time applies only at the end of a transfer. Therefore, during a burst transfer or a transfer to a port size smaller than the transfer size, the hold time is only added after the last bus cycle.
+                </description>
+                <item id="kFLEXBUS_Hold1Cycle" label="One cycle" value="kFLEXBUS_Hold1Cycle">
+                    <description>Hold address one cycle after FB_CSn negates on writes.</description>
+                </item>
+                <item id="kFLEXBUS_Hold2Cycles" label="Two cycles" value="kFLEXBUS_Hold2Cycles">
+                    <description>Hold address two cycles after FB_CSn negates on writes.</description>
+                </item>
+                <item id="kFLEXBUS_Hold3Cycles" label="Three cycles" value="kFLEXBUS_Hold3Cycles">
+                    <description>Hold address three cycles after FB_CSn negates on writes.</description>
+                </item>
+                <item id="kFLEXBUS_Hold4Cycles" label="Four cycles" value="kFLEXBUS_Hold4Cycles">
+                    <description>Hold address four cycles after FB_CSn negates on writes.</description>
+                </item>
+            </enum>
+            <enum id="flexbus_read_address_hold_t" label="Read control interval" from="_flexbus_read_address_hold">
+                <description>
+Controls the **address** and **attribute hold time** after the termination during a **read cycle** that hits in the associated chip-select's address space.
+  *NOTE:*  
+  * The hold time applies only at the end of a transfer. Therefore, during a burst transfer or a transfer to a port size smaller than the transfer size, the hold time is only added after the last bus cycle.
+  * The number of cycles the address and attributes are held after FB_CSn (chip select signal) de-assertion depends on the value of the AA bit (Auto acknowledge).
+                </description>
+                <item id="kFLEXBUS_Hold1Or0Cycles" label_expr="($parent.autoAcknowledge.getValue() ?`One`:`Zero`) + ` cycle`" value="kFLEXBUS_Hold1Or0Cycles">
+                    <description expr="`Hold address ` + ($parent.autoAcknowledge.getValue() ?`one`:`zero`) + ` cycle on reads.`"/>
+                </item>
+                <item id="kFLEXBUS_Hold2Or1Cycles" label_expr="($parent.autoAcknowledge.getValue() ?`Two cycles`:`One cycle`)" value="kFLEXBUS_Hold2Or1Cycles">
+                    <description expr="`Hold address ` + ($parent.autoAcknowledge.getValue() ?`two cycles`:`one cycle`) + ` on reads.`"/>
+                </item>
+                <item id="kFLEXBUS_Hold3Or2Cycle" label_expr="($parent.autoAcknowledge.getValue() ?`Three`:`Two`) + ` cycles`" value="kFLEXBUS_Hold3Or2Cycle">
+                    <description expr="`Hold address ` + ($parent.autoAcknowledge.getValue() ?`three`:`two`) + ` cycles on reads.`"/>
+                </item>
+                <item id="kFLEXBUS_Hold4Or3Cycle" label_expr="($parent.autoAcknowledge.getValue() ?`Four`:`Three`) + ` cycles`" value="kFLEXBUS_Hold4Or3Cycle">
+                    <description expr="`Hold address ` + ($parent.autoAcknowledge.getValue() ?`four`:`three`) + ` cycles on reads.`"/>
+                </item>
+            </enum>
+            <enum id="flexbus_address_setup_t" label="Address setup" from="_flexbus_address_setup">
+                <description>
+Controls when the chip-select is asserted with respect to assertion of a valid address and attributes.
+                </description>
+                <item id="kFLEXBUS_FirstRisingEdge" label="First rising clock edge" value="kFLEXBUS_FirstRisingEdge">
+                    <description>Assert FB_CSn (chip select) on first rising clock edge after address is asserted.</description>
+                </item>
+                <item id="kFLEXBUS_SecondRisingEdge" label="Second rising clock edge" value="kFLEXBUS_SecondRisingEdge">
+                    <description>Assert FB_CSn (chip select) on second rising clock edge after address is asserted</description>
+                </item>
+                <item id="kFLEXBUS_ThirdRisingEdge" label="Third rising clock edge" value="kFLEXBUS_ThirdRisingEdge">
+                    <description>Assert FB_CSn (chip select) on third rising clock edge after address is asserted</description>
+                </item>
+                <item id="kFLEXBUS_FourthRisingEdge" label="Fourth rising clock edge" value="kFLEXBUS_FourthRisingEdge">
+                    <description>Assert FB_CSn (chip select) on fourth rising clock edge after address is asserted</description>
+                </item>
+            </enum>
+            <enum id="flexbus_bytelane_shift_t" label="Byte-lane shift" from="_flexbus_bytelane_shift">
+                <description>
+Specifies if data on FB_AD appears left-aligned or right-aligned during the data phase of a FlexBus access.
+                </description>
+                <item id="kFLEXBUS_NotShifted" label="Not shifted" value="kFLEXBUS_NotShifted">
+                    <description>Not shifted. Data is left-aligned on FB_AD.</description>
+                </item>
+                <item id="kFLEXBUS_Shifted" label="Shifted" value="kFLEXBUS_Shifted">
+                    <description>Shifted. Data is right-aligned on FB_AD.</description>
+                </item>
+            </enum>
+            <enum id="flexbus_multiplex_group1_t" label="Select group 1 signal" from="_flexbus_multiplex_group1_signal">
+                <description>Controls the multiplexing of the FB_ALE, FB_CS1 or FB_TS signals to the external pin.</description>
+                <item id="kFLEXBUS_MultiplexGroup1_FB_ALE" label="FB_ALE" value="kFLEXBUS_MultiplexGroup1_FB_ALE">
+                    <description>FB_ALE signal</description>
+                </item>
+                <item id="kFLEXBUS_MultiplexGroup1_FB_CS1" label="FB_CS1" value="kFLEXBUS_MultiplexGroup1_FB_CS1">
+                    <description>Inverted FB_CS1 signal</description>
+                </item>
+                <item id="kFLEXBUS_MultiplexGroup1_FB_TS" label="FB_TS" value="kFLEXBUS_MultiplexGroup1_FB_TS">
+                    <description>Inverted FB_TS signal</description>
+                </item>
+            </enum>
+            <enum id="flexbus_multiplex_group2_t" label="Select group 2  signal" from="_flexbus_multiplex_group2_signal">
+                <description>Controls the multiplexing of the FB_CS4 , FB_TSIZ0, and FB_BE_31_24 signals to the external pin.</description>
+                <item id="kFLEXBUS_MultiplexGroup2_FB_CS4" label="FB_CS4" value="kFLEXBUS_MultiplexGroup2_FB_CS4">
+                    <description>Inverted FB_CS4 signal</description>
+                </item>
+                <item id="kFLEXBUS_MultiplexGroup2_FB_TSIZ0" label="FB_TSIZ0" value="kFLEXBUS_MultiplexGroup2_FB_TSIZ0">
+                    <description>FB_TSIZ0 signal</description>
+                </item>
+                <item id="kFLEXBUS_MultiplexGroup2_FB_BE_31_24" label="FB_BE_31_24" value="kFLEXBUS_MultiplexGroup2_FB_BE_31_24">
+                    <description>Inverted FB_BE_31_24 signal</description>
+                </item>
+            </enum>
+            <enum id="flexbus_multiplex_group3_t" label="Select group 3  signal" from="_flexbus_multiplex_group3_signal">
+                <description>Controls the multiplexing of the FB_CS5 , FB_TSIZ1, and FB_BE_23_16 signals to the external pin.</description>
+                <item id="kFLEXBUS_MultiplexGroup3_FB_CS5" label="FB_CS5" value="kFLEXBUS_MultiplexGroup3_FB_CS5">
+                    <description>Inverted FB_CS5 signal</description>
+                </item>
+                <item id="kFLEXBUS_MultiplexGroup3_FB_TSIZ1" label="FB_TSIZ1" value="kFLEXBUS_MultiplexGroup3_FB_TSIZ1">
+                    <description>FB_TSIZ1 signal</description>
+                </item>
+                <item id="kFLEXBUS_MultiplexGroup3_FB_BE_23_16" label="FB_BE_23_16" value="kFLEXBUS_MultiplexGroup3_FB_BE_23_16">
+                    <description>Inverted FB_BE_23_16 signal</description>
+                </item>
+            </enum>
+            <enum id="flexbus_multiplex_group4_t" label="Select group 4 signal" from="_flexbus_multiplex_group4_signal">
+                <description>Controls the multiplexing of the FB_TBST , FB_CS2 , and FB_BE_15_8 signals to the external pin.</description>
+                <item id="kFLEXBUS_MultiplexGroup4_FB_TBST" label="FB_TBST" value="kFLEXBUS_MultiplexGroup4_FB_TBST">
+                    <description>Inverted FB_TBST signal</description>
+                </item>
+                <item id="kFLEXBUS_MultiplexGroup4_FB_CS2" label="FB_CS2" value="kFLEXBUS_MultiplexGroup4_FB_CS2">
+                    <description>Inverted FB_CS2 signal</description>
+                </item>
+                <item id="kFLEXBUS_MultiplexGroup4_FB_BE_15_8" label="FB_BE_15_8" value="kFLEXBUS_MultiplexGroup4_FB_BE_15_8">
+                    <description>Inverted FB_BE_15_8 signal</description>
+                </item>
+            </enum>
+            <enum id="flexbus_multiplex_group5_t" label="Select group 5 signal " from="_flexbus_multiplex_group5_signal">
+                <description>Controls the multiplexing of the FB_TA , FB_CS3 , and FB_BE_7_0 signals to the external pin.</description>
+                <item id="kFLEXBUS_MultiplexGroup5_FB_TA" label="FB_TA" value="kFLEXBUS_MultiplexGroup5_FB_TA">
+                    <description>Inverted FB_TA signal</description>
+                </item>
+                <item id="kFLEXBUS_MultiplexGroup5_FB_CS3" label="FB_CS3" value="kFLEXBUS_MultiplexGroup5_FB_CS3">
+                    <description>Inverted FB_CS3 signal</description>
+                </item>
+                <item id="kFLEXBUS_MultiplexGroup5_FB_BE_7_0" label="FB_BE_7_0" value="kFLEXBUS_MultiplexGroup5_FB_BE_7_0">
+                    <description>Inverted FB_BE_7_0 signal</description>
+                </item>
+            </enum>
+            <struct id="flexbus_config_t" label="Configuration structure" from="_flexbus_config">
+                <description expr="`Flexbus `+ toLowerCase($configSet.chipRename.getValue()) +` configuration structure.`"/>
+                <bool id="enableChipConfiguration" label_expr="`Enable `+ toLowerCase($configSet.chipRename.getValue()) +` configuration`" options="remove_from_struct_init">
+                    <description expr="`Generate the external ` + toLowerCase($configSet.chipRename.getValue()) + ` configuration structure to the source file.`"/>
+                </bool>
+                <bool id="initChip" label_expr="$configSet.chipRename.getValue() + ` initialization`" options="remove_from_struct_init" enable="$parent.enableChipConfiguration.getValue() &amp;&amp; (($parent.getID() == `0`) || $parent.getParent().getSetting(`0`).getSetting(`initChip`).getValue())">
+                    <description expr="`Call the initialization function for this ` + toLowerCase($configSet.chipRename.getValue()) + ` in the c source file.`"/>
+                </bool>
+                <reference id="chip" type="chipSelect" options="use_enum_value">
+                    <description expr="`The selection of the chip-select pin and ` + toLowerCase($configSet.chipRename.getValue()) + `(chip) index.`"/>
+                    <validation>
+                        <constraint cond_expr="$configSet.flexbus_configs.countOccurrences(item -> (item.getSetting(`chip`).getEnumItemValue() == $this.getEnumItemValue())) &lt;= 1" description_expr="`The chip select index ` + $this.getEnumItemValue() + ` is not unique.`" level="error"/>
+                        <constraint when_expr="$this.getEnumItemValue() == `1`" cond_expr="$configSet.groupsMultiplexControl.group1MultiplexControl.getEnumItemId() == `kFLEXBUS_MultiplexGroup1_FB_CS1`" description_expr="`The chip select signal FB_CS1 is not choosen in group 1.`" level="warning"/>
+                        <constraint when_expr="$this.getEnumItemValue() == `2`" cond_expr="$configSet.groupsMultiplexControl.group4MultiplexControl.getEnumItemId() == `kFLEXBUS_MultiplexGroup4_FB_CS2`" description_expr="`The chip select signal FB_CS2 is not choosen in group 4.`" level="warning"/>
+                        <constraint when_expr="$this.getEnumItemValue() == `3`" cond_expr="$configSet.groupsMultiplexControl.group5MultiplexControl.getEnumItemId() == `kFLEXBUS_MultiplexGroup5_FB_CS3`" description_expr="`The chip select signal FB_CS3 is not choosen in group 5.`" level="warning"/>
+                        <constraint when_expr="$this.getEnumItemValue() == `4`" cond_expr="$configSet.groupsMultiplexControl.group2MultiplexControl.getEnumItemId() == `kFLEXBUS_MultiplexGroup2_FB_CS4`" description_expr="`The chip select signal FB_CS4 is not choosen in group 2.`" level="warning"/>
+                        <constraint when_expr="$this.getEnumItemValue() == `5`" cond_expr="$configSet.groupsMultiplexControl.group3MultiplexControl.getEnumItemId() == `kFLEXBUS_MultiplexGroup3_FB_CS5`" description_expr="`The chip select signal FB_CS5 is not choosen in group 3.`" level="warning"/>
+                    </validation>
+                </reference>
+                <string id="chipUserName" label_expr="$configSet.chipRename.getValue() + ` user name`" validation_expr="(x -> ((x == ``) || (($configSet.flexbus_configs.countOccurrences(item -> (item.getSetting(`chipUserName`).getValue() == x)) &lt;= 1) &amp;&amp; isCIdentifier(x))))" options="remove_from_struct_init">
+                    <description expr="$configSet.chipRename.getValue() + ` user name is used in the name of the configuration structures and has to be unique and C identifier.`"/>
+                </string>
+                <variable id="minMemory" value="0x00000000" options="remove_from_struct_init"/>
+                <variable id="maxMemory" value="0xFFFFFFFF" options="remove_from_struct_init"/>
+                <integer id="chipBaseAddress" label_expr="$configSet.chipRename.getValue() + ` base address`" type="uint32_t" min_expr="$parent.minMemory.getValue()" max_expr="$parent.maxMemory.getValue()">
+                    <description>
+Defines the base address for memory dedicated to the associated chip-select. BA is compared to bits 31–16 on the internal address bus to determine if the associated chip-select's memory is being accessed.
+
+*NOTE:* 
+Because the FlexBus module is one of the slaves connected to the crossbar switch, it is only accessible within a certain memory range. See the chip memory map for the applicable FlexBus "expansion" address range for which the chip-selects can be active.
+                    </description>
+                    <validation>
+                        <constraint when_expr="$parent.enableChipConfiguration.getValue()" cond_expr="$configSet.flexbus_configs.countOccurrences(item -> (item.getSetting(`enableChipConfiguration`).getValue() &amp;&amp; ((item.getSetting(`chipBaseAddressClear`).getValue().toInt() &lt;= $this.getValue().toInt()) &amp;&amp; (item.getSetting(`chipMaxAddress`).getValue().toInt() &gt;= $this.getValue().toInt())))) &lt;= 1" description_expr="`Instance ` + $instance.getID()  + `. The base address is in memory range of other chips. ` + $configSet.chipsMemoryMapping.getValue()" level="error"/>
+                    </validation>
+                </integer>
+                <enum id="chipBaseAddressMask" label_expr="$configSet.chipRename.getValue() + ` base address mask`" options="use_enum_value">
+                    <description>
+Defines the associated chip-select's block size
+                    </description>
+                    <validation>
+                        <constraint when_expr="$parent.enableChipConfiguration.getValue()" cond_expr="$configSet.flexbus_configs.countOccurrences(item -> (item.getSetting(`enableChipConfiguration`).getValue() &amp;&amp; ((item.getSetting(`chipBaseAddressClear`).getValue().toInt() &lt;= $parent.chipMaxAddress.getValue().toInt()) &amp;&amp; (item.getSetting(`chipMaxAddress`).getValue().toInt() &gt;= $parent.chipMaxAddress.getValue().toInt())))) &lt;= 1" description_expr="`Instance ` + $instance.getID()  + `. The address range of the chip is in the memory range of other chips. Set the base address or the address mask. ` + $configSet.chipsMemoryMapping.getValue()" level="error"/>
+                    </validation>
+                    <item id="mask_0x0000" label="64 kB" value="0x0000U"/>
+                    <item id="mask_0x0001" label="128 kB" value="0x0001U"/>
+                    <item id="mask_0x0003" label="256 kB" value="0x0003U"/>
+                    <item id="mask_0x0007" label="512 kB" value="0x0007U"/>
+                    <item id="mask_0x000F" label="1 MB" value="0x000FU"/>
+                    <item id="mask_0x001F" label="2 MB" value="0x001FU"/>
+                    <item id="mask_0x003F" label="4 MB" value="0x003FU"/>
+                    <item id="mask_0x007F" label="8 MB" value="0x007FU"/>
+                    <item id="mask_0x00FF" label="16 MB" value="0x00FFU"/>
+                    <item id="mask_0x01FF" label="32 MB" value="0x01FFU"/>
+                    <item id="mask_0x03FF" label="64 MB" value="0x03FFU"/>
+                    <item id="mask_0x07FF" label="128 MB" value="0x07FFU"/>
+                    <item id="mask_0x0FFF" label="256 MB" value="0x0FFFU"/>
+                </enum>
+                <variable  id="chipBaseAddressClear" value="toString((($parent.chipBaseAddress.getValue().toInt() &gt;&gt; 16) &lt;&lt; 16),16)" options="remove_from_struct_init"/>
+                <variable id="chipBaseAddressMaskFull" value="$parent.chipBaseAddressMask.getEnumItemValue().regexSubstr(`(0x[0-9A-F]+)U`,1) + `FFFF`"/>
+                <variable id="chipMaxAddress" value="toString((($parent.chipBaseAddressClear.getValue().toInt() &amp; ~($parent.chipBaseAddressMaskFull.getValue().toInt())) + $parent.chipBaseAddressMaskFull.getValue().toInt()),16)" options="remove_from_struct_init"/>
+                <info id="addressRange" label="Address range" value="$parent.chipBaseAddressClear.getValue() + ` - ` + $parent.chipMaxAddress.getValue()" options="remove_from_struct_init">
+                    <description expr="$configSet.chipRename.getValue() + ` address range. This range depends on the ` + $configSet.chipRename.getValue() + ` base address and the ` + $configSet.chipRename.getValue() + ` base address mask items.`"/>
+                </info>
+                <bool id="byteEnableMode" label="Byte-enable mode">
+                    <description>
+Specifies whether the corresponding FB\_BE is asserted for read accesses. Certain memories have byte enables that must be asserted during reads and writes. Write 1 to the BEM bit in the relevant CSCR to provide the appropriate mode of byte enable support for these SRAMs.
+Disable: FB_BE is asserted for data write only.
+Enable: FB_BE is asserted for data read and write accesses.
+                </description>
+                </bool>
+                <bool id="autoAcknowledge" label="Auto acknowledge">
+                    <description>
+Asserts the internal transfer acknowledge for accesses specified by the chip-select address.
+
+NOTE: If AA is 1 for a corresponding FB_CSn and the external system asserts an external FB_TA before the wait-state countdown asserts the internal FB_TA, the cycle is terminated. Burst cycles increment the address bus between each internal termination.
+
+NOTE: This field must be Enable if FB_TA is disabled (signal group 5).
+
+Disable: No internal transfer acknowledge is asserted and the cycle is terminated externally.
+Enable: Internal transfer acknowledge is asserted as specified by wait states.
+                    </description>
+                    <validation>
+                        <constraint when_expr="$parent.enableChipConfiguration.getValue()" cond_expr="$this.getValue() || ($configSet.groupsMultiplexControl.group5MultiplexControl.getEnumItemValue() == `kFLEXBUS_MultiplexGroup5_FB_TA`)" description_expr="`Instance ` + $instance.getID()  + `. The Auto acknowledge must be Enable if FB_TA is disabled (signal group 5).`" level="error"/>
+                    </validation>
+                </bool>
+                <bool id="extendTransferAddress" label="Extend TS/ALE">
+                    <description>
+*Extend transfer start (TS)/extend address latch enable (ALE)*
+
+Controls how long FB\_TS /FB\_ALE is asserted.  
+  * Disabled: FB\_TS /FB\_ALE asserts for one bus clock cycle.  
+  * Enabled: FB\_TS /FB\_ALE remains asserted until the first positive clock edge after FB_CSn asserts.  
+                    </description>
+                </bool>
+                <reference id="byteLaneShift" type="flexbus_bytelane_shift_t" options="use_enum_value"/>
+                <reference id="portSize" type="flexbus_port_size_t" options="use_enum_value"/>
+                <reference id="writeAddressHold" type="flexbus_write_address_hold_t" options="use_enum_value"/>
+                <reference id="readAddressHold" type="flexbus_read_address_hold_t" options="use_enum_value"/>
+                <reference id="addressSetup" type="flexbus_address_setup_t" options="use_enum_value"/>
+                <integer id="waitStates" label="Wait states value" type="uint8_t" max_expr="63">
+                    <description>
+                        Specifies the number of wait states inserted after FlexBus asserts the associated chip-select and before an internal transfer acknowledge is generated.
+                    </description>
+                </integer>
+                <bool id="secondaryWaitStatesEnable" label="Enable secondary wait states">
+                    <description>Enable secondary wait states</description>
+                </bool>
+                <integer id="secondaryWaitStates" label="Secondary wait states value" type="uint8_t"  max_expr="63">
+                    <description>Specifies the number of wait states inserted before an internal transfer acknowledge is generated for a burst transfer (except for the first termination, which is controlledby WS). Used only when Enable secondary wait states item is set.</description>
+                </integer>
+                <bool id="burstWrite" label="Burst-Write enable">
+                    <description>                        
+                        Specifies whether burst writes are enabled for memory associated with each chip select.
+                        Disable: Data exceeding the specified port size is broken into individual, port-sized, non-burst writes. For example, a 32-bit write to an 8-bit port takes four byte writes.
+                        Enable: Enabled. Enables burst write of data larger than the specified port size, including 32-bit writes to 8- and 16-bit ports, 16-bit writes to 8-bit ports, and line writes to 8-, 16-, and 32-bit ports.
+                    </description>
+                </bool>
+                <bool id="burstRead" label="Burst-Read enable">
+                    <description>
+                        Specifies whether burst reads are enabled for memory associated with each chip select.
+                        Disable: Data exceeding the specified port size is broken into individual, port-sized, non-burst reads. For example, a 32-bit read from an 8-bit port is broken into four 8-bit reads.
+                        Enable: Enables data burst reads larger than the specified port size, including 32-bit reads from 8- and 16-bit ports, 16-bit reads from 8-bit ports, and line reads from 8-, 16-, and 32-bit ports.
+                    </description>
+                </bool>
+                <bool id="writeProtect" label="Write protected">
+                    <description>
+                        Controls write accesses to the address range.
+                        Disable:  Write accesses are allowed.
+                        Enable: Write accesses are not allowed. Attempting to write to the range of addresses for which the WP bit is set results in a bus error termination of the internal cycle and no external cycle.
+                    </description>
+                </bool>
+                <variable id="group1MultiplexControl" value="$configSet.groupsMultiplexControl.group1MultiplexControl.getEnumItemValue()" options="add_to_struct"/>
+                <variable id="group2MultiplexControl" value="$configSet.groupsMultiplexControl.group2MultiplexControl.getEnumItemValue()" options="add_to_struct"/>
+                <variable id="group3MultiplexControl" value="$configSet.groupsMultiplexControl.group3MultiplexControl.getEnumItemValue()" options="add_to_struct"/>
+                <variable id="group4MultiplexControl" value="$configSet.groupsMultiplexControl.group4MultiplexControl.getEnumItemValue()" options="add_to_struct"/>
+                <variable id="group5MultiplexControl" value="$configSet.groupsMultiplexControl.group5MultiplexControl.getEnumItemValue()" options="add_to_struct"/>
+            </struct>
+            <struct id="groupsMultiplexControl_user">
+                <reference id="group1MultiplexControl" type="flexbus_multiplex_group1_t"/>
+                <reference id="group2MultiplexControl" type="flexbus_multiplex_group2_t"/>
+                <reference id="group3MultiplexControl" type="flexbus_multiplex_group3_t"/>
+                <reference id="group4MultiplexControl" type="flexbus_multiplex_group4_t"/>
+                <reference id="group5MultiplexControl" type="flexbus_multiplex_group5_t"/>
+            </struct>
+            <set id="checkSignalsPins_user">
+                <item id="checkSignals_FB_A" label_expr="`FB_Ax   `" available="enumItemsOf($configSet.listOf_FB_A_Signals).size() &gt; 0">
+                    <description expr="`Check FB_Ax (address) signals routing in the Pins tool.`"/>                    
+                </item>
+                <item id="checkSignals_FB_AD" label_expr="`FB_ADx`">
+                    <description expr="`Check FB_ADx (address/Data) signals routing in the Pins tool.`"/>                    
+                </item>
+                <item id="checkSignal_FB_CLK" label_expr="`FB_CLK   `">
+                    <description expr="`Check FB_CLK signal routing in the Pins tool.`"/>                    
+                </item>
+                <item id="checkSignal_FB_OE" label_expr="`FB_OE    `">
+                    <description expr="`Check FB_OE signal routing in the Pins tool.`"/>                    
+                </item>
+                <item id="checkSignal_FB_RW" label_expr="`FB_RW     `">
+                    <description expr="`Check FB_RW signal routing in the Pins tool.`"/>                    
+                </item>
+                <item id="checkSignal_FB_CS0" label_expr="`FB_CS0   `">
+                    <description expr="`Check FB_CS0 signal routing in the Pins tool.`"/>                    
+                </item>
+                <item id="checkSignalGroup1" label_expr="$configSet.groupsMultiplexControl.group1MultiplexControl.getEnumItemLabel()">
+                    <description expr="`Check ` + $configSet.groupsMultiplexControl.group1MultiplexControl.getEnumItemLabel() + ` signals routing in the Pins tool.`"/> 
+                </item>
+                <item id="checkSignalGroup2" label_expr="$configSet.groupsMultiplexControl.group2MultiplexControl.getEnumItemLabel()">
+                    <description expr="`Check ` + $configSet.groupsMultiplexControl.group2MultiplexControl.getEnumItemLabel() + ` signals routing in the Pins tool.`"/> 
+                </item>
+                <item id="checkSignalGroup3" label_expr="$configSet.groupsMultiplexControl.group3MultiplexControl.getEnumItemLabel()">
+                    <description expr="`Check ` + $configSet.groupsMultiplexControl.group3MultiplexControl.getEnumItemLabel() + ` signals routing in the Pins tool.`"/> 
+                </item>
+                <item id="checkSignalGroup4" label_expr="$configSet.groupsMultiplexControl.group4MultiplexControl.getEnumItemLabel()">
+                    <description expr="`Check ` + $configSet.groupsMultiplexControl.group4MultiplexControl.getEnumItemLabel() + ` signals routing in the Pins tool.`"/> 
+                </item>
+                <item id="checkSignalGroup5" label_expr="$configSet.groupsMultiplexControl.group5MultiplexControl.getEnumItemLabel()">
+                    <description expr="`Check ` + $configSet.groupsMultiplexControl.group5MultiplexControl.getEnumItemLabel() + ` signals routing in the Pins tool.`"/> 
+                </item>
+            </set>
+            <set id="channelNrUser">
+                <item id="Nr00" label="0"/>
+                <item id="Nr01" label="1"/>
+                <item id="Nr02" label="2"/>
+                <item id="Nr03" label="3"/>
+                <item id="Nr04" label="4"/>
+                <item id="Nr05" label="5"/>
+                <item id="Nr06" label="6"/>
+                <item id="Nr07" label="7"/>
+                <item id="Nr08" label="8"/>
+                <item id="Nr09" label="9"/>
+                <item id="Nr10" label="10"/>
+                <item id="Nr11" label="11"/>
+                <item id="Nr12" label="12"/>
+                <item id="Nr13" label="13"/>
+                <item id="Nr14" label="14"/>
+                <item id="Nr15" label="15"/>
+                <item id="Nr16" label="16"/>
+                <item id="Nr17" label="17"/>
+                <item id="Nr18" label="18"/>
+                <item id="Nr19" label="19"/>
+                <item id="Nr20" label="20"/>
+                <item id="Nr21" label="21"/>
+                <item id="Nr22" label="22"/>
+                <item id="Nr23" label="23"/>
+                <item id="Nr24" label="24"/>
+                <item id="Nr25" label="25"/>
+                <item id="Nr26" label="26"/>
+                <item id="Nr27" label="27"/>
+                <item id="Nr28" label="28"/>
+                <item id="Nr29" label="29"/>
+                <item id="Nr30" label="30"/>
+                <item id="Nr31" label="31"/>
+            </set>
+        </user_types>
+        <settings>
+            <variable id="chipRename" value="`Device`"/>
+            <variable id="chipsMemoryMapping" value="`Memory mapping ` + ((($parent.flexbus_configs.size() &gt; 0) &amp;&amp; $parent.flexbus_configs.getSetting(`0`).getSetting(`enableChipConfiguration`).isAvailable() &amp;&amp; $parent.flexbus_configs.getSetting(`0`).getSetting(`enableChipConfiguration`).getValue()) ? ( ` ` + $parent.flexbus_configs.getSetting(`0`).getSettingKey() + `: ` +  $parent.flexbus_configs.getSetting(`0`).getSetting(`addressRange`).getValue()) : `` )+
+                ((($parent.flexbus_configs.size() &gt; 1) &amp;&amp; $parent.flexbus_configs.getSetting(`1`).getSetting(`enableChipConfiguration`).isAvailable() &amp;&amp; $parent.flexbus_configs.getSetting(`1`).getSetting(`enableChipConfiguration`).getValue()) ? ( ` ` +$parent.flexbus_configs.getSetting(`1`).getSettingKey() + `: ` +  $parent.flexbus_configs.getSetting(`1`).getSetting(`addressRange`).getValue()) : `` )+
+                ((($parent.flexbus_configs.size() &gt; 2) &amp;&amp; $parent.flexbus_configs.getSetting(`2`).getSetting(`enableChipConfiguration`).isAvailable() &amp;&amp; $parent.flexbus_configs.getSetting(`2`).getSetting(`enableChipConfiguration`).getValue()) ? ( ` ` +$parent.flexbus_configs.getSetting(`2`).getSettingKey() + `: ` +  $parent.flexbus_configs.getSetting(`2`).getSetting(`addressRange`).getValue()) : `` )+
+                ((($parent.flexbus_configs.size() &gt; 3) &amp;&amp; $parent.flexbus_configs.getSetting(`3`).getSetting(`enableChipConfiguration`).isAvailable() &amp;&amp; $parent.flexbus_configs.getSetting(`3`).getSetting(`enableChipConfiguration`).getValue()) ? ( ` ` +$parent.flexbus_configs.getSetting(`3`).getSettingKey() + `: ` +  $parent.flexbus_configs.getSetting(`3`).getSetting(`addressRange`).getValue()) : `` )+
+                ((($parent.flexbus_configs.size() &gt; 4) &amp;&amp; $parent.flexbus_configs.getSetting(`4`).getSetting(`enableChipConfiguration`).isAvailable() &amp;&amp; $parent.flexbus_configs.getSetting(`4`).getSetting(`enableChipConfiguration`).getValue()) ? ( ` ` +$parent.flexbus_configs.getSetting(`4`).getSettingKey() + `: ` +  $parent.flexbus_configs.getSetting(`4`).getSetting(`addressRange`).getValue()) : `` )+
+                ((($parent.flexbus_configs.size() &gt; 5) &amp;&amp; $parent.flexbus_configs.getSetting(`5`).getSetting(`enableChipConfiguration`).isAvailable() &amp;&amp; $parent.flexbus_configs.getSetting(`5`).getSetting(`enableChipConfiguration`).getValue()) ? ( ` ` +$parent.flexbus_configs.getSetting(`5`).getSettingKey() + `: ` +  $parent.flexbus_configs.getSetting(`5`).getSetting(`addressRange`).getValue()) : `` )
+            "/>
+            <dynamic_enum id="listOf_FB_A_Signals" items="getPeripheralSignals($instance.getPeripheral()).filter(item -> item.getID().regexMatch(`.*FB_A\..*`) || item.getValue().regexMatch(`.*fb_a\..*`))" available="false"/>
+            <variable id="clockSourceUId" value="`FunctionClock`"/>
+            <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" 
+                items="createArray().addItemToList($parent.clockSourceUId.getValue(), getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()), ($instance.getPeripheral() + `_CLK_SRC`),true)">
+                <description>Flexbus clock source.</description>
+                <validation>
+                    <dependency resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                        description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                        level="Warning">
+                        <feature name="frequency" evaluation="greaterThan">
+                            <data expr="0" unit="Hz" type="Frequency"/>
+                        </feature>
+                    </dependency>
+                </validation>
+            </dynamic_enum>
+            <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" 
+                items="getClockFunctionalGroups().arrayToEnumItems(
+                enumItem -> true,
+                enumItem -> enumItem,
+                enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)) + ((getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem) &gt; 0 ) ? (` / ` +  timeToString(getTimeFloat((getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem) + ` Hz`),`s`,`Hz`)*1000000)) : ``) + ` (` + enumItem + `)`,
+                enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem))">
+                <description>Selection of the clock source frequency / cycle </description>
+            </dynamic_enum> 
+            <array id="flexbus_configs" label="Flexbus configurations" type="flexbus_config_t" options="ShowContentAs=TABS;UI_ARRAY_INDICES_HIDDEN;UI_ARRAY_REORDER;BORDER_HIDDEN" key_selector_expr="x ->((x.getSetting(`chipUserName`).getValue()==``) ? (`Device` + x.getID()) : x.getSetting(`chipUserName`).getValue())">
+                <item_defaults>
+                    <set_default id="enableChipConfiguration" value_expr="x -> true"/>
+                    <set_default id="initChip" value_expr="x -> true"/>
+                    <set_default id="chip" value_expr="x -> `FB_CS` + x.getID()"/>
+                    <set_default id="chipUserName" value_expr="x -> `Device` + x.getID()"/>
+                    <set_default id="waitStates" value_expr="x -> 0"/>
+                    <set_default id="chipBaseAddress" value_expr="x -> ( (x.getID() == `0`) ? `0x60000000` : toString($configSet.flexbus_configs.getSetting(toString(x.getID().toInt() - 1)).getSetting(`chipMaxAddress`).getValue().toInt() + 1, 16))"/>
+                    <set_default id="chipBaseAddressMask" value_expr="x -> `mask_0x0000`"/>
+                    <set_default id="writeProtect" value_expr="x -> false"/>
+                    <set_default id="burstWrite" value_expr="x -> false"/>
+                    <set_default id="burstRead" value_expr="x -> false"/>
+                    <set_default id="byteEnableMode" value_expr="x -> false"/>
+                    <set_default id="autoAcknowledge" value_expr="x -> true"/>
+                    <set_default id="extendTransferAddress" value_expr="x -> false"/>
+                    <set_default id="portSize" value_expr="x -> `kFLEXBUS_1Byte`"/>
+                    <set_default id="byteLaneShift" value_expr="x -> `kFLEXBUS_NotShifted`"/>
+                    <set_default id="writeAddressHold" value_expr="x -> `kFLEXBUS_Hold1Cycle`"/>
+                    <set_default id="readAddressHold" value_expr="x -> `kFLEXBUS_Hold1Or0Cycles`"/>
+                    <set_default id="addressSetup" value_expr="x -> `kFLEXBUS_FirstRisingEdge`"/>
+                </item_defaults>
+            </array>
+            <variable id="maximalChipMemoryMask" value="(($parent.flexbus_configs.getSize() == 0) ? -1 : $parent.flexbus_configs.reduce(0, (lastResult, x) -> ((lastResult >=  x.getSetting(`chipBaseAddressMask`).getEnumItemValue().regexSubstr(`(0x[0-9A-F]+)U`,1).toInt()) ? lastResult : (x.getSetting(`chipBaseAddressMask`).getEnumItemValue().regexSubstr(`(0x[0-9A-F]+)U`,1).toInt()))))"/>
+            <reference id="channelNr" type="channelNrUser" available="false"/>
+            <variable id="FB_A_dependency" value="$parent.channelNr.reduce(0, (lastResult, x) -> (($parent.checkSignalsPins.checkSignals_FB_A.isAvailable() &amp;&amp; $parent.checkSignalsPins.checkSignals_FB_A.getValue() &amp;&amp; queryFeature(`PeripheralUnifiedSignal`,$instance.getPeripheral() + `.fb_a.` + x.getLabel(),`Exists`)  &amp;&amp; ((x.getLabel().toInt() > 15) ? (($parent.maximalChipMemoryMask.getValue() &amp; (2**(x.getLabel().toInt() - 16))) &gt; 0x0000): true)) ? lastResult.toInt() + (2 ** x.getLabel().toInt()) : lastResult))"/>
+            <variable id="FB_D_dependency" value="(($parent.flexbus_configs.getSize() == 0) ? 0 : $parent.flexbus_configs.reduce(0, (lastResult, x) -> ((x.getSetting(`byteLaneShift`).getEnumItemValue() == `kFLEXBUS_NotShifted`)? ((x.getSetting(`portSize`).getEnumItemValue() == `kFLEXBUS_1Byte`)? (lastResult.toInt() | 0xFF000000) : ((x.getSetting(`portSize`).getEnumItemValue() == `kFLEXBUS_2Bytes`)? (lastResult.toInt() | 0xFFFF0000) : 0xFFFFFFFF)): ((x.getSetting(`portSize`).getEnumItemValue() == `kFLEXBUS_1Byte`)? (lastResult.toInt() | 0x000000FF) : ((x.getSetting(`portSize`).getEnumItemValue() == `kFLEXBUS_2Bytes`)? (lastResult.toInt() | 0x0000FFFF) : 0xFFFFFFFF)))))"/>
+            <variable id="FB_AD_dependency" value="toString($parent.checkSignalsPins.checkSignals_FB_AD.getValue() ? (($parent.FB_A_dependency.getValue().toInt() ^ 0xFFFFFFFF) &amp; (($parent.maximalChipMemoryMask.getValue() &lt;&lt; 16) + 0xFFFF))| $parent.FB_D_dependency.getValue().toInt()  : 0,16)"/>
+            <reference id="groupsMultiplexControl" label="Signals multiplexing configuration" type="groupsMultiplexControl_user">
+                <description>Set the multiplexing of the FlexBus signals.</description>
+            </reference>
+            <reference id="checkSignalsPins" label="Check signals routing" type="checkSignalsPins_user">
+                <description>
+Set the signals which should be routed in the pins tool. 
+                </description>
+                <validation>
+                    <!-- FB_A -->
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**0)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.0`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `0` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**1)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.1`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `1` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**2)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.2`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `2` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**3)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.3`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `3` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**4)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.4`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `4` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**5)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.5`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `5` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**6)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.6`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `6` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**7)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.7`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `7` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**8)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.8`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `8` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**9)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.9`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `9` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**10)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.10`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `10` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**11)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.11`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `11` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**12)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.12`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `12` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**13)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.13`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `13` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**14)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.14`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `14` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**15)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.15`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `15` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**16)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.16`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `16` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**17)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.17`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `17` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**18)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.18`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `18` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**19)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.19`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `19` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**20)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.20`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `20` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**21)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.21`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `21` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**22)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.22`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `22` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**23)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.23`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `23` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**24)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.24`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `24` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**25)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.25`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `25` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**26)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.26`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `26` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**27)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.27`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `27` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**28)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.28`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `28` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**29)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.29`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `29` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**30)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.30`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `30` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_A_dependency.getValue().toInt() &amp; (2**31)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_a.31`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address bus`, `31` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <!-- FB_AD -->
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**0)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.0`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `0` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**1)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.1`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `1` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**2)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.2`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `2` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**3)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.3`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `3` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**4)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.4`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `4` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**5)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.5`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `5` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**6)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.6`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `6` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**7)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.7`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `7` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**8)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.8`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `8` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**9)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.9`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `9` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**10)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.10`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `10` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**11)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.11`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `11` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**12)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.12`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `12` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**13)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.13`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `13` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**14)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.14`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `14` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**15)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.15`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `15` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**16)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.16`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `16` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**17)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.17`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `17` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**18)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.18`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `18` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**19)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.19`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `19` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**20)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.20`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `20` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**21)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.21`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `21` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**22)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.22`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `22` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**23)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.23`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `23` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**24)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.24`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `24` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**25)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.25`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `25` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**26)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.26`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `26` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**27)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.27`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `27` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**28)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.28`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `28` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**29)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.29`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `29` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**30)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.30`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `30` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="($parent.FB_AD_dependency.getValue().toInt() &amp; (2**31)) != 0"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_ad.31`" description_expr="$components.system.#global.err_routed_channel.getValue().formatMessage(`address/data bus`, `31` , $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <!-- FB_CLK -->
+                    <dependency when_expr="$this.checkSignal_FB_CLK.getValue()"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_clk`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`CLKOUT`, $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <!-- FB_OE -->
+                    <dependency when_expr="$this.checkSignal_FB_OE.getValue()"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_oe`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`OE`, $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <!-- FB_RW -->
+                    <dependency when_expr="$this.checkSignal_FB_RW.getValue()"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_rw`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`RW`, $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <!-- FB_CS0 -->
+                    <dependency when_expr="$this.checkSignal_FB_CS0.getValue()"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_cs0`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`CS0`, $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <!-- Signal Group 1 -->
+                    <dependency when_expr="$this.checkSignalGroup1.getValue()"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_cs1_ale_ts`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`CS1/ALE/TS`, $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <!-- Signal Group 2 -->
+                    <dependency when_expr="$this.checkSignalGroup2.getValue()"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_cs4_tsiz0_be31_24`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`CS4/TSIZ0/BE31_24_BLS7_0`, $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <!-- Signal Group 3 -->
+                    <dependency when_expr="$this.checkSignalGroup3.getValue()"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_cs5_tsiz1_be23_16`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`CS5/TSIZ1/BE23_16_BLS15_8`, $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <!-- Signal Group 4 -->
+                    <dependency when_expr="$this.checkSignalGroup4.getValue()"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.fb_cs2_tbst_be15_8`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`TBST/CS2/BE15_8_BLS23_16`, $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <!-- Signal Group 5 -->
+                    <dependency when_expr="$this.checkSignalGroup5.getValue()"
+                        resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + (($this.checkSignalGroup5.getLabel() == `FB_TA`)?`.fb_ta`:`.fb_cs3_be7_0`)" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage((($this.checkSignalGroup5.getLabel() == `FB_TA`)?`TA`:`CS3/BE7_0_BLS31_24`), $instance.getPeripheral())" level="Warning">
+                        <feature name="routed">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                </validation>
+            </reference>
+            <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+            <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+            <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+        </settings>
+        <fragment_defs>
+            <import>
+                <from component_id="system" config_set_id="common_code_templates"/>
+                <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+            </import>
+            <def fragment="globalStructFlexBus" public="false">
+                <fragment id="global_struct" apply_to="$this" if_expr="$this.enableChipConfiguration.getValue()">
+                    <param id="name" expr="$configSet.inst_ID.getValue()+ `_` + $this.getSettingKey() + `_config`"/>
+                    <param id="type">flexbus_config_t</param>
+                    <param id="description" expr="`FlexBus configuration structure for ` + $this.getSettingKey()"/>
+                </fragment>
+            </def>
+            <def fragment="externVarFlexBus" public="false">
+                <fragment id="extern_var" apply_to="$this" if_expr="$this.enableChipConfiguration.getValue()">
+                    <param id="name" expr="$configSet.inst_ID.getValue()+ `_` + $this.getSettingKey() + `_config`"/>
+                    <param id="type">flexbus_config_t</param>
+                    <param id="description" expr="`FlexBus configuration structure for ` + $this.getSettingKey()"/>
+                </fragment>
+            </def>
+            <def fragment="initFlexBus" public="false">
+                <if expr="$this.initChip.isEnabled() &amp;&amp; $this.initChip.getValue()">
+                    <expr>leftPadding(`FLEXBUS_Init(` + $configSet.inst_peripheral_ID.getValue() +`, &amp;` + $configSet.inst_ID.getValue() + `_` + $this.getSettingKey() + `_config` + `);`,1)</expr><br/>
+                </if>
+            </def>
+        </fragment_defs>
+        <code>
+            <section target="component_parameter">
+                <text>priority=50</text>
+            </section>
+            <section target="includes">
+                <fragment id="include">
+                    <param id="name">common</param>
+                    <param id="filename">fsl_common.h</param>
+                </fragment>
+                <fragment id="include">
+                    <param id="name">fsl_flexbus</param>
+                    <param id="filename">fsl_flexbus.h</param>
+                </fragment>
+            </section>
+            <section target="defines">
+                <fragment id="define">
+                    <param id="name" expr="$this.inst_peripheral_ID.getValue()"/>
+                    <param id="value" expr="$instance.getPeripheral()"/>  
+                    <param id="description">Definition of peripheral ID</param>             
+                </fragment>
+            </section>
+            <section target="global_vars">
+                <fragment id="globalStructFlexBus" for_elements_of="$configSet.flexbus_configs"/>
+            </section>
+            <section target="global_vars_extern">
+                <fragment id="externVarFlexBus" for_elements_of="$configSet.flexbus_configs"/>
+            </section>
+            <section target="init_function_body">
+                <expr>leftPadding(`/* FlexBus initialization */`,1)</expr><br/>
+                <fragment id="initFlexBus" for_elements_of="$configSet.flexbus_configs"/>
+            </section>
+        </code>
+        <validation/>
+        <quick_selections>
+            <quick_selection id="QuickSelection1" label="Default">
+                <description>Default setting</description>
+                <!-- Chip 0 -->
+                <set id="flexbus_configs.0.enableChipConfiguration">true</set>
+                <set id="flexbus_configs.0.initChip">true</set>
+                <set id="flexbus_configs.0.chip">FB_CS0</set>
+                <set id="flexbus_configs.0.waitStates">0</set>
+                <set id="flexbus_configs.0.chipBaseAddress">0x60000000</set>
+                <set id="flexbus_configs.0.chipBaseAddressMask">mask_0x0000</set>
+                <set id="flexbus_configs.0.writeProtect">false</set>
+                <set id="flexbus_configs.0.burstWrite">false</set>
+                <set id="flexbus_configs.0.burstRead">false</set>
+                <set id="flexbus_configs.0.byteEnableMode">false</set>
+                <set id="flexbus_configs.0.autoAcknowledge">true</set>
+                <set id="flexbus_configs.0.extendTransferAddress">false</set>
+                <set id="flexbus_configs.0.portSize">kFLEXBUS_1Byte</set>
+                <set id="flexbus_configs.0.byteLaneShift">kFLEXBUS_NotShifted</set>
+                <set id="flexbus_configs.0.writeAddressHold">kFLEXBUS_Hold1Cycle</set>
+                <set id="flexbus_configs.0.readAddressHold">kFLEXBUS_Hold1Or0Cycles</set>
+                <set id="flexbus_configs.0.addressSetup">kFLEXBUS_FirstRisingEdge</set>
+                <!-- Multipex groups -->
+                <set id="groupsMultiplexControl.checkPinGroup1">kFLEXBUS_MultiplexGroup1_FB_ALE</set>
+                <set id="groupsMultiplexControl.checkPinGroup2">kFLEXBUS_MultiplexGroup2_FB_CS4</set>
+                <set id="groupsMultiplexControl.checkPinGroup3">kFLEXBUS_MultiplexGroup3_FB_CS5</set>
+                <set id="groupsMultiplexControl.checkPinGroup4">kFLEXBUS_MultiplexGroup4_FB_TBST</set>
+                <set id="groupsMultiplexControl.checkPinGroup5">kFLEXBUS_MultiplexGroup5_FB_TA</set>
+                <!-- Signals routing -->
+                <set id="checkSignalsPins.checkSignals_FB_A">false</set>
+                <set id="checkSignalsPins.checkSignals_FB_AD">true</set>
+                <set id="checkSignalsPins.checkSignal_FB_CLK">true</set>
+                <set id="checkSignalsPins.checkSignal_FB_OE">true</set>
+                <set id="checkSignalsPins.checkSignal_FB_RW">true</set>
+                <set id="checkSignalsPins.checkSignal_FB_CS0">true</set>
+                <set id="checkSignalsPins.checkSignalGroup1">false</set>
+                <set id="checkSignalsPins.checkSignalGroup2">false</set>
+                <set id="checkSignalsPins.checkSignalGroup3">false</set>
+                <set id="checkSignalsPins.checkSignalGroup4">false</set>
+                <set id="checkSignalsPins.checkSignalGroup5">false</set>
+            </quick_selection>
+            <default>QuickSelection1</default>
+        </quick_selections>
+    </config_set>
+</component:config_component>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<clocks:component xmlns:clocks="http://apif.freescale.net/schemas/clocks/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://apif.freescale.net/schemas/clocks/1.1 http://apif.freescale.net/schemas/clocks/1.1/clocks.xsd" id="PMC">
+  <instance_header>
+    <instance_description>Clock model for the PMC module - LPO (parameterized, shared accross all Kinetis parts)</instance_description>
+  </instance_header>
+  <interface>
+    <output_clock_signal id="LPOCLK" name="LPOCLK"/>
+  </interface>
+  <implementation>
+    <clock_source id="LPO" name="LPO" description="The Low Power Oscillator (LPO) is an internal 1KHz RC oscillator">
+      <internal_source>
+        <fixed_frequency freq="1 kHz"/>
+      </internal_source>
+      <disable power_modes="VLLS0" description="LPO clock source is not available in VLLS0 power mode."/>
+    </clock_source>
+    <map_output id="LPOCLK">
+      <input signal="LPO.clk"/>
+      <disable cond_expr="powerMode==`VLLS0`" description="LPO cock is disabled in VLLS0 mode"/>
+    </map_output>
+  </implementation>
+</clocks:component>

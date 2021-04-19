@@ -1,0 +1,1224 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="tpm" label="TPM" category="Peripheral driver" global_only="false" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-5.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <sw_comp_ref name="platform.drivers.tpm" version="2.0.2"/>
+   <description>Timer/PWM Module (TPM)</description>
+   <mode id="EdgeAligned" label="Edge-Aligned Modes" available="!(featureDefined(`FTM_IS_TPM_ONLY_INSTANCE`) &amp;&amp; getFeature(`FTM_IS_TPM_ONLY_INSTANCE`))">
+      <description>Edge aligned mode initialization. It supports Input Capture, Dual-edge Capture, Output Compare, PWM, Combined PWM and Timer Period Interrupt modes.</description>
+      <config_set_refs>
+         <config_set_ref>tpm_main_config</config_set_ref>
+         <config_set_ref>tpm_edge_aligned_mode</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>TPM</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="CenterAligned" label="Center-aligned PWM Mode" available="!(featureDefined(`FTM_IS_TPM_ONLY_INSTANCE`) &amp;&amp; getFeature(`FTM_IS_TPM_ONLY_INSTANCE`))">
+      <description>Center aligned mode initialization</description>
+      <config_set_refs>
+         <config_set_ref>tpm_main_config</config_set_ref>
+         <config_set_ref>tpm_center_aligned_mode</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>TPM</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="QuadratureDecoder" label="Quadrature Decoder Mode" available="(featureDefined(`FSL_FEATURE_TPM_HAS_QDCTRL`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_QDCTRL`)) &amp;&amp; (!(featureDefined(`FTM_IS_TPM_ONLY_INSTANCE`) &amp;&amp; getFeature(`FTM_IS_TPM_ONLY_INSTANCE`)))">
+      <description>Quadrature decoder mode initialization</description>
+      <config_set_refs>
+         <config_set_ref>tpm_main_config</config_set_ref>
+         <config_set_ref>tpm_quadrature_decoder_mode</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>TPM</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="EdgeAligned_FTM" label="Edge-Aligned Modes (FTM)" available="(featureDefined(`FTM_IS_TPM_ONLY_INSTANCE`) &amp;&amp; getFeature(`FTM_IS_TPM_ONLY_INSTANCE`))">
+      <description>Edge aligned mode initialization of TPM driver on limited FTM peripheral. It supports Input Capture, Dual-edge Capture, Output Compare, PWM, Combined PWM and Timer Period Interrupt modes.</description>
+      <config_set_refs>
+         <config_set_ref>tpm_main_config</config_set_ref>
+         <config_set_ref>tpm_edge_aligned_mode</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>FTM</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="CenterAligned_FTM" label="Center-aligned PWM Mode (FTM)" available="(featureDefined(`FTM_IS_TPM_ONLY_INSTANCE`) &amp;&amp; getFeature(`FTM_IS_TPM_ONLY_INSTANCE`))">
+      <description>Center aligned mode initialization of TPM driver on limited FTM peripheral.</description>
+      <config_set_refs>
+         <config_set_ref>tpm_main_config</config_set_ref>
+         <config_set_ref>tpm_center_aligned_mode</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>FTM</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <!-- ******************** -->
+   <!-- GENERATED CONFIG SET -->
+   <!-- ******************** -->
+   <config_set id="fsl_tpm" label="Timer/PWM module configuration" from_source="fsl_tpm.h">
+      <description>TBD</description>
+      <fragment_defs/>
+      <code/>
+      <validation/>
+      <quick_selections>
+      </quick_selections>
+      <user_types>
+      </user_types>
+      <settings>
+      </settings>
+      <generated_types>
+         <enum id="tpm_chnl_t" label="List of TPM channels." from="_tpm_chnl">
+            <description>Actual number of available channels is SoC dependent</description>
+            <item id="kTPM_Chnl_0" label="TPM channel number 0"/>
+            <item id="kTPM_Chnl_1" label="TPM channel number 1"/>
+            <item id="kTPM_Chnl_2" label="TPM channel number 2"/>
+            <item id="kTPM_Chnl_3" label="TPM channel number 3"/>
+            <item id="kTPM_Chnl_4" label="TPM channel number 4"/>
+            <item id="kTPM_Chnl_5" label="TPM channel number 5"/>
+            <item id="kTPM_Chnl_6" label="TPM channel number 6"/>
+            <item id="kTPM_Chnl_7" label="TPM channel number 7"/>
+         </enum>
+         <enum id="tpm_pwm_mode_t" label="TPM PWM operation modes." from="_tpm_pwm_mode">
+            <item id="kTPM_EdgeAlignedPwm" label="Edge aligned PWM"/>
+            <item id="kTPM_CenterAlignedPwm" label="Center aligned PWM"/>
+            <item id="kTPM_CombinedPwm" label="Combined PWM" available="(featureDefined(`FSL_FEATURE_TPM_HAS_COMBINE`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_COMBINE`))"/>
+         </enum>
+         <enum id="tpm_pwm_level_select_t" label="TPM PWM output pulse mode: high-true, low-true or no output." from="_tpm_pwm_level_select">
+            <item id="kTPM_NoPwmSignal" label="No PWM output on pin"/>
+            <item id="kTPM_LowTrue" label="Low true pulses"/>
+            <item id="kTPM_HighTrue" label="High true pulses"/>
+         </enum>
+         <struct id="tpm_chnl_pwm_signal_param_t" label="Options to configure a TPM channel&apos;s PWM signal." from="_tpm_chnl_pwm_signal_param">
+            <reference id="chnlNumber" label="TPM channel to configure." type="tpm_chnl_t">
+               <description>TPM channel to configure. In combined mode (available in some SoC&apos;s, this represents the channel pair number</description>
+            </reference>
+            <reference id="level" label="PWM output active level select" type="tpm_pwm_level_select_t">
+               <description>PWM output active level select</description>
+            </reference>
+            <integer id="dutyCyclePercent" label="PWM pulse width, value should be between 0 to 100 0=inactive signal(0% duty cycle)... 100=always active signal (100% duty cycle)" type="uint8_t">
+               <description>PWM pulse width, value should be between 0 to 100 0=inactive signal(0% duty cycle)... 100=always active signal (100% duty cycle)</description>
+            </integer>
+            <integer id="firstEdgeDelayPercent" label="Used only in combined PWM mode to generate asymmetrical PWM." type="uint8_t" available="(featureDefined(`FSL_FEATURE_TPM_HAS_COMBINE`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_COMBINE`))">
+               <description>Used only in combined PWM mode to generate asymmetrical PWM. Specifies the delay to the first edge in a PWM period. If unsure, leave as 0; Should be specified as percentage of the PWM period</description>
+            </integer>
+         </struct>
+         <enum id="tpm_trigger_select_t" label="Trigger options available." from="_tpm_trigger_select">
+            <description>This is used for both internal &amp;amp; external trigger sources (external option available in certain SoC&amp;apos;s)The actual trigger options available is SoC-specific.</description>
+            <item id="kTPM_Trigger_Select_0" label=""/>
+            <item id="kTPM_Trigger_Select_1" label=""/>
+            <item id="kTPM_Trigger_Select_2" label=""/>
+            <item id="kTPM_Trigger_Select_3" label=""/>
+            <item id="kTPM_Trigger_Select_4" label=""/>
+            <item id="kTPM_Trigger_Select_5" label=""/>
+            <item id="kTPM_Trigger_Select_6" label=""/>
+            <item id="kTPM_Trigger_Select_7" label=""/>
+            <item id="kTPM_Trigger_Select_8" label=""/>
+            <item id="kTPM_Trigger_Select_9" label=""/>
+            <item id="kTPM_Trigger_Select_10" label=""/>
+            <item id="kTPM_Trigger_Select_11" label=""/>
+            <item id="kTPM_Trigger_Select_12" label=""/>
+            <item id="kTPM_Trigger_Select_13" label=""/>
+            <item id="kTPM_Trigger_Select_14" label=""/>
+            <item id="kTPM_Trigger_Select_15" label=""/>
+         </enum>
+         <enum id="tpm_trigger_source_t" label="Trigger source options available." from="_tpm_trigger_source" available="(featureDefined(`FSL_FEATURE_TPM_HAS_EXTERNAL_TRIGGER_SELECTION`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_EXTERNAL_TRIGGER_SELECTION`))">
+            <description>This selection is available only on some SoC&apos;s. For SoC&apos;s without this selection, the only trigger source available is internal triger.</description>
+            <item id="kTPM_TriggerSource_External" label="Use external trigger input"/>
+            <item id="kTPM_TriggerSource_Internal" label="Use internal trigger"/>
+         </enum>
+         <enum id="tpm_output_compare_mode_t" label="TPM output compare modes." from="_tpm_output_compare_mode">
+            <item id="kTPM_NoOutputSignal" label="No channel output when counter reaches CnV"/>
+            <item id="kTPM_ToggleOnMatch" label="Toggle output"/>
+            <item id="kTPM_ClearOnMatch" label="Clear output"/>
+            <item id="kTPM_SetOnMatch" label="Set output"/>
+            <item id="kTPM_HighPulseOutput" label="Pulse output high"/>
+            <item id="kTPM_LowPulseOutput" label="Pulse output low"/>
+         </enum>
+         <enum id="tpm_input_capture_edge_t" label="TPM input capture edge." from="_tpm_input_capture_edge">
+            <item id="kTPM_RisingEdge" label="Capture on rising edge only"/>
+            <item id="kTPM_FallingEdge" label="Capture on falling edge only"/>
+            <item id="kTPM_RiseAndFallEdge" label="Capture on rising or falling edge"/>
+         </enum>
+         <struct id="tpm_dual_edge_capture_param_t" label="TPM dual edge capture parameters." from="_tpm_dual_edge_capture_param" available="(featureDefined(`FSL_FEATURE_TPM_HAS_COMBINE`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_COMBINE`))">
+            <description>This mode is available only on some SoC&apos;s.</description>
+            <bool id="enableSwap" label="true: Use channel n+1 input, channel n input is ignored; false: Use channel n input, channel n+1 input is ignored">
+               <description>true: Use channel n+1 input, channel n input is ignored; false: Use channel n input, channel n+1 input is ignored</description>
+            </bool>
+            <reference id="currChanEdgeMode" label="Input capture edge select for channel n" type="tpm_input_capture_edge_t">
+               <description>Input capture edge select for channel n</description>
+            </reference>
+            <reference id="nextChanEdgeMode" label="Input capture edge select for channel n+1" type="tpm_input_capture_edge_t">
+               <description>Input capture edge select for channel n+1</description>
+            </reference>
+         </struct>
+         <enum id="tpm_quad_decode_mode_t" label="TPM quadrature decode modes." from="_tpm_quad_decode_mode" available="(featureDefined(`FSL_FEATURE_TPM_HAS_QDCTRL`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_QDCTRL`))">
+            <description>This mode is available only on some SoC&apos;s.</description>
+            <item id="kTPM_QuadPhaseEncode" label="Phase A and Phase B encoding mode"/>
+            <item id="kTPM_QuadCountAndDir" label="Count and direction encoding mode"/>
+         </enum>
+         <enum id="tpm_phase_polarity_t" label="TPM quadrature phase polarities." from="_tpm_phase_polarity" available="(featureDefined(`FSL_FEATURE_TPM_HAS_QDCTRL`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_QDCTRL`))">
+            <item id="kTPM_QuadPhaseNormal" label="Phase input signal is not inverted"/>
+            <item id="kTPM_QuadPhaseInvert" label="Phase input signal is inverted"/>
+         </enum>
+         <struct id="tpm_phase_params_t" label="TPM quadrature decode phase parameters." from="_tpm_phase_param" available="(featureDefined(`FSL_FEATURE_TPM_HAS_QDCTRL`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_QDCTRL`))">
+            <integer id="phaseFilterVal" label="Filter value, filter is disabled when the value is zero" type="uint32_t">
+               <description>Filter value, filter is disabled when the value is zero</description>
+            </integer>
+            <reference id="phasePolarity" label="Phase polarity" type="tpm_phase_polarity_t">
+               <description>Phase polarity</description>
+            </reference>
+         </struct>
+         <enum id="tpm_clock_source_t" label="TPM clock source selection." from="_tpm_clock_source">
+            <item id="kTPM_SystemClock" label="System clock"/>
+            <item id="kTPM_ExternalClock" label="External clock"/>
+         </enum>
+         <enum id="tpm_clock_prescale_t" label="TPM prescale value selection for the clock source." from="_tpm_clock_prescale">
+            <item id="kTPM_Prescale_Divide_1" label="Divide by 1"/>
+            <item id="kTPM_Prescale_Divide_2" label="Divide by 2"/>
+            <item id="kTPM_Prescale_Divide_4" label="Divide by 4"/>
+            <item id="kTPM_Prescale_Divide_8" label="Divide by 8"/>
+            <item id="kTPM_Prescale_Divide_16" label="Divide by 16"/>
+            <item id="kTPM_Prescale_Divide_32" label="Divide by 32"/>
+            <item id="kTPM_Prescale_Divide_64" label="Divide by 64"/>
+            <item id="kTPM_Prescale_Divide_128" label="Divide by 128"/>
+         </enum>
+         <struct id="tpm_config_t" label="TPM config structure." from="_tpm_config">
+            <description>This structure holds the configuration settings for the TPM peripheral. To initialize this structure to reasonable defaults, call the TPM_GetDefaultConfig() function and pass a pointer to your config structure instance.The config struct can be made const so it resides in flash</description>
+            <reference id="prescale" label="Select TPM clock prescale value" type="tpm_clock_prescale_t">
+               <description>Select TPM clock prescale value</description>
+            </reference>
+            <bool id="useGlobalTimeBase" label="true: Use of an external global time base is enabled; false: disabled">
+               <description>true: Use of an external global time base is enabled; false: disabled</description>
+            </bool>
+            <reference id="triggerSelect" label="Input trigger to use for controlling the counter operation" type="tpm_trigger_select_t">
+               <description>Input trigger to use for controlling the counter operation</description>
+            </reference>
+            <reference id="triggerSource" label="Decides if we use external or internal trigger." type="tpm_trigger_source_t" available="(featureDefined(`FSL_FEATURE_TPM_HAS_EXTERNAL_TRIGGER_SELECTION`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_EXTERNAL_TRIGGER_SELECTION`))">
+               <description>Decides if we use external or internal trigger.</description>
+            </reference>
+            <bool id="enableDoze" label="true: TPM counter is paused in doze mode; false: TPM counter continues in doze mode">
+               <description>true: TPM counter is paused in doze mode; false: TPM counter continues in doze mode</description>
+            </bool>
+            <bool id="enableDebugMode" label="true: TPM counter continues in debug mode; false: TPM counter is paused in debug mode">
+               <description>true: TPM counter continues in debug mode; false: TPM counter is paused in debug mode</description>
+            </bool>
+            <bool id="enableReloadOnTrigger" label="true: TPM counter is reloaded on trigger; false: TPM counter not reloaded">
+               <description>true: TPM counter is reloaded on trigger; false: TPM counter not reloaded</description>
+            </bool>
+            <bool id="enableStopOnOverflow" label="true: TPM counter stops after overflow; false: TPM counter continues running after overflow">
+               <description>true: TPM counter stops after overflow; false: TPM counter continues running after overflow</description>
+            </bool>
+            <bool id="enableStartOnTrigger" label="true: TPM counter only starts when a trigger is detected; false: TPM counter starts immediately">
+               <description>true: TPM counter only starts when a trigger is detected; false: TPM counter starts immediately</description>
+            </bool>
+            <bool id="enablePauseOnTrigger" label="true: TPM counter will pause while trigger remains asserted; false: TPM counter continues running" available="(featureDefined(`FSL_FEATURE_TPM_HAS_PAUSE_COUNTER_ON_TRIGGER`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_PAUSE_COUNTER_ON_TRIGGER`))">
+               <description>true: TPM counter will pause while trigger remains asserted; false: TPM counter continues running</description>
+            </bool>
+         </struct>
+         <enum id="tpm_interrupt_enable_t" label="List of TPM interrupts." from="_tpm_interrupt_enable">
+            <item id="kTPM_Chnl0InterruptEnable" label="Channel 0 interrupt."/>
+            <item id="kTPM_Chnl1InterruptEnable" label="Channel 1 interrupt."/>
+            <item id="kTPM_Chnl2InterruptEnable" label="Channel 2 interrupt."/>
+            <item id="kTPM_Chnl3InterruptEnable" label="Channel 3 interrupt."/>
+            <item id="kTPM_Chnl4InterruptEnable" label="Channel 4 interrupt."/>
+            <item id="kTPM_Chnl5InterruptEnable" label="Channel 5 interrupt."/>
+            <item id="kTPM_Chnl6InterruptEnable" label="Channel 6 interrupt."/>
+            <item id="kTPM_Chnl7InterruptEnable" label="Channel 7 interrupt."/>
+            <item id="kTPM_TimeOverflowInterruptEnable" label="Time overflow interrupt."/>
+         </enum>
+         <enum id="tpm_status_flags_t" label="List of TPM flags." from="_tpm_status_flags">
+            <item id="kTPM_Chnl0Flag" label="Channel 0 flag"/>
+            <item id="kTPM_Chnl1Flag" label="Channel 1 flag"/>
+            <item id="kTPM_Chnl2Flag" label="Channel 2 flag"/>
+            <item id="kTPM_Chnl3Flag" label="Channel 3 flag"/>
+            <item id="kTPM_Chnl4Flag" label="Channel 4 flag"/>
+            <item id="kTPM_Chnl5Flag" label="Channel 5 flag"/>
+            <item id="kTPM_Chnl6Flag" label="Channel 6 flag"/>
+            <item id="kTPM_Chnl7Flag" label="Channel 7 flag"/>
+            <item id="kTPM_TimeOverflowFlag" label="Time overflow flag"/>
+         </enum>
+      </generated_types>
+   </config_set>
+   <!-- *************************** -->
+   <!-- END OF GENERATED CONFIG SET -->
+   <!-- *************************** -->
+   <config_set id="tpm_main_config" label="TPM general configuration" from_source="fsl_tpm.h">
+      <description>Timer/PWM Module (TPM) general configuration (without channels)</description>
+      <generated_types>
+      </generated_types>
+      <user_types>
+         <set id="tpm_interrupt_enable_t" label="List of TPM interrupts.">
+            <description>Actual available interrupts are SoC-specific</description>
+<!--            <item id="kTPM_Chnl0InterruptEnable" label="Channel 0 interrupt"/>
+            <item id="kTPM_Chnl1InterruptEnable" label="Channel 1 interrupt"/>
+            <item id="kTPM_Chnl2InterruptEnable" label="Channel 2 interrupt"/>
+            <item id="kTPM_Chnl3InterruptEnable" label="Channel 3 interrupt"/>
+            <item id="kTPM_Chnl4InterruptEnable" label="Channel 4 interrupt"/>
+            <item id="kTPM_Chnl5InterruptEnable" label="Channel 5 interrupt"/>
+            <item id="kTPM_Chnl6InterruptEnable" label="Channel 6 interrupt"/>
+            <item id="kTPM_Chnl7InterruptEnable" label="Channel 7 interrupt"/>-->
+            <item id="kTPM_TimeOverflowInterruptEnable" label="Time overflow interrupt"/>
+         </set>
+         <enum id="tpm_clock_source_t" label="TPM clock source selection." from="_tpm_clock_source">
+            <item id="kTPM_SystemClock" label="TPM clock" value="TPMClock" available="!(featureDefined(`FTM_IS_TPM_ONLY_INSTANCE`) &amp;&amp; getFeature(`FTM_IS_TPM_ONLY_INSTANCE`))"/> <!-- value = clock_unify_ID -->
+            <!-- FTM clock source for implementation of the  -->
+            <item id="kTPM_SystemClock" label="System clock" value="BusInterfaceClock" available="(featureDefined(`FTM_IS_TPM_ONLY_INSTANCE`) &amp;&amp; getFeature(`FTM_IS_TPM_ONLY_INSTANCE`))"/> <!-- value = clock_unify_ID -->
+            <item id="kTPM_FixedClock" label="Fixed frequency clock" value="FixedClock" available="(featureDefined(`FSL_FEATURE_TPM_HAS_SC_CLKS`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_SC_CLKS`))"/>
+            <item id="kTPM_ExternalClock" label="External clock" value="ExternalClock"/>
+         </enum>
+         <!-- The TPM timer main configuration structure -->
+         <struct id="tpm_config_t" label="TPM configuration structure." from="_tpm_config">
+            <description>This structure holds the configuration settings for the TPM peripheral. To initialize this structure to reasonable defaults, call the TPM_GetDefaultConfig() function and pass a pointer to the configuration structure instance. The configuration structure can be made constant so as to reside in flash.</description>
+<!--            <reference id="clockSource" label="Clock source" type="tpm_clock_source_t" options="remove_from_struct_init" config_set_id="fsl_tpm">
+               <description>TPM timer clock source selection.</description>
+               <validation>
+<!-\-                  <dependency when_expr="$this.getValue() = `kTPM_ExternalClock`" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_clk" description_expr="`External clock source signal of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">-\->
+                  <dependency when_expr="$this.getValue() == `kTPM_ExternalClock`" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_clk`" description_expr="`External clock source signal of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                        <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </reference>-->
+            <reference id="_clockSource" label="Clock source" type="tpm_clock_source_t" options="remove_from_struct_init" available="false"/> <!-- item used for clockSource dynamic enum implementation only -->
+            <variable id="clockSourceUId" value="$parent.clockSource.getEnumItemValue()"/>
+            <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="enumItemsOf($parent._clockSource).arrayToEnumItems(
+               enumItem -> enumItem.isAvailable(),
+               enumItem -> enumItem.getID(),
+               enumItem -> getPeripheralClock($instance.getPeripheral(), enumItem.getValue()),
+               enumItem -> enumItem.getValue())" >
+               <description>TPM timer clock source selection.</description>
+               <validation>
+                  <dependency when_expr="$this.getEnumItemValue() == `ExternalClock`" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.` + getPeripheralClockSignal($instance.getPeripheral(), $this.getEnumItemValue())" description_expr="`External clock source signal ` +  getPeripheralClock($instance.getPeripheral(), $this.getEnumItemValue()) + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                        <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.clockSourceUId.getValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.tpmSrcClkFreq.getEnumItemId() == `GetFreq`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Warning">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.clockSourceUId.getValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.tpmSrcClkFreq.getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.tpmSrcClkFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <dynamic_enum id="tpmSrcClkFreq" label="Clock source frequency" options="remove_from_struct_init" available="!($parent.clockSource.getEnumItemValue() == `ExternalClock`)" 
+               items="getClockFunctionalGroups().arrayToEnumItems(
+                  enumItem -> true,
+                  enumItem -> enumItem,
+                  enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemValue(), enumItem)) + ` (` + enumItem + `)`,
+                  enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemValue(), enumItem))">
+               <description>Selection of the clock source frequency</description>
+               <validation>
+                  <constraint cond_expr="$this.getEnumItemValue() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+            </dynamic_enum> 
+            <integer type="uint32_t" id="extClockFrequency" label="External clock frequency [Hz]" options="remove_from_struct_init" available="$parent.clockSource.getEnumItemValue() == `ExternalClock`" min_expr="1">
+               <description>Frequency of the external clock source of the TPM device (when the external clock source is selected in the TPM clock source settings).</description>
+            </integer>
+<!--            <integer id="tpmSrcClkFreq" label="Source clock frequency [Hz]" type="uint32_t" options="remove_from_struct_init">
+               <description>TPM clock source selection is part of the SIM (System Integration Module) configuration that is MCU specific. Set the value of this setting according to the configuration of the SIM device. You can use the clock tool for selection of the required clock source and frequency.</description>
+               <validation>
+                  <constraint cond_expr="$this.getValue() &gt; 0" level="error" description="The TPM source clock freqnency must be set (non-zero value is expected)."/>
+               </validation>
+            </integer>-->
+<!--            <integer type="uint32_t" id="extClockFrequency" label="External clock frequency [Hz]" options="remove_from_struct_init" available="($parent.clockSource.getValue() == `kTPM_ExternalClock`) &amp;&amp; ($instance.getMode() != `QuadratureDecoder`)">
+               <description>Frequency of the external clock source of the TPM device (when the external clock source is selected in the TPM clock source settings).</description>
+               <validation>
+                  <constraint cond_expr="$this.getValue() != 0" level="error" description="External clock frequency cannot be 0 when it is used"/>
+<!-\-                  <dependency resource_type="ClockOutput" level="Error">
+                     <feature name="routed">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>-\->
+               </validation>
+            </integer>-->
+            <reference id="prescale" label="Clock prescale value" type="tpm_clock_prescale_t"  config_set_id="fsl_tpm">
+               <description>TPM clock prescale value</description>
+            </reference>
+            <!-- Timer frequency  - it is not used in the quadrature decoder mode (external signals are used) -->
+            <integer type="uint32_t" id="timerFrequency" label="Timer output frequency [Hz]" options="remove_from_struct_init" available="$instance.getMode() != `QuadratureDecoder`" min_expr="1">
+               <description>Timer frequency in Hz. This settings impact the modulo value of the TPM timer. The possible value depends on the selected input clock frequency, i.e. the modulo register value depend on the ration of the input clock frequency and the timer frequency.</description>
+            </integer>
+            <bool id="useGlobalTimeBase" label="External global time base" available="!(featureDefined(`FSL_FEATURE_TPM_HAS_NO_CONF`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_NO_CONF`))">
+               <description>Enabled/disable using of an external global time base.</description>
+            </bool>
+            <reference id="triggerSelect" label="Trigger" type="tpm_trigger_select_t" config_set_id="fsl_tpm" available="!(featureDefined(`FSL_FEATURE_TPM_HAS_NO_CONF`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_NO_CONF`))">
+               <description>Input trigger to use for controlling the counter operation</description>
+            </reference>
+            <reference id="triggerSource" label="Trigger source" type="tpm_trigger_source_t" config_set_id="fsl_tpm" available="(featureDefined(`FSL_FEATURE_TPM_HAS_EXTERNAL_TRIGGER_SELECTION`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_EXTERNAL_TRIGGER_SELECTION`)) &amp;&amp; (!(featureDefined(`FSL_FEATURE_TPM_HAS_NO_CONF`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_NO_CONF`)))">
+               <description>Selection of the external or internal trigger source usage.</description>
+            </reference>
+            <bool id="enableDoze" label="Pause TPM counter in doze mode" available="!(featureDefined(`FSL_FEATURE_TPM_HAS_NO_CONF`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_NO_CONF`))">
+               <description>Enable/disable TPM counter in doze mode. When enabled the TPM counter is paused in doze mode. When disabled the TPM counter continues in doze mode</description>
+            </bool>
+            <bool id="enableDebugMode" label="Enable TPM counter in debug mode" available="!(featureDefined(`FSL_FEATURE_TPM_HAS_NO_CONF`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_NO_CONF`))">
+               <description>Enable/disable the TPM counter in debug mode. When disabled the TPM counter is paused in debug mode.</description>
+            </bool>
+            <bool id="enableReloadOnTrigger" label="Enable counter reload on trigger" available="!(featureDefined(`FSL_FEATURE_TPM_HAS_NO_CONF`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_NO_CONF`))">
+               <description>Enabled/disable TPM counter reload on trigger. When enabled the TPM counter is reloaded on trigger.</description>
+            </bool>
+            <bool id="enableStopOnOverflow" label="Enable stops after overflow" available="!(featureDefined(`FSL_FEATURE_TPM_HAS_NO_CONF`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_NO_CONF`))">
+               <description>Enable/disable the TPM counter stop after overflow. When enabled the TPM counter stops after overflow.</description>
+            </bool>
+            <bool id="enableStartOnTrigger" label="Start counter on trigger" available="!(featureDefined(`FSL_FEATURE_TPM_HAS_NO_CONF`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_NO_CONF`))">
+               <description>Enable/disable start the TPM counter on the trigger. When enabled the TPM counter only starts when the trigger condition is detected. When disabled the TPM counter starts immediately when it is enabled.</description>
+            </bool>
+            <bool id="enablePauseOnTrigger" label="Pause on trigger" available="(featureDefined(`FSL_FEATURE_TPM_HAS_PAUSE_COUNTER_ON_TRIGGER`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_PAUSE_COUNTER_ON_TRIGGER`)) &amp;&amp; (!(featureDefined(`FSL_FEATURE_TPM_HAS_NO_CONF`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_NO_CONF`)))">
+               <description>Enabled/disable the TPM counter to be paused while trigger remains asserted. When enabled, the counter will pause incrementing while the trigger remains asserted (level sensitive). When disabled the TPM counter continues running.</description>
+            </bool>
+         </struct>
+      </user_types>
+      <settings>
+         <reference id="tpm_config" label="Timer Configuration" type="tpm_config_t">
+            <description>Timer/PWM Module configuration</description>
+         </reference>
+         <reference type="tpm_interrupt_enable_t" id="timer_interrupts" label="Timer interrupts"></reference>
+         <info value="getFeature(`TPM_CHANNEL_COUNT`)" id="TPM_channel_count" label="Number of channels" available="featureDefined(`TPM_CHANNEL_COUNT`)">
+            <description>Number of channels of this TPM device (MCU specific information).</description>
+         </info>
+         <!-- Interrupt request from the system component -->
+         <bool id="enable_irq" label="Enable interrupt request">
+            <description>Enable interrupt request in the NVIC (Nested Interrupt Vector Controller) of the CPU.</description>
+         </bool>
+         <reference id="tpm_interrupt" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_irq.getValue()">
+            <options_expr>
+               <option id="irq_handler_insert" expr="
+leftPadding(`uint32_t intStatus;`, 1) + `&#10;` +
+leftPadding(`/* Reading all interrupt flags of status register */`, 1) + `&#10;` +
+leftPadding(`intStatus = TPM_GetStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `);`, 1) + `&#10;` +
+leftPadding(`TPM_ClearStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `, intStatus);`, 1) + `&#10;&#10;` +
+leftPadding(`/* Place your code here */`, 1) + `&#10;`
+               "/>
+            </options_expr>
+         </reference>
+         <bool id="EnableTimerInInit" label="Start timer in initialization code">
+            <description>When the start of the timer is enable in the initialization code the TPM_StartTimer() function is called and the TPM device timer start counting.</description>
+         </bool>
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+         <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+      </settings>
+      <validation>
+         <constraint when_expr="($instance.getPeripheral().getPeripheralType() == `FTM`)" cond_expr="featureDefined(`FTM_IS_TPM_ONLY_INSTANCE`) &amp;&amp; getFeature(`FTM_IS_TPM_ONLY_INSTANCE`)" level="error" description="This instance of the FTM peripheral is not supported by TPM component. Use the FTM component."/>
+      </validation>
+      <fragment_defs>
+         <import>
+           <from component_id="system" config_set_id="common_code_templates"/>
+           <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+         <def fragment="tpm_start_init"> <!-- it is an array of structures -->
+            <expr>
+               leftPadding(`TPM_StartTimer(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               + $param.clock_source + `);`, 1) 
+            </expr><br/>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">uart</param>
+               <param id="filename">fsl_clock.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">uart</param>
+               <param id="filename">fsl_tpm.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <!-- Peripheral name definition --> 
+            <fragment id="define">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)"/>
+               <param id="value" expr="$instance.getPeripheral()"/> <!-- The getValue() function must be used to provide the symbol name (getCValue() return a string) -->
+               <param id="description">Definition of peripheral ID</param>
+            </fragment>
+            <!-- Clock source frequency size -->
+            <fragment id="define" >
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`)"/>
+<!--               <param id="value" expr="`CLOCK_GetFreq(` + (($this.tpm_config.clockSource.getValue() == `kTPM_SystemClock`) ? `kCLOCK_BusClk` : `kCLOCK_McgFixedFreqClk`) + `)`"/> -->
+               <param id="value" expr="($this.tpm_config.clockSource.getEnumItemValue() == `ExternalClock`) ?
+                  ($this.tpm_config.extClockFrequency.getCValue() + `UL`)
+                  :($this.tpm_config.tpmSrcClkFreq.getEnumItemValue().toHertz() + `UL`)"/>
+               <param id="description">Definition of the clock source frequency</param>
+            </fragment>
+            <fragment id="IRQ_definitions" apply_to="$this.tpm_interrupt"/>
+         </section> 
+         <section target="global_vars">
+            <fragment id="const_struct" apply_to="$this.tpm_config">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`"></param>
+               <param id="type" >tpm_config_t</param>
+            </fragment>
+         </section>
+         <section target="global_vars_extern">
+            <fragment id="extern_const_var">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`"></param>
+               <param id="type" >tpm_config_t</param>
+            </fragment>
+         </section>
+         <section target="init_function_body">
+            <expr>leftPadding(`TPM_Init(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, &amp;` +  $instance.getFnGroupPrefix() + $instance.getID() + `_config);`, 1)</expr><br/>
+         </section>
+         <section target="init_function_postinit0">
+            <!-- TPM device interrupt initialization -->
+            <fragment id="IRQn_set_priority_default" if_expr="$this.enable_irq.getValue()" apply_to="$this.tpm_interrupt"/>
+            <fragment id="IRQn_enable_default" if_expr="$this.enable_irq.getValue()" apply_to="$this.tpm_interrupt"/>
+            <fragment id="tpm_start_init" if_expr="$this.EnableTimerInInit.getValue()">
+               <param id="clock_source" expr="$instance.tpm_main_config.tpm_config.clockSource.getCValue()"></param>
+            </fragment>
+         </section>
+         
+      </code>
+      <quick_selections>
+         <quick_selection id="QuickSelectionDefault" label="Default">
+            <set id="tpm_config.prescale">kTPM_Prescale_Divide_1</set>
+            <set id="tpm_config.timerFrequency">10000</set>
+            <set id="tpm_config.enableDoze">false</set>
+            <set id="tpm_config.enableDebugMode">false</set>
+            <set id="tpm_config.enableReloadOnTrigger">false</set>
+            <set id="tpm_config.enableStopOnOverflow">false</set>
+            <set id="tpm_config.enableStartOnTrigger">false</set>
+            <set id="tpm_config.enablePauseOnTrigger">false</set>
+            <set id="tpm_config.triggerSelect">kTPM_Trigger_Select_0</set>
+            <set id="tpm_config.triggerSource">kTPM_TriggerSource_External</set>
+            <set id="tpm_config.useGlobalTimeBase">false</set>
+            <set id="EnableTimerInInit">true</set>
+         </quick_selection>
+         <default>QuickSelectionDefault</default>
+      </quick_selections>
+   </config_set>
+   
+   <config_set id="tpm_edge_aligned_mode" label="TPM Edge-aligned mode" from_source="fsl_tpm.h">
+      <description>Configuration of timer channels.</description>
+      <generated_types>
+      </generated_types>
+      <user_types>
+         <enum id="tpm_chnl_pair_t" label="List of TPM channel pairs." from="_tpm_chnl">
+            <description>Actual number of available channels is SoC dependent</description>
+            <item id="kTPM_Chnl_0" label="TPM channel number 0/1"/>
+            <item id="kTPM_Chnl_1" label="TPM channel number 2/3"/>
+            <item id="kTPM_Chnl_2" label="TPM channel number 4/5"/>
+            <item id="kTPM_Chnl_3" label="TPM channel number 6/7"/>
+         </enum>
+         <struct id="tpm_dual_edge_capture_param_t" label="TPM dual edge capture parameters." from="_tpm_dual_edge_capture_param" available="(featureDefined(`FSL_FEATURE_TPM_HAS_COMBINE`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_COMBINE`))">
+            <description>This mode is available only on some SoC&apos;s.</description>
+            <bool id="enableSwap" label="Enable swap">
+               <description>Enable swap of even and odd channel in the combine mode. When enabled the odd channel is used for input capture and 1st compare. When disabled the even channel is used for input capture and 1st compare.</description>
+            </bool>
+            <reference id="currChanEdgeMode" label="Input capture edge select for channel n" type="tpm_input_capture_edge_t">
+               <description>Input capture edge select for channel n</description>
+            </reference>
+            <reference id="nextChanEdgeMode" label="Input capture edge select for channel n+1" type="tpm_input_capture_edge_t">
+               <description>Input capture edge select for channel n+1</description>
+            </reference>
+         </struct>
+         <struct from="tpm_input_capture" id="tpm_input_capture_mode_t" label="TPM Input Capture mode">
+            <reference type="tpm_chnl_t" id="chnNumber" label="Channel number" config_set_id="fsl_tpm">
+               <validation>
+                  <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_ch.` +  $this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1)" description_expr="`Signal CH` + $this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1) + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <constraint cond_expr="featureDefined(`TPM_CHANNEL_COUNT`) &amp;&amp; ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt() &lt; getFeature(`TPM_CHANNEL_COUNT`))" level="error" description="You must select an existing channel of the selected TPM device (see the Number of channel property of this component)"/>
+               </validation>
+            </reference>
+            <reference id="input_capture_edge" label="Input Capture Edge" type="tpm_input_capture_edge_t" config_set_id="fsl_tpm">
+            </reference>
+<!--            <integer type="uint32_t" id="filterValue" label="Filter Value">
+               <description>Filter value for validation of the input signal (filtering of glitches). When set to 0 the filter is disabled.</description>
+            </integer>-->
+            <bool id="enable_chan_irq" label="Enable channel interrupt" options="remove_from_struct_init"/>
+            <variable  id="chan_interrupt" available="$parent.enable_chan_irq.getValue()" value="`kTPM_Chnl` + $parent.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1)  + `InterruptEnable`"></variable>
+         </struct>
+         <struct from="tpm_dual_edge" id="tpm_dual_edge_t" label="Dual Edge Capture Mode" available="(featureDefined(`FSL_FEATURE_TPM_HAS_COMBINE`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_COMBINE`))">
+            <reference type="tpm_chnl_pair_t" id="chnNumber" label="Channel pair number">
+                  <validation>
+                  <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_ch.` +  ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2)" description_expr="`Signal CH` + ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2) + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_ch.` +  ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1)" description_expr="`Signal CH` + ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1) + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <constraint cond_expr="featureDefined(`TPM_CHANNEL_COUNT`) &amp;&amp; 
+                                         (($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2) &lt; getFeature(`TPM_CHANNEL_COUNT`)) &amp;&amp;
+                                         (($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1) &lt; getFeature(`TPM_CHANNEL_COUNT`))" level="error" description="You must select an existing channel pair of the selected TPM device (see the Number of channel property of this component)"/>
+                  </validation>
+            </reference>
+            <reference type="tpm_dual_edge_capture_param_t" id="dual_edge_capture_param" label="Dual Edge Mode" config_set_id="fsl_tpm">
+            </reference>
+            <integer type="uint32_t" id="filterValue" label="Filter Value">
+               <description>Filter value for validation of the input signal (filtering of glitches). When set to 0 the filter is disabled.</description>
+            </integer>
+            <bool id="enable_chan_irq" label="Enable channel N interrupt" options="remove_from_struct_init"/>
+            <variable  id="chan_interrupt" available="$parent.enable_chan_irq.getValue()" value="`kTPM_Chnl` + (($parent.chnNumber.getValue() == `kTPM_Chnl_0`) ? `0` : ($parent.chnNumber.getValue() == `kTPM_Chnl_1`) ? `2` : ($parent.chnNumber.getValue() == `kTPM_Chnl_2`) ? `4` : `6`)  + `InterruptEnable`"></variable>
+            <bool id="enable_chan1_irq" label="Enable channel N+1 interrupt"  options="remove_from_struct_init"/>
+            <variable  id="chan1_interrupt" available="$parent.enable_chan1_irq.getValue()" value="`kTPM_Chnl` + (($parent.chnNumber.getValue() == `kTPM_Chnl_0`) ? `1` : ($parent.chnNumber.getValue() == `kTPM_Chnl_1`) ? `3` : ($parent.chnNumber.getValue() == `kTPM_Chnl_2`) ? `5` : `7`)  + `InterruptEnable`"></variable>
+         </struct>
+         <struct from="tpm_output_compare" id="tpm_output_compare_mode_t" label="TPM Output Compare mode">
+            <reference type="tpm_chnl_t" id="chnNumber" label="Channel number" config_set_id="fsl_tpm">
+               <validation>
+                  <dependency when_expr="$parent.output_compare_mode.getValue() != `kTPM_NoOutputSignal`"  resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_ch.` +  $this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1)" description_expr="`Signal CH` + $this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1) + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <constraint cond_expr="featureDefined(`TPM_CHANNEL_COUNT`) &amp;&amp; ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt() &lt; getFeature(`TPM_CHANNEL_COUNT`))" level="error" description="You must select an existing channel of the selected TPM device (see the Number of channel property of this component)"/>
+               </validation>
+            </reference>
+            <reference id="output_compare_mode" label="Output Compare Mode" type="tpm_output_compare_mode_t" config_set_id="fsl_tpm">
+            </reference>
+            <integer type="uint32_t" id="compareValue" label="Compare Value">
+               <description>Compare value that will be used as the match value of the TPM channel. This value define the value of the counter when the output action is executed. The value must not exceed the modulo value of the TPM counter</description>
+            </integer>
+            <bool id="enable_chan_irq" label="Enable channel interrupt" options="remove_from_struct_init"/>
+            <variable  id="chan_interrupt" available="$parent.enable_chan_irq.getValue()" value="`kTPM_Chnl` + $parent.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1)  + `InterruptEnable`"></variable>
+         </struct>
+         <struct id="tpm_chnl_pwm_signal_param_t" label="Options to configure a TPM channel&apos;s PWM signal." from="_tpm_chnl_pwm_signal_param">
+            <reference id="chnlNumber" label="The channel number" type="tpm_chnl_t" config_set_id="fsl_tpm">
+               <description>The TPM channel number.</description>
+               <validation>
+                  <dependency when_expr="$parent.level.getValue() != `kTPM_NoPwmSignal`" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_ch.` +  $this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1)" description_expr="`Signal CH` + $this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1) + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <constraint cond_expr="featureDefined(`TPM_CHANNEL_COUNT`) &amp;&amp; ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt() &lt; getFeature(`TPM_CHANNEL_COUNT`))" level="error" description="You must select an existing channel of the selected TPM device (see the Number of channel property of this component)"/>
+               </validation>
+            </reference>
+            <reference id="level" label="PWM output active level select" type="tpm_pwm_level_select_t" config_set_id="fsl_tpm">
+               <description>PWM output active level select.</description>
+            </reference>
+            <integer id="dutyCyclePercent" label="PWM pulse width [%]" type="uint8_t" min_expr="0" max_expr="100">
+               <description>PWM pulse width, value shall be between 0 to 100 0 = inactive signal(0% duty cycle)... 100 = always active signal (100% duty cycle).</description>
+            </integer>
+            <bool id="enable_chan_irq" label="Enable channel interrupt" options="remove_from_struct_init"/>
+            <variable  id="chan_interrupt" available="$parent.enable_chan_irq.getValue()" value="`kTPM_Chnl` + $parent.chnlNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1)  + `InterruptEnable`"></variable>
+            <!--            <integer id="firstEdgeDelayPercent" label="First edge delay [%]" type="uint8_t">
+               <description>First edge dealy is used in combined PWM mode only to generate an asymmetrical PWM. It specifies the delay to the first edge in a PWM period. If unsure leave as 0; Should be specified as a percentage of the PWM period</description>
+            </integer>-->
+<!--           PWM frequency is defined in the tpm main configuration 
+               <integer type="uint32_t" id="pwmFreq" label="PWM frequency [Hz]">
+               <description>PWM output frequency in Hz. Note: The same PWM frequency must be used for all TPM channels. The frequency value is hared accross all channels of a TPM timer (modulo values of the main counter).</description>
+            </integer>-->
+         </struct>
+         <struct id="tpm_chnl_combined_pwm_signal_param_t" label="Options to configure a TPM channel&apos;s PWM signal." from="_tpm_chnl_pwm_signal_param" available="(featureDefined(`FSL_FEATURE_TPM_HAS_COMBINE`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_COMBINE`))">
+            <reference id="chnlNumber" label="Channel pair number" type="tpm_chnl_pair_t">
+               <description>The channel/channel pair number. In combined mode, this represents the channel pair number.</description>
+               <validation>
+                  <dependency when_expr="$parent.level.getValue() != `kTPM_NoPwmSignal`" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_ch.` +  ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2)" description_expr="`Signal CH` + ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2) + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="$parent.level.getValue() != `kTPM_NoPwmSignal`" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_ch.` +  ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1)" description_expr="`Signal CH` + ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1) + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <constraint cond_expr="featureDefined(`TPM_CHANNEL_COUNT`) &amp;&amp; 
+                     (($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2) &lt; getFeature(`TPM_CHANNEL_COUNT`)) &amp;&amp;
+                     (($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1) &lt; getFeature(`TPM_CHANNEL_COUNT`))" level="error" description="You must select an existing channel pair of the selected TPM device (see the Number of channel property of this component)"/>
+               </validation>
+            </reference>
+            <reference id="level" label="PWM output active level select." type="tpm_pwm_level_select_t" config_set_id="fsl_tpm">
+               <description>PWM output active level select.</description>
+            </reference>
+            <integer id="dutyCyclePercent" label="PWM pulse width [%]" type="uint8_t"  min_expr="0" max_expr="100">
+               <description>PWM pulse width, value shall be between 0 to 100 0 = inactive signal(0% duty cycle)... 100 = always active signal (100% duty cycle).</description>
+            </integer>
+            <integer id="firstEdgeDelayPercent" label="First edge delay [%]" type="uint8_t"  min_expr="0" max_expr="100">
+               <description>First edge dealy is used in combined PWM mode only to generate an asymmetrical PWM. It specifies the delay to the first edge in a PWM period. If unsure leave as 0; Should be specified as a percentage of the PWM period</description>
+            </integer>
+            <!--  PWM frequency is defined in the tpm main configuration 
+            <integer type="uint32_t" id="pwmFreq" label="PWM frequency [Hz]">
+               <description>PWM output frequency in Hz. Note: The same PWM frequency must be used for all TPM channels. The frequency value is hared accross all channels of a TPM timer (modulo values of the main counter).</description>
+            </integer>-->
+            <bool id="enable_chan_irq" label="Enable channel N interrupt" options="remove_from_struct_init"/>
+            <variable  id="chan_interrupt" available="$parent.enable_chan_irq.getValue()" value="`kTPM_Chnl` + (($parent.chnlNumber.getValue() == `kTPM_Chnl_0`) ? `0` : ($parent.chnlNumber.getValue() == `kTPM_Chnl_1`) ? `2` : ($parent.chnlNumber.getValue() == `kTPM_Chnl_2`) ? `4` : `6`)  + `InterruptEnable`"></variable>
+            <bool id="enable_chan1_irq" label="Enable channel N+1 interrupt"  options="remove_from_struct_init"/>
+            <variable  id="chan1_interrupt" available="$parent.enable_chan1_irq.getValue()" value="`kTPM_Chnl` + (($parent.chnlNumber.getValue() == `kTPM_Chnl_0`) ? `1` : ($parent.chnlNumber.getValue() == `kTPM_Chnl_1`) ? `3` : ($parent.chnlNumber.getValue() == `kTPM_Chnl_2`) ? `5` : `7`)  + `InterruptEnable`"></variable>
+         </struct>
+         
+         <enum id="tpm_edge_aligned_mode_t" label="TPM edge-aligned channel modes." from="_tpm_edge_aligned_mode">
+            <item id="kTPM_InputCapture" label="Input Capture"/>
+            <item id="kTPM_DualEdgeCapture" label="Dual Edge Capture" available="(featureDefined(`FSL_FEATURE_TPM_HAS_COMBINE`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_COMBINE`))"/>
+            <item id="kTPM_OutputCompare" label="Output compare"/>
+            <item id="kTPM_EdgeAlignedPwm" label="Edge-aligned PWM"/>
+            <item id="kTPM_CombinedPwm" label="Combined PWM" available="(featureDefined(`FSL_FEATURE_TPM_HAS_COMBINE`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_COMBINE`))"/>
+         </enum>
+         <struct id="tpm_edge_aligned_channel_mode" label="TPM Edge Aligned Channel Mode" from="_tpm_edge_aligned_channel_mode">
+            <validation>
+               <!-- constraint for checking of duplicated channel - it is also used for combined mode - even number of channels -->
+               <constraint cond_expr="$parent.searchInArray(
+                  item -> (($this.getID() != item.getID()) &amp;&amp; 
+                  (((item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_InputCapture`) 
+                    ?  item.getSetting(`input_capture.chnNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : (item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_DualEdgeCapture`) 
+                    ? (item.getSetting(`dual_edge_capture.chnNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2) 
+                    : (item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_OutputCompare`) 
+                    ?  item.getSetting(`output_compare.chnNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : (item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_EdgeAlignedPwm`) 
+                    ?  item.getSetting(`edge_aligned_pwm.chnlNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : (item.getSetting(`combined_pwm.chnlNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2) 
+                   ) == 
+                   (
+                    ($this.edge_aligned_mode.getValue() == `kTPM_InputCapture`) 
+                    ? $this.input_capture.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : ($this.edge_aligned_mode.getValue() == `kTPM_DualEdgeCapture`) 
+                    ? ($this.dual_edge_capture.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2) 
+                    : ($this.edge_aligned_mode.getValue() == `kTPM_OutputCompare`) 
+                    ? $this.output_compare.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : ($this.edge_aligned_mode.getValue() == `kTPM_EdgeAlignedPwm`) 
+                    ? $this.edge_aligned_pwm.chnlNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : ($this.combined_pwm.chnlNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2)
+                   )    
+                 ))) &lt; 0 " level="warning" 
+                    description_expr="`Duplicated channel (` + 
+                    (($this.edge_aligned_mode.getValue() == `kTPM_InputCapture`) 
+                    ? $this.input_capture.chnNumber.getEnumItemLabel() 
+                    : ($this.edge_aligned_mode.getValue() == `kTPM_DualEdgeCapture`) 
+                    ? ($this.dual_edge_capture.chnNumber.getEnumItemLabel()) 
+                    : ($this.edge_aligned_mode.getValue() == `kTPM_OutputCompare`) 
+                    ? $this.output_compare.chnNumber.getEnumItemLabel() 
+                    : ($this.edge_aligned_mode.getValue() == `kTPM_EdgeAlignedPwm`) 
+                    ? $this.edge_aligned_pwm.chnlNumber.getEnumItemLabel() 
+                    : ($this.combined_pwm.chnlNumber.getEnumItemLabel()))
+                 + `) is selected. Please, select each channel once only.`" />
+               <!-- constraint for checking of duplicated channel - it is also used for combined mode - odd number of channels -->
+               <constraint cond_expr="$parent.searchInArray(
+                  item -> (($this.getID() != item.getID()) &amp;&amp; 
+                  ((
+                    (item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_DualEdgeCapture`) 
+                    ? (item.getSetting(`dual_edge_capture.chnNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1) 
+                    : (item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_CombinedPwm`) 
+                    ? (item.getSetting(`combined_pwm.chnlNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1) 
+                    : (-1)
+                   ) == 
+                   (
+                    ($this.edge_aligned_mode.getValue() == `kTPM_InputCapture`) 
+                    ? $this.input_capture.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : ($this.edge_aligned_mode.getValue() == `kTPM_DualEdgeCapture`) 
+                    ? ($this.dual_edge_capture.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1) 
+                    : ($this.edge_aligned_mode.getValue() == `kTPM_OutputCompare`) 
+                    ? $this.output_compare.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : ($this.edge_aligned_mode.getValue() == `kTPM_EdgeAlignedPwm`) 
+                    ? $this.edge_aligned_pwm.chnlNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : ($this.combined_pwm.chnlNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1)
+                   )    
+                 ))) &lt; 0 " level="warning" 
+                    description_expr="`Duplicated channel (` + 
+                    (($this.edge_aligned_mode.getValue() == `kTPM_InputCapture`) 
+                    ? $this.input_capture.chnNumber.getEnumItemLabel() 
+                    : ($this.edge_aligned_mode.getValue() == `kTPM_DualEdgeCapture`) 
+                    ? ($this.dual_edge_capture.chnNumber.getEnumItemLabel()) 
+                    : ($this.edge_aligned_mode.getValue() == `kTPM_OutputCompare`) 
+                    ? $this.output_compare.chnNumber.getEnumItemLabel() 
+                    : ($this.edge_aligned_mode.getValue() == `kTPM_EdgeAlignedPwm`) 
+                    ? $this.edge_aligned_pwm.chnlNumber.getEnumItemLabel() 
+                    : ($this.combined_pwm.chnlNumber.getEnumItemLabel()))
+                 + `) is selected. Please, select each channel once only.`" />
+               <constraint cond_expr="$parent.searchInArray(
+                  item -> (($this.getID() != item.getID()) &amp;&amp; 
+                  (((item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_InputCapture`) 
+                    ?  item.getSetting(`input_capture.chnNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : (item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_DualEdgeCapture`) 
+                    ? (item.getSetting(`dual_edge_capture.chnNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2) 
+                    : (item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_OutputCompare`) 
+                    ?  item.getSetting(`output_compare.chnNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : (item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_EdgeAlignedPwm`) 
+                    ?  item.getSetting(`edge_aligned_pwm.chnlNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : (item.getSetting(`combined_pwm.chnlNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2) 
+                   ) == 
+                   (
+                    ($this.edge_aligned_mode.getValue() == `kTPM_DualEdgeCapture`) 
+                    ? ($this.dual_edge_capture.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1) 
+                    : ($this.edge_aligned_mode.getValue() == `kTPM_CombinedPwm`) 
+                    ? ($this.combined_pwm.chnlNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1) 
+                    : (-1)
+                   )    
+                 ))) &lt; 0 " level="warning" 
+                    description_expr="`Duplicated channel (` + 
+                    (($this.edge_aligned_mode.getValue() == `kTPM_InputCapture`) 
+                    ? $this.input_capture.chnNumber.getEnumItemLabel() 
+                    : ($this.edge_aligned_mode.getValue() == `kTPM_DualEdgeCapture`) 
+                    ? ($this.dual_edge_capture.chnNumber.getEnumItemLabel()) 
+                    : ($this.edge_aligned_mode.getValue() == `kTPM_OutputCompare`) 
+                    ? $this.output_compare.chnNumber.getEnumItemLabel() 
+                    : ($this.edge_aligned_mode.getValue() == `kTPM_EdgeAlignedPwm`) 
+                    ? $this.edge_aligned_pwm.chnlNumber.getEnumItemLabel() 
+                    : ($this.combined_pwm.chnlNumber.getEnumItemLabel()))
+                 + `) is selected. Please, select each channel once only.`" />
+            </validation>
+            <reference type="tpm_edge_aligned_mode_t" id="edge_aligned_mode" label="Edge-aligned mode">
+               <description>Selection of the edge-aligned mode of the channel.</description>
+            </reference>
+            <reference type="tpm_input_capture_mode_t" id="input_capture" label="Input Capture settings" available="$parent.edge_aligned_mode.getValue() == `kTPM_InputCapture`"/>
+            <reference type="tpm_dual_edge_t" id="dual_edge_capture" label="Dual-edge Capture settings" available="(featureDefined(`FSL_FEATURE_TPM_HAS_COMBINE`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_COMBINE`)) &amp;&amp; ($parent.edge_aligned_mode.getValue() == `kTPM_DualEdgeCapture`)"/>
+            <reference type="tpm_output_compare_mode_t" id="output_compare" label="Output Compare settings" available="$parent.edge_aligned_mode.getValue() == `kTPM_OutputCompare`"/>
+            <reference type="tpm_chnl_pwm_signal_param_t" id="edge_aligned_pwm" label="Edge-aligned PWM settings" available="$parent.edge_aligned_mode.getValue() == `kTPM_EdgeAlignedPwm`"/>
+            <reference type="tpm_chnl_combined_pwm_signal_param_t" id="combined_pwm" label="Combined PWM settings" available="(featureDefined(`FSL_FEATURE_TPM_HAS_COMBINE`) &amp;&amp; getFeature(`FSL_FEATURE_TPM_HAS_COMBINE`)) &amp;&amp; ($parent.edge_aligned_mode.getValue() == `kTPM_CombinedPwm`)"/>
+         </struct>
+      </user_types>
+      <settings>
+         <array id="tpm_edge_aligned_channels_config" label="Channels" type="tpm_edge_aligned_channel_mode">
+            <description>Configuration of the TPM channels in the edge-eligned mode.</description>
+         </array>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+         </import>
+         <def fragment="dual_edge_capture_struct">
+            <fragment id="const_struct" apply_to="$this.dual_edge_capture_param">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_channel` + $parent.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1)"></param>
+               <param id="type">tpm_dual_edge_capture_param_t</param>
+            </fragment>
+         </def>
+         <def fragment="channel_struct">
+            <fragment id="dual_edge_capture_struct" if_expr="($this.edge_aligned_mode.getValue() == `kTPM_DualEdgeCapture`)" apply_to="$this.dual_edge_capture">
+            </fragment>
+         </def>
+         <def fragment="tpm_edge_aligned_channels_struct"> <!-- it is an array of structures -->
+            <fragment id="channel_struct" for_elements_of="$this" >     <!-- apply in context of each iten in the set/structure/array -->      
+            </fragment>
+            <br/>
+         </def>
+
+         <!-- Init functions -->
+         <def fragment="input_capture_init">
+            <expr>
+               leftPadding(`TPM_SetupInputCapture(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               $this.chnNumber.getCValue() + `, ` +
+               $this.input_capture_edge.getCValue() + `);`, 1)
+            </expr><br/>
+         </def>
+         <def fragment="dual_edge_capture_init">
+            <expr>
+               leftPadding(`TPM_SetupDualEdgeCapture(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               $this.chnNumber.getCValue() + `, ` +
+               `&amp;` + $instance.getFnGroupPrefix() + $instance.getID() + `_channel` + $this.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1) + `, ` + 
+               $this.filterValue.getCValue() + `);`, 1)
+            </expr><br/>
+         </def>
+         <def fragment="output_compare_init">
+            <expr>
+               leftPadding(`TPM_SetupOutputCompare(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               $this.chnNumber.getCValue() + `, ` +
+               $this.output_compare_mode.getCValue() + `, ` +
+               $this.compareValue.getCValue() + `);`, 1)
+            </expr><br/>
+         </def>
+         
+         <def fragment="channel_init">
+            <fragment id="input_capture_init" if_expr="($this.edge_aligned_mode.getValue() == `kTPM_InputCapture`)" apply_to="$this.input_capture"></fragment>
+            <fragment id="dual_edge_capture_init" if_expr="($this.edge_aligned_mode.getValue() == `kTPM_DualEdgeCapture`)" apply_to="$this.dual_edge_capture"></fragment>
+            <fragment id="output_compare_init" if_expr="($this.edge_aligned_mode.getValue() == `kTPM_OutputCompare`)" apply_to="$this.output_compare"></fragment>
+         </def>
+         <def fragment="tpm_edge_aligned_channels_init"> <!-- it is an array of structures -->
+            <fragment id="channel_init" for_elements_of="$this" >     <!-- apply in context of each iten in the set/structure/array -->      
+            </fragment>
+         </def>
+         <!-- PWM channels signal params configuration as an array of the tpm_chnl_pwm_signal_param_t structures -->         
+         <def fragment="pwm_channel_struct">
+            <expr>leftPadding(`{`,1)</expr><br/>
+            <fragment id="field" for_elements_of="$this.edge_aligned_pwm.filter(item -> ((!item.hasOption(`remove_from_struct_init`)) &amp;&amp; 
+                                                                                        ((getType(item) != `info`) || (item.hasOption(`transform_by_regex`)) || (item.hasOption(`add_to_struct`))) &amp;&amp;
+                                                                                        (getType(item) != `variable`)) )">
+                  <param id="paddingLevel" expr="2"></param>
+               </fragment>
+            <expr>leftPadding(`}`,1)</expr>
+            <expr> ($param._last ? ``: `,`) </expr><br/>
+         </def>
+
+         <def fragment="pwm_channels_struct"> <!-- it is an array of structures -->
+            <expr>`const ` + $param.type + ` ` + $param.name + `[] = { `</expr><br/>
+             <fragment id="pwm_channel_struct" for_elements_of="$this.filter(item -> (item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_EdgeAlignedPwm`))">      
+               </fragment>
+            <text>};</text>
+            <br/>
+         </def>
+         <def fragment="pwm_channels_init"> <!-- it is an array of structures -->
+            <expr>
+               leftPadding(`TPM_SetupPwm(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               $param.struct_name + `, ` + 
+               + $param.number_of_channels + `, ` +
+               + `kTPM_EdgeAlignedPwm, ` +
+               + $instance.tpm_main_config.tpm_config.timerFrequency.getCValue() + `U, ` +
+               toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`) + `);`, 1) 
+            </expr><br/>
+         </def>
+
+         <!-- PWM channels signal params configuration as an array of the tpm_chnl_pwm_signal_param_t structures -->         
+         <def fragment="combined_pwm_channel_struct">
+            <expr>leftPadding(`{`,1)</expr><br/>
+            <fragment id="field" for_elements_of="$this.combined_pwm.filter(item -> ((!item.hasOption(`remove_from_struct_init`)) &amp;&amp; 
+                                                                                    ((getType(item) != `info`) || (item.hasOption(`transform_by_regex`)) || (item.hasOption(`add_to_struct`))) &amp;&amp;
+                                                                                    (getType(item) != `variable`)) )">
+                  <param id="paddingLevel" expr="2"></param>
+               </fragment>
+            <expr>leftPadding(`}`,1)</expr>
+            <expr> ($param._last ? ``: `,`) </expr><br/>
+         </def>
+         <def fragment="combined_pwm_channels_struct"> <!-- it is an array of structures -->
+            <expr>`const ` + $param.type + ` ` + $param.name + `[] = { `</expr><br/>
+            <fragment id="combined_pwm_channel_struct" for_elements_of="$this.filter(item -> (item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_CombinedPwm`))">      
+            </fragment>
+            <text>};</text>
+            <br/>
+         </def>
+         <def fragment="combined_pwm_channels_init"> <!-- it is an array of structures -->
+            <expr>
+               leftPadding(`TPM_SetupPwm(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               $param.struct_name + `, ` + 
+               + $param.number_of_channels + `, ` +
+               + `kTPM_CombinedPwm, ` +
+               + $instance.tpm_main_config.tpm_config.timerFrequency.getCValue() + `U, ` +
+               toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`) + `);`, 1) 
+            </expr><br/>
+         </def>
+         <def fragment="tpm_set_timer_period_init"> <!-- it is an array of structures -->
+            <expr>
+               leftPadding(`TPM_SetTimerPeriod(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               + `((` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`) + `/ (1U &lt;&lt; (` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)+`-&gt;SC &amp; TPM_SC_PS_MASK)))`  
+               + ` / ` + $instance.tpm_main_config.tpm_config.timerFrequency.getCValue() + `) + 1` + 
+               `);`, 1) 
+            </expr><br/>
+         </def>
+         <!-- Enable interrupts of channels and timer -->
+         <def fragment="channel_interrupts">
+            <expr if_expr="$this.edge_aligned_mode.getValue() == `kTPM_InputCapture`">$this.input_capture.enable_chan_irq.getValue() ? $this.input_capture.chan_interrupt.getValue() : ``</expr>
+            <expr if_expr="$this.edge_aligned_mode.getValue() == `kTPM_DualEdgeCapture`">($this.dual_edge_capture.enable_chan_irq.getValue() &amp;&amp; $this.dual_edge_capture.enable_chan1_irq.getValue()) ? ($this.dual_edge_capture.chan_interrupt.getValue() + `|` + $this.dual_edge_capture.chan1_interrupt.getValue()) : $this.dual_edge_capture.enable_chan_irq.getValue() ? $this.dual_edge_capture.chan_interrupt.getValue() : $this.dual_edge_capture.enable_chan1_irq.getValue() ? $this.dual_edge_capture.chan1_interrupt.getValue() : ``</expr>
+            <expr if_expr="$this.edge_aligned_mode.getValue() == `kTPM_OutputCompare`">$this.output_compare.enable_chan_irq.getValue() ? $this.output_compare.chan_interrupt.getValue() : ``</expr>
+            <expr if_expr="$this.edge_aligned_mode.getValue() == `kTPM_EdgeAlignedPwm`">$this.edge_aligned_pwm.enable_chan_irq.getValue() ? $this.edge_aligned_pwm.chan_interrupt.getValue() : ``</expr>
+            <expr if_expr="$this.edge_aligned_mode.getValue() == `kTPM_CombinedPwm`">($this.combined_pwm.enable_chan_irq.getValue() &amp;&amp; $this.combined_pwm.enable_chan1_irq.getValue()) ? ($this.combined_pwm.chan_interrupt.getValue() + `|` + $this.combined_pwm.chan1_interrupt.getValue()) : $this.combined_pwm.enable_chan_irq.getValue() ? $this.combined_pwm.chan_interrupt.getValue() : $this.combined_pwm.enable_chan1_irq.getValue() ? $this.combined_pwm.chan1_interrupt.getValue() : `` </expr>
+            <expr> ($param._last ? `` : ` | `) </expr>
+         </def>
+         <def fragment="tpm_enable_interrupts"> <!-- it is an array of structures -->
+            <expr>
+               leftPadding(`TPM_EnableInterrupts(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, `, 1) 
+            </expr>
+            <fragment id="channel_interrupts" for_elements_of="$this.filter(item -> ((item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_InputCapture`) &amp;&amp; (item.getSetting(`input_capture.enable_chan_irq`).getValue())) || 
+                                                                                    ((item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_DualEdgeCapture`) &amp;&amp; (item.getSetting(`dual_edge_capture.enable_chan_irq`).getValue() || item.getSetting(`dual_edge_capture.enable_chan1_irq`).getValue())) || 
+                                                                                    ((item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_OutputCompare`) &amp;&amp; (item.getSetting(`output_compare.enable_chan_irq`).getValue())) || 
+                                                                                    ((item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_EdgeAlignedPwm`) &amp;&amp; (item.getSetting(`edge_aligned_pwm.enable_chan_irq`).getValue())) || 
+                                                                                    ((item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_CombinedPwm`) &amp;&amp; (item.getSetting(`combined_pwm.enable_chan_irq`).getValue() || item.getSetting(`combined_pwm.enable_chan1_irq`).getValue())))"/>
+            <expr if_expr="($this.searchInArray(item -> ((item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_InputCapture`) &amp;&amp; (item.getSetting(`input_capture.enable_chan_irq`).getValue())) || 
+               ((item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_DualEdgeCapture`) &amp;&amp; (item.getSetting(`dual_edge_capture.enable_chan_irq`).getValue() || item.getSetting(`dual_edge_capture.enable_chan1_irq`).getValue())) || 
+                                                 ((item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_OutputCompare`) &amp;&amp; (item.getSetting(`output_compare.enable_chan_irq`).getValue())) || 
+                                                 ((item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_EdgeAlignedPwm`) &amp;&amp; (item.getSetting(`edge_aligned_pwm.enable_chan_irq`).getValue())) || 
+                                                 ((item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_CombinedPwm`) &amp;&amp; (item.getSetting(`combined_pwm.enable_chan_irq`).getValue() || item.getSetting(`combined_pwm.enable_chan1_irq`).getValue()))  ) >= 0) &amp;&amp;
+                            ($instance.tpm_main_config.timer_interrupts.getCValue() != ``)">` | `</expr>
+            <expr>($instance.tpm_main_config.timer_interrupts.getValue() != ``) ? $instance.tpm_main_config.timer_interrupts.getCValue() : `0`</expr>
+<!--            <expr>($instance.tpm_main_config.timer_interrupts.getValue() != ``) ? $instance.tpm_main_config.timer_interrupts.getCValue() : `0`</expr>-->
+            <expr>   
+               `);` 
+            </expr><br/>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="defines">
+         </section> 
+         <section target="global_vars">
+            <fragment id="tpm_edge_aligned_channels_struct" apply_to="$this.tpm_edge_aligned_channels_config">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_edgeAlignedConfig`"></param>
+               <param id="type" >tpm_edge_aligned_channels_config_t</param>
+            </fragment>
+            <fragment id="pwm_channels_struct" apply_to="$this.tpm_edge_aligned_channels_config" if_expr="$this.tpm_edge_aligned_channels_config.searchInArray(item -> (item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_EdgeAlignedPwm`)) >= 0">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_pwmSignalParams`"></param>
+               <param id="type" >tpm_chnl_pwm_signal_param_t</param>
+            </fragment>
+            <fragment id="combined_pwm_channels_struct" apply_to="$this.tpm_edge_aligned_channels_config" if_expr="$this.tpm_edge_aligned_channels_config.searchInArray(item -> (item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_CombinedPwm`)) >= 0">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_combinedPwmSignalParams`"></param>
+               <param id="type" >tpm_chnl_pwm_signal_param_t</param>
+            </fragment>
+         </section>
+         <section target="global_vars_extern">
+<!--            <fragment type="extern_var">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`"></param>
+               <param id="type" >tpm_config_t</param>
+            </fragment>-->
+         </section>
+         <section target="init_function_body">
+            <!-- Initialization functions for Input Capture, Output Compare and Dual Edge modes -->
+            <fragment id="tpm_edge_aligned_channels_init" apply_to="$this.tpm_edge_aligned_channels_config"></fragment>
+            <!-- PWM channels initialization function -->
+            <fragment id="pwm_channels_init" apply_to="$this.tpm_edge_aligned_channels_config" if_expr="$this.tpm_edge_aligned_channels_config.searchInArray(item -> (item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_EdgeAlignedPwm`)) >= 0">
+               <param id="struct_name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_pwmSignalParams`"></param>
+               <param id="number_of_channels" expr="`sizeof(` + $instance.getFnGroupPrefix() + $instance.getID() + `_pwmSignalParams` + `) / sizeof(tpm_chnl_pwm_signal_param_t)`"></param> <!-- Note: $this expression here corespond to the expression apply_to="$this.tpm_edge_aligned_channels_config" above  -->
+            </fragment>
+            <!-- Combined PWM channels initialization function -->
+            <fragment id="combined_pwm_channels_init" apply_to="$this.tpm_edge_aligned_channels_config" if_expr="$this.tpm_edge_aligned_channels_config.searchInArray(item -> (item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_CombinedPwm`)) >= 0">
+               <param id="struct_name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_combinedPwmSignalParams`"></param>
+               <param id="number_of_channels" expr="`sizeof(` + $instance.getFnGroupPrefix() + $instance.getID() + `_combinedPwmSignalParams` + `) / sizeof(tpm_chnl_pwm_signal_param_t)`"></param> <!-- Note: $this expression here corespond to the expression apply_to="$this.tpm_edge_aligned_channels_config" above  -->
+            </fragment>
+            <!-- The TPM_SetTimerPeriod function is called only if the SetuPWM is not invoked before (the SetupPWM function sets the MOD register of TPM by the same way as the call of the TPM_SetTimerPeriod)-->
+            <fragment id="tpm_set_timer_period_init" if_expr="$this.tpm_edge_aligned_channels_config.searchInArray(item -> ((item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_CombinedPwm`) || (item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_EdgeAlignedPwm`))) &lt; 0">
+            </fragment>
+            <!-- Enable interrupts of timer and channels -->
+            <fragment id="tpm_enable_interrupts" apply_to="$this.tpm_edge_aligned_channels_config" if_expr="($this.tpm_edge_aligned_channels_config.searchInArray(item -> (((item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_InputCapture`) &amp;&amp; (item.getSetting(`input_capture.enable_chan_irq`).getValue())) || 
+               ((item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_DualEdgeCapture`) &amp;&amp; (item.getSetting(`dual_edge_capture.enable_chan_irq`).getValue() || item.getSetting(`dual_edge_capture.enable_chan1_irq`).getValue())) || 
+               ((item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_OutputCompare`) &amp;&amp; (item.getSetting(`output_compare.enable_chan_irq`).getValue())) || 
+               ((item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_EdgeAlignedPwm`) &amp;&amp; (item.getSetting(`edge_aligned_pwm.enable_chan_irq`).getValue())) || 
+               ((item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_CombinedPwm`) &amp;&amp; (item.getSetting(`combined_pwm.enable_chan_irq`).getValue() || item.getSetting(`combined_pwm.enable_chan1_irq`).getValue()))  )) >= 0) ||
+               ($instance.tpm_main_config.timer_interrupts.getCValue() != ``)">
+            </fragment>
+         </section>
+      </code>
+      <quick_selections>
+      </quick_selections>
+   </config_set>
+   
+   <config_set id="tpm_center_aligned_mode" label="TPM Center-aligned mode" from_source="fsl_tpm.h">
+      <description>TPM center aligned mode configuration.</description>
+      <generated_types>
+      </generated_types>
+      <user_types>
+         <reference id="center_aligned_pwm" label="Center-aligned PWM settings" type="tpm_chnl_pwm_signal_param_t" config_set_id="tpm_edge_aligned_mode">
+            <validation>
+               <!-- constraint for checking of duplicated channels -->
+               <constraint cond_expr="($parent.searchInArray(item -> (($this.getID() != item.getID()) &amp;&amp; 
+                                      ((item.getSetting(`chnlNumber`).getValue())  ==  ($this.chnlNumber.getValue())))) &lt; 0)" level="warning" 
+                                      description_expr="`Duplicated channel (` + $this.chnlNumber.getEnumItemLabel() + `) is selected. Please, select each channel once only.`"/>
+            </validation>
+         </reference>
+      </user_types>
+      <settings>
+         <array id="tpm_center_aligned_channels_config" label="Channels" type="center_aligned_pwm">
+            <description>Configuration of the TPM channels in the edge-eligned mode.</description>
+         </array>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+         </import>
+         <def fragment="tpm_edge_aligned_channels_struct"> <!-- it is an array of structures -->
+            <fragment id="channel_struct" for_elements_of="$this" >     <!-- apply in context of each iten in the set/structure/array -->      
+            </fragment>
+            <br/>
+         </def>
+         <!-- Init functions -->
+         <!-- PWM channels signal params configuration as an array of the tpm_chnl_pwm_signal_param_t structures -->         
+         <def fragment="center_pwm_channel_struct">
+            <expr>leftPadding(`{`,1)</expr><br/>
+            <fragment id="field" for_elements_of="$this.filter(item -> ((!item.hasOption(`remove_from_struct_init`)) &amp;&amp; 
+                                                                       ((getType(item) != `info`) || (item.hasOption(`transform_by_regex`)) || (item.hasOption(`add_to_struct`)))  &amp;&amp;
+                                                                       (getType(item) != `variable`)) )">
+               <param id="paddingLevel" expr="2"></param>
+            </fragment>
+            <expr>leftPadding(`}`,1)</expr>
+            <expr> ($param._last ? ``: `,`) </expr><br/>
+         </def>
+         <def fragment="center_pwm_channels_struct"> <!-- it is an array of structures -->
+            <expr>`const ` + $param.type + ` ` + $param.name + `[] = { `</expr><br/>
+            <fragment id="center_pwm_channel_struct" for_elements_of="$this">      
+            </fragment>
+            <text>};</text>
+            <br/>
+         </def>
+         <def fragment="center_pwm_channels_init"> <!-- it is an array of structures -->
+            <expr>
+               leftPadding(`TPM_SetupPwm(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               $param.struct_name + `, ` + 
+               + $param.number_of_channels + `, ` +
+               + `kTPM_CenterAlignedPwm, ` +
+               + $instance.tpm_main_config.tpm_config.timerFrequency.getCValue() + `U, ` +
+               toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`) + `);`, 1) 
+            </expr><br/>
+         </def>
+         <!-- Enable interrupts of channels and timer -->
+         <def fragment="channel_interrupts">
+            <expr>$this.enable_chan_irq.getValue() ? $this.chan_interrupt.getValue() : ``</expr>
+            <expr> ($param._last ? `` : ` | `) </expr>
+         </def>
+         <def fragment="tpm_enable_interrupts"> <!-- it is an array of structures -->
+            <expr>
+               leftPadding(`TPM_EnableInterrupts(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, `, 1) 
+            </expr>
+            <fragment id="channel_interrupts" for_elements_of="$this.filter(item -> (item.getSetting(`enable_chan_irq`).getValue()))"/>
+            <expr if_expr="( ($this.searchInArray(item -> (item.getSetting(`enable_chan_irq`).getValue())) >= 0) &amp;&amp;
+                                                  ($instance.tpm_main_config.timer_interrupts.getCValue() != ``))">` | `</expr>
+            <expr>($instance.tpm_main_config.timer_interrupts.getValue() != ``) ? $instance.tpm_main_config.timer_interrupts.getCValue() : `0`</expr>
+            <expr>   
+               `);` 
+            </expr><br/>
+         </def>
+         <def fragment="tpm_set_timer_period_init"> <!-- it is an array of structures -->
+            <expr>
+               leftPadding(`TPM_SetTimerPeriod(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               + `((` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`) + `/ (1U &lt;&lt; (` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)+`-&gt;SC &amp; TPM_SC_PS_MASK)))`  
+               + ` / (` + $instance.tpm_main_config.tpm_config.timerFrequency.getCValue() + ` * 2))` + 
+               `);`, 1) 
+            </expr><br/>
+         </def>
+      </fragment_defs>
+      <code>
+         <!--         <code_template id="main_init">-->
+         <section target="defines">
+         </section> 
+         <section target="global_vars" >
+            <fragment id="center_pwm_channels_struct" apply_to="$this.tpm_center_aligned_channels_config" if_expr="$this.tpm_center_aligned_channels_config.length() &gt; 0">
+               <!--               <fragment id="pwm_channels_struct" apply_to="$this.tpm_edge_aligned_channels_config" if_expr="$this.tpm_edge_aligned_channels_config.searchInArray($item.getSetting(`edge_aligned_mode`).getValue() == `kTPM_EdgeAlignedPwm`)">-->
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_centerPwmSignalParams`"></param>
+               <param id="type" >tpm_chnl_pwm_signal_param_t</param>
+            </fragment>
+         </section>
+         <section target="global_vars_extern">
+         </section>
+         <section target="init_function_body">
+            <!-- Center PWM channels initialization function -->
+            <fragment id="center_pwm_channels_init" apply_to="$this.tpm_center_aligned_channels_config" if_expr="$this.tpm_center_aligned_channels_config.length() &gt; 0">
+               <param id="struct_name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_centerPwmSignalParams`"></param>
+               <param id="number_of_channels" expr="`sizeof(` + $instance.getFnGroupPrefix() + $instance.getID() + `_centerPwmSignalParams` + `) / sizeof(tpm_chnl_pwm_signal_param_t)`"></param> <!-- Note: $this expression here corespond to the expression apply_to="$this.tpm_edge_aligned_channels_config" above  -->
+            </fragment>
+            <!-- The TPM_SetTimerPeriod function is called only if the SetuPWM is not invoked before (the SetupPWM function sets the MOD register of TPM by the same way as the call of the TPM_SetTimerPeriod)-->
+            <fragment id="tpm_set_timer_period_init" if_expr="$this.tpm_center_aligned_channels_config.length() == 0">
+            </fragment>
+            <!-- Enable interrupts of timer and channels -->
+            <fragment id="tpm_enable_interrupts" apply_to="$this.tpm_center_aligned_channels_config" if_expr="($this.tpm_center_aligned_channels_config.searchInArray(item -> (item.getSetting(`enable_chan_irq`).getValue())) >= 0) || ($instance.tpm_main_config.timer_interrupts.getCValue() != ``)">
+            </fragment>
+         </section>
+      </code>
+      <quick_selections>
+      </quick_selections>
+   </config_set>
+   <config_set id="tpm_quadrature_decoder_mode" label="FlexTimer Quadrature Decoder Mode" from_source="fsl_tpm.h">
+      <description>FlexTimer quadrature decoder mode configuration.</description>
+      <generated_types>
+      </generated_types>
+      <user_types>
+         <struct id="tpm_phase_params_t" label="FlexTimer quadrature decoder phase parameters." from="_tpm_phase_param">
+<!--            <bool id="enablePhaseFilter" label="Enable phase filter">
+               <description>True: enable phase filter; false: disable filter</description>
+            </bool>-->
+            <integer id="phaseFilterVal" label="Filter value" type="uint32_t">
+               <description>Filter value, used only if phase filter is enabled</description>
+            </integer>
+            <reference id="phasePolarity" label="Phase polarity" type="tpm_phase_polarity_t" config_set_id="fsl_tpm">
+               <description>Phase polarity</description>
+            </reference>
+         </struct>
+      </user_types>
+      <settings>
+         <!-- Quadrature decoder mode - modulo value -->
+         <integer type="uint32_t" id="timerModuloVal" label="Timer modulo value" min_expr="1">
+            <description>Timer modulo value that is used in the quadrature decoder mode of the TPM device.</description>
+         </integer>
+         <!-- Quadrature decoder mode - initial value of the timer-->
+<!--         <integer type="uint32_t" id="timerInitVal" label="Timer initial value">
+            <description>Initial value of the timer that is used in the quadrature decoder mode of the TPM device.</description>
+         </integer>-->
+         <reference id="tpm_quad_decoder_mode" label="TPM Quadrature Decoder Mode" type="tpm_quad_decode_mode_t" config_set_id="fsl_tpm">
+            <description>Quadrature decoder mode</description>
+         </reference>
+         <reference id="tpm_phase_a_params" label="TPM Phase A Parameters" type="tpm_phase_params_t">
+            <description>Phase A parameters configuration.</description>
+            <validation>
+               <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_qd_ph.0`" description_expr="`Quadrature decoder phase A (0) signal is not routed (` + $instance.getPeripheral() + ` device).`" level="Warning">
+                  <feature name="routed" evaluation="equal">
+                     <data expr="true"/>
+                  </feature>
+               </dependency>
+            </validation>
+         </reference>
+         <reference id="tpm_phase_b_params" label="TPM Phase B Parameters" type="tpm_phase_params_t">
+            <description>Phase B parameters configuration.</description>
+            <validation>
+               <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_qd_ph.1`" description_expr="`Quadrature decoder phase B (1) signal is not routed (` + $instance.getPeripheral() + ` device).`" level="Warning">
+                  <feature name="routed" evaluation="equal">
+                     <data expr="true"/>
+                  </feature>
+               </dependency>
+            </validation>
+         </reference>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+         </import>
+         <def fragment="tpm_quad_decoder_struct"> <!-- it is an array of structures -->
+            <fragment id="channel_struct" for_elements_of="$this" >     <!-- apply in context of each iten in the set/structure/array -->      
+            </fragment>
+            <br/>
+         </def>
+         <!-- Init functions -->
+         <!-- PWM channels signal params configuration as an array of the tpm_chnl_pwm_signal_param_t structures -->         
+         <def fragment="quad_decoder_struct_items">
+            <fragment id="field" apply_to="$this.phaseFilterVal">
+               <param id="paddingLevel" expr="1"></param>
+               <param id="_last" expr="false"></param> <!-- define the _last parameter because one item of the structer is applied only -->
+            </fragment>
+            <fragment id="field" apply_to="$this.phasePolarity">
+               <param id="paddingLevel" expr="1"></param>
+               <param id="_last" expr="true"></param> <!-- define the _last parameter because one item of the structer is applied only -->
+            </fragment>
+            <br/>
+         </def>
+         <def fragment="quad_decoder_struct"> 
+            <expr>`const ` + $param.type + ` ` + $param.name + ` = { `</expr><br/>
+            <fragment id="quad_decoder_struct_items" apply_to="$this"/>       
+            <text>};</text>
+            <br/>
+         </def>
+         <def fragment="quad_decoder_init"> <!-- it is an array of structures -->
+            <expr>
+               leftPadding(`TPM_SetupQuadDecode(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               `&amp;` + $param.struct_phase_A_name + `, ` + 
+               `&amp;` + $param.struct_phase_B_name + `, ` + 
+               + $param.quad_mode + `);`, 1) 
+            </expr><br/>
+         </def>
+         <def fragment="quad_decoder_modulo_value"> 
+            <expr>
+               leftPadding(`TPM_SetTimerPeriod(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` +
+               + $this.timerModuloVal.getValue() + `);`, 1)
+            </expr><br/>
+         </def>
+         
+      </fragment_defs>
+      <code>
+         <!--         <code_template id="main_init">-->
+         <section target="defines">
+         </section> 
+         <section target="global_vars">
+            <fragment id="quad_decoder_struct" apply_to="$this.tpm_phase_a_params">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_phaseAParams`"></param>
+               <param id="type" >tpm_phase_params_t</param>
+            </fragment>
+            <fragment id="quad_decoder_struct" apply_to="$this.tpm_phase_b_params">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_phaseBParams`"></param>
+               <param id="type" >tpm_phase_params_t</param>
+            </fragment>
+         </section>
+         <section target="global_vars_extern">
+         </section>
+         <section target="init_function_body">
+            <!-- Quadrature decoder initialization functions -->
+            <fragment id="quad_decoder_modulo_value"/>
+            <fragment id="quad_decoder_init">
+               <param id="struct_phase_A_name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_phaseAParams`"></param>
+               <param id="struct_phase_B_name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_phaseBParams`"></param>
+               <param id="quad_mode" expr="$this.tpm_quad_decoder_mode.getCValue()"></param> <!-- Note: $this expression here corespond to the expression apply_to="$this.tpm_edge_aligned_channels_config" above  -->
+            </fragment>
+         </section>
+      </code>
+      <quick_selections>
+      </quick_selections>
+   </config_set>
+</component:config_component>

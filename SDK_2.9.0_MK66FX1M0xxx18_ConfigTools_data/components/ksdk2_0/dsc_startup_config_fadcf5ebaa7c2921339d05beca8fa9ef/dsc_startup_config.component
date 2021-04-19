@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component:config_component
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd"
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0" options="UI_COMPONENT_MODE_HIDDEN"
+   id="dsc_startup_config" label="Boot_option" category="Register init" registers_init="false" auto_add_instances="1">
+   <description>Startup bootloader configuration</description>
+   <mode id="general" label="General">
+      <description>Startup bootloader initialization</description>
+      <config_set_refs>
+          <config_set_ref>startup_config</config_set_ref>
+      </config_set_refs>
+   </mode>
+    <script file="dsc_startup_config_codegenerator.js"/>
+    <config_set id="startup_config" label="General configuation">
+      <description>Startup bootloader configuration</description>
+      <generated_types/>
+      <user_types>
+          <struct id="startupConfig_t">
+              <bool id="enable" label="Enter bootloader at startup"></bool>
+              <set id="resetType" label="Resets triggering bootloader" enable="$parent.enable.getValue() == true">
+                  <description>Selects resets that will trigger the bootloader during startup.</description>
+                  <item id="power_on" label="Power on reset" value="0x04"></item>
+                  <item id="external_pin" label="External pin reset" value="0x08"></item>
+                  <item id="cop_loss_of_reference" label="COP loss of reference reset" value="0x10"></item>
+                  <item id="cop_timeout" label="COP time-out reset" value="0x20"></item>
+                  <item id="cop_window_timeout" label="COP window time-out reset" value="0x80"></item>
+              </set>
+          </struct>
+      </user_types>
+      <settings>
+          <!-- Fragment variables -->
+          <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+          <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+          <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+          <!-- UI --> 
+          <reference type="startupConfig_t" id="startupConfig" label="Startup configuration" options="UI_BORDER_HIDDEN;UI_LABEL_HIDDEN"></reference>
+          <variable id="resetTypeValue" value=" $parent.startupConfig.enable.getValue() == false ? 0 :
+              ($configSet.startupConfig.resetType.power_on.getValue() ? 0x04 : 0) +
+              ($configSet.startupConfig.resetType.external_pin.getValue() ? 0x08 : 0) + 
+              ($configSet.startupConfig.resetType.cop_loss_of_reference.getValue() ? 0x10 : 0) + 
+              ($configSet.startupConfig.resetType.cop_timeout.getValue() ? 0x20 : 0) + 
+              ($configSet.startupConfig.resetType.cop_window_timeout.getValue() ? 0x100 : 0)"></variable>
+          <!-- Template parameters -->
+          <struct id="startup_codegenerator" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+              <variable id="_ENTER_BOOTLOADER_AT_STARTUP" value="$configSet.getSetting(`startupConfig.enable`).getValue() == true ? 1 : 0"></variable>
+              <variable id="_ENTER_BOOTLOADER_RESET_TYPE" value="$configSet.resetTypeValue.getValue().toString(16)">
+              </variable>           
+          </struct>
+      </settings>
+      <validation>
+          <constraint level="error" description_expr="`Only one instance of the Startup configuration component should be enabled.`"
+              cond_expr="$root.flatMap(x -> x).filter(x -> x.isEnabled()).countOccurrences(i -> (i.getType() == $instance.getType()), false) == 1"/>
+          <!-- Update for v9 -->
+          <!--constraint level="error" description_expr="msg::message(`err_component_instance`, `Startup configuration`)"
+            cond_expr="$components.system.#global.all_enabled_instances.getValue().countOccurrences(i -> (i.getType() == $instance.getType()), false) == 1"/-->
+      </validation>
+       <fragment_defs>
+           <import>
+               <from component_id="system" config_set_id="common_code_templates"/>
+           </import>
+       </fragment_defs>
+       <code>
+       </code> 
+      <quick_selections>
+         <quick_selection id="default" label="Default">
+            <description>Default configuration</description>
+             <set id="startupConfig.enable">false</set>
+             <set id="startupConfig.resetType.power_on">true</set>
+         </quick_selection>
+          <default>default</default>
+      </quick_selections>
+   </config_set>
+</component:config_component>

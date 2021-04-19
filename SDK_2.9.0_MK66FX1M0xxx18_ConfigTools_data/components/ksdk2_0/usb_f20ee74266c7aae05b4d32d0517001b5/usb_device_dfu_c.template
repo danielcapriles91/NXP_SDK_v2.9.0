@@ -1,0 +1,129 @@
+#include "usb_device_config.h"
+#include "usb.h"
+#include "usb_device.h"
+#include "usb_device_composite.h"
+#include "usb_device_class.h"
+#include "usb_device_dfu.h"
+#include "usb_device_ch9.h"
+#include "usb_device_${idLowerSnakeCase}$_app.h"
+#include "usb_device_${idLowerSnakeCase}$.h"
+
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+typedef usb_status_t (*dfu_state_func)(usb_dfu_struct_t *dfu_dev, usb_device_dfu_event_struct_t *event);
+
+/*******************************************************************************
+ * Prototypes
+ ******************************************************************************/
+
+/*******************************************************************************
+ * Variables
+ ******************************************************************************/
+
+extern usb_dfu_struct_t g_UsbDevice${idCamelCase}$;
+extern uint8_t ${idLowerCamelCase}$FirmwareBlock[];
+/*******************************************************************************
+ * Code
+ ******************************************************************************/
+
+/*!
+ * @brief DFU task function.
+ *
+ * This function gets the current state of the device, do downloading
+ * or manifestation if it needs.
+ *
+ * @return None.
+ */
+void USB_Device${idCamelCase}$Task(void)
+{
+    static usb_dfu_state_struct_t state;
+
+    USB_DeviceStateUpdate();
+
+    state = USB_Device${idCamelCase}$GetState();
+
+    if (kState_DfuDnLoadSync == state)
+    {
+        USB_Device${idCamelCase}$Dnload();
+    }
+    else if (kState_DfuManifest == state)
+    {
+        USB_Device${idCamelCase}$Manifest();
+    }
+    if (g_UsbDevice${idCamelCase}$.crcCheck)
+    {
+        if (1 == g_UsbDevice${idCamelCase}$.dfuReboot)
+        {
+            g_UsbDevice${idCamelCase}$.dfuReboot = 0;
+
+            USB_Device${idCamelCase}$SwitchMode();
+        }
+    }
+}
+
+/*!
+ * @brief DFU class callback function.
+ *
+ * This function serves as the callback function for DFU class specific requests.
+ *
+ * @return A USB error code or kStatus_USB_Success.
+ */
+usb_status_t USB_Device${idCamelCase}$Callback(class_handle_t handle, uint32_t event, void *param)
+{
+    usb_status_t error                                  = kStatus_USB_Error;
+    usb_device_control_request_struct_t *controlRequest = (usb_device_control_request_struct_t *)param;
+    switch (event)
+    {
+        case kUSB_DeviceDfuEventDetach:
+            error = USB_Device${idCamelCase}$DetachReqest(controlRequest->setup->wValue);
+            break;
+        case kUSB_DeviceDfuEventDownLoad:
+            if ((controlRequest->isSetup) && (controlRequest->setup->wLength > 0))
+            {
+                controlRequest->buffer = ${idLowerCamelCase}$FirmwareBlock;
+                error                  = kStatus_USB_Success;
+            }
+            else
+            {
+                error = USB_Device${idCamelCase}$DownLoadReqest(controlRequest->setup->wLength, &controlRequest->buffer);
+            }
+            break;
+        case kUSB_DeviceDfuEventUpLoad:
+            error = USB_Device${idCamelCase}$UpLoadReqest(&controlRequest->length, &controlRequest->buffer);
+            break;
+        case kUSB_DeviceDfuEventGetStatus:
+            error = USB_Device${idCamelCase}$GetStatusReqest((uint8_t *)&controlRequest->length, &controlRequest->buffer);
+            break;
+        case kUSB_DeviceDfuEventClearStatus:
+            error = USB_Device${idCamelCase}$ClearStatusReqest();
+            break;
+        case kUSB_DeviceDfuEventGetState:
+            error = USB_Device${idCamelCase}$GetStateReqest((uint8_t *)&controlRequest->length, &controlRequest->buffer);
+            break;
+        case kUSB_DeviceDfuEventAbort:
+            error = USB_Device${idCamelCase}$AbortReqest();
+            break;
+        default:
+            break;
+    }
+
+    return error;
+}
+
+/* set Configuration */
+usb_status_t USB_Device${idCamelCase}$SetConfiguration(class_handle_t handle, uint8_t configuration_idx)
+{   
+    return kStatus_USB_Success;
+}
+
+usb_status_t USB_Device${idCamelCase}$SetInterface(class_handle_t handle, uint8_t alternateSetting)
+{
+    return kStatus_USB_Success;
+}
+
+usb_status_t USB_Device${idCamelCase}$Init(usb_device_composite_struct_t *deviceComposite)
+{   
+    USB_Device${idCamelCase}$AppInit();
+    return kStatus_USB_Success;
+}

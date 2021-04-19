@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="32" name="PDOR" description="Port Data Output Register">
+    <alias type="CMSIS" value="PDOR"/>
+    <bit_field_array offset="0" width="32" item_width="1" name="PDO" access="RW" reset_value="0" description="Port Data Output">
+      <alias type="CMSIS" value="GPIO_PDOR_PDO(x)"/>
+      <bit_field_value name="PDOR_PDO_0b00000000000000000000000000000000" value="0b0" description="Logic level 0 is driven on pin, provided pin is configured for general-purpose output."/>
+      <bit_field_value name="PDOR_PDO_0b00000000000000000000000000000001" value="0b1" description="Logic level 1 is driven on pin, provided pin is configured for general-purpose output."/>
+    </bit_field_array>
+  </register>
+  <register offset="0x4" width="32" name="PSOR" description="Port Set Output Register">
+    <alias type="CMSIS" value="PSOR"/>
+    <bit_field_array offset="0" width="32" item_width="1" name="PTSO" access="WORZ" reset_value="0" description="Port Set Output">
+      <alias type="CMSIS" value="GPIO_PSOR_PTSO(x)"/>
+      <bit_field_value name="PSOR_PTSO_0b00000000000000000000000000000000" value="0b0" description="Corresponding bit in PDORn does not change."/>
+      <bit_field_value name="PSOR_PTSO_0b00000000000000000000000000000001" value="0b1" description="Corresponding bit in PDORn is set to logic 1."/>
+    </bit_field_array>
+  </register>
+  <register offset="0x8" width="32" name="PCOR" description="Port Clear Output Register">
+    <alias type="CMSIS" value="PCOR"/>
+    <bit_field_array offset="0" width="32" item_width="1" name="PTCO" access="WORZ" reset_value="0" description="Port Clear Output">
+      <alias type="CMSIS" value="GPIO_PCOR_PTCO(x)"/>
+      <bit_field_value name="PCOR_PTCO_0b00000000000000000000000000000000" value="0b0" description="Corresponding bit in PDORn does not change."/>
+      <bit_field_value name="PCOR_PTCO_0b00000000000000000000000000000001" value="0b1" description="Corresponding bit in PDORn is cleared to logic 0."/>
+    </bit_field_array>
+  </register>
+  <register offset="0xC" width="32" name="PTOR" description="Port Toggle Output Register">
+    <alias type="CMSIS" value="PTOR"/>
+    <bit_field_array offset="0" width="32" item_width="1" name="PTTO" access="WORZ" reset_value="0" description="Port Toggle Output">
+      <alias type="CMSIS" value="GPIO_PTOR_PTTO(x)"/>
+      <bit_field_value name="PTOR_PTTO_0b00000000000000000000000000000000" value="0b0" description="Corresponding bit in PDORn does not change."/>
+      <bit_field_value name="PTOR_PTTO_0b00000000000000000000000000000001" value="0b1" description="Corresponding bit in PDORn is set to the inverse of its existing logic state."/>
+    </bit_field_array>
+  </register>
+  <register offset="0x10" width="32" name="PDIR" description="Port Data Input Register">
+    <alias type="CMSIS" value="PDIR"/>
+    <bit_field_array offset="0" width="32" item_width="1" name="PDI" access="RO" reset_value="0" description="Port Data Input">
+      <alias type="CMSIS" value="GPIO_PDIR_PDI(x)"/>
+      <bit_field_value name="PDIR_PDI_0b00000000000000000000000000000000" value="0b0" description="Pin logic level is logic 0, or is not configured for use by digital function."/>
+      <bit_field_value name="PDIR_PDI_0b00000000000000000000000000000001" value="0b1" description="Pin logic level is logic 1."/>
+    </bit_field_array>
+  </register>
+  <register offset="0x14" width="32" name="PDDR" description="Port Data Direction Register">
+    <alias type="CMSIS" value="PDDR"/>
+    <bit_field_array offset="0" width="32" item_width="1" name="PDD" access="RW" reset_value="0" description="Port Data Direction">
+      <alias type="CMSIS" value="GPIO_PDDR_PDD(x)"/>
+      <bit_field_value name="PDDR_PDD_0b00000000000000000000000000000000" value="0b0" description="Pin is configured as general-purpose input, for the GPIO function."/>
+      <bit_field_value name="PDDR_PDD_0b00000000000000000000000000000001" value="0b1" description="Pin is configured as general-purpose output, for the GPIO function."/>
+    </bit_field_array>
+  </register>
+</regs:peripheral>

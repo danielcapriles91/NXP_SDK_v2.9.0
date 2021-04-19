@@ -1,0 +1,610 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="edma" label="eDMA" category="Peripheral driver" global_only="false" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-6.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <sw_comp_ref name="platform.drivers.edma" version="2.1.1"/>
+   <description>Enhanced Direct Memory Access (eDMA)</description>
+   <mode id="basic" label="General" >
+      <description>Basic initialization of the eDMA and DMAMUX</description>
+      <config_set_refs>
+         <config_set_ref>fsl_edma</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>DMA</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="fsl_edma" label="eDMA" from_source="fsl_edma.h">
+      <description>eDMA configuration</description>
+      <generated_types>
+         <enum id="edma_transfer_size_t" label="eDMA transfer configuration" from="_edma_transfer_size">
+            <item id="kEDMA_TransferSize1Bytes" label="Source/Destination data transfer size is 1 byte every time"/>
+            <item id="kEDMA_TransferSize2Bytes" label="Source/Destination data transfer size is 2 bytes every time"/>
+            <item id="kEDMA_TransferSize4Bytes" label="Source/Destination data transfer size is 4 bytes every time"/>
+            <item id="kEDMA_TransferSize8Bytes" label="Source/Destination data transfer size is 8 bytes every time"/>
+            <item id="kEDMA_TransferSize16Bytes" label="Source/Destination data transfer size is 16 bytes every time"/>
+            <item id="kEDMA_TransferSize32Bytes" label="Source/Destination data transfer size is 32 bytes every time"/>
+         </enum>
+         <enum id="edma_modulo_t" label="eDMA modulo configuration" from="_edma_modulo">
+            <item id="kEDMA_ModuloDisable" label="Disable modulo"/>
+            <item id="kEDMA_Modulo2bytes" label="Circular buffer size is 2 bytes"/>
+            <item id="kEDMA_Modulo4bytes" label="Circular buffer size is 4 bytes"/>
+            <item id="kEDMA_Modulo8bytes" label="Circular buffer size is 8 bytes"/>
+            <item id="kEDMA_Modulo16bytes" label="Circular buffer size is 16 bytes"/>
+            <item id="kEDMA_Modulo32bytes" label="Circular buffer size is 32 bytes"/>
+            <item id="kEDMA_Modulo64bytes" label="Circular buffer size is 64 bytes"/>
+            <item id="kEDMA_Modulo128bytes" label="Circular buffer size is 128 bytes"/>
+            <item id="kEDMA_Modulo256bytes" label="Circular buffer size is 256 bytes"/>
+            <item id="kEDMA_Modulo512bytes" label="Circular buffer size is 512 bytes"/>
+            <item id="kEDMA_Modulo1Kbytes" label="Circular buffer size is 1 K bytes"/>
+            <item id="kEDMA_Modulo2Kbytes" label="Circular buffer size is 2 K bytes"/>
+            <item id="kEDMA_Modulo4Kbytes" label="Circular buffer size is 4 K bytes"/>
+            <item id="kEDMA_Modulo8Kbytes" label="Circular buffer size is 8 K bytes"/>
+            <item id="kEDMA_Modulo16Kbytes" label="Circular buffer size is 16 K bytes"/>
+            <item id="kEDMA_Modulo32Kbytes" label="Circular buffer size is 32 K bytes"/>
+            <item id="kEDMA_Modulo64Kbytes" label="Circular buffer size is 64 K bytes"/>
+            <item id="kEDMA_Modulo128Kbytes" label="Circular buffer size is 128 K bytes"/>
+            <item id="kEDMA_Modulo256Kbytes" label="Circular buffer size is 256 K bytes"/>
+            <item id="kEDMA_Modulo512Kbytes" label="Circular buffer size is 512 K bytes"/>
+            <item id="kEDMA_Modulo1Mbytes" label="Circular buffer size is 1 M bytes"/>
+            <item id="kEDMA_Modulo2Mbytes" label="Circular buffer size is 2 M bytes"/>
+            <item id="kEDMA_Modulo4Mbytes" label="Circular buffer size is 4 M bytes"/>
+            <item id="kEDMA_Modulo8Mbytes" label="Circular buffer size is 8 M bytes"/>
+            <item id="kEDMA_Modulo16Mbytes" label="Circular buffer size is 16 M bytes"/>
+            <item id="kEDMA_Modulo32Mbytes" label="Circular buffer size is 32 M bytes"/>
+            <item id="kEDMA_Modulo64Mbytes" label="Circular buffer size is 64 M bytes"/>
+            <item id="kEDMA_Modulo128Mbytes" label="Circular buffer size is 128 M bytes"/>
+            <item id="kEDMA_Modulo256Mbytes" label="Circular buffer size is 256 M bytes"/>
+            <item id="kEDMA_Modulo512Mbytes" label="Circular buffer size is 512 M bytes"/>
+            <item id="kEDMA_Modulo1Gbytes" label="Circular buffer size is 1 G bytes"/>
+            <item id="kEDMA_Modulo2Gbytes" label="Circular buffer size is 2 G bytes"/>
+         </enum>
+         <enum id="edma_bandwidth_t" label="Bandwidth control" from="_edma_bandwidth">
+            <item id="kEDMA_BandwidthStallNone" label="No eDMA engine stalls"/>
+            <item id="kEDMA_BandwidthStall4Cycle" label="eDMA engine stalls for 4 cycles after each read/write"/>
+            <item id="kEDMA_BandwidthStall8Cycle" label="eDMA engine stalls for 8 cycles after each read/write"/>
+         </enum>
+         <enum id="edma_channel_link_type_t" label="Channel link type" from="_edma_channel_link_type">
+            <item id="kEDMA_LinkNone" label="No channel link"/>
+            <item id="kEDMA_MinorLink" label="Channel link after each minor loop"/>
+            <item id="kEDMA_MajorLink" label="Channel link while major loop count exhausted"/>
+         </enum>
+         <enum id="edma_interrupt_enable_t" label="eDMA interrupt source" from="_edma_interrupt_enable">
+            <item id="kEDMA_ErrorInterruptEnable" label="Enable interrupt while channel error occurs"/>
+            <item id="kEDMA_MajorInterruptEnable" label="Enable interrupt while major count exhausted"/>
+            <item id="kEDMA_HalfInterruptEnable" label="Enable interrupt while major count to half value"/>
+         </enum>
+         <enum id="edma_transfer_type_t" label="eDMA transfer type" from="_edma_transfer_type">
+            <item id="kEDMA_MemoryToMemory" label="Transfer from memory to memory"/>
+            <item id="kEDMA_PeripheralToMemory" label="Transfer from peripheral to memory"/>
+            <item id="kEDMA_MemoryToPeripheral" label="Transfer from memory to peripheral"/>
+         </enum>
+         <struct id="edma_config_t" label="eDMA global configuration structure" from="_edma_config">
+            <bool id="enableContinuousLinkMode" label="Enable (true) continuous link mode">
+               <description>Enable (true) continuous link mode. Upon minor loop completion, the channel activates again if that channel has a minor loop channel link enabled and the link channel is itself.</description>
+            </bool>
+            <bool id="enableHaltOnError" label="Enable (true) transfer halt on error">
+               <description>Enable (true) transfer halt on error. Any error causes the HALT bit to set. Subsequently, all service requests are ignored until the HALT bit is cleared.</description>
+            </bool>
+            <bool id="enableRoundRobinArbitration" label="Enable (true) round robin channel arbitration method or fixed priority arbitration is used for channel selection">
+               <description>Enable (true) round robin channel arbitration method or fixed priority arbitration is used for channel selection</description>
+            </bool>
+            <bool id="enableDebugMode" label="Enable(true) eDMA debug mode">
+               <description>Enable(true) eDMA debug mode. When in debug mode, the eDMA stalls the start of a new channel. Executing channels are allowed to complete.</description>
+            </bool>
+         </struct>
+         <struct id="edma_transfer_config_t" label="eDMA transfer configuration" from="_edma_transfer_config">
+            <description>This structure configures the source/destination transfer attribute.</description>
+            <integer id="srcAddr" label="Source data address" type="uint32_t">
+               <description>Source data address.</description>
+            </integer>
+            <integer id="destAddr" label="Destination data address" type="uint32_t">
+               <description>Destination data address.</description>
+            </integer>
+            <reference id="srcTransferSize" label="Source data transfer size" type="edma_transfer_size_t">
+               <description>Source data transfer size.</description>
+            </reference>
+            <reference id="destTransferSize" label="Destination data transfer size" type="edma_transfer_size_t">
+               <description>Destination data transfer size.</description>
+            </reference>
+            <integer id="srcOffset" label="Sign-extended offset applied to the current source address to form the next-state value as each source read is completed" type="int16_t">
+               <description>Sign-extended offset applied to the current source address to form the next-state value as each source read is completed.</description>
+            </integer>
+            <integer id="destOffset" label="Sign-extended offset applied to the current destination address to form the next-state value as each destination write is completed" type="int16_t">
+               <description>Sign-extended offset applied to the current destination address to form the next-state value as each destination write is completed.</description>
+            </integer>
+            <integer id="minorLoopBytes" label="Bytes to transfer in a minor loop" type="uint32_t">
+               <description>Bytes to transfer in a minor loop</description>
+            </integer>
+            <integer id="majorLoopCounts" label="Major loop iteration count" type="uint32_t">
+               <description>Major loop iteration count.</description>
+            </integer>
+         </struct>
+         <struct id="edma_channel_Preemption_config_t" label="eDMA channel priority configuration" from="_edma_channel_Preemption_config">
+            <bool id="enableChannelPreemption" label="If true: a channel can be suspended by other channel with higher priority">
+               <description>If true: a channel can be suspended by other channel with higher priority</description>
+            </bool>
+            <bool id="enablePreemptAbility" label="If true: a channel can suspend other channel with low priority">
+               <description>If true: a channel can suspend other channel with low priority</description>
+            </bool>
+            <integer id="channelPriority" label="Channel priority" type="uint8_t">
+               <description>Channel priority</description>
+            </integer>
+         </struct>
+         <struct id="edma_minor_offset_config_t" label="eDMA minor offset configuration" from="_edma_minor_offset_config">
+            <bool id="enableSrcMinorOffset" label="Enable(true) or Disable(false) source minor loop offset">
+               <description>Enable(true) or Disable(false) source minor loop offset.</description>
+            </bool>
+            <bool id="enableDestMinorOffset" label="Enable(true) or Disable(false) destination minor loop offset">
+               <description>Enable(true) or Disable(false) destination minor loop offset.</description>
+            </bool>
+            <integer id="minorOffset" label="Offset for a minor loop mapping" type="uint32_t">
+               <description>Offset for a minor loop mapping.</description>
+            </integer>
+         </struct>
+         <struct id="edma_tcd_t" label="eDMA TCD" from="_edma_tcd">
+            <description>This structure is same as TCD register which is described in reference manual, and is used to configure the scatter/gather feature as a next hardware TCD.</description>
+            <fixme id="SADDR" label="SADDR register, used to save source address" type="__IO uint32_t">
+               <description>SADDR register, used to save source address</description>
+            </fixme>
+            <fixme id="SOFF" label="SOFF register, save offset bytes every transfer" type="__IO uint16_t">
+               <description>SOFF register, save offset bytes every transfer</description>
+            </fixme>
+            <fixme id="ATTR" label="ATTR register, source/destination transfer size and modulo" type="__IO uint16_t">
+               <description>ATTR register, source/destination transfer size and modulo</description>
+            </fixme>
+            <fixme id="NBYTES" label="Nbytes register, minor loop length in bytes" type="__IO uint32_t">
+               <description>Nbytes register, minor loop length in bytes</description>
+            </fixme>
+            <fixme id="SLAST" label="SLAST register" type="__IO uint32_t">
+               <description>SLAST register</description>
+            </fixme>
+            <fixme id="DADDR" label="DADDR register, used for destination address" type="__IO uint32_t">
+               <description>DADDR register, used for destination address</description>
+            </fixme>
+            <fixme id="DOFF" label="DOFF register, used for destination offset" type="__IO uint16_t">
+               <description>DOFF register, used for destination offset</description>
+            </fixme>
+            <fixme id="CITER" label="CITER register, current minor loop numbers, for unfinished minor loop" type="__IO uint16_t">
+               <description>CITER register, current minor loop numbers, for unfinished minor loop.</description>
+            </fixme>
+            <fixme id="DLAST_SGA" label="DLASTSGA register, next stcd address used in scatter-gather mode" type="__IO uint32_t">
+               <description>DLASTSGA register, next stcd address used in scatter-gather mode</description>
+            </fixme>
+            <fixme id="CSR" label="CSR register, for TCD control status" type="__IO uint16_t">
+               <description>CSR register, for TCD control status</description>
+            </fixme>
+            <fixme id="BITER" label="BITER register, begin minor loop count" type="__IO uint16_t">
+               <description>BITER register, begin minor loop count.</description>
+            </fixme>
+         </struct>
+         <fixme id="edma_callback" label="Define callback function for eDMA" type="void(*"/>
+         <struct id="edma_handle_t" label="eDMA transfer handle structure" from="_edma_handle">
+            <reference id="callback" label="Callback function for major count exhausted" type="edma_callback">
+               <description>Callback function for major count exhausted.</description>
+            </reference>
+            <fixme id="userData" label="Callback function parameter" type="void *">
+               <description>Callback function parameter.</description>
+            </fixme>
+            <fixme id="base" label="eDMA peripheral base address" type="DMA_Type *">
+               <description>eDMA peripheral base address.</description>
+            </fixme>
+            <fixme id="tcdPool" label="Pointer to memory stored TCDs" type="edma_tcd_t *">
+               <description>Pointer to memory stored TCDs.</description>
+            </fixme>
+            <integer id="channel" label="eDMA channel number" type="uint8_t">
+               <description>eDMA channel number.</description>
+            </integer>
+            <integer id="header" label="The first TCD index" type="int8_t">
+               <description>The first TCD index. Should point to the next TCD to be loaded into the eDMA engine.</description>
+            </integer>
+            <integer id="tail" label="The last TCD index" type="int8_t">
+               <description>The last TCD index. Should point to the next TCD to be stored into the memory pool.</description>
+            </integer>
+            <integer id="tcdUsed" label="The number of used TCD slots" type="int8_t">
+               <description>The number of used TCD slots. Should reflect the number of TCDs can be used/loaded in the memory.</description>
+            </integer>
+            <integer id="tcdSize" label="The total number of TCD slots in the queue" type="int8_t">
+               <description>The total number of TCD slots in the queue.</description>
+            </integer>
+            <integer id="flags" label="The status of the current channel" type="uint8_t">
+               <description>The status of the current channel.</description>
+            </integer>
+         </struct>
+      </generated_types>
+      <user_types>
+         <struct id="edma_config_t" label="eDMA global configuration structure" from="_edma_config">
+            <bool id="enableContinuousLinkMode" label="Enable continuous link mode">
+               <description>Enable (true) continuous link mode. Upon minor loop completion, the channel activates again if that channel has a minor loop channel link enabled and the link channel is itself.</description>
+            </bool>
+            <bool id="enableHaltOnError" label="Enable transfer halt on error">
+               <description>Enable (true) transfer halt on error. Any error causes the HALT bit to set. Subsequently, all service requests are ignored until the HALT bit is cleared.</description>
+            </bool>
+            <bool id="enableRoundRobinArbitration" label="Enable round robin channel arbitration method">
+               <description>Enable round robin channel arbitration method. When disabled the fixed priority arbitration is used for channel selection.</description>
+            </bool>
+            <bool id="enableDebugMode" label="Enable eDMA debug mode">
+               <description>Enable eDMA debug mode. When in debug mode, the eDMA stalls the start of a new channel. Executing channels are allowed to complete.</description>
+            </bool>
+         </struct>
+         <set id="edma_interrupt_enable_t" label="eDMA interrupt source">
+            <item id="kEDMA_ErrorInterruptEnable" label="Channel error event"/>
+            <item id="kEDMA_MajorInterruptEnable" label="Major count is complete"/>
+            <item id="kEDMA_HalfInterruptEnable" label="Major count is half complete"/>
+         </set>
+         <struct id="edma_channel_Preemption_config_t" label="eDMA channel priority configuration" from="_edma_channel_Preemption_config">
+            <bool id="enableChannelPreemption" label="Enable channel preemption">
+               <description>If enabled the channel can be suspended by other channel with higher priority</description>
+            </bool>
+            <bool id="enablePreemptAbility" label="Enable preempt ability">
+               <description>If enabled the channel can suspend other channel with low priority</description>
+            </bool>
+            <integer id="channelPriority" label="Channel arbitration priority" type="uint8_t">
+               <description>Channel arbitration priority.</description>
+            </integer>
+         </struct>
+         
+         <struct id="edma_channel_cfg_t" label="eDMA channel configuration">
+<!--            <reference id="transfer_cfg" label="Transfer configuration" type="edma_transfer_config_t" ></reference>
+-->            
+            <reference id="edma_channel" label="eDMA channel" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" options="all_devices;channel_prefix_id;without_priority"/>
+            <!-- CALLBACK FUNCTION -->
+            <bool id="init_callback" label="Callback function initialization">
+               <description>Enables/disables the initialization of the callback function and user data pointer.</description>
+            </bool>
+            <string id="callback_function" label="Transfer callback function name" enable="$parent.init_callback.getValue()">
+               <description>The callback function name that is used in the transfer initialization. User must provide the definition of this function. This item is optional for the transfer mode initialization.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="$this.getValue() != ``" level="error" description="The callback function shall be defined. If the callback function is not used uncheck the Initialization of transfer callback option."/> 
+                  <constraint when_expr="$parent.init_callback.getValue() &amp;&amp; ($this.getValue() != ``)" cond_expr="isCIdentifier($this.getValue())" level="error" description="The callback function name must be a valid identifier."/> 
+               </validation>
+            </string>
+            <string id="callback_user_data" label="User data pointer" enable="$parent.init_callback.getValue()">
+               <!--               <string id="user_data" label="User data pointer" enable="$parent.callback_fcn.getValue()!=``">-->
+               <description>Definition of the user data pointer ID. When empty the NULL is provided in the initializaton function for the callback function.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="(($this.getValue() == ``) || isCIdentifier($this.getValue()))" level="error" description="The user data pointer is not valid C identifier."/>
+               </validation>
+            </string>
+            <!-- Channel preemtion and priority settings -->
+            <bool id="init_preemption" label="Preemption and priority initialization" options="UI_LABEL_BOLD">
+               <description>Enables/disables the initialization of the preemption and priority settings.</description>
+            </bool>
+            <reference id="preemption" label="Channel preemption and priority" type="edma_channel_Preemption_config_t" enable="$parent.init_preemption.getValue()" options="UI_LABEL_HIDDEN"/>
+            <!-- Channel link settings -->
+            <bool id="init_channel_link" label="Channel link initialization">
+               <description>Enables/disables the initialization of channel link settings.</description>
+            </bool>
+            <reference id="channel_link" label="Channel link" type="edma_channel_link_type_t" enable="$parent.init_channel_link.getValue()">
+               <description>Selection of the channel link type, i.e. the channel-to-channel linking can be enabled on minor loop completion or major loop completion.</description>
+            </reference>
+            <integer id="linkedChannel" label="Linked channel" type="uint32_t"  enable="$parent.init_channel_link.getValue()">
+               <description>Selection of the linked channel that is activated after minor or major loop (it depends on the selected channel link)</description>
+            </integer>
+            <!-- Bandwidth -->
+            <bool id="init_bandwidth" label="Bandwidth initialization">
+               <description>Enables/disables the initialization of bandwidth settings.</description>
+            </bool>
+            <reference id="bandwidth" label="Channel bandwidth" type="edma_bandwidth_t" enable="$parent.init_bandwidth.getValue()">
+               <description>This setting allows configuration of the amount of bus bandwidth consumed by the eDMA. Generally, as the eDMA processes the minor loop, it continuously generates read/write sequences until the minor count is exhausted. This setting 
+                            forces the eDMA to stall after the completion of each read/write access to control the bus request bandwidth seen by the crossbar switch.</description>
+            </reference>
+            <!-- Interrupts -->
+            <bool id="init_interrupts" label="Interrupts initialization" options="UI_LABEL_BOLD">
+               <description>Enables/disables the initialization of channel interrupt settings.</description>
+            </bool>
+            <reference id="channel_enabled_interrupts" label="Channel interrupts" type="edma_interrupt_enable_t" enable="$parent.init_interrupts.getValue()">
+               <description>Selection of enabled DMA channel interrupt requests.</description>
+            </reference>
+            <!-- irq_channel variable is used for the interrupt as a reference based on the dma channel selection  -->
+            <variable value="$parent.edma_channel.eDMAn.getValue()" id="irq_channel"></variable>
+            <variable id="statusName" value="$parent.edma_channel.channel_prefix_id.getValue() + `_status`"></variable> 
+            <reference id="interrupt_channel" label="Channel Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=DMA_CH_INT_DONE;irq_channel_reference" enable="$parent.init_interrupts.getValue()">
+               <options_expr>
+                  <option id="irq_handler_insert" expr="`&#10;`+
+                     leftPadding(`/* Channel ` + $parent.edma_channel.channel_prefix_id.getValue() + ` status */`, 1) + `&#10;` +
+                     leftPadding(`uint32_t ` + $parent.statusName.getValue() + `;`, 1) + `&#10;&#10;` +
+                     leftPadding(`/* Reading all flags of status register */`, 1) + `&#10;` +
+                     leftPadding($parent.statusName.getValue() + ` = EDMA_GetChannelStatusFlags(` + $configSet.dma_base_id.getValue() + `, ` + $parent.edma_channel.dma_channel_define.getValue() + `);`, 1) + `&#10;` +
+                     leftPadding(`/* Clearing all flags of the channel status register */`, 1) + `&#10;` +
+					 leftPadding(`EDMA_ClearChannelStatusFlags(` + $configSet.dma_base_id.getValue() + `, ` + $parent.edma_channel.dma_channel_define.getValue()+ `, ` + $parent.statusName.getValue() + `);`, 1) + `&#10;&#10;` +
+                     leftPadding(`/* Place your code here */`, 1) + `&#10;`
+                     "/>
+               </options_expr>
+            </reference>
+            <!-- TCD - Transfer Control Descriptor -->
+            <bool id="tcd_pool_enable" label="TCD Pool initialization" options="UI_LABEL_BOLD" >
+               <description>This feature allows using TCD (Transfer Control Descriptor) pool for the scatter/gather mode of the eDMA (loading of the TCD from the memory pool). When the initialization of the TCD (Transfer Control Descriptor) pool is enabled the memory allocation of the TCD is provided (size, memory allocation and assigmnet to the handle and installation as the TCD).</description>
+            </bool>
+            <struct id="tcd_settings" label="TCD configuration" options="UI_LABEL_HIDDEN">
+               <integer id="tcd_size" label="TCD Size" type="uint16_t" min_expr="1" max_expr="127" available="$parent.getParent().getSetting(`tcd_pool_enable`).getValue()">
+                  <description>Number of TCD items in the pool (array of items). Allowed range is 1 - 127. Note: The initialized array contains size+1 items for proper memory alignment.</description>
+               </integer>
+               <info id="tcd_memory_ptr_id" label="TCD buffer ID:" value="$instance.getFnGroupPrefix() + $instance.getID() + `_` + $parent.getParent().getSetting(`edma_channel.channel_prefix_id`).getValue() + `_TCD_pool_ptr`" available="$parent.getParent().getSetting(`tcd_pool_enable`).getValue()">
+                  <description>The identifier of the TCD buffer that is defined and used in the TCD pool initialization. The TCD pool (buffer) is assigned into the eDMA handle.</description>
+               </info>
+               <variable id="tcd_size_define" value="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $parent.getParent().getSetting(`edma_channel.channel_prefix_id`).getValue() + `_TCD_SIZE`)" ></variable>
+            </struct>
+         </struct>
+         <struct id="dma_table_t">
+            <info id="dma_source" label="DMA request" value="$configSet.all_dma_cfg.getValue().get($parent.getID().toInt()).getSetting(`eDMA_source`).getEnumItemLabel()" >
+                <description>The DMA source of request that is muxed through the DMAMUX device.</description>
+            </info>
+            <info id="dma_channel" label="Channel" value="$configSet.all_dma_cfg.getValue().get($parent.getID().toInt()).getSetting(`eDMAn`).getValue()" >
+                <description>The DMA channel number of the DMA device </description>
+            </info>
+            <info id="dma_handle" label="Handle ID" value="$configSet.all_dma_cfg.getValue().get($parent.getID().toInt()).getSetting(`eDMA_handle`).getValue()" >
+                <description>The DMA handle identifier that is used for processing of DMA requests.</description>
+            </info>
+            <info id="instance" label="Component" value="$configSet.all_dma_cfg.getValue().get($parent.getID().toInt()).getSetting(`$instance`).getID()" >
+                <description>Instance of the component where the DMA channel is used.</description>
+            </info>
+            <info id="reference" label="Setting reference" value="$configSet.all_dma_cfg.getValue().get($parent.getID().toInt()).getSetting(`$instance`).getID() + ` setting`">
+               <options_expr>
+                  <option id="UI_SETTING_LINK" expr="$configSet.all_dma_cfg.getValue().get($parent.getID().toInt())"/>
+               </options_expr>
+               <description>
+A link to the component's settings where the DMA channel is used and configured. 
+
+Please note that switching to a component that is instantiated in different functional group will cause closing of this component window (the diferenct functional group's compopnents will be displayed). Switch to the current functional group for restoring of view of these components.
+               </description>
+            </info>
+            <info id="func_group" label="Functional group" value="$configSet.all_dma_cfg.getValue().get($parent.getID().toInt()).getSetting(`$group`).getID()" >
+                <description>Name of the functional group where the component is instantiated.</description>
+            </info>
+         </struct>
+      </user_types>
+      <settings>
+         <info id="dmamux_device"  label="Associated DMAMUX device:" value="getResource(`dmamux`, `dmaMuxInfo`).findFirst(item -> (item.getSetting(`dmaDevice`).getValue() == $instance.getPeripheral())).getSetting(`muxDevice`).getValue()"></info>
+<!--         <info id="dmamux_device"  label="DMAMUX device" value="getResource(`dmamux`, `dmaMuxInfo`).findFirst(item -> (true)).getSetting(`muxDevice`).getValue()"></info>-->
+<!--         <info id="test"  label="test" value="$instance.getPeripheral()"></info>-->
+         <variable id="dma_base_id" value="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_DMA_BASEADDR`)" ></variable>
+         <variable id="dmamux_base_id" value="toUpperCase($instance.getFnGroupPrefix() +  $instance.getID() + `_DMAMUX_BASEADDR`)"></variable>
+<!--         <variable id="dmamux_base_id" value="toUpperCase($instance.getFnGroupPrefix() + $parent.dmamux_device.getValue() + `_DMAMUX_BASEADDR`)"></variable>-->
+         <reference id="common_settings" label="Common settings" type="edma_config_t">
+            <description>Common global configuration of the eDMA.</description>
+         </reference>
+         <!-- DMA table that contains overview of all DMA channels used in the current project --> 
+         <variable id="all_dma_cfg" value="$components.system.#global.all_edma_config.getValue()"></variable>
+         <array id="dma_table" label="DMA overview table" type="dma_table_t" size="$parent.all_dma_cfg.getValue().size()" options="ShowContentAs=Table;UI_TABLE_COLUMN_WIDTHS=2,14,6,11,8,11,14">
+             <description>DMA overview table shows all dma channels that are initialized and used in the all functional groups (see the Functional group column).</description>
+         </array>
+          <!-- configuration settings of DMA channels -->
+         <array id="edma_channels" label="eDMA channels" type="edma_channel_cfg_t" options="ShowContentAs=MasterDetail" key_selector_expr="(x) -> (x.getSetting(`edma_channel.channel_prefix_id`).getValue() == ``) ? (`&lt;empty ID (` + x.getId() + `)&gt;`) : x.getSetting(`edma_channel.channel_prefix_id`).getValue()"></array>
+      </settings>
+      <validation>
+         <dependency resource_type="SWComponent" resource_id="platform.drivers.dmamux" level="Warning" description_expr="$components.system.#global.err_missing_driver.getValue().formatMessage(`fsl_dmamux`, ` (required for the eDMA)`)">
+            <feature name="enabled" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="SWComponent" resource_id="platform.drivers.dmamux" level="Warning" description_expr="$components.system.#global.err_driver_version.getValue().formatMessage(`fsl_dmamux`, ` (required for the eDMA)`)">
+            <feature name="version" evaluation="compatible">
+               <data type="Version" expr="`2.0.2`"/>
+               </feature>
+         </dependency>
+      </validation>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_edma_peripheral"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+         <def fragment="channels_definitions">
+            <fragment id="DMA_channel_definitions" apply_to="$this.edma_channel"/>
+         </def>
+         <def fragment="channels_handles_definition">
+            <fragment id="DMA_handle_definition" apply_to="$this.edma_channel"/>
+         </def>
+         <def fragment="channels_handles_declaration">
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.edma_channel"/>
+         </def>
+         <def fragment="channels_DMAMUX_source_init">
+            <fragment id="DMAMUX_source_init" apply_to="$this.edma_channel"/>
+         </def>
+         <def fragment="channels_DMA_handle_init">
+            <fragment id="DMA_handle_init" apply_to="$this.edma_channel"/>
+         </def>
+         <def fragment="DMA_bases_definitions">
+            <fragment id="define">
+               <param id="name" expr="$this.dma_base_id.getValue()"/>
+               <!-- Substitution of the CMSIS alias that is used in the Kinetis IO maps if the there is the DMA device the CMSIS alias is DMA0 (in the IO map)  -->
+               <param id="value" expr="getSdkBasePointer($instance)"/> 
+               <param id="description" expr="`Used DMA device.`"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="$this.dmamux_base_id.getValue()"/>
+               <param id="value" expr="$this.dmamux_device.getValue()"/>
+               <param id="description" expr="`Associated DMAMUX device that is used for muxing of requests.`"/>
+            </fragment>
+         </def>
+         <def fragment="DMAMUX_init">
+            <expr>leftPadding(`DMAMUX_Init(` + $this.dmamux_base_id.getValue() + `);`, 1)</expr><br/> 
+         </def>
+         <def fragment="DMA_init">
+            <expr>leftPadding(`EDMA_Init(` + $this.dma_base_id.getValue() + `, &amp;` + $instance.getFnGroupPrefix() + $instance.getID() + `_config` +`);`, 1)</expr><br/> 
+         </def>
+         <!-- eDMA channel specific funciton - must be applied on edma_channel_cfg_t structure -->
+         <def fragment="callback_ext_def">
+            <fragment id="extern_fcn_def" if_expr="$this.init_callback.getValue()">
+               <param id="name" expr="$this.callback_function.getValue()"/>
+               <param id="type">void</param>
+               <param id="params">edma_handle_t*, void*, bool, uint32_t</param>
+               <param id="description" expr="`eDMA callback function for the ` + $this.edma_channel.eDMAn.getValue() +` channel.` "/>
+            </fragment>
+         </def>
+         <def fragment="DMA_SetCallback">
+            <if expr="$this.init_callback.getValue()">
+               <expr>leftPadding(`EDMA_SetCallback(&amp;` + $this.edma_channel.eDMA_handle.getValue() + `, ` + $this.callback_function.getValue() + `, `+ (($this.callback_user_data.getValue()==``) ? `NULL` : $this.callback_user_data.getValue()) + `);`, 1)</expr><br/>
+            </if>
+         </def>
+         <def fragment="preemption_struct_init">
+            <if expr="$this.init_preemption.getValue()">
+               <fragment id="const_struct" apply_to="$this.preemption">
+                  <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_` + $parent.edma_channel.channel_prefix_id.getValue() + `_preemption`" />
+                  <param id="type" >edma_channel_Preemption_config_t</param>
+               </fragment>
+            </if>
+         </def>
+         <def fragment="DMA_SetChannelPreemptionConfig">
+            <if expr="$this.init_preemption.getValue()">
+               <expr>leftPadding(`EDMA_SetChannelPreemptionConfig(` + $parent.getParent().getSetting(`dma_base_id`).getValue() + `, ` + $this.edma_channel.dma_channel_define.getValue() + `, &amp;` + $instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.edma_channel.channel_prefix_id.getValue() + `_preemption` + `);`, 1)</expr><br/>
+            </if>
+         </def>
+         <def fragment="DMA_SetChannelLink">
+            <if expr="$this.init_channel_link.getValue()">
+               <expr>leftPadding(`EDMA_SetChannelLink(` + $parent.getParent().getSetting(`dma_base_id`).getValue() + `, ` + $this.edma_channel.dma_channel_define.getValue() + `, ` + $this.channel_link.getCValue() + `, ` + $this.linkedChannel.getCValue() + `);`, 1)</expr><br/>
+            </if>
+         </def>
+         <def fragment="DMA_SetBandWidth">
+            <if expr="$this.init_bandwidth.getValue()">
+               <expr>leftPadding(`EDMA_SetBandWidth(` + $parent.getParent().getSetting(`dma_base_id`).getValue() + `, ` + $this.edma_channel.dma_channel_define.getValue() + `, ` + $this.bandwidth.getCValue() + `);`, 1)</expr><br/>
+            </if>
+         </def>
+         <def fragment="DMA_EnableChannelInterrupts">
+            <if expr="$this.init_interrupts.getValue()">
+               <expr>leftPadding(`EDMA_EnableChannelInterrupts(` + $parent.getParent().getSetting(`dma_base_id`).getValue() + `, ` + $this.edma_channel.dma_channel_define.getValue() + `, ` + (($this.channel_enabled_interrupts.getCValue() == ``) ? `0` : $this.channel_enabled_interrupts.getCValue()) + `);`, 1)</expr><br/>
+            </if>
+         </def>
+         <!-- NVIC initialization -->
+         <def fragment="channel_IRQ_definitions">
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_channel" if_expr="$this.init_interrupts.getValue()"/>
+         </def>
+         <def fragment="channel_IRQ_NVIC_init">
+            <fragment id="IRQn_set_priority_default" apply_to="$this.interrupt_channel" if_expr="$this.init_interrupts.getValue()"/>
+            <fragment id="IRQn_enable_default" apply_to="$this.interrupt_channel" if_expr="$this.init_interrupts.getValue()"/>
+         </def>
+         <!-- TCD and memory -->
+         <def fragment="tcd_memory_init">
+            <if expr="$this.tcd_pool_enable.getValue()">
+               <expr>leftPadding(`/* Allocate TCD memory pool */`,1)</expr><br/>
+               <expr>leftPadding($this.tcd_settings.tcd_memory_ptr_id.getValue() + ` = (edma_tcd_t *)malloc(sizeof(edma_tcd_t) * (` + $this.tcd_settings.tcd_size_define.getValue() + ` + 1));`, 1)</expr><br/>
+               <expr>leftPadding(`if (` + $this.tcd_settings.tcd_memory_ptr_id.getValue() + ` != NULL) {`, 1)</expr><br/>
+               <expr>leftPadding(`EDMA_InstallTCDMemory(&amp;` + $this.edma_channel.eDMA_handle.getValue() + `, ` + `(edma_tcd_t *)((uint32_t)(` + $this.tcd_settings.tcd_memory_ptr_id.getValue() + ` + 1) &amp; (~0x1FU))` + `, ` + $this.tcd_settings.tcd_size_define.getValue() + `);`, 2)</expr><br/>
+               <expr>leftPadding(`}`, 1)</expr><br/>
+            </if>
+         </def>
+         <def fragment="channel_tcd_size_definition">
+            <fragment id="define">
+               <param id="name" expr="$this.tcd_settings.tcd_size_define.getValue()"/>
+               <param id="value" expr="$this.tcd_settings.tcd_size.getValue()"/>
+               <param id="description" expr="`TCD pool size`"/>
+            </fragment>
+         </def>
+         <def fragment="init_channel">
+            <br/><expr>leftPadding(`/* Channel ` + $this.edma_channel.channel_prefix_id.getValue() + ` initialization */`, 1)</expr><br/>
+            <!-- eDMA channels -->
+            <fragment id="channels_DMAMUX_source_init" />
+            <fragment id="channels_DMA_handle_init"/>
+            <!-- CALLBACK -->
+            <fragment id="DMA_SetCallback"/>
+            <!-- Preemption init -->
+            <fragment id="DMA_SetChannelPreemptionConfig"/>
+            <!-- Channel link init -->
+            <fragment id="DMA_SetChannelLink"/>
+            <!-- Bandwidth init -->
+            <fragment id="DMA_SetBandWidth"/>
+            <!-- Interrupts enable init -->
+            <fragment id="DMA_EnableChannelInterrupts"/>
+            <!-- Interrupts NVIC init -->
+            <fragment id="channel_IRQ_NVIC_init"/>
+            <!-- TCD memory pool init -->
+            <fragment id="tcd_memory_init"/>
+         </def>
+         <def fragment="edma_channel_definition">
+            <br/><expr>leftPadding(`/* Channel ` + $this.edma_channel.channel_prefix_id.getValue() + ` definitions */`, 1)</expr><br/>
+            <!-- eDMA channels -->
+            <fragment id="channels_definitions"/>
+            <!-- TCD size -->
+            <fragment id="channel_tcd_size_definition" if_expr="$this.tcd_pool_enable.getValue()"/>
+            <!-- channels interrupt -->
+            <fragment id="channel_IRQ_definitions"/>
+         </def> 
+         <def fragment="edma_channel_global_vars">
+            <br/><expr>leftPadding(`/* Channel ` + $this.edma_channel.channel_prefix_id.getValue() + ` global variables */`, 1)</expr><br/>
+            <!-- eDMA channels -->
+            <fragment id="channels_handles_definition"/>
+            <!-- preemption structures -->
+            <fragment id="preemption_struct_init"/>
+            <!-- TCD Memory Pool pointer -->
+            <fragment id="global_var" if_expr="$this.tcd_pool_enable.getValue()">
+               <param id="name" expr="$this.tcd_settings.tcd_memory_ptr_id.getValue()"/> 
+               <param id="type" expr="`edma_tcd_t *`"/>
+            </fragment>
+         </def>
+         <def fragment="edma_channel_global_vars_extern">
+            <fragment id="channels_handles_declaration"/>
+            <!-- callback function - user data pointer -->
+            <fragment id="extern_var" if_expr="($this.init_callback.getValue()) &amp;&amp; ($this.callback_user_data.getValue()!=``)">
+               <param id="name" expr="$this.callback_user_data.getValue()"/> 
+               <param id="type" expr="`void *`"/>
+            </fragment>
+            <fragment id="extern_const_var" if_expr="$this.init_preemption.isAvailable() &amp;&amp; $this.init_preemption.getValue()">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.edma_channel.channel_prefix_id.getValue() + `_preemption`"/> 
+               <param id="type" expr="`edma_channel_Preemption_config_t`"/>
+            </fragment>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">edma</param>
+               <param id="filename">fsl_edma.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">dmamux</param>
+               <param id="filename">fsl_dmamux.h</param>
+            </fragment>
+            <fragment id="include" if_expr="$this.edma_channels.countOccurrences(i -> (i.getSetting(`tcd_pool_enable`).getValue())) &gt; 0">
+               <param id="name">stdlib</param>
+               <param id="filename">stdlib.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <!-- DMA and DMAMUX base definitions -->
+            <fragment id="DMA_bases_definitions"/>
+            <!-- eDMA channels -->
+            <fragment id="edma_channel_definition" for_elements_of="$this.edma_channels"/>
+         </section> 
+         <section target="global_vars">
+            <!-- eDMA global config -->
+            <fragment id="const_struct" apply_to="$this.common_settings">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`"/> 
+               <param id="type" expr="`edma_config_t`"/>
+            </fragment>
+            <!-- eDMA channels -->
+            <fragment id="edma_channel_global_vars" for_elements_of="$this.edma_channels"/>
+         </section>   
+         <section target="global_vars_extern">
+            <!-- eDMA global config -->
+            <fragment id="extern_const_var">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`"/> 
+               <param id="type" expr="`edma_config_t`"/>
+            </fragment>
+            <!-- eDMA channels -->
+<!--            <fragment id="channels_handles_declaration" for_elements_of="$this.edma_channels"/>-->
+            <fragment id="edma_channel_global_vars_extern" for_elements_of="$this.edma_channels"/>
+         </section>
+         <section target="global_preinit0">
+            <!-- DMAMUX and DMA initialization -->
+            <fragment id="DMAMUX_init"/>
+            <fragment id="DMA_init"/>
+         </section>   
+         <section target="init_function_body">
+            <!-- DMAMUX and DMA initialization -->
+            <fragment id="init_channel" for_elements_of="$this.edma_channels"/>
+         </section>   
+         <section target="callback_function_extern">
+            <!-- eDMA callback function declaration -->
+            <fragment id="callback_ext_def" for_elements_of="$this.edma_channels"></fragment>
+         </section>
+      </code>
+      <quick_selections>
+         <quick_selection id="default" label="Default" >
+            <description>Default settings</description>
+            <set id="common_settings.enableRoundRobinArbitration">false</set>
+            <set id="common_settings.enableHaltOnError">true</set>
+            <set id="common_settings.enableContinuousLinkMode">false</set>
+            <set id="common_settings.enableDebugMode">false</set>
+         </quick_selection>
+         <default>default</default>
+      </quick_selections>
+   </config_set>
+</component:config_component>

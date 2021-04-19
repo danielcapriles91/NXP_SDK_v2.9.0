@@ -1,0 +1,2215 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="32" name="MPRA" description="Master Privilege Register A">
+    <alias type="CMSIS" value="MPRA"/>
+    <reserved_bit_field offset="0" width="4" reset_value="0"/>
+    <bit_field offset="4" width="1" name="MPL6" access="RW" reset_value="0" description="Master 6 Privilege Level">
+      <alias type="CMSIS" value="AIPS_MPRA_MPL6(x)"/>
+      <bit_field_value name="MPRA_MPL6_0b0" value="0b0" description="Accesses from this master are forced to user-mode."/>
+      <bit_field_value name="MPRA_MPL6_0b1" value="0b1" description="Accesses from this master are not forced to user-mode."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="MTW6" access="RW" reset_value="0" description="Master 6 Trusted for Writes">
+      <alias type="CMSIS" value="AIPS_MPRA_MTW6(x)"/>
+      <bit_field_value name="MPRA_MTW6_0b0" value="0b0" description="This master is not trusted for write accesses."/>
+      <bit_field_value name="MPRA_MTW6_0b1" value="0b1" description="This master is trusted for write accesses."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="MTR6" access="RW" reset_value="0" description="Master 6 Trusted for Read">
+      <alias type="CMSIS" value="AIPS_MPRA_MTR6(x)"/>
+      <bit_field_value name="MPRA_MTR6_0b0" value="0b0" description="This master is not trusted for read accesses."/>
+      <bit_field_value name="MPRA_MTR6_0b1" value="0b1" description="This master is trusted for read accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="MPL5" access="RW" reset_value="0" description="Master 5 Privilege Level">
+      <alias type="CMSIS" value="AIPS_MPRA_MPL5(x)"/>
+      <bit_field_value name="MPRA_MPL5_0b0" value="0b0" description="Accesses from this master are forced to user-mode."/>
+      <bit_field_value name="MPRA_MPL5_0b1" value="0b1" description="Accesses from this master are not forced to user-mode."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="MTW5" access="RW" reset_value="0" description="Master 5 Trusted For Writes">
+      <alias type="CMSIS" value="AIPS_MPRA_MTW5(x)"/>
+      <bit_field_value name="MPRA_MTW5_0b0" value="0b0" description="This master is not trusted for write accesses."/>
+      <bit_field_value name="MPRA_MTW5_0b1" value="0b1" description="This master is trusted for write accesses."/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="MTR5" access="RW" reset_value="0" description="Master 5 Trusted For Read">
+      <alias type="CMSIS" value="AIPS_MPRA_MTR5(x)"/>
+      <bit_field_value name="MPRA_MTR5_0b0" value="0b0" description="This master is not trusted for read accesses."/>
+      <bit_field_value name="MPRA_MTR5_0b1" value="0b1" description="This master is trusted for read accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="1" name="MPL4" access="RW" reset_value="0" description="Master 4 Privilege Level">
+      <alias type="CMSIS" value="AIPS_MPRA_MPL4(x)"/>
+      <bit_field_value name="MPRA_MPL4_0b0" value="0b0" description="Accesses from this master are forced to user-mode."/>
+      <bit_field_value name="MPRA_MPL4_0b1" value="0b1" description="Accesses from this master are not forced to user-mode."/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="MTW4" access="RW" reset_value="0" description="Master 4 Trusted For Writes">
+      <alias type="CMSIS" value="AIPS_MPRA_MTW4(x)"/>
+      <bit_field_value name="MPRA_MTW4_0b0" value="0b0" description="This master is not trusted for write accesses."/>
+      <bit_field_value name="MPRA_MTW4_0b1" value="0b1" description="This master is trusted for write accesses."/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="MTR4" access="RW" reset_value="0" description="Master 4 Trusted For Read">
+      <alias type="CMSIS" value="AIPS_MPRA_MTR4(x)"/>
+      <bit_field_value name="MPRA_MTR4_0b0" value="0b0" description="This master is not trusted for read accesses."/>
+      <bit_field_value name="MPRA_MTR4_0b1" value="0b1" description="This master is trusted for read accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="MPL3" access="RW" reset_value="0" description="Master 3 Privilege Level">
+      <alias type="CMSIS" value="AIPS_MPRA_MPL3(x)"/>
+      <bit_field_value name="MPRA_MPL3_0b0" value="0b0" description="Accesses from this master are forced to user-mode."/>
+      <bit_field_value name="MPRA_MPL3_0b1" value="0b1" description="Accesses from this master are not forced to user-mode."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="MTW3" access="RW" reset_value="0" description="Master 3 Trusted For Writes">
+      <alias type="CMSIS" value="AIPS_MPRA_MTW3(x)"/>
+      <bit_field_value name="MPRA_MTW3_0b0" value="0b0" description="This master is not trusted for write accesses."/>
+      <bit_field_value name="MPRA_MTW3_0b1" value="0b1" description="This master is trusted for write accesses."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="MTR3" access="RW" reset_value="0" description="Master 3 Trusted For Read">
+      <alias type="CMSIS" value="AIPS_MPRA_MTR3(x)"/>
+      <bit_field_value name="MPRA_MTR3_0b0" value="0b0" description="This master is not trusted for read accesses."/>
+      <bit_field_value name="MPRA_MTR3_0b1" value="0b1" description="This master is trusted for read accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="1" name="MPL2" access="RW" reset_value="0x1" description="Master 2 Privilege Level">
+      <alias type="CMSIS" value="AIPS_MPRA_MPL2(x)"/>
+      <bit_field_value name="MPRA_MPL2_0b0" value="0b0" description="Accesses from this master are forced to user-mode."/>
+      <bit_field_value name="MPRA_MPL2_0b1" value="0b1" description="Accesses from this master are not forced to user-mode."/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="MTW2" access="RW" reset_value="0x1" description="Master 2 Trusted For Writes">
+      <alias type="CMSIS" value="AIPS_MPRA_MTW2(x)"/>
+      <bit_field_value name="MPRA_MTW2_0b0" value="0b0" description="This master is not trusted for write accesses."/>
+      <bit_field_value name="MPRA_MTW2_0b1" value="0b1" description="This master is trusted for write accesses."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="MTR2" access="RW" reset_value="0x1" description="Master 2 Trusted For Read">
+      <alias type="CMSIS" value="AIPS_MPRA_MTR2(x)"/>
+      <bit_field_value name="MPRA_MTR2_0b0" value="0b0" description="This master is not trusted for read accesses."/>
+      <bit_field_value name="MPRA_MTR2_0b1" value="0b1" description="This master is trusted for read accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="MPL1" access="RW" reset_value="0x1" description="Master 1 Privilege Level">
+      <alias type="CMSIS" value="AIPS_MPRA_MPL1(x)"/>
+      <bit_field_value name="MPRA_MPL1_0b0" value="0b0" description="Accesses from this master are forced to user-mode."/>
+      <bit_field_value name="MPRA_MPL1_0b1" value="0b1" description="Accesses from this master are not forced to user-mode."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="MTW1" access="RW" reset_value="0x1" description="Master 1 Trusted for Writes">
+      <alias type="CMSIS" value="AIPS_MPRA_MTW1(x)"/>
+      <bit_field_value name="MPRA_MTW1_0b0" value="0b0" description="This master is not trusted for write accesses."/>
+      <bit_field_value name="MPRA_MTW1_0b1" value="0b1" description="This master is trusted for write accesses."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="MTR1" access="RW" reset_value="0x1" description="Master 1 Trusted for Read">
+      <alias type="CMSIS" value="AIPS_MPRA_MTR1(x)"/>
+      <bit_field_value name="MPRA_MTR1_0b0" value="0b0" description="This master is not trusted for read accesses."/>
+      <bit_field_value name="MPRA_MTR1_0b1" value="0b1" description="This master is trusted for read accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <bit_field offset="28" width="1" name="MPL0" access="RW" reset_value="0x1" description="Master 0 Privilege Level">
+      <alias type="CMSIS" value="AIPS_MPRA_MPL0(x)"/>
+      <bit_field_value name="MPRA_MPL0_0b0" value="0b0" description="Accesses from this master are forced to user-mode."/>
+      <bit_field_value name="MPRA_MPL0_0b1" value="0b1" description="Accesses from this master are not forced to user-mode."/>
+    </bit_field>
+    <bit_field offset="29" width="1" name="MTW0" access="RW" reset_value="0x1" description="Master 0 Trusted For Writes">
+      <alias type="CMSIS" value="AIPS_MPRA_MTW0(x)"/>
+      <bit_field_value name="MPRA_MTW0_0b0" value="0b0" description="This master is not trusted for write accesses."/>
+      <bit_field_value name="MPRA_MTW0_0b1" value="0b1" description="This master is trusted for write accesses."/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="MTR0" access="RW" reset_value="0x1" description="Master 0 Trusted For Read">
+      <alias type="CMSIS" value="AIPS_MPRA_MTR0(x)"/>
+      <bit_field_value name="MPRA_MTR0_0b0" value="0b0" description="This master is not trusted for read accesses."/>
+      <bit_field_value name="MPRA_MTR0_0b1" value="0b1" description="This master is trusted for read accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x20" width="32" name="PACRA" description="Peripheral Access Control Register">
+    <alias type="CMSIS" value="PACRA"/>
+    <bit_field offset="0" width="1" name="TP7" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_TP7(x)"/>
+      <bit_field_value name="PACRA_TP7_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRA_TP7_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WP7" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_WP7(x)"/>
+      <bit_field_value name="PACRA_WP7_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRA_WP7_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SP7" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_SP7(x)"/>
+      <bit_field_value name="PACRA_SP7_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRA_SP7_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="TP6" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_TP6(x)"/>
+      <bit_field_value name="PACRA_TP6_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRA_TP6_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WP6" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_WP6(x)"/>
+      <bit_field_value name="PACRA_WP6_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRA_WP6_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="SP6" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_SP6(x)"/>
+      <bit_field_value name="PACRA_SP6_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRA_SP6_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="TP5" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_TP5(x)"/>
+      <bit_field_value name="PACRA_TP5_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRA_TP5_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="WP5" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_WP5(x)"/>
+      <bit_field_value name="PACRA_WP5_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRA_WP5_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="SP5" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_SP5(x)"/>
+      <bit_field_value name="PACRA_SP5_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRA_SP5_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="1" name="TP4" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_TP4(x)"/>
+      <bit_field_value name="PACRA_TP4_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRA_TP4_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="WP4" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_WP4(x)"/>
+      <bit_field_value name="PACRA_WP4_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRA_WP4_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="SP4" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_SP4(x)"/>
+      <bit_field_value name="PACRA_SP4_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRA_SP4_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TP3" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_TP3(x)"/>
+      <bit_field_value name="PACRA_TP3_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRA_TP3_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="WP3" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_WP3(x)"/>
+      <bit_field_value name="PACRA_WP3_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRA_WP3_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="SP3" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_SP3(x)"/>
+      <bit_field_value name="PACRA_SP3_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRA_SP3_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="1" name="TP2" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_TP2(x)"/>
+      <bit_field_value name="PACRA_TP2_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRA_TP2_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="WP2" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_WP2(x)"/>
+      <bit_field_value name="PACRA_WP2_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRA_WP2_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="SP2" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_SP2(x)"/>
+      <bit_field_value name="PACRA_SP2_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRA_SP2_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TP1" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_TP1(x)"/>
+      <bit_field_value name="PACRA_TP1_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRA_TP1_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="WP1" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_WP1(x)"/>
+      <bit_field_value name="PACRA_WP1_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRA_WP1_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="SP1" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_SP1(x)"/>
+      <bit_field_value name="PACRA_SP1_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRA_SP1_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <bit_field offset="28" width="1" name="TP0" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_TP0(x)"/>
+      <bit_field_value name="PACRA_TP0_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRA_TP0_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="29" width="1" name="WP0" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_WP0(x)"/>
+      <bit_field_value name="PACRA_WP0_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRA_WP0_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="SP0" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRA_SP0(x)"/>
+      <bit_field_value name="PACRA_SP0_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRA_SP0_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x24" width="32" name="PACRB" description="Peripheral Access Control Register">
+    <alias type="CMSIS" value="PACRB"/>
+    <bit_field offset="0" width="1" name="TP7" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_TP7(x)"/>
+      <bit_field_value name="PACRB_TP7_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRB_TP7_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WP7" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_WP7(x)"/>
+      <bit_field_value name="PACRB_WP7_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRB_WP7_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SP7" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_SP7(x)"/>
+      <bit_field_value name="PACRB_SP7_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRB_SP7_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="TP6" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_TP6(x)"/>
+      <bit_field_value name="PACRB_TP6_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRB_TP6_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WP6" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_WP6(x)"/>
+      <bit_field_value name="PACRB_WP6_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRB_WP6_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="SP6" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_SP6(x)"/>
+      <bit_field_value name="PACRB_SP6_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRB_SP6_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="TP5" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_TP5(x)"/>
+      <bit_field_value name="PACRB_TP5_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRB_TP5_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="WP5" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_WP5(x)"/>
+      <bit_field_value name="PACRB_WP5_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRB_WP5_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="SP5" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_SP5(x)"/>
+      <bit_field_value name="PACRB_SP5_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRB_SP5_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="1" name="TP4" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_TP4(x)"/>
+      <bit_field_value name="PACRB_TP4_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRB_TP4_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="WP4" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_WP4(x)"/>
+      <bit_field_value name="PACRB_WP4_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRB_WP4_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="SP4" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_SP4(x)"/>
+      <bit_field_value name="PACRB_SP4_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRB_SP4_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TP3" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_TP3(x)"/>
+      <bit_field_value name="PACRB_TP3_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRB_TP3_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="WP3" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_WP3(x)"/>
+      <bit_field_value name="PACRB_WP3_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRB_WP3_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="SP3" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_SP3(x)"/>
+      <bit_field_value name="PACRB_SP3_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRB_SP3_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="1" name="TP2" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_TP2(x)"/>
+      <bit_field_value name="PACRB_TP2_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRB_TP2_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="WP2" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_WP2(x)"/>
+      <bit_field_value name="PACRB_WP2_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRB_WP2_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="SP2" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_SP2(x)"/>
+      <bit_field_value name="PACRB_SP2_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRB_SP2_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TP1" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_TP1(x)"/>
+      <bit_field_value name="PACRB_TP1_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRB_TP1_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="WP1" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_WP1(x)"/>
+      <bit_field_value name="PACRB_WP1_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRB_WP1_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="SP1" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_SP1(x)"/>
+      <bit_field_value name="PACRB_SP1_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRB_SP1_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <bit_field offset="28" width="1" name="TP0" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_TP0(x)"/>
+      <bit_field_value name="PACRB_TP0_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRB_TP0_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="29" width="1" name="WP0" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_WP0(x)"/>
+      <bit_field_value name="PACRB_WP0_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRB_WP0_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="SP0" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRB_SP0(x)"/>
+      <bit_field_value name="PACRB_SP0_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRB_SP0_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x28" width="32" name="PACRC" description="Peripheral Access Control Register">
+    <alias type="CMSIS" value="PACRC"/>
+    <bit_field offset="0" width="1" name="TP7" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_TP7(x)"/>
+      <bit_field_value name="PACRC_TP7_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRC_TP7_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WP7" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_WP7(x)"/>
+      <bit_field_value name="PACRC_WP7_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRC_WP7_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SP7" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_SP7(x)"/>
+      <bit_field_value name="PACRC_SP7_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRC_SP7_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="TP6" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_TP6(x)"/>
+      <bit_field_value name="PACRC_TP6_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRC_TP6_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WP6" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_WP6(x)"/>
+      <bit_field_value name="PACRC_WP6_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRC_WP6_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="SP6" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_SP6(x)"/>
+      <bit_field_value name="PACRC_SP6_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRC_SP6_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="TP5" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_TP5(x)"/>
+      <bit_field_value name="PACRC_TP5_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRC_TP5_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="WP5" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_WP5(x)"/>
+      <bit_field_value name="PACRC_WP5_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRC_WP5_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="SP5" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_SP5(x)"/>
+      <bit_field_value name="PACRC_SP5_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRC_SP5_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="1" name="TP4" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_TP4(x)"/>
+      <bit_field_value name="PACRC_TP4_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRC_TP4_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="WP4" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_WP4(x)"/>
+      <bit_field_value name="PACRC_WP4_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRC_WP4_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="SP4" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_SP4(x)"/>
+      <bit_field_value name="PACRC_SP4_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRC_SP4_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TP3" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_TP3(x)"/>
+      <bit_field_value name="PACRC_TP3_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRC_TP3_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="WP3" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_WP3(x)"/>
+      <bit_field_value name="PACRC_WP3_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRC_WP3_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="SP3" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_SP3(x)"/>
+      <bit_field_value name="PACRC_SP3_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRC_SP3_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="1" name="TP2" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_TP2(x)"/>
+      <bit_field_value name="PACRC_TP2_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRC_TP2_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="WP2" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_WP2(x)"/>
+      <bit_field_value name="PACRC_WP2_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRC_WP2_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="SP2" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_SP2(x)"/>
+      <bit_field_value name="PACRC_SP2_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRC_SP2_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TP1" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_TP1(x)"/>
+      <bit_field_value name="PACRC_TP1_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRC_TP1_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="WP1" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_WP1(x)"/>
+      <bit_field_value name="PACRC_WP1_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRC_WP1_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="SP1" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_SP1(x)"/>
+      <bit_field_value name="PACRC_SP1_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRC_SP1_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <bit_field offset="28" width="1" name="TP0" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_TP0(x)"/>
+      <bit_field_value name="PACRC_TP0_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRC_TP0_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="29" width="1" name="WP0" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_WP0(x)"/>
+      <bit_field_value name="PACRC_WP0_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRC_WP0_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="SP0" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRC_SP0(x)"/>
+      <bit_field_value name="PACRC_SP0_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRC_SP0_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x2C" width="32" name="PACRD" description="Peripheral Access Control Register">
+    <alias type="CMSIS" value="PACRD"/>
+    <bit_field offset="0" width="1" name="TP7" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_TP7(x)"/>
+      <bit_field_value name="PACRD_TP7_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRD_TP7_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WP7" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_WP7(x)"/>
+      <bit_field_value name="PACRD_WP7_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRD_WP7_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SP7" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_SP7(x)"/>
+      <bit_field_value name="PACRD_SP7_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRD_SP7_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="TP6" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_TP6(x)"/>
+      <bit_field_value name="PACRD_TP6_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRD_TP6_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WP6" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_WP6(x)"/>
+      <bit_field_value name="PACRD_WP6_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRD_WP6_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="SP6" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_SP6(x)"/>
+      <bit_field_value name="PACRD_SP6_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRD_SP6_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="TP5" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_TP5(x)"/>
+      <bit_field_value name="PACRD_TP5_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRD_TP5_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="WP5" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_WP5(x)"/>
+      <bit_field_value name="PACRD_WP5_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRD_WP5_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="SP5" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_SP5(x)"/>
+      <bit_field_value name="PACRD_SP5_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRD_SP5_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="1" name="TP4" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_TP4(x)"/>
+      <bit_field_value name="PACRD_TP4_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRD_TP4_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="WP4" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_WP4(x)"/>
+      <bit_field_value name="PACRD_WP4_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRD_WP4_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="SP4" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_SP4(x)"/>
+      <bit_field_value name="PACRD_SP4_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRD_SP4_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TP3" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_TP3(x)"/>
+      <bit_field_value name="PACRD_TP3_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRD_TP3_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="WP3" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_WP3(x)"/>
+      <bit_field_value name="PACRD_WP3_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRD_WP3_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="SP3" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_SP3(x)"/>
+      <bit_field_value name="PACRD_SP3_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRD_SP3_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="1" name="TP2" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_TP2(x)"/>
+      <bit_field_value name="PACRD_TP2_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRD_TP2_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="WP2" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_WP2(x)"/>
+      <bit_field_value name="PACRD_WP2_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRD_WP2_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="SP2" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_SP2(x)"/>
+      <bit_field_value name="PACRD_SP2_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRD_SP2_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TP1" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_TP1(x)"/>
+      <bit_field_value name="PACRD_TP1_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRD_TP1_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="WP1" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_WP1(x)"/>
+      <bit_field_value name="PACRD_WP1_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRD_WP1_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="SP1" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_SP1(x)"/>
+      <bit_field_value name="PACRD_SP1_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRD_SP1_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <bit_field offset="28" width="1" name="TP0" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_TP0(x)"/>
+      <bit_field_value name="PACRD_TP0_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRD_TP0_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="29" width="1" name="WP0" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_WP0(x)"/>
+      <bit_field_value name="PACRD_WP0_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRD_WP0_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="SP0" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRD_SP0(x)"/>
+      <bit_field_value name="PACRD_SP0_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRD_SP0_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x40" width="32" name="PACRE" description="Peripheral Access Control Register">
+    <alias type="CMSIS" value="PACRE"/>
+    <bit_field offset="0" width="1" name="TP7" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_TP7(x)"/>
+      <bit_field_value name="PACRE_TP7_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRE_TP7_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WP7" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_WP7(x)"/>
+      <bit_field_value name="PACRE_WP7_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRE_WP7_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SP7" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_SP7(x)"/>
+      <bit_field_value name="PACRE_SP7_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRE_SP7_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="TP6" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_TP6(x)"/>
+      <bit_field_value name="PACRE_TP6_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRE_TP6_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WP6" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_WP6(x)"/>
+      <bit_field_value name="PACRE_WP6_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRE_WP6_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="SP6" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_SP6(x)"/>
+      <bit_field_value name="PACRE_SP6_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRE_SP6_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="TP5" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_TP5(x)"/>
+      <bit_field_value name="PACRE_TP5_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRE_TP5_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="WP5" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_WP5(x)"/>
+      <bit_field_value name="PACRE_WP5_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRE_WP5_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="SP5" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_SP5(x)"/>
+      <bit_field_value name="PACRE_SP5_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRE_SP5_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="1" name="TP4" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_TP4(x)"/>
+      <bit_field_value name="PACRE_TP4_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRE_TP4_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="WP4" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_WP4(x)"/>
+      <bit_field_value name="PACRE_WP4_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRE_WP4_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="SP4" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_SP4(x)"/>
+      <bit_field_value name="PACRE_SP4_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRE_SP4_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TP3" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_TP3(x)"/>
+      <bit_field_value name="PACRE_TP3_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRE_TP3_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="WP3" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_WP3(x)"/>
+      <bit_field_value name="PACRE_WP3_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRE_WP3_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="SP3" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_SP3(x)"/>
+      <bit_field_value name="PACRE_SP3_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRE_SP3_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="1" name="TP2" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_TP2(x)"/>
+      <bit_field_value name="PACRE_TP2_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRE_TP2_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="WP2" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_WP2(x)"/>
+      <bit_field_value name="PACRE_WP2_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRE_WP2_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="SP2" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_SP2(x)"/>
+      <bit_field_value name="PACRE_SP2_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRE_SP2_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TP1" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_TP1(x)"/>
+      <bit_field_value name="PACRE_TP1_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRE_TP1_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="WP1" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_WP1(x)"/>
+      <bit_field_value name="PACRE_WP1_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRE_WP1_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="SP1" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_SP1(x)"/>
+      <bit_field_value name="PACRE_SP1_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRE_SP1_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <bit_field offset="28" width="1" name="TP0" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_TP0(x)"/>
+      <bit_field_value name="PACRE_TP0_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRE_TP0_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="29" width="1" name="WP0" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_WP0(x)"/>
+      <bit_field_value name="PACRE_WP0_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRE_WP0_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="SP0" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRE_SP0(x)"/>
+      <bit_field_value name="PACRE_SP0_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRE_SP0_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x44" width="32" name="PACRF" description="Peripheral Access Control Register">
+    <alias type="CMSIS" value="PACRF"/>
+    <bit_field offset="0" width="1" name="TP7" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_TP7(x)"/>
+      <bit_field_value name="PACRF_TP7_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRF_TP7_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WP7" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_WP7(x)"/>
+      <bit_field_value name="PACRF_WP7_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRF_WP7_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SP7" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_SP7(x)"/>
+      <bit_field_value name="PACRF_SP7_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRF_SP7_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="TP6" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_TP6(x)"/>
+      <bit_field_value name="PACRF_TP6_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRF_TP6_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WP6" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_WP6(x)"/>
+      <bit_field_value name="PACRF_WP6_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRF_WP6_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="SP6" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_SP6(x)"/>
+      <bit_field_value name="PACRF_SP6_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRF_SP6_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="TP5" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_TP5(x)"/>
+      <bit_field_value name="PACRF_TP5_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRF_TP5_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="WP5" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_WP5(x)"/>
+      <bit_field_value name="PACRF_WP5_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRF_WP5_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="SP5" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_SP5(x)"/>
+      <bit_field_value name="PACRF_SP5_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRF_SP5_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="1" name="TP4" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_TP4(x)"/>
+      <bit_field_value name="PACRF_TP4_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRF_TP4_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="WP4" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_WP4(x)"/>
+      <bit_field_value name="PACRF_WP4_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRF_WP4_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="SP4" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_SP4(x)"/>
+      <bit_field_value name="PACRF_SP4_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRF_SP4_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TP3" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_TP3(x)"/>
+      <bit_field_value name="PACRF_TP3_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRF_TP3_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="WP3" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_WP3(x)"/>
+      <bit_field_value name="PACRF_WP3_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRF_WP3_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="SP3" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_SP3(x)"/>
+      <bit_field_value name="PACRF_SP3_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRF_SP3_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="1" name="TP2" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_TP2(x)"/>
+      <bit_field_value name="PACRF_TP2_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRF_TP2_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="WP2" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_WP2(x)"/>
+      <bit_field_value name="PACRF_WP2_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRF_WP2_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="SP2" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_SP2(x)"/>
+      <bit_field_value name="PACRF_SP2_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRF_SP2_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TP1" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_TP1(x)"/>
+      <bit_field_value name="PACRF_TP1_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRF_TP1_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="WP1" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_WP1(x)"/>
+      <bit_field_value name="PACRF_WP1_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRF_WP1_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="SP1" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_SP1(x)"/>
+      <bit_field_value name="PACRF_SP1_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRF_SP1_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <bit_field offset="28" width="1" name="TP0" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_TP0(x)"/>
+      <bit_field_value name="PACRF_TP0_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRF_TP0_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="29" width="1" name="WP0" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_WP0(x)"/>
+      <bit_field_value name="PACRF_WP0_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRF_WP0_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="SP0" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRF_SP0(x)"/>
+      <bit_field_value name="PACRF_SP0_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRF_SP0_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x48" width="32" name="PACRG" description="Peripheral Access Control Register">
+    <alias type="CMSIS" value="PACRG"/>
+    <bit_field offset="0" width="1" name="TP7" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_TP7(x)"/>
+      <bit_field_value name="PACRG_TP7_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRG_TP7_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WP7" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_WP7(x)"/>
+      <bit_field_value name="PACRG_WP7_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRG_WP7_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SP7" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_SP7(x)"/>
+      <bit_field_value name="PACRG_SP7_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRG_SP7_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="TP6" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_TP6(x)"/>
+      <bit_field_value name="PACRG_TP6_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRG_TP6_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WP6" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_WP6(x)"/>
+      <bit_field_value name="PACRG_WP6_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRG_WP6_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="SP6" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_SP6(x)"/>
+      <bit_field_value name="PACRG_SP6_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRG_SP6_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="TP5" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_TP5(x)"/>
+      <bit_field_value name="PACRG_TP5_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRG_TP5_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="WP5" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_WP5(x)"/>
+      <bit_field_value name="PACRG_WP5_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRG_WP5_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="SP5" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_SP5(x)"/>
+      <bit_field_value name="PACRG_SP5_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRG_SP5_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="1" name="TP4" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_TP4(x)"/>
+      <bit_field_value name="PACRG_TP4_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRG_TP4_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="WP4" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_WP4(x)"/>
+      <bit_field_value name="PACRG_WP4_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRG_WP4_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="SP4" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_SP4(x)"/>
+      <bit_field_value name="PACRG_SP4_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRG_SP4_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TP3" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_TP3(x)"/>
+      <bit_field_value name="PACRG_TP3_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRG_TP3_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="WP3" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_WP3(x)"/>
+      <bit_field_value name="PACRG_WP3_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRG_WP3_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="SP3" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_SP3(x)"/>
+      <bit_field_value name="PACRG_SP3_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRG_SP3_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="1" name="TP2" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_TP2(x)"/>
+      <bit_field_value name="PACRG_TP2_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRG_TP2_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="WP2" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_WP2(x)"/>
+      <bit_field_value name="PACRG_WP2_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRG_WP2_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="SP2" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_SP2(x)"/>
+      <bit_field_value name="PACRG_SP2_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRG_SP2_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TP1" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_TP1(x)"/>
+      <bit_field_value name="PACRG_TP1_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRG_TP1_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="WP1" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_WP1(x)"/>
+      <bit_field_value name="PACRG_WP1_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRG_WP1_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="SP1" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_SP1(x)"/>
+      <bit_field_value name="PACRG_SP1_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRG_SP1_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <bit_field offset="28" width="1" name="TP0" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_TP0(x)"/>
+      <bit_field_value name="PACRG_TP0_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRG_TP0_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="29" width="1" name="WP0" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_WP0(x)"/>
+      <bit_field_value name="PACRG_WP0_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRG_WP0_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="SP0" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRG_SP0(x)"/>
+      <bit_field_value name="PACRG_SP0_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRG_SP0_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x4C" width="32" name="PACRH" description="Peripheral Access Control Register">
+    <alias type="CMSIS" value="PACRH"/>
+    <bit_field offset="0" width="1" name="TP7" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_TP7(x)"/>
+      <bit_field_value name="PACRH_TP7_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRH_TP7_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WP7" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_WP7(x)"/>
+      <bit_field_value name="PACRH_WP7_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRH_WP7_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SP7" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_SP7(x)"/>
+      <bit_field_value name="PACRH_SP7_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRH_SP7_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="TP6" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_TP6(x)"/>
+      <bit_field_value name="PACRH_TP6_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRH_TP6_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WP6" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_WP6(x)"/>
+      <bit_field_value name="PACRH_WP6_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRH_WP6_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="SP6" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_SP6(x)"/>
+      <bit_field_value name="PACRH_SP6_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRH_SP6_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="TP5" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_TP5(x)"/>
+      <bit_field_value name="PACRH_TP5_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRH_TP5_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="WP5" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_WP5(x)"/>
+      <bit_field_value name="PACRH_WP5_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRH_WP5_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="SP5" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_SP5(x)"/>
+      <bit_field_value name="PACRH_SP5_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRH_SP5_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="1" name="TP4" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_TP4(x)"/>
+      <bit_field_value name="PACRH_TP4_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRH_TP4_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="WP4" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_WP4(x)"/>
+      <bit_field_value name="PACRH_WP4_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRH_WP4_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="SP4" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_SP4(x)"/>
+      <bit_field_value name="PACRH_SP4_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRH_SP4_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TP3" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_TP3(x)"/>
+      <bit_field_value name="PACRH_TP3_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRH_TP3_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="WP3" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_WP3(x)"/>
+      <bit_field_value name="PACRH_WP3_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRH_WP3_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="SP3" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_SP3(x)"/>
+      <bit_field_value name="PACRH_SP3_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRH_SP3_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="1" name="TP2" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_TP2(x)"/>
+      <bit_field_value name="PACRH_TP2_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRH_TP2_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="WP2" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_WP2(x)"/>
+      <bit_field_value name="PACRH_WP2_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRH_WP2_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="SP2" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_SP2(x)"/>
+      <bit_field_value name="PACRH_SP2_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRH_SP2_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TP1" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_TP1(x)"/>
+      <bit_field_value name="PACRH_TP1_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRH_TP1_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="WP1" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_WP1(x)"/>
+      <bit_field_value name="PACRH_WP1_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRH_WP1_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="SP1" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_SP1(x)"/>
+      <bit_field_value name="PACRH_SP1_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRH_SP1_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <bit_field offset="28" width="1" name="TP0" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_TP0(x)"/>
+      <bit_field_value name="PACRH_TP0_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRH_TP0_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="29" width="1" name="WP0" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_WP0(x)"/>
+      <bit_field_value name="PACRH_WP0_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRH_WP0_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="SP0" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRH_SP0(x)"/>
+      <bit_field_value name="PACRH_SP0_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRH_SP0_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x50" width="32" name="PACRI" description="Peripheral Access Control Register">
+    <alias type="CMSIS" value="PACRI"/>
+    <bit_field offset="0" width="1" name="TP7" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_TP7(x)"/>
+      <bit_field_value name="PACRI_TP7_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRI_TP7_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WP7" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_WP7(x)"/>
+      <bit_field_value name="PACRI_WP7_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRI_WP7_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SP7" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_SP7(x)"/>
+      <bit_field_value name="PACRI_SP7_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRI_SP7_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="TP6" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_TP6(x)"/>
+      <bit_field_value name="PACRI_TP6_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRI_TP6_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WP6" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_WP6(x)"/>
+      <bit_field_value name="PACRI_WP6_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRI_WP6_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="SP6" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_SP6(x)"/>
+      <bit_field_value name="PACRI_SP6_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRI_SP6_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="TP5" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_TP5(x)"/>
+      <bit_field_value name="PACRI_TP5_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRI_TP5_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="WP5" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_WP5(x)"/>
+      <bit_field_value name="PACRI_WP5_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRI_WP5_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="SP5" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_SP5(x)"/>
+      <bit_field_value name="PACRI_SP5_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRI_SP5_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="1" name="TP4" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_TP4(x)"/>
+      <bit_field_value name="PACRI_TP4_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRI_TP4_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="WP4" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_WP4(x)"/>
+      <bit_field_value name="PACRI_WP4_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRI_WP4_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="SP4" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_SP4(x)"/>
+      <bit_field_value name="PACRI_SP4_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRI_SP4_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TP3" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_TP3(x)"/>
+      <bit_field_value name="PACRI_TP3_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRI_TP3_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="WP3" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_WP3(x)"/>
+      <bit_field_value name="PACRI_WP3_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRI_WP3_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="SP3" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_SP3(x)"/>
+      <bit_field_value name="PACRI_SP3_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRI_SP3_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="1" name="TP2" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_TP2(x)"/>
+      <bit_field_value name="PACRI_TP2_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRI_TP2_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="WP2" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_WP2(x)"/>
+      <bit_field_value name="PACRI_WP2_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRI_WP2_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="SP2" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_SP2(x)"/>
+      <bit_field_value name="PACRI_SP2_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRI_SP2_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TP1" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_TP1(x)"/>
+      <bit_field_value name="PACRI_TP1_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRI_TP1_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="WP1" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_WP1(x)"/>
+      <bit_field_value name="PACRI_WP1_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRI_WP1_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="SP1" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_SP1(x)"/>
+      <bit_field_value name="PACRI_SP1_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRI_SP1_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <bit_field offset="28" width="1" name="TP0" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_TP0(x)"/>
+      <bit_field_value name="PACRI_TP0_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRI_TP0_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="29" width="1" name="WP0" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_WP0(x)"/>
+      <bit_field_value name="PACRI_WP0_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRI_WP0_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="SP0" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRI_SP0(x)"/>
+      <bit_field_value name="PACRI_SP0_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRI_SP0_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x54" width="32" name="PACRJ" description="Peripheral Access Control Register">
+    <alias type="CMSIS" value="PACRJ"/>
+    <bit_field offset="0" width="1" name="TP7" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_TP7(x)"/>
+      <bit_field_value name="PACRJ_TP7_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRJ_TP7_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WP7" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_WP7(x)"/>
+      <bit_field_value name="PACRJ_WP7_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRJ_WP7_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SP7" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_SP7(x)"/>
+      <bit_field_value name="PACRJ_SP7_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRJ_SP7_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="TP6" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_TP6(x)"/>
+      <bit_field_value name="PACRJ_TP6_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRJ_TP6_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WP6" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_WP6(x)"/>
+      <bit_field_value name="PACRJ_WP6_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRJ_WP6_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="SP6" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_SP6(x)"/>
+      <bit_field_value name="PACRJ_SP6_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRJ_SP6_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="TP5" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_TP5(x)"/>
+      <bit_field_value name="PACRJ_TP5_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRJ_TP5_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="WP5" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_WP5(x)"/>
+      <bit_field_value name="PACRJ_WP5_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRJ_WP5_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="SP5" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_SP5(x)"/>
+      <bit_field_value name="PACRJ_SP5_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRJ_SP5_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="1" name="TP4" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_TP4(x)"/>
+      <bit_field_value name="PACRJ_TP4_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRJ_TP4_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="WP4" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_WP4(x)"/>
+      <bit_field_value name="PACRJ_WP4_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRJ_WP4_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="SP4" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_SP4(x)"/>
+      <bit_field_value name="PACRJ_SP4_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRJ_SP4_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TP3" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_TP3(x)"/>
+      <bit_field_value name="PACRJ_TP3_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRJ_TP3_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="WP3" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_WP3(x)"/>
+      <bit_field_value name="PACRJ_WP3_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRJ_WP3_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="SP3" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_SP3(x)"/>
+      <bit_field_value name="PACRJ_SP3_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRJ_SP3_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="1" name="TP2" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_TP2(x)"/>
+      <bit_field_value name="PACRJ_TP2_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRJ_TP2_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="WP2" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_WP2(x)"/>
+      <bit_field_value name="PACRJ_WP2_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRJ_WP2_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="SP2" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_SP2(x)"/>
+      <bit_field_value name="PACRJ_SP2_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRJ_SP2_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TP1" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_TP1(x)"/>
+      <bit_field_value name="PACRJ_TP1_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRJ_TP1_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="WP1" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_WP1(x)"/>
+      <bit_field_value name="PACRJ_WP1_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRJ_WP1_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="SP1" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_SP1(x)"/>
+      <bit_field_value name="PACRJ_SP1_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRJ_SP1_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <bit_field offset="28" width="1" name="TP0" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_TP0(x)"/>
+      <bit_field_value name="PACRJ_TP0_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRJ_TP0_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="29" width="1" name="WP0" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_WP0(x)"/>
+      <bit_field_value name="PACRJ_WP0_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRJ_WP0_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="SP0" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRJ_SP0(x)"/>
+      <bit_field_value name="PACRJ_SP0_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRJ_SP0_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x58" width="32" name="PACRK" description="Peripheral Access Control Register">
+    <alias type="CMSIS" value="PACRK"/>
+    <bit_field offset="0" width="1" name="TP7" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_TP7(x)"/>
+      <bit_field_value name="PACRK_TP7_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRK_TP7_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WP7" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_WP7(x)"/>
+      <bit_field_value name="PACRK_WP7_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRK_WP7_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SP7" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_SP7(x)"/>
+      <bit_field_value name="PACRK_SP7_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRK_SP7_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="TP6" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_TP6(x)"/>
+      <bit_field_value name="PACRK_TP6_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRK_TP6_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WP6" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_WP6(x)"/>
+      <bit_field_value name="PACRK_WP6_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRK_WP6_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="SP6" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_SP6(x)"/>
+      <bit_field_value name="PACRK_SP6_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRK_SP6_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="TP5" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_TP5(x)"/>
+      <bit_field_value name="PACRK_TP5_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRK_TP5_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="WP5" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_WP5(x)"/>
+      <bit_field_value name="PACRK_WP5_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRK_WP5_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="SP5" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_SP5(x)"/>
+      <bit_field_value name="PACRK_SP5_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRK_SP5_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="1" name="TP4" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_TP4(x)"/>
+      <bit_field_value name="PACRK_TP4_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRK_TP4_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="WP4" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_WP4(x)"/>
+      <bit_field_value name="PACRK_WP4_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRK_WP4_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="SP4" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_SP4(x)"/>
+      <bit_field_value name="PACRK_SP4_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRK_SP4_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TP3" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_TP3(x)"/>
+      <bit_field_value name="PACRK_TP3_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRK_TP3_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="WP3" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_WP3(x)"/>
+      <bit_field_value name="PACRK_WP3_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRK_WP3_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="SP3" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_SP3(x)"/>
+      <bit_field_value name="PACRK_SP3_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRK_SP3_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="1" name="TP2" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_TP2(x)"/>
+      <bit_field_value name="PACRK_TP2_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRK_TP2_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="WP2" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_WP2(x)"/>
+      <bit_field_value name="PACRK_WP2_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRK_WP2_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="SP2" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_SP2(x)"/>
+      <bit_field_value name="PACRK_SP2_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRK_SP2_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TP1" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_TP1(x)"/>
+      <bit_field_value name="PACRK_TP1_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRK_TP1_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="WP1" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_WP1(x)"/>
+      <bit_field_value name="PACRK_WP1_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRK_WP1_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="SP1" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_SP1(x)"/>
+      <bit_field_value name="PACRK_SP1_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRK_SP1_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <bit_field offset="28" width="1" name="TP0" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_TP0(x)"/>
+      <bit_field_value name="PACRK_TP0_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRK_TP0_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="29" width="1" name="WP0" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_WP0(x)"/>
+      <bit_field_value name="PACRK_WP0_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRK_WP0_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="SP0" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRK_SP0(x)"/>
+      <bit_field_value name="PACRK_SP0_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRK_SP0_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x5C" width="32" name="PACRL" description="Peripheral Access Control Register">
+    <alias type="CMSIS" value="PACRL"/>
+    <bit_field offset="0" width="1" name="TP7" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_TP7(x)"/>
+      <bit_field_value name="PACRL_TP7_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRL_TP7_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WP7" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_WP7(x)"/>
+      <bit_field_value name="PACRL_WP7_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRL_WP7_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SP7" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_SP7(x)"/>
+      <bit_field_value name="PACRL_SP7_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRL_SP7_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="TP6" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_TP6(x)"/>
+      <bit_field_value name="PACRL_TP6_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRL_TP6_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WP6" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_WP6(x)"/>
+      <bit_field_value name="PACRL_WP6_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRL_WP6_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="SP6" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_SP6(x)"/>
+      <bit_field_value name="PACRL_SP6_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRL_SP6_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="TP5" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_TP5(x)"/>
+      <bit_field_value name="PACRL_TP5_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRL_TP5_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="WP5" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_WP5(x)"/>
+      <bit_field_value name="PACRL_WP5_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRL_WP5_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="SP5" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_SP5(x)"/>
+      <bit_field_value name="PACRL_SP5_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRL_SP5_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="1" name="TP4" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_TP4(x)"/>
+      <bit_field_value name="PACRL_TP4_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRL_TP4_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="WP4" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_WP4(x)"/>
+      <bit_field_value name="PACRL_WP4_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRL_WP4_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="SP4" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_SP4(x)"/>
+      <bit_field_value name="PACRL_SP4_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRL_SP4_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TP3" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_TP3(x)"/>
+      <bit_field_value name="PACRL_TP3_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRL_TP3_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="WP3" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_WP3(x)"/>
+      <bit_field_value name="PACRL_WP3_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRL_WP3_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="SP3" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_SP3(x)"/>
+      <bit_field_value name="PACRL_SP3_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRL_SP3_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="1" name="TP2" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_TP2(x)"/>
+      <bit_field_value name="PACRL_TP2_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRL_TP2_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="WP2" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_WP2(x)"/>
+      <bit_field_value name="PACRL_WP2_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRL_WP2_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="SP2" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_SP2(x)"/>
+      <bit_field_value name="PACRL_SP2_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRL_SP2_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TP1" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_TP1(x)"/>
+      <bit_field_value name="PACRL_TP1_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRL_TP1_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="WP1" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_WP1(x)"/>
+      <bit_field_value name="PACRL_WP1_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRL_WP1_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="SP1" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_SP1(x)"/>
+      <bit_field_value name="PACRL_SP1_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRL_SP1_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <bit_field offset="28" width="1" name="TP0" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_TP0(x)"/>
+      <bit_field_value name="PACRL_TP0_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRL_TP0_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="29" width="1" name="WP0" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_WP0(x)"/>
+      <bit_field_value name="PACRL_WP0_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRL_WP0_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="SP0" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRL_SP0(x)"/>
+      <bit_field_value name="PACRL_SP0_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRL_SP0_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x60" width="32" name="PACRM" description="Peripheral Access Control Register">
+    <alias type="CMSIS" value="PACRM"/>
+    <bit_field offset="0" width="1" name="TP7" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_TP7(x)"/>
+      <bit_field_value name="PACRM_TP7_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRM_TP7_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WP7" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_WP7(x)"/>
+      <bit_field_value name="PACRM_WP7_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRM_WP7_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SP7" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_SP7(x)"/>
+      <bit_field_value name="PACRM_SP7_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRM_SP7_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="TP6" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_TP6(x)"/>
+      <bit_field_value name="PACRM_TP6_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRM_TP6_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WP6" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_WP6(x)"/>
+      <bit_field_value name="PACRM_WP6_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRM_WP6_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="SP6" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_SP6(x)"/>
+      <bit_field_value name="PACRM_SP6_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRM_SP6_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="TP5" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_TP5(x)"/>
+      <bit_field_value name="PACRM_TP5_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRM_TP5_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="WP5" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_WP5(x)"/>
+      <bit_field_value name="PACRM_WP5_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRM_WP5_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="SP5" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_SP5(x)"/>
+      <bit_field_value name="PACRM_SP5_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRM_SP5_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="1" name="TP4" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_TP4(x)"/>
+      <bit_field_value name="PACRM_TP4_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRM_TP4_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="WP4" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_WP4(x)"/>
+      <bit_field_value name="PACRM_WP4_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRM_WP4_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="SP4" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_SP4(x)"/>
+      <bit_field_value name="PACRM_SP4_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRM_SP4_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TP3" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_TP3(x)"/>
+      <bit_field_value name="PACRM_TP3_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRM_TP3_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="WP3" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_WP3(x)"/>
+      <bit_field_value name="PACRM_WP3_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRM_WP3_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="SP3" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_SP3(x)"/>
+      <bit_field_value name="PACRM_SP3_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRM_SP3_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="1" name="TP2" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_TP2(x)"/>
+      <bit_field_value name="PACRM_TP2_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRM_TP2_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="WP2" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_WP2(x)"/>
+      <bit_field_value name="PACRM_WP2_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRM_WP2_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="SP2" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_SP2(x)"/>
+      <bit_field_value name="PACRM_SP2_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRM_SP2_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TP1" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_TP1(x)"/>
+      <bit_field_value name="PACRM_TP1_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRM_TP1_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="WP1" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_WP1(x)"/>
+      <bit_field_value name="PACRM_WP1_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRM_WP1_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="SP1" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_SP1(x)"/>
+      <bit_field_value name="PACRM_SP1_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRM_SP1_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <bit_field offset="28" width="1" name="TP0" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_TP0(x)"/>
+      <bit_field_value name="PACRM_TP0_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRM_TP0_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="29" width="1" name="WP0" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_WP0(x)"/>
+      <bit_field_value name="PACRM_WP0_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRM_WP0_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="SP0" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRM_SP0(x)"/>
+      <bit_field_value name="PACRM_SP0_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRM_SP0_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x64" width="32" name="PACRN" description="Peripheral Access Control Register">
+    <alias type="CMSIS" value="PACRN"/>
+    <bit_field offset="0" width="1" name="TP7" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_TP7(x)"/>
+      <bit_field_value name="PACRN_TP7_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRN_TP7_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WP7" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_WP7(x)"/>
+      <bit_field_value name="PACRN_WP7_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRN_WP7_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SP7" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_SP7(x)"/>
+      <bit_field_value name="PACRN_SP7_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRN_SP7_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="TP6" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_TP6(x)"/>
+      <bit_field_value name="PACRN_TP6_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRN_TP6_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WP6" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_WP6(x)"/>
+      <bit_field_value name="PACRN_WP6_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRN_WP6_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="SP6" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_SP6(x)"/>
+      <bit_field_value name="PACRN_SP6_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRN_SP6_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="TP5" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_TP5(x)"/>
+      <bit_field_value name="PACRN_TP5_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRN_TP5_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="WP5" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_WP5(x)"/>
+      <bit_field_value name="PACRN_WP5_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRN_WP5_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="SP5" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_SP5(x)"/>
+      <bit_field_value name="PACRN_SP5_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRN_SP5_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="1" name="TP4" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_TP4(x)"/>
+      <bit_field_value name="PACRN_TP4_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRN_TP4_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="WP4" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_WP4(x)"/>
+      <bit_field_value name="PACRN_WP4_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRN_WP4_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="SP4" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_SP4(x)"/>
+      <bit_field_value name="PACRN_SP4_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRN_SP4_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TP3" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_TP3(x)"/>
+      <bit_field_value name="PACRN_TP3_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRN_TP3_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="WP3" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_WP3(x)"/>
+      <bit_field_value name="PACRN_WP3_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRN_WP3_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="SP3" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_SP3(x)"/>
+      <bit_field_value name="PACRN_SP3_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRN_SP3_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="1" name="TP2" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_TP2(x)"/>
+      <bit_field_value name="PACRN_TP2_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRN_TP2_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="WP2" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_WP2(x)"/>
+      <bit_field_value name="PACRN_WP2_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRN_WP2_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="SP2" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_SP2(x)"/>
+      <bit_field_value name="PACRN_SP2_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRN_SP2_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TP1" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_TP1(x)"/>
+      <bit_field_value name="PACRN_TP1_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRN_TP1_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="WP1" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_WP1(x)"/>
+      <bit_field_value name="PACRN_WP1_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRN_WP1_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="SP1" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_SP1(x)"/>
+      <bit_field_value name="PACRN_SP1_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRN_SP1_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <bit_field offset="28" width="1" name="TP0" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_TP0(x)"/>
+      <bit_field_value name="PACRN_TP0_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRN_TP0_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="29" width="1" name="WP0" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_WP0(x)"/>
+      <bit_field_value name="PACRN_WP0_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRN_WP0_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="SP0" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRN_SP0(x)"/>
+      <bit_field_value name="PACRN_SP0_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRN_SP0_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x68" width="32" name="PACRO" description="Peripheral Access Control Register">
+    <alias type="CMSIS" value="PACRO"/>
+    <bit_field offset="0" width="1" name="TP7" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_TP7(x)"/>
+      <bit_field_value name="PACRO_TP7_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRO_TP7_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WP7" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_WP7(x)"/>
+      <bit_field_value name="PACRO_WP7_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRO_WP7_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SP7" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_SP7(x)"/>
+      <bit_field_value name="PACRO_SP7_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRO_SP7_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="TP6" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_TP6(x)"/>
+      <bit_field_value name="PACRO_TP6_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRO_TP6_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WP6" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_WP6(x)"/>
+      <bit_field_value name="PACRO_WP6_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRO_WP6_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="SP6" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_SP6(x)"/>
+      <bit_field_value name="PACRO_SP6_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRO_SP6_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="TP5" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_TP5(x)"/>
+      <bit_field_value name="PACRO_TP5_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRO_TP5_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="WP5" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_WP5(x)"/>
+      <bit_field_value name="PACRO_WP5_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRO_WP5_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="SP5" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_SP5(x)"/>
+      <bit_field_value name="PACRO_SP5_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRO_SP5_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="1" name="TP4" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_TP4(x)"/>
+      <bit_field_value name="PACRO_TP4_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRO_TP4_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="WP4" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_WP4(x)"/>
+      <bit_field_value name="PACRO_WP4_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRO_WP4_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="SP4" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_SP4(x)"/>
+      <bit_field_value name="PACRO_SP4_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRO_SP4_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TP3" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_TP3(x)"/>
+      <bit_field_value name="PACRO_TP3_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRO_TP3_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="WP3" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_WP3(x)"/>
+      <bit_field_value name="PACRO_WP3_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRO_WP3_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="SP3" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_SP3(x)"/>
+      <bit_field_value name="PACRO_SP3_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRO_SP3_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="1" name="TP2" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_TP2(x)"/>
+      <bit_field_value name="PACRO_TP2_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRO_TP2_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="WP2" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_WP2(x)"/>
+      <bit_field_value name="PACRO_WP2_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRO_WP2_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="SP2" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_SP2(x)"/>
+      <bit_field_value name="PACRO_SP2_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRO_SP2_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TP1" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_TP1(x)"/>
+      <bit_field_value name="PACRO_TP1_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRO_TP1_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="WP1" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_WP1(x)"/>
+      <bit_field_value name="PACRO_WP1_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRO_WP1_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="SP1" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_SP1(x)"/>
+      <bit_field_value name="PACRO_SP1_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRO_SP1_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <bit_field offset="28" width="1" name="TP0" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_TP0(x)"/>
+      <bit_field_value name="PACRO_TP0_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRO_TP0_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="29" width="1" name="WP0" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_WP0(x)"/>
+      <bit_field_value name="PACRO_WP0_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRO_WP0_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="SP0" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRO_SP0(x)"/>
+      <bit_field_value name="PACRO_SP0_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRO_SP0_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x6C" width="32" name="PACRP" description="Peripheral Access Control Register">
+    <alias type="CMSIS" value="PACRP"/>
+    <bit_field offset="0" width="1" name="TP7" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_TP7(x)"/>
+      <bit_field_value name="PACRP_TP7_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRP_TP7_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WP7" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_WP7(x)"/>
+      <bit_field_value name="PACRP_WP7_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRP_WP7_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SP7" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_SP7(x)"/>
+      <bit_field_value name="PACRP_SP7_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRP_SP7_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="TP6" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_TP6(x)"/>
+      <bit_field_value name="PACRP_TP6_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRP_TP6_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WP6" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_WP6(x)"/>
+      <bit_field_value name="PACRP_WP6_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRP_WP6_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="SP6" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_SP6(x)"/>
+      <bit_field_value name="PACRP_SP6_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRP_SP6_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="TP5" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_TP5(x)"/>
+      <bit_field_value name="PACRP_TP5_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRP_TP5_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="WP5" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_WP5(x)"/>
+      <bit_field_value name="PACRP_WP5_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRP_WP5_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="SP5" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_SP5(x)"/>
+      <bit_field_value name="PACRP_SP5_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRP_SP5_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="1" name="TP4" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_TP4(x)"/>
+      <bit_field_value name="PACRP_TP4_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRP_TP4_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="WP4" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_WP4(x)"/>
+      <bit_field_value name="PACRP_WP4_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRP_WP4_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="SP4" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_SP4(x)"/>
+      <bit_field_value name="PACRP_SP4_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRP_SP4_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TP3" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_TP3(x)"/>
+      <bit_field_value name="PACRP_TP3_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRP_TP3_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="WP3" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_WP3(x)"/>
+      <bit_field_value name="PACRP_WP3_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRP_WP3_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="SP3" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_SP3(x)"/>
+      <bit_field_value name="PACRP_SP3_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRP_SP3_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="1" name="TP2" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_TP2(x)"/>
+      <bit_field_value name="PACRP_TP2_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRP_TP2_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="WP2" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_WP2(x)"/>
+      <bit_field_value name="PACRP_WP2_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRP_WP2_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="SP2" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_SP2(x)"/>
+      <bit_field_value name="PACRP_SP2_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRP_SP2_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TP1" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_TP1(x)"/>
+      <bit_field_value name="PACRP_TP1_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRP_TP1_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="WP1" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_WP1(x)"/>
+      <bit_field_value name="PACRP_WP1_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRP_WP1_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="SP1" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_SP1(x)"/>
+      <bit_field_value name="PACRP_SP1_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRP_SP1_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <bit_field offset="28" width="1" name="TP0" access="RW" reset_value="0" description="Trusted Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_TP0(x)"/>
+      <bit_field_value name="PACRP_TP0_0b0" value="0b0" description="Accesses from an untrusted master are allowed."/>
+      <bit_field_value name="PACRP_TP0_0b1" value="0b1" description="Accesses from an untrusted master are not allowed."/>
+    </bit_field>
+    <bit_field offset="29" width="1" name="WP0" access="RW" reset_value="0" description="Write Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_WP0(x)"/>
+      <bit_field_value name="PACRP_WP0_0b0" value="0b0" description="This peripheral allows write accesses."/>
+      <bit_field_value name="PACRP_WP0_0b1" value="0b1" description="This peripheral is write protected."/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="SP0" access="RW" reset_value="0" description="Supervisor Protect">
+      <alias type="CMSIS" value="AIPS_PACRP_SP0(x)"/>
+      <bit_field_value name="PACRP_SP0_0b0" value="0b0" description="This peripheral does not require supervisor privilege level for accesses."/>
+      <bit_field_value name="PACRP_SP0_0b1" value="0b1" description="This peripheral requires supervisor privilege level for accesses."/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+</regs:peripheral>

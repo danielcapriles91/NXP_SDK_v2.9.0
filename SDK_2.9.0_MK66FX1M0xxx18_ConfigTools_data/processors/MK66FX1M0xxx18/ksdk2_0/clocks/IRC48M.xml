@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<clocks:component xmlns:clocks="http://apif.freescale.net/schemas/clocks/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://apif.freescale.net/schemas/clocks/1.1 http://apif.freescale.net/schemas/clocks/1.1/clocks.xsd" id="IRC48M">
+  <instance_header>
+    <instance_description>Clock model for the IRC48M internal clock module (parameterized, shared accross all Kinetis parts)</instance_description>
+  </instance_header>
+  <interface>
+    <output_clock_signal id="IRC48MCLK" name="IRC48MCLK" description="Internal Reference Clock 48MHz (USB device)"/>
+  </interface>
+  <implementation>
+    <clock_source id="IRC48M" name="IRC48M" description="IRC 48MHz. This internal clock source is active when it is used (selected as a clock source in a connected clock selector)">
+      <internal_source>
+        <fixed_frequency freq="48 MHz"/>
+      </internal_source>
+      <enable power_modes="HSRUN RUN WAIT" cond_expr="MCG::C7[OSCSEL] == 2 || SIM::SOPT2[PLLFLLSEL] == 3" description="IRC48MCLK is enabled when the USB device uses it (USB_CLK_RECOVER_IRC_EN[IRC_EN] is set in the USB device; if the USB device is available in the MCU) or when selected as clock source in MCG device (OSCSEL clock selector) or SIM (PLLFLLSEL clock selector). The IRC48M is active in RUN, WAIT and HSRUN modes only."/>
+    </clock_source>
+    <map_output id="IRC48MCLK">
+      <input signal="IRC48M.clk"/>
+    </map_output>
+  </implementation>
+</clocks:component>

@@ -1,0 +1,884 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="32" name="DSADDR" description="DMA System Address register">
+    <alias type="CMSIS" value="DSADDR"/>
+    <reserved_bit_field offset="0" width="2" reset_value="0"/>
+    <bit_field offset="2" width="30" name="DSADDR" access="RW" reset_value="0" description="DMA System Address">
+      <alias type="CMSIS" value="SDHC_DSADDR_DSADDR(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x4" width="32" name="BLKATTR" description="Block Attributes register">
+    <alias type="CMSIS" value="BLKATTR"/>
+    <bit_field offset="0" width="13" name="BLKSIZE" access="RW" reset_value="0" description="Transfer Block Size">
+      <alias type="CMSIS" value="SDHC_BLKATTR_BLKSIZE(x)"/>
+      <bit_field_value name="BLKATTR_BLKSIZE_0b0000000000000" value="0b0000000000000" description="No data transfer."/>
+      <bit_field_value name="BLKATTR_BLKSIZE_0b0000000000001" value="0b0000000000001" description="1 Byte"/>
+      <bit_field_value name="BLKATTR_BLKSIZE_0b0000000000010" value="0b0000000000010" description="2 Bytes"/>
+      <bit_field_value name="BLKATTR_BLKSIZE_0b0000000000011" value="0b0000000000011" description="3 Bytes"/>
+      <bit_field_value name="BLKATTR_BLKSIZE_0b0000000000100" value="0b0000000000100" description="4 Bytes"/>
+      <bit_field_value name="BLKATTR_BLKSIZE_0b0000111111111" value="0b0000111111111" description="511 Bytes"/>
+      <bit_field_value name="BLKATTR_BLKSIZE_0b0001000000000" value="0b0001000000000" description="512 Bytes"/>
+      <bit_field_value name="BLKATTR_BLKSIZE_0b0100000000000" value="0b0100000000000" description="2048 Bytes"/>
+      <bit_field_value name="BLKATTR_BLKSIZE_0b1000000000000" value="0b1000000000000" description="4096 Bytes"/>
+    </bit_field>
+    <reserved_bit_field offset="13" width="3" reset_value="0"/>
+    <bit_field offset="16" width="16" name="BLKCNT" access="RW" reset_value="0" description="Blocks Count For Current Transfer">
+      <alias type="CMSIS" value="SDHC_BLKATTR_BLKCNT(x)"/>
+      <bit_field_value name="BLKATTR_BLKCNT_0b0000000000000000" value="0b0000000000000000" description="Stop count."/>
+      <bit_field_value name="BLKATTR_BLKCNT_0b0000000000000001" value="0b0000000000000001" description="1 block"/>
+      <bit_field_value name="BLKATTR_BLKCNT_0b0000000000000010" value="0b0000000000000010" description="2 blocks"/>
+      <bit_field_value name="BLKATTR_BLKCNT_0b1111111111111111" value="0b1111111111111111" description="65535 blocks"/>
+    </bit_field>
+  </register>
+  <register offset="0x8" width="32" name="CMDARG" description="Command Argument register">
+    <alias type="CMSIS" value="CMDARG"/>
+    <bit_field offset="0" width="32" name="CMDARG" access="RW" reset_value="0" description="Command Argument">
+      <alias type="CMSIS" value="SDHC_CMDARG_CMDARG(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xC" width="32" name="XFERTYP" description="Transfer Type register">
+    <alias type="CMSIS" value="XFERTYP"/>
+    <bit_field offset="0" width="1" name="DMAEN" access="RW" reset_value="0" description="DMA Enable">
+      <alias type="CMSIS" value="SDHC_XFERTYP_DMAEN(x)"/>
+      <bit_field_value name="XFERTYP_DMAEN_0b0" value="0b0" description="Disable"/>
+      <bit_field_value name="XFERTYP_DMAEN_0b1" value="0b1" description="Enable"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="BCEN" access="RW" reset_value="0" description="Block Count Enable">
+      <alias type="CMSIS" value="SDHC_XFERTYP_BCEN(x)"/>
+      <bit_field_value name="XFERTYP_BCEN_0b0" value="0b0" description="Disable"/>
+      <bit_field_value name="XFERTYP_BCEN_0b1" value="0b1" description="Enable"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="AC12EN" access="RW" reset_value="0" description="Auto CMD12 Enable">
+      <alias type="CMSIS" value="SDHC_XFERTYP_AC12EN(x)"/>
+      <bit_field_value name="XFERTYP_AC12EN_0b0" value="0b0" description="Disable"/>
+      <bit_field_value name="XFERTYP_AC12EN_0b1" value="0b1" description="Enable"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="DTDSEL" access="RW" reset_value="0" description="Data Transfer Direction Select">
+      <alias type="CMSIS" value="SDHC_XFERTYP_DTDSEL(x)"/>
+      <bit_field_value name="XFERTYP_DTDSEL_0b0" value="0b0" description="Write host to card."/>
+      <bit_field_value name="XFERTYP_DTDSEL_0b1" value="0b1" description="Read card to host."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="MSBSEL" access="RW" reset_value="0" description="Multi/Single Block Select">
+      <alias type="CMSIS" value="SDHC_XFERTYP_MSBSEL(x)"/>
+      <bit_field_value name="XFERTYP_MSBSEL_0b0" value="0b0" description="Single block."/>
+      <bit_field_value name="XFERTYP_MSBSEL_0b1" value="0b1" description="Multiple blocks."/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="10" reset_value="0"/>
+    <bit_field offset="16" width="2" name="RSPTYP" access="RW" reset_value="0" description="Response Type Select">
+      <alias type="CMSIS" value="SDHC_XFERTYP_RSPTYP(x)"/>
+      <bit_field_value name="XFERTYP_RSPTYP_0b00" value="0b00" description="No response."/>
+      <bit_field_value name="XFERTYP_RSPTYP_0b01" value="0b01" description="Response length 136."/>
+      <bit_field_value name="XFERTYP_RSPTYP_0b10" value="0b10" description="Response length 48."/>
+      <bit_field_value name="XFERTYP_RSPTYP_0b11" value="0b11" description="Response length 48, check busy after response."/>
+    </bit_field>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <bit_field offset="19" width="1" name="CCCEN" access="RW" reset_value="0" description="Command CRC Check Enable">
+      <alias type="CMSIS" value="SDHC_XFERTYP_CCCEN(x)"/>
+      <bit_field_value name="XFERTYP_CCCEN_0b0" value="0b0" description="Disable"/>
+      <bit_field_value name="XFERTYP_CCCEN_0b1" value="0b1" description="Enable"/>
+    </bit_field>
+    <bit_field offset="20" width="1" name="CICEN" access="RW" reset_value="0" description="Command Index Check Enable">
+      <alias type="CMSIS" value="SDHC_XFERTYP_CICEN(x)"/>
+      <bit_field_value name="XFERTYP_CICEN_0b0" value="0b0" description="Disable"/>
+      <bit_field_value name="XFERTYP_CICEN_0b1" value="0b1" description="Enable"/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="DPSEL" access="RW" reset_value="0" description="Data Present Select">
+      <alias type="CMSIS" value="SDHC_XFERTYP_DPSEL(x)"/>
+      <bit_field_value name="XFERTYP_DPSEL_0b0" value="0b0" description="No data present."/>
+      <bit_field_value name="XFERTYP_DPSEL_0b1" value="0b1" description="Data present."/>
+    </bit_field>
+    <bit_field offset="22" width="2" name="CMDTYP" access="RW" reset_value="0" description="Command Type">
+      <alias type="CMSIS" value="SDHC_XFERTYP_CMDTYP(x)"/>
+      <bit_field_value name="XFERTYP_CMDTYP_0b00" value="0b00" description="Normal other commands."/>
+      <bit_field_value name="XFERTYP_CMDTYP_0b01" value="0b01" description="Suspend CMD52 for writing bus suspend in CCCR."/>
+      <bit_field_value name="XFERTYP_CMDTYP_0b10" value="0b10" description="Resume CMD52 for writing function select in CCCR."/>
+      <bit_field_value name="XFERTYP_CMDTYP_0b11" value="0b11" description="Abort CMD12, CMD52 for writing I/O abort in CCCR."/>
+    </bit_field>
+    <bit_field offset="24" width="6" name="CMDINX" access="RW" reset_value="0" description="Command Index">
+      <alias type="CMSIS" value="SDHC_XFERTYP_CMDINX(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="30" width="2" reset_value="0"/>
+  </register>
+  <register offset="0x10" width="32" name="CMDRSP0" description="Command Response 0">
+    <alias type="CMSIS" value="CMDRSP[0]"/>
+    <bit_field offset="0" width="32" name="CMDRSP0" access="RO" reset_value="0" description="Command Response 0">
+      <alias type="CMSIS" value="SDHC_CMDRSP_CMDRSP0(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x14" width="32" name="CMDRSP1" description="Command Response 1">
+    <alias type="CMSIS" value="CMDRSP[1]"/>
+    <bit_field offset="0" width="32" name="CMDRSP1" access="RO" reset_value="0" description="Command Response 1">
+      <alias type="CMSIS" value="SDHC_CMDRSP_CMDRSP1(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x18" width="32" name="CMDRSP2" description="Command Response 2">
+    <alias type="CMSIS" value="CMDRSP[2]"/>
+    <bit_field offset="0" width="32" name="CMDRSP2" access="RO" reset_value="0" description="Command Response 2">
+      <alias type="CMSIS" value="SDHC_CMDRSP_CMDRSP2(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x1C" width="32" name="CMDRSP3" description="Command Response 3">
+    <alias type="CMSIS" value="CMDRSP[3]"/>
+    <bit_field offset="0" width="32" name="CMDRSP3" access="RO" reset_value="0" description="Command Response 3">
+      <alias type="CMSIS" value="SDHC_CMDRSP_CMDRSP3(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x20" width="32" name="DATPORT" description="Buffer Data Port register">
+    <alias type="CMSIS" value="DATPORT"/>
+    <bit_field offset="0" width="32" name="DATCONT" access="RW" reset_value="0" description="Data Content">
+      <alias type="CMSIS" value="SDHC_DATPORT_DATCONT(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x24" width="32" name="PRSSTAT" description="Present State register">
+    <alias type="CMSIS" value="PRSSTAT"/>
+    <bit_field offset="0" width="1" name="CIHB" access="RO" reset_value="0" description="Command Inhibit (CMD)">
+      <alias type="CMSIS" value="SDHC_PRSSTAT_CIHB(x)"/>
+      <bit_field_value name="PRSSTAT_CIHB_0b0" value="0b0" description="Can issue command using only CMD line."/>
+      <bit_field_value name="PRSSTAT_CIHB_0b1" value="0b1" description="Cannot issue command."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="CDIHB" access="RO" reset_value="0" description="Command Inhibit (DAT)">
+      <alias type="CMSIS" value="SDHC_PRSSTAT_CDIHB(x)"/>
+      <bit_field_value name="PRSSTAT_CDIHB_0b0" value="0b0" description="Can issue command which uses the DAT line."/>
+      <bit_field_value name="PRSSTAT_CDIHB_0b1" value="0b1" description="Cannot issue command which uses the DAT line."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="DLA" access="RO" reset_value="0" description="Data Line Active">
+      <alias type="CMSIS" value="SDHC_PRSSTAT_DLA(x)"/>
+      <bit_field_value name="PRSSTAT_DLA_0b0" value="0b0" description="DAT line inactive."/>
+      <bit_field_value name="PRSSTAT_DLA_0b1" value="0b1" description="DAT line active."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="SDSTB" access="RO" reset_value="0" description="SD Clock Stable">
+      <alias type="CMSIS" value="SDHC_PRSSTAT_SDSTB(x)"/>
+      <bit_field_value name="PRSSTAT_SDSTB_0b0" value="0b0" description="Clock is changing frequency and not stable."/>
+      <bit_field_value name="PRSSTAT_SDSTB_0b1" value="0b1" description="Clock is stable."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="IPGOFF" access="RO" reset_value="0" description="Bus Clock Gated Off Internally">
+      <alias type="CMSIS" value="SDHC_PRSSTAT_IPGOFF(x)"/>
+      <bit_field_value name="PRSSTAT_IPGOFF_0b0" value="0b0" description="Bus clock is active."/>
+      <bit_field_value name="PRSSTAT_IPGOFF_0b1" value="0b1" description="Bus clock is gated off."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="HCKOFF" access="RO" reset_value="0" description="System Clock Gated Off Internally">
+      <alias type="CMSIS" value="SDHC_PRSSTAT_HCKOFF(x)"/>
+      <bit_field_value name="PRSSTAT_HCKOFF_0b0" value="0b0" description="System clock is active."/>
+      <bit_field_value name="PRSSTAT_HCKOFF_0b1" value="0b1" description="System clock is gated off."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="PEROFF" access="RO" reset_value="0" description="SDHC clock Gated Off Internally">
+      <alias type="CMSIS" value="SDHC_PRSSTAT_PEROFF(x)"/>
+      <bit_field_value name="PRSSTAT_PEROFF_0b0" value="0b0" description="SDHC clock is active."/>
+      <bit_field_value name="PRSSTAT_PEROFF_0b1" value="0b1" description="SDHC clock is gated off."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="SDOFF" access="RO" reset_value="0" description="SD Clock Gated Off Internally">
+      <alias type="CMSIS" value="SDHC_PRSSTAT_SDOFF(x)"/>
+      <bit_field_value name="PRSSTAT_SDOFF_0b0" value="0b0" description="SD clock is active."/>
+      <bit_field_value name="PRSSTAT_SDOFF_0b1" value="0b1" description="SD clock is gated off."/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="WTA" access="RO" reset_value="0" description="Write Transfer Active">
+      <alias type="CMSIS" value="SDHC_PRSSTAT_WTA(x)"/>
+      <bit_field_value name="PRSSTAT_WTA_0b0" value="0b0" description="No valid data."/>
+      <bit_field_value name="PRSSTAT_WTA_0b1" value="0b1" description="Transferring data."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="RTA" access="RO" reset_value="0" description="Read Transfer Active">
+      <alias type="CMSIS" value="SDHC_PRSSTAT_RTA(x)"/>
+      <bit_field_value name="PRSSTAT_RTA_0b0" value="0b0" description="No valid data."/>
+      <bit_field_value name="PRSSTAT_RTA_0b1" value="0b1" description="Transferring data."/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="BWEN" access="RO" reset_value="0" description="Buffer Write Enable">
+      <alias type="CMSIS" value="SDHC_PRSSTAT_BWEN(x)"/>
+      <bit_field_value name="PRSSTAT_BWEN_0b0" value="0b0" description="Write disable, the buffer can hold valid data less than the write watermark level."/>
+      <bit_field_value name="PRSSTAT_BWEN_0b1" value="0b1" description="Write enable, the buffer can hold valid data greater than the write watermark level."/>
+    </bit_field>
+    <bit_field offset="11" width="1" name="BREN" access="RO" reset_value="0" description="Buffer Read Enable">
+      <alias type="CMSIS" value="SDHC_PRSSTAT_BREN(x)"/>
+      <bit_field_value name="PRSSTAT_BREN_0b0" value="0b0" description="Read disable, valid data less than the watermark level exist in the buffer."/>
+      <bit_field_value name="PRSSTAT_BREN_0b1" value="0b1" description="Read enable, valid data greater than the watermark level exist in the buffer."/>
+    </bit_field>
+    <reserved_bit_field offset="12" width="4" reset_value="0"/>
+    <bit_field offset="16" width="1" name="CINS" access="RO" reset_value="0" description="Card Inserted">
+      <alias type="CMSIS" value="SDHC_PRSSTAT_CINS(x)"/>
+      <bit_field_value name="PRSSTAT_CINS_0b0" value="0b0" description="Power on reset or no card."/>
+      <bit_field_value name="PRSSTAT_CINS_0b1" value="0b1" description="Card inserted."/>
+    </bit_field>
+    <reserved_bit_field offset="17" width="6" reset_value="0"/>
+    <bit_field offset="23" width="1" name="CLSL" access="RO" reset_value="0" description="CMD Line Signal Level">
+      <alias type="CMSIS" value="SDHC_PRSSTAT_CLSL(x)"/>
+    </bit_field>
+    <bit_field offset="24" width="8" name="DLSL" access="RO" reset_value="0" description="DAT Line Signal Level">
+      <alias type="CMSIS" value="SDHC_PRSSTAT_DLSL(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x28" width="32" name="PROCTL" description="Protocol Control register">
+    <alias type="CMSIS" value="PROCTL"/>
+    <bit_field offset="0" width="1" name="LCTL" access="RW" reset_value="0" description="LED Control">
+      <alias type="CMSIS" value="SDHC_PROCTL_LCTL(x)"/>
+      <bit_field_value name="PROCTL_LCTL_0b0" value="0b0" description="LED off."/>
+      <bit_field_value name="PROCTL_LCTL_0b1" value="0b1" description="LED on."/>
+    </bit_field>
+    <bit_field offset="1" width="2" name="DTW" access="RW" reset_value="0" description="Data Transfer Width">
+      <alias type="CMSIS" value="SDHC_PROCTL_DTW(x)"/>
+      <bit_field_value name="PROCTL_DTW_0b00" value="0b00" description="1-bit mode"/>
+      <bit_field_value name="PROCTL_DTW_0b01" value="0b01" description="4-bit mode"/>
+      <bit_field_value name="PROCTL_DTW_0b10" value="0b10" description="8-bit mode"/>
+      <bit_field_value name="PROCTL_DTW_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="D3CD" access="RW" reset_value="0" description="DAT3 As Card Detection Pin">
+      <alias type="CMSIS" value="SDHC_PROCTL_D3CD(x)"/>
+      <bit_field_value name="PROCTL_D3CD_0b0" value="0b0" description="DAT3 does not monitor card Insertion."/>
+      <bit_field_value name="PROCTL_D3CD_0b1" value="0b1" description="DAT3 as card detection pin."/>
+    </bit_field>
+    <bit_field offset="4" width="2" name="EMODE" access="RW" reset_value="0x2" description="Endian Mode">
+      <alias type="CMSIS" value="SDHC_PROCTL_EMODE(x)"/>
+      <bit_field_value name="PROCTL_EMODE_0b00" value="0b00" description="Big endian mode"/>
+      <bit_field_value name="PROCTL_EMODE_0b01" value="0b01" description="Half word big endian mode"/>
+      <bit_field_value name="PROCTL_EMODE_0b10" value="0b10" description="Little endian mode"/>
+      <bit_field_value name="PROCTL_EMODE_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="CDTL" access="RW" reset_value="0" description="Card Detect Test Level">
+      <alias type="CMSIS" value="SDHC_PROCTL_CDTL(x)"/>
+      <bit_field_value name="PROCTL_CDTL_0b0" value="0b0" description="Card detect test level is 0, no card inserted."/>
+      <bit_field_value name="PROCTL_CDTL_0b1" value="0b1" description="Card detect test level is 1, card inserted."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="CDSS" access="RW" reset_value="0" description="Card Detect Signal Selection">
+      <alias type="CMSIS" value="SDHC_PROCTL_CDSS(x)"/>
+      <bit_field_value name="PROCTL_CDSS_0b0" value="0b0" description="Card detection level is selected for normal purpose."/>
+      <bit_field_value name="PROCTL_CDSS_0b1" value="0b1" description="Card detection test level is selected for test purpose."/>
+    </bit_field>
+    <bit_field offset="8" width="2" name="DMAS" access="RW" reset_value="0" description="DMA Select">
+      <alias type="CMSIS" value="SDHC_PROCTL_DMAS(x)"/>
+      <bit_field_value name="PROCTL_DMAS_0b00" value="0b00" description="No DMA or simple DMA is selected."/>
+      <bit_field_value name="PROCTL_DMAS_0b01" value="0b01" description="ADMA1 is selected."/>
+      <bit_field_value name="PROCTL_DMAS_0b10" value="0b10" description="ADMA2 is selected."/>
+      <bit_field_value name="PROCTL_DMAS_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="10" width="6" reset_value="0"/>
+    <bit_field offset="16" width="1" name="SABGREQ" access="RW" reset_value="0" description="Stop At Block Gap Request">
+      <alias type="CMSIS" value="SDHC_PROCTL_SABGREQ(x)"/>
+      <bit_field_value name="PROCTL_SABGREQ_0b0" value="0b0" description="Transfer"/>
+      <bit_field_value name="PROCTL_SABGREQ_0b1" value="0b1" description="Stop"/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="CREQ" access="RW" reset_value="0" description="Continue Request">
+      <alias type="CMSIS" value="SDHC_PROCTL_CREQ(x)"/>
+      <bit_field_value name="PROCTL_CREQ_0b0" value="0b0" description="No effect."/>
+      <bit_field_value name="PROCTL_CREQ_0b1" value="0b1" description="Restart"/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="RWCTL" access="RW" reset_value="0" description="Read Wait Control">
+      <alias type="CMSIS" value="SDHC_PROCTL_RWCTL(x)"/>
+      <bit_field_value name="PROCTL_RWCTL_0b0" value="0b0" description="Disable read wait control, and stop SD clock at block gap when SABGREQ is set."/>
+      <bit_field_value name="PROCTL_RWCTL_0b1" value="0b1" description="Enable read wait control, and assert read wait without stopping SD clock at block gap when SABGREQ bit is set."/>
+    </bit_field>
+    <bit_field offset="19" width="1" name="IABG" access="RW" reset_value="0" description="Interrupt At Block Gap">
+      <alias type="CMSIS" value="SDHC_PROCTL_IABG(x)"/>
+      <bit_field_value name="PROCTL_IABG_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="PROCTL_IABG_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="4" reset_value="0"/>
+    <bit_field offset="24" width="1" name="WECINT" access="RW" reset_value="0" description="Wakeup Event Enable On Card Interrupt">
+      <alias type="CMSIS" value="SDHC_PROCTL_WECINT(x)"/>
+      <bit_field_value name="PROCTL_WECINT_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="PROCTL_WECINT_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="WECINS" access="RW" reset_value="0" description="Wakeup Event Enable On SD Card Insertion">
+      <alias type="CMSIS" value="SDHC_PROCTL_WECINS(x)"/>
+      <bit_field_value name="PROCTL_WECINS_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="PROCTL_WECINS_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="WECRM" access="RW" reset_value="0" description="Wakeup Event Enable On SD Card Removal">
+      <alias type="CMSIS" value="SDHC_PROCTL_WECRM(x)"/>
+      <bit_field_value name="PROCTL_WECRM_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="PROCTL_WECRM_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="5" reset_value="0"/>
+  </register>
+  <register offset="0x2C" width="32" name="SYSCTL" description="System Control register">
+    <alias type="CMSIS" value="SYSCTL"/>
+    <bit_field offset="0" width="1" name="IPGEN" access="RW" reset_value="0" description="IPG Clock Enable">
+      <alias type="CMSIS" value="SDHC_SYSCTL_IPGEN(x)"/>
+      <bit_field_value name="SYSCTL_IPGEN_0b0" value="0b0" description="Bus clock will be internally gated off."/>
+      <bit_field_value name="SYSCTL_IPGEN_0b1" value="0b1" description="Bus clock will not be automatically gated off."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="HCKEN" access="RW" reset_value="0" description="System Clock Enable">
+      <alias type="CMSIS" value="SDHC_SYSCTL_HCKEN(x)"/>
+      <bit_field_value name="SYSCTL_HCKEN_0b0" value="0b0" description="System clock will be internally gated off."/>
+      <bit_field_value name="SYSCTL_HCKEN_0b1" value="0b1" description="System clock will not be automatically gated off."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="PEREN" access="RW" reset_value="0" description="Peripheral Clock Enable">
+      <alias type="CMSIS" value="SDHC_SYSCTL_PEREN(x)"/>
+      <bit_field_value name="SYSCTL_PEREN_0b0" value="0b0" description="SDHC clock will be internally gated off."/>
+      <bit_field_value name="SYSCTL_PEREN_0b1" value="0b1" description="SDHC clock will not be automatically gated off."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="SDCLKEN" access="RW" reset_value="0x1" description="SD Clock Enable">
+      <alias type="CMSIS" value="SDHC_SYSCTL_SDCLKEN(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="4" name="DVS" access="RW" reset_value="0" description="Divisor">
+      <alias type="CMSIS" value="SDHC_SYSCTL_DVS(x)"/>
+      <bit_field_value name="SYSCTL_DVS_0b0000" value="0b0000" description="Divisor by 1."/>
+      <bit_field_value name="SYSCTL_DVS_0b0001" value="0b0001" description="Divisor by 2."/>
+      <bit_field_value name="SYSCTL_DVS_0b1110" value="0b1110" description="Divisor by 15."/>
+      <bit_field_value name="SYSCTL_DVS_0b1111" value="0b1111" description="Divisor by 16."/>
+    </bit_field>
+    <bit_field offset="8" width="8" name="SDCLKFS" access="RW" reset_value="0x80" description="SDCLK Frequency Select">
+      <alias type="CMSIS" value="SDHC_SYSCTL_SDCLKFS(x)"/>
+      <bit_field_value name="SYSCTL_SDCLKFS_0b00000001" value="0b00000001" description="Base clock divided by 2."/>
+      <bit_field_value name="SYSCTL_SDCLKFS_0b00000010" value="0b00000010" description="Base clock divided by 4."/>
+      <bit_field_value name="SYSCTL_SDCLKFS_0b00000100" value="0b00000100" description="Base clock divided by 8."/>
+      <bit_field_value name="SYSCTL_SDCLKFS_0b00001000" value="0b00001000" description="Base clock divided by 16."/>
+      <bit_field_value name="SYSCTL_SDCLKFS_0b00010000" value="0b00010000" description="Base clock divided by 32."/>
+      <bit_field_value name="SYSCTL_SDCLKFS_0b00100000" value="0b00100000" description="Base clock divided by 64."/>
+      <bit_field_value name="SYSCTL_SDCLKFS_0b01000000" value="0b01000000" description="Base clock divided by 128."/>
+      <bit_field_value name="SYSCTL_SDCLKFS_0b10000000" value="0b10000000" description="Base clock divided by 256."/>
+    </bit_field>
+    <bit_field offset="16" width="4" name="DTOCV" access="RW" reset_value="0" description="Data Timeout Counter Value">
+      <alias type="CMSIS" value="SDHC_SYSCTL_DTOCV(x)"/>
+      <bit_field_value name="SYSCTL_DTOCV_0b0000" value="0b0000" description="SDCLK x 2 13"/>
+      <bit_field_value name="SYSCTL_DTOCV_0b0001" value="0b0001" description="SDCLK x 2 14"/>
+      <bit_field_value name="SYSCTL_DTOCV_0b1110" value="0b1110" description="SDCLK x 2 27"/>
+      <bit_field_value name="SYSCTL_DTOCV_0b1111" value="0b1111" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="4" reset_value="0"/>
+    <bit_field offset="24" width="1" name="RSTA" access="WORZ" reset_value="0" description="Software Reset For ALL">
+      <alias type="CMSIS" value="SDHC_SYSCTL_RSTA(x)"/>
+      <bit_field_value name="SYSCTL_RSTA_0b0" value="0b0" description="No reset."/>
+      <bit_field_value name="SYSCTL_RSTA_0b1" value="0b1" description="Reset."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="RSTC" access="WORZ" reset_value="0" description="Software Reset For CMD Line">
+      <alias type="CMSIS" value="SDHC_SYSCTL_RSTC(x)"/>
+      <bit_field_value name="SYSCTL_RSTC_0b0" value="0b0" description="No reset."/>
+      <bit_field_value name="SYSCTL_RSTC_0b1" value="0b1" description="Reset."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="RSTD" access="WORZ" reset_value="0" description="Software Reset For DAT Line">
+      <alias type="CMSIS" value="SDHC_SYSCTL_RSTD(x)"/>
+      <bit_field_value name="SYSCTL_RSTD_0b0" value="0b0" description="No reset."/>
+      <bit_field_value name="SYSCTL_RSTD_0b1" value="0b1" description="Reset."/>
+    </bit_field>
+    <bit_field offset="27" width="1" name="INITA" access="RW" reset_value="0" description="Initialization Active">
+      <alias type="CMSIS" value="SDHC_SYSCTL_INITA(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="28" width="4" reset_value="0"/>
+  </register>
+  <register offset="0x30" width="32" name="IRQSTAT" description="Interrupt Status register">
+    <alias type="CMSIS" value="IRQSTAT"/>
+    <bit_field offset="0" width="1" name="CC" access="W1C" reset_value="0" description="Command Complete">
+      <alias type="CMSIS" value="SDHC_IRQSTAT_CC(x)"/>
+      <bit_field_value name="IRQSTAT_CC_0b0" value="0b0" description="Command not complete."/>
+      <bit_field_value name="IRQSTAT_CC_0b1" value="0b1" description="Command complete."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="TC" access="W1C" reset_value="0" description="Transfer Complete">
+      <alias type="CMSIS" value="SDHC_IRQSTAT_TC(x)"/>
+      <bit_field_value name="IRQSTAT_TC_0b0" value="0b0" description="Transfer not complete."/>
+      <bit_field_value name="IRQSTAT_TC_0b1" value="0b1" description="Transfer complete."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="BGE" access="W1C" reset_value="0" description="Block Gap Event">
+      <alias type="CMSIS" value="SDHC_IRQSTAT_BGE(x)"/>
+      <bit_field_value name="IRQSTAT_BGE_0b0" value="0b0" description="No block gap event."/>
+      <bit_field_value name="IRQSTAT_BGE_0b1" value="0b1" description="Transaction stopped at block gap."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="DINT" access="W1C" reset_value="0" description="DMA Interrupt">
+      <alias type="CMSIS" value="SDHC_IRQSTAT_DINT(x)"/>
+      <bit_field_value name="IRQSTAT_DINT_0b0" value="0b0" description="No DMA Interrupt."/>
+      <bit_field_value name="IRQSTAT_DINT_0b1" value="0b1" description="DMA Interrupt is generated."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="BWR" access="W1C" reset_value="0" description="Buffer Write Ready">
+      <alias type="CMSIS" value="SDHC_IRQSTAT_BWR(x)"/>
+      <bit_field_value name="IRQSTAT_BWR_0b0" value="0b0" description="Not ready to write buffer."/>
+      <bit_field_value name="IRQSTAT_BWR_0b1" value="0b1" description="Ready to write buffer."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="BRR" access="W1C" reset_value="0" description="Buffer Read Ready">
+      <alias type="CMSIS" value="SDHC_IRQSTAT_BRR(x)"/>
+      <bit_field_value name="IRQSTAT_BRR_0b0" value="0b0" description="Not ready to read buffer."/>
+      <bit_field_value name="IRQSTAT_BRR_0b1" value="0b1" description="Ready to read buffer."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="CINS" access="W1C" reset_value="0" description="Card Insertion">
+      <alias type="CMSIS" value="SDHC_IRQSTAT_CINS(x)"/>
+      <bit_field_value name="IRQSTAT_CINS_0b0" value="0b0" description="Card state unstable or removed."/>
+      <bit_field_value name="IRQSTAT_CINS_0b1" value="0b1" description="Card inserted."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="CRM" access="W1C" reset_value="0" description="Card Removal">
+      <alias type="CMSIS" value="SDHC_IRQSTAT_CRM(x)"/>
+      <bit_field_value name="IRQSTAT_CRM_0b0" value="0b0" description="Card state unstable or inserted."/>
+      <bit_field_value name="IRQSTAT_CRM_0b1" value="0b1" description="Card removed."/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="CINT" access="W1C" reset_value="0" description="Card Interrupt">
+      <alias type="CMSIS" value="SDHC_IRQSTAT_CINT(x)"/>
+      <bit_field_value name="IRQSTAT_CINT_0b0" value="0b0" description="No Card Interrupt."/>
+      <bit_field_value name="IRQSTAT_CINT_0b1" value="0b1" description="Generate Card Interrupt."/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="7" reset_value="0"/>
+    <bit_field offset="16" width="1" name="CTOE" access="W1C" reset_value="0" description="Command Timeout Error">
+      <alias type="CMSIS" value="SDHC_IRQSTAT_CTOE(x)"/>
+      <bit_field_value name="IRQSTAT_CTOE_0b0" value="0b0" description="No error."/>
+      <bit_field_value name="IRQSTAT_CTOE_0b1" value="0b1" description="Time out."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="CCE" access="W1C" reset_value="0" description="Command CRC Error">
+      <alias type="CMSIS" value="SDHC_IRQSTAT_CCE(x)"/>
+      <bit_field_value name="IRQSTAT_CCE_0b0" value="0b0" description="No error."/>
+      <bit_field_value name="IRQSTAT_CCE_0b1" value="0b1" description="CRC Error generated."/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="CEBE" access="W1C" reset_value="0" description="Command End Bit Error">
+      <alias type="CMSIS" value="SDHC_IRQSTAT_CEBE(x)"/>
+      <bit_field_value name="IRQSTAT_CEBE_0b0" value="0b0" description="No error."/>
+      <bit_field_value name="IRQSTAT_CEBE_0b1" value="0b1" description="End Bit Error generated."/>
+    </bit_field>
+    <bit_field offset="19" width="1" name="CIE" access="W1C" reset_value="0" description="Command Index Error">
+      <alias type="CMSIS" value="SDHC_IRQSTAT_CIE(x)"/>
+      <bit_field_value name="IRQSTAT_CIE_0b0" value="0b0" description="No error."/>
+      <bit_field_value name="IRQSTAT_CIE_0b1" value="0b1" description="Error."/>
+    </bit_field>
+    <bit_field offset="20" width="1" name="DTOE" access="W1C" reset_value="0" description="Data Timeout Error">
+      <alias type="CMSIS" value="SDHC_IRQSTAT_DTOE(x)"/>
+      <bit_field_value name="IRQSTAT_DTOE_0b0" value="0b0" description="No error."/>
+      <bit_field_value name="IRQSTAT_DTOE_0b1" value="0b1" description="Time out."/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="DCE" access="W1C" reset_value="0" description="Data CRC Error">
+      <alias type="CMSIS" value="SDHC_IRQSTAT_DCE(x)"/>
+      <bit_field_value name="IRQSTAT_DCE_0b0" value="0b0" description="No error."/>
+      <bit_field_value name="IRQSTAT_DCE_0b1" value="0b1" description="Error."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="DEBE" access="W1C" reset_value="0" description="Data End Bit Error">
+      <alias type="CMSIS" value="SDHC_IRQSTAT_DEBE(x)"/>
+      <bit_field_value name="IRQSTAT_DEBE_0b0" value="0b0" description="No error."/>
+      <bit_field_value name="IRQSTAT_DEBE_0b1" value="0b1" description="Error."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="AC12E" access="W1C" reset_value="0" description="Auto CMD12 Error">
+      <alias type="CMSIS" value="SDHC_IRQSTAT_AC12E(x)"/>
+      <bit_field_value name="IRQSTAT_AC12E_0b0" value="0b0" description="No error."/>
+      <bit_field_value name="IRQSTAT_AC12E_0b1" value="0b1" description="Error."/>
+    </bit_field>
+    <reserved_bit_field offset="25" width="3" reset_value="0"/>
+    <bit_field offset="28" width="1" name="DMAE" access="W1C" reset_value="0" description="DMA Error">
+      <alias type="CMSIS" value="SDHC_IRQSTAT_DMAE(x)"/>
+      <bit_field_value name="IRQSTAT_DMAE_0b0" value="0b0" description="No error."/>
+      <bit_field_value name="IRQSTAT_DMAE_0b1" value="0b1" description="Error."/>
+    </bit_field>
+    <reserved_bit_field offset="29" width="3" reset_value="0"/>
+  </register>
+  <register offset="0x34" width="32" name="IRQSTATEN" description="Interrupt Status Enable register">
+    <alias type="CMSIS" value="IRQSTATEN"/>
+    <bit_field offset="0" width="1" name="CCSEN" access="RW" reset_value="0x1" description="Command Complete Status Enable">
+      <alias type="CMSIS" value="SDHC_IRQSTATEN_CCSEN(x)"/>
+      <bit_field_value name="IRQSTATEN_CCSEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSTATEN_CCSEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="TCSEN" access="RW" reset_value="0x1" description="Transfer Complete Status Enable">
+      <alias type="CMSIS" value="SDHC_IRQSTATEN_TCSEN(x)"/>
+      <bit_field_value name="IRQSTATEN_TCSEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSTATEN_TCSEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="BGESEN" access="RW" reset_value="0x1" description="Block Gap Event Status Enable">
+      <alias type="CMSIS" value="SDHC_IRQSTATEN_BGESEN(x)"/>
+      <bit_field_value name="IRQSTATEN_BGESEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSTATEN_BGESEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="DINTSEN" access="RW" reset_value="0x1" description="DMA Interrupt Status Enable">
+      <alias type="CMSIS" value="SDHC_IRQSTATEN_DINTSEN(x)"/>
+      <bit_field_value name="IRQSTATEN_DINTSEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSTATEN_DINTSEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="BWRSEN" access="RW" reset_value="0x1" description="Buffer Write Ready Status Enable">
+      <alias type="CMSIS" value="SDHC_IRQSTATEN_BWRSEN(x)"/>
+      <bit_field_value name="IRQSTATEN_BWRSEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSTATEN_BWRSEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="BRRSEN" access="RW" reset_value="0x1" description="Buffer Read Ready Status Enable">
+      <alias type="CMSIS" value="SDHC_IRQSTATEN_BRRSEN(x)"/>
+      <bit_field_value name="IRQSTATEN_BRRSEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSTATEN_BRRSEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="CINSEN" access="RW" reset_value="0" description="Card Insertion Status Enable">
+      <alias type="CMSIS" value="SDHC_IRQSTATEN_CINSEN(x)"/>
+      <bit_field_value name="IRQSTATEN_CINSEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSTATEN_CINSEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="CRMSEN" access="RW" reset_value="0" description="Card Removal Status Enable">
+      <alias type="CMSIS" value="SDHC_IRQSTATEN_CRMSEN(x)"/>
+      <bit_field_value name="IRQSTATEN_CRMSEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSTATEN_CRMSEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="CINTSEN" access="RW" reset_value="0x1" description="Card Interrupt Status Enable">
+      <alias type="CMSIS" value="SDHC_IRQSTATEN_CINTSEN(x)"/>
+      <bit_field_value name="IRQSTATEN_CINTSEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSTATEN_CINTSEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="7" reset_value="0"/>
+    <bit_field offset="16" width="1" name="CTOESEN" access="RW" reset_value="0x1" description="Command Timeout Error Status Enable">
+      <alias type="CMSIS" value="SDHC_IRQSTATEN_CTOESEN(x)"/>
+      <bit_field_value name="IRQSTATEN_CTOESEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSTATEN_CTOESEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="CCESEN" access="RW" reset_value="0x1" description="Command CRC Error Status Enable">
+      <alias type="CMSIS" value="SDHC_IRQSTATEN_CCESEN(x)"/>
+      <bit_field_value name="IRQSTATEN_CCESEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSTATEN_CCESEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="CEBESEN" access="RW" reset_value="0x1" description="Command End Bit Error Status Enable">
+      <alias type="CMSIS" value="SDHC_IRQSTATEN_CEBESEN(x)"/>
+      <bit_field_value name="IRQSTATEN_CEBESEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSTATEN_CEBESEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="19" width="1" name="CIESEN" access="RW" reset_value="0x1" description="Command Index Error Status Enable">
+      <alias type="CMSIS" value="SDHC_IRQSTATEN_CIESEN(x)"/>
+      <bit_field_value name="IRQSTATEN_CIESEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSTATEN_CIESEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="20" width="1" name="DTOESEN" access="RW" reset_value="0x1" description="Data Timeout Error Status Enable">
+      <alias type="CMSIS" value="SDHC_IRQSTATEN_DTOESEN(x)"/>
+      <bit_field_value name="IRQSTATEN_DTOESEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSTATEN_DTOESEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="DCESEN" access="RW" reset_value="0x1" description="Data CRC Error Status Enable">
+      <alias type="CMSIS" value="SDHC_IRQSTATEN_DCESEN(x)"/>
+      <bit_field_value name="IRQSTATEN_DCESEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSTATEN_DCESEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="DEBESEN" access="RW" reset_value="0x1" description="Data End Bit Error Status Enable">
+      <alias type="CMSIS" value="SDHC_IRQSTATEN_DEBESEN(x)"/>
+      <bit_field_value name="IRQSTATEN_DEBESEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSTATEN_DEBESEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="AC12ESEN" access="RW" reset_value="0x1" description="Auto CMD12 Error Status Enable">
+      <alias type="CMSIS" value="SDHC_IRQSTATEN_AC12ESEN(x)"/>
+      <bit_field_value name="IRQSTATEN_AC12ESEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSTATEN_AC12ESEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="25" width="3" reset_value="0"/>
+    <bit_field offset="28" width="1" name="DMAESEN" access="RW" reset_value="0x1" description="DMA Error Status Enable">
+      <alias type="CMSIS" value="SDHC_IRQSTATEN_DMAESEN(x)"/>
+      <bit_field_value name="IRQSTATEN_DMAESEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSTATEN_DMAESEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="29" width="3" reset_value="0"/>
+  </register>
+  <register offset="0x38" width="32" name="IRQSIGEN" description="Interrupt Signal Enable register">
+    <alias type="CMSIS" value="IRQSIGEN"/>
+    <bit_field offset="0" width="1" name="CCIEN" access="RW" reset_value="0" description="Command Complete Interrupt Enable">
+      <alias type="CMSIS" value="SDHC_IRQSIGEN_CCIEN(x)"/>
+      <bit_field_value name="IRQSIGEN_CCIEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSIGEN_CCIEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="TCIEN" access="RW" reset_value="0" description="Transfer Complete Interrupt Enable">
+      <alias type="CMSIS" value="SDHC_IRQSIGEN_TCIEN(x)"/>
+      <bit_field_value name="IRQSIGEN_TCIEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSIGEN_TCIEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="BGEIEN" access="RW" reset_value="0" description="Block Gap Event Interrupt Enable">
+      <alias type="CMSIS" value="SDHC_IRQSIGEN_BGEIEN(x)"/>
+      <bit_field_value name="IRQSIGEN_BGEIEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSIGEN_BGEIEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="DINTIEN" access="RW" reset_value="0" description="DMA Interrupt Enable">
+      <alias type="CMSIS" value="SDHC_IRQSIGEN_DINTIEN(x)"/>
+      <bit_field_value name="IRQSIGEN_DINTIEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSIGEN_DINTIEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="BWRIEN" access="RW" reset_value="0" description="Buffer Write Ready Interrupt Enable">
+      <alias type="CMSIS" value="SDHC_IRQSIGEN_BWRIEN(x)"/>
+      <bit_field_value name="IRQSIGEN_BWRIEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSIGEN_BWRIEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="BRRIEN" access="RW" reset_value="0" description="Buffer Read Ready Interrupt Enable">
+      <alias type="CMSIS" value="SDHC_IRQSIGEN_BRRIEN(x)"/>
+      <bit_field_value name="IRQSIGEN_BRRIEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSIGEN_BRRIEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="CINSIEN" access="RW" reset_value="0" description="Card Insertion Interrupt Enable">
+      <alias type="CMSIS" value="SDHC_IRQSIGEN_CINSIEN(x)"/>
+      <bit_field_value name="IRQSIGEN_CINSIEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSIGEN_CINSIEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="CRMIEN" access="RW" reset_value="0" description="Card Removal Interrupt Enable">
+      <alias type="CMSIS" value="SDHC_IRQSIGEN_CRMIEN(x)"/>
+      <bit_field_value name="IRQSIGEN_CRMIEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSIGEN_CRMIEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="CINTIEN" access="RW" reset_value="0" description="Card Interrupt Enable">
+      <alias type="CMSIS" value="SDHC_IRQSIGEN_CINTIEN(x)"/>
+      <bit_field_value name="IRQSIGEN_CINTIEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSIGEN_CINTIEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="7" reset_value="0"/>
+    <bit_field offset="16" width="1" name="CTOEIEN" access="RW" reset_value="0" description="Command Timeout Error Interrupt Enable">
+      <alias type="CMSIS" value="SDHC_IRQSIGEN_CTOEIEN(x)"/>
+      <bit_field_value name="IRQSIGEN_CTOEIEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSIGEN_CTOEIEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="CCEIEN" access="RW" reset_value="0" description="Command CRC Error Interrupt Enable">
+      <alias type="CMSIS" value="SDHC_IRQSIGEN_CCEIEN(x)"/>
+      <bit_field_value name="IRQSIGEN_CCEIEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSIGEN_CCEIEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="CEBEIEN" access="RW" reset_value="0" description="Command End Bit Error Interrupt Enable">
+      <alias type="CMSIS" value="SDHC_IRQSIGEN_CEBEIEN(x)"/>
+      <bit_field_value name="IRQSIGEN_CEBEIEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSIGEN_CEBEIEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="19" width="1" name="CIEIEN" access="RW" reset_value="0" description="Command Index Error Interrupt Enable">
+      <alias type="CMSIS" value="SDHC_IRQSIGEN_CIEIEN(x)"/>
+      <bit_field_value name="IRQSIGEN_CIEIEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSIGEN_CIEIEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="20" width="1" name="DTOEIEN" access="RW" reset_value="0" description="Data Timeout Error Interrupt Enable">
+      <alias type="CMSIS" value="SDHC_IRQSIGEN_DTOEIEN(x)"/>
+      <bit_field_value name="IRQSIGEN_DTOEIEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSIGEN_DTOEIEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="DCEIEN" access="RW" reset_value="0" description="Data CRC Error Interrupt Enable">
+      <alias type="CMSIS" value="SDHC_IRQSIGEN_DCEIEN(x)"/>
+      <bit_field_value name="IRQSIGEN_DCEIEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSIGEN_DCEIEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="DEBEIEN" access="RW" reset_value="0" description="Data End Bit Error Interrupt Enable">
+      <alias type="CMSIS" value="SDHC_IRQSIGEN_DEBEIEN(x)"/>
+      <bit_field_value name="IRQSIGEN_DEBEIEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSIGEN_DEBEIEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="AC12EIEN" access="RW" reset_value="0" description="Auto CMD12 Error Interrupt Enable">
+      <alias type="CMSIS" value="SDHC_IRQSIGEN_AC12EIEN(x)"/>
+      <bit_field_value name="IRQSIGEN_AC12EIEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSIGEN_AC12EIEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="25" width="3" reset_value="0"/>
+    <bit_field offset="28" width="1" name="DMAEIEN" access="RW" reset_value="0" description="DMA Error Interrupt Enable">
+      <alias type="CMSIS" value="SDHC_IRQSIGEN_DMAEIEN(x)"/>
+      <bit_field_value name="IRQSIGEN_DMAEIEN_0b0" value="0b0" description="Masked"/>
+      <bit_field_value name="IRQSIGEN_DMAEIEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="29" width="3" reset_value="0"/>
+  </register>
+  <register offset="0x3C" width="32" name="AC12ERR" description="Auto CMD12 Error Status Register">
+    <alias type="CMSIS" value="AC12ERR"/>
+    <bit_field offset="0" width="1" name="AC12NE" access="RO" reset_value="0" description="Auto CMD12 Not Executed">
+      <alias type="CMSIS" value="SDHC_AC12ERR_AC12NE(x)"/>
+      <bit_field_value name="AC12ERR_AC12NE_0b0" value="0b0" description="Executed."/>
+      <bit_field_value name="AC12ERR_AC12NE_0b1" value="0b1" description="Not executed."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="AC12TOE" access="RO" reset_value="0" description="Auto CMD12 Timeout Error">
+      <alias type="CMSIS" value="SDHC_AC12ERR_AC12TOE(x)"/>
+      <bit_field_value name="AC12ERR_AC12TOE_0b0" value="0b0" description="No error."/>
+      <bit_field_value name="AC12ERR_AC12TOE_0b1" value="0b1" description="Time out."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="AC12EBE" access="RO" reset_value="0" description="Auto CMD12 End Bit Error">
+      <alias type="CMSIS" value="SDHC_AC12ERR_AC12EBE(x)"/>
+      <bit_field_value name="AC12ERR_AC12EBE_0b0" value="0b0" description="No error."/>
+      <bit_field_value name="AC12ERR_AC12EBE_0b1" value="0b1" description="End bit error generated."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="AC12CE" access="RO" reset_value="0" description="Auto CMD12 CRC Error">
+      <alias type="CMSIS" value="SDHC_AC12ERR_AC12CE(x)"/>
+      <bit_field_value name="AC12ERR_AC12CE_0b0" value="0b0" description="No CRC error."/>
+      <bit_field_value name="AC12ERR_AC12CE_0b1" value="0b1" description="CRC error met in Auto CMD12 response."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="AC12IE" access="RO" reset_value="0" description="Auto CMD12 Index Error">
+      <alias type="CMSIS" value="SDHC_AC12ERR_AC12IE(x)"/>
+      <bit_field_value name="AC12ERR_AC12IE_0b0" value="0b0" description="No error."/>
+      <bit_field_value name="AC12ERR_AC12IE_0b1" value="0b1" description="Error, the CMD index in response is not CMD12."/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="2" reset_value="0"/>
+    <bit_field offset="7" width="1" name="CNIBAC12E" access="RO" reset_value="0" description="Command Not Issued By Auto CMD12 Error">
+      <alias type="CMSIS" value="SDHC_AC12ERR_CNIBAC12E(x)"/>
+      <bit_field_value name="AC12ERR_CNIBAC12E_0b0" value="0b0" description="No error."/>
+      <bit_field_value name="AC12ERR_CNIBAC12E_0b1" value="0b1" description="Not issued."/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="24" reset_value="0"/>
+  </register>
+  <register offset="0x40" width="32" name="HTCAPBLT" description="Host Controller Capabilities">
+    <alias type="CMSIS" value="HTCAPBLT"/>
+    <reserved_bit_field offset="0" width="16" reset_value="0"/>
+    <bit_field offset="16" width="3" name="MBL" access="RO" reset_value="0x3" description="Max Block Length">
+      <alias type="CMSIS" value="SDHC_HTCAPBLT_MBL(x)"/>
+      <bit_field_value name="HTCAPBLT_MBL_0b000" value="0b000" description="512 bytes"/>
+      <bit_field_value name="HTCAPBLT_MBL_0b001" value="0b001" description="1024 bytes"/>
+      <bit_field_value name="HTCAPBLT_MBL_0b010" value="0b010" description="2048 bytes"/>
+      <bit_field_value name="HTCAPBLT_MBL_0b011" value="0b011" description="4096 bytes"/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="1" name="ADMAS" access="RO" reset_value="0x1" description="ADMA Support">
+      <alias type="CMSIS" value="SDHC_HTCAPBLT_ADMAS(x)"/>
+      <bit_field_value name="HTCAPBLT_ADMAS_0b0" value="0b0" description="Advanced DMA not supported."/>
+      <bit_field_value name="HTCAPBLT_ADMAS_0b1" value="0b1" description="Advanced DMA supported."/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="HSS" access="RO" reset_value="0x1" description="High Speed Support">
+      <alias type="CMSIS" value="SDHC_HTCAPBLT_HSS(x)"/>
+      <bit_field_value name="HTCAPBLT_HSS_0b0" value="0b0" description="High speed not supported."/>
+      <bit_field_value name="HTCAPBLT_HSS_0b1" value="0b1" description="High speed supported."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="DMAS" access="RO" reset_value="0x1" description="DMA Support">
+      <alias type="CMSIS" value="SDHC_HTCAPBLT_DMAS(x)"/>
+      <bit_field_value name="HTCAPBLT_DMAS_0b0" value="0b0" description="DMA not supported."/>
+      <bit_field_value name="HTCAPBLT_DMAS_0b1" value="0b1" description="DMA supported."/>
+    </bit_field>
+    <bit_field offset="23" width="1" name="SRS" access="RO" reset_value="0x1" description="Suspend/Resume Support">
+      <alias type="CMSIS" value="SDHC_HTCAPBLT_SRS(x)"/>
+      <bit_field_value name="HTCAPBLT_SRS_0b0" value="0b0" description="Not supported."/>
+      <bit_field_value name="HTCAPBLT_SRS_0b1" value="0b1" description="Supported."/>
+    </bit_field>
+    <bit_field offset="24" width="1" name="VS33" access="RO" reset_value="0x1" description="Voltage Support 3.3 V">
+      <alias type="CMSIS" value="SDHC_HTCAPBLT_VS33(x)"/>
+      <bit_field_value name="HTCAPBLT_VS33_0b0" value="0b0" description="3.3 V not supported."/>
+      <bit_field_value name="HTCAPBLT_VS33_0b1" value="0b1" description="3.3 V supported."/>
+    </bit_field>
+    <reserved_bit_field offset="25" width="1" reset_value="0x1"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0x1"/>
+    <reserved_bit_field offset="27" width="5" reset_value="0"/>
+  </register>
+  <register offset="0x44" width="32" name="WML" description="Watermark Level Register">
+    <alias type="CMSIS" value="WML"/>
+    <bit_field offset="0" width="8" name="RDWML" access="RW" reset_value="0x10" description="Read Watermark Level">
+      <alias type="CMSIS" value="SDHC_WML_RDWML(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="5" reset_value="0"/>
+    <reserved_bit_field offset="13" width="3" reset_value="0"/>
+    <bit_field offset="16" width="8" name="WRWML" access="RW" reset_value="0x10" description="Write Watermark Level">
+      <alias type="CMSIS" value="SDHC_WML_WRWML(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="5" reset_value="0"/>
+    <reserved_bit_field offset="29" width="3" reset_value="0"/>
+  </register>
+  <register offset="0x50" width="32" name="FEVT" description="Force Event register">
+    <alias type="CMSIS" value="FEVT"/>
+    <bit_field offset="0" width="1" name="AC12NE" access="WORZ" reset_value="0" description="Force Event Auto Command 12 Not Executed">
+      <alias type="CMSIS" value="SDHC_FEVT_AC12NE(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="AC12TOE" access="WORZ" reset_value="0" description="Force Event Auto Command 12 Time Out Error">
+      <alias type="CMSIS" value="SDHC_FEVT_AC12TOE(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="AC12CE" access="WORZ" reset_value="0" description="Force Event Auto Command 12 CRC Error">
+      <alias type="CMSIS" value="SDHC_FEVT_AC12CE(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="AC12EBE" access="WORZ" reset_value="0" description="Force Event Auto Command 12 End Bit Error">
+      <alias type="CMSIS" value="SDHC_FEVT_AC12EBE(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="AC12IE" access="WORZ" reset_value="0" description="Force Event Auto Command 12 Index Error">
+      <alias type="CMSIS" value="SDHC_FEVT_AC12IE(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="2" reset_value="0"/>
+    <bit_field offset="7" width="1" name="CNIBAC12E" access="WORZ" reset_value="0" description="Force Event Command Not Executed By Auto Command 12 Error">
+      <alias type="CMSIS" value="SDHC_FEVT_CNIBAC12E(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="8" reset_value="0"/>
+    <bit_field offset="16" width="1" name="CTOE" access="WORZ" reset_value="0" description="Force Event Command Time Out Error">
+      <alias type="CMSIS" value="SDHC_FEVT_CTOE(x)"/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="CCE" access="WORZ" reset_value="0" description="Force Event Command CRC Error">
+      <alias type="CMSIS" value="SDHC_FEVT_CCE(x)"/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="CEBE" access="WORZ" reset_value="0" description="Force Event Command End Bit Error">
+      <alias type="CMSIS" value="SDHC_FEVT_CEBE(x)"/>
+    </bit_field>
+    <bit_field offset="19" width="1" name="CIE" access="WORZ" reset_value="0" description="Force Event Command Index Error">
+      <alias type="CMSIS" value="SDHC_FEVT_CIE(x)"/>
+    </bit_field>
+    <bit_field offset="20" width="1" name="DTOE" access="WORZ" reset_value="0" description="Force Event Data Time Out Error">
+      <alias type="CMSIS" value="SDHC_FEVT_DTOE(x)"/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="DCE" access="WORZ" reset_value="0" description="Force Event Data CRC Error">
+      <alias type="CMSIS" value="SDHC_FEVT_DCE(x)"/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="DEBE" access="WORZ" reset_value="0" description="Force Event Data End Bit Error">
+      <alias type="CMSIS" value="SDHC_FEVT_DEBE(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="AC12E" access="WORZ" reset_value="0" description="Force Event Auto Command 12 Error">
+      <alias type="CMSIS" value="SDHC_FEVT_AC12E(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="25" width="3" reset_value="0"/>
+    <bit_field offset="28" width="1" name="DMAE" access="WORZ" reset_value="0" description="Force Event DMA Error">
+      <alias type="CMSIS" value="SDHC_FEVT_DMAE(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="29" width="2" reset_value="0"/>
+    <bit_field offset="31" width="1" name="CINT" access="WORZ" reset_value="0" description="Force Event Card Interrupt">
+      <alias type="CMSIS" value="SDHC_FEVT_CINT(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x54" width="32" name="ADMAES" description="ADMA Error Status register">
+    <alias type="CMSIS" value="ADMAES"/>
+    <bit_field offset="0" width="2" name="ADMAES" access="RO" reset_value="0" description="ADMA Error State (When ADMA Error Is Occurred.)">
+      <alias type="CMSIS" value="SDHC_ADMAES_ADMAES(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="ADMALME" access="RO" reset_value="0" description="ADMA Length Mismatch Error">
+      <alias type="CMSIS" value="SDHC_ADMAES_ADMALME(x)"/>
+      <bit_field_value name="ADMAES_ADMALME_0b0" value="0b0" description="No error."/>
+      <bit_field_value name="ADMAES_ADMALME_0b1" value="0b1" description="Error."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="ADMADCE" access="RO" reset_value="0" description="ADMA Descriptor Error">
+      <alias type="CMSIS" value="SDHC_ADMAES_ADMADCE(x)"/>
+      <bit_field_value name="ADMAES_ADMADCE_0b0" value="0b0" description="No error."/>
+      <bit_field_value name="ADMAES_ADMADCE_0b1" value="0b1" description="Error."/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="28" reset_value="0"/>
+  </register>
+  <register offset="0x58" width="32" name="ADSADDR" description="ADMA System Addressregister">
+    <alias type="CMSIS" value="ADSADDR"/>
+    <reserved_bit_field offset="0" width="2" reset_value="0"/>
+    <bit_field offset="2" width="30" name="ADSADDR" access="RW" reset_value="0" description="ADMA System Address">
+      <alias type="CMSIS" value="SDHC_ADSADDR_ADSADDR(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xC0" width="32" name="VENDOR" description="Vendor Specific register">
+    <alias type="CMSIS" value="VENDOR"/>
+    <reserved_bit_field offset="0" width="1" reset_value="0x1"/>
+    <bit_field offset="1" width="1" name="EXBLKNU" access="RW" reset_value="0" description="Exact Block Number Block Read Enable For SDIO CMD53">
+      <alias type="CMSIS" value="SDHC_VENDOR_EXBLKNU(x)"/>
+      <bit_field_value name="VENDOR_EXBLKNU_0b0" value="0b0" description="None exact block read."/>
+      <bit_field_value name="VENDOR_EXBLKNU_0b1" value="0b1" description="Exact block read for SDIO CMD53."/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="14" reset_value="0"/>
+    <bit_field offset="16" width="8" name="INTSTVAL" access="RO" reset_value="0" description="Internal State Value">
+      <alias type="CMSIS" value="SDHC_VENDOR_INTSTVAL(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="4" reset_value="0"/>
+    <reserved_bit_field offset="28" width="4" reset_value="0"/>
+  </register>
+  <register offset="0xC4" width="32" name="MMCBOOT" description="MMC Boot register">
+    <alias type="CMSIS" value="MMCBOOT"/>
+    <bit_field offset="0" width="4" name="DTOCVACK" access="RW" reset_value="0" description="Boot ACK Time Out Counter Value">
+      <alias type="CMSIS" value="SDHC_MMCBOOT_DTOCVACK(x)"/>
+      <bit_field_value name="MMCBOOT_DTOCVACK_0b0000" value="0b0000" description="SDCLK x 2^8"/>
+      <bit_field_value name="MMCBOOT_DTOCVACK_0b0001" value="0b0001" description="SDCLK x 2^9"/>
+      <bit_field_value name="MMCBOOT_DTOCVACK_0b0010" value="0b0010" description="SDCLK x 2^10"/>
+      <bit_field_value name="MMCBOOT_DTOCVACK_0b0011" value="0b0011" description="SDCLK x 2^11"/>
+      <bit_field_value name="MMCBOOT_DTOCVACK_0b0100" value="0b0100" description="SDCLK x 2^12"/>
+      <bit_field_value name="MMCBOOT_DTOCVACK_0b0101" value="0b0101" description="SDCLK x 2^13"/>
+      <bit_field_value name="MMCBOOT_DTOCVACK_0b0110" value="0b0110" description="SDCLK x 2^14"/>
+      <bit_field_value name="MMCBOOT_DTOCVACK_0b0111" value="0b0111" description="SDCLK x 2^15"/>
+      <bit_field_value name="MMCBOOT_DTOCVACK_0b1110" value="0b1110" description="SDCLK x 2^22"/>
+      <bit_field_value name="MMCBOOT_DTOCVACK_0b1111" value="0b1111" description="Reserved"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="BOOTACK" access="RW" reset_value="0" description="Boot Ack Mode Select">
+      <alias type="CMSIS" value="SDHC_MMCBOOT_BOOTACK(x)"/>
+      <bit_field_value name="MMCBOOT_BOOTACK_0b0" value="0b0" description="No ack."/>
+      <bit_field_value name="MMCBOOT_BOOTACK_0b1" value="0b1" description="Ack."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="BOOTMODE" access="RW" reset_value="0" description="Boot Mode Select">
+      <alias type="CMSIS" value="SDHC_MMCBOOT_BOOTMODE(x)"/>
+      <bit_field_value name="MMCBOOT_BOOTMODE_0b0" value="0b0" description="Normal boot."/>
+      <bit_field_value name="MMCBOOT_BOOTMODE_0b1" value="0b1" description="Alternative boot."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="BOOTEN" access="RW" reset_value="0" description="Boot Mode Enable">
+      <alias type="CMSIS" value="SDHC_MMCBOOT_BOOTEN(x)"/>
+      <bit_field_value name="MMCBOOT_BOOTEN_0b0" value="0b0" description="Fast boot disable."/>
+      <bit_field_value name="MMCBOOT_BOOTEN_0b1" value="0b1" description="Fast boot enable."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="AUTOSABGEN" access="RW" reset_value="0" description="When boot, enable auto stop at block gap function. This function will be triggered, and host will stop at block gap when received card block cnt is equal to BOOTBLKCNT.">
+      <alias type="CMSIS" value="SDHC_MMCBOOT_AUTOSABGEN(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="8" reset_value="0"/>
+    <bit_field offset="16" width="16" name="BOOTBLKCNT" access="RW" reset_value="0" description="Defines the stop at block gap value of automatic mode. When received card block cnt is equal to BOOTBLKCNT and AUTOSABGEN is 1, then stop at block gap.">
+      <alias type="CMSIS" value="SDHC_MMCBOOT_BOOTBLKCNT(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xFC" width="32" name="HOSTVER" description="Host Controller Version">
+    <alias type="CMSIS" value="HOSTVER"/>
+    <bit_field offset="0" width="8" name="SVN" access="RO" reset_value="0x1" description="Specification Version Number">
+      <alias type="CMSIS" value="SDHC_HOSTVER_SVN(x)"/>
+      <bit_field_value name="HOSTVER_SVN_0b00000001" value="0b00000001" description="SD host specification version 2.0, supports test event register and ADMA."/>
+    </bit_field>
+    <bit_field offset="8" width="8" name="VVN" access="RO" reset_value="0x12" description="Vendor Version Number">
+      <alias type="CMSIS" value="SDHC_HOSTVER_VVN(x)"/>
+      <bit_field_value name="HOSTVER_VVN_0b00000000" value="0b00000000" description="Freescale SDHC version 1.0"/>
+      <bit_field_value name="HOSTVER_VVN_0b00010000" value="0b00010000" description="Freescale SDHC version 2.0"/>
+      <bit_field_value name="HOSTVER_VVN_0b00010001" value="0b00010001" description="Freescale SDHC version 2.1"/>
+      <bit_field_value name="HOSTVER_VVN_0b00010010" value="0b00010010" description="Freescale SDHC version 2.2"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+</regs:peripheral>

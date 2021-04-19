@@ -1,0 +1,1421 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="dspi" label="DSPI" category="Peripheral driver" global_only="false" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-5.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <sw_comp_ref name="platform.drivers.dspi" version="2.2.0"/>
+   <description>Dual Serial Peripheral Interface (DSPI)</description>
+   <mode id="DSPI_Polling" label="Polling">
+      <description>Polling mode - Basic operation initialization (without support of interrupts and transactional API).</description>
+      <config_set_refs>
+         <config_set_ref>fsl_dspi</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>SPI</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="DSPI_Interrupt" label="Interrupts">
+      <description>Interrupts mode - Operation using interrupts (interrupt routines are defined by users).</description>
+      <config_set_refs>
+         <config_set_ref>fsl_dspi</config_set_ref>
+         <config_set_ref>interrupt</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>SPI</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="DSPI_Transfer" label="Transfer">
+      <description>Transfer mode - Operation using transfer mode (ring buffer). This mode supports transactional APIs.</description>
+      <config_set_refs>
+         <config_set_ref>fsl_dspi</config_set_ref>
+         <config_set_ref>transferCfg</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>SPI</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="edma" label="eDMA"  available="featureDefined(`FSL_FEATURE_SOC_EDMA_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SOC_EDMA_COUNT`) &gt; 0)">
+      <description>eDMA mode - Operation using eDMA mode (DMA device). This mode supports transactional API by using eDMA device.</description>
+      <config_set_refs>
+         <config_set_ref>fsl_dspi</config_set_ref>
+        <config_set_ref>edmaCfg</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>SPI</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="dma" label="DMA" available="featureDefined(`FSL_FEATURE_SOC_DMA_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SOC_DMA_COUNT`) &gt; 0)">
+      <description>DMA mode - Operation using DMA mode (DMA device). This mode supports transactional API by using DMA device.</description>
+      <config_set_refs>
+         <config_set_ref>fsl_dspi</config_set_ref>
+         <config_set_ref>dmaCfg</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>SPI</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="freertos" label="FreeRTOS">
+      <description>FreeRTOS mode - DSPI operation in RTOS mode (FreeRTOS mode with transactional API).</description>
+      <config_set_refs>
+         <config_set_ref>fsl_dspi</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>SPI</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="fsl_dspi" label="General configuration" from_source="fsl_dspi.h">
+      <description>General configuration.</description>
+      <generated_types>
+            <enum id="dspi_master_slave_mode_t" label="DSPI master or slave mode configuration" from="_dspi_master_slave_mode">
+                <description></description>
+                <item id="kDSPI_Master" label="DSPI peripheral operates in master mode"/>
+                <item id="kDSPI_Slave" label="DSPI peripheral operates in slave mode"/>
+            </enum>
+            <enum id="dspi_master_sample_point_t" label="DSPI Sample Point: Controls when the DSPI master samples SIN in the Modified Transfer Format" from="_dspi_master_sample_point">
+                <description></description>
+                <item id="kDSPI_SckToSin0Clock" label="0 system clocks between SCK edge and SIN sample"/>
+                <item id="kDSPI_SckToSin1Clock" label="1 system clock between SCK edge and SIN sample"/>
+                <item id="kDSPI_SckToSin2Clock" label="2 system clocks between SCK edge and SIN sample"/>
+            </enum>
+            <enum id="dspi_which_pcs_t" label="DSPI Peripheral Chip Select (Pcs) configuration (which Pcs to configure)" from="_dspi_which_pcs_config">
+                <description></description>
+                <item id="kDSPI_Pcs0" label="Pcs[0]"/>
+                <item id="kDSPI_Pcs1" label="Pcs[1]"/>
+                <item id="kDSPI_Pcs2" label="Pcs[2]"/>
+                <item id="kDSPI_Pcs3" label="Pcs[3]"/>
+                <item id="kDSPI_Pcs4" label="Pcs[4]"/>
+                <item id="kDSPI_Pcs5" label="Pcs[5]"/>
+            </enum>
+            <enum id="dspi_pcs_polarity_config_t" label="DSPI Peripheral Chip Select (Pcs) Polarity configuration" from="_dspi_pcs_polarity_config">
+                <description></description>
+                <item id="kDSPI_PcsActiveHigh" label="Pcs Active High (idles low)"/>
+                <item id="kDSPI_PcsActiveLow" label="Pcs Active Low (idles high)"/>
+            </enum>
+            <enum id="dspi_clock_polarity_t" label="DSPI clock polarity configuration for a given CTAR" from="_dspi_clock_polarity">
+                <description></description>
+                <item id="kDSPI_ClockPolarityActiveHigh" label="CPOL=0"/>
+                <item id="kDSPI_ClockPolarityActiveLow" label="CPOL=1"/>
+            </enum>
+            <enum id="dspi_clock_phase_t" label="DSPI clock phase configuration for a given CTAR" from="_dspi_clock_phase">
+                <description></description>
+                <item id="kDSPI_ClockPhaseFirstEdge" label="CPHA=0"/>
+                <item id="kDSPI_ClockPhaseSecondEdge" label="CPHA=1"/>
+            </enum>
+            <enum id="dspi_shift_direction_t" label="DSPI data shifter direction options for a given CTAR" from="_dspi_shift_direction">
+                <description></description>
+                <item id="kDSPI_MsbFirst" label="Data transfers start with most significant bit"/>
+                <item id="kDSPI_LsbFirst" label="Data transfers start with least significant bit"/>
+            </enum>
+            <enum id="dspi_delay_type_t" label="DSPI delay type selection" from="_dspi_delay_type">
+                <description></description>
+                <item id="kDSPI_PcsToSck" label="Pcs-to-SCK delay"/>
+                <item id="kDSPI_LastSckToPcs" label="The last SCK edge to Pcs delay"/>
+                <item id="kDSPI_BetweenTransfer" label="Delay between transfers"/>
+            </enum>
+            <enum id="dspi_ctar_selection_t" label="DSPI Clock and Transfer Attributes Register (CTAR) selection" from="_dspi_ctar_selection">
+                <description></description>
+                <item id="kDSPI_Ctar0" label="CTAR0 selection option for master or slave mode; note that CTAR0 and CTAR0_SLAVE are the same register address"/>
+                <item id="kDSPI_Ctar1" label="CTAR1 selection option for master mode only"/>
+                <item id="kDSPI_Ctar2" label="CTAR2 selection option for master mode only; note that some devices do not support CTAR2"/>
+                <item id="kDSPI_Ctar3" label="CTAR3 selection option for master mode only; note that some devices do not support CTAR3"/>
+                <item id="kDSPI_Ctar4" label="CTAR4 selection option for master mode only; note that some devices do not support CTAR4"/>
+                <item id="kDSPI_Ctar5" label="CTAR5 selection option for master mode only; note that some devices do not support CTAR5"/>
+                <item id="kDSPI_Ctar6" label="CTAR6 selection option for master mode only; note that some devices do not support CTAR6"/>
+                <item id="kDSPI_Ctar7" label="CTAR7 selection option for master mode only; note that some devices do not support CTAR7"/>
+            </enum>
+            <struct id="dspi_command_data_config_t" label="DSPI master command date configuration used for the SPIx_PUSHR" from="_dspi_command_data_config">
+                <description></description>
+                <bool id="isPcsContinuous" label="Option to enable the continuous assertion of the chip select between transfers">
+                    <description>Option to enable the continuous assertion of the chip select between transfers.</description>
+                </bool>
+                <reference id="whichCtar" label="The desired Clock and Transfer Attributes Register (CTAR) to use for CTAS" type="dspi_ctar_selection_t">
+                    <description>The desired Clock and Transfer Attributes Register (CTAR) to use for CTAS.</description>
+                </reference>
+                <reference id="whichPcs" label="The desired PCS signal to use for the data transfer" type="dspi_which_pcs_t">
+                    <description>The desired PCS signal to use for the data transfer.</description>
+                </reference>
+                <bool id="isEndOfQueue" label="Signals that the current transfer is the last in the queue">
+                    <description>Signals that the current transfer is the last in the queue.</description>
+                </bool>
+                <bool id="clearTransferCount" label="Clears the SPI Transfer Counter (SPI_TCNT) before transmission starts">
+                    <description>Clears the SPI Transfer Counter (SPI_TCNT) before transmission starts.</description>
+                </bool>
+            </struct>
+            <struct id="dspi_master_ctar_config_t" label="DSPI master ctar configuration structure" from="_dspi_master_ctar_config">
+                <description></description>
+                <integer id="baudRate" label="Baud Rate for DSPI" type="uint32_t">
+                    <description>Baud Rate for DSPI.</description>
+                </integer>
+                <integer id="bitsPerFrame" label="Bits per frame, minimum 4, maximum 16" type="uint32_t">
+                    <description>Bits per frame, minimum 4, maximum 16.</description>
+                </integer>
+                <reference id="cpol" label="Clock polarity" type="dspi_clock_polarity_t">
+                    <description>Clock polarity.</description>
+                </reference>
+                <reference id="cpha" label="Clock phase" type="dspi_clock_phase_t">
+                    <description>Clock phase.</description>
+                </reference>
+                <reference id="direction" label="MSB or LSB data shift direction" type="dspi_shift_direction_t">
+                    <description>MSB or LSB data shift direction.</description>
+                </reference>
+                <integer id="pcsToSckDelayInNanoSec" label="PCS to SCK delay time in nanoseconds; setting to 0 sets the minimum delay" type="uint32_t">
+                    <description>PCS to SCK delay time in nanoseconds; setting to 0 sets the minimum delay. It also sets the boundary value if out of range.</description>
+                </integer>
+                <integer id="lastSckToPcsDelayInNanoSec" label="The last SCK to PCS delay time in nanoseconds; setting to 0 sets the minimum delay" type="uint32_t">
+                    <description>The last SCK to PCS delay time in nanoseconds; setting to 0 sets the minimum delay. It also sets the boundary value if out of range.</description>
+                </integer>
+                <integer id="betweenTransferDelayInNanoSec" label="After the SCK delay time in nanoseconds; setting to 0 sets the minimum delay" type="uint32_t">
+                    <description>After the SCK delay time in nanoseconds; setting to 0 sets the minimum delay. It also sets the boundary value if out of range.</description>
+                </integer>
+            </struct>
+            <struct id="dspi_master_config_t" label="DSPI master configuration structure" from="_dspi_master_config">
+                <description></description>
+                <reference id="whichCtar" label="The desired CTAR to use" type="dspi_ctar_selection_t">
+                    <description>The desired CTAR to use.</description>
+                </reference>
+                <reference id="ctarConfig" label="Set the ctarConfig to the desired CTAR" type="dspi_master_ctar_config_t">
+                    <description>Set the ctarConfig to the desired CTAR.</description>
+                </reference>
+                <reference id="whichPcs" label="The desired Peripheral Chip Select (pcs)" type="dspi_which_pcs_t">
+                    <description>The desired Peripheral Chip Select (pcs).</description>
+                </reference>
+                <reference id="pcsActiveHighOrLow" label="The desired PCS active high or low" type="dspi_pcs_polarity_config_t">
+                    <description>The desired PCS active high or low.</description>
+                </reference>
+                <bool id="enableContinuousSCK" label="CONT_SCKE, continuous SCK enable">
+                    <description>CONT_SCKE, continuous SCK enable. Note that the continuous SCK is only supported for CPHA = 1.</description>
+                </bool>
+                <bool id="enableRxFifoOverWrite" label="ROOE, receive FIFO overflow overwrite enable">
+                    <description>ROOE, receive FIFO overflow overwrite enable. If ROOE = 0, the incoming data is ignored and the data from the transfer that generated the overflow is also ignored. If ROOE = 1, the incoming data is shifted to the shift register.</description>
+                </bool>
+                <bool id="enableModifiedTimingFormat" label="Enables a modified transfer format to be used if true">
+                    <description>Enables a modified transfer format to be used if true.</description>
+                </bool>
+                <reference id="samplePoint" label="Controls when the module master samples SIN in the Modified Transfer Format" type="dspi_master_sample_point_t">
+                    <description>Controls when the module master samples SIN in the Modified Transfer Format. It&apos;s valid only when CPHA=0.</description>
+                </reference>
+            </struct>
+            <struct id="dspi_slave_ctar_config_t" label="DSPI slave ctar configuration structure" from="_dspi_slave_ctar_config">
+                <description></description>
+                <integer id="bitsPerFrame" label="Bits per frame, minimum 4, maximum 16" type="uint32_t">
+                    <description>Bits per frame, minimum 4, maximum 16.</description>
+                </integer>
+                <reference id="cpol" label="Clock polarity" type="dspi_clock_polarity_t">
+                    <description>Clock polarity.</description>
+                </reference>
+                <reference id="cpha" label="Clock phase" type="dspi_clock_phase_t">
+                    <description>Clock phase. Slave only supports MSB and does not support LSB.</description>
+                </reference>
+            </struct>
+            <struct id="dspi_slave_config_t" label="DSPI slave configuration structure" from="_dspi_slave_config">
+                <description></description>
+                <reference id="whichCtar" label="The desired CTAR to use" type="dspi_ctar_selection_t">
+                    <description>The desired CTAR to use.</description>
+                </reference>
+                <reference id="ctarConfig" label="Set the ctarConfig to the desired CTAR" type="dspi_slave_ctar_config_t">
+                    <description>Set the ctarConfig to the desired CTAR.</description>
+                </reference>
+                <bool id="enableContinuousSCK" label="CONT_SCKE, continuous SCK enable">
+                    <description>CONT_SCKE, continuous SCK enable. Note that the continuous SCK is only supported for CPHA = 1.</description>
+                </bool>
+                <bool id="enableRxFifoOverWrite" label="ROOE, receive FIFO overflow overwrite enable">
+                    <description>ROOE, receive FIFO overflow overwrite enable. If ROOE = 0, the incoming data is ignored and the data from the transfer that generated the overflow is also ignored. If ROOE = 1, the incoming data is shifted to the shift register.</description>
+                </bool>
+                <bool id="enableModifiedTimingFormat" label="Enables a modified transfer format to be used if true">
+                    <description>Enables a modified transfer format to be used if true.</description>
+                </bool>
+                <reference id="samplePoint" label="Controls when the module master samples SIN in the Modified Transfer Format" type="dspi_master_sample_point_t">
+                    <description>Controls when the module master samples SIN in the Modified Transfer Format. It&apos;s valid only when CPHA=0.</description>
+                </reference>
+            </struct>
+            <struct id="dspi_master_handle_t" label="Forward declaration of the _dspi_master_handle typedefs" from="_dspi_master_handle">
+                <description></description>
+                <integer id="bitsPerFrame" label="The desired number of bits per frame" type="uint32_t">
+                    <description>The desired number of bits per frame.</description>
+                </integer>
+                <integer id="command" label="The desired data command" type="uint32_t">
+                    <description>The desired data command.</description>
+                </integer>
+                <integer id="lastCommand" label="The desired last data command" type="uint32_t">
+                    <description>The desired last data command.</description>
+                </integer>
+                <integer id="fifoSize" label="FIFO dataSize" type="uint8_t">
+                    <description>FIFO dataSize.</description>
+                </integer>
+                <bool id="isPcsActiveAfterTransfer" label="Indicates whether the PCS signal is active after the last frame transfer">
+                    <description>Indicates whether the PCS signal is active after the last frame transfer.</description>
+                </bool>
+                <bool id="isThereExtraByte" label="Indicates whether there are extra bytes">
+                    <description>Indicates whether there are extra bytes.</description>
+                </bool>
+                <fixme id="txData" label="Send buffer" type="uint8_t *volatile">
+                    <description>Send buffer.</description>
+                </fixme>
+                <fixme id="rxData" label="Receive buffer" type="uint8_t *volatile">
+                    <description>Receive buffer.</description>
+                </fixme>
+                <fixme id="remainingSendByteCount" label="A number of bytes remaining to send" type="size_t">
+                    <description>A number of bytes remaining to send.</description>
+                </fixme>
+                <fixme id="remainingReceiveByteCount" label="A number of bytes remaining to receive" type="size_t">
+                    <description>A number of bytes remaining to receive.</description>
+                </fixme>
+                <fixme id="totalByteCount" label="A number of transfer bytes" type="size_t">
+                    <description>A number of transfer bytes</description>
+                </fixme>
+                <integer id="state" label="DSPI transfer state, see _dspi_transfer_state" type="uint8_t">
+                    <description>DSPI transfer state, see _dspi_transfer_state.</description>
+                </integer>
+                <reference id="callback" label="Completion callback" type="dspi_master_transfer_callback_t">
+                    <description>Completion callback.</description>
+                </reference>
+                <fixme id="userData" label="Callback user data" type="void *">
+                    <description>Callback user data.</description>
+                </fixme>
+            </struct>
+            <struct id="dspi_slave_handle_t" label="Forward declaration of the _dspi_slave_handle typedefs" from="_dspi_slave_handle">
+                <description></description>
+                <integer id="bitsPerFrame" label="The desired number of bits per frame" type="uint32_t">
+                    <description>The desired number of bits per frame.</description>
+                </integer>
+                <bool id="isThereExtraByte" label="Indicates whether there are extra bytes">
+                    <description>Indicates whether there are extra bytes.</description>
+                </bool>
+                <fixme id="txData" label="Send buffer" type="uint8_t *volatile">
+                    <description>Send buffer.</description>
+                </fixme>
+                <fixme id="rxData" label="Receive buffer" type="uint8_t *volatile">
+                    <description>Receive buffer.</description>
+                </fixme>
+                <fixme id="remainingSendByteCount" label="A number of bytes remaining to send" type="size_t">
+                    <description>A number of bytes remaining to send.</description>
+                </fixme>
+                <fixme id="remainingReceiveByteCount" label="A number of bytes remaining to receive" type="size_t">
+                    <description>A number of bytes remaining to receive.</description>
+                </fixme>
+                <fixme id="totalByteCount" label="A number of transfer bytes" type="size_t">
+                    <description>A number of transfer bytes</description>
+                </fixme>
+                <integer id="state" label="DSPI transfer state" type="uint8_t">
+                    <description>DSPI transfer state.</description>
+                </integer>
+                <integer id="errorCount" label="Error count for slave transfer" type="uint32_t">
+                    <description>Error count for slave transfer.</description>
+                </integer>
+                <reference id="callback" label="Completion callback" type="dspi_slave_transfer_callback_t">
+                    <description>Completion callback.</description>
+                </reference>
+                <fixme id="userData" label="Callback user data" type="void *">
+                    <description>Callback user data.</description>
+                </fixme>
+            </struct>
+            <fixme id="dspi_master_transfer_callback_t" label="Completion callback function pointer type" type="void(*">
+                <description>base
+
+
+DSPI peripheral address. 
+
+
+
+handle
+
+
+Pointer to the handle for the DSPI master. 
+
+
+
+status
+
+
+Success or error code describing whether the transfer completed. 
+
+
+
+userData
+
+
+Arbitrary pointer-dataSized value passed from the application.</description>
+            </fixme>
+            <fixme id="dspi_slave_transfer_callback_t" label="Completion callback function pointer type" type="void(*">
+                <description>base
+
+
+DSPI peripheral address. 
+
+
+
+handle
+
+
+Pointer to the handle for the DSPI slave. 
+
+
+
+status
+
+
+Success or error code describing whether the transfer completed. 
+
+
+
+userData
+
+
+Arbitrary pointer-dataSized value passed from the application.</description>
+            </fixme>
+            <struct id="dspi_transfer_t" label="DSPI master/slave transfer structure" from="_dspi_transfer">
+                <description></description>
+                <fixme id="txData" label="Send buffer" type="uint8_t *">
+                    <description>Send buffer.</description>
+                </fixme>
+                <fixme id="rxData" label="Receive buffer" type="uint8_t *">
+                    <description>Receive buffer.</description>
+                </fixme>
+                <fixme id="dataSize" label="Transfer bytes" type="size_t">
+                    <description>Transfer bytes.</description>
+                </fixme>
+                <integer id="configFlags" label="Transfer transfer configuration flags; set from _dspi_transfer_config_flag_for_master if the transfer is used for master or _dspi_transfer_config_flag_for_slave enumeration if the transfer is used for slave" type="uint32_t">
+                    <description>Transfer transfer configuration flags; set from _dspi_transfer_config_flag_for_master if the transfer is used for master or _dspi_transfer_config_flag_for_slave enumeration if the transfer is used for slave.</description>
+                </integer>
+            </struct>
+            <struct id="dspi_half_duplex_transfer_t" label="DSPI half-duplex(master) transfer structure" from="_dspi_half_duplex_transfer">
+                <description></description>
+                <fixme id="txData" label="Send buffer" type="uint8_t *">
+                    <description>Send buffer</description>
+                </fixme>
+                <fixme id="rxData" label="Receive buffer" type="uint8_t *">
+                    <description>Receive buffer</description>
+                </fixme>
+                <fixme id="txDataSize" label="Transfer bytes for transmit" type="size_t">
+                    <description>Transfer bytes for transmit</description>
+                </fixme>
+                <fixme id="rxDataSize" label="Transfer bytes" type="size_t">
+                    <description>Transfer bytes</description>
+                </fixme>
+                <integer id="configFlags" label="Transfer configuration flags; set from _dspi_transfer_config_flag_for_master" type="uint32_t">
+                    <description>Transfer configuration flags; set from _dspi_transfer_config_flag_for_master.</description>
+                </integer>
+                <bool id="isPcsAssertInTransfer" label="If Pcs pin keep assert between transmit and receive">
+                    <description>If Pcs pin keep assert between transmit and receive. true for assert and false for deassert.</description>
+                </bool>
+                <bool id="isTransmitFirst" label="True for transmit first and false for receive first">
+                    <description>True for transmit first and false for receive first.</description>
+                </bool>
+            </struct>
+      </generated_types>
+      <user_types>
+         <struct id="dspi_master_config_user_t" label="Master configuration structure" from="_dspi_master_config">
+            <reference id="whichCtar" label="Set Clock and Transfer Attributes (CTAR)" type="dspi_ctar_selection_user_t">
+               <description>The desired CTAR to use.</description>
+            </reference>
+            <reference id="ctarConfig" label="The ctarConfig to the desired CTAR" type="dspi_master_ctar_config_user_t">
+               <description>The ctarConfig to the desired CTAR.</description>
+            </reference>
+            <reference id="whichPcs" label="Peripheral Chip Select (pcs)" type="dspi_which_pcs_user_t">
+               <description>The desired Peripheral Chip Select (pcs).</description>
+            </reference>
+            <reference id="pcsActiveHighOrLow" label="PCS active high or low" type="dspi_pcs_polarity_config_user_t">
+               <description>The desired PCS active high or low.</description>
+            </reference>
+            <bool id="enableContinuousSCK" label="Continuous SCK">
+               <description>Continuous SCK enable. Note that the continuous SCK is only supported for clock phase is set to &apos;second edge&apos;.</description>
+               <validation>
+                  <constraint cond_expr="($parent.ctarConfig.cpha.getValue()==`kDSPI_ClockPhaseSecondEdge`) || ($this.getValue() == false)" level="warning" description="The continuous SCK is only supported for clock phase is set to second edge"/>
+               </validation>
+            </bool>
+            <bool id="enableRxFifoOverWrite" label="Receive FIFO overflow overwrite">
+               <description>Receive FIFO overflow overwrite enable (ROOE). If ROOE = 0, the incoming data is ignored and the data from the transfer that generated the overflow is also ignored. If ROOE = 1, the incoming data is shifted to the shift register.</description>
+            </bool>
+            <bool id="enableModifiedTimingFormat" label="Modified transfer format">
+               <description>Enable a modified transfer format to be used if true.</description>
+            </bool>
+            <reference id="samplePoint" label="Sample point" type="dspi_master_sample_point_user_t">
+               <description>Controls when the module master samples SIN in the Modified Transfer Format</description>
+               <validation>
+                  <constraint cond_expr="($parent.ctarConfig.cpha.getValue()==`kDSPI_ClockPhaseFirstEdge`) || ($this.getValue() == `kDSPI_SckToSin0Clock`)" level="warning" description="The sample point is valid only when the clock phase is set to first edge"/>
+               </validation>
+            </reference>
+         </struct>
+         <enum id="dspi_ctar_selection_user_t" label="DSPI Clock and Transfer Attributes Register (CTAR) selection" from="_dspi_ctar_selection">
+            <item id="kDSPI_Ctar0" label="CTAR0 selection option"/>
+            <item id="kDSPI_Ctar1" label="CTAR1 selection option" available="(featureDefined(`FSL_FEATURE_DSPI_CTAR_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_DSPI_CTAR_COUNT`) &gt; 1))"/>
+            <item id="kDSPI_Ctar2" label="CTAR2 selection option" available="(featureDefined(`FSL_FEATURE_DSPI_CTAR_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_DSPI_CTAR_COUNT`) &gt; 2))"/>
+            <item id="kDSPI_Ctar3" label="CTAR3 selection option" available="(featureDefined(`FSL_FEATURE_DSPI_CTAR_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_DSPI_CTAR_COUNT`) &gt; 3))"/>
+            <item id="kDSPI_Ctar4" label="CTAR4 selection option" available="(featureDefined(`FSL_FEATURE_DSPI_CTAR_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_DSPI_CTAR_COUNT`) &gt; 4))"/>
+            <item id="kDSPI_Ctar5" label="CTAR5 selection option" available="(featureDefined(`FSL_FEATURE_DSPI_CTAR_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_DSPI_CTAR_COUNT`) &gt; 5))"/>
+            <item id="kDSPI_Ctar6" label="CTAR6 selection option" available="(featureDefined(`FSL_FEATURE_DSPI_CTAR_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_DSPI_CTAR_COUNT`) &gt; 6))"/>
+            <item id="kDSPI_Ctar7" label="CTAR7 selection option" available="(featureDefined(`FSL_FEATURE_DSPI_CTAR_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_DSPI_CTAR_COUNT`) &gt; 7))"/>
+         </enum>
+         <struct id="dspi_master_ctar_config_user_t" label="Master ctar configuration structure" from="_dspi_master_ctar_config">
+            <integer id="baudRate" label="Baud rate" type="uint32_t" min_expr="1">
+               <description>Baud rate.</description>
+            </integer>
+            <integer id="bitsPerFrame" label="Bits per frame" type="uint32_t"  min_expr="4" max_expr="(featureDefined(`FSL_FEATURE_DSPI_MAX_DATA_WIDTH`)?(getFeature(`FSL_FEATURE_DSPI_MAX_DATA_WIDTH`)):8)">
+               <description>Bits per frame (minimum 4, maximum 16)</description>
+            </integer>
+            <reference id="cpol" label="Clock polarity" type="dspi_clock_polarity_user_t">
+               <description>Clock polarity.</description>
+            </reference>
+            <reference id="cpha" label="Clock phase" type="dspi_clock_phase_user_t">
+               <description>Clock phase.</description>
+            </reference>
+            <reference id="direction" label="MSB or LSB data shift direction" type="dspi_shift_direction_user_t">
+               <description>MSB or LSB data shift direction.</description>
+            </reference>
+            <integer id="pcsToSckDelayInNanoSec" label="PCS to SCK delay time [ns]" type="uint32_t">
+               <description>PCS to SCK delay time in nanoseconds; setting to 0 sets the minimum delay. It also sets the boundary value if out of range.</description>
+            </integer>
+            <integer id="lastSckToPcsDelayInNanoSec" label="The last SCK to PCS delay time [ns]" type="uint32_t">
+               <description>The last SCK to PCS delay time in nanoseconds; setting to 0 sets the minimum delay. It also sets the boundary value if out of range.</description>
+            </integer>
+            <integer id="betweenTransferDelayInNanoSec" label="After the SCK delay time [ns]" type="uint32_t">
+               <description>After the SCK delay time in nanoseconds; setting to 0 sets the minimum delay. It also sets the boundary value if out of range.</description>
+            </integer>
+         </struct>
+         <struct id="dspi_slave_config_user_t" label="Slave configuration structure" from="_dspi_slave_config">
+            <enum id="whichCtar" label="The desired CTAR to use" from="_dspi_ctar_selection">
+               <item id="kDSPI_Ctar0" label="CTAR0 selection option"/>
+            </enum>
+            <reference id="ctarConfig" label="The ctarConfig to the desired CTAR" type="dspi_slave_ctar_config_user_t">
+               <description>Set the ctarConfig to the desired CTAR.</description>
+            </reference>
+            <bool id="enableContinuousSCK" label="Continuous SCK">
+               <description>Continuous SCK enable. Note that the continuous SCK is only supported for clock phase is set to &apos;second edge&apos;.</description>
+               <validation>
+                  <constraint cond_expr="($parent.ctarConfig.cpha.getValue()==`kDSPI_ClockPhaseSecondEdge`) || ($this.getValue() == false)" level="warning" description="The continuous SCK is only supported for clock phase is set to second edge"/>
+               </validation>
+            </bool>
+            <bool id="enableRxFifoOverWrite" label="Receive FIFO overflow overwrite">
+               <description>Receive FIFO overflow overwrite enable (ROOE). If ROOE = 0, the incoming data is ignored and the data from the transfer that generated the overflow is also ignored. If ROOE = 1, the incoming data is shifted to the shift register.</description>
+            </bool>
+            <bool id="enableModifiedTimingFormat" label="Modified transfer format">
+               <description>Enable a modified transfer format to be used if true.</description>
+            </bool>
+            <reference id="samplePoint" label="Sample point" type="dspi_master_sample_point_user_t">
+               <description>Controls when the module master samples SIN in the Modified Transfer Format. It&apos;s valid only when CPHA=0.</description>
+               <validation>
+                  <constraint cond_expr="($parent.ctarConfig.cpha.getValue()==`kDSPI_ClockPhaseFirstEdge`) || ($this.getValue() == `kDSPI_SckToSin0Clock`)" level="warning" description="The sample point is valid only when the clock phase is set to first edge"/>
+               </validation>
+            </reference>
+         </struct>
+         <struct id="dspi_slave_ctar_config_user_t" label="Slave ctar configuration structure" from="_dspi_slave_ctar_config">
+            <integer id="bitsPerFrame" label="Bits per frame" type="uint32_t" min_expr="4" max_expr="(featureDefined(`FSL_FEATURE_DSPI_MAX_DATA_WIDTH`)?(getFeature(`FSL_FEATURE_DSPI_MAX_DATA_WIDTH`)):8)">
+               <description>Bits per frame (minimum 4, maximum 16).</description>
+            </integer>
+            <reference id="cpol" label="Clock polarity" type="dspi_clock_polarity_user_t">
+               <description>Clock polarity.</description>
+            </reference>
+            <reference id="cpha" label="Clock phase" type="dspi_clock_phase_user_t">
+               <description>Clock phase. Slave only supports MSB and does not support LSB.</description>
+            </reference>
+         </struct>
+         <enum id="dspi_clock_polarity_user_t" label="Clock polarity configuration for a given CTAR" from="_dspi_clock_polarity">
+            <item id="kDSPI_ClockPolarityActiveHigh" label="CPOL=0: SCK inactive in low">
+               <description>CPOL=0: The inactive state value of SCK is low.</description>
+            </item>
+            <item id="kDSPI_ClockPolarityActiveLow" label="CPOL=1: SCK inactive in high">
+               <description>CPOL=1: The inactive state value of SCK is high.</description>
+            </item>
+         </enum>
+         <enum id="dspi_clock_phase_user_t" label="Clock phase configuration for a given CTAR" from="_dspi_clock_phase">
+            <item id="kDSPI_ClockPhaseFirstEdge" label="CPHA=0: Capture on leading edge/data on following edge">
+               <description>CPHA=0: Data is captured on the leading edge of SCK and changed on the following edge of SCK.</description>
+            </item>
+            <item id="kDSPI_ClockPhaseSecondEdge" label="CPHA=1: Data on leading edge/capture on following edge">
+               <description>CPHA=1: Data is changed on the leading edge of SCK and captured on the following edge of SCK.</description>
+            </item>
+         </enum>
+         <enum id="dspi_master_slave_mode_user_t" label="Master or slave mode configuration" from="_dspi_master_slave_mode">
+            <item id="kDSPI_Master" label="Master mode"/>
+            <item id="kDSPI_Slave" label="Slave mode"/>
+         </enum>
+         <enum id="dspi_master_sample_point_user_t" label="Sample Point: Controls when the master samples SIN in the Modified Transfer Format" from="_dspi_master_sample_point">
+            <item id="kDSPI_SckToSin0Clock" label="Zero system clocks between SCK edge and SIN sample"/>
+            <item id="kDSPI_SckToSin1Clock" label="One system clock between SCK edge and SIN sample"/>
+            <item id="kDSPI_SckToSin2Clock" label="Two system clocks between SCK edge and SIN sample"/>
+         </enum>
+         <enum id="dspi_pcs_polarity_config_user_t" label="DSPI Peripheral Chip Select (Pcs) Polarity configuration." from="_dspi_pcs_polarity_config">
+            <item id="kDSPI_PcsActiveHigh" label="Active High (idles low)"/>
+            <item id="kDSPI_PcsActiveLow" label="Active Low (idles high)"/>
+         </enum>
+         <enum id="dspi_shift_direction_user_t" label="DSPI data shifter direction options for a given CTAR" from="_dspi_shift_direction">
+            <item id="kDSPI_MsbFirst" label="Data transfers start with most significant bit"/>
+            <item id="kDSPI_LsbFirst" label="Data transfers start with least significant bit"/>
+         </enum>
+         <dynamic_enum id="dspi_which_pcs_user_t" label="Peripheral Chip Select" items="getPeripheralSignals($instance.getPeripheral()).filter(item -> item.regexMatch(`.*[cC][sS]\d+.*`))"  options="transform_by_regex=.*[cC][sS](\d+).*;prefix=kDSPI_Pcs"/>
+         <struct id="rtos_handle_user" label="RTOS handle name" from_source="_rtosHandle">
+            <bool id="enable_custom_name" label="Enable custom name">
+               <description>When this option is enabled a user custom name of the handle is allowed to set in the settings below.
+               </description>
+            </bool>
+            <string id="handle_custom_name" label="Name" available="$parent.enable_custom_name.getValue()">
+               <description>The handle is used for processing of RTOS requests. </description>
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="`The handle name: `+ $this.getCValue() +` is not valid C identifier!`"/>
+               </validation>
+            </string>
+            <info id="handle_default_name" label="Name" value="$parent.enable_custom_name.getValue() ? $parent.handle_custom_name.getValue() : 
+               $instance.getFnGroupPrefix() + $instance.getID() + 
+               `_rtosHandle`" available="!$parent.enable_custom_name.getValue()">
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description="The handle name is not valid C identifier!"/>
+               </validation>
+            </info>
+            <variable id="handle_name" value="($parent.enable_custom_name.getValue()) ? $parent.handle_custom_name.getValue() : $parent.handle_default_name.getValue()"/>
+         </struct>
+      </user_types>
+      <settings>
+         <reference id="dspi_mode" label="DSPI mode " type="dspi_master_slave_mode_user_t">
+            <description>DSPI mode</description>
+         </reference>
+        <variable id="clockSourceUId" value="`BusInterfaceClock`"/>
+        <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" available="$parent.dspi_mode.value() == `kDSPI_Master`" items="createArray()
+          .addItemToList(`BusInterfaceClock`, getPeripheralClock($instance.getPeripheral(), `BusInterfaceClock`), ($instance.getPeripheral() + `_CLK_SRC`),true)">
+          <description>DSPI clock source</description>
+          <validation>
+            <dependency when_expr="$parent.clockSourceFreq.getEnumItemId() == `GetFreq`" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+               description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+               level="Warning">
+               <feature name="frequency" evaluation="greaterThan">
+                  <data expr="0" unit="Hz" type="Frequency"/>
+               </feature>
+            </dependency>
+            <dependency when_expr="($parent.clockSourceFreq.getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+               description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+               level="Error">
+               <feature name="frequency" evaluation="greaterThan">
+                  <data expr="0" unit="Hz" type="Frequency"/>
+               </feature>
+            </dependency>
+          </validation>
+        </dynamic_enum>
+        <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" available="$parent.dspi_mode.value() == `kDSPI_Master`" items="createArray()
+          .addItemToList(`GetFreq`,`Runtime calculation by CLOCK_GetFreq()`,`GetFreq`,true)
+          .merge(getClockFunctionalGroups().arrayToEnumItems(
+           enumItem -> true,
+           enumItem -> enumItem,
+           enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), `BusInterfaceClock`, enumItem)) + ` (`+ enumItem + `)`,
+           enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), `BusInterfaceClock` , enumItem)))">
+           <validation>
+              <constraint cond_expr="(($this.getEnumItemValue() == `GetFreq`) || ($this.getEnumItemValue().toHertz() != 0))" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+           </validation>
+          <custom_value_support default="0" validation_expr="x -> toHertz(x) >= 0" />
+        </dynamic_enum>
+         <reference id="rtos_handle" label="RTOS handle name" type="rtos_handle_user" available="($instance.getMode() == `freertos`)">
+            <description>RTOS handle name</description>
+         </reference>
+         <reference id="dspi_master_config" label="Master configuration " available="$parent.dspi_mode.value() == `kDSPI_Master`" type="dspi_master_config_user_t">
+            <description>Master configuration</description>
+         </reference>
+         <reference id="dspi_slave_config" label="Slave configuration " available="$parent.dspi_mode.value() == `kDSPI_Slave`" type="dspi_slave_config_user_t">
+            <description>Slave configuration</description>
+         </reference>
+         <variable id="var_shared_IRQn_rx_tx" value="getResource(
+            `interrupts`, 
+            $instance.getCoreId()
+            ).searchInArray
+            ( varItem -> 
+            (   
+            (varItem.getSetting(`devices`).searchInArray
+            (
+            item -> (item.getSetting(`function`).getValue() == `serial_rx` &amp;&amp; (item.getSetting(`id`).getValue() == $instance.getPeripheral()))
+            )
+            ) >=0
+            &amp;&amp;
+            (varItem.getSetting(`devices`).searchInArray
+            (
+            item -> (item.getSetting(`function`).getValue() == `serial_tx` &amp;&amp; (item.getSetting(`id`).getValue() == $instance.getPeripheral()))
+            )
+            ) >=0
+            )
+            ) >=0"/>
+         <reference id="interrupt_rx_tx" label="Rx/Tx interrupt priority setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_without_enable_control;without_handler_settings" available="($instance.getMode() == `freertos` || $instance.getMode() == `DSPI_Transfer`) &amp;&amp; ($parent.var_shared_IRQn_rx_tx.value() == `true`)">
+            <description>Configuration of Rx/Tx interrupt priority (by default FreeRTOS sets interrupt to lower priority than the default level).</description>
+         </reference>
+         <reference id="interrupt_rx" label="Rx interrupt priority setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=serial_rx;irq_without_enable_control;without_handler_settings" available="($instance.getMode() == `freertos` || $instance.getMode() == `DSPI_Transfer`) &amp;&amp; (!$parent.interrupt_rx_tx.isAvailable())">
+            <description>Configuration of RX interrupt priority (by default FreeRTOS sets interrupt to lower priority than the default level).</description>
+         </reference>
+         <reference id="interrupt_tx" label="Tx interrupt priority setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=serial_tx;irq_without_enable_control;without_handler_settings" available="($instance.getMode() == `freertos` || $instance.getMode() == `DSPI_Transfer`) &amp;&amp; (!$parent.interrupt_rx_tx.isAvailable())">
+            <description>Configuration of TX interrupt priority (by default FreeRTOS sets interrupt to lower priority than the default level).</description>
+         </reference>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral" if_expr="$instance.getMode() == `freertos` || $instance.getMode() == `DSPI_Transfer`"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">dspi</param>
+               <param id="filename">fsl_dspi.h</param>
+            </fragment>
+            <fragment id="include" if_expr="($instance.getMode() == `freertos`)">
+               <param id="name">dspi_freertos</param>
+               <param id="filename">fsl_dspi_freertos.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <expr>`/* `+ $instance.getFnGroupName() +` defines for `+ $instance.getPeripheral() +` */`</expr><br/>
+            <fragment id="define">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)"/>
+               <param id="value" expr="$instance.getPeripheral()"/><!-- get current peripheral -->
+               <param id="description">Definition of peripheral ID</param>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`)"/>
+               <param id="value" expr="`DSPI` + $instance.getPeripheral().regexSubstr(`.*SPI(\d+)`, 1) + `_CLK_SRC`"/>
+               <param id="description">Definition of the clock source</param>
+            </fragment>
+            <fragment id="define" if_expr="$this.dspi_mode.value() == `kDSPI_Master`">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLK_FREQ`)"/>
+               <param id="value" expr="($this.clockSourceFreq.value() == `GetFreq`)?`CLOCK_GetFreq(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE)`):$this.clockSourceFreq.getEnumItemValue().toHertz() + `UL`"/>
+               <param id="description">Definition of the clock source frequency</param>
+            </fragment>
+            <fragment id="IRQ_definitions"  if_expr="$this.interrupt_rx_tx.isAvailable()" apply_to="$this.interrupt_rx_tx"/>
+            <fragment id="IRQ_definitions"  if_expr="$this.interrupt_rx.isAvailable()" apply_to="$this.interrupt_rx"/>
+            <fragment id="IRQ_definitions"  if_expr="$this.interrupt_tx.isAvailable()" apply_to="$this.interrupt_tx"/>
+         </section>
+         <section target="global_vars">
+            <fragment id="global_var" if_expr="($this.dspi_mode.value() == `kDSPI_Master`) &amp;&amp; ($instance.getMode() == `freertos`)">
+               <param id="name" expr="$this.rtos_handle.handle_name.getValue()"/> 
+               <param id="type" expr="`dspi_rtos_handle_t`"/>
+            </fragment>
+            <fragment id="const_struct" apply_to="$this.dspi_master_config" if_expr="$this.dspi_mode.value() == `kDSPI_Master`">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`" />
+               <param id="type">dspi_master_config_t</param>
+            </fragment>
+            <fragment id="const_struct" apply_to="$this.dspi_slave_config" if_expr="$this.dspi_mode.value() == `kDSPI_Slave`">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`"/>
+               <param id="type">dspi_slave_config_t</param>
+            </fragment> 
+         </section>
+         <section target="global_vars_extern">
+            <fragment id="extern_var" if_expr="($this.dspi_mode.value() == `kDSPI_Master`) &amp;&amp; ($instance.getMode() == `freertos`)">
+               <param id="name" expr="$this.rtos_handle.handle_name.getValue()"/> 
+               <param id="type" expr="`dspi_rtos_handle_t`"/>
+            </fragment>
+            <fragment id="extern_const" if_expr="$this.dspi_mode.value() == `kDSPI_Master`">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`" />
+               <param id="type">dspi_master_config_t</param>
+            </fragment>
+            <fragment id="extern_const" if_expr="$this.dspi_mode.value() == `kDSPI_Slave`">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`" />
+               <param id="type">dspi_slave_config_t</param>
+            </fragment> 
+         </section>
+         <section target="init_function_body">
+            <text>  /* Initialization function */</text><br/>
+            <expr if_expr="($this.dspi_mode.value() == `kDSPI_Master`) &amp;&amp; ($instance.getMode() != `freertos`)">`  DSPI_MasterInit(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, &amp;`) + $instance.getFnGroupPrefix() + $instance.getID() + `_config, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLK_FREQ);`)</expr>
+            <expr if_expr="($this.dspi_mode.value() == `kDSPI_Master`) &amp;&amp; ($instance.getMode() == `freertos`)">`  DSPI_RTOS_Init(&amp;` + $this.rtos_handle.handle_name.getValue() + `, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, &amp;`) + $instance.getFnGroupPrefix() + $instance.getID() + `_config, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLK_FREQ);`)</expr>
+            <expr if_expr="$this.dspi_mode.value() == `kDSPI_Slave`">`  DSPI_SlaveInit(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, &amp;`) + $instance.getFnGroupPrefix() + $instance.getID() + `_config);`</expr><br/>
+            <fragment id="IRQn_set_priority_default" if_expr="$this.interrupt_rx_tx.isAvailable()" apply_to="$this.interrupt_rx_tx"/>
+            <fragment id="IRQn_set_priority_default" if_expr="$this.interrupt_rx.isAvailable()" apply_to="$this.interrupt_rx"/>
+            <fragment id="IRQn_set_priority_default" if_expr="$this.interrupt_tx.isAvailable()" apply_to="$this.interrupt_tx"/>
+         </section>
+      </code>
+      <validation>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral()+`.spi_rxd`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`serial data in`, $instance.getPeripheral())" level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral()+`.spi_txd`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`serial data out`, $instance.getPeripheral())" level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.spi_sck`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`serial clock`, $instance.getPeripheral())" level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.spi_cs0`" when_expr="(($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) &amp;&amp; ($instance.fsl_dspi.dspi_master_config.whichPcs.value().regexSubstr(`.*[cC][sS](\d+).*`, 1) == `0`)) || ($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Slave`)" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage((($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`)? `chip select 0` : `slave select`), $instance.getPeripheral())" level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.spi_cs1`" when_expr="($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) &amp;&amp; ($instance.fsl_dspi.dspi_master_config.whichPcs.value().regexSubstr(`.*[cC][sS](\d+).*`, 1) == `1`)" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`chip select 1`, $instance.getPeripheral())" level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.spi_cs2`" when_expr="($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) &amp;&amp; ($instance.fsl_dspi.dspi_master_config.whichPcs.value().regexSubstr(`.*[cC][sS](\d+).*`, 1) == `2`)" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`chip select 2`, $instance.getPeripheral())" level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.spi_cs3`" when_expr="($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) &amp;&amp; ($instance.fsl_dspi.dspi_master_config.whichPcs.value().regexSubstr(`.*[cC][sS](\d+).*`, 1) == `3`)" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`chip select 3`, $instance.getPeripheral())" level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.spi_cs4`" when_expr="($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) &amp;&amp; ($instance.fsl_dspi.dspi_master_config.whichPcs.value().regexSubstr(`.*[cC][sS](\d+).*`, 1) == `4`)" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`chip select 4`, $instance.getPeripheral())" level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.spi_cs5`" when_expr="($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) &amp;&amp; ($instance.fsl_dspi.dspi_master_config.whichPcs.value().regexSubstr(`.*[cC][sS](\d+).*`, 1) == `5`)" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`chip select 5 / chip select strobe`, $instance.getPeripheral())" level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <!-- FreeRTOS -->
+         <constraint cond_expr="!(($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Slave`) &amp;&amp; ($instance.getMode() == `freertos`))" level="error" description="FreeRTOS mode is not available for the DSPI slave mode."/>
+         <dependency when_expr="($instance.getMode() == `freertos`)" resource_type="SWComponent" resource_id="platform.drivers.dspi_freertos" level="Warning" description_expr="$components.system.#global.err_missing_driver.getValue().formatMessage(`fsl_dspi_freertos`, ` (required for the FreeRTOS mode)`)">
+            <feature name="enabled" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="($instance.getMode() == `freertos`)" resource_type="SWComponent" resource_id="platform.drivers.dspi_freertos" level="Warning" description_expr="$components.system.#global.err_driver_version.getValue().formatMessage(`fsl_dspi_freertos`, ` (required for the FreeRTOS mode)`)">
+            <feature name="version" evaluation="compatible">
+               <data type="Version" expr="`2.2.0`"/>
+            </feature>
+         </dependency>
+      </validation>
+      <quick_selections>
+         <quick_selection id="QS_DSPI_1" label="Default setting - Master">
+            <description>Default setting - Master.</description>
+            <set id="dspi_mode">kDSPI_Master</set>
+            <set id="dspi_master_config.whichCtar">kDSPI_Ctar0</set>
+            <set id="dspi_master_config.ctarConfig.baudRate">500000</set>
+            <set id="dspi_master_config.ctarConfig.bitsPerFrame">8</set>
+            <set id="dspi_master_config.ctarConfig.cpol">kDSPI_ClockPolarityActiveHigh</set>
+            <set id="dspi_master_config.ctarConfig.cpha">kDSPI_ClockPhaseFirstEdge</set>
+            <set id="dspi_master_config.ctarConfig.direction">kDSPI_MsbFirst</set>
+            <set id="dspi_master_config.ctarConfig.pcsToSckDelayInNanoSec">1000</set>
+            <set id="dspi_master_config.ctarConfig.lastSckToPcsDelayInNanoSec">1000</set>
+            <set id="dspi_master_config.ctarConfig.betweenTransferDelayInNanoSec">1000</set>
+            <set id="dspi_master_config.pcsActiveHighOrLow">kDSPI_PcsActiveLow</set>
+            <set id="dspi_master_config.enableContinuousSCK">false</set>
+            <set id="dspi_master_config.enableRxFifoOverWrite">false</set>
+            <set id="dspi_master_config.enableModifiedTimingFormat">false</set>
+            <set id="dspi_master_config.samplePoint">kDSPI_SckToSin0Clock</set>
+            <set id="dspi_slave_config.ctarConfig.bitsPerFrame">8</set>
+            <set id="dspi_slave_config.ctarConfig.cpol">kDSPI_ClockPolarityActiveHigh</set>
+            <set id="dspi_slave_config.ctarConfig.cpha">kDSPI_ClockPhaseFirstEdge</set>
+            <set id="dspi_slave_config.enableContinuousSCK">false</set>
+            <set id="dspi_slave_config.enableRxFifoOverWrite">false</set>
+            <set id="dspi_slave_config.enableModifiedTimingFormat">false</set>
+            <set id="dspi_slave_config.samplePoint">kDSPI_SckToSin0Clock</set>
+         </quick_selection>
+         <quick_selection id="QS_DSPI_2" label="Default setting - Slave">
+            <description>Default setting - Slave.</description>
+            <set id="dspi_mode">kDSPI_Slave</set>
+            <set id="dspi_master_config.whichCtar">kDSPI_Ctar0</set>
+            <set id="dspi_master_config.ctarConfig.baudRate">500000</set>
+            <set id="dspi_master_config.ctarConfig.bitsPerFrame">8</set>
+            <set id="dspi_master_config.ctarConfig.cpol">kDSPI_ClockPolarityActiveHigh</set>
+            <set id="dspi_master_config.ctarConfig.cpha">kDSPI_ClockPhaseFirstEdge</set>
+            <set id="dspi_master_config.ctarConfig.direction">kDSPI_MsbFirst</set>
+            <set id="dspi_master_config.ctarConfig.pcsToSckDelayInNanoSec">1000</set>
+            <set id="dspi_master_config.ctarConfig.lastSckToPcsDelayInNanoSec">1000</set>
+            <set id="dspi_master_config.ctarConfig.betweenTransferDelayInNanoSec">1000</set>
+            <set id="dspi_master_config.pcsActiveHighOrLow">kDSPI_PcsActiveLow</set>
+            <set id="dspi_master_config.enableContinuousSCK">false</set>
+            <set id="dspi_master_config.enableRxFifoOverWrite">false</set>
+            <set id="dspi_master_config.enableModifiedTimingFormat">false</set>
+            <set id="dspi_master_config.samplePoint">kDSPI_SckToSin0Clock</set>
+            <set id="dspi_slave_config.ctarConfig.bitsPerFrame">8</set>
+            <set id="dspi_slave_config.ctarConfig.cpol">kDSPI_ClockPolarityActiveHigh</set>
+            <set id="dspi_slave_config.ctarConfig.cpha">kDSPI_ClockPhaseFirstEdge</set>
+            <set id="dspi_slave_config.enableContinuousSCK">false</set>
+            <set id="dspi_slave_config.enableRxFifoOverWrite">false</set>
+            <set id="dspi_slave_config.enableModifiedTimingFormat">false</set>
+            <set id="dspi_slave_config.samplePoint">kDSPI_SckToSin0Clock</set>
+         </quick_selection>
+         <default>QS_DSPI_1</default>
+      </quick_selections>
+   </config_set>
+   <config_set id="interrupt" label="Interrupt configuration " from_source="fsl_common.h">
+      <description>Interrupt configuration</description> 
+      <generated_types/>
+      <user_types>
+         <set id="interrupt_types" label="Interrupt types">
+            <description>Interrupt types</description>
+            <item id="kDSPI_TxCompleteInterruptEnable" label="Tx complete interrupt enable" value="kDSPI_TxCompleteInterruptEnable"/>
+            <item id="kDSPI_EndOfQueueInterruptEnable" label="End of queue interrupt enable" value="kDSPI_EndOfQueueInterruptEnable"/>
+            <item id="kDSPI_TxFifoUnderflowInterruptEnable" label="Tx FIFO underflow interrupt enable" value="kDSPI_TxFifoUnderflowInterruptEnable"/>
+            <item id="kDSPI_TxFifoFillRequestInterruptEnable" label="Tx FIFO fill request interrupt enable" value="kDSPI_TxFifoFillRequestInterruptEnable"/>
+            <item id="kDSPI_RxFifoOverflowInterruptEnable" label="Rx FIFO overflow interrupt enable" value="kDSPI_RxFifoOverflowInterruptEnable"/>
+            <item id="kDSPI_RxFifoDrainRequestInterruptEnable" label="Rx FIFO drain request interrupt enable" value="kDSPI_RxFifoDrainRequestInterruptEnable"/>
+         </set>
+      </user_types>
+      <settings>
+         <reference id="interrupt_sel" label="Interrupt selection" type="interrupt_types"/>
+         <reference id="interrupt_rx_tx" label="Rx/Tx interrupt setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" available="$instance.fsl_dspi.var_shared_IRQn_rx_tx.value() == `true`">
+            <options_expr>
+               <option id="irq_handler_insert" expr="
+leftPadding(`uint32_t intStatus;`, 1) + `&#10;` +
+leftPadding(`/* Reading all interrupt flags of status register */`, 1) + `&#10;` +
+leftPadding(`intStatus = DSPI_GetStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `);`, 1) + `&#10;` +
+leftPadding(`DSPI_ClearStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `, intStatus);`, 1) + `&#10;&#10;` +
+leftPadding(`/* Place your code here */`, 1) + `&#10;`
+               "/>
+            </options_expr>
+         </reference>
+         <reference id="interrupt_rx" label="Rx interrupt setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=serial_rx" available="!$parent.interrupt_rx_tx.isAvailable()">
+            <options_expr>
+               <option id="irq_handler_insert" expr="
+leftPadding(`uint32_t intStatus;`, 1) + `&#10;` +
+leftPadding(`/* Reading all interrupt flags of status register */`, 1) + `&#10;` +
+leftPadding(`intStatus = DSPI_GetStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `);`, 1) + `&#10;` +
+leftPadding(`intStatus &amp;= (kDSPI_RxFifoOverflowFlag | kDSPI_RxFifoDrainRequestFlag);`, 1) + `&#10;` +
+leftPadding(`DSPI_ClearStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `, intStatus);`, 1) + `&#10;&#10;` +
+leftPadding(`/* Place your code here */`, 1) + `&#10;`
+               "/>
+            </options_expr>
+         </reference>
+         <reference id="interrupt_tx" label="Tx interrupt setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=serial_tx" available="!$parent.interrupt_rx_tx.isAvailable()">
+            <options_expr>
+               <option id="irq_handler_insert" expr="
+leftPadding(`uint32_t intStatus;`, 1) + `&#10;` +
+leftPadding(`/* Reading all interrupt flags of status register */`, 1) + `&#10;` +
+leftPadding(`intStatus = DSPI_GetStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `);`, 1) + `&#10;` +
+leftPadding(`intStatus &amp;= (kDSPI_TxCompleteFlag | kDSPI_EndOfQueueFlag | kDSPI_TxFifoUnderflowFlag | kDSPI_TxFifoFillRequestFlag);`, 1) + `&#10;` +
+leftPadding(`DSPI_ClearStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `, intStatus);`, 1) + `&#10;&#10;` +
+leftPadding(`/* Place your code here */`, 1) + `&#10;`
+               "/>
+            </options_expr>
+         </reference>
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+         <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="defines">
+            <fragment id="IRQ_definitions"  if_expr="$this.interrupt_rx_tx.isAvailable()" apply_to="$this.interrupt_rx_tx"/>
+            <fragment id="IRQ_definitions"  if_expr="$this.interrupt_rx.isAvailable()" apply_to="$this.interrupt_rx"/>
+            <fragment id="IRQ_definitions"  if_expr="$this.interrupt_tx.isAvailable()" apply_to="$this.interrupt_tx"/>
+         </section>            
+         <section target="init_function_postinit0">
+            <if expr="$this.interrupt_sel.getCValue() != ``">
+               <text>  /* Enable interrupts */</text><br/>
+               <expr>`  DSPI_EnableInterrupts(`+ toUpperCase($instance.getFnGroupPrefix() + $instance.getID() +`_PERIPHERAL, (`) + $this.interrupt_sel.getCValue() + `));`</expr><br/>
+            </if>
+            <fragment id="IRQn_set_priority_default" if_expr="$this.interrupt_rx_tx.isAvailable()" apply_to="$this.interrupt_rx_tx"/>
+            <fragment id="IRQn_enable_default" if_expr="$this.interrupt_rx_tx.isAvailable()" apply_to="$this.interrupt_rx_tx"/>
+            <fragment id="IRQn_set_priority_default" if_expr="$this.interrupt_rx.isAvailable()" apply_to="$this.interrupt_rx"/>
+            <fragment id="IRQn_enable_default" if_expr="$this.interrupt_rx.isAvailable()" apply_to="$this.interrupt_rx"/>
+            <fragment id="IRQn_set_priority_default" if_expr="$this.interrupt_tx.isAvailable()" apply_to="$this.interrupt_tx"/>
+            <fragment id="IRQn_enable_default" if_expr="$this.interrupt_tx.isAvailable()" apply_to="$this.interrupt_tx"/>
+         </section>
+      </code>
+      <quick_selections>
+         <quick_selection id="QS_IRQ_priority1" label="Default IRQ setting">
+            <description>Default IRQ setting.</description>
+            <set id="interrupt_sel.kDSPI_TxCompleteInterruptEnable">true</set>
+            <set id="interrupt_sel.kDSPI_EndOfQueueInterruptEnable">true</set>
+            <set id="interrupt_rx_tx.priority">0</set>
+            <set id="interrupt_rx.priority">0</set>
+            <set id="interrupt_tx.priority">0</set>
+         </quick_selection>
+         <default>QS_IRQ_priority1</default>
+      </quick_selections>
+   </config_set>
+   <config_set id="transferCfg" label="Transfer configuration" from_source="src/fsl_dspi.h">
+      <description>Transfer configuration</description>
+      <generated_types>
+      </generated_types>
+      <user_types>
+         <struct id="dspi_transfer_cfg" label="DSPI transfer structure" from="_dspi_transfer">
+            <bool id="halfDuplex" label="Half-duplex" available="$instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`"/>
+            <bool id="txDataBufferEnable" label="Tx data buffer enable" />
+            <info id="txData" label="The ID of the buffer" value="$instance.getFnGroupPrefix() + $instance.getID() + `_txBuffer`" enable="$parent.txDataBufferEnable.value()">
+               <description>The ID of data buffer to be transfered.</description>
+            </info>
+            <integer id="tx_dataSize" label="Tx Buffer size in bytes" type="uint16_t" min_expr="1" enable="$parent.txDataBufferEnable.getValue()" available="($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) &amp;&amp; ($parent.halfDuplex.getValue())">
+               <description>The size of the Tx buffer (number of bytes that are transfered).</description>
+            </integer>
+            <bool id="rxDataBufferEnable" label="Rx data buffer enable" />
+            <info id="rxData" label="The ID of the buffer" value="$instance.getFnGroupPrefix() + $instance.getID() + `_rxBuffer`" enable="$parent.rxDataBufferEnable.value()">
+               <description>The ID of data buffer to be transfered.</description>
+            </info>
+            <integer id="rx_dataSize" label="Rx Buffer size in bytes" type="uint16_t" min_expr="1" enable="$parent.rxDataBufferEnable.getValue()" available="($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) &amp;&amp; ($parent.halfDuplex.getValue())">
+               <description>The size of the Rx buffer (number of bytes that are transfered).</description>
+            </integer>
+            <integer id="dataSize" label="Buffer size in bytes" type="uint16_t" min_expr="1" available="!(($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) &amp;&amp; ($parent.halfDuplex.getValue()))">
+               <description>The size of the buffer (number of bytes that are transfered).</description>
+            </integer>
+         </struct>
+         <struct id="transfer_config" label="Transfer functions setting">
+            <info id="transfer_handle" label="Transfer handle ID" value="$instance.getFnGroupPrefix() + $instance.getID() + `_handle`"/>
+            <bool id="init_transfer" label="Initialization of the structures for the transfer functions"></bool>
+            <reference id="transfer_cfg" label="Setting" type="dspi_transfer_cfg" enable="$parent.init_transfer.getValue()"/>
+            <bool id="init_callback" label="Initialization of transfer callback"/>
+            <string id="callback_fcn" label="Transfer callback function name" enable="$parent.init_callback.getValue()">
+               <description>The callback function name that is used in the transfer initialization. User must provide the definition of this function. This item is optional for the transfer mode initialization.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="$this.getValue() != ``" level="error" description="The callback function shall be defined. If the callback function is not used uncheck the Initialization of transfer callback option."/> 
+                  <constraint when_expr="$parent.init_callback.getValue() &amp;&amp; ($this.getValue() != ``)" cond_expr="isCIdentifier($this.getValue())" level="error" description="The callback function name must be a valid identifier."/>
+               </validation>
+            </string>
+            <string id="user_data" label="User data pointer" enable="$parent.init_callback.getValue()">
+               <description>Definition of the user data pointer ID. When empty the NULL is provided in the initializaton function for the callback function.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="(($this.getValue() == ``) || isCIdentifier($this.getValue()))" level="error" description="The user data pointer is not valid C identifier."/>
+               </validation>
+            </string>
+         </struct>
+      </user_types>
+      <settings>
+         <reference id="transfer" label="Transfer functions setting" type="transfer_config"/>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="defines">
+            <!-- Transfer buffer size -->
+            <fragment id="define" if_expr="$this.transfer.init_transfer.getValue() &amp;&amp; !(($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) &amp;&amp; ($this.transfer.transfer_cfg.halfDuplex.getValue()))">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_BUFFER_SIZE`)"/>
+               <param id="value" expr="$this.transfer.transfer_cfg.dataSize.getCValue()"/> <!-- The getValue() function must be used to provide the symbol name (getCValue() return a string) -->
+               <param id="description">Transfer buffer size.</param>
+            </fragment>
+            <fragment id="define" if_expr="$this.transfer.init_transfer.getValue() &amp;&amp; (($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) &amp;&amp; ($this.transfer.transfer_cfg.halfDuplex.getValue()) &amp;&amp; $this.transfer.transfer_cfg.txDataBufferEnable.value())">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_TXBUFFER_SIZE`)"/>
+               <param id="value" expr="$this.transfer.transfer_cfg.tx_dataSize.getCValue()"/> <!-- The getValue() function must be used to provide the symbol name (getCValue() return a string) -->
+               <param id="description">Tx transfer buffer size.</param>
+            </fragment>
+            <fragment id="define" if_expr="$this.transfer.init_transfer.getValue() &amp;&amp; (($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) &amp;&amp; ($this.transfer.transfer_cfg.halfDuplex.getValue()) &amp;&amp; $this.transfer.transfer_cfg.rxDataBufferEnable.value())">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_RXBUFFER_SIZE`)"/>
+               <param id="value" expr="$this.transfer.transfer_cfg.rx_dataSize.getCValue()"/> <!-- The getValue() function must be used to provide the symbol name (getCValue() return a string) -->
+               <param id="description">Rx transfer buffer size.</param>
+            </fragment>
+         </section>
+         <section target="global_vars">
+            <!-- Transfer handle definition -->
+            <fragment id="global_var" apply_to="$this.transfer.transfer_handle" if_expr="$instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`">
+               <param id="name" expr="$this.getValue()" />
+               <param id="type">dspi_master_handle_t</param>
+            </fragment>
+            <fragment id="global_var" apply_to="$this.transfer.transfer_handle" if_expr="$instance.fsl_dspi.dspi_mode.value() == `kDSPI_Slave`">
+               <param id="name" expr="$this.getValue()" />
+               <param id="type">dspi_slave_handle_t</param>
+            </fragment>
+            <!-- Transfer buffer definition -->
+            <fragment id="global_var_array" apply_to="$this.transfer.transfer_cfg" if_expr="$this.transfer.init_transfer.getValue() &amp;&amp; $this.transfer.transfer_cfg.txDataBufferEnable.value()">
+               <param id="name" expr="$this.txData.getValue()" />
+               <param id="size" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + ((($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) &amp;&amp; ($this.halfDuplex.getValue())) ? `_TXBUFFER_SIZE` : `_BUFFER_SIZE`))"/>
+               <param id="type">uint8_t</param>
+            </fragment>
+            <fragment id="global_var_array" apply_to="$this.transfer.transfer_cfg" if_expr="$this.transfer.init_transfer.getValue() &amp;&amp; $this.transfer.transfer_cfg.rxDataBufferEnable.value()">
+               <param id="name" expr="$this.rxData.getValue()" />
+               <param id="size" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + ((($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) &amp;&amp; ($this.halfDuplex.getValue()))? `_RXBUFFER_SIZE` : `_BUFFER_SIZE`))"/>
+               <param id="type">uint8_t</param>
+            </fragment>
+         </section>
+         <section target="global_vars_extern">
+            <!-- Transfer handle definition -->
+            <fragment id="extern_var" apply_to="$this.transfer.transfer_handle" if_expr="$instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`">
+               <param id="name" expr="$this.getValue()" />
+               <param id="type">dspi_master_handle_t</param>
+            </fragment>
+            <fragment id="extern_var" apply_to="$this.transfer.transfer_handle" if_expr="$instance.fsl_dspi.dspi_mode.value() == `kDSPI_Slave`">
+               <param id="name" expr="$this.getValue()" />
+               <param id="type">dspi_slave_handle_t</param>
+            </fragment>
+            <!-- Transfer buffer definition -->
+            <fragment id="extern_var_array" apply_to="$this.transfer.transfer_cfg" if_expr="$this.transfer.init_transfer.getValue() &amp;&amp; $this.transfer.transfer_cfg.txDataBufferEnable.value()">
+               <param id="name" expr="$this.txData.getValue()" />
+               <param id="size" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + ((($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) &amp;&amp; ($this.halfDuplex.getValue())) ? `_TXBUFFER_SIZE` : `_BUFFER_SIZE`))"/>
+               <param id="type">uint8_t</param>
+            </fragment>
+            <fragment id="extern_var_array" apply_to="$this.transfer.transfer_cfg" if_expr="$this.transfer.init_transfer.getValue() &amp;&amp; $this.transfer.transfer_cfg.rxDataBufferEnable.value()">
+               <param id="name" expr="$this.rxData.getValue()" />
+               <param id="size" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + ((($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) &amp;&amp; ($this.halfDuplex.getValue())) ? `_RXBUFFER_SIZE` : `_BUFFER_SIZE`))"/>
+               <param id="type">uint8_t</param>
+            </fragment>
+            <!-- user data pointer of the callback function -->
+            <fragment id="extern_var" if_expr="$this.transfer.init_callback.getValue() &amp;&amp; ($this.transfer.user_data.getValue() != ``)">
+               <param id="name" expr="$this.transfer.user_data.getValue()"/>
+               <param id="type" expr="`void *`"/>
+            </fragment>
+         </section>
+         <section target="callback_function_extern">
+            <!-- Transfer callback function declaration -->
+            <fragment id="extern_fcn_def" if_expr="$this.transfer.init_callback.getValue()">
+               <param id="name" expr="$this.transfer.callback_fcn.getValue()"/>
+               <param id="type">void</param>
+               <param id="params" expr="`SPI_Type *base, dspi_` + (($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) ? `master` : `slave`) +`_handle_t *handle, status_t status, void *userData`"></param>
+               <param id="description" expr="`DSPI transfer callback function for the ` + $instance.getID() +` component (init. function `+ $instance.getFnGroupName() + `)` "/>
+            </fragment>
+         </section>
+         <section target="init_function_body">
+            <expr> (($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) ? `  DSPI_MasterTransferCreateHandle(` : `  DSPI_SlaveTransferCreateHandle(`) + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, &amp;`) +  $this.transfer.transfer_handle.getValue() + `, ` + ($this.transfer.init_callback.getValue() ? $this.transfer.callback_fcn.getValue() : `NULL`   ) + `, ` + (($this.transfer.init_callback.getValue() &amp;&amp; ($this.transfer.user_data.getValue()!=``)) ? $this.transfer.user_data.getValue() : `NULL`)  + `);`</expr><br/>               
+         </section>         
+      </code>
+      <quick_selections>
+         <quick_selection id="QuickSelection1" label="Rx/Tx transfer enabled">
+            <set id="transfer.init_transfer">true</set>
+            <set id="transfer.transfer_cfg.rxDataBufferEnable">true</set>
+            <set id="transfer.transfer_cfg.txDataBufferEnable">true</set>
+            <set id="transfer.transfer_cfg.dataSize">10</set>
+            <set id="transfer.transfer_cfg.rx_dataSize">10</set>
+            <set id="transfer.transfer_cfg.tx_dataSize">10</set>
+         </quick_selection>
+         <default>QuickSelection1</default>
+      </quick_selections>
+   </config_set>
+   <config_set id="edmaCfg" label="eDMA configuration" from_source="src/fsl_dspi_edma.h">
+      <description>DSPI transfer mode configuration.</description>
+      <generated_types/>
+      <user_types>
+         <struct id="dspi_edma_t" label="DSPI eDMA handle type" public="true">
+            <bool id="enable_custom_name" label="Enable DSPI custom handle name">
+               <description>When this option is enabled a user custom name of the DMA handle is allowed to set in the settings below.
+               </description>
+            </bool>
+            <string id="handle_custom_name" label="Handle name" available="$parent.enable_custom_name.getValue()">
+               <description>The eDMA handle is used for processing of DMA requests. </description>
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="`The handle name: `+ $this.getCValue() +` is not valid C identifier!`"/>
+                  <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> x.getValue() == $this.getValue())" level="warning" description_expr="`The handle name ` + $this.getValue() + ` is a duplicate.`"/>  
+               </validation>
+            </string>
+            <info id="handle_default_name" label="Handle name" value="$parent.enable_custom_name.getValue() ? $parent.handle_custom_name.getValue() : 
+               $instance.getFnGroupPrefix() + $instance.getID() + 
+               `_eDMA_Handle`" available="!$parent.enable_custom_name.getValue()">
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description="The handle name is not valid C identifier!"/>
+                  <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> x.getValue() == $this.getValue())" level="warning" description_expr="`The handle name ` + $this.getValue() + ` is a duplicate.`"/>  
+			   </validation>
+            </info>
+            <variable id="dspi_eDMA_handle_id" value="$parent.enable_custom_name.getValue() ? $parent.handle_custom_name.getValue() : $parent.handle_default_name.getValue()" options="id_check"></variable>
+            <bool id="init_callback" label="Initialization of eDMA callback"></bool>
+            <string id="callback_fcn" label="Transfer callback function name" enable="$parent.init_callback.getValue()">
+               <description>The callback function name that is used in the eDMA initialization. User must provide the definition of this function. This item is optional for the eDMA mode initialization.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="$this.getValue() != ``" level="error" description="The callback function shall be defined. If the callback function is not used uncheck the Initialization of eDMA callback option."/> 
+                  <constraint when_expr="$parent.init_callback.getValue() &amp;&amp; ($this.getValue() != ``)" cond_expr="isCIdentifier($this.getValue())" level="error" description="The callback function name must be a valid identifier."/> 
+               </validation>
+            </string>
+            <string id="user_data" label="User data pointer" enable="$parent.init_callback.getValue()">
+               <description>Definition of the user data pointer ID. When empty the NULL is provided in the initializaton function for the callback function.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="(($this.getValue() == ``) || isCIdentifier($this.getValue()))" level="error" description="The user data pointer is not valid C identifier."/>
+               </validation>
+            </string>
+         </struct>
+      </user_types>
+      <settings>
+         <variable id="DSPI_HAS_SEPARATE_DMA_RX_TX_REQ" value="featureDefined(`FSL_FEATURE_DSPI_HAS_SEPARATE_DMA_RX_TX_REQ`) &amp;&amp; (getFeature(`FSL_FEATURE_DSPI_HAS_SEPARATE_DMA_RX_TX_REQ`) &gt; 0)"/>
+         <variable id="DSPI_HAS_GASKET" value="featureDefined(`FSL_FEATURE_DSPI_HAS_GASKET`) &amp;&amp; (getFeature(`FSL_FEATURE_DSPI_HAS_GASKET`) &gt; 0)"/>
+         <struct id="edma_channels" label="eDMA channels">
+            <bool id="enable_rx_edma_channel" label="Enable Rx eDMA channel"></bool>
+            <reference id="edma_rx_channel" label="Rx eDMA channel" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" options="dma_function=RX" enable="$parent.enable_rx_edma_channel.getValue()"  available="$parent.getParent().getSetting(`DSPI_HAS_SEPARATE_DMA_RX_TX_REQ`).getValue()"/>
+            <reference id="edma_rx_channel_NoSep" label="Rx eDMA channel" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" enable="$parent.enable_rx_edma_channel.getValue()" available="!$parent.getParent().getSetting(`DSPI_HAS_SEPARATE_DMA_RX_TX_REQ`).getValue()"/>
+            <bool id="enable_tx_edma_channel" label="Enable Tx eDMA channel"></bool>
+            <reference id="edma_intermediary_channel" label="Intermediary eDMA channel" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" options="dma_function=Intermediary;without_dmamux_init=true" enable="$parent.enable_tx_edma_channel.getValue()" available="!$parent.getParent().getSetting(`DSPI_HAS_GASKET`).getValue() &amp;&amp; $instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`"/>
+            <reference id="edma_tx_channel" label="Tx eDMA channel" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" options="dma_function=TX" enable="$parent.enable_tx_edma_channel.getValue()" available="$parent.getParent().getSetting(`DSPI_HAS_SEPARATE_DMA_RX_TX_REQ`).getValue()"/>
+            <reference id="edma_tx_channel_NoSep" label="Tx eDMA channel" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" options="dma_function=TX;without_dmamux_init=true" enable="$parent.enable_tx_edma_channel.getValue()" available="!$parent.getParent().getSetting(`DSPI_HAS_SEPARATE_DMA_RX_TX_REQ`).getValue()"/>
+         </struct>
+         <reference id="dspi_edma_handle" label="DSPI eDMA handle" type="dspi_edma_t"/>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_edma_peripheral"/>
+         </import>
+         <def fragment="DSPI_eDMA_transfer_handle_init" public="true">
+            <expr>leftPadding(`/* Create the DSPI eDMA handle */`,1)</expr><br/>
+            <expr>leftPadding(`DSPI_`,1) 
+               + ($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master` ? `Master` : `Slave`) + `TransferCreateHandleEDMA(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, `) 
+               + `&amp;` + $this.dspi_edma_handle.dspi_eDMA_handle_id.getValue() + `, ` +
+               + ( $this.dspi_edma_handle.init_callback.getValue() ? $this.dspi_edma_handle.callback_fcn.getValue() : `NULL`) + `, `  
+               + (($this.dspi_edma_handle.init_callback.getValue() &amp;&amp; ($this.dspi_edma_handle.user_data.getValue() != ``)) ? $this.dspi_edma_handle.user_data.getValue() : `NULL`) + `, `  
+               + ($this.edma_channels.enable_rx_edma_channel.getValue() ? (`&amp;` + ($this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue() ? $this.edma_channels.edma_rx_channel.eDMA_handle.getValue(): $this.edma_channels.edma_rx_channel_NoSep.eDMA_handle.getValue())) : `NULL`) + `, ` 
+               + ($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master` ? ((($this.edma_channels.enable_tx_edma_channel.getValue() &amp;&amp;  ! $this.DSPI_HAS_GASKET.getValue())? (`&amp;` + $this.edma_channels.edma_intermediary_channel.eDMA_handle.getValue()) : `NULL`) + `, ` ) : ``) +
+               + ($this.edma_channels.enable_tx_edma_channel.getValue() ? (`&amp;` + ($this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue() ? $this.edma_channels.edma_tx_channel.eDMA_handle.getValue(): $this.edma_channels.edma_tx_channel_NoSep.eDMA_handle.getValue())) : `NULL`)
+               + `);`</expr><br/>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">dspi</param>
+               <param id="filename">fsl_dspi_edma.h</param>
+            </fragment>
+         </section>
+         <section target="defines">            
+            <!-- RX -->
+            <fragment id="DMA_definitions" apply_to="$this.edma_channels.edma_rx_channel" if_expr="$this.edma_channels.enable_rx_edma_channel.getValue() &amp;&amp; $this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <fragment id="DMA_definitions" apply_to="$this.edma_channels.edma_rx_channel_NoSep" if_expr="$this.edma_channels.enable_rx_edma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <!-- Intermediary -->
+            <fragment id="DMA_definitions" apply_to="$this.edma_channels.edma_intermediary_channel" if_expr="$this.edma_channels.enable_tx_edma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_GASKET.getValue() &amp;&amp; $instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`"/>
+            <!-- TX -->
+            <fragment id="DMA_definitions" apply_to="$this.edma_channels.edma_tx_channel" if_expr="$this.edma_channels.enable_tx_edma_channel.getValue() &amp;&amp; $this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <fragment id="DMA_definitions" apply_to="$this.edma_channels.edma_tx_channel_NoSep" if_expr="$this.edma_channels.enable_tx_edma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+         </section> 
+         <section target="global_vars">
+            <!-- RX -->
+            <fragment id="DMA_handle_definition" apply_to="$this.edma_channels.edma_rx_channel" if_expr="$this.edma_channels.enable_rx_edma_channel.getValue() &amp;&amp; $this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <fragment id="DMA_handle_definition" apply_to="$this.edma_channels.edma_rx_channel_NoSep" if_expr="$this.edma_channels.enable_rx_edma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <!-- Intermediary -->
+            <fragment id="DMA_handle_definition" apply_to="$this.edma_channels.edma_intermediary_channel" if_expr="$this.edma_channels.enable_tx_edma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_GASKET.getValue() &amp;&amp; $instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`"/>
+            <!-- TX -->
+            <fragment id="DMA_handle_definition" apply_to="$this.edma_channels.edma_tx_channel" if_expr="$this.edma_channels.enable_tx_edma_channel.getValue() &amp;&amp; $this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <fragment id="DMA_handle_definition" apply_to="$this.edma_channels.edma_tx_channel_NoSep" if_expr="$this.edma_channels.enable_tx_edma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <!-- DSPI eDMA handle -->
+            <fragment id="global_var">
+               <param id="name" expr="$this.dspi_edma_handle.dspi_eDMA_handle_id.getValue()"/>
+               <param id="type" expr="`dspi_` + (($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) ? `master` : `slave`) + `_edma_handle_t`"/>
+            </fragment>
+         </section>   
+         <section target="global_vars_extern">
+            <!-- RX -->
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.edma_channels.edma_rx_channel" if_expr="$this.edma_channels.enable_rx_edma_channel.getValue()  &amp;&amp; $this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.edma_channels.edma_rx_channel_NoSep" if_expr="$this.edma_channels.enable_rx_edma_channel.getValue()  &amp;&amp; !$this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <!-- Intermediary -->
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.edma_channels.edma_intermediary_channel" if_expr="$this.edma_channels.enable_tx_edma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_GASKET.getValue() &amp;&amp; $instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`"/>
+            <!-- TX -->
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.edma_channels.edma_tx_channel" if_expr="$this.edma_channels.enable_tx_edma_channel.getValue() &amp;&amp; $this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.edma_channels.edma_tx_channel_NoSep" if_expr="$this.edma_channels.enable_tx_edma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <!-- user data pointer of the callback function -->
+            <fragment id="extern_var" if_expr="$this.dspi_edma_handle.init_callback.getValue() &amp;&amp; ($this.dspi_edma_handle.user_data.getValue() != ``)">
+               <param id="name" expr="$this.dspi_edma_handle.user_data.getValue()"/>
+               <param id="type" expr="`void *`"/>
+            </fragment>
+            <!-- DSPI eDMA handle -->
+            <fragment id="extern_var">
+               <param id="name" expr="$this.dspi_edma_handle.dspi_eDMA_handle_id.getValue()"/>
+               <param id="type" expr="`dspi_` + (($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) ? `master` : `slave`) + `_edma_handle_t`"/>
+            </fragment>
+         </section>   
+         <section target="init_function_body">
+            <!-- RX -->
+            <fragment id="DMAMUX_source_init" apply_to="$this.edma_channels.edma_rx_channel" if_expr="$this.edma_channels.enable_rx_edma_channel.getValue() &amp;&amp; $this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <fragment id="DMAMUX_source_init" apply_to="$this.edma_channels.edma_rx_channel_NoSep" if_expr="$this.edma_channels.enable_rx_edma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <!-- TX -->
+            <fragment id="DMAMUX_source_init" apply_to="$this.edma_channels.edma_tx_channel" if_expr="$this.edma_channels.enable_tx_edma_channel.getValue() &amp;&amp; $this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()" />
+            <!-- RX -->
+            <fragment id="DMA_handle_init" apply_to="$this.edma_channels.edma_rx_channel" if_expr="$this.edma_channels.enable_rx_edma_channel.getValue() &amp;&amp; $this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <fragment id="DMA_handle_init" apply_to="$this.edma_channels.edma_rx_channel_NoSep" if_expr="$this.edma_channels.enable_rx_edma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <!-- Intermediary -->
+            <fragment id="DMA_handle_init" apply_to="$this.edma_channels.edma_intermediary_channel" if_expr="$this.edma_channels.enable_tx_edma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_GASKET.getValue() &amp;&amp; $instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`"/>
+            <!-- TX -->
+            <fragment id="DMA_handle_init" apply_to="$this.edma_channels.edma_tx_channel" if_expr="$this.edma_channels.enable_tx_edma_channel.getValue()  &amp;&amp; $this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <fragment id="DMA_handle_init" apply_to="$this.edma_channels.edma_tx_channel" if_expr="$this.edma_channels.enable_tx_edma_channel.getValue()  &amp;&amp; !$this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <fragment id="DSPI_eDMA_transfer_handle_init"/>
+         </section> 
+         <section target="callback_function_extern">
+            <!-- Transfer callback function declaration -->
+            <fragment id="extern_fcn_def" if_expr="$this.dspi_edma_handle.init_callback.getValue() ">
+               <param id="name" expr="$this.dspi_edma_handle.callback_fcn.getValue()"/>
+               <param id="type">void</param>
+               <param id="params" expr="`SPI_Type *, dspi_` + (($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) ? `master` : `slave`) + `_edma_handle_t *, status_t, void *`"></param>
+               <param id="description" expr="`DSPI eDMA callback function for the ` + $instance.getID() +` component (init. function `+ $instance.getFnGroupName() + `)` "/>
+            </fragment>
+         </section>
+      </code>
+      <validation>
+         <constraint cond_expr="$this.edma_channels.enable_rx_edma_channel.getValue() || $this.edma_channels.enable_tx_edma_channel.getValue()" level="warning" description="Both Rx and Tx eDMA requests are disabled. The eDMA transfer handles will not be initialized."/>
+         <dependency resource_type="SWComponent" resource_id="platform.drivers.dspi_edma" level="Warning" description_expr="$components.system.#global.err_missing_driver.getValue().formatMessage(`fsl_dspi_edma`, ` (required for the eDMA mode)`)">
+            <feature name="enabled" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="SWComponent" resource_id="platform.drivers.dspi_edma" level="Warning" description_expr="$components.system.#global.err_driver_version.getValue().formatMessage(`fsl_dspi_edma`, ` (required for the eDMA mode)`)">
+            <feature name="version" evaluation="compatible">
+               <data type="Version" expr="`2.2.0`"/>
+            </feature>
+         </dependency>
+      </validation>
+      <quick_selections>
+         <quick_selection id="QuickSelection1" label="Rx / Tx transfer enabled">
+            <set id="edma_channels.enable_rx_edma_channel">true</set>
+            <set id="edma_channels.enable_tx_edma_channel">true</set>
+            <set id="edma_channels.edma_tx_channel.eDMAn">1</set>
+            <set id="edma_channels.edma_tx_channel_NoSep.eDMAn">1</set>
+            <set id="edma_channels.edma_intermediary_channel.eDMAn">2</set>
+         </quick_selection>
+         <default>QuickSelection1</default>
+      </quick_selections>
+   </config_set>
+   <!-- DMA mode -->
+   <config_set id="dmaCfg" label="DMA configuration" from_source="src/fsl_dspi_dma.h">
+      <description>DSPI transfer mode configuration.</description>
+      <generated_types/>             
+      <user_types>
+         <struct id="dspi_dma_t" label="DSPI DMA handle type" public="true">
+            <bool id="enable_custom_name" label="Enable DSPI custom handle name">
+               <description>When this option is enabled a user custom name of the DMA handle is allowed to set in the settings below.
+               </description>
+            </bool>
+            <string id="handle_custom_name" label="Handle name" available="$parent.enable_custom_name.getValue()">
+               <description>The DMA handle is used for processing of DMA requests. </description>
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="`The handle name: `+ $this.getCValue() +` is not valid C identifier!`"/>
+                  <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> x.getValue() == $this.getValue())" level="warning" description_expr="`The handle name ` + $this.getValue() + ` is a duplicate.`"/>  
+               </validation>
+            </string>
+            <info id="handle_default_name" label="Handle name" value="$parent.enable_custom_name.getValue() ? $parent.handle_custom_name.getValue() : 
+               $instance.getFnGroupPrefix() + $instance.getID() + 
+               `_DMA_Handle`" available="!$parent.enable_custom_name.getValue()">
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description="The handle name is not valid C identifier!"/>
+                  <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> x.getValue() == $this.getValue())" level="warning" description_expr="`The handle name ` + $this.getValue() + ` is a duplicate.`"/>  
+               </validation>
+            </info>
+            <variable id="dspi_DMA_handle_id" value="$parent.enable_custom_name.getValue() ? $parent.handle_custom_name.getValue() : $parent.handle_default_name.getValue()" options="id_check"></variable>
+            <bool id="init_callback" label="Initialization of DMA callback"></bool>
+            <string id="callback_fcn" label="Transfer callback function name" enable="$parent.init_callback.getValue()">
+               <description>The callback function name that is used in the DMA initialization. User must provide the definition of this function. This item is optional for the DMA mode initialization.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="$this.getValue() != ``" level="error" description="The callback function shall be defined. If the callback function is not used uncheck the Initialization of DMA callback option."/> 
+                  <constraint when_expr="$parent.init_callback.getValue() &amp;&amp; ($this.getValue() != ``)" cond_expr="isCIdentifier($this.getValue())" level="error" description="The callback function name must be a valid identifier."/> 
+               </validation>
+            </string>
+            <string id="user_data" label="User data pointer" enable="$parent.init_callback.getValue()">
+               <!--               <string id="user_data" label="User data pointer" enable="$parent.callback_fcn.getValue()!=``">-->
+               <description>Definition of the user data pointer ID. When empty the NULL is provided in the initializaton function for the callback function.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="(($this.getValue() == ``) || isCIdentifier($this.getValue()))" level="error" description="The user data pointer is not valid C identifier."/>
+               </validation>
+            </string>
+         </struct>
+      </user_types>
+      <settings>
+         <variable id="DSPI_HAS_SEPARATE_DMA_RX_TX_REQ" value="featureDefined(`FSL_FEATURE_DSPI_HAS_SEPARATE_DMA_RX_TX_REQ`) &amp;&amp; (getFeature(`FSL_FEATURE_DSPI_HAS_SEPARATE_DMA_RX_TX_REQ`) &gt; 0)"/>
+         <variable id="DSPI_HAS_GASKET" value="featureDefined(`FSL_FEATURE_DSPI_HAS_GASKET`) &amp;&amp; (getFeature(`FSL_FEATURE_DSPI_HAS_GASKET`) &gt; 0)"/>
+         <struct id="dma_channels" label="DMA channels">
+            <bool id="enable_rx_dma_channel" label="Enable Rx DMA channel"></bool>
+            <reference id="dma_rx_channel" label="Rx DMA channel" type="dma_channel_t" config_set_id="fsl_dma_peripheral" component_id="system" options="dma_function=RX" enable="$parent.enable_rx_dma_channel.getValue()"  available="$parent.getParent().getSetting(`DSPI_HAS_SEPARATE_DMA_RX_TX_REQ`).getValue()"/>
+            <reference id="dma_rx_channel_NoSep" label="Rx DMA channel" type="dma_channel_t" config_set_id="fsl_dma_peripheral" component_id="system" enable="$parent.enable_rx_dma_channel.getValue()" available="!$parent.getParent().getSetting(`DSPI_HAS_SEPARATE_DMA_RX_TX_REQ`).getValue()"/>
+            <bool id="enable_tx_dma_channel" label="Enable Tx DMA channel"></bool>
+            <reference id="dma_intermediary_channel" label="Intermediary DMA channel" type="dma_channel_t" config_set_id="fsl_dma_peripheral" component_id="system" options="dma_function=Intermediary;without_dmamux_init=true" enable="$parent.enable_tx_dma_channel.getValue()" available="!$parent.getParent().getSetting(`DSPI_HAS_GASKET`).getValue() &amp;&amp; $instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`"/>
+            <reference id="dma_tx_channel" label="Tx DMA channel" type="dma_channel_t" config_set_id="fsl_dma_peripheral" component_id="system" options="dma_function=TX" enable="$parent.enable_tx_dma_channel.getValue()" available="$parent.getParent().getSetting(`DSPI_HAS_SEPARATE_DMA_RX_TX_REQ`).getValue()"/>
+            <reference id="dma_tx_channel_NoSep" label="Tx DMA channel" type="dma_channel_t" config_set_id="fsl_dma_peripheral" component_id="system" options="dma_function=TX;without_dmamux_ini=true" enable="$parent.enable_tx_dma_channel.getValue()" available="!$parent.getParent().getSetting(`DSPI_HAS_SEPARATE_DMA_RX_TX_REQ`).getValue()"/>
+         </struct>
+         <reference id="dspi_dma_handle" label="DSPI DMA handle" type="dspi_dma_t"/>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_dma_peripheral"/>
+         </import>
+         <def fragment="DSPI_DMA_transfer_handle_init" public="true">
+            <expr>leftPadding(`/* Create the DSPI DMA handle */`,1)</expr><br/>
+            <expr>leftPadding(`DSPI_`,1) 
+               + ($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master` ? `Master` : `Slave`) + `TransferCreateHandleDMA(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, `) 
+               + `&amp;` + $this.dspi_dma_handle.dspi_DMA_handle_id.getValue() + `, ` +
+               + ( $this.dspi_dma_handle.init_callback.getValue() ? $this.dspi_dma_handle.callback_fcn.getValue() : `NULL`) + `, `  
+               + (($this.dspi_dma_handle.init_callback.getValue() &amp;&amp; ($this.dspi_dma_handle.user_data.getValue() != ``)) ? $this.dspi_dma_handle.user_data.getValue() : `NULL`) + `, `  
+               + ($this.dma_channels.enable_rx_dma_channel.getValue() ? (`&amp;` + ($this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue() ? $this.dma_channels.dma_rx_channel.DMA_handle.getValue(): $this.dma_channels.dma_rx_channel_NoSep.DMA_handle.getValue())) : `NULL`) + `, ` 
+               + ($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master` ? ((($this.dma_channels.enable_tx_dma_channel.getValue() &amp;&amp;  ! $this.DSPI_HAS_GASKET.getValue())? (`&amp;` + $this.dma_channels.dma_intermediary_channel.DMA_handle.getValue()) : `NULL`) + `, ` ) : ``) +
+               + ($this.dma_channels.enable_tx_dma_channel.getValue() ? (`&amp;` + ($this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue() ? $this.dma_channels.dma_tx_channel.DMA_handle.getValue(): $this.dma_channels.dma_tx_channel_NoSep.DMA_handle.getValue())) : `NULL`)
+               + `);`</expr><br/>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">dspi</param>
+               <param id="filename">fsl_dspi_dma.h</param>
+            </fragment>
+         </section>
+         <section target="defines">            
+            <!-- RX -->
+            <fragment id="DMA_definitions" apply_to="$this.dma_channels.dma_rx_channel" if_expr="$this.dma_channels.enable_rx_dma_channel.getValue() &amp;&amp; $this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <fragment id="DMA_definitions" apply_to="$this.dma_channels.dma_rx_channel_NoSep" if_expr="$this.dma_channels.enable_rx_dma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <!-- Intermediary -->
+            <fragment id="DMA_definitions" apply_to="$this.dma_channels.dma_intermediary_channel" if_expr="$this.dma_channels.enable_tx_dma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_GASKET.getValue() &amp;&amp; $instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`"/>
+            <!-- TX -->
+            <fragment id="DMA_definitions" apply_to="$this.dma_channels.dma_tx_channel" if_expr="$this.dma_channels.enable_tx_dma_channel.getValue() &amp;&amp; $this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <fragment id="DMA_definitions" apply_to="$this.dma_channels.dma_tx_channel_NoSep" if_expr="$this.dma_channels.enable_tx_dma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+         </section> 
+         <section target="global_vars">
+            <!-- RX -->
+            <fragment id="DMA_handle_definition" apply_to="$this.dma_channels.dma_rx_channel" if_expr="$this.dma_channels.enable_rx_dma_channel.getValue() &amp;&amp; $this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <fragment id="DMA_handle_definition" apply_to="$this.dma_channels.dma_rx_channel_NoSep" if_expr="$this.dma_channels.enable_rx_dma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <!-- Intermediary -->
+            <fragment id="DMA_handle_definition" apply_to="$this.dma_channels.dma_intermediary_channel" if_expr="$this.dma_channels.enable_tx_dma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_GASKET.getValue() &amp;&amp; $instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`"/>
+            <!-- TX -->
+            <fragment id="DMA_handle_definition" apply_to="$this.dma_channels.dma_tx_channel" if_expr="$this.dma_channels.enable_tx_dma_channel.getValue() &amp;&amp; $this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <fragment id="DMA_handle_definition" apply_to="$this.dma_channels.dma_tx_channel_NoSep" if_expr="$this.dma_channels.enable_tx_dma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <!-- DSPI DMA handle -->
+            <fragment id="global_var">
+               <param id="name" expr="$this.dspi_dma_handle.dspi_DMA_handle_id.getValue()"/>
+               <param id="type" expr="`dspi_` + (($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) ? `master` : `slave`) + `_dma_handle_t`"/>
+            </fragment>
+         </section>   
+         <section target="global_vars_extern">
+            <!-- RX -->
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.dma_channels.dma_rx_channel" if_expr="$this.dma_channels.enable_rx_dma_channel.getValue()  &amp;&amp; $this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.dma_channels.dma_rx_channel_NoSep" if_expr="$this.dma_channels.enable_rx_dma_channel.getValue()  &amp;&amp; !$this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <!-- Intermediary -->
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.dma_channels.dma_intermediary_channel" if_expr="$this.dma_channels.enable_tx_dma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_GASKET.getValue() &amp;&amp; $instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`"/>
+            <!-- TX -->
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.dma_channels.dma_tx_channel" if_expr="$this.dma_channels.enable_tx_dma_channel.getValue() &amp;&amp; $this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.dma_channels.dma_tx_channel_NoSep" if_expr="$this.dma_channels.enable_tx_dma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <!-- user data pointer of the callback function -->
+            <fragment id="extern_var" if_expr="$this.dspi_dma_handle.init_callback.getValue() &amp;&amp; ($this.dspi_dma_handle.user_data.getValue() != ``)">
+               <param id="name" expr="$this.dspi_dma_handle.user_data.getValue()"/>
+               <param id="type" expr="`void *`"/>
+            </fragment>
+            <!-- DSPI DMA handle -->
+            <fragment id="extern_var">
+               <param id="name" expr="$this.dspi_dma_handle.dspi_DMA_handle_id.getValue()"/>
+               <param id="type" expr="`dspi_` + (($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) ? `master` : `slave`) + `_dma_handle_t`"/>
+            </fragment>
+         </section>   
+         <section target="init_function_body">
+            <!-- RX -->
+            <fragment id="DMAMUX_source_init" apply_to="$this.dma_channels.dma_rx_channel" if_expr="$this.dma_channels.enable_rx_dma_channel.getValue() &amp;&amp; $this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <fragment id="DMAMUX_source_init" apply_to="$this.dma_channels.dma_rx_channel_NoSep" if_expr="$this.dma_channels.enable_rx_dma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <!-- TX -->
+            <fragment id="DMAMUX_source_init" apply_to="$this.dma_channels.dma_tx_channel" if_expr="$this.dma_channels.enable_tx_dma_channel.getValue() &amp;&amp; $this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()" />
+            <!-- RX -->
+            <fragment id="DMA_handle_init" apply_to="$this.dma_channels.dma_rx_channel" if_expr="$this.dma_channels.enable_rx_dma_channel.getValue() &amp;&amp; $this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <fragment id="DMA_handle_init" apply_to="$this.dma_channels.dma_rx_channel_NoSep" if_expr="$this.dma_channels.enable_rx_dma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <!-- Intermediary -->
+            <fragment id="DMA_handle_init" apply_to="$this.dma_channels.dma_intermediary_channel" if_expr="$this.dma_channels.enable_tx_dma_channel.getValue() &amp;&amp; !$this.DSPI_HAS_GASKET.getValue() &amp;&amp; $instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`"/>
+            <!-- TX -->
+            <fragment id="DMA_handle_init" apply_to="$this.dma_channels.dma_tx_channel" if_expr="$this.dma_channels.enable_tx_dma_channel.getValue()  &amp;&amp; $this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <fragment id="DMA_handle_init" apply_to="$this.dma_channels.dma_tx_channel" if_expr="$this.dma_channels.enable_tx_dma_channel.getValue()  &amp;&amp; !$this.DSPI_HAS_SEPARATE_DMA_RX_TX_REQ.getValue()"/>
+            <fragment id="DSPI_DMA_transfer_handle_init"/>
+         </section> 
+         <section target="callback_function_extern">
+            <!-- Transfer callback function declaration -->
+            <fragment id="extern_fcn_def" if_expr="$this.dspi_dma_handle.init_callback.getValue() ">
+               <param id="name" expr="$this.dspi_dma_handle.callback_fcn.getValue()"/>
+               <param id="type">void</param>
+               <param id="params" expr="`SPI_Type *,dspi_` + (($instance.fsl_dspi.dspi_mode.value() == `kDSPI_Master`) ? `master` : `slave`) + `_dma_handle_t *,status_t ,void *`"></param>
+               <param id="description" expr="`DSPI DMA callback function for the ` + $instance.getID() +` component (init. function `+ $instance.getFnGroupName() + `)` "/>
+            </fragment>
+         </section>
+      </code>
+      <validation>
+         <constraint cond_expr="$this.dma_channels.enable_rx_dma_channel.getValue() || $this.dma_channels.enable_tx_dma_channel.getValue()" level="warning" description="Both Rx and Tx DMA requests are disabled. The DMA transfer handles will not be initialized."/>
+         <dependency resource_type="SWComponent" resource_id="platform.drivers.dspi_dma" level="Warning" description_expr="$components.system.#global.err_missing_driver.getValue().formatMessage(`fsl_dspi_dma`, ` (required for the DMA mode)`)">
+            <feature name="enabled" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="SWComponent" resource_id="platform.drivers.dspi_dma" level="Warning" description_expr="$components.system.#global.err_driver_version.getValue().formatMessage(`fsl_dspi_dma`, ` (required for the DMA mode)`)">
+            <feature name="version" evaluation="compatible">
+               <data type="Version" expr="`2.2.0`"/>
+            </feature>
+         </dependency>
+      </validation>
+      <quick_selections>
+         <quick_selection id="QuickSelection1" label="Rx / Tx transfer enabled">
+            <set id="dma_channels.enable_rx_dma_channel">true</set>
+            <set id="dma_channels.enable_tx_dma_channel">true</set>
+            <set id="dma_channels.dma_tx_channel.DMAn">1</set>
+            <set id="dma_channels.dma_tx_channel_NoSep.DMAn">1</set>
+            <set id="dma_channels.dma_intermediary_channel.DMAn">2</set>
+         </quick_selection>
+         <default>QuickSelection1</default>
+      </quick_selections>
+   </config_set> 
+</component:config_component>

@@ -1,0 +1,979 @@
+#include "usb_device_config.h"
+#include "usb.h"
+#include "usb_device.h"
+
+#include "usb_device_class.h"${<code>
+if (hidCount) {
+</code>}$
+#include "usb_device_hid.h"
+${<code>
+}
+</code>}$${<code>
+if (dfuCount) {
+</code>}$
+#include "usb_device_dfu.h"${<code>
+}
+if (audioCount || audio20Count) {
+</code>}$
+#include "usb_device_audio.h"${<code>
+}
+</code>}$${<code>
+interfaces.forEach(function(interface) {
+    switch (interface.interfaceClass) {
+        case CONST.USB_CLASS_APPLICATION_SPECIFIC:
+</code>}$
+#include "usb_device_${interface.idLowerSnakeCase}$_app.h"${<code>
+        break;
+    }
+});
+</code>}$
+#include "usb_device_descriptor.h"
+
+#include "usb_device_composite.h"
+
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+
+/* Define endpoint setting type */
+typedef struct _usb_endpoint_setting
+{
+    uint16_t size;
+    uint8_t interval;
+} usb_endpoint_setting_t;
+ 
+ /*!
+* @brief Gets setting (interval and max packet size) of specific endpoint based on speed a alternate setting
+*
+* @param uint8_t Speed.
+* @param uint8_t Alternate setting.
+* @param uint8_t Endpoint address.
+* @retval usb_endpoint_setting_t Endpoint setting.
+*/
+static usb_endpoint_setting_t getEndpointSetting (uint8_t speed, uint8_t alternateSetting, uint8_t address);
+
+/*******************************************************************************
+ * Variables
+ ******************************************************************************/
+${<code>
+interfaces.forEach(function(interface) {
+    switch (interface.interfaceClass) {
+        case CONST.USB_CLASS_APPLICATION_SPECIFIC:
+</code>}$
+extern uint8_t g_${interface.idCamelCase}$detachRequest;${<code>
+        break;
+    }
+});
+</code>}$${<code>
+var nrToHexStr = function(nr) {
+    return "0x" + ("0" + nr.toString(16).toUpperCase()).substr(-2);
+};
+var getHidReportCases = "";
+var configDescriptorLength = "USB_DESCRIPTOR_LENGTH_CONFIGURE";
+var haveAssociableInterface = false;
+interfaces.forEach(function(interface) {
+    if (isAssociableInterface(interface, interfaces)) {
+        haveAssociableInterface = true;
+        configDescriptorLength += " + USB_IAD_DESC_SIZE";
+    }
+    interface.endpointsSettings.forEach(function (setting) { 
+        if (interface.interfaceClass == CONST.USB_CLASS_AUDIO) { // audio specific length of endpoints and class specific descriptors
+            if (interface.interfaceProtocol == CONST.AUDIO_PROTOCOL_IPV20){
+                // Audio 2.0
+                configDescriptorLength += " + USB_DESCRIPTOR_LENGTH_INTERFACE"; 
+                if (setting.audio20StreamSpecificSettings) {
+                    configDescriptorLength += " + USB_AUDIO_STREAMING_INTERFACE_DESC_SIZE";
+                    configDescriptorLength += " + USB_AUDIO_STREAMING_FORMAT_DESC_SIZE";
+                }
+                setting.endpoints.forEach(function(endpoint) {
+                    configDescriptorLength += " + USB_DESCRIPTOR_LENGTH_ENDPOINT";
+                    if (endpoint.cs_as_data_2_0_available) {
+                        configDescriptorLength += " + USB_AUDIO_STREAMING_ENDPOINT_DESC_SIZE";
+                    }
+                });                
+            } else {
+                // Audio 1.0
+                configDescriptorLength += " + USB_DESCRIPTOR_LENGTH_INTERFACE";
+                if (setting.audioStreamSpecificSettings) {
+                    configDescriptorLength += " + USB_AUDIO_STREAMING_INTERFACE_DESC_SIZE";
+                    configDescriptorLength += " + USB_" + interface.idSnakeCase + "_" + setting.idSnakeCase + "_FORMAT_DESC_SIZE";
+                }
+                setting.endpoints.forEach(function(endpoint) {
+                    configDescriptorLength += " + USB_ENDPOINT_AUDIO_DESCRIPTOR_LENGTH";
+                    if (endpoint.cs_as_data_available) {
+                        configDescriptorLength += " + USB_AUDIO_STREAMING_ENDPOINT_DESC_SIZE";
+                    }
+                });
+            }
+        } else {       
+            configDescriptorLength += " + USB_DESCRIPTOR_LENGTH_INTERFACE";
+            setting.endpoints.forEach(function(endpoint) {
+                configDescriptorLength += " + USB_DESCRIPTOR_LENGTH_ENDPOINT";
+            });
+        }   
+    // audio units length
+    if (interface.audioUnits != null)
+        configDescriptorLength += " + " + interface.audioUnits.getAudioControlDescriptorLength();
+    });
+    switch (interface.interfaceClass) {
+        case CONST.USB_CLASS_APPLICATION_SPECIFIC:
+                configDescriptorLength +=  " + USB_DESCRIPTOR_LENGTH_DFU_FUNCTINAL";
+            break;
+        case CONST.USB_CLASS_CIC:
+            configDescriptorLength +=  " + USB_DESCRIPTOR_LENGTH_CDC_HEADER_FUNC + USB_DESCRIPTOR_LENGTH_CDC_CALL_MANAG + USB_DESCRIPTOR_LENGTH_CDC_ABSTRACT + USB_DESCRIPTOR_LENGTH_"
+                + interface.idSnakeCase + "_UNION_FUNC";
+            break;
+        case CONST.USB_CLASS_HID:
+            getHidReportCases += "    case USB_"
+                + interface.idSnakeCase + "_INDEX:\n\        hidReportDescriptor->buffer = g_UsbDevice"
+                + interface.idCamelCase + "ReportDescriptor;\n\        hidReportDescriptor->length = USB_DESCRIPTOR_LENGTH_"
+                + interface.idSnakeCase + "_REPORT;\n\        break;\n";
+            configDescriptorLength +=  " + USB_DESCRIPTOR_LENGTH_HID";
+            break;
+    };
+    
+    var interfaceSettings = "";
+    // Class specific item of the interface settings (usb_device_interface_struct_t)
+    if ((interface.interfaceClass == CONST.USB_CLASS_AUDIO) && (interface.interfaceSubClass == CONST.AUDIO_SUBCLASS_AUDIOCONTROL)) {
+        classSpecificStr = "&" + interface.audioUnits.getAudioControlEntityId(interface.idCamelCase); 
+    } else {
+        classSpecificStr = "NULL";
+    }
+    interface.endpointsSettings.forEach(function (setting, index) {
+        if (setting.endpoints.length > 0) {
+</code>}$
+usb_device_endpoint_struct_t g_UsbDevice${interface.idCamelCase}$${setting.idCamelCase}$Endpoints[USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_ENDPOINT_COUNT] = {${<code>
+            setting.endpoints.forEach(function(endpoint) {
+</code>}$
+    {
+        USB_${endpoint.idSnakeCase}$ | (USB_${endpoint.directionSnakeCase}$ << USB_DESCRIPTOR_ENDPOINT_ADDRESS_DIRECTION_SHIFT),
+        USB_ENDPOINT_${endpoint.typeSnakeCase}$,
+        FS_${endpoint.idSnakeCase}$_PACKET_SIZE,
+        FS_${endpoint.idSnakeCase}$_INTERVAL,
+    },${<code>
+            });</code>}$
+};
+${<code>
+            interfaceSettings += "    {\n\
+        USB_" + interface.idSnakeCase + "_" + setting.idSnakeCase + "_INDEX, /* The alternate setting of the interface */\n\
+        {\n\
+            USB_" + interface.idSnakeCase + "_" + setting.idSnakeCase + "_ENDPOINT_COUNT, /* Endpoints count */\n\
+            g_UsbDevice" + interface.idCamelCase + setting.idCamelCase + "Endpoints, /* Endpoints handle */\n\
+        },\n\
+        " + classSpecificStr + ",\n\
+    },\n";
+        } else {
+            interfaceSettings += "    {\n\
+        USB_" + interface.idSnakeCase + "_" + setting.idSnakeCase + "_INDEX, /* The alternate setting of the interface */\n\
+        {\n\
+            0U, /* Endpoints count */\n\
+            NULL, /* Endpoints handle */\n\
+        },\n\
+        " + classSpecificStr + ",\n\
+    },\n";
+        }
+    });
+    if ((interface.interfaceClass == CONST.USB_CLASS_AUDIO) && (interface.interfaceSubClass == CONST.AUDIO_SUBCLASS_AUDIOCONTROL)) {
+        var audioEntityInitStr = interface.audioUnits.getAudioControlEntityDefinition("", interface.idCamelCase);
+</code>}$
+/* Audio control entity struct */
+${audioEntityInitStr}$
+${<code>
+    }
+</code>}$
+usb_device_interface_struct_t g_UsbDevice${interface.idCamelCase}$Interface[] = {
+${interfaceSettings}$};
+${<code>
+});
+interfaces.forEach(function(interface) {
+    if (!isSubordinateInterface(interface, interfaces)) {
+</code>}$
+usb_device_interfaces_struct_t g_UsbDevice${interface.idCamelCase}$Interfaces[USB_${interface.idSnakeCase}$_INTERFACE_COUNT] = {
+    {
+        USB_${interface.idSnakeCase}$_CLASS,
+        USB_${interface.idSnakeCase}$_SUBCLASS,
+        USB_${interface.idSnakeCase}$_PROTOCOL,
+        USB_${interface.idSnakeCase}$_INDEX,
+        g_UsbDevice${interface.idCamelCase}$Interface,  /* Interfaces handle */
+        sizeof(g_UsbDevice${interface.idCamelCase}$Interface) / sizeof(usb_device_interface_struct_t),
+    },${<code>
+    interface.dataInterfaces.forEach(function(dataInterface) {
+</code>}$
+    {
+        USB_${dataInterface.idSnakeCase}$_CLASS,
+        USB_${dataInterface.idSnakeCase}$_SUBCLASS,
+        USB_${dataInterface.idSnakeCase}$_PROTOCOL,
+        USB_${dataInterface.idSnakeCase}$_INDEX,
+        g_UsbDevice${dataInterface.idCamelCase}$Interface,  /* Interfaces handle */
+        sizeof(g_UsbDevice${dataInterface.idCamelCase}$Interface) / sizeof(usb_device_interface_struct_t),
+    },${<code>
+    });
+</code>}$
+};
+
+usb_device_interface_list_t g_UsbDevice${interface.idCamelCase}$InterfaceList[USB_DEVICE_CONFIGURATION_COUNT] = {
+    {
+        USB_${interface.idSnakeCase}$_INTERFACE_COUNT,
+        g_UsbDevice${interface.idCamelCase}$Interfaces, /* The interfaces handle */
+    },
+};
+
+usb_device_class_struct_t g_UsbDevice${interface.idCamelCase}$Config = {
+    g_UsbDevice${interface.idCamelCase}$InterfaceList,
+    kUSB_DeviceClassType${interface.deviceClassCamelCase}$,
+    USB_DEVICE_CONFIGURATION_COUNT,
+};
+${<code>
+    }
+});
+</code>}$
+USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
+uint8_t g_UsbDeviceDescriptor[] = {
+    USB_DESCRIPTOR_LENGTH_DEVICE, /* Size of this descriptor in bytes */
+    USB_DESCRIPTOR_TYPE_DEVICE,   /* DEVICE Descriptor Type */
+    USB_SHORT_GET_LOW(USB_DEVICE_SPECIFIC_BCD_VERSION),
+    USB_SHORT_GET_HIGH(USB_DEVICE_SPECIFIC_BCD_VERSION), /* USB Specification Release Number in
+                                                     Binary-Coded Decimal (i.e., 2.10 is 210H). */
+    USB_DEVICE_CLASS,                                    /* Class code (assigned by the USB-IF). */
+    USB_DEVICE_SUBCLASS,                                 /* Subclass code (assigned by the USB-IF). */
+    USB_DEVICE_PROTOCOL,                                 /* Protocol code (assigned by the USB-IF). */
+    USB_CONTROL_MAX_PACKET_SIZE,                         /* Maximum packet size for endpoint zero
+                                                     (only 8, 16, 32, or 64 are valid) */
+
+    ${nrToHexStr(vendorIdLower)}$U, ${nrToHexStr(vendorIdUpper)}$U,                                        /* Vendor ID (assigned by the USB-IF) */
+    ${nrToHexStr(productIdLower)}$U, ${nrToHexStr(productIdUpper)}$U,                                        /* Product ID (assigned by the manufacturer) */
+    USB_SHORT_GET_LOW(USB_DEVICE_DEMO_BCD_VERSION),
+    USB_SHORT_GET_HIGH(USB_DEVICE_DEMO_BCD_VERSION), /* Device release number in binary-coded decimal */
+    0x01U,                                           /* Index of string descriptor describing manufacturer */
+    0x02U,                                           /* Index of string descriptor describing product */
+    0x00U,                                           /* Index of string descriptor describing the
+                                                        device\'s serial number */
+    USB_DEVICE_CONFIGURATION_COUNT,                  /* Number of possible configurations */
+};
+${<code>
+interfaces.forEach(function(interface) {
+    switch (interface.interfaceClass) {
+        case CONST.USB_CLASS_APPLICATION_SPECIFIC:
+            if (interface.interfaceProtocol == CONST.APP_SPEC_PROTOCOL_DFU_APP)
+            {
+</code>}$
+USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
+uint8_t g_UsbDeviceDescriptorDfu[] = {
+    USB_DESCRIPTOR_LENGTH_DEVICE, /* Size of this descriptor in bytes */
+    USB_DESCRIPTOR_TYPE_DEVICE,   /* DEVICE Descriptor Type */
+    USB_SHORT_GET_LOW(USB_DEVICE_SPECIFIC_BCD_VERSION),
+    USB_SHORT_GET_HIGH(USB_DEVICE_SPECIFIC_BCD_VERSION), /* USB Specification Release Number in
+                                                     Binary-Coded Decimal (i.e., 2.10 is 210H). */
+    USB_DEVICE_CLASS,                                    /* Class code (assigned by the USB-IF). */
+    USB_DEVICE_SUBCLASS,                                 /* Subclass code (assigned by the USB-IF). */
+    USB_DEVICE_PROTOCOL,                                 /* Protocol code (assigned by the USB-IF). */
+    USB_CONTROL_MAX_PACKET_SIZE,                         /* Maximum packet size for endpoint zero
+                                                     (only 8, 16, 32, or 64 are valid) */
+    ${nrToHexStr(vendorIdLower)}$U, ${nrToHexStr(vendorIdUpper)}$U,                                        /* Vendor ID (assigned by the USB-IF) */
+    ${nrToHexStr(interface.dfuModePid & 0xFF)}$U, ${nrToHexStr((interface.dfuModePid >>> 8) & 0xFF)}$U,                                        /* Product ID (assigned by the manufacturer) */
+    USB_SHORT_GET_LOW(USB_DEVICE_DEMO_BCD_VERSION),                                        
+    USB_SHORT_GET_HIGH(USB_DEVICE_DEMO_BCD_VERSION), /* Device release number in binary-coded decimal */
+    0x01U,                                           /* Index of string descriptor describing manufacturer */
+    0x02U,                                           /* Index of string descriptor describing product */
+    0x00U,                                           /* Index of string descriptor describing the
+                                                        device\'s serial number */
+    USB_DEVICE_CONFIGURATION_COUNT,                  /* Number of possible configurations */
+};${<code>
+            }
+            break;
+    }
+});
+interfaces.forEach(function(interface) {
+    if (interface.interfaceClass == CONST.USB_CLASS_HID) {
+</code>}$
+USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
+uint8_t g_UsbDevice${interface.idCamelCase}$ReportDescriptor[] = {${<code>
+        var report = interface.reportDescriptor;
+        for (var i = 0; i < report.length; i++) {
+</code>}$
+    ${report[i]}$ ${<code>
+        }
+</code>}$
+};
+${<code>
+    }
+});
+if (hidCount) {
+</code>}$
+/* Get hid descriptor request */
+usb_status_t USB_DeviceGetHidDescriptor(usb_device_handle handle, usb_device_get_hid_descriptor_struct_t *hidDescriptor)
+{
+    return kStatus_USB_InvalidRequest;
+}
+
+/* Get hid physical descriptor request */
+usb_status_t USB_DeviceGetHidPhysicalDescriptor(usb_device_handle handle,
+                                                usb_device_get_hid_physical_descriptor_struct_t *hidPhysicalDescriptor)
+{
+    return kStatus_USB_InvalidRequest;
+}
+
+/* Get hid report descriptor request */
+usb_status_t USB_DeviceGetHidReportDescriptor(usb_device_handle handle,
+                                              usb_device_get_hid_report_descriptor_struct_t *hidReportDescriptor)
+{
+    switch(hidReportDescriptor->interfaceNumber){
+${getHidReportCases}$    default:
+        return kStatus_USB_InvalidRequest;
+    }
+    return kStatus_USB_Success;
+}${<code>
+}
+</code>}$
+
+#if (defined(USB_DEVICE_CONFIG_CV_TEST) && (USB_DEVICE_CONFIG_CV_TEST > 0U))
+USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
+uint8_t g_UsbDeviceQualifierDescriptor[] = {
+    USB_DESCRIPTOR_LENGTH_DEVICE_QUALITIER, /* Size of this descriptor in bytes */
+    USB_DESCRIPTOR_TYPE_DEVICE_QUALITIER,   /* DEVICE Descriptor Type */
+    USB_SHORT_GET_LOW(USB_DEVICE_SPECIFIC_BCD_VERSION),
+    USB_SHORT_GET_HIGH(USB_DEVICE_SPECIFIC_BCD_VERSION), /* USB Specification Release Number in
+                                                            Binary-Coded Decimal (i.e., 2.10 is 210H). */
+    USB_DEVICE_CLASS,                                    /* Class code (assigned by the USB-IF). */
+    USB_DEVICE_SUBCLASS,                                 /* Subclass code (assigned by the USB-IF). */
+    USB_DEVICE_PROTOCOL,                                 /* Protocol code (assigned by the USB-IF). */
+    USB_CONTROL_MAX_PACKET_SIZE,                         /* Maximum packet size for endpoint zero
+                                                            (only 8, 16, 32, or 64 are valid) */
+    0x00U,                                               /* Number of Other-speed Configurations */
+    0x00U,                                               /* Reserved for future use, must be zero */
+};
+#endif
+
+USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
+uint8_t g_UsbDeviceConfigurationDescriptor[] = {
+    USB_DESCRIPTOR_LENGTH_CONFIGURE, /* Size of this descriptor in bytes */
+    USB_DESCRIPTOR_TYPE_CONFIGURE,   /* CONFIGURATION Descriptor Type */
+    USB_SHORT_GET_LOW(${configDescriptorLength}$),
+    USB_SHORT_GET_HIGH(${configDescriptorLength}$), /* Total length of data returned for this configuration. */
+    USB_COMPOSITE_INTERFACE_COUNT,                 /* Number of interfaces supported by this configuration */
+    USB_COMPOSITE_CONFIGURATION_INDEX,              /* Value to use as an argument to the
+                                                      SetConfiguration() request to select this configuration */
+    0x00U,                                      /* Index of string descriptor describing this configuration */
+    (USB_DESCRIPTOR_CONFIGURE_ATTRIBUTE_D7_MASK) |
+        (USB_DEVICE_CONFIG_SELF_POWER << USB_DESCRIPTOR_CONFIGURE_ATTRIBUTE_SELF_POWERED_SHIFT) |
+        (USB_DEVICE_CONFIG_REMOTE_WAKEUP << USB_DESCRIPTOR_CONFIGURE_ATTRIBUTE_REMOTE_WAKEUP_SHIFT),
+    /* Configuration characteristics
+         D7: Reserved (set to one)
+         D6: Self-powered
+         D5: Remote Wakeup
+         D4...0: Reserved (reset to zero)
+    */
+    USB_DEVICE_MAX_POWER/2,          /* Maximum power consumption of the USB
+                                      * device from the bus in this specific
+                                      * configuration when the device is fully
+                                      * operational. Expressed in 2 mA units
+                                      *  (i.e., 50 = 100 mA).
+                                      */
+${<code>;
+interfaces.forEach(function(interface) {
+    if (isAssociableInterface(interface, interfaces)) {
+</code>}$
+    USB_IAD_DESC_SIZE, /* Size of this descriptor in bytes */
+    USB_DESCRIPTOR_TYPE_INTERFACE_ASSOCIATION, /* INTERFACE_ASSOCIATION Descriptor Type */
+    USB_${interface.idSnakeCase}$_INDEX, /* The first interface number associated with this function */
+    ${1 + interface.dataInterfaceCount}$U, /* The number of contiguous interfaces associated with this function */
+    USB_${interface.idSnakeCase}$_CLASS,            /* Class code (assigned by the USB-IF). */
+${<code>; 
+        if ((interface.interfaceClass == CONST.USB_CLASS_AUDIO) && (interface.interfaceSubClass == CONST.AUDIO_SUBCLASS_AUDIOCONTROL) && (interface.interfaceProtocol == CONST.AUDIO_PROTOCOL_IPV20)) {
+</code>}$
+    USB_FUNCTION_SUBCLASS_UNDEFINED,
+${<code>;   
+        }
+        else{
+</code>}$
+    USB_${interface.idSnakeCase}$_SUBCLASS,         /* Subclass code (assigned by the USB-IF). */
+${<code>; 
+        }
+</code>}$ 
+    USB_${interface.idSnakeCase}$_PROTOCOL,         /* Protocol code (assigned by the USB). */
+    2U, /* Function string descriptor index */
+${<code>
+    }
+    interface.endpointsSettings.forEach(function (setting, index) {
+</code>}$
+    USB_DESCRIPTOR_LENGTH_INTERFACE, /* Size of this descriptor in bytes */
+    USB_DESCRIPTOR_TYPE_INTERFACE,   /* INTERFACE Descriptor Type */
+    USB_${interface.idSnakeCase}$_INDEX,   /* Number of this interface. */
+    USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_INDEX,         /* Value used to select this alternate setting
+                                        for the interface identified in the prior field */
+    USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_ENDPOINT_COUNT,  /* Number of endpoints used by this
+                                       interface setting (excluding endpoint zero). */
+    USB_${interface.idSnakeCase}$_CLASS,            /* Class code (assigned by the USB-IF). */
+    USB_${interface.idSnakeCase}$_SUBCLASS,         /* Subclass code (assigned by the USB-IF). */
+    USB_${interface.idSnakeCase}$_PROTOCOL,         /* Protocol code (assigned by the USB). */
+    0U,                             /* Index of string descriptor describing this interface */
+${<code>
+        switch (interface.interfaceClass) {
+            case CONST.USB_CLASS_CIC:
+</code>}$
+    USB_DESCRIPTOR_LENGTH_CDC_HEADER_FUNC, /* Size of this descriptor in bytes */
+    USB_DESCRIPTOR_TYPE_CDC_CS_INTERFACE,  /* CS_INTERFACE Descriptor Type */
+    USB_CDC_HEADER_FUNC_DESC,
+    0x10U,
+    0x01U, /* USB Class Definitions for Communications the Communication specification version 1.10 */
+
+    USB_DESCRIPTOR_LENGTH_CDC_CALL_MANAG, /* Size of this descriptor in bytes */
+    USB_DESCRIPTOR_TYPE_CDC_CS_INTERFACE, /* CS_INTERFACE Descriptor Type */
+    USB_CDC_CALL_MANAGEMENT_FUNC_DESC,
+    0x01U, /*Bit 0: Whether device handle call management itself 1, Bit 1: Whether device can send/receive call
+             management information over a Data Class Interface 0 */${<code>
+                if (interface.dataInterfaces.length != 0) {</code>}$
+    USB_${interface.dataInterfaces[0].idSnakeCase}$_INDEX, /* Indicates multiplexed commands are handled via data interface */${<code>
+                } else {</code>}$
+    0x00U, /* Indicates multiplexed commands are handled via control interface */${<code>
+                }
+</code>}$
+
+    USB_DESCRIPTOR_LENGTH_CDC_ABSTRACT,   /* Size of this descriptor in bytes */
+    USB_DESCRIPTOR_TYPE_CDC_CS_INTERFACE, /* CS_INTERFACE Descriptor Type */
+    USB_CDC_ABSTRACT_CONTROL_FUNC_DESC,
+    0x06U, /* Bit 0: Whether device supports the request combination of Set_Comm_Feature, Clear_Comm_Feature, and
+             Get_Comm_Feature 0, Bit 1: Whether device supports the request combination of Set_Line_Coding,
+             Set_Control_Line_State, Get_Line_Coding, and the notification Serial_State 1, Bit 2: Whether device
+             supports the request Send_Break, Bit 3: Whether device supports the notification Network_Connection */
+
+    USB_DESCRIPTOR_LENGTH_${interface.idSnakeCase}$_UNION_FUNC, /* Size of this descriptor in bytes */
+    USB_DESCRIPTOR_TYPE_CDC_CS_INTERFACE, /* CS_INTERFACE Descriptor Type */
+    USB_CDC_UNION_FUNC_DESC,
+    USB_${interface.idSnakeCase}$_INDEX,        /* The interface number of the Communications or Data Class interface  */${<code>
+                interface.dataInterfaces.forEach(function(dataInterface) {	
+</code>}$
+    USB_${dataInterface.idSnakeCase}$_INDEX,        /* Interface number of subordinate interface in the Union  */
+${<code>
+                });
+                break;
+    case CONST.USB_CLASS_APPLICATION_SPECIFIC:
+</code>}$
+    USB_DESCRIPTOR_LENGTH_DFU_FUNCTINAL,    /* size of DFU functional descriptor in bytes */
+    USB_DESCRIPTOR_TYPE_DFU_FUNCTIONAL, /* DFU functional descriptor type */
+    (USB_${interface.idSnakeCase}$_BIT_WILL_DETACH << 3U) | (USB_${interface.idSnakeCase}$_BIT_MANIFESTATION_TOLERANT << 2U) | (USB_${interface.idSnakeCase}$_BIT_CAN_UPLOAD << 1U) |
+        USB_${interface.idSnakeCase}$_BIT_CAN_DNLOAD, /* DFU attributes */
+    USB_SHORT_GET_LOW(USB_${interface.idSnakeCase}$_DETACH_TIMEOUT),
+    USB_SHORT_GET_HIGH(USB_${interface.idSnakeCase}$_DETACH_TIMEOUT),                                  /* wDetachTimeout */
+    USB_SHORT_GET_LOW(USB_${interface.idSnakeCase}$_MAX_TRANSFER_SIZE), USB_SHORT_GET_HIGH(USB_${interface.idSnakeCase}$_MAX_TRANSFER_SIZE), /* Max transfer size */
+    USB_SHORT_GET_LOW(USB_DEVICE_DEMO_BCD_VERSION), USB_SHORT_GET_HIGH(USB_DEVICE_DEMO_BCD_VERSION), /* bcdDFUVersion */${<code>
+            break;
+            case CONST.USB_CLASS_HID:
+</code>}$
+    USB_DESCRIPTOR_LENGTH_HID,      /* Numeric expression that is the total size of the
+                                       HID descriptor. */
+    USB_DESCRIPTOR_TYPE_HID,        /* Constant name specifying type of HID
+                                       descriptor. */
+    0x00U, 0x01U,                   /* Numeric expression identifying the HID Class
+                                       Specification release. */
+    0x00U,                          /* Numeric expression identifying country code of
+                                       the localized hardware */
+    0x01U,                          /* Numeric expression specifying the number of
+                                       class descriptors(at least one report descriptor) */
+    USB_DESCRIPTOR_TYPE_HID_REPORT, /* Constant name identifying type of class descriptor. */
+    USB_SHORT_GET_LOW(USB_DESCRIPTOR_LENGTH_${interface.idSnakeCase}$_REPORT),
+    USB_SHORT_GET_HIGH(USB_DESCRIPTOR_LENGTH_${interface.idSnakeCase}$_REPORT),
+${<code>
+                break;
+			case CONST.USB_CLASS_AUDIO:	
+				if (interface.audioUnits != null) {
+</code>}$
+${interface.audioUnits.getAudioControlDescriptor("    ")}$
+${<code>
+				}
+				break;
+        }
+        /* Audio 2.0 stream interface - class specific descriptors */
+        if (setting.audio20StreamSpecificSettings) {
+</code>}$
+    /* Class specific Audio Streaming interface - header */
+    USB_AUDIO_STREAMING_INTERFACE_DESC_SIZE,
+    USB_DESCRIPTOR_TYPE_AUDIO_CS_INTERFACE,
+    USB_DESCRIPTOR_SUBTYPE_AUDIO_STREAMING_GENERAL,
+    USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_LINKED_TERMINAL,
+    USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_CONTROLS,
+    USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_FORMAT_TYPE,
+    USB_SHORT_GET_LOW(((uint32_t) USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_FORMAT) & 0xFFFFU), 
+    USB_SHORT_GET_HIGH(((uint32_t) USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_FORMAT) & 0xFFFFU), 
+    USB_SHORT_GET_LOW((((uint32_t) USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_FORMAT) >> 16U ) & 0xFFFFU),
+    USB_SHORT_GET_HIGH((((uint32_t) USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_FORMAT) >> 16U ) & 0xFFFFU),
+    USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_NUMBER_OF_CHANNEL,
+    USB_SHORT_GET_LOW(((uint32_t) USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_CHANNEL_CONFIG) & 0xFFFFU), 
+    USB_SHORT_GET_HIGH(((uint32_t) USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_CHANNEL_CONFIG) & 0xFFFFU), 
+    USB_SHORT_GET_LOW((((uint32_t) USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_CHANNEL_CONFIG) >> 16U ) & 0xFFFFU),
+    USB_SHORT_GET_HIGH((((uint32_t) USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_CHANNEL_CONFIG) >> 16U ) & 0xFFFFU),
+    USB_NO_STRING_DESCRIPTION,
+    
+    /* Class specific Audio Streaming interface - format */
+    USB_AUDIO_STREAMING_FORMAT_DESC_SIZE,
+    USB_DESCRIPTOR_TYPE_AUDIO_CS_INTERFACE,
+    USB_DESCRIPTOR_SUBTYPE_AUDIO_STREAMING_FORMAT_TYPE,
+    USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_FORMAT_TYPE,
+    USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_SUBSLOT_SIZE,
+    USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_BIT_RESOLUTION,
+${<code>
+        }
+        /* Audio 1.0 stream interface - class specific descriptors */
+        if (setting.audioStreamSpecificSettings) {
+</code>}$
+    /* Class specific Audio Streaming interface - header */
+    USB_AUDIO_STREAMING_INTERFACE_DESC_SIZE,
+    USB_DESCRIPTOR_TYPE_AUDIO_CS_INTERFACE,
+    USB_DESCRIPTOR_SUBTYPE_AUDIO_STREAMING_GENERAL,
+    USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_LINKED_TERMINAL,
+    USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_DELAY,  
+    USB_SHORT_GET_LOW(USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_FORMAT_TAG),
+    USB_SHORT_GET_HIGH(USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_FORMAT_TAG),
+    /* Class specific Audio Streaming interface - format */
+    USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_FORMAT_DESC_SIZE,
+    USB_DESCRIPTOR_TYPE_AUDIO_CS_INTERFACE,
+    USB_DESCRIPTOR_SUBTYPE_AUDIO_STREAMING_FORMAT_TYPE,
+    ${setting.bFormatType}$,
+    USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_NUMBER_OF_CHANNEL,
+    USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_SUBFRAME_SIZE,
+    USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_BIT_RESOLUTION,
+    USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_SAMPLE_FREQ_TYPE,${<code>
+            if (setting.bSamFreqType == 0) { // sample frequencies are defined by a range
+</code>}$
+    USB_LONG_GET_BYTE0(USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_LOWER_SAMPLE_FREQ),
+    USB_LONG_GET_BYTE1(USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_LOWER_SAMPLE_FREQ),
+    USB_LONG_GET_BYTE2(USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_LOWER_SAMPLE_FREQ),
+    USB_LONG_GET_BYTE0(USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_UPPER_SAMPLE_FREQ),
+    USB_LONG_GET_BYTE1(USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_UPPER_SAMPLE_FREQ),
+    USB_LONG_GET_BYTE2(USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_UPPER_SAMPLE_FREQ),${<code>
+            } else { // sample frequencies are defined by a list of values
+                setting.tSamFreqList.forEach(function(sampleFreqItem, index) {
+</code>}$
+    USB_LONG_GET_BYTE0(USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_SAMPLE_FREQ_${index}$),
+    USB_LONG_GET_BYTE1(USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_SAMPLE_FREQ_${index}$),
+    USB_LONG_GET_BYTE2(USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_SAMPLE_FREQ_${index}$),${<code>
+                });
+            }
+        } 
+        setting.endpoints.forEach(function(ep) {
+            if ((ep.classType == "kClassAudio_1_0") && ((ep.typeSnakeCase == "ISOCHRONOUS") || (ep.typeSnakeCase == "INTERRUPT"))) {  
+</code>}$
+    USB_ENDPOINT_AUDIO_DESCRIPTOR_LENGTH,       /* Size of this descriptor in bytes */${<code>
+            } else {
+</code>}$
+    USB_DESCRIPTOR_LENGTH_ENDPOINT,       /* Size of this descriptor in bytes */${<code>
+            }
+</code>}$
+    USB_DESCRIPTOR_TYPE_ENDPOINT,         /* ENDPOINT Descriptor Type */
+    USB_${ep.idSnakeCase}$ | (USB_${ep.directionSnakeCase}$ << USB_DESCRIPTOR_ENDPOINT_ADDRESS_DIRECTION_SHIFT),
+    /* The number of the endpoint on the USB device described by this descriptor. */${<code>
+            if (ep.typeSnakeCase == "ISOCHRONOUS") {
+</code>}$
+    USB_ENDPOINT_${ep.typeSnakeCase}$${ep.synchronization}$${ep.usage}$, /* This field describes the endpoint\'s attributes */${<code>
+            } else {
+</code>}$
+    USB_ENDPOINT_${ep.typeSnakeCase}$, /* This field describes the endpoint\'s attributes */${<code>
+            }
+</code>}$
+    USB_SHORT_GET_LOW(FS_${ep.idSnakeCase}$_PACKET_SIZE),
+    USB_SHORT_GET_HIGH(FS_${ep.idSnakeCase}$_PACKET_SIZE),
+    FS_${ep.idSnakeCase}$_INTERVAL, /* Interval for polling endpoint for data transfers. */${<code>
+			if ((ep.classType == "kClassAudio_1_0") && ((ep.typeSnakeCase == "ISOCHRONOUS") || (ep.typeSnakeCase == "INTERRUPT"))) { 
+</code>}$
+	USB_${ep.idSnakeCase}$_REFRESH,
+	USB_${ep.idSnakeCase}$_SYNCH_ADDRESS,${<code>
+            }
+            /* Class-Specific Audio Streaming Isochronous Audio Data Endpoint Descriptor */
+            if (ep.cs_as_data_available) {
+</code>}$
+    USB_AUDIO_STREAMING_ENDPOINT_DESC_SIZE,
+    USB_DESCRIPTOR_TYPE_AUDIO_AS_DATA_ENDPOINT,
+    USB_DESCRIPTOR_SUBTYPE_AS_EP_GENERAL_SUBTYPE,
+    USB_${ep.idSnakeCase}$_AS_DATA_ENDPOINT_ATTRIBUTES,
+    USB_${ep.idSnakeCase}$_AS_DATA_ENDPOINT_DELAY_UNITS,
+    USB_SHORT_GET_LOW(USB_${ep.idSnakeCase}$_AS_DATA_ENDPOINT_DELAY),
+    USB_SHORT_GET_HIGH(USB_${ep.idSnakeCase}$_AS_DATA_ENDPOINT_DELAY),
+${<code>
+            }  
+            /* Class-Specific Audio 2.0 Streaming Isochronous Audio Data Endpoint Descriptor */
+            if (ep.cs_as_data_2_0_available) {
+</code>}$
+    USB_AUDIO_STREAMING_ENDPOINT_DESC_SIZE,
+    USB_DESCRIPTOR_TYPE_AUDIO_AS_DATA_ENDPOINT,
+    USB_DESCRIPTOR_SUBTYPE_AS_EP_GENERAL_SUBTYPE,
+    USB_${ep.idSnakeCase}$_AS_DATA_ENDPOINT_ATTRIBUTES,
+    USB_${ep.idSnakeCase}$_AS_DATA_ENDPOINT_CONTROLS ,
+    USB_${ep.idSnakeCase}$_AS_DATA_ENDPOINT_DELAY_UNITS,
+    USB_SHORT_GET_LOW(USB_${ep.idSnakeCase}$_AS_DATA_ENDPOINT_DELAY),
+    USB_SHORT_GET_HIGH(USB_${ep.idSnakeCase}$_AS_DATA_ENDPOINT_DELAY),
+${<code>
+            }
+        });
+    });
+});
+</code>}$
+};
+${<code>
+interfaces.forEach(function(interface) {
+    switch (interface.interfaceClass) {
+        case CONST.USB_CLASS_APPLICATION_SPECIFIC:
+            if (interface.interfaceProtocol == CONST.APP_SPEC_PROTOCOL_DFU_APP)
+            {
+</code>}$
+USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
+uint8_t g_UsbDeviceConfigurationDescriptorDfuMode[] = {
+    USB_DESCRIPTOR_LENGTH_CONFIGURE, /* Size of this descriptor in bytes */
+    USB_DESCRIPTOR_TYPE_CONFIGURE,   /* CONFIGURATION Descriptor Type */
+    USB_SHORT_GET_LOW(USB_DESCRIPTOR_LENGTH_CONFIGURATION_DFU_MODE),
+    USB_SHORT_GET_HIGH(USB_DESCRIPTOR_LENGTH_CONFIGURATION_DFU_MODE), /* Total length of data returned for this configuration. */
+    1U,                 /* Number of interfaces supported by this configuration */
+    USB_COMPOSITE_CONFIGURATION_INDEX,              /* Value to use as an argument to the
+                                                      SetConfiguration() request to select this configuration */
+    0x00U,                                      /* Index of string descriptor describing this configuration */
+    (USB_DESCRIPTOR_CONFIGURE_ATTRIBUTE_D7_MASK) |
+        (USB_DEVICE_CONFIG_SELF_POWER << USB_DESCRIPTOR_CONFIGURE_ATTRIBUTE_SELF_POWERED_SHIFT) |
+        (USB_DEVICE_CONFIG_REMOTE_WAKEUP << USB_DESCRIPTOR_CONFIGURE_ATTRIBUTE_REMOTE_WAKEUP_SHIFT),
+    /* Configuration characteristics
+         D7: Reserved (set to one)
+         D6: Self-powered
+         D5: Remote Wakeup
+         D4...0: Reserved (reset to zero)
+    */
+    USB_DEVICE_MAX_POWER/2,          /* Maximum power consumption of the USB
+                                      * device from the bus in this specific
+                                      * configuration when the device is fully
+                                      * operational. Expressed in 2 mA units
+                                      *  (i.e., 50 = 100 mA).
+                                      */
+${<code>
+                interface.endpointsSettings.forEach(function (setting, index) {
+</code>}$
+    USB_${interface.idSnakeCase}$_DESCRIPTOR_LENGTH_INTERFACE, /* Size of this descriptor in bytes */
+    USB_DESCRIPTOR_TYPE_INTERFACE,   /* INTERFACE Descriptor Type */
+    USB_${interface.idSnakeCase}$_INDEX,   /* Number of this interface. */
+    USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_INDEX,         /* Value used to select this alternate setting
+                                        for the interface identified in the prior field */
+    USB_${interface.idSnakeCase}$_${setting.idSnakeCase}$_ENDPOINT_COUNT,  /* Number of endpoints used by this
+                                       interface (excluding endpoint zero). */
+    USB_${interface.idSnakeCase}$_CLASS,            /* Class code (assigned by the USB-IF). */
+    USB_${interface.idSnakeCase}$_SUBCLASS,         /* Subclass code (assigned by the USB-IF). */
+    USB_${interface.idSnakeCase}$_PROTOCOL_DFU_PROGRAM_MODE,        /* Protocol code (assigned by the USB). */
+    0U,                             /* Index of string descriptor describing this interface */
+
+    USB_DESCRIPTOR_LENGTH_DFU_FUNCTINAL,    /* size of DFU functional descriptor in bytes */
+    USB_DESCRIPTOR_TYPE_DFU_FUNCTIONAL, /* DFU functional descriptor type */
+    (USB_${interface.idSnakeCase}$_BIT_WILL_DETACH << 3U) | (USB_${interface.idSnakeCase}$_BIT_MANIFESTATION_TOLERANT << 2U) | (USB_${interface.idSnakeCase}$_BIT_CAN_UPLOAD << 1U) |
+        USB_${interface.idSnakeCase}$_BIT_CAN_DNLOAD, /* DFU attributes */
+    USB_SHORT_GET_LOW(USB_${interface.idSnakeCase}$_DETACH_TIMEOUT),
+    USB_SHORT_GET_HIGH(USB_${interface.idSnakeCase}$_DETACH_TIMEOUT),                                  /* wDetachTimeout */
+    USB_SHORT_GET_LOW(USB_${interface.idSnakeCase}$_MAX_TRANSFER_SIZE), USB_SHORT_GET_HIGH(USB_${interface.idSnakeCase}$_MAX_TRANSFER_SIZE), /* Max transfer size */
+    USB_SHORT_GET_LOW(USB_DEVICE_DEMO_BCD_VERSION), USB_SHORT_GET_HIGH(USB_DEVICE_DEMO_BCD_VERSION), /* bcdDFUVersion */
+};${<code>
+                });
+            }
+            break;
+    }
+});
+</code>}$
+USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
+uint8_t g_UsbDeviceString0[] = {
+    2U + 2U * 1U,
+    USB_DESCRIPTOR_TYPE_STRING,
+    0x09U,
+    0x04U,
+};
+
+USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
+uint8_t g_UsbDeviceString1[] = {
+    2U + 2U * ${manufacturerString.length}$U,
+    USB_DESCRIPTOR_TYPE_STRING,
+${<code>
+    var strToDescriptor = function(str) {
+        var out = "";
+        for (var i = 0; i < str.length; i++) {
+            out += "    \'" + str.charAt(i) + "\',\n    0x00U,\n";
+        }
+        return out;
+    }
+</code>
+strToDescriptor(manufacturerString)}$};
+
+USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
+uint8_t g_UsbDeviceString2[] = {
+    2U + 2U * ${productString.length}$U,
+    USB_DESCRIPTOR_TYPE_STRING,
+${strToDescriptor(productString)}$};
+
+uint32_t g_UsbDeviceStringDescriptorLength[USB_DEVICE_STRING_COUNT] = {
+    sizeof(g_UsbDeviceString0),
+    sizeof(g_UsbDeviceString1),
+    sizeof(g_UsbDeviceString2),
+};
+
+uint8_t *g_UsbDeviceStringDescriptorArray[USB_DEVICE_STRING_COUNT] = {
+    g_UsbDeviceString0,
+    g_UsbDeviceString1,
+    g_UsbDeviceString2,
+};
+
+usb_language_t g_UsbDeviceLanguage[USB_DEVICE_LANGUAGE_COUNT] = {{
+    g_UsbDeviceStringDescriptorArray, g_UsbDeviceStringDescriptorLength, (uint16_t)0x0409U,
+}};
+
+usb_language_list_t g_UsbDeviceLanguageList = {
+    g_UsbDeviceString0, sizeof(g_UsbDeviceString0), g_UsbDeviceLanguage, USB_DEVICE_LANGUAGE_COUNT,
+};
+
+/*******************************************************************************
+ * Code
+ ******************************************************************************/
+
+/* Get device descriptor request. */
+usb_status_t USB_DeviceGetDeviceDescriptor(usb_device_handle handle,
+                                           usb_device_get_device_descriptor_struct_t *deviceDescriptor)
+{${<code>
+interfaces.forEach(function(interface) {
+    switch (interface.interfaceClass) {
+        case CONST.USB_CLASS_APPLICATION_SPECIFIC:
+            if (interface.interfaceProtocol == CONST.APP_SPEC_PROTOCOL_DFU_APP)
+{
+</code>}$
+    if (g_${interface.idCamelCase}$detachRequest)
+    {
+        deviceDescriptor->buffer = g_UsbDeviceDescriptorDfu;
+        deviceDescriptor->length = USB_DESCRIPTOR_LENGTH_DEVICE;
+    }
+    else
+    {
+    deviceDescriptor->buffer = g_UsbDeviceDescriptor;
+    deviceDescriptor->length = USB_DESCRIPTOR_LENGTH_DEVICE;
+    }
+${<code>
+            }
+            else
+            {
+</code>}$
+        deviceDescriptor->buffer = g_UsbDeviceDescriptor;
+        deviceDescriptor->length = USB_DESCRIPTOR_LENGTH_DEVICE;${<code>
+            }
+            break;
+    }
+});
+if (dfuCount == 0) {
+</code>}$
+    deviceDescriptor->buffer = g_UsbDeviceDescriptor;
+    deviceDescriptor->length = USB_DESCRIPTOR_LENGTH_DEVICE;${<code>
+}
+</code>}$
+    return kStatus_USB_Success;
+}
+
+#if (defined(USB_DEVICE_CONFIG_CV_TEST) && (USB_DEVICE_CONFIG_CV_TEST > 0U))
+/* Get device qualifier descriptor request. */
+usb_status_t USB_DeviceGetDeviceQualifierDescriptor(
+    usb_device_handle handle, usb_device_get_device_qualifier_descriptor_struct_t *deviceQualifierDescriptor)
+{
+    deviceQualifierDescriptor->buffer = g_UsbDeviceQualifierDescriptor;
+    deviceQualifierDescriptor->length = USB_DESCRIPTOR_LENGTH_DEVICE_QUALITIER;
+    return kStatus_USB_Success;
+}
+#endif
+/* Get device configuration descriptor request. */
+usb_status_t USB_DeviceGetConfigurationDescriptor(
+    usb_device_handle handle, usb_device_get_configuration_descriptor_struct_t *configurationDescriptor)
+{
+    if (USB_COMPOSITE_CONFIGURATION_INDEX > configurationDescriptor->configuration)
+    {${<code>
+interfaces.forEach(function(interface) {
+    switch (interface.interfaceClass) {
+        case CONST.USB_CLASS_APPLICATION_SPECIFIC:
+            if (interface.interfaceProtocol == CONST.APP_SPEC_PROTOCOL_DFU_APP)
+    {
+</code>}$
+        if (g_${interface.idCamelCase}$detachRequest)
+        {
+            configurationDescriptor->buffer = g_UsbDeviceConfigurationDescriptorDfuMode;
+            configurationDescriptor->length = USB_DESCRIPTOR_LENGTH_CONFIGURATION_DFU_MODE;
+        }
+        else
+        {
+        configurationDescriptor->buffer = g_UsbDeviceConfigurationDescriptor;
+        configurationDescriptor->length = USB_DESCRIPTOR_LENGTH_CONFIGURATION_ALL;
+        }${<code>
+            }
+            else
+            {
+</code>}$
+        configurationDescriptor->buffer = g_UsbDeviceConfigurationDescriptor;
+        configurationDescriptor->length = USB_DESCRIPTOR_LENGTH_CONFIGURATION_ALL;${<code>
+            }
+            break;
+    }
+});
+if (dfuCount == 0) {
+</code>}$
+        configurationDescriptor->buffer = g_UsbDeviceConfigurationDescriptor;
+        configurationDescriptor->length = USB_DESCRIPTOR_LENGTH_CONFIGURATION_ALL;${<code>
+}
+</code>}$
+        return kStatus_USB_Success;
+    }
+    return kStatus_USB_InvalidRequest;
+}
+
+/* Get device string descriptor request. */
+usb_status_t USB_DeviceGetStringDescriptor(usb_device_handle handle,
+                                           usb_device_get_string_descriptor_struct_t *stringDescriptor)
+{
+    if (stringDescriptor->stringIndex == 0U)
+    {
+        stringDescriptor->buffer = (uint8_t *)g_UsbDeviceLanguageList.languageString;
+        stringDescriptor->length = g_UsbDeviceLanguageList.stringLength;
+    }
+    else
+    {
+        uint8_t languageId = 0U;
+        uint8_t languageIndex = USB_DEVICE_STRING_COUNT;
+
+        for (; languageId < USB_DEVICE_LANGUAGE_COUNT; languageId++)
+        {
+            if (stringDescriptor->languageId == g_UsbDeviceLanguageList.languageList[languageId].languageId)
+            {
+                if (stringDescriptor->stringIndex < USB_DEVICE_STRING_COUNT)
+                {
+                    languageIndex = stringDescriptor->stringIndex;
+                }
+                break;
+            }
+        }
+
+        if (USB_DEVICE_STRING_COUNT == languageIndex)
+        {
+            return kStatus_USB_InvalidRequest;
+        }
+        stringDescriptor->buffer = (uint8_t *)g_UsbDeviceLanguageList.languageList[languageId].string[languageIndex];
+        stringDescriptor->length = g_UsbDeviceLanguageList.languageList[languageId].length[languageIndex];
+    }
+    return kStatus_USB_Success;
+}
+${<code>
+var part1AlternateSettingFs = [];
+var part1AlternateSettingHs = [];
+var part1Fs = "";
+var part1Hs = "";
+var part2Fs = "";
+var part2Hs = "";
+
+interfaces.forEach(function (interface) {
+    interface.endpointsSettings.forEach(function (setting, alternateSetting) {
+        if (part1AlternateSettingFs[alternateSetting] === undefined) {
+            part1AlternateSettingFs[alternateSetting] = "";
+            part1AlternateSettingHs[alternateSetting] = "";
+        }
+        
+        setting.endpoints.forEach(function (ep, epIndex){
+        part1AlternateSettingFs[alternateSetting] += "                case USB_" + ep.idSnakeCase + " | USB_" + ep.idSnakeCase + "_DIRECTION:\n\
+                    setting.interval = FS_" + ep.idSnakeCase + "_INTERVAL;\n\
+                    setting.size = FS_" + ep.idSnakeCase + "_PACKET_SIZE;\n\
+                    break;\n";
+        part1AlternateSettingHs[alternateSetting] += "                case USB_" + ep.idSnakeCase + " | USB_" + ep.idSnakeCase + "_DIRECTION:\n\
+                    setting.interval = HS_" + ep.idSnakeCase + "_INTERVAL;\n\
+                    setting.size = HS_" + ep.idSnakeCase + "_PACKET_SIZE;\n\
+                    break;\n";
+        part2Fs += "        g_UsbDevice" + interface.idCamelCase + setting.idCamelCase + "Endpoints[" + epIndex + "].maxPacketSize = FS_" + ep.idSnakeCase + "_PACKET_SIZE;\n";
+        part2Hs += "        g_UsbDevice" + interface.idCamelCase + setting.idCamelCase + "Endpoints[" + epIndex + "].maxPacketSize = HS_" + ep.idSnakeCase + "_PACKET_SIZE;\n";
+        });
+    });
+});
+
+part1AlternateSettingFs.forEach(function (endpointsCases, index){
+    if (endpointsCases === "") {
+        return;
+    }
+    
+    part1Fs += "		case USB_ALTERNATE_SETTING_" + index + ":\n\
+			switch (address)\n\
+			{\n";
+    part1Fs += endpointsCases;
+    part1Fs += "\
+            }\n\
+            break;\n";
+});
+
+part1AlternateSettingHs.forEach(function (endpointsCases, index){
+    if (endpointsCases === "") {
+        return;
+    }
+    
+    part1Hs += "		case USB_ALTERNATE_SETTING_" + index + ":\n\
+			switch (address)\n\
+			{\n";
+    part1Hs += endpointsCases;
+    part1Hs += "\
+            }\n\
+            break;\n";
+});
+</code>}$
+/* Gets setting (interval and max packet size) of specific endpoint based on speed a alternate setting */
+static usb_endpoint_setting_t getEndpointSetting (uint8_t speed, uint8_t alternateSetting, uint8_t address)
+{
+	usb_endpoint_setting_t setting;
+
+	setting.interval = 0U;
+	setting.size = 0U;
+
+    if (USB_SPEED_HIGH == speed)
+    {
+		switch (alternateSetting)
+		{
+${part1Hs}$		}
+    }
+    else
+    {
+        switch (alternateSetting)
+        {
+${part1Fs}$        }
+    }
+
+	return setting;
+}
+
+/* Due to the difference of HS and FS descriptors, the device descriptors and configurations need to be updated to match
+ * current speed.
+ * As the default, the device descriptors and configurations are configured by using FS parameters for both EHCI and
+ * KHCI.
+ * When the EHCI is enabled, the application needs to call this function to update device by using current speed.
+ * The updated information includes endpoint max packet size, endpoint interval, etc. */
+usb_status_t USB_DeviceSetSpeed(usb_device_handle handle, uint8_t speed)
+{
+    usb_descriptor_union_t *descriptorHead;
+    usb_descriptor_union_t *descriptorTail;
+    uint8_t alternateSetting = 0;
+    usb_endpoint_setting_t endpointSetting = {0,0};
+
+    descriptorHead = (usb_descriptor_union_t *)&g_UsbDeviceConfigurationDescriptor[0];
+    descriptorTail =
+        (usb_descriptor_union_t *)(&g_UsbDeviceConfigurationDescriptor[USB_DESCRIPTOR_LENGTH_CONFIGURATION_ALL - 1U]);
+
+    while (descriptorHead < descriptorTail)
+    {
+    	if (descriptorHead->common.bDescriptorType == USB_DESCRIPTOR_TYPE_INTERFACE)
+    	{
+			alternateSetting = descriptorHead->interface.bAlternateSetting;
+    	}
+
+        if (descriptorHead->common.bDescriptorType == USB_DESCRIPTOR_TYPE_ENDPOINT)
+        {
+           	endpointSetting = getEndpointSetting(speed, alternateSetting, descriptorHead->endpoint.bEndpointAddress);
+
+            descriptorHead->endpoint.bInterval = endpointSetting.interval;
+            USB_SHORT_TO_LITTLE_ENDIAN_ADDRESS(endpointSetting.size, descriptorHead->endpoint.wMaxPacketSize);
+        }
+
+        descriptorHead = (usb_descriptor_union_t *)((uint8_t *)descriptorHead  +  descriptorHead->common.bLength);
+    }
+
+    if (USB_SPEED_HIGH == speed)
+    {
+${part2Hs}$    }
+    else
+    {
+${part2Fs}$    }
+
+    return kStatus_USB_Success;
+}

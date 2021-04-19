@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0x42" width="16" name="CTRL" description="Control Register">
+    <alias type="CMSIS" value="CTRL"/>
+    <bit_field offset="0" width="9" name="RC" access="RW" reset_value="0" reset_mask="0" description="Refresh count">
+      <alias type="CMSIS" value="SDRAM_CTRL_RC(x)"/>
+    </bit_field>
+    <bit_field offset="9" width="2" name="RTIM" access="RW" reset_value="0" reset_mask="0" description="Refresh timing">
+      <alias type="CMSIS" value="SDRAM_CTRL_RTIM(x)"/>
+      <bit_field_value name="CTRL_RTIM_0b00" value="0b00" description="3 clocks"/>
+      <bit_field_value name="CTRL_RTIM_0b01" value="0b01" description="6 clocks"/>
+      <bit_field_value name="CTRL_RTIM_0b10" value="0b10" description="9 clocks"/>
+      <bit_field_value name="CTRL_RTIM_0b11" value="0b11" description="9 clocks"/>
+    </bit_field>
+    <bit_field offset="11" width="1" name="IS" access="RW" reset_value="0" reset_mask="0" description="Initiate self-refresh command.">
+      <alias type="CMSIS" value="SDRAM_CTRL_IS(x)"/>
+      <bit_field_value name="CTRL_IS_0b0" value="0b0" description="Take no action or issue a selfx command to exit self refresh."/>
+      <bit_field_value name="CTRL_IS_0b1" value="0b1" description="SDRAM controller sends a self command to both SDRAM blocks to put them in low-power, self-refresh state where they remain until IS is cleared. When IS is cleared, the controller sends a selfx command for the SDRAMs to exit self-refresh. The refresh counter is suspended while the SDRAMs are in self-refresh; the SDRAM controls the refresh period."/>
+    </bit_field>
+    <reserved_bit_field offset="12" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="14" width="2" reset_value="0" reset_mask="0"/>
+  </register>
+  <register offset="0x48" width="32" name="AC0" description="Address and Control Register">
+    <alias type="CMSIS" value="BLOCK[0].AC"/>
+    <reserved_bit_field offset="0" width="3" reset_value="0" reset_mask="0"/>
+    <bit_field offset="3" width="1" name="IP" access="RW" reset_value="0" reset_mask="0" description="Initiate precharge all (pall) command.">
+      <alias type="CMSIS" value="SDRAM_AC_IP(x)"/>
+      <bit_field_value name="BLOCK_IP_0b0" value="0b0" description="Take no action."/>
+      <bit_field_value name="BLOCK_IP_0b1" value="0b1" description="A pall command is sent to the associated SDRAM block. During initialization, this command is executed after all DRAM controller registers are programmed. After IP is set, the next write to an appropriate SDRAM address generates the pall command to the SDRAM block."/>
+    </bit_field>
+    <bit_field offset="4" width="2" name="PS" access="RW" reset_value="0" reset_mask="0" description="Port size.">
+      <alias type="CMSIS" value="SDRAM_AC_PS(x)"/>
+      <bit_field_value name="BLOCK_PS_0b00" value="0b00" description="32-bit port"/>
+      <bit_field_value name="BLOCK_PS_0b01" value="0b01" description="8-bit port"/>
+      <bit_field_value name="BLOCK_PS_0b10" value="0b10" description="16-bit port"/>
+      <bit_field_value name="BLOCK_PS_0b11" value="0b11" description="16-bit port"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="IMRS" access="RW" reset_value="0" description="Initiate mode register set (mrs) command.">
+      <alias type="CMSIS" value="SDRAM_AC_IMRS(x)"/>
+      <bit_field_value name="BLOCK_IMRS_0b0" value="0b0" description="Take no action"/>
+      <bit_field_value name="BLOCK_IMRS_0b1" value="0b1" description="Initiate mrs command"/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0" reset_mask="0"/>
+    <bit_field offset="8" width="3" name="CBM" access="RW" reset_value="0" reset_mask="0" description="Command bit location">
+      <alias type="CMSIS" value="SDRAM_AC_CBM(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0" reset_mask="0"/>
+    <bit_field offset="12" width="2" name="CASL" access="RW" reset_value="0" reset_mask="0" description="CAS Latency">
+      <alias type="CMSIS" value="SDRAM_AC_CASL(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="14" width="1" reset_value="0" reset_mask="0"/>
+    <bit_field offset="15" width="1" name="RE" access="RW" reset_value="0" description="Refresh enable">
+      <alias type="CMSIS" value="SDRAM_AC_RE(x)"/>
+      <bit_field_value name="BLOCK_RE_0b0" value="0b0" description="Do not refresh associated DRAM block"/>
+      <bit_field_value name="BLOCK_RE_0b1" value="0b1" description="Refresh associated DRAM block"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="2" reset_value="0" reset_mask="0"/>
+    <bit_field offset="18" width="14" name="BA" access="RW" reset_value="0" reset_mask="0" description="Base address register.">
+      <alias type="CMSIS" value="SDRAM_AC_BA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x4C" width="32" name="CM0" description="Control Mask">
+    <alias type="CMSIS" value="BLOCK[0].CM"/>
+    <bit_field offset="0" width="1" name="V" access="RW" reset_value="0" description="Valid.">
+      <alias type="CMSIS" value="SDRAM_CM_V(x)"/>
+      <bit_field_value name="BLOCK_V_0b0" value="0b0" description="Do not decode DRAM accesses."/>
+      <bit_field_value name="BLOCK_V_0b1" value="0b1" description="Registers controlling the DRAM block are initialized; DRAM accesses can be decoded"/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="7" reset_value="0" reset_mask="0"/>
+    <bit_field offset="8" width="1" name="WP" access="RW" reset_value="0" reset_mask="0" description="Write protect.">
+      <alias type="CMSIS" value="SDRAM_CM_WP(x)"/>
+      <bit_field_value name="BLOCK_WP_0b0" value="0b0" description="Allow write accesses"/>
+      <bit_field_value name="BLOCK_WP_0b1" value="0b1" description="Ignore write accesses. The DRAM controller ignores write accesses to the memory block and an address exception occurs. Write accesses to a write-protected DRAM region are compared in the chip select module for a hit. If no hit occurs, an external bus cycle is generated. If this external bus cycle is not acknowledged, an access exception occurs."/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="9" reset_value="0" reset_mask="0"/>
+    <bit_field offset="18" width="14" name="BAM" access="RW" reset_value="0" reset_mask="0" description="Base address mask.">
+      <alias type="CMSIS" value="SDRAM_CM_BAM(x)"/>
+      <bit_field_value name="BLOCK_BAM_0b00000000000000" value="0b00000000000000" description="The associated address bit is used in decoding the DRAM hit to a memory block"/>
+      <bit_field_value name="BLOCK_BAM_0b00000000000001" value="0b00000000000001" description="The associated address bit is not used in the DRAM hit decode"/>
+    </bit_field>
+  </register>
+  <register offset="0x50" width="32" name="AC1" description="Address and Control Register">
+    <alias type="CMSIS" value="BLOCK[1].AC"/>
+    <reserved_bit_field offset="0" width="3" reset_value="0" reset_mask="0"/>
+    <bit_field offset="3" width="1" name="IP" access="RW" reset_value="0" reset_mask="0" description="Initiate precharge all (pall) command.">
+      <alias type="CMSIS" value="SDRAM_AC_IP(x)"/>
+      <bit_field_value name="BLOCK_IP_0b0" value="0b0" description="Take no action."/>
+      <bit_field_value name="BLOCK_IP_0b1" value="0b1" description="A pall command is sent to the associated SDRAM block. During initialization, this command is executed after all DRAM controller registers are programmed. After IP is set, the next write to an appropriate SDRAM address generates the pall command to the SDRAM block."/>
+    </bit_field>
+    <bit_field offset="4" width="2" name="PS" access="RW" reset_value="0" reset_mask="0" description="Port size.">
+      <alias type="CMSIS" value="SDRAM_AC_PS(x)"/>
+      <bit_field_value name="BLOCK_PS_0b00" value="0b00" description="32-bit port"/>
+      <bit_field_value name="BLOCK_PS_0b01" value="0b01" description="8-bit port"/>
+      <bit_field_value name="BLOCK_PS_0b10" value="0b10" description="16-bit port"/>
+      <bit_field_value name="BLOCK_PS_0b11" value="0b11" description="16-bit port"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="IMRS" access="RW" reset_value="0" description="Initiate mode register set (mrs) command.">
+      <alias type="CMSIS" value="SDRAM_AC_IMRS(x)"/>
+      <bit_field_value name="BLOCK_IMRS_0b0" value="0b0" description="Take no action"/>
+      <bit_field_value name="BLOCK_IMRS_0b1" value="0b1" description="Initiate mrs command"/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0" reset_mask="0"/>
+    <bit_field offset="8" width="3" name="CBM" access="RW" reset_value="0" reset_mask="0" description="Command bit location">
+      <alias type="CMSIS" value="SDRAM_AC_CBM(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0" reset_mask="0"/>
+    <bit_field offset="12" width="2" name="CASL" access="RW" reset_value="0" reset_mask="0" description="CAS Latency">
+      <alias type="CMSIS" value="SDRAM_AC_CASL(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="14" width="1" reset_value="0" reset_mask="0"/>
+    <bit_field offset="15" width="1" name="RE" access="RW" reset_value="0" description="Refresh enable">
+      <alias type="CMSIS" value="SDRAM_AC_RE(x)"/>
+      <bit_field_value name="BLOCK_RE_0b0" value="0b0" description="Do not refresh associated DRAM block"/>
+      <bit_field_value name="BLOCK_RE_0b1" value="0b1" description="Refresh associated DRAM block"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="2" reset_value="0" reset_mask="0"/>
+    <bit_field offset="18" width="14" name="BA" access="RW" reset_value="0" reset_mask="0" description="Base address register.">
+      <alias type="CMSIS" value="SDRAM_AC_BA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x54" width="32" name="CM1" description="Control Mask">
+    <alias type="CMSIS" value="BLOCK[1].CM"/>
+    <bit_field offset="0" width="1" name="V" access="RW" reset_value="0" description="Valid.">
+      <alias type="CMSIS" value="SDRAM_CM_V(x)"/>
+      <bit_field_value name="BLOCK_V_0b0" value="0b0" description="Do not decode DRAM accesses."/>
+      <bit_field_value name="BLOCK_V_0b1" value="0b1" description="Registers controlling the DRAM block are initialized; DRAM accesses can be decoded"/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="7" reset_value="0" reset_mask="0"/>
+    <bit_field offset="8" width="1" name="WP" access="RW" reset_value="0" reset_mask="0" description="Write protect.">
+      <alias type="CMSIS" value="SDRAM_CM_WP(x)"/>
+      <bit_field_value name="BLOCK_WP_0b0" value="0b0" description="Allow write accesses"/>
+      <bit_field_value name="BLOCK_WP_0b1" value="0b1" description="Ignore write accesses. The DRAM controller ignores write accesses to the memory block and an address exception occurs. Write accesses to a write-protected DRAM region are compared in the chip select module for a hit. If no hit occurs, an external bus cycle is generated. If this external bus cycle is not acknowledged, an access exception occurs."/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="9" reset_value="0" reset_mask="0"/>
+    <bit_field offset="18" width="14" name="BAM" access="RW" reset_value="0" reset_mask="0" description="Base address mask.">
+      <alias type="CMSIS" value="SDRAM_CM_BAM(x)"/>
+      <bit_field_value name="BLOCK_BAM_0b00000000000000" value="0b00000000000000" description="The associated address bit is used in decoding the DRAM hit to a memory block"/>
+      <bit_field_value name="BLOCK_BAM_0b00000000000001" value="0b00000000000001" description="The associated address bit is not used in the DRAM hit decode"/>
+    </bit_field>
+  </register>
+</regs:peripheral>

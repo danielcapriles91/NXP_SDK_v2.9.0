@@ -1,0 +1,1366 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-5.0.xsd"
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0" id="uart" label="UART" category="Peripheral driver">
+   <sw_comp_ref name="platform.drivers.uart" version="2.1.5"/>
+   <description>Universal Asynchronous Receiver/Transmitter (UART)</description>
+   <mode id="polling" label="Polling">
+      <description>Basic UART operation initialization (without support of interrupts and transactional API).</description>
+      <config_set_refs>
+         <config_set_ref>uartConfig_t</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>UART</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="interrupts" label="Interrupts">
+      <description>UART operation using interrupts (interrupt routines are defined by users)</description>
+      <config_set_refs>
+         <config_set_ref>uartConfig_t</config_set_ref>
+         <config_set_ref>interruptsCfg</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>UART</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="transfer" label="Transfer">
+      <description>UART operation using transfer mode (ring buffer). This mode supports transactional APIs that provides asynchronous transfer (non-blocking API is provided; callback functions can be used).
+      </description>
+      <config_set_refs>
+         <config_set_ref>uartConfig_t</config_set_ref>
+         <config_set_ref>transferCfg</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>UART</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="edma" label="eDMA" available="featureDefined(`SOC_EDMA_COUNT`) &amp;&amp; getFeature(`SOC_EDMA_COUNT`)">
+      <description>UART operation using eDMA mode (DMA device). This mode supports transactional API by using eDMA device.
+      </description>
+      <config_set_refs>
+         <config_set_ref>uartConfig_t</config_set_ref>
+         <config_set_ref>edmaCfg</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>UART</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="dma" label="DMA" available="featureDefined(`SOC_DMA_COUNT`) &amp;&amp; getFeature(`SOC_DMA_COUNT`)">
+      <description>UART operation using DMA mode (DMA device). This mode supports transactional API by using DMA device.
+      </description>
+      <config_set_refs>
+         <config_set_ref>uartConfig_t</config_set_ref>
+         <config_set_ref>dmaCfg</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>UART</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="freertos" label="FreeRTOS" available="isSdkComponentDefined(`platform.drivers.uart_freertos`)">
+      <description>UART operation in RTOS mode (FreeRTOS mode with transactional API).</description>
+      <config_set_refs>
+         <config_set_ref>fsl_uart_freertos</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>UART</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="uartConfig_t" label="UART general configuration" from_source="src/fsl_uart.h">
+      <description>UART general configuration</description>
+      <generated_types>
+         <enum id="uart_parity_mode_t" label="UART parity mode" from="_uart_parity_mode">
+            <item id="kUART_ParityDisabled" label="Parity disabled"/>
+            <item id="kUART_ParityEven" label="Parity enabled, type even, bit setting: PE|PT = 10"/>
+            <item id="kUART_ParityOdd" label="Parity enabled, type odd, bit setting: PE|PT = 11"/>
+         </enum>
+         <enum id="uart_stop_bit_count_t" label="UART stop bit count" from="_uart_stop_bit_count">
+            <item id="kUART_OneStopBit" label="One stop bit"/>
+            <item id="kUART_TwoStopBit" label="Two stop bits"/>
+         </enum>
+         <enum id="uart_idle_type_select_t" label="UART idle type select" from="_uart_idle_type_select">
+            <item id="kUART_IdleTypeStartBit" label="Start counting after a valid start bit"/>
+            <item id="kUART_IdleTypeStopBit" label="Start conuting after a stop bit"/>
+         </enum>
+         <struct id="uart_config_t" label="UART configuration structure" from="_uart_config" available="((featureDefined(`FSL_FEATURE_UART_HAS_LIN_BREAK_DETECT`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_LIN_BREAK_DETECT`)) &amp;&amp; (featureDefined(`FSL_FEATURE_UART_HAS_FIFO`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_FIFO`)))">
+            <integer id="baudRate_Bps" label="UART baud rate" type="uint32_t">
+               <description>UART baud rate</description>
+            </integer>
+            <reference id="parityMode" label="Parity mode, disabled (default), even, odd" type="uart_parity_mode_t">
+               <description>Parity mode, disabled (default), even, odd</description>
+            </reference>
+            <reference id="stopBitCount" label="Number of stop bits, 1 stop bit (default) or 2 stop bits" type="uart_stop_bit_count_t" available="(featureDefined(`FSL_FEATURE_UART_HAS_STOP_BIT_CONFIG_SUPPORT`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_STOP_BIT_CONFIG_SUPPORT`))">
+               <description>Number of stop bits, 1 stop bit (default) or 2 stop bits</description>
+            </reference>
+            <integer id="txFifoWatermark" label="TX FIFO watermark" type="uint8_t">
+               <description>TX FIFO watermark</description>
+            </integer>
+            <integer id="rxFifoWatermark" label="RX FIFO watermark" type="uint8_t">
+               <description>RX FIFO watermark</description>
+            </integer>
+            <bool id="enableRxRTS" label="RX RTS enable" available="(featureDefined(`FSL_FEATURE_UART_HAS_MODEM_SUPPORT`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_MODEM_SUPPORT`))">
+               <description>RX RTS enable</description>
+            </bool>
+            <bool id="enableTxCTS" label="TX CTS enable" available="(featureDefined(`FSL_FEATURE_UART_HAS_MODEM_SUPPORT`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_MODEM_SUPPORT`))">
+               <description>TX CTS enable</description>
+            </bool>
+            <reference id="idleType" label="IDLE type select" type="uart_idle_type_select_t">
+               <description>IDLE type select.</description>
+            </reference>
+            <bool id="enableTx" label="Enable TX">
+               <description>Enable TX</description>
+            </bool>
+            <bool id="enableRx" label="Enable RX">
+               <description>Enable RX</description>
+            </bool>
+         </struct>
+         <struct id="uart_transfer_t" label="UART transfer structure" from="_uart_transfer" available="((featureDefined(`FSL_FEATURE_UART_HAS_LIN_BREAK_DETECT`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_LIN_BREAK_DETECT`)) &amp;&amp; (featureDefined(`FSL_FEATURE_UART_HAS_FIFO`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_FIFO`)))">
+            <fixme id="data" label="The buffer of data to be transfer" type="uint8_t *">
+               <description>The buffer of data to be transfer.</description>
+            </fixme>
+            <fixme id="dataSize" label="The byte count to be transfer" type="size_t">
+               <description>The byte count to be transfer.</description>
+            </fixme>
+         </struct>
+         <struct id="uart_handle_t" label="" from="_uart_handle" available="((featureDefined(`FSL_FEATURE_UART_HAS_LIN_BREAK_DETECT`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_LIN_BREAK_DETECT`)) &amp;&amp; (featureDefined(`FSL_FEATURE_UART_HAS_FIFO`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_FIFO`)))">
+            <fixme id="txData" label="Address of remaining data to send" type="uint8_t *volatile">
+               <description>Address of remaining data to send.</description>
+            </fixme>
+            <fixme id="txDataSize" label="Size of the remaining data to send" type="size_t">
+               <description>Size of the remaining data to send.</description>
+            </fixme>
+            <fixme id="txDataSizeAll" label="Size of the data to send out" type="size_t">
+               <description>Size of the data to send out.</description>
+            </fixme>
+            <fixme id="rxData" label="Address of remaining data to receive" type="uint8_t *volatile">
+               <description>Address of remaining data to receive.</description>
+            </fixme>
+            <fixme id="rxDataSize" label="Size of the remaining data to receive" type="size_t">
+               <description>Size of the remaining data to receive.</description>
+            </fixme>
+            <fixme id="rxDataSizeAll" label="Size of the data to receive" type="size_t">
+               <description>Size of the data to receive.</description>
+            </fixme>
+            <fixme id="rxRingBuffer" label="Start address of the receiver ring buffer" type="uint8_t *">
+               <description>Start address of the receiver ring buffer.</description>
+            </fixme>
+            <fixme id="rxRingBufferSize" label="Size of the ring buffer" type="size_t">
+               <description>Size of the ring buffer.</description>
+            </fixme>
+            <integer id="rxRingBufferHead" label="Index for the driver to store received data into ring buffer" type="uint16_t">
+               <description>Index for the driver to store received data into ring buffer.</description>
+            </integer>
+            <integer id="rxRingBufferTail" label="Index for the user to get data from the ring buffer" type="uint16_t">
+               <description>Index for the user to get data from the ring buffer.</description>
+            </integer>
+            <reference id="callback" label="Callback function" type="uart_transfer_callback_t">
+               <description>Callback function.</description>
+            </reference>
+            <fixme id="userData" label="UART callback function parameter" type="void *">
+               <description>UART callback function parameter.</description>
+            </fixme>
+            <integer id="txState" label="TX transfer state" type="uint8_t">
+               <description>TX transfer state.</description>
+            </integer>
+            <integer id="rxState" label="RX transfer state" type="uint8_t">
+               <description>RX transfer state</description>
+            </integer>
+         </struct>
+         <fixme id="uart_transfer_callback_t" label="UART transfer callback function" type="void(*" available="((featureDefined(`FSL_FEATURE_UART_HAS_LIN_BREAK_DETECT`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_LIN_BREAK_DETECT`)) &amp;&amp; (featureDefined(`FSL_FEATURE_UART_HAS_FIFO`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_FIFO`)))"/>
+      </generated_types>
+      <user_types>
+         <enum id="uart_idle_type_select_t" label="UART idle type select" from="_uart_idle_type_select">
+            <item id="kUART_IdleTypeStartBit" label="Start counting after a valid start bit"/>
+            <item id="kUART_IdleTypeStopBit" label="Start counting after a stop bit"/>
+         </enum>
+         <enum id="uart_parity_mode_t" label="UART parity mode" from="_uart_parity_mode">
+            <item id="kUART_ParityDisabled" label="Parity disabled"/>
+            <item id="kUART_ParityEven" label="Even parity"/>
+            <item id="kUART_ParityOdd" label="Odd parity"/>
+         </enum>
+         <enum id="uart_stop_bit_count_t" label="UART stop bit count" from="_uart_stop_bit_count">
+            <item id="kUART_OneStopBit" label="One stop bit"/>
+            <item id="kUART_TwoStopBit" label="Two stop bits"/>
+         </enum>
+         <struct id="uart_config_t" label="UART configuration structure" from="_uart_config">
+            <variable id="clockSourceUId" value="`BusInterfaceClock`"/>
+            <variable id="partName" value="queryFeatureAdvanced(`Configuration`, `processor`, `name`,false)"/>
+            <variable id="isGetFreqSupported" value="!$parent.partName.getValue().regexMatch(`\[MKE0[2,4,6].*`)"/>
+            <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="createArray().addItemToList(`BusInterfaceClock`, getPeripheralClock($instance.getPeripheral(), `BusInterfaceClock`), ($instance.getPeripheral() + `_CLK_SRC`),true)" >
+               <description>UART clock source.</description>
+               <validation>
+                  <dependency when_expr="$parent.clockSourceFreq.getEnumItemId() == `GetFreq`" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Warning">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="($parent.clockSourceFreq.getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" 
+               items="createArray().addItemToList(`GetFreq`,`Runtime calculation by CLOCK_GetFreq()`,`GetFreq`,$parent.isGetFreqSupported.getValue()).merge(
+                  getClockFunctionalGroups().arrayToEnumItems(
+                     enumItem -> true,
+                     enumItem -> enumItem,
+                     enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)) + ` (` + enumItem + `)`,
+                     enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)))" >
+               <description>Selection of the clock source frequency</description>
+               <validation>
+                  <constraint cond_expr="(($this.getEnumItemValue() == `GetFreq`) || ($this.getEnumItemValue().toHertz() != 0))" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+            </dynamic_enum> 
+            <integer id="baudRate_Bps" label="UART baud rate" type="uint32_t"  min_expr="1"/>
+            <reference id="parityMode" label="Parity mode" type="uart_parity_mode_t"/>
+            <reference id="stopBitCount" label="Number of stop bits" available="featureDefined(`FSL_FEATURE_UART_HAS_STOP_BIT_CONFIG_SUPPORT`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_STOP_BIT_CONFIG_SUPPORT`)" type="uart_stop_bit_count_t"/>
+            <integer id="txFifoWatermark" label="TX FIFO watermark" available="featureDefined(`FSL_FEATURE_UART_HAS_FIFO`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_FIFO`)" type="uint8_t" max_expr="((featureDefined(`FSL_FEATURE_UART_FIFO_SIZE`) &amp;&amp; (getFeature(`FSL_FEATURE_UART_FIFO_SIZE`) > 1))? (getFeature(`FSL_FEATURE_UART_FIFO_SIZE`) - 1): 1)">
+               <validation>
+<!--                  <constraint when_expr="featureDefined(`FSL_FEATURE_UART_FIFO_SIZE`) &amp;&amp; (getFeature(`FSL_FEATURE_UART_FIFO_SIZE`) > 1)" cond_expr="$this.getValue()!=0" level="info" description="Tx FIFO watermark should not be set 0 when the fifo buffer is available."/> --> 
+               </validation>
+            </integer>
+            <integer id="rxFifoWatermark" label="RX FIFO watermark" available="featureDefined(`FSL_FEATURE_UART_HAS_FIFO`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_FIFO`)" type="uint8_t" max_expr="((featureDefined(`FSL_FEATURE_UART_FIFO_SIZE`) &amp;&amp; (getFeature(`FSL_FEATURE_UART_FIFO_SIZE`) > 1))? (getFeature(`FSL_FEATURE_UART_FIFO_SIZE`) - 1): 1)">
+               <validation>
+                  <constraint when_expr="featureDefined(`FSL_FEATURE_UART_FIFO_SIZE`) &amp;&amp; (getFeature(`FSL_FEATURE_UART_FIFO_SIZE`) > 1)" cond_expr="$this.getValue()!=0" level="info" description_expr="`Rx FIFO buffer (size: ` + getFeature(`FSL_FEATURE_UART_FIFO_SIZE`) + ` datawords) is available and can be used by setting watermark in range 1 - ` + (getFeature(`FSL_FEATURE_UART_FIFO_SIZE`).toInt()-1) + `.`"/> 
+               </validation>
+            </integer>
+            <reference id="idleType" label="IDLE type select" type="uart_idle_type_select_t">
+               <description>IDLE type select.</description>
+            </reference>
+            <bool id="enableTx" label="Enable TX">
+               <validation>
+<!--                  <constraint cond_expr="nodeExists(`$components.system.#global.err_routed_signal`)" level="warning" description="Internal error: err_routed_signal message of the global config set of the system component does not exist."/>-->
+                  <dependency when_expr="$this.getValue()" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.uart_tx`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`TX`, $instance.getPeripheral())" level="Warning">
+                      <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </bool>
+            <bool id="enableRx" label="Enable RX">
+               <validation>
+                  <dependency when_expr="$this.getValue()" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.uart_rx`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`RX`, $instance.getPeripheral())"  level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </bool>
+         </struct>
+         <struct id="uart_transfer_t" label="UART transfer structure." available="(featureDefined(`FSL_FEATURE_UART_HAS_LIN_BREAK_DETECT`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_LIN_BREAK_DETECT`)) &amp;&amp; (featureDefined(`FSL_FEATURE_UART_HAS_FIFO`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_FIFO`))" from="_uart_transfer">
+            <fixme id="data" label="The buffer of data to be transfer." type="uint8_t *">
+               <description>The buffer of data to be transfer.</description>
+            </fixme>
+            <fixme id="dataSize" label="The byte count to be transfer." type="size_t">
+               <description>The byte count to be transfer.</description>
+            </fixme>
+         </struct>
+         <struct id="uart_handle_t" label="" available="(featureDefined(`FSL_FEATURE_UART_HAS_LIN_BREAK_DETECT`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_LIN_BREAK_DETECT`)) &amp;&amp; (featureDefined(`FSL_FEATURE_UART_HAS_FIFO`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_FIFO`))" from="_uart_handle">
+            <fixme id="txData" label="Address of remaining data to send." type="uint8_t *volatile">
+               <description>Address of remaining data to send.</description>
+            </fixme>
+            <fixme id="txDataSize" label="Size of the remaining data to send." type="size_t">
+               <description>Size of the remaining data to send.</description>
+            </fixme>
+            <fixme id="txDataSizeAll" label="Size of the data to send out." type="size_t">
+               <description>Size of the data to send out.</description>
+            </fixme>
+            <fixme id="rxData" label="Address of remaining data to receive." type="uint8_t *volatile">
+               <description>Address of remaining data to receive.</description>
+            </fixme>
+            <fixme id="rxDataSize" label="Size of the remaining data to receive." type="size_t">
+               <description>Size of the remaining data to receive.</description>
+            </fixme>
+            <fixme id="rxDataSizeAll" label="Size of the data to receive." type="size_t">
+               <description>Size of the data to receive.</description>
+            </fixme>
+            <fixme id="rxRingBuffer" label="Start address of the receiver ring buffer." type="uint8_t *">
+               <description>Start address of the receiver ring buffer.</description>
+            </fixme>
+            <fixme id="rxRingBufferSize" label="Size of the ring buffer." type="size_t">
+               <description>Size of the ring buffer.</description>
+            </fixme>
+            <integer id="rxRingBufferHead" label="Index for the driver to store received data into ring buffer." type="uint16_t">
+               <description>Index for the driver to store received data into ring buffer.</description>
+            </integer>
+            <integer id="rxRingBufferTail" label="Index for the user to get data from the ring buffer." type="uint16_t">
+               <description>Index for the user to get data from the ring buffer.</description>
+            </integer>
+            <reference id="callback" label="Callback function." type="uart_transfer_callback_t">
+               <description>Callback function.</description>
+            </reference>
+            <fixme id="userData" label="UART callback function parameter." type="void *">
+               <description>UART callback function parameter.</description>
+            </fixme>
+            <integer id="txState" label="TX transfer state." type="uint8_t">
+               <description>TX transfer state.</description>
+            </integer>
+            <integer id="rxState" label="RX transfer state" type="uint8_t">
+               <description>RX transfer state</description>
+            </integer>
+         </struct>
+      </user_types>
+      <settings>
+         <reference id="uartConfig" label="UART Configuration" type="uart_config_t"/>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">uart</param>
+               <param id="filename">fsl_uart.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">clock</param>
+               <param id="filename">fsl_clock.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <fragment id="define">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)"/>
+               <param id="value" expr="$instance.getPeripheral()"/>
+               <param id="description">Definition of peripheral ID</param>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`)"/>
+               <param id="value" expr="($this.uartConfig.clockSourceFreq.getEnumItemId() == `GetFreq`) ? 
+                  (`CLOCK_GetFreq(` + $instance.getPeripheral() + `_CLK_SRC)`) 
+                  : ($this.uartConfig.clockSourceFreq.getEnumItemValue().toHertz() + `UL`)
+                  "/> 
+               <param id="description">Definition of the clock source frequency</param>
+            </fragment>
+         </section>                  
+         <section target="global_vars">
+            <fragment id="const_struct" apply_to="$this.uartConfig">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`" />
+               <param id="type" >uart_config_t</param>
+            </fragment>
+         </section>
+         <section target="global_vars_extern">
+            <fragment id="extern_const_var" apply_to="$this.uartConfig">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`" />
+               <param id="type" >uart_config_t</param>
+            </fragment>
+         </section>
+         <section target="init_function_body">
+            <expr>leftPadding(`UART_Init(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, &amp;`) + $instance.getFnGroupPrefix() + $instance.getID() + `_config, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE);`), 1)</expr><br/>
+         </section>
+      </code>
+      <validation>  
+      </validation>
+      <quick_selections>
+         <quick_selection id="QuickSelection1" label="115200-N,8,1">
+            <set id="uartConfig.baudRate_Bps">115200</set>
+            <set id="uartConfig.parityMode">kUART_ParityDisabled</set>
+            <set id="uartConfig.rxFifoWatermark">1</set>
+            <set id="uartConfig.enableTx">true</set>
+            <set id="uartConfig.enableRx">true</set>
+         </quick_selection>
+         <quick_selection id="QuickSelection2" label="57600-N,8,1">
+            <set id="uartConfig.baudRate_Bps">57600</set>
+            <set id="uartConfig.parityMode">kUART_ParityDisabled</set>
+            <set id="uartConfig.rxFifoWatermark">1</set>
+            <set id="uartConfig.enableTx">true</set>
+            <set id="uartConfig.enableRx">true</set>
+         </quick_selection>
+         <quick_selection id="QuickSelection3" label="38400-N,8,1">
+            <set id="uartConfig.baudRate_Bps">38400</set>
+            <set id="uartConfig.parityMode">kUART_ParityDisabled</set>
+            <set id="uartConfig.rxFifoWatermark">1</set>
+            <set id="uartConfig.enableTx">true</set>
+            <set id="uartConfig.enableRx">true</set>
+         </quick_selection>
+         <quick_selection id="QuickSelection4" label="19200-N,8,1">
+            <set id="uartConfig.baudRate_Bps">19200</set>
+            <set id="uartConfig.parityMode">kUART_ParityDisabled</set>
+            <set id="uartConfig.rxFifoWatermark">1</set>
+            <set id="uartConfig.enableTx">true</set>
+            <set id="uartConfig.enableRx">true</set>
+         </quick_selection>
+         <quick_selection id="QuickSelection5" label="9600-N,8,1">
+            <set id="uartConfig.baudRate_Bps">9600</set>
+            <set id="uartConfig.parityMode">kUART_ParityDisabled</set>
+            <set id="uartConfig.rxFifoWatermark">1</set>
+            <set id="uartConfig.enableTx">true</set>
+            <set id="uartConfig.enableRx">true</set>
+         </quick_selection>
+         <default>QuickSelection1</default>
+      </quick_selections>
+   </config_set>
+   <config_set id="interruptsCfg" label="Interrupt configuration" from_source="src/fsl_uart.h">
+      <description>UART interrupt mode configuration.</description>
+      <generated_types>
+      </generated_types>
+      <user_types>
+         <set id="interrupt_types" label="Interrupts">
+            <item id="kUART_RxActiveEdgeInterruptEnable" label="RX active edge interrupt"/>
+            <item id="kUART_TxDataRegEmptyInterruptEnable" label="Transmit data register empty interrupt"/>
+            <item id="kUART_TransmissionCompleteInterruptEnable" label="Transmission complete interrupt"/>
+            <item id="kUART_RxDataRegFullInterruptEnable" label="Receiver data register full interrupt"/>
+            <item id="kUART_IdleLineInterruptEnable" label="Idle line interrupt"/>
+            <item id="kUART_RxOverrunInterruptEnable" label="Receiver overrun interrupt"/>
+            <item id="kUART_NoiseErrorInterruptEnable" label="Noise error flag interrupt"/>
+            <item id="kUART_FramingErrorInterruptEnable" label="Framing error flag interrupt"/>
+            <item id="kUART_ParityErrorInterruptEnable" label="Parity error flag interrupt"/>
+            <item id="kUART_RxFifoOverflowInterruptEnable" label="RX FIFO overflow interrupt" available="featureDefined(`FSL_FEATURE_UART_HAS_FIFO`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_FIFO`)"/>
+            <item id="kUART_TxFifoOverflowInterruptEnable" label="TX FIFO overflow interrupt" available="featureDefined(`FSL_FEATURE_UART_HAS_FIFO`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_FIFO`)"/>
+            <item id="kUART_RxFifoUnderflowInterruptEnable" label="RX FIFO underflow interrupt" available="featureDefined(`FSL_FEATURE_UART_HAS_FIFO`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_FIFO`)"/>
+         </set>
+      </user_types>
+      <settings>
+         <reference id="interrupts" label="Interrupts" type="interrupt_types"/>
+         <struct id="interrupt_vectors" label="Interrupt vectors">
+            <!-- Checking number of interrupt for the UART, when dedicated interrupt vector for UART is available, the error irq selection is available  -->
+            <variable id="uart_irq_number" value="getResource(`interrupts`, $instance.getCoreId()).countOccurrences(item -> (item.getSetting(`devices`).searchInArray(devItem -> devItem.getSetting(`id`).getValue() == $instance.getPeripheral()) >= 0), false)"></variable>            
+            <bool id="enable_rx_tx_irq" label="Enable Rx/Tx interrupt"></bool>
+<!--            <reference id="interrupt_rx_tx" label="Rx/Tx Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function='RX_TX'" enable="$parent.enable_rx_tx_irq.getValue()"/>-->
+            <reference id="interrupt_rx_tx" label="Rx/Tx Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=serial_rx_tx" enable="$parent.enable_rx_tx_irq.getValue()">
+               <options_expr>
+                  <option id="irq_handler_insert" expr="
+leftPadding(`uint32_t intStatus;`, 1) + `&#10;` +
+leftPadding(`/* Reading all interrupt flags of status registers */`, 1) + `&#10;` +
+leftPadding(`intStatus = UART_GetStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `);`, 1) + `&#10;&#10;` +
+leftPadding(`/* Flags can be cleared by reading the status register and reading/writing data registers.`,1) + `&#10;` +
+leftPadding(`See the reference manual for details of each flag.`, 2) + `&#10;` +
+leftPadding(`The UART_ClearStatusFlags() function can be also used for clearing of flags in case the content of data regsiter is not used.`, 2) + `&#10;` +
+leftPadding(`For example:`, 2) + `&#10;` +
+leftPadding(`status_t status;`, 4) + `&#10;` +
+leftPadding(`intStatus &amp;= ~(kUART_RxOverrunFlag | kUART_NoiseErrorFlag | kUART_FramingErrorFlag | kUART_ParityErrorFlag);`, 4) + `&#10;` +
+leftPadding(`status = UART_ClearStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `, intStatus);`, 4) + `&#10;` +
+leftPadding(`*/`, 1) + `&#10;&#10;` +
+leftPadding(`/* Place your code here */`, 1) + `&#10;`
+                  "/>
+               </options_expr>
+            </reference>
+            <bool id="enable_err_irq" label="Enable Error interrupt" available="$parent.uart_irq_number.getValue() > 1"></bool>
+            <!--            <reference id="interrupt_rx_tx" label="Rx/Tx Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function='RX_TX'" enable="$parent.enable_rx_tx_irq.getValue()"/>-->
+            <reference id="interrupt_err" label="Error Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=serial_error" enable="$parent.enable_err_irq.getValue()" available="$parent.uart_irq_number.getValue() > 1">
+               <options_expr>
+                  <option id="irq_handler_insert" expr="
+leftPadding(`uint32_t intStatus;`, 1) + `&#10;` +
+leftPadding(`/* Reading all interrupt flags of status registers */`, 1) + `&#10;` +
+leftPadding(`intStatus = UART_GetStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `);`, 1) + `&#10;&#10;` +
+leftPadding(`/* Flags can be cleared by reading the status register and reading/writing data registers.`,1) + `&#10;` +
+leftPadding(`See the reference manual for details of each flag.`, 2) + `&#10;` +
+leftPadding(`The UART_ClearStatusFlags() function can be also used for clearing of flags in case the content of data regsiter is not used.`, 2) + `&#10;` +
+leftPadding(`For example:`, 2) + `&#10;` +
+leftPadding(`status_t status;`, 4) + `&#10;` +
+leftPadding(`intStatus &amp;= (kUART_RxOverrunFlag | kUART_NoiseErrorFlag | kUART_FramingErrorFlag | kUART_ParityErrorFlag);`, 4) + `&#10;` +
+leftPadding(`status = UART_ClearStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `, intStatus);`, 4) + `&#10;` +
+leftPadding(`*/`, 1) + `&#10;&#10;` +
+leftPadding(`/* Place your code here */`, 1) + `&#10;`
+                  "/>
+               </options_expr>
+            </reference>
+         </struct>
+<!--         <info id="interrupt_info" label="IRQ name" value="$instance.getPeripheral() + `_RX_TX_IRQn`"/>-->
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+         <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+            <from component_id="system" config_set_id="common_code_templates"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="defines">
+            <!-- RX/TX interrupt definitions -->
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_vectors.interrupt_rx_tx"/>
+            <!-- Error interrupt definitions -->
+            <fragment id="IRQ_definitions" if_expr="$this.interrupt_vectors.uart_irq_number.getValue() > 1" apply_to="$this.interrupt_vectors.interrupt_err"/>
+         </section>                  
+         <section target="init_function_body">
+            <expr>leftPadding(`UART_EnableInterrupts(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, `) + (($this.interrupts.getCValue()==``) ? `0` : $this.interrupts.getCValue()) + `);`, 1)</expr><br/>
+            <!-- RX/TX interrupt initialization -->
+            <fragment id="IRQn_set_priority_default" if_expr="$this.interrupt_vectors.enable_rx_tx_irq.getValue()" apply_to="$this.interrupt_vectors.interrupt_rx_tx"/>
+            <fragment id="IRQn_enable_default" if_expr="$this.interrupt_vectors.enable_rx_tx_irq.getValue()" apply_to="$this.interrupt_vectors.interrupt_rx_tx"/>
+            <!-- Error interrupt initialization -->
+            <fragment id="IRQn_set_priority_default" if_expr="$this.interrupt_vectors.enable_err_irq.getValue() &amp;&amp; ($this.interrupt_vectors.uart_irq_number.getValue() > 1)" apply_to="$this.interrupt_vectors.interrupt_err"/>
+            <fragment id="IRQn_enable_default" if_expr="$this.interrupt_vectors.enable_err_irq.getValue() &amp;&amp; ($this.interrupt_vectors.uart_irq_number.getValue() > 1)" apply_to="$this.interrupt_vectors.interrupt_err"/>
+         </section>
+      </code>
+      <quick_selections>
+         <quick_selection id="QuickSelection1" label="Rx/Tx interrupts enabled">
+            <set id="interrupts.kUART_TxDataRegEmptyInterruptEnable">true</set>
+            <set id="interrupts.kUART_TransmissionCompleteInterruptEnable">true</set>
+            <set id="interrupts.kUART_RxDataRegFullInterruptEnable">true</set>
+            <set id="interrupts.kUART_RxOverrunInterruptEnable">true</set>
+            <set id="interrupt_vectors.enable_rx_tx_irq">true</set>
+         </quick_selection>
+         <quick_selection id="QuickSelection2" label="Rx/Tx and error interrupts">
+            <set id="interrupts.kUART_TxDataRegEmptyInterruptEnable">true</set>
+            <set id="interrupts.kUART_TransmissionCompleteInterruptEnable">true</set>
+            <set id="interrupts.kUART_RxDataRegFullInterruptEnable">true</set>
+            <set id="interrupts.kUART_RxOverrunInterruptEnable">true</set>
+            <set id="interrupts.kUART_NoiseErrorInterruptEnable">true</set>
+            <set id="interrupts.kUART_FramingErrorInterruptEnable">true</set>
+            <set id="interrupts.kUART_ParityErrorInterruptEnable">true</set>
+            <set id="interrupts.kUART_RxFifoOverflowInterruptEnable">true</set>
+            <set id="interrupts.kUART_TxFifoOverflowInterruptEnable">true</set>
+            <set id="interrupts.kUART_RxFifoUnderflowInterruptEnable">true</set>
+            <set id="interrupt_vectors.enable_rx_tx_irq">true</set>
+            <set id="interrupt_vectors.enable_err_irq">true</set>
+         </quick_selection>
+         <default>QuickSelection1</default>
+      </quick_selections>
+   </config_set>
+   
+   <config_set id="transferCfg" label="Transfer configuration" from_source="src/fsl_uart.h">
+      <description>UART transfer mode configuration.</description>
+      <generated_types>
+      </generated_types>
+      <user_types>
+<!--         <struct id="uart_transfer_cfg" label="UART transfer structure." available="(featureDefined(`FSL_FEATURE_UART_HAS_LIN_BREAK_DETECT`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_LIN_BREAK_DETECT`)) &amp;&amp; (featureDefined(`FSL_FEATURE_UART_HAS_FIFO`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_FIFO`))" from="_uart_transfer">-->
+         <struct id="uart_transfer_cfg" label="UART transfer structure." from="_uart_transfer">
+            <info id="data" label="The ID of the buffer" value="$instance.getFnGroupPrefix() + $instance.getID() + `_` +  ($parent.hasOption(`function`) ? $parent.optionValue(`function`) : ``) + `Buffer`">
+               <description>The ID of data buffer to be transfered.</description>
+            </info>
+            <integer id="data_size" label="Buffer size [bytes]" type="uint16_t" min_expr="1">
+               <description>The size of the buffer (number of bytes that are transfered.</description>
+            </integer>
+         </struct>
+         <struct id="transfer_config" label="Transfer configuration">
+            <info id="transfer_handle" label="Transfer handle ID" value="$instance.getFnGroupPrefix() + $instance.getID() + `_handle`"/>
+            <bool id="init_rx_transfer" label="Initialization of Rx transfer structure"></bool>
+            <reference id="rx_transfer" label="Rx transfer" type="uart_transfer_cfg" options="function=rx" enable="$parent.init_rx_transfer.getValue()"/>
+            <bool id="init_tx_transfer" label="Initialization of Tx transfer structure"></bool>
+            <reference id="tx_transfer" label="Tx transfer" type="uart_transfer_cfg" options="function=tx" enable="$parent.init_tx_transfer.getValue()"/>
+            <bool id="init_callback" label="Initialization of transfer callback"></bool>
+            <string id="callback_fcn" label="Transfer callback function name" enable="$parent.init_callback.getValue()">
+               <description>The callback function name that is used in the transfer initialization. User must provide the definition of this function. This item is optional for the transfer mode initialization.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="$this.getValue() != ``" level="error" description="The callback function shall be defined. If the callback function is not used uncheck the Initialization of transfer callback option."/> 
+                  <constraint when_expr="$parent.init_callback.getValue() &amp;&amp; ($this.getValue() != ``)" cond_expr="isCIdentifier($this.getValue())" level="error" description="The callback function name must be a valid identifier."/> 
+               </validation>
+            </string>
+            <string id="user_data" label="User data pointer" enable="$parent.init_callback.getValue()">
+<!--               <string id="user_data" label="User data pointer" enable="$parent.callback_fcn.getValue()!=``">-->
+                  <description>Definition of the user data pointer ID. When empty the NULL is provided in the initializaton function for the callback function.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="(($this.getValue() == ``) || isCIdentifier($this.getValue()))" level="error" description="The user data pointer is not valid C identifier."/>
+               </validation>
+            </string>
+         </struct>
+      </user_types>
+      <settings>
+         <reference id="transfer" label="Transfer" type="transfer_config"/>
+         <variable id="uart_irq_number_transfer" value="getResource(`interrupts`, $instance.getCoreId()).countOccurrences(item -> (item.getSetting(`devices`).searchInArray(devItem -> devItem.getSetting(`id`).getValue() == $instance.getPeripheral()) >= 0), false)"/>
+         <reference id="interrupt_rx_tx" label="Rx/Tx interrupt priority setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=serial_rx_tx;irq_without_enable_control;without_handler_settings">
+            <description>Configuration of Rx/Tx interrupt priority (by default FreeRTOS and Transfer sets interrupt to lower priority than the default level).</description> 
+         </reference>
+         <reference id="interrupt_err" label="Error Interrupt priority setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=serial_error;irq_without_enable_control;without_handler_settings" available="$parent.uart_irq_number_transfer.getValue() > 1">
+            <description>Configuration of error interrupt priority (by default FreeRTOS and Transfer sets interrupt to lower priority than the default level).</description>
+         </reference>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+         <def fragment="transfer_struct">
+            <text>const </text><expr>$param.type + ` ` + $param.name</expr><text> = {</text><br/>
+            <expr>`  .data = ` + $param.bufferID + `,`</expr><br/>  
+            <expr>`  .dataSize = ` + $param.bufferSize</expr><br/>
+            <text>};</text><br/>
+         </def>
+         <def fragment="rx_buffer_size">
+            <expr>toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $instance.transferCfg.transfer.rx_transfer.optionValue(`function`) + `_BUFFER_SIZE`)</expr>
+         </def>
+      </fragment_defs>
+      <code>
+         <!--         <code_template id="main_init">-->
+         <section target="defines">            
+            <!-- RX/TX transfer buffer size -->
+            <fragment id="define" if_expr="$this.transfer.init_rx_transfer.getValue()">
+<!--               <param id="name" expr="$instance.getFnGroupName().toUpperCase() + `_` + $instance.getID().toUpperCase() + `_` + $this.transfer.rx_transfer.optionValue(`function`).toUpperCase() + `_BUFFER_SIZE`"/>-->
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.transfer.rx_transfer.optionValue(`function`) + `_BUFFER_SIZE`)"/>
+               <param id="value" expr="$this.transfer.rx_transfer.data_size.getCValue()"/> <!-- The getValue() function must be used to provide the symbol name (getCValue() return a string) -->
+               <param id="description">Rx transfer buffer size.</param>
+            </fragment>
+            <fragment id="define" if_expr="$this.transfer.init_tx_transfer.getValue()">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.transfer.tx_transfer.optionValue(`function`) + `_BUFFER_SIZE`)"/>
+               <param id="value" expr="$this.transfer.tx_transfer.data_size.getCValue()"/> <!-- The getValue() function must be used to provide the symbol name (getCValue() return a string) -->
+               <param id="description">Tx transfer buffer size.</param>
+            </fragment>
+            <fragment id="IRQ_definitions" if_expr="$this.interrupt_rx_tx.isAvailable()" apply_to="$this.interrupt_rx_tx"/>
+            <fragment id="IRQ_definitions" if_expr="$this.interrupt_err.isAvailable()" apply_to="$this.interrupt_err"/>
+         </section> 
+         <section target="global_vars">
+            <!-- Transfer handle definition -->
+            <fragment id="global_var" apply_to="$this.transfer.transfer_handle">
+               <param id="name" expr="$this.getValue()" />
+               <param id="type">uart_handle_t</param>
+            </fragment>
+            <!-- Rx transfer buffer definition -->
+            <fragment id="global_var_array" apply_to="$this.transfer.rx_transfer" if_expr="$this.transfer.init_rx_transfer.getValue()">
+               <param id="name" expr="$this.data.getValue()" />
+               <param id="size" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.optionValue(`function`) + `_BUFFER_SIZE`)"/>
+               <param id="type">uint8_t</param>
+            </fragment>
+            <!-- RX transfer structures -->
+            <fragment id="transfer_struct" if_expr="$this.transfer.init_rx_transfer.getValue()">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_rxTransfer`"/>
+               <param id="type">uart_transfer_t</param>
+               <param id="bufferID" expr="$this.transfer.rx_transfer.data.getValue()"/>
+               <param id="bufferSize" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.transfer.rx_transfer.optionValue(`function`) + `_BUFFER_SIZE`)"/>
+            </fragment>
+            <!-- Tx transfer buffer definition -->
+            <fragment id="global_var_array" apply_to="$this.transfer.tx_transfer" if_expr="$this.transfer.init_tx_transfer.getValue()">
+               <param id="name" expr="$this.data.getValue()" />
+               <param id="size" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.optionValue(`function`) + `_BUFFER_SIZE`)"/>
+               <param id="type">uint8_t</param>
+            </fragment>
+            <!-- TX transfer structures -->
+            <fragment id="transfer_struct" if_expr="$this.transfer.init_tx_transfer.getValue()">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_txTransfer`"/>
+               <param id="type">uart_transfer_t</param>
+               <param id="bufferID" expr="$this.transfer.tx_transfer.data.getValue()"/>
+               <param id="bufferSize" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.transfer.tx_transfer.optionValue(`function`) + `_BUFFER_SIZE`)"/>
+            </fragment>
+         </section>
+         <section target="global_vars_extern">
+            <!-- Transfer handle definition -->
+            <fragment id="extern_var" apply_to="$this.transfer.transfer_handle">
+               <param id="name" expr="$this.getValue()" />
+               <param id="type">uart_handle_t</param>
+            </fragment>
+            <!-- Rx transfer buffer definition -->
+            <fragment id="extern_var_array" apply_to="$this.transfer.rx_transfer" if_expr="$this.transfer.init_rx_transfer.getValue()">
+               <param id="name" expr="$this.data.getValue()" />
+               <param id="size" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.optionValue(`function`) + `_BUFFER_SIZE`)"/>
+               <param id="type">uint8_t</param>
+            </fragment>
+            <!-- RX transfer structures -->
+            <fragment id="extern_const_var" if_expr="$this.transfer.init_rx_transfer.getValue()">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_rxTransfer`"/>
+               <param id="type">uart_transfer_t</param>
+            </fragment>
+            <!-- Tx transfer buffer definition -->
+            <fragment id="extern_var_array" apply_to="$this.transfer.tx_transfer" if_expr="$this.transfer.init_tx_transfer.getValue()">
+               <param id="name" expr="$this.data.getValue()" />
+               <param id="size" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.optionValue(`function`) + `_BUFFER_SIZE`)"/>
+               <param id="type">uint8_t</param>
+            </fragment>
+            <!-- TX transfer structures -->
+            <fragment id="extern_const_var" if_expr="$this.transfer.init_tx_transfer.getValue()">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_txTransfer`"/>
+               <param id="type">uart_transfer_t</param>
+            </fragment>
+            <!-- user data pointer of the callback function -->
+            <fragment id="extern_var" if_expr="$this.transfer.init_callback.getValue() &amp;&amp; ($this.transfer.user_data.getValue() != ``)">
+               <param id="name" expr="$this.transfer.user_data.getValue()"/>
+               <param id="type" expr="`void *`"/>
+            </fragment>
+         </section>
+         <section target="callback_function_extern">
+            <!-- Transfer callback function declaration -->
+<!--            void UART_UserCallback(UART_Type *base, uart_handle_t *handle, status_t status, void *userData)-->
+            <fragment id="extern_fcn_def" if_expr="$this.transfer.init_callback.getValue()">
+               <param id="name" expr="$this.transfer.callback_fcn.getValue()"/>
+               <param id="type">void</param>
+               <param id="params">UART_Type *base, uart_handle_t *handle, status_t status, void *userData</param>
+               <param id="description" expr="`UART transfer callback function for the ` + $instance.getID() +` component (init. function `+ $instance.getFnGroupName() + `)` "/>
+            </fragment>
+         </section>
+         <section target="init_function_body">
+<!--                 UART_TransferCreateHandle(UARTx, &g_uartHandle, UART_UserCallback, NULL /* user data ptr */);-->
+            <expr>leftPadding(`UART_TransferCreateHandle(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, &amp;`) +  $this.transfer.transfer_handle.getValue() + `, ` + ($this.transfer.init_callback.getValue() ? $this.transfer.callback_fcn.getValue() : `NULL`   ) + `, ` + (($this.transfer.init_callback.getValue() &amp;&amp; ($this.transfer.user_data.getValue()!=``)) ? $this.transfer.user_data.getValue() : `NULL`)  + `);`, 1)</expr><br/>
+            <fragment id="IRQn_set_priority_default" if_expr="$this.interrupt_rx_tx.isAvailable()" apply_to="$this.interrupt_rx_tx"/>
+            <fragment id="IRQn_set_priority_default" if_expr="$this.interrupt_err.isAvailable()" apply_to="$this.interrupt_err"/>
+         </section>
+      </code>
+      <quick_selections>
+         <quick_selection id="QuickSelection1" label="Rx/Tx transfer enabled">
+            <set id="transfer.init_rx_transfer">true</set>
+            <set id="transfer.rx_transfer.data_size">10</set>
+            <set id="transfer.init_tx_transfer">true</set>
+            <set id="transfer.tx_transfer.data_size">10</set>
+         </quick_selection>
+         <default>QuickSelection1</default>
+      </quick_selections>
+   </config_set>
+   <!-- eDMA mode -->
+   <config_set id="edmaCfg" label="eDMA configuration" from_source="src/fsl_uart_edma.h">
+      <description>UART transfer mode configuration.</description>
+      <generated_types>
+         <struct id="uart_edma_handle_t" label="" from="_uart_edma_handle">
+            <reference id="callback" label="Callback function" type="uart_edma_transfer_callback_t">
+               <description>Callback function.</description>
+            </reference>
+            <fixme id="userData" label="UART callback function parameter" type="void *">
+               <description>UART callback function parameter.</description>
+            </fixme>
+            <fixme id="rxDataSizeAll" label="Size of the data to receive" type="size_t">
+               <description>Size of the data to receive.</description>
+            </fixme>
+            <fixme id="txDataSizeAll" label="Size of the data to send out" type="size_t">
+               <description>Size of the data to send out.</description>
+            </fixme>
+            <fixme id="txEdmaHandle" label="The eDMA TX channel used" type="edma_handle_t *">
+               <description>The eDMA TX channel used.</description>
+            </fixme>
+            <fixme id="rxEdmaHandle" label="The eDMA RX channel used" type="edma_handle_t *">
+               <description>The eDMA RX channel used.</description>
+            </fixme>
+            <integer id="nbytes" label="eDMA minor byte transfer count initially configured" type="uint8_t">
+               <description>eDMA minor byte transfer count initially configured.</description>
+            </integer>
+            <integer id="txState" label="TX transfer state" type="uint8_t">
+               <description>TX transfer state.</description>
+            </integer>
+            <integer id="rxState" label="RX transfer state" type="uint8_t">
+               <description>RX transfer state</description>
+            </integer>
+         </struct>
+         <fixme id="uart_edma_transfer_callback_t" label="UART transfer callback function" type="void(*"/>
+      </generated_types>
+      <user_types>
+         <struct id="uart_edma_t" label="UART eDMA handle type" public="true">
+            <bool id="enable_custom_name" label="Enable UART custom handle name">
+               <description>When this option is enabled a user custom name of the DMA handle is allowed to set in the settings below.
+               </description>
+            </bool>
+            <string id="handle_custom_name" label="Handle name" available="$parent.enable_custom_name.getValue()">
+               <description>The eDMA handle is used for processing of DMA requests. </description>
+				<validation>
+				   <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="`The handle name: `+ $this.getCValue() +` is not valid C identifier!`"/>
+				   <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> x.getValue() == $this.getValue())" level="warning" description_expr="`The handle name ` + $this.getValue() + ` is a duplicate.`"/>  
+				</validation>
+            </string>
+            <info id="handle_default_name" label="Handle name" value="$parent.enable_custom_name.getValue() ? $parent.handle_custom_name.getValue() : 
+               $instance.getFnGroupPrefix() + $instance.getID() + 
+               `_UART_eDMA_Handle`" available="!$parent.enable_custom_name.getValue()">
+				<validation>
+				   <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="`The handle name: `+ $this.getCValue() +` is not valid C identifier!`"/>
+				   <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> x.getValue() == $this.getValue())" level="warning" description_expr="`The handle name ` + $this.getValue() + ` is a duplicate.`"/>  
+				</validation>
+            </info>
+            <variable id="uart_eDMA_handle_id" value="$parent.enable_custom_name.getValue() ? $parent.handle_custom_name.getValue() : $parent.handle_default_name.getValue()" options="id_check"></variable>
+            <bool id="init_callback" label="Initialization of eDMA callback"></bool>
+            <string id="callback_fcn" label="Transfer callback function name" enable="$parent.init_callback.getValue()">
+               <description>The callback function name that is used in the eDMA initialization. User must provide the definition of this function. This item is optional for the eDMA mode initialization.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="$this.getValue() != ``" level="error" description="The callback function shall be defined. If the callback function is not used uncheck the Initialization of eDMA callback option."/> 
+                  <constraint when_expr="$parent.init_callback.getValue() &amp;&amp; ($this.getValue() != ``)" cond_expr="isCIdentifier($this.getValue())" level="error" description="The callback function name must be a valid identifier."/> 
+               </validation>
+            </string>
+            <string id="user_data" label="User data pointer" enable="$parent.init_callback.getValue()">
+               <!--               <string id="user_data" label="User data pointer" enable="$parent.callback_fcn.getValue()!=``">-->
+               <description>Definition of the user data pointer ID. When empty the NULL is provided in the initializaton function for the callback function.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="(($this.getValue() == ``) || isCIdentifier($this.getValue()))" level="error" description="The user data pointer is not valid C identifier."/>
+               </validation>
+            </string>
+         </struct>
+      </user_types>
+      <settings>
+         <struct id="edma_channels" label="eDMA channels">
+            <variable id="shared_dma_request" value="getResource(`dmamux`, $instance.getCoreId()).searchInArray(enumItem -> 
+               (enumItem.getSetting(`devices`).searchInArray(item -> (item.getSetting(`function`).getValue() == `UART`) &amp;&amp; (item.getSetting(`device`).getValue() == $instance.getPeripheral())) >= 0)) >= 0"/>
+            <bool id="enable_rx_edma_channel" label="Enable Rx eDMA channel"></bool>
+            <reference id="edma_rx_channel" label="Rx eDMA channel" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" enable="$parent.enable_rx_edma_channel.getValue()">
+               <options_expr>
+                  <option id="dma_function" expr="$parent.shared_dma_request.getValue() ? `UART` : `RX`"/>
+               </options_expr>
+            </reference>
+            <bool id="enable_tx_edma_channel" label="Enable Tx eDMA channel"></bool>
+            <reference id="edma_tx_channel" label="Tx eDMA channel" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" enable="$parent.enable_tx_edma_channel.getValue()">
+               <options_expr>
+                  <option id="dma_function" expr="$parent.shared_dma_request.getValue() ? `UART` : `TX`"/>
+               </options_expr>
+               <validation>
+                  <constraint when_expr="$parent.shared_dma_request.getValue()" cond_expr="(!$parent.enable_rx_edma_channel.getValue()) || $this.eDMA_source.getValue() != $parent.edma_rx_channel.eDMA_source.getValue()" level="error" 
+                     description="The same DMA request cannot be used for Rx and Tx (this instance of the UART support one shared DMA request for Rx and Tx only). Enable either Rx or Tx eDMA channel."/>
+               </validation>
+            </reference>
+         </struct>
+         <reference id="uart_edma_handle" label="UART eDMA handle" type="uart_edma_t"/>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_edma_peripheral"/>
+         </import>
+         <def fragment="UART_eDMA_transfer_handle_init" public="true">
+            <expr>leftPadding(`/* Create the UART eDMA handle */`,1)</expr><br/>
+            <expr>leftPadding(`UART_TransferCreateHandleEDMA(`, 1) + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, `) 
+               + `&amp;` + $this.uart_edma_handle.uart_eDMA_handle_id.getValue() + `, ` +
+               + ($this.uart_edma_handle.init_callback.getValue() ? $this.uart_edma_handle.callback_fcn.getValue() : `NULL`) + `, `  
+               + (($this.uart_edma_handle.init_callback.getValue() &amp;&amp; ($this.uart_edma_handle.user_data.getValue() != ``)) ? $this.uart_edma_handle.user_data.getValue() : `NULL`) + `, `  
+               + ($this.edma_channels.enable_tx_edma_channel.getValue() ? (`&amp;` + $this.edma_channels.edma_tx_channel.eDMA_handle.getValue()) : `NULL`) + `, `
+               + ($this.edma_channels.enable_rx_edma_channel.getValue() ? (`&amp;` + $this.edma_channels.edma_rx_channel.eDMA_handle.getValue()) : `NULL`) +
+               + `);`</expr><br/>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">uart</param>
+               <param id="filename">fsl_uart_edma.h</param>
+            </fragment>
+         </section>
+         <section target="defines">            
+            <!-- RX -->
+            <fragment id="DMA_definitions" apply_to="$this.edma_channels.edma_rx_channel" if_expr="$this.edma_channels.enable_rx_edma_channel.getValue()"/>
+            <!-- TX -->
+            <fragment id="DMA_definitions" apply_to="$this.edma_channels.edma_tx_channel" if_expr="$this.edma_channels.enable_tx_edma_channel.getValue()"/>
+         </section> 
+         <section target="global_vars">
+            <!-- RX -->
+            <fragment id="DMA_handle_definition" apply_to="$this.edma_channels.edma_rx_channel" if_expr="$this.edma_channels.enable_rx_edma_channel.getValue()"/>
+            <!-- TX -->
+            <fragment id="DMA_handle_definition" apply_to="$this.edma_channels.edma_tx_channel" if_expr="$this.edma_channels.enable_tx_edma_channel.getValue()"/>
+            <!-- UART eDMA handle -->
+            <fragment id="global_var">
+               <param id="name" expr="$this.uart_edma_handle.uart_eDMA_handle_id.getValue()"/>
+               <param id="type" expr="`uart_edma_handle_t`"/>
+            </fragment>
+         </section>   
+         <section target="global_vars_extern">
+            <!-- RX -->
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.edma_channels.edma_rx_channel" if_expr="$this.edma_channels.enable_rx_edma_channel.getValue()"/>
+            <!-- TX -->
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.edma_channels.edma_tx_channel" if_expr="$this.edma_channels.enable_tx_edma_channel.getValue()"/>
+            <!-- user data pointer of the callback function -->
+            <fragment id="extern_var" if_expr="$this.uart_edma_handle.init_callback.getValue() &amp;&amp; ($this.uart_edma_handle.user_data.getValue() != ``)">
+               <param id="name" expr="$this.uart_edma_handle.user_data.getValue()"/>
+               <param id="type" expr="`void *`"/>
+            </fragment>
+            <!-- UART eDMA handle -->
+            <fragment id="extern_var">
+               <param id="name" expr="$this.uart_edma_handle.uart_eDMA_handle_id.getValue()"/>
+               <param id="type" expr="`uart_edma_handle_t`"/>
+            </fragment>
+         </section>   
+         <section target="init_function_body">
+            <!-- RX -->
+            <fragment id="DMAMUX_source_init" apply_to="$this.edma_channels.edma_rx_channel" if_expr="$this.edma_channels.enable_rx_edma_channel.getValue()"/>
+            <!-- TX -->
+            <fragment id="DMAMUX_source_init" apply_to="$this.edma_channels.edma_tx_channel" if_expr="$this.edma_channels.enable_tx_edma_channel.getValue()"/>
+            <!-- RX -->
+            <fragment id="DMA_handle_init" apply_to="$this.edma_channels.edma_rx_channel" if_expr="$this.edma_channels.enable_rx_edma_channel.getValue()"/>
+            <!-- TX -->
+            <fragment id="DMA_handle_init" apply_to="$this.edma_channels.edma_tx_channel" if_expr="$this.edma_channels.enable_tx_edma_channel.getValue()"/>
+            <fragment id="UART_eDMA_transfer_handle_init"/>
+         </section> 
+         <section target="callback_function_extern">
+            <!-- Transfer callback function declaration -->
+            <fragment id="extern_fcn_def" if_expr="$this.uart_edma_handle.init_callback.getValue() ">
+               <param id="name" expr="$this.uart_edma_handle.callback_fcn.getValue()"/>
+               <param id="type">void</param>
+               <param id="params">UART_Type *,uart_edma_handle_t *,status_t ,void *</param>
+               <param id="description" expr="`UART eDMA callback function for the ` + $instance.getID() +` component (init. function `+ $instance.getFnGroupName() + `)` "/>
+            </fragment>
+         </section>
+      </code>
+      <validation>
+         <constraint cond_expr="$this.edma_channels.enable_rx_edma_channel.getValue() || $this.edma_channels.enable_tx_edma_channel.getValue()" level="warning" description="Both Rx and Tx eDMA requests are disabled. The eDMA transfer handles will not be initialized."/>
+         <dependency resource_type="SWComponent" resource_id="platform.drivers.uart_edma" level="Warning" description_expr="$components.system.#global.err_missing_driver.getValue().formatMessage(`fsl_uart_edma`, ` (required for the eDMA mode)`)">
+            <feature name="enabled" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="SWComponent" resource_id="platform.drivers.uart_edma" level="Warning" description_expr="$components.system.#global.err_driver_version.getValue().formatMessage(`fsl_uart_edma`, ` (required for the eDMA mode)`)">
+            <feature name="version" evaluation="compatible">
+               <data type="Version" expr="`2.1.5`"/>
+               </feature>
+         </dependency>
+      </validation>
+      <quick_selections>
+         <quick_selection id="QuickSelection1" label="Rx /Tx transfer enabled">
+            <set id="edma_channels.enable_rx_edma_channel">true</set>
+            <set id="edma_channels.enable_tx_edma_channel">true</set>
+            <set id="edma_channels.edma_tx_channel.eDMAn">1</set>
+         </quick_selection>
+         <default>QuickSelection1</default>
+      </quick_selections>
+   </config_set>
+   <!-- DMA mode -->
+   <config_set id="dmaCfg" label="DMA configuration" from_source="src/fsl_uart_dma.h">
+      <description>UART transfer mode configuration.</description>
+      <generated_types>
+         <struct id="uart_dma_handle_t" label="" from="_uart_dma_handle">
+            <fixme id="base" label="UART peripheral base address" type="UART_Type *">
+               <description>UART peripheral base address.</description>
+            </fixme>
+            <reference id="callback" label="Callback function" type="uart_dma_transfer_callback_t">
+               <description>Callback function.</description>
+            </reference>
+            <fixme id="userData" label="UART callback function parameter" type="void *">
+               <description>UART callback function parameter.</description>
+            </fixme>
+            <fixme id="rxDataSizeAll" label="Size of the data to receive" type="size_t">
+               <description>Size of the data to receive.</description>
+            </fixme>
+            <fixme id="txDataSizeAll" label="Size of the data to send out" type="size_t">
+               <description>Size of the data to send out.</description>
+            </fixme>
+            <fixme id="txDmaHandle" label="The DMA TX channel used" type="dma_handle_t *">
+               <description>The DMA TX channel used.</description>
+            </fixme>
+            <fixme id="rxDmaHandle" label="The DMA RX channel used" type="dma_handle_t *">
+               <description>The DMA RX channel used.</description>
+            </fixme>
+            <integer id="txState" label="TX transfer state" type="uint8_t">
+               <description>TX transfer state.</description>
+            </integer>
+            <integer id="rxState" label="RX transfer state" type="uint8_t">
+               <description>RX transfer state</description>
+            </integer>
+         </struct>
+         <fixme id="uart_dma_transfer_callback_t" label="UART transfer callback function" type="void(*"/>
+      </generated_types>
+      <user_types>
+         <struct id="uart_dma_t" label="UART DMA handle type" public="true">
+            <bool id="enable_custom_name" label="Enable UART custom handle name">
+               <description>When this option is enabled a user custom name of the DMA handle is allowed to set in the settings below.
+               </description>
+            </bool>
+            <string id="handle_custom_name" label="Handle name" available="$parent.enable_custom_name.getValue()">
+               <description>The DMA handle is used for processing of DMA requests. </description>
+				<validation>
+				   <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="`The handle name: `+ $this.getCValue() +` is not valid C identifier!`"/>
+				   <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> x.getValue() == $this.getValue())" level="warning" description_expr="`The handle name ` + $this.getValue() + ` is a duplicate.`"/>  
+				</validation>
+            </string>
+            <info id="handle_default_name" label="Handle name" value="$parent.enable_custom_name.getValue() ? $parent.handle_custom_name.getValue() : 
+               $instance.getFnGroupPrefix() + $instance.getID() + 
+               `_UART_DMA_Handle`" available="!$parent.enable_custom_name.getValue()">
+				<validation>
+				   <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="`The handle name: `+ $this.getCValue() +` is not valid C identifier!`"/>
+				   <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> x.getValue() == $this.getValue())" level="warning" description_expr="`The handle name ` + $this.getValue() + ` is a duplicate.`"/>  
+				</validation>
+            </info>
+            <variable id="uart_DMA_handle_id" value="$parent.enable_custom_name.getValue() ? $parent.handle_custom_name.getValue() : $parent.handle_default_name.getValue()" options="id_check"></variable>
+            <bool id="init_callback" label="Initialization of DMA callback"></bool>
+            <string id="callback_fcn" label="Transfer callback function name" enable="$parent.init_callback.getValue()">
+               <description>The callback function name that is used in the DMA initialization. User must provide the definition of this function. This item is optional for the DMA mode initialization.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="$this.getValue() != ``" level="error" description="The callback function shall be defined. If the callback function is not used uncheck the Initialization of DMA callback option."/> 
+                  <constraint when_expr="$parent.init_callback.getValue() &amp;&amp; ($this.getValue() != ``)" cond_expr="isCIdentifier($this.getValue())" level="error" description="The callback function name must be a valid identifier."/> 
+               </validation>
+            </string>
+            <string id="user_data" label="User data pointer" enable="$parent.init_callback.getValue()">
+               <!--               <string id="user_data" label="User data pointer" enable="$parent.callback_fcn.getValue()!=``">-->
+               <description>Definition of the user data pointer ID. When empty the NULL is provided in the initializaton function for the callback function.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="(($this.getValue() == ``) || isCIdentifier($this.getValue()))" level="error" description="The user data pointer is not valid C identifier."/>
+               </validation>
+            </string>
+         </struct>
+      </user_types>
+      <settings>
+         <struct id="dma_channels" label="DMA channels">
+            <variable id="shared_dma_request" value="getResource(`dmamux`, $instance.getCoreId()).searchInArray(enumItem -> 
+               (enumItem.getSetting(`devices`).searchInArray(item -> (item.getSetting(`function`).getValue() == `UART`) &amp;&amp; (item.getSetting(`device`).getValue() == $instance.getPeripheral())) >= 0)) >= 0"/>
+            <bool id="enable_rx_dma_channel" label="Enable Rx DMA channel"></bool>
+            <reference id="dma_rx_channel" label="Rx DMA channel" type="dma_channel_t" config_set_id="fsl_dma_peripheral" component_id="system" enable="$parent.enable_rx_dma_channel.getValue()">
+               <options_expr>
+                  <option id="dma_function" expr="$parent.shared_dma_request.getValue() ? `UART` : `RX`"/>
+               </options_expr>
+            </reference>
+            <bool id="enable_tx_dma_channel" label="Enable Tx DMA channel"></bool>
+            <reference id="dma_tx_channel" label="Tx DMA channel" type="dma_channel_t" config_set_id="fsl_dma_peripheral" component_id="system" enable="$parent.enable_tx_dma_channel.getValue()">
+               <options_expr>
+                  <option id="dma_function" expr="$parent.shared_dma_request.getValue() ? `UART` : `TX`"/>
+               </options_expr>
+               <validation>
+                  <constraint when_expr="$parent.shared_dma_request.getValue()" cond_expr="(!$parent.enable_rx_dma_channel.getValue()) || $this.DMA_source.getValue() != $parent.dma_rx_channel.DMA_source.getValue()" level="error" 
+                     description="The same DMA request cannot be used for Rx and Tx (this instance of the UART support one shared DMA request for Rx and Tx only). Enable either Rx or Tx DMA channel."/>
+               </validation>
+            </reference>
+         </struct>
+         <reference id="uart_dma_handle" label="UART DMA handle" type="uart_dma_t"/>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_dma_peripheral"/>
+         </import>
+         <def fragment="UART_DMA_transfer_handle_init" public="true">
+            <expr>leftPadding(`/* Create the UART DMA handle */`,1)</expr><br/>
+            <expr>leftPadding(`UART_TransferCreateHandleDMA(`, 1) + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, `) 
+               + `&amp;` + $this.uart_dma_handle.uart_DMA_handle_id.getValue() + `, ` +
+               + ($this.uart_dma_handle.init_callback.getValue() ? $this.uart_dma_handle.callback_fcn.getValue() : `NULL`) + `, `  
+               + (($this.uart_dma_handle.init_callback.getValue() &amp;&amp; ($this.uart_dma_handle.user_data.getValue() != ``)) ? $this.uart_dma_handle.user_data.getValue() : `NULL`) + `, `  
+               + ($this.dma_channels.enable_tx_dma_channel.getValue() ? (`&amp;` + $this.dma_channels.dma_tx_channel.DMA_handle.getValue()) : `NULL`) + `, `
+               + ($this.dma_channels.enable_rx_dma_channel.getValue() ? (`&amp;` + $this.dma_channels.dma_rx_channel.DMA_handle.getValue()) : `NULL`) +
+               + `);`</expr><br/>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">uart</param>
+               <param id="filename">fsl_uart_dma.h</param>
+            </fragment>
+         </section>
+         <section target="defines">            
+            <!-- RX -->
+            <fragment id="DMA_definitions" apply_to="$this.dma_channels.dma_rx_channel" if_expr="$this.dma_channels.enable_rx_dma_channel.getValue()"/>
+            <!-- TX -->
+            <fragment id="DMA_definitions" apply_to="$this.dma_channels.dma_tx_channel" if_expr="$this.dma_channels.enable_tx_dma_channel.getValue()"/>
+         </section> 
+         <section target="global_vars">
+            <!-- RX -->
+            <fragment id="DMA_handle_definition" apply_to="$this.dma_channels.dma_rx_channel" if_expr="$this.dma_channels.enable_rx_dma_channel.getValue()"/>
+            <!-- TX -->
+            <fragment id="DMA_handle_definition" apply_to="$this.dma_channels.dma_tx_channel" if_expr="$this.dma_channels.enable_tx_dma_channel.getValue()"/>
+            <!-- UART DMA handle -->
+            <fragment id="global_var">
+               <param id="name" expr="$this.uart_dma_handle.uart_DMA_handle_id.getValue()"/>
+               <param id="type" expr="`uart_dma_handle_t`"/>
+            </fragment>
+         </section>   
+         <section target="global_vars_extern">
+            <!-- RX -->
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.dma_channels.dma_rx_channel" if_expr="$this.dma_channels.enable_rx_dma_channel.getValue()"/>
+            <!-- TX -->
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.dma_channels.dma_tx_channel" if_expr="$this.dma_channels.enable_tx_dma_channel.getValue()"/>
+            <!-- user data pointer of the callback function -->
+            <fragment id="extern_var" if_expr="$this.uart_dma_handle.init_callback.getValue() &amp;&amp; ($this.uart_dma_handle.user_data.getValue() != ``)">
+               <param id="name" expr="$this.uart_dma_handle.user_data.getValue()"/>
+               <param id="type" expr="`void *`"/>
+            </fragment>
+            <!-- UART DMA handle -->
+            <fragment id="extern_var">
+               <param id="name" expr="$this.uart_dma_handle.uart_DMA_handle_id.getValue()"/>
+               <param id="type" expr="`uart_dma_handle_t`"/>
+            </fragment>
+         </section>   
+         <section target="init_function_body">
+            <!-- RX -->
+            <fragment id="DMAMUX_source_init" apply_to="$this.dma_channels.dma_rx_channel" if_expr="$this.dma_channels.enable_rx_dma_channel.getValue()"/>
+            <!-- TX -->
+            <fragment id="DMAMUX_source_init" apply_to="$this.dma_channels.dma_tx_channel" if_expr="$this.dma_channels.enable_tx_dma_channel.getValue()"/>
+            <!-- RX -->
+            <fragment id="DMA_handle_init" apply_to="$this.dma_channels.dma_rx_channel" if_expr="$this.dma_channels.enable_rx_dma_channel.getValue()"/>
+            <!-- TX -->
+            <fragment id="DMA_handle_init" apply_to="$this.dma_channels.dma_tx_channel" if_expr="$this.dma_channels.enable_tx_dma_channel.getValue()"/>
+            <fragment id="UART_DMA_transfer_handle_init"/>
+         </section> 
+         <section target="callback_function_extern">
+            <!-- Transfer callback function declaration -->
+            <fragment id="extern_fcn_def" if_expr="$this.uart_dma_handle.init_callback.getValue() ">
+               <param id="name" expr="$this.uart_dma_handle.callback_fcn.getValue()"/>
+               <param id="type">void</param>
+               <param id="params">UART_Type *,uart_dma_handle_t *,status_t ,void *</param>
+               <param id="description" expr="`UART DMA callback function for the ` + $instance.getID() +` component (init. function `+ $instance.getFnGroupName() + `)` "/>
+            </fragment>
+         </section>
+      </code>
+      <validation>
+         <constraint cond_expr="$this.dma_channels.enable_rx_dma_channel.getValue() || $this.dma_channels.enable_tx_dma_channel.getValue()" level="warning" description="Both Rx and Tx DMA requests are disabled. The DMA transfer handles will not be initialized."/>
+         <dependency resource_type="SWComponent" resource_id="platform.drivers.uart_dma" level="Warning" description_expr="$components.system.#global.err_missing_driver.getValue().formatMessage(`fsl_uart_dma`, ` (required for the DMA mode)`)">
+            <feature name="enabled" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="SWComponent" resource_id="platform.drivers.uart_dma" level="Warning" description_expr="$components.system.#global.err_driver_version.getValue().formatMessage(`fsl_uart_dma`, ` (required for the DMA mode)`)">
+            <feature name="version" evaluation="compatible">
+               <data type="Version" expr="`2.1.5`"/>
+            </feature>
+         </dependency>
+      </validation>
+      <quick_selections>
+         <quick_selection id="QuickSelection1" label="Rx /Tx transfer enabled">
+            <set id="dma_channels.enable_rx_dma_channel">true</set>
+            <set id="dma_channels.enable_tx_dma_channel">true</set>
+            <set id="dma_channels.dma_tx_channel.DMAn">1</set>
+         </quick_selection>
+         <default>QuickSelection1</default>
+      </quick_selections>
+   </config_set>
+   <!-- FreeRTOS mode -->
+   <config_set id="fsl_uart_freertos" label="FreeRTOS configuration" from_source="fsl_uart_freertos.h">
+      <description>FreeRTOS configuration of the UART</description>
+      <generated_types>
+         <enum id="uart_parity_mode_t" label="UART parity mode" from="_uart_parity_mode" from_source="fsl_uart.h">
+            <item id="kUART_ParityDisabled" label="Parity disabled"/>
+            <item id="kUART_ParityEven" label="Parity enabled, type even, bit setting: PE|PT = 10"/>
+            <item id="kUART_ParityOdd" label="Parity enabled, type odd, bit setting: PE|PT = 11"/>
+         </enum>
+         <enum id="uart_stop_bit_count_t" label="UART stop bit count" from="_uart_stop_bit_count" from_source="fsl_uart.h">
+            <item id="kUART_OneStopBit" label="One stop bit"/>
+            <item id="kUART_TwoStopBit" label="Two stop bits"/>
+         </enum>
+         <struct id="uart_rtos_config_t" label="UART configuration structure" from="_uart_rtos_config">
+            <fixme id="base" label="UART base address" type="UART_Type *">
+               <description>UART base address</description>
+            </fixme>
+            <integer id="srcclk" label="UART source clock in Hz" type="uint32_t">
+               <description>UART source clock in Hz</description>
+            </integer>
+            <integer id="baudrate" label="Desired communication speed" type="uint32_t">
+               <description>Desired communication speed</description>
+            </integer>
+            <reference id="parity" label="Parity setting" type="uart_parity_mode_t">
+               <description>Parity setting</description>
+            </reference>
+            <reference id="stopbits" label="Number of stop bits to use" type="uart_stop_bit_count_t">
+               <description>Number of stop bits to use</description>
+            </reference>
+            <fixme id="buffer" label="Buffer for background reception" type="uint8_t *">
+               <description>Buffer for background reception</description>
+            </fixme>
+            <integer id="buffer_size" label="Size of buffer for background reception" type="uint32_t">
+               <description>Size of buffer for background reception</description>
+            </integer>
+         </struct>
+      </generated_types>
+      <user_types>
+         <struct id="uart_rtos_config_t" label="UART configuration structure" from="_uart_rtos_config">
+<!--            <integer id="srcclk" label="UART source clock in Hz" type="uint32_t">
+               <description>UART source clock in Hz</description>
+            </integer>-->
+<!--            <integer id="baudrate" label="Desired communication speed" type="uint32_t">
+               <description>Desired communication speed</description>
+            </integer>-->
+            <variable id="clockSourceUId" value="`BusInterfaceClock`"/>
+            <variable id="partName" value="queryFeatureAdvanced(`Configuration`, `processor`, `name`,false)"/>
+            <variable id="isGetFreqSupported" value="!$parent.partName.getValue().regexMatch(`\[MKE0[2,4,6].*`)"/>
+            <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="createArray().addItemToList(`BusInterfaceClock`, getPeripheralClock($instance.getPeripheral(), `BusInterfaceClock`), ($instance.getPeripheral() + `_CLK_SRC`),true)" >
+               <description>UART clock source.</description>
+               <validation>
+                  <dependency when_expr="$parent.clockSourceFreq.getEnumItemId() == `GetFreq`" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Warning">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="($parent.clockSourceFreq.getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" 
+               items="createArray().addItemToList(`GetFreq`,`Runtime calculation by CLOCK_GetFreq()`,`GetFreq`,$parent.isGetFreqSupported.getValue()).merge(
+               getClockFunctionalGroups().arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> enumItem,
+               enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)) + ` (` + enumItem + `)`,
+               enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)))" >
+               <description>Selection of the clock source frequency.</description>
+               <validation>
+                  <constraint cond_expr="(($this.getEnumItemValue() == `GetFreq`) || ($this.getEnumItemValue().toHertz() != 0))" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+            </dynamic_enum> 
+            
+            <integer id="baudrate" label="UART baud rate" type="uint32_t"  min_expr="1"/>
+            <reference id="parity" label="Parity mode" type="uart_parity_mode_t"/>
+            <reference id="stopbits" label="Number of stop bits" type="uart_stop_bit_count_t"/> <!-- available="featureDefined(`FSL_FEATURE_UART_HAS_STOP_BIT_CONFIG_SUPPORT`) &amp;&amp; getFeature(`FSL_FEATURE_UART_HAS_STOP_BIT_CONFIG_SUPPORT`)" -->
+            <info id="buffer" label="The ID of the buffer" value="$instance.getFnGroupPrefix() + $instance.getID() + `_background_buffer`" options="add_to_struct">
+               <description>The ID of data background buffer for transfers.</description>
+            </info>
+            <integer id="buffer_size" label="Buffer size [bytes]" type="uint32_t" min_expr="1" max_expr="0x7FFFFFFF">
+               <description>The size of the buffer (number of bytes that are transfered.</description>
+            </integer>
+         </struct>
+      </user_types>
+      <settings>
+         <reference id="uart_rtos_configuration" label="UART RTOS Configuration" type="uart_rtos_config_t">
+            <description>UART RTOS configuration.</description>
+         </reference>
+         <variable id="rtos_peripheral_id" value="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)" ></variable>
+         <variable id="rtos_clock_source_id" value="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`)" ></variable>
+         <variable id="buffer_size_id" value="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_BACKGROUND_BUFFER_SIZE`)" ></variable>
+         <variable id="rtos_config_id" value="$instance.getFnGroupPrefix() + $instance.getID() + `_rtos_config`" ></variable>
+         <variable id="rtos_handle_id" value="$instance.getFnGroupPrefix() + $instance.getID() + `_rtos_handle`" ></variable>
+         <variable id="uart_handle_id" value="$instance.getFnGroupPrefix() + $instance.getID() + `_uart_handle`" ></variable>
+         <variable id="uart_irq_number" value="getResource(`interrupts`, $instance.getCoreId()).countOccurrences(item -> (item.getSetting(`devices`).searchInArray(devItem -> devItem.getSetting(`id`).getValue() == $instance.getPeripheral()) >= 0), false)"></variable>
+         <reference id="interrupt_rx_tx" label="Rx/Tx interrupt priority setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=serial_rx_tx;irq_without_enable_control;without_handler_settings">
+            <description>Configuration of Rx/Tx interrupt priority (by default FreeRTOS sets interrupt to lower priority than the default level).</description> 
+         </reference>
+         <reference id="interrupt_err" label="Error Interrupt priority setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=serial_error;irq_without_enable_control;without_handler_settings" available="$parent.uart_irq_number.getValue() > 1">
+            <description>Configuration of error interrupt priority (by default FreeRTOS sets interrupt to lower priority than the default level).</description>
+         </reference>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+            <from component_id="system" config_set_id="common_code_templates"/>
+         </import>
+         <def fragment="uart_rtos_config_struct_init">
+            <expr>`uart_rtos_config_t ` + $configSet.rtos_config_id.getValue() + ` = {`</expr><br/>
+            <expr>leftPadding(`.base = ` + $configSet.rtos_peripheral_id.getValue() + `,`, 1)</expr><br/> 
+            <fragment id="field" apply_to="$this.baudrate">
+               <param id="paddingLevel" expr="1"></param>
+               <param id="_last" expr="false"></param>
+            </fragment>
+            <fragment id="field" apply_to="$this.parity">
+              <param id="paddingLevel" expr="1"></param>
+               <param id="_last" expr="false"></param>
+            </fragment>
+            <fragment id="field" apply_to="$this.stopbits">
+               <param id="paddingLevel" expr="1"></param>
+               <param id="_last" expr="false"></param>
+            </fragment>
+            <fragment id="field" apply_to="$this.buffer">
+               <param id="paddingLevel" expr="1"></param>
+               <param id="_last" expr="false"></param>
+            </fragment>
+            <expr>leftPadding(`.buffer_size = ` + $configSet.buffer_size_id.getValue(), 1)</expr><br/> 
+            <text>};</text><br/>
+         </def>
+         <def fragment="uart_rtos_init">
+            <expr>leftPadding(`/* UART clock source initialization */`,1)</expr><br/>
+            <expr>leftPadding($this.rtos_config_id.getValue() + `.srcclk = ` + $this.rtos_clock_source_id.getValue() + `;`,1)</expr><br/>
+            <expr>leftPadding(`/* UART rtos initialization */`,1)</expr><br/>
+            <expr>leftPadding(`UART_RTOS_Init(&amp;` + $this.rtos_handle_id.getValue() + `, &amp;` + $this.uart_handle_id.getValue() + `, &amp;` + $this.rtos_config_id.getValue() + `);`, 1)</expr><br/>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">uart</param>
+               <param id="filename">fsl_uart.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">uart</param>
+               <param id="filename">fsl_uart_freertos.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">clock</param>
+               <param id="filename">fsl_clock.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <fragment id="define">
+               <param id="name" expr="$this.rtos_peripheral_id.getValue()"/>
+               <param id="value" expr="$instance.getPeripheral()"/>
+               <param id="description">Definition of peripheral ID</param>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="$this.rtos_clock_source_id.getValue()"/>
+               <param id="value" expr="($this.uart_rtos_configuration.clockSourceFreq.getEnumItemId() == `GetFreq`) ? 
+                  (`CLOCK_GetFreq(` + $instance.getPeripheral() + `_CLK_SRC)`) 
+                  : ($this.uart_rtos_configuration.clockSourceFreq.getEnumItemValue().toHertz() + `UL`)
+                  "/> 
+               <param id="description">Definition of the clock source frequency</param>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="$this.buffer_size_id.getValue()"/>
+               <param id="value" expr="$this.uart_rtos_configuration.buffer_size.getValue()"/>
+               <param id="description">Definition of the backround buffer size</param>
+            </fragment>
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_rx_tx"/>
+            <fragment id="IRQ_definitions" if_expr="$this.uart_irq_number.getValue() > 1" apply_to="$this.interrupt_err"/>
+         </section>                  
+         <section target="global_vars">
+            <fragment id="global_var">
+               <param id="name" expr="$this.rtos_handle_id.getValue()" />
+               <param id="type" >uart_rtos_handle_t</param>
+            </fragment>
+            <fragment id="global_var">
+               <param id="name" expr="$this.uart_handle_id.getValue()" />
+               <param id="type" >uart_handle_t</param>
+            </fragment>
+            <fragment id="global_var_array">
+               <param id="name" expr="$this.uart_rtos_configuration.buffer.getValue()" />
+               <param id="size" expr="$this.buffer_size_id.getValue()" />
+               <param id="type" >uint8_t</param>
+            </fragment>
+            <fragment id="uart_rtos_config_struct_init" apply_to="$this.uart_rtos_configuration">
+               <param id="name" expr="$parent.rtos_config_id.getValue()" />
+               <param id="type" >uart_rtos_config_t</param>
+            </fragment>
+         </section>
+         <section target="global_vars_extern">
+            <fragment id="extern_var">
+               <param id="name" expr="$this.rtos_handle_id.getValue()" />
+               <param id="type" >uart_rtos_handle_t</param>
+            </fragment>
+            <fragment id="extern_var">
+               <param id="name" expr="$this.uart_handle_id.getValue()" />
+               <param id="type" >uart_handle_t</param>
+            </fragment>
+            <fragment id="extern_var" apply_to="$this.uart_rtos_configuration">
+               <param id="name" expr="$parent.rtos_config_id.getValue()" />
+               <param id="type" >uart_rtos_config_t</param>
+            </fragment>
+         </section>
+         <section target="init_function_body">
+            <fragment id="uart_rtos_init"/>
+            <fragment id="IRQn_set_priority_default" apply_to="$this.interrupt_rx_tx"/>
+            <fragment id="IRQn_set_priority_default" if_expr="$this.interrupt_err.isAvailable()" apply_to="$this.interrupt_err"/>
+         </section>
+      </code>
+      <validation>
+         <!-- RxD and TxD is always enabled in the RTOS mode initialization -->
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.uart_tx`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`TX`, $instance.getPeripheral())" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.uart_rx`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`RX`, $instance.getPeripheral())"  level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="SWComponent" resource_id="platform.drivers.uart_freertos" level="Warning" description_expr="$components.system.#global.err_missing_driver.getValue().formatMessage(`fsl_uart_freertos`, ` (required for the FreeRTOS mode)`)">
+            <feature name="enabled" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="SWComponent" resource_id="platform.drivers.uart_freertos" level="Warning" description_expr="$components.system.#global.err_driver_version.getValue().formatMessage(`fsl_uart_freertos`, ` (required for the FreeRTOS mode)`)">
+            <feature name="version" evaluation="compatible">
+               <data type="Version" expr="`2.1.5`"/>
+            </feature>
+         </dependency>
+      </validation>
+      <quick_selections>
+         <quick_selection id="QuickSelection1" label="115200-N,8,1">
+            <set id="uart_rtos_configuration.baudrate">115200</set>
+            <set id="uart_rtos_configuration.parity">kUART_ParityDisabled</set>
+            <set id="uart_rtos_configuration.stopbits">kUART_OneStopBit</set>
+         </quick_selection>
+         <quick_selection id="QuickSelection2" label="57600-N,8,1">
+            <set id="uart_rtos_configuration.baudrate">57600</set>
+            <set id="uart_rtos_configuration.parity">kUART_ParityDisabled</set>
+            <set id="uart_rtos_configuration.stopbits">kUART_OneStopBit</set>
+         </quick_selection>
+         <quick_selection id="QuickSelection3" label="38400-N,8,1">
+            <set id="uart_rtos_configuration.baudrate">38400</set>
+            <set id="uart_rtos_configuration.parity">kUART_ParityDisabled</set>
+            <set id="uart_rtos_configuration.stopbits">kUART_OneStopBit</set>
+         </quick_selection>
+         <quick_selection id="QuickSelection4" label="19200-N,8,1">
+            <set id="uart_rtos_configuration.baudrate">19200</set>
+            <set id="uart_rtos_configuration.parity">kUART_ParityDisabled</set>
+            <set id="uart_rtos_configuration.stopbits">kUART_OneStopBit</set>
+         </quick_selection>
+         <quick_selection id="QuickSelection5" label="9600-N,8,1">
+            <set id="uart_rtos_configuration.baudrate">9600</set>
+            <set id="uart_rtos_configuration.parity">kUART_ParityDisabled</set>
+            <set id="uart_rtos_configuration.stopbits">kUART_OneStopBit</set>
+         </quick_selection>
+         <default>QuickSelection1</default>
+      </quick_selections>
+   </config_set>
+</component:config_component>

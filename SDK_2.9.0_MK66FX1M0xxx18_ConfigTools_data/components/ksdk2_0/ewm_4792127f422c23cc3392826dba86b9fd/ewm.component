@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component  id="ewm" label="EWM" category="Peripheral driver" global_only="false" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-5.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <sw_comp_ref name="platform.drivers.ewm" version="2.0.1"/>
+   <description>External Watchdog Monitor (EWM)</description>
+   <mode id="basic" label="General" >
+      <description>General configuration of the External Watchdog Monitor (EWM).</description>
+      <config_set_refs>
+         <config_set_ref>fsl_ewm</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>EWM</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="fsl_ewm" label="General configuration" from_source="fsl_ewm.h">
+      <description>General configuration of the External Watchdog Monitor.</description>
+      <generated_types>
+         <enum id="ewm_lpo_clock_source_t" label="Describes EWM clock source." from="_ewm_lpo_clock_source" available="(featureDefined(`FSL_FEATURE_EWM_HAS_CLOCK_SELECT`) &amp;&amp; getFeature(`FSL_FEATURE_EWM_HAS_CLOCK_SELECT`))">
+            <item id="kEWM_LpoClockSource0" label="EWM clock sourced from lpo_clk[0]"/>
+            <item id="kEWM_LpoClockSource1" label="EWM clock sourced from lpo_clk[1]"/>
+            <item id="kEWM_LpoClockSource2" label="EWM clock sourced from lpo_clk[2]"/>
+            <item id="kEWM_LpoClockSource3" label="EWM clock sourced from lpo_clk[3]"/>
+         </enum>
+         <struct id="ewm_config_t" label="Data structure for EWM configuration." from="_ewm_config">
+            <description>This structure is used to configure the EWM.</description>
+            <bool id="enableEwm" label="Enable EWM module">
+               <description>Enable EWM module</description>
+            </bool>
+            <bool id="enableEwmInput" label="Enable EWM_in input">
+               <description>Enable EWM_in input</description>
+            </bool>
+            <bool id="setInputAssertLogic" label="EWM_in signal assertion state">
+               <description>EWM_in signal assertion state</description>
+            </bool>
+            <bool id="enableInterrupt" label="Enable EWM interrupt">
+               <description>Enable EWM interrupt</description>
+            </bool>
+            <reference id="clockSource" label="Clock source select" type="ewm_lpo_clock_source_t" available="(featureDefined(`FSL_FEATURE_EWM_HAS_CLOCK_SELECT`) &amp;&amp; getFeature(`FSL_FEATURE_EWM_HAS_CLOCK_SELECT`))">
+               <description>Clock source select</description>
+            </reference>
+            <integer id="prescaler" label="Clock prescaler value" type="uint8_t" available="(featureDefined(`FSL_FEATURE_EWM_HAS_PRESCALER`) &amp;&amp; getFeature(`FSL_FEATURE_EWM_HAS_PRESCALER`))">
+               <description>Clock prescaler value</description>
+            </integer>
+            <integer id="compareLowValue" label="Compare low-register value" type="uint8_t">
+               <description>Compare low-register value</description>
+            </integer>
+            <integer id="compareHighValue" label="Compare high-register value" type="uint8_t">
+               <description>Compare high-register value</description>
+            </integer>
+         </struct>
+      </generated_types>
+      <user_types>
+         <enum id="ewm_lpo_clock_source_t" label="Describes EWM clock source." from="_ewm_lpo_clock_source" available="(featureDefined(`FSL_FEATURE_EWM_HAS_CLOCK_SELECT`) &amp;&amp; getFeature(`FSL_FEATURE_EWM_HAS_CLOCK_SELECT`))">
+            <item id="kEWM_LpoClockSource0" label="EWM clock sourced from lpo_clk[0]" value="LPO"/>
+            <item id="kEWM_LpoClockSource1" label="EWM clock sourced from lpo_clk[1]" value="LPO1"/>
+            <item id="kEWM_LpoClockSource2" label="EWM clock sourced from lpo_clk[2]" value="LPO2"/>
+            <item id="kEWM_LpoClockSource3" label="EWM clock sourced from lpo_clk[3]" value="LPO3"/>
+         </enum>
+         <struct id="ewm_config_t" label="Data structure for EWM configuration." from="_ewm_config">
+            <description>This structure is used to configure the EWM.</description>
+            <bool id="enableEwm" label="Enable module">
+               <description>Enable EWM module</description>
+            </bool>
+            <bool id="enableEwmInput" label="Enable input">
+               <description>Enable EWM input (EWM_in) for safety status of external safety circuits.</description>
+            </bool>
+            <bool id="setInputAssertLogic" label="Input signal assertion state">
+               <description>EWM input (EWM_in) signal assertion state. If disabled, assert state of the EWM_in signal is logic zero; if enabled, assert state of EWM_in signal to a logic one.</description>
+            </bool>
+            <reference id="clockSourceEnum" label="Clock source" type="ewm_lpo_clock_source_t" available="false"></reference>
+            <variable id="clockSourceUId" value="$parent.clockSource.getEnumItemValue()"/>
+            <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" available="(featureDefined(`FSL_FEATURE_EWM_HAS_CLOCK_SELECT`) &amp;&amp; getFeature(`FSL_FEATURE_EWM_HAS_CLOCK_SELECT`))" items="enumItemsOf($parent.clockSourceEnum).arrayToEnumItems(
+               enumItem -> getPeripheralClockType($instance.getPeripheral(), enumItem.getValue()) != `NOT_CONNECTED`,
+               enumItem -> enumItem.getID(),
+               enumItem -> getPeripheralClock($instance.getPeripheral(), enumItem.getValue()),
+               enumItem -> enumItem.getValue())">
+               <description>EWM clock source selection.</description>
+               <validation>
+                <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.clockSourceUId.getValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.clockSource.getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.clockSource.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                   description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                   level="Error">
+                  <feature name="frequency" evaluation="greaterThan">
+                     <data expr="0" unit="Hz" type="Frequency"/>
+                  </feature>
+                </dependency>
+              </validation>
+            </dynamic_enum>
+            <integer id="prescaler" label="Clock prescaler value" type="uint8_t" min_expr="0" max_expr="255" available="(featureDefined(`FSL_FEATURE_EWM_HAS_PRESCALER`) &amp;&amp; getFeature(`FSL_FEATURE_EWM_HAS_PRESCALER`))">
+               <description>Clock prescaler value</description>
+            </integer>
+            <integer id="compareLowValue" label="Compare low-register value" type="uint8_t" min_expr="0" max_expr="255">
+               <description>Compare low-register value</description>
+            </integer>
+            <integer id="compareHighValue" label="Compare high-register value" type="uint8_t" min_expr="0" max_expr="255">
+               <description>Compare high-register value</description>
+            </integer>
+         </struct>
+         <struct id="ewm_interrupt" label="Interrupt settings">
+            <description>EWM interrupt settings</description>
+            <bool id="enableInterrupt" label="Enable interrupt">
+               <description>When enabled, interrupt request is generated when EWM output (EWM_out) is asserted.</description>
+            </bool>
+            <reference id="interrupt" label="Interrupt setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enableInterrupt.value()" available="$parent.enableInterrupt.isAvailable()" options="UI_LABEL_HIDDEN"/>
+         </struct>
+      </user_types>
+      <settings>
+         <reference id="ewmConfig" label="General configuration" type="ewm_config_t" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+            <description>EWM configuration structure</description>
+         </reference>
+         <reference id="ewmIntConfig" label="Interrupt configuration" type="ewm_interrupt">
+            <description>EWM interrupt settings</description>
+         </reference>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+         <def fragment="ewm_irq">
+            <fragment id="init_line" if_expr="$this.enableInterrupt.value()">
+               <param id="code" expr="`EWM_EnableInterrupts(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID()) + `_PERIPHERAL, kEWM_InterruptEnable);`"/>
+               <param id="description" expr="`Enable EWM interrupt.`"/>
+               <param id="paddingLevel" expr="1"/>
+            </fragment>
+            <fragment id="IRQn_set_priority_default" apply_to="$this.interrupt" if_expr="$this.interrupt.enable_priority.value() &amp;&amp; $this.enableInterrupt.value()"/>
+            <fragment id="IRQn_enable_default" apply_to="$this.interrupt" if_expr="$this.enableInterrupt.value()"/>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">ewm</param>
+               <param id="filename">fsl_ewm.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <fragment id="define">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)"/>
+               <param id="value" expr="$instance.getPeripheral()"/>
+               <param id="description" expr="`Alias for ` + $instance.getPeripheral() + ` peripheral`"></param>
+            </fragment>
+            <fragment id="IRQ_definitions" apply_to="$this.ewmIntConfig.interrupt" if_expr="$this.ewmIntConfig.enableInterrupt.value()"></fragment>
+         </section>  
+         <section target="global_vars">
+            <fragment id="const_struct" apply_to="$this.ewmConfig">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`" />
+               <param id="type">ewm_config_t</param>
+            </fragment>
+         </section>
+         <section target="global_vars_extern">
+            <fragment id="extern_const">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`" />
+               <param id="type">ewm_config_t</param>
+            </fragment> 
+         </section>
+         <section target="init_function_body">
+            <text>  /* Initialization function */</text><br/>
+            <expr>`  EWM_Init(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, &amp;`) + $instance.getFnGroupPrefix() + $instance.getID() + `_config);`</expr>
+            <br/>
+            <fragment id="ewm_irq" apply_to="$this.ewmIntConfig"/>
+         </section>
+      </code>
+      <validation/>
+      <quick_selections>
+         <quick_selection id="default" label="Default">
+            <description>Default driver settings</description>
+            <set id="ewmConfig.enableEwm">true</set>
+            <set id="ewmConfig.enableEwmInput">false</set>
+            <set id="ewmConfig.setInputAssertLogic">false</set>
+            <set id="ewmConfig.enableInterrupt">false</set>
+            <set id="ewmConfig.clockSource">kEWM_LpoClockSource0</set>
+            <set id="ewmConfig.prescaler">0</set>
+            <set id="ewmConfig.compareLowValue">0</set>
+            <set id="ewmConfig.compareHighValue">0xFF</set>
+         </quick_selection>
+         <default>default</default>
+      </quick_selections>
+   </config_set>
+ </component:config_component>

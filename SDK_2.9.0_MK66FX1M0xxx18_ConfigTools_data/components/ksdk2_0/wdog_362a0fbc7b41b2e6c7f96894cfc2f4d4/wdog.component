@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="wdog" label="WDOG" category="Peripheral driver" options="UI_COMPONENT_MODE_HIDDEN" global_only="false" hidden="false" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-5.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <sw_comp_ref name="platform.drivers.wdog" version="2.0.0"/>
+    <description>Watchdog timer (WDOG)</description>
+    <mode id="general" label="General">
+      <description>General configuration of the watchdog timer.</description>
+        <config_set_refs>
+            <config_set_ref>fsl_wdog</config_set_ref>
+        </config_set_refs>
+        <master_peripheral exclusive="true">
+            <peripheral_type>WDOG</peripheral_type>
+        </master_peripheral>
+    </mode>
+    <config_set id="fsl_wdog" label="Watchdog configuration" from_source="fsl_wdog.h">
+        <description>Watchdog timer general configuration.</description>
+        <generated_types>
+            <enum id="wdog_clock_source_t" label="Describes WDOG clock source" from="_wdog_clock_source">
+                <description></description>
+                <item id="kWDOG_LpoClockSource" label="WDOG clock sourced from LPO">
+                    <description>WDOG clock sourced from LPO</description>
+                </item>
+                <item id="kWDOG_AlternateClockSource" label="WDOG clock sourced from alternate clock source">
+                    <description>WDOG clock sourced from alternate clock source</description>
+                </item>
+            </enum>
+            <struct id="wdog_work_mode_t" label="Defines WDOG work mode" from="_wdog_work_mode">
+                <description></description>
+                <bool id="enableWait" label="Enables or disables WDOG in wait mode" available="(featureDefined(`FSL_FEATURE_WDOG_HAS_WAITEN`) &amp;&amp; getFeature(`FSL_FEATURE_WDOG_HAS_WAITEN`))">
+                    <description>Enables or disables WDOG in wait mode</description>
+                </bool>
+                <bool id="enableStop" label="Enables or disables WDOG in stop mode">
+                    <description>Enables or disables WDOG in stop mode</description>
+                </bool>
+                <bool id="enableDebug" label="Enables or disables WDOG in debug mode">
+                    <description>Enables or disables WDOG in debug mode</description>
+                </bool>
+            </struct>
+            <enum id="wdog_clock_prescaler_t" label="Describes the selection of the clock prescaler" from="_wdog_clock_prescaler">
+                <description></description>
+                <item id="kWDOG_ClockPrescalerDivide1" label="Divided by 1">
+                    <description>Divided by 1</description>
+                </item>
+                <item id="kWDOG_ClockPrescalerDivide2" label="Divided by 2">
+                    <description>Divided by 2</description>
+                </item>
+                <item id="kWDOG_ClockPrescalerDivide3" label="Divided by 3">
+                    <description>Divided by 3</description>
+                </item>
+                <item id="kWDOG_ClockPrescalerDivide4" label="Divided by 4">
+                    <description>Divided by 4</description>
+                </item>
+                <item id="kWDOG_ClockPrescalerDivide5" label="Divided by 5">
+                    <description>Divided by 5</description>
+                </item>
+                <item id="kWDOG_ClockPrescalerDivide6" label="Divided by 6">
+                    <description>Divided by 6</description>
+                </item>
+                <item id="kWDOG_ClockPrescalerDivide7" label="Divided by 7">
+                    <description>Divided by 7</description>
+                </item>
+                <item id="kWDOG_ClockPrescalerDivide8" label="Divided by 8">
+                    <description>Divided by 8</description>
+                </item>
+            </enum>
+            <struct id="wdog_config_t" label="Describes WDOG configuration structure" from="_wdog_config">
+                <description></description>
+                <bool id="enableWdog" label="Enables or disables WDOG">
+                    <description>Enables or disables WDOG</description>
+                </bool>
+                <reference id="clockSource" label="Clock source select" type="wdog_clock_source_t">
+                    <description>Clock source select</description>
+                </reference>
+                <reference id="prescaler" label="Clock prescaler value" type="wdog_clock_prescaler_t">
+                    <description>Clock prescaler value</description>
+                </reference>
+                <reference id="workMode" label="Configures WDOG work mode in debug stop and wait mode" type="wdog_work_mode_t">
+                    <description>Configures WDOG work mode in debug stop and wait mode</description>
+                </reference>
+                <bool id="enableUpdate" label="Update write-once register enable">
+                    <description>Update write-once register enable</description>
+                </bool>
+                <bool id="enableInterrupt" label="Enables or disables WDOG interrupt">
+                    <description>Enables or disables WDOG interrupt</description>
+                </bool>
+                <bool id="enableWindowMode" label="Enables or disables WDOG window mode">
+                    <description>Enables or disables WDOG window mode</description>
+                </bool>
+                <integer id="windowValue" label="Window value" type="uint32_t">
+                    <description>Window value</description>
+                </integer>
+                <integer id="timeoutValue" label="Timeout value" type="uint32_t">
+                    <description>Timeout value</description>
+                </integer>
+            </struct>
+            <enum id="wdog_test_mode_t" label="Describes WDOG test mode" from="_wdog_test_mode">
+                <description></description>
+                <item id="kWDOG_QuickTest" label="Selects quick test">
+                    <description>Selects quick test</description>
+                </item>
+                <item id="kWDOG_ByteTest" label="Selects byte test">
+                    <description>Selects byte test</description>
+                </item>
+            </enum>
+            <enum id="wdog_tested_byte_t" label="Describes WDOG tested byte selection in byte test mode" from="_wdog_tested_byte">
+                <description></description>
+                <item id="kWDOG_TestByte0" label="Byte 0 selected in byte test mode">
+                    <description>Byte 0 selected in byte test mode</description>
+                </item>
+                <item id="kWDOG_TestByte1" label="Byte 1 selected in byte test mode">
+                    <description>Byte 1 selected in byte test mode</description>
+                </item>
+                <item id="kWDOG_TestByte2" label="Byte 2 selected in byte test mode">
+                    <description>Byte 2 selected in byte test mode</description>
+                </item>
+                <item id="kWDOG_TestByte3" label="Byte 3 selected in byte test mode">
+                    <description>Byte 3 selected in byte test mode</description>
+                </item>
+            </enum>
+            <struct id="wdog_test_config_t" label="Describes WDOG test mode configuration structure" from="_wdog_test_config">
+                <description></description>
+                <reference id="testMode" label="Selects test mode" type="wdog_test_mode_t">
+                    <description>Selects test mode</description>
+                </reference>
+                <reference id="testedByte" label="Selects tested byte in byte test mode" type="wdog_tested_byte_t">
+                    <description>Selects tested byte in byte test mode</description>
+                </reference>
+                <integer id="timeoutValue" label="Timeout value" type="uint32_t">
+                    <description>Timeout value</description>
+                </integer>
+            </struct>
+        </generated_types>
+        <user_types>
+            <enum id="wdog_clock_source_t" label="WDOG clock sources" from="_wdog_clock_source">
+                <description>Watchdog timer clock source.</description>
+                <item id="kWDOG_LpoClockSource" label="LPO" value="LPO">
+                    <description>Watchdog is clocked from the Low Power Oscillator (LPO)</description>
+                </item>
+                <item id="kWDOG_AlternateClockSource" label="Alternate clock" value="AlternateClock">
+                    <description>
+Watchdog is clocked from the alternate clock source (MCU specific clock source; usually the bus clock is used).
+
+**Note:**
+When a functional test mode is used (the Quick test or the Byte test) the high speed test clock is used (the bus clock)
+                    </description>
+                </item>
+				<item id="kWDOG_FastTestClockSource" label="Fast test clock" value="FastTestClock">
+                    <description>Watchdog is clocked from the Fast Test Clock</description>
+                </item>
+            </enum>
+            <struct id="wdog_work_mode_t" label="Defines WDOG work mode" from="_wdog_work_mode">
+                <description>Watchdog functionality configuration in the debug, wait and stop modes.</description>
+                <bool id="enableWait" label="Enabled in wait mode" available="(featureDefined(`FSL_FEATURE_WDOG_HAS_WAITEN`) &amp;&amp; getFeature(`FSL_FEATURE_WDOG_HAS_WAITEN`))">
+                    <description>Enable/disable the watchdog timer in the wait mode.</description>
+                </bool>
+                <bool id="enableStop" label="Enabled in stop mode">
+                    <description>Enable/disable watchdog timer in the stop mode.</description>
+                </bool>
+                <bool id="enableDebug" label="Enabled in debug mode">
+                    <description>Enable/disable the watchdog timer in the debug mode.</description>
+                </bool>
+            </struct>
+            <enum id="wdog_clock_prescaler_t" label="Clock prescaler" from="_wdog_clock_prescaler">
+                <description></description>
+                <item id="kWDOG_ClockPrescalerDivide1" label="1" value="1">
+                    <description>Divided by 1</description>
+                </item>
+                <item id="kWDOG_ClockPrescalerDivide2" label="2" value="2">
+                    <description>Divided by 2</description>
+                </item>
+                <item id="kWDOG_ClockPrescalerDivide3" label="3" value="3">
+                    <description>Divided by 3</description>
+                </item>
+                <item id="kWDOG_ClockPrescalerDivide4" label="4" value="4">
+                    <description>Divided by 4</description>
+                </item>
+                <item id="kWDOG_ClockPrescalerDivide5" label="5" value="5">
+                    <description>Divided by 5</description>
+                </item>
+                <item id="kWDOG_ClockPrescalerDivide6" label="6" value="6">
+                    <description>Divided by 6</description>
+                </item>
+                <item id="kWDOG_ClockPrescalerDivide7" label="7" value="7">
+                    <description>Divided by 7</description>
+                </item>
+                <item id="kWDOG_ClockPrescalerDivide8" label="8" value="8">
+                    <description>Divided by 8</description>
+                </item>
+            </enum>
+            <struct id="wdog_config_t" label="Watchdog configuration structure" from="_wdog_config">
+                <description>Configuration of the watchdog peripheral.</description>
+                <reference id="testMode" label="Test mode" type="wdog_test_mode_t">
+                    <description>Selection of the normal functional mode (Disabled test mode) or functional test mode of the watchdog timer. When a test mode is selected a limited configuration of the watchdog is provided for execution of a functional test.</description>
+                </reference>
+                <reference id="testedByte" label="Tested byte" type="wdog_tested_byte_t" available="$parent.testMode.getValue() != `kWDOG_TestDisabled`">
+                    <description>Selection of the tested byte of the watchdog timer in the Byte test mode.</description>
+                </reference>
+                <reference id="_clockSource" label="Clock source" type="wdog_clock_source_t" options="remove_from_struct_init" available="false"/> <!-- item used for clockSource dynamic enum implementation only -->
+                <variable id="clockSourceUId" value="$parent.clockSource.getEnumItemValue()"/>
+                <dynamic_enum id="clockSource" label="Clock source" 
+                    items="enumItemsOf($parent._clockSource).arrayToEnumItems(
+                           enumItem -> (($parent.testMode.getValue() == `kWDOG_TestDisabled`) &amp;&amp; (enumItem.getValue() != `FastTestClock`)) || (($parent.testMode.getValue() != `kWDOG_TestDisabled`) &amp;&amp; (enumItem.getValue() == `FastTestClock`)),
+                           enumItem -> enumItem.getID(),
+                           enumItem -> getPeripheralClock($instance.getPeripheral(), enumItem.getValue()),
+                           enumItem -> enumItem.getValue())"> 
+                   <description>
+Watchdog clock source selection. Watchdog can be clocked from the Low power oscialltor (LPO) or from the alternate clock source (MCU specific clock source; usually the bus clock is used).
+
+**Note:** When a functional test mode is used (the Quick test or the Byte test) the high speed test clock is used (the bus clock)
+                   </description>
+                   <validation>
+                      <dependency  resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                         description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                         level="Error">
+                         <feature name="frequency" evaluation="greaterThan">
+                            <data expr="0" unit="Hz" type="Frequency"/>
+                         </feature>
+                      </dependency>
+                   </validation>
+                </dynamic_enum>
+                <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" available="(!($parent.clockSource.getEnumItemValue() == `ExternalClock`))  &amp;&amp; ($instance.getMode() != `QuadratureDecoder`)" 
+                   items="createArray().merge(getClockFunctionalGroups().arrayToEnumItems(
+                      enumItem -> true,
+                      enumItem -> enumItem,
+                      enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemValue(), enumItem)) + ` (` + enumItem + `)`,
+                      enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemValue(), enumItem)))" >
+                   <description>Selection of the clock source frequency.</description>
+                   <validation>
+                      <constraint cond_expr="$this.getEnumItemValue().toHertz() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+                   </validation>
+                   <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+                </dynamic_enum> 
+                <variable id="wctTick" value="(queryFeatureAdvanced(`ClockSetting`, getPeripheralClockSignal($instance.getPeripheral(), `AlternateClock`) + `.outFreq`, `value`, true) != `0`) ? (1.0 / queryFeatureAdvanced(`ClockSetting`, getPeripheralClockSignal($instance.getPeripheral(), `AlternateClock`) + `.outFreq`, `value`, true).toHertz()) : `N/A`" ></variable>
+                <info id="wct" label="Watchdog configuration time" value="($parent.wctTick.getValue() != `N/A`) 
+                    ? timeToString($parent.wctTick.getValue() * 256 * 1000000)
+                    : `N/A`">
+                    <description>Watchdog configuration time (WCT) which is used as a configuration/timeout period for modification of watchdog registers after the unlock and also for execution of interrupt subroutine (WCT = 256 bus clock cycles).</description>
+                </info>
+                <variable id="minTimeout" value="($parent.wctTick.getValue() != `N/A`) 
+                    ? $parent.wctTick.getValue() * ((2 * 256) + 20)
+                    : `N/A`">
+                    <description>Watchdog configuration time (WCT) which is used as a configuration/timeout period for modification of watchdog registers after the unlock and also for execution of interrupt subroutine.</description>
+                </variable>
+                <reference id="prescaler" label="Clock prescaler" type="wdog_clock_prescaler_t" available="$parent.testMode.getValue() == `kWDOG_TestDisabled`">
+                    <description>Clock prescaler divider value.</description>
+                </reference>
+                <variable id="counterPeriod_rational" value="($parent.clockSourceFreq.getEnumItemValue().toHertz() &gt; 0)
+                    ? (1.0 / (1.0 * $parent.clockSourceFreq.getEnumItemValue().toHertz() / ($parent.prescaler.isAvailable() ? $parent.prescaler.getEnumItemValue().toInt() : 1))) 
+                    : `N/A`"/>
+                <info id="counterPeriod" label="Period of counter tick" 
+                    value="($parent.counterPeriod_rational.getValue() != `N/A`) ? timeToString(1000000.0 * $parent.counterPeriod_rational.getValue()) : `N/A`">
+                   <description>Period of one tick of the watchdog counter clock source that is computed by using the selected clock source frequency and the prescaler.</description>
+                </info>
+    <!--        This original integer item is replaced by the following string and info items
+                <integer id="timeoutValue" label="Timeout value" type="uint32_t">
+                    <description>Timeout value</description>
+                </integer> -->
+                <variable id="decHexNumRegExpr" value="`(\d+)|(0x[0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,a,b,c,d,e,f]+)`" ></variable>
+                <string id="timeoutValue_str" label="Timeout value/period" options="remove_from_struct_init" 
+                   validation_expr="x -> (x.regexMatch($parent.decHexNumRegExpr.getValue())) ? ((x.toInt() &gt;= 1) &amp;&amp; (x.toInt() &lt;= 0xFFFFFFFF)) : (x.isTime()) ">
+                   <description>Timeout value in ticks or time units that is used by the watchdog timer (when watchdog counter reach the timeout value the reset is forced). An integer number in range 1 - 4294967295 (0xFFFFFFFF) is processed as a value in ticks, a period value must be in format &quot;float_number [ns, us, ms, s, m, h or d]&quot;.&lt;br/&gt;
+                      Time units can only be used when clock source frequency is selected (clock must not be disabled).
+                      </description>
+                      <validation>
+                         <constraint when_expr="$parent.timeoutValue.getValue() != `N/A`" cond_expr="($parent.timeoutValue.getValue() &lt;= 0xFFFFFFFF) &amp;&amp; ($parent.timeoutValue.getValue() &gt; 0)" level="error" description="The timeout value (in timer ticks) must be in the range 1 - 4294967295 (0xFFFFFFFF)."/>
+                         <constraint when_expr="($parent.timemout_rational.getValue() != `N/A`) &amp;&amp; ($parent.minTimeout.getValue() != `N/A`)" cond_expr="$parent.timemout_rational.getValue() &gt; $parent.minTimeout.getValue()" level="error" description="The Timeout period must be greater then 2 x WCT time + 20 bus clock cycles"/>
+                      </validation>
+                </string>
+                <variable id="timeoutValue" options="add_to_struct" value="
+                   ($parent.timeoutValue_str.getValue() == ``) ?
+                   `N/A`
+                   : (($parent.timeoutValue_str.getValue().regexMatch($parent.decHexNumRegExpr.getValue())) ?
+                        $parent.timeoutValue_str.getValue().toInt()
+                      : (($parent.timeoutValue_str.getValue().isTime()) ? 
+                        (($parent.counterPeriod_rational.getValue() != `N/A`) ? toHertz($parent.timeoutValue_str.getValue().getTime(`ns`,`Hz`) / 1000000000.0 / $parent.counterPeriod_rational.getValue()) : `N/A`)
+                      : `N/A`))">
+                   <description>Timeout value in timer ticks that represents the value written in the watchdog timeout register.</description>
+                </variable>
+                <info id="timeoutValueInTime" label="Calculated real timeout period" value="
+                   (($parent.timeoutValue.getValue() == `N/A`) || ($parent.counterPeriod_rational.getValue() == `0`) || ($parent.counterPeriod_rational.getValue() == `N/A`))?
+                   `N/A`
+                   : $parent.timeoutValue.getValue() + ` ticks (`+ (timeToString($parent.counterPeriod_rational.getValue() * $parent.timeoutValue.getValue() * 1000000)) + `)`">
+                   <description>Timeout value in timer ticks and time units that is calculated by using real counter tick period and the timeout value in counter ticks. The timeout value in timer ticks represents the value that is written in the watchdog timeout register.</description>
+                </info>
+                <variable id="timemout_rational" value="(($parent.timeoutValue.getValue() != `N/A`) &amp;&amp; ($parent.counterPeriod_rational.getValue() != `N/A`)) 
+                    ? $parent.timeoutValue.getValue() * $parent.counterPeriod_rational.getValue()
+                    : `N/A`"/>
+                <bool id="enableWindowMode" label="Enable window mode" available="$parent.testMode.getValue() == `kWDOG_TestDisabled`">
+                   <description>Enable/disable watchdog window mode</description>
+                </bool>
+    <!--        The windowValue integer item of this structure is replaced by the string and windowValue info value.
+                <integer id="windowValue" label="Window value" type="uint32_t">
+                    <description>Window value</description>
+                </integer>-->
+                <string id="windowValue_str" label="Window value/period" enable="$parent.enableWindowMode.getValue()" options="remove_from_struct_init"   
+                   validation_expr="x -> (x.regexMatch($parent.decHexNumRegExpr.getValue())) ? ((x.toInt() &gt;= 0) &amp;&amp; (x.toInt() &lt;= 0xFFFFFFFF)) : (x.isTime())"
+                   available="$parent.testMode.getValue() == `kWDOG_TestDisabled`">
+                   <description>Window value in ticks or time units that is used by the watchdog timer (it determines the earliest time when a refresh sequence is considered valid). 
+                      An integer number in range 1 - 4294967295 (0xFFFFFFFF) is processed as a value in ticks, a period value must be in format &quot;float_number [ns, us, ms, s, m, h or d]&quot;.&lt;br/&gt;
+                      Time units can only be used when clock source frequency is selected (clock must not be disabled).
+                      </description>
+                   <validation>
+                      <constraint when_expr="($parent.enableWindowMode.getValue()) &amp;&amp; ($parent.timeoutValue.getValue() != `N/A`) &amp;&amp; ($parent.windowValue.getValue() != `N/A`) " cond_expr="$parent.windowValue.getValue() &lt; $parent.timeoutValue.getValue()" level="error" description="The window value must be lower than the timeout value."/>
+                   </validation>
+                </string>
+                <variable id="windowValue" enable="$parent.enableWindowMode.getValue()" options="add_to_struct" value="
+                   ($parent.windowValue_str.getValue() == ``) ?
+                   0
+                   : (($parent.windowValue_str.getValue().regexMatch($parent.decHexNumRegExpr.getValue())) ?
+                        $parent.windowValue_str.getValue().toInt()
+                      : (($parent.windowValue_str.getValue().isTime()) ? 
+                        (($parent.counterPeriod_rational.getValue() != `N/A`) ? toHertz($parent.windowValue_str.getValue().getTime(`ns`,`Hz`) / 1000000000.0 / $parent.counterPeriod_rational.getValue()) : `N/A`)
+                      : `N/A`))"
+                    available="$parent.testMode.getValue() == `kWDOG_TestDisabled`">
+                   <description>Window value in timer ticks that represents the value written in the watchdog window register.</description>
+                </variable>
+                <info id="windowValueInTime" label="Calculated real window period" enable="$parent.enableWindowMode.getValue()" value="
+                   (($parent.windowValue.getValue() == `N/A`) || ($parent.counterPeriod_rational.getValue() == `0`) || ($parent.counterPeriod_rational.getValue() == `N/A`))?
+                   `N/A`
+                   : $parent.windowValue.getValue() + ` ticks (` + (timeToString($parent.counterPeriod_rational.getValue() * $parent.windowValue.getValue() * 1000000)) + `)`"
+                    available="$parent.testMode.getValue() == `kWDOG_TestDisabled`">
+                   <description>Winbdow value in timer ticks and time units that is calculated by using real counter tick period and the window value in counter ticks. The window value in timer ticks represents the value that is written in the watchdog window register.</description>
+                </info>
+                <bool id="enableUpdate" label="Enable update of watchdog configuration" available="$parent.testMode.getValue() == `kWDOG_TestDisabled`">
+                    <description>When enabled the watchdog configuration can be updated later again (the Control/Status register) otherwise the configuration update is allowed after reset only.</description>
+                </bool>
+                <info id="enableUpdateTest" label="Update of watchdog configuration" value="`Enabled`" available="$parent.testMode.getValue() != `kWDOG_TestDisabled`">
+                    <description>When enabled the watchdog configuration can be updated later again (the Control/Status register) otherwise the configuration update is allowed after reset only. Note: In a functional test mode the update is always enabled.</description>
+                </info>
+                <bool id="enableWdog" label="Enable watchdog" available="$parent.testMode.getValue() == `kWDOG_TestDisabled`">
+                   <description>Enable/disable the watchdog peripheral (timeout timer).</description>
+                </bool>
+                <info id="enableWdogTest" label="Watchdog" value="`Enabled`" available="$parent.testMode.getValue() != `kWDOG_TestDisabled`">
+                   <description>Enable the watchdog peripheral (timeout timer). Note: In a functional test mode the watchodg is always enabled.</description>
+                </info>
+                <reference id="workMode" label="Work mode" type="wdog_work_mode_t" available="$parent.testMode.getValue() == `kWDOG_TestDisabled`">
+                   <description>Watchdog functionality configuration in the debug, wait and stop modes of the MCU.</description>
+                </reference>
+<!--                <bool id="enableInterrupt" label="Enables or disables WDOG interrupt" available="$parent.testMode.getValue() == `kWDOG_TestDisabled`">
+                    <description>Enables or disables WDOG interrupt</description>
+                </bool>-->
+                <variable id="enableInterrupt" value="($parent.testMode.getValue() == `kWDOG_TestDisabled`) ? $configSet.interrupt_config.enableInterrupt.timeout_illegal_write.getValue() : false" options="add_to_struct"></variable>
+            </struct>
+            <enum id="wdog_test_mode_t" label="Describes WDOG test mode" from="_wdog_test_mode">
+                <description>Selection of the watchdog test mode.</description>
+                <item id="kWDOG_TestDisabled" label="Disabled">
+                    <description>The test mode is disabled and the watchdog is initialized in the normal functional mode.</description>
+                </item>
+                <item id="kWDOG_QuickTest" label="Quick test">
+                    <description>In this functional test mode the time-out value of watchdog timer should be programmed to a very low value to achieve quick time-out. 
+                    Note: In this mode the watchdog timer and the associated compare and reset generation logic is tested for correct operation.</description>
+                </item>
+                <item id="kWDOG_ByteTest" label="Byte test">
+                    <description>In this functional test mode the timer is split up into its constituent byte-wide stages that are run independently and tested for time-out against the corresponding byte of the time-out value register (see the Test byte setting). 
+                    Note: In this mode the watchdog timer and the associated compare and reset generation logic is tested for correct operation.</description>
+                </item>
+            </enum>
+            <enum id="wdog_tested_byte_t" label="Tested byte" from="_wdog_tested_byte">
+                <description>Describes WDOG tested byte selection in byte test mode</description>
+                <item id="kWDOG_TestByte0" label="Byte 0">
+                    <description>Byte 0 selected in the Byte test mode.</description>
+                </item>
+                <item id="kWDOG_TestByte1" label="Byte 1">
+                    <description>Byte 1 selected in the Byte test mode.</description>
+                </item>
+                <item id="kWDOG_TestByte2" label="Byte 2">
+                    <description>Byte 2 selected in the Byte test mode.</description>
+                </item>
+                <item id="kWDOG_TestByte3" label="Byte 3">
+                    <description>Byte 3 is selected in the Byte test mode.</description>
+                </item>
+            </enum>
+        </user_types>
+        <settings>
+            <reference id="wdogConfig" label="Watchdog configuration" type="wdog_config_t" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+                <description>Configuration of the watchdog.</description>
+            </reference>
+            <struct id="interrupt_config" label="Interrupt configuration">
+                <info id="enableInterruptTest" label="Timeout/illegal write interrupt request" value="`Disabled`" available="$configSet.wdogConfig.testMode.getValue() != `kWDOG_TestDisabled`">
+                   <description>Watchdog timeout/illegal write interrupt request. In a functional test mode the interrupt request is disabled.</description>
+                </info>
+                <set id="enableInterrupt" label="Interrupt sources" available="$configSet.wdogConfig.testMode.getValue() == `kWDOG_TestDisabled`">
+                    <description> Enable/disable watchdog interrupt request. When an interrupt request is enabled the reset is delayed 255 bus cycles (see the Watchdog configuration time setting) after the timeout event (watchdog timeout interrupt vector fetch).</description>
+                    <validation>
+                        <constraint when_expr="$parent.interrupt_vectors.enable_irq.getValue()" cond_expr="$this.timeout_illegal_write.getValue()" level="info" description="The interrupt is enabled (in the interrupt controller) but the interrupt request of the watchdog is disabled (interrupt will not be invoked)."/>
+                    </validation>
+                    <item id="timeout_illegal_write" label="Timeout/illegal write">
+                    <description>
+Enable timeout/illegal write watchdog interrupt request. When the interrupt request is enabled the reset is delayed 255 bus cycles (see the Watchdog configuration time setting) after the timeout event (watchdog timeout interrupt vector fetch).
+
+The watchdog generates a reset in the following events, also referred to as exceptions:
+* A watchdog time-out
+* Failure to unlock the watchdog within WCT time after system reset deassertion
+* No update of the control and configuration registers within the WCT window after
+unlocking. 
+* A value other than the unlock sequence or the refresh sequence is written to the
+unlock and/or refresh registers, respectively.
+* A gap of more than 20 bus cycles exists between the writes of two values of the
+unlock sequence.
+* A gap of more than 20 bus cycles exists between the writes of two values of the
+refresh sequence.                    
+                    </description>
+                    </item>
+                </set>
+                <struct id="interrupt_vectors" label="Interrupt vector" available="$configSet.wdogConfig.testMode.getValue() == `kWDOG_TestDisabled`">
+                    <description>Interrupt vector controller (NVIC - Nested Vectored Interrupt Controller peripheral) settings that provide configuration of interrupt vectors and their enabling.</description>
+                    <bool id="enable_irq" label="Enable interrupt">
+                        <description>Enable initialization of the interrupt vector in the NVIC (Nested Vectored Interrupt Controller peripheral) and providing definition of the interrupt routine name.</description>
+                    </bool>
+                    <reference id="interrupt" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN" enable="$parent.enable_irq.getValue()"/>
+                </struct>
+            </struct>   
+         <!-- IDs used for an instance of this component -->
+            <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+            <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+            <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+            <variable id="inst_clock_src_ID" value="$parent.inst_ID_def.getValue() + `_CLOCK_SOURCE`"></variable>
+        </settings>
+        <fragment_defs>
+            <import>
+                <from component_id="system" config_set_id="common_code_templates"/>
+                <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+            </import>
+            <def fragment="wdog_struct" public="true">
+                <text>const </text>
+                <expr>$param.type + ` ` + $param.name</expr>
+                <text> = {</text>
+                <br/>
+                <expr>leftPadding(`.clockSource` + ` = ` + $this.clockSource.getCValue() + `,`, 1) </expr><br/>
+                <expr>leftPadding(`.prescaler` + ` = ` + $this.prescaler.getCValue() + `,`, 1) </expr><br/>
+                <expr>leftPadding(`.timeoutValue` + ` = ` + $this.timeoutValue.getValue() + `UL,`, 1) </expr><br/>
+                <expr>leftPadding(`.enableWindowMode` + ` = ` + $this.enableWindowMode.getValue() + `,`, 1) </expr><br/>
+                <expr>leftPadding(`.windowValue` + ` = ` + $this.windowValue.getValue() + `UL,`, 1) </expr><br/>
+                <expr>leftPadding(`.enableUpdate` + ` = ` + $this.enableUpdate.getCValue() + `,`, 1) </expr><br/>
+                <expr>leftPadding(`.enableWdog` + ` = ` + $this.enableWdog.getCValue() + `,`, 1) </expr><br/>
+                <expr>leftPadding(`.workMode = {`, 1) </expr><br/>
+                <fragment id="field" for_elements_of="$this.workMode">
+                    <param id="paddingLevel" expr="2"/>
+                </fragment>
+                <expr>leftPadding(`}, `, 1) </expr><br/>
+                <expr>leftPadding(`.enableInterrupt` + ` = ` + $this.enableInterrupt.getValue(), 1) </expr><br/>
+                <text>};</text>
+                <br/>
+            </def>
+            <def fragment="wdog_test_struct" public="true">
+<!--                <text>const </text>-->
+                <expr>$param.type + ` ` + $param.name</expr>
+                <text> = {</text>
+                <br/>
+                <expr>leftPadding(`.testMode` + ` = ` + $this.testMode.getCValue() + `,`, 1) </expr><br/>
+                <expr>leftPadding(`.testedByte` + ` = ` + $this.testedByte.getCValue() + `,`, 1) </expr><br/>
+                <expr>leftPadding(`.timeoutValue` + ` = ` + $this.timeoutValue.getValue() + `UL`, 1) </expr><br/>
+                <text>};</text>
+                <br/>
+            </def>
+            <def fragment="wdog_init">
+                <expr>leftPadding(`/* WDOG peripheral initialization */`, 1)</expr><br/>
+                <expr>leftPadding(`WDOG_Init(` + $this.inst_peripheral_ID.getValue() + `, &amp;` + $this.inst_ID.getValue() + `_config);`, 1)</expr><br/>
+            </def>   
+            <def fragment="wdog_test_init">
+                <expr>leftPadding(`/* WDOG functional test initialization */`, 1)</expr><br/>
+                <expr>leftPadding(`WDOG_SetTestModeConfig(` + $this.inst_peripheral_ID.getValue() + `, &amp;` + $this.inst_ID.getValue() + `_config);`, 1)</expr><br/>
+            </def>   
+        </fragment_defs>
+        <code>
+            <section target="includes">
+                <fragment id="include">
+                    <param id="name">common</param>
+                    <param id="filename">fsl_common.h</param>
+                </fragment>
+                <fragment id="include">
+                    <param id="name">wdog</param>
+                    <param id="filename">fsl_wdog.h</param>
+                </fragment>
+                <fragment id="include">
+                    <param id="name">clock</param>
+                    <param id="filename">fsl_clock.h</param>
+                </fragment>
+            </section>
+            <section target="defines">
+                <fragment id="define">
+                    <param id="name" expr="$this.inst_peripheral_ID.getValue()"/>
+                    <param id="value" expr="$instance.getPeripheral()"/>
+                    <param id="description">Definition of peripheral ID</param>
+                </fragment>
+                <fragment id="define" >
+                    <param id="name" expr="$this.inst_clock_src_ID.getValue()"/>
+                    <param id="value" expr="$this.wdogConfig.clockSourceFreq.getEnumItemValue().toHertz() + `UL`"/> 
+                    <param id="description">Definition of the clock source frequency</param>
+                </fragment>
+                <!-- Interrupt definitions -->
+                <fragment id="IRQ_definitions" apply_to="$this.interrupt_config.interrupt_vectors.interrupt" if_expr="($configSet.wdogConfig.testMode.getValue() == `kWDOG_TestDisabled`) &amp;&amp; ($this.interrupt_config.interrupt_vectors.enable_irq.getValue())"/>
+            </section>                  
+            <section target="global_vars">
+                <fragment id="wdog_struct" apply_to="$this.wdogConfig" if_expr="$configSet.wdogConfig.testMode.getValue() == `kWDOG_TestDisabled`">
+                    <param id="name" expr="$configSet.inst_ID.getValue() + `_config`" />
+                    <param id="type" >wdog_config_t</param>
+                </fragment>
+                <fragment id="wdog_test_struct" apply_to="$this.wdogConfig" if_expr="$configSet.wdogConfig.testMode.getValue() != `kWDOG_TestDisabled`">
+                    <param id="name" expr="$configSet.inst_ID.getValue() + `_config`" />
+                    <param id="type" >wdog_test_config_t</param>
+                </fragment>
+            </section>
+            <section target="global_vars_extern">
+                <fragment id="extern_const_var" apply_to="$this.wdogConfig" if_expr="$configSet.wdogConfig.testMode.getValue() == `kWDOG_TestDisabled`">
+                   <param id="name" expr="$configSet.inst_ID.getValue() + `_config`" />
+                   <param id="type" >wdog_config_t</param>
+                </fragment>
+                <fragment id="extern_var" apply_to="$this.wdogConfig" if_expr="$configSet.wdogConfig.testMode.getValue() != `kWDOG_TestDisabled`">
+                   <param id="name" expr="$configSet.inst_ID.getValue() + `_config`" />
+                   <param id="type" >wdog_test_config_t</param>
+                </fragment>
+            </section>
+            <section target="init_function_body">
+                <!-- WDOG device initialization -->
+                <!--
+                    void WDOG_Init(WDOG_Type *base, const wdog_config_t *config)
+                -->
+                <fragment id="wdog_init" if_expr="$configSet.wdogConfig.testMode.getValue() == `kWDOG_TestDisabled`"/>
+                <!-- 
+                    void WDOG_SetTestModeConfig(WDOG_Type *base, wdog_test_config_t *config)
+                -->
+                <fragment id="wdog_test_init" if_expr="$configSet.wdogConfig.testMode.getValue() != `kWDOG_TestDisabled`"/>
+                <!--  Enable the interrupt request in NVIC -->
+                <fragment id="IRQn_set_priority_default" if_expr="($configSet.wdogConfig.testMode.getValue() == `kWDOG_TestDisabled`) &amp;&amp; ($this.interrupt_config.interrupt_vectors.enable_irq.getValue())" apply_to="$this.interrupt_config.interrupt_vectors.interrupt"/>
+                <fragment id="IRQn_enable_default" if_expr="($configSet.wdogConfig.testMode.getValue() == `kWDOG_TestDisabled`) &amp;&amp; ($this.interrupt_config.interrupt_vectors.enable_irq.getValue())" apply_to="$this.interrupt_config.interrupt_vectors.interrupt"/> 
+            </section>
+        </code>
+        <validation/>
+        <quick_selections>
+            <quick_selection id="default" label="Default">
+                <description>Default setting of the watchdog</description>
+                <set id="wdogConfig.testMode">kWDOG_TestDisabled</set>
+                <set id="wdogConfig.enableWdog">true</set>
+                <set id="wdogConfig.clockSource">kWDOG_LpoClockSource</set>
+                <set id="wdogConfig.prescaler">kWDOG_ClockPrescalerDivide1</set>
+                <set id="wdogConfig.workMode.enableWait">true</set>
+                <set id="wdogConfig.workMode.enableStop">false</set>
+                <set id="wdogConfig.workMode.enableDebug">false</set>
+                <set id="wdogConfig.enableUpdate">true</set>
+                <set id="interrupt_config.enableInterrupt.timeout_illegal_write">false</set>
+                <set id="wdogConfig.enableWindowMode">false</set>
+                <set id="wdogConfig.windowValue_str">0</set>
+                <set id="wdogConfig.timeoutValue_str">65535</set>
+             </quick_selection>
+            <quick_selection id="quickTest" label="Quick test">
+                <description>Default setting of the watchdog</description>
+                <set id="wdogConfig.testMode">kWDOG_QuickTest</set>
+                <set id="wdogConfig.clockSource">kWDOG_AlternateClockSource</set>
+                <set id="wdogConfig.testedByte">kWDOG_TestByte0</set>
+                <set id="wdogConfig.timeoutValue_str">1048575</set>
+             </quick_selection>
+             <default>default</default>
+        </quick_selections>
+    </config_set>
+</component:config_component>

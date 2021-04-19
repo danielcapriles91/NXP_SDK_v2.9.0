@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="32" name="CONTROL" description="Control register">
+    <alias type="CMSIS" value="CONTROL"/>
+    <bit_field offset="0" width="1" name="IACK" access="WORZ" reset_value="0" description="Interrupt Acknowledge">
+      <alias type="CMSIS" value="USBDCD_CONTROL_IACK(x)"/>
+      <bit_field_value name="CONTROL_IACK_0b0" value="0b0" description="Do not clear the interrupt."/>
+      <bit_field_value name="CONTROL_IACK_0b1" value="0b1" description="Clear the IF bit (interrupt flag)."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="7" reset_value="0"/>
+    <bit_field offset="8" width="1" name="IF" access="RO" reset_value="0" description="Interrupt Flag">
+      <alias type="CMSIS" value="USBDCD_CONTROL_IF(x)"/>
+      <bit_field_value name="CONTROL_IF_0b0" value="0b0" description="No interrupt is pending."/>
+      <bit_field_value name="CONTROL_IF_0b1" value="0b1" description="An interrupt is pending."/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="7" reset_value="0"/>
+    <bit_field offset="16" width="1" name="IE" access="RW" reset_value="0x1" description="Interrupt Enable">
+      <alias type="CMSIS" value="USBDCD_CONTROL_IE(x)"/>
+      <bit_field_value name="CONTROL_IE_0b0" value="0b0" description="Disable interrupts to the system."/>
+      <bit_field_value name="CONTROL_IE_0b1" value="0b1" description="Enable interrupts to the system."/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="BC12" access="RW" reset_value="0" description="BC1.2 compatibility. This bit cannot be changed after start detection.">
+      <alias type="CMSIS" value="USBDCD_CONTROL_BC12(x)"/>
+      <bit_field_value name="CONTROL_BC12_0b0" value="0b0" description="Compatible with BC1.1 (default)"/>
+      <bit_field_value name="CONTROL_BC12_0b1" value="0b1" description="Compatible with BC1.2"/>
+    </bit_field>
+    <reserved_bit_field offset="18" width="6" reset_value="0"/>
+    <bit_field offset="24" width="1" name="START" access="WORZ" reset_value="0" description="Start Change Detection Sequence">
+      <alias type="CMSIS" value="USBDCD_CONTROL_START(x)"/>
+      <bit_field_value name="CONTROL_START_0b0" value="0b0" description="Do not start the sequence. Writes of this value have no effect."/>
+      <bit_field_value name="CONTROL_START_0b1" value="0b1" description="Initiate the charger detection sequence. If the sequence is already running, writes of this value have no effect."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="SR" access="WORZ" reset_value="0" description="Software Reset">
+      <alias type="CMSIS" value="USBDCD_CONTROL_SR(x)"/>
+      <bit_field_value name="CONTROL_SR_0b0" value="0b0" description="Do not perform a software reset."/>
+      <bit_field_value name="CONTROL_SR_0b1" value="0b1" description="Perform a software reset."/>
+    </bit_field>
+    <reserved_bit_field offset="26" width="6" reset_value="0"/>
+  </register>
+  <register offset="0x4" width="32" name="CLOCK" description="Clock register">
+    <alias type="CMSIS" value="CLOCK"/>
+    <bit_field offset="0" width="1" name="CLOCK_UNIT" access="RW" reset_value="0x1" description="Unit of Measurement Encoding for Clock Speed">
+      <alias type="CMSIS" value="USBDCD_CLOCK_CLOCK_UNIT(x)"/>
+      <bit_field_value name="CLOCK_CLOCK_UNIT_kHz" value="0b0" description="kHz Speed (between 1 kHz and 1023 kHz)"/>
+      <bit_field_value name="CLOCK_CLOCK_UNIT_MHz" value="0b1" description="MHz Speed (between 1 MHz and 1023 MHz)"/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="10" name="CLOCK_SPEED" access="RW" reset_value="0x30" description="Numerical Value of Clock Speed in Binary">
+      <alias type="CMSIS" value="USBDCD_CLOCK_CLOCK_SPEED(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="12" width="20" reset_value="0"/>
+  </register>
+  <register offset="0x8" width="32" name="STATUS" description="Status register">
+    <alias type="CMSIS" value="STATUS"/>
+    <reserved_bit_field offset="0" width="16" reset_value="0"/>
+    <bit_field offset="16" width="2" name="SEQ_RES" access="RO" reset_value="0" description="Charger Detection Sequence Results">
+      <alias type="CMSIS" value="USBDCD_STATUS_SEQ_RES(x)"/>
+      <bit_field_value name="STATUS_SEQ_RES_0b00" value="0b00" description="No results to report."/>
+      <bit_field_value name="STATUS_SEQ_RES_0b01" value="0b01" description="Attached to an SDP. Must comply with USB 2.0 by drawing only 2.5 mA (max) until connected."/>
+      <bit_field_value name="STATUS_SEQ_RES_0b10" value="0b10" description="Attached to a charging port. The exact meaning depends on bit 18: 0: Attached to either a CDP or a DCP. The charger type detection has not completed. 1: Attached to a CDP. The charger type detection has completed."/>
+      <bit_field_value name="STATUS_SEQ_RES_0b11" value="0b11" description="Attached to a DCP."/>
+    </bit_field>
+    <bit_field offset="18" width="2" name="SEQ_STAT" access="RO" reset_value="0" description="Charger Detection Sequence Status">
+      <alias type="CMSIS" value="USBDCD_STATUS_SEQ_STAT(x)"/>
+      <bit_field_value name="STATUS_SEQ_STAT_0b00" value="0b00" description="The module is either not enabled, or the module is enabled but the data pins have not yet been detected."/>
+      <bit_field_value name="STATUS_SEQ_STAT_0b01" value="0b01" description="Data pin contact detection is complete."/>
+      <bit_field_value name="STATUS_SEQ_STAT_0b10" value="0b10" description="Charging port detection is complete."/>
+      <bit_field_value name="STATUS_SEQ_STAT_0b11" value="0b11" description="Charger type detection is complete."/>
+    </bit_field>
+    <bit_field offset="20" width="1" name="ERR" access="RO" reset_value="0" description="Error Flag">
+      <alias type="CMSIS" value="USBDCD_STATUS_ERR(x)"/>
+      <bit_field_value name="STATUS_ERR_0b0" value="0b0" description="No sequence errors."/>
+      <bit_field_value name="STATUS_ERR_0b1" value="0b1" description="Error in the detection sequence. See the SEQ_STAT field to determine the phase in which the error occurred."/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="TO" access="RO" reset_value="0" description="Timeout Flag">
+      <alias type="CMSIS" value="USBDCD_STATUS_TO(x)"/>
+      <bit_field_value name="STATUS_TO_0b0" value="0b0" description="The detection sequence has not been running for over 1 s."/>
+      <bit_field_value name="STATUS_TO_0b1" value="0b1" description="It has been over 1 s since the data pin contact was detected and debounced."/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="ACTIVE" access="RO" reset_value="0" description="Active Status Indicator">
+      <alias type="CMSIS" value="USBDCD_STATUS_ACTIVE(x)"/>
+      <bit_field_value name="STATUS_ACTIVE_0b0" value="0b0" description="The sequence is not running."/>
+      <bit_field_value name="STATUS_ACTIVE_0b1" value="0b1" description="The sequence is running."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="9" reset_value="0"/>
+  </register>
+  <register offset="0xC" width="32" name="SIGNAL_OVERRIDE" description="Signal Override Register">
+    <alias type="CMSIS" value="SIGNAL_OVERRIDE"/>
+    <bit_field offset="0" width="2" name="PS" access="RW" reset_value="0" description="Phase Selection">
+      <alias type="CMSIS" value="USBDCD_SIGNAL_OVERRIDE_PS(x)"/>
+      <bit_field_value name="SIGNAL_OVERRIDE_PS_0b00" value="0b00" description="No overrides. Bit field must remain at this value during normal USB data communication to prevent unexpected conditions on USB_DP and USB_DM pins. (Default)"/>
+      <bit_field_value name="SIGNAL_OVERRIDE_PS_0b01" value="0b01" description="Reserved, not for customer use."/>
+      <bit_field_value name="SIGNAL_OVERRIDE_PS_0b10" value="0b10" description="Enables VDP_SRC voltage source for the USB_DP pin and IDM_SINK current source for the USB_DM pin."/>
+      <bit_field_value name="SIGNAL_OVERRIDE_PS_0b11" value="0b11" description="Reserved, not for customer use."/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="6" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="22" reset_value="0"/>
+  </register>
+  <register offset="0x10" width="32" name="TIMER0" description="TIMER0 register">
+    <alias type="CMSIS" value="TIMER0"/>
+    <bit_field offset="0" width="12" name="TUNITCON" access="RO" reset_value="0" description="Unit Connection Timer Elapse (in ms)">
+      <alias type="CMSIS" value="USBDCD_TIMER0_TUNITCON(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="12" width="4" reset_value="0"/>
+    <bit_field offset="16" width="10" name="TSEQ_INIT" access="RW" reset_value="0x10" description="Sequence Initiation Time">
+      <alias type="CMSIS" value="USBDCD_TIMER0_TSEQ_INIT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="26" width="6" reset_value="0"/>
+  </register>
+  <register offset="0x14" width="32" name="TIMER1" description="TIMER1 register">
+    <alias type="CMSIS" value="TIMER1"/>
+    <bit_field offset="0" width="10" name="TVDPSRC_ON" access="RW" reset_value="0x28" description="Time Period Comparator Enabled">
+      <alias type="CMSIS" value="USBDCD_TIMER1_TVDPSRC_ON(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="10" width="6" reset_value="0"/>
+    <bit_field offset="16" width="10" name="TDCD_DBNC" access="RW" reset_value="0xA" description="Time Period to Debounce D+ Signal">
+      <alias type="CMSIS" value="USBDCD_TIMER1_TDCD_DBNC(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="26" width="6" reset_value="0"/>
+  </register>
+  <register offset="0x18" width="32" name="TIMER2_BC11" description="TIMER2_BC11 register">
+    <alias type="CMSIS" value="TIMER2_BC11"/>
+    <bit_field offset="0" width="4" name="CHECK_DM" access="RW" reset_value="0x1" description="Time Before Check of D- Line">
+      <alias type="CMSIS" value="USBDCD_TIMER2_BC11_CHECK_DM(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="12" reset_value="0"/>
+    <bit_field offset="16" width="10" name="TVDPSRC_CON" access="RW" reset_value="0x28" description="Time Period Before Enabling D+ Pullup">
+      <alias type="CMSIS" value="USBDCD_TIMER2_BC11_TVDPSRC_CON(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="26" width="6" reset_value="0"/>
+  </register>
+  <register offset="0x18" width="32" name="TIMER2_BC12" description="TIMER2_BC12 register">
+    <alias type="CMSIS" value="TIMER2_BC12"/>
+    <bit_field offset="0" width="10" name="TVDMSRC_ON" access="RW" reset_value="0x28" description="Sets the amount of time (in ms) that the module enables the VDM_SRC. Valid values are 0-40ms.">
+      <alias type="CMSIS" value="USBDCD_TIMER2_BC12_TVDMSRC_ON(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="10" width="6" reset_value="0"/>
+    <bit_field offset="16" width="10" name="TWAIT_AFTER_PRD" access="RW" reset_value="0x1" description="Sets the amount of time (in ms) that the module waits after primary detection before start to secondary detection. Valid values are 1-1023ms. Default is 1ms.">
+      <alias type="CMSIS" value="USBDCD_TIMER2_BC12_TWAIT_AFTER_PRD(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="26" width="6" reset_value="0"/>
+  </register>
+</regs:peripheral>

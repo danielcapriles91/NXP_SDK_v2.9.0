@@ -1,0 +1,83 @@
+/*
+ * Copyright ${(new Date()).getFullYear()}$ NXP
+ * All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#ifndef _FLASH_CONFIG_H_
+#define _FLASH_CONFIG_H_
+
+/******************* Bootloader Configuration Area ************************/
+
+#define BCA_CRC_START_ADDRESS ${CRC_START_ADDR}$
+#define BCA_CRC_BYTE_COUNTS ${CRC_BYTE_COUNT}$
+#define BCA_CRC_EXPECTED_VALUE ${CRC_EXP_VALUE}$
+
+/*
+ * BCA_ENABLED_PERIPHERALS${<code>if(mcu == 'nevis3'){</code>}$
+ *   Bit[3]: CAN. 0b1 = enable, 0b0 = disable.
+ *   Bit[2]: SPI. 0b1 = enable, 0b0 = disable.
+ *   Bit[1]: I2C. 0b1 = enable, 0b0 = disable.
+ *   Bit[0]: QSCI/UART. 0b1 = enable, 0b0 = disable.${<code>};if(mcu == 'anguilla_nano'){</code>}$
+ *   Bit[1]: LPI2C. 0b1 = enable, 0b0 = disable.
+ *   Bit[0]: QSCI/UART. 0b1 = enable, 0b0 = disable.${<code>};</code>}$
+ */
+#define BCA_ENABLED_PERIPHERALS ${ENABLED_PERIPHERALS}$
+
+/*
+ * If BCA_I2C_SLAVE_ADDRESS = 0xFF, the I2C addr = 0x10,
+ * otherwise use the BCA_I2C_SLAVE_ADDRESS[6:0] as I2C slave addr.
+ */
+#define BCA_I2C_SLAVE_ADDRESS ${I2C_SLAVE_ADDR}$
+
+/*
+ * If BCA_PERIPHERAL_DETECTION_TIMEOUT = 0xFFFF, the timeout = 5000ms.
+ * otherwise timeout = BCA_PERIPHERAL_DETECTION_TIMEOUT in unit ms.
+ */
+#define BCA_PERIPHERAL_DETECTION_TIMEOUT ${PERIPH_DETECT_TIME}$
+
+/*
+ * If BCA_DIRECT_BOOT_FLAG = 0xFE, means direct boot,
+ * otherwise not direct boot.
+ */
+#define BCA_DIRECT_BOOT_FLAG ${DIRECT_BOOT_FLAG}$${<code>if(mcu == 'nevis3'){</code>}$
+#define BCA_CAN_CONFIG1 ${CAN_CONFIG1}$
+#define BCA_CAN_CONFIG2 ${CAN_CONFIG2}$
+#define BCA_CAN_TX_ID ${CAN_TX}$
+#define BCA_CAN_RX_ID ${CAN_RX}$${<code>};</code>}$
+
+/************************** Flash configuration field *********************/
+
+#define FCF_BACKDOOR_KEY0 ${BACKKEY0}$
+#define FCF_BACKDOOR_KEY1 ${BACKKEY1}$
+#define FCF_BACKDOOR_KEY2 ${BACKKEY2}$
+#define FCF_BACKDOOR_KEY3 ${BACKKEY3}$
+#define FCF_BACKDOOR_KEY4 ${BACKKEY4}$
+#define FCF_BACKDOOR_KEY5 ${BACKKEY5}$
+#define FCF_BACKDOOR_KEY6 ${BACKKEY6}$
+#define FCF_BACKDOOR_KEY7 ${BACKKEY7}$
+#define FCF_FLASH_PROTECTION_BYTE0 ${FPROT0}$
+#define FCF_FLASH_PROTECTION_BYTE1 ${FPROT1}$
+#define FCF_FLASH_PROTECTION_BYTE2 ${FPROT2}$
+#define FCF_FLASH_PROTECTION_BYTE3 ${FPROT3}$
+
+/*
+ * FCF_FLASH_SECURE_BYTE
+ *   Bit[7:6]: KEYEN, Backdoor Key Security Enable. 0b10 = enable, others = disable.
+ *   Bit[5:4]: MEEN, Mass Erase Enable Bits. 0b10 = disable, others = enable.
+ *   Bit[3:2]: FSLACC, Factory Security Level Access Code. 0b00 or 0b11 = granted, others = denied.
+ *   Bit[1:0]: SEC, Flash Security. 0b10 = unsecure, others = secure.
+ */
+#define FCF_FLASH_SECURE_BYTE ${FSEC}$
+
+/*
+ * FCF_FLASH_OPTION_BYTE
+ *   Bit[7:6]: BOOTOPT, Boot options combined with SIM_BOOT_MODE_OVERRIDE[BOOT_OVERRIDE].
+ *             When power on reset, 0b11 = boot from ROM, others = boot from flash.
+ *   Bit[0]:   PowerMode. 0b1 = writing SIM_PWRMODE register takes effect, writing SIM_PWR register doesn\'t take effect.
+ *                        0b0 = writing SIM_PWRMODE register doesn\'t take effect, writing SIM_PWR register takes effect.
+ */
+#define FCF_FLASH_OPTION_BYTE ${FOPT}$
+
+#endif /* _FLASH_CONFIG_H_*/

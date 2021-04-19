@@ -1,0 +1,97 @@
+#ifndef _TIMER_QUEUE_TIMER_H_
+#define _TIMER_QUEUE_TIMER_H_
+
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+
+/*! @brief max timer object support */
+#ifndef TIMER_QUEUE_MAX_TIMER_OBJECTS
+#define TIMER_QUEUE_MAX_TIMER_OBJECTS ${(remoteWakeup ? 2 : 0) + dfuCount + phdcCount*2}$U
+#endif
+#if TIMER_QUEUE_MAX_TIMER_OBJECTS
+
+/*! @brief timer callback function prototype */
+typedef void (*timerQueue_timer_callback)(void *);
+
+/*! @brief timer object structure */
+typedef struct _timerQueue_timer_object
+{
+    uint32_t timerCount;              /*!< Time-out value in milliseconds */
+    timerQueue_timer_callback timerCallback; /*!< Callback function */
+    void *timerArgument;                    /*!< Callback function argument */
+} timerQueue_timer_object_t;
+
+/*******************************************************************************
+ * API
+ ******************************************************************************/
+
+/*! @brief global function prototypes */
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+/*!
+ * @brief timer initialization.
+ *
+ * This function initializes the timer object queue and system clock counter.
+ *
+ *
+ * @retval success or error.
+ */
+void TimerQueue_TimerInit(void);
+/*!
+ * @brief timer initialization.
+ *
+ * This function initializes the timer hardware.
+ *
+ *
+ * @retval success or error.
+ */
+void TimerQueue_TimerHWInit(void);
+/*!
+ * @brief hardware timer control.
+ *
+ * This function is used to enable or disable the timer IRQ.
+ *
+ *
+ * @retval success or error.
+ */
+void HW_TimerControl(uint8_t enable);
+/*!
+ * @brief add object to timer queue.
+ *
+ * This function is called to add timer object to timer queue.
+ *
+ * @param pTimerObject      timer object.
+ *
+ * @retval Returns timer ID on success or -1 on error.
+ */
+uint8_t TimerQueue_AddTimerQueue(timerQueue_timer_object_t *timerObject);
+
+/*!
+ * @brief remove timer queue.
+ *
+ * This function is called to remove timer object from timer queue.
+ *
+ * @param pTimerObject      index of timer object in queue.
+ *
+ * @retval success or error.
+ */
+uint8_t TimerQueue_RemoveTimer(uint8_t timerId);
+/*!
+ * @brief timer interrupt service routine function.
+ *
+ * This function services timer interrupt when a timer object
+ * expires, then removes the timer object from timer queue and calls its
+ * callback function (if registered).
+ *
+ * @retval Returns 0 on success or -1 on error.
+ */
+void TimerIsr(void);
+#if defined(__cplusplus)
+}
+#endif
+#endif
+#endif
+/* _TIMER_QUEUE_TIMER_H_ */

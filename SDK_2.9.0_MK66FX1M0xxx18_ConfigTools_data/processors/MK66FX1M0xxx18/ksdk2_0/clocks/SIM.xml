@@ -1,0 +1,319 @@
+<?xml version="1.0"?>
+<clocks:component xmlns:clocks="http://apif.freescale.net/schemas/clocks/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://apif.freescale.net/schemas/clocks/1.1 http://apif.freescale.net/schemas/clocks/1.1/clocks.xsd" id="SIM">
+  <instance_header>
+    <instance_description>Clock model for the SIM module (parameterized, shared accross K-family parts)</instance_description>
+  </instance_header>
+  <interface>
+    <input_clock_signal id="MCGOUTCLK_IN" name="MCGOUTCLK" description="MCG output clock"/>
+    <input_clock_signal id="MCGFLLCLK_IN" name="MCGFLLCLK" description="MCG FLL output clock"/>
+    <input_clock_signal id="MCGPLLCLK_IN" name="MCGPLLCLK" description="MCG PLL output clock"/>
+    <input_clock_signal id="IRC48MCLK_IN" name="IRC48MCLK" description="Internal Reference Clock 48MHz output"/>
+    <input_clock_signal id="OSCERCLK_IN" name="OSCERCLK" description="System Oscillator External Reference output clock"/>
+    <input_clock_signal id="OSCERCLK_UNDIV_IN" name="OSCERCLK Undivided" description="Undivided system Oscillator External Reference output clock"/>
+    <input_clock_signal id="OSC32KCLK_IN" name="OSC32KCLK" description="System Oscillator 32K output clock"/>
+    <input_clock_signal id="RTC1HzCLK_IN" name="RTC1HzCLK" description="RTC 1Hz output clock"/>
+    <input_clock_signal id="RTC32KCLK_IN" name="RTC32KCLK" description="RTC 32kHz output clock"/>
+    <input_clock_signal id="OSCCLK_IN" name="OSCLCK" description="System Oscillator output clock"/>
+    <input_clock_signal id="MCGIRCLK_IN" name="MCGIRCLK" description="MCG Internal Reference output clock (slow or fast)"/>
+    <input_clock_signal id="MCGFFCLK_IN" name="MCGFFCLK" description="MCG Fixed Frequency output clock (slow IRC or divided external)"/>
+    <input_clock_signal id="LPOCLK_IN" name="LPOCLK" description="PMC Low Power Oscillator 1kHz clock"/>
+    <input_clock_signal id="USBPFDCLK_IN" name="USBPFDCLK" description="USBPHY PFD clock"/>
+    <output_clock_signal id="CORECLK" name="CORECLK" description="ARM Cortex M4 core clock"/>
+    <output_clock_signal id="SYSTEMCLK" name="SYSTEMCLK" description="Clocks the crossbar switch and bus masters directly connected to the crossbar."/>
+    <output_clock_signal id="BUSCLK" name="BUSCLK" description="Clocks bus slaves and peripheral (excluding memories)"/>
+    <output_clock_signal id="FLEXBUSCLK" name="FLEXBUSCLK" description="Clocks the external external FlexBus interface" available="hasPeripheral(`FB`)"/>
+    <output_clock_signal id="FLASHCLK" name="FLASHCLK" description="Clocks the flash memory."/>
+    <output_clock_signal id="IRC48MCLK" name="IRC48MCLK" description="Internal clock 48MHz"/>
+    <output_clock_signal id="RTC32KCLK" name="RTC32KCLK" description="RTC 32 kHz clock" available="hasPeripheral(`RTC`)"/>
+    <output_clock_signal id="OSCCLK" name="OSCCLK" description="System Oscillator output clock"/>
+    <output_clock_signal id="OSCERCLK" name="OSCERCLK" description="System Oscillator eternal reference clock"/>
+    <output_clock_signal id="OSCERCLK_UNDIV" name="OSCERCLK Undivided" description="Undivided system Oscillator External Reference output clock"/>
+    <output_clock_signal id="ERCLK32K" name="ERCLK32K" description="External reference clock 32k (or 1kHz LPO). Clock source for some modules."/>
+    <output_clock_signal id="MCGIRCLK" name="MCGIRCLK" description="MCG Internal Reference output clock (slow or fast)"/>
+    <output_clock_signal id="MCGFFCLK" name="MCGFFCLK" description="MCG Fixed Frequency output clock (slow IRC or divided external)"/>
+    <output_clock_signal id="PLLFLLCLK" name="PLLFLLCLK" description="Selected clock signal, either MCGPLLCLK, MCGFLLCLK or IRC48M (if supported)."/>
+    <output_clock_signal id="RTCCLKOUT" name="RTCCLKOUT" description="RTC oscillator output for the RTC module." available="hasPeripheral(`RTC`)"/>
+    <output_clock_signal id="USB48MCLK" name="USB FS clock" description="USB 48MHz clock for USB Full Speed device." available="hasPeripheral(`USB0`)"/>
+    <output_clock_signal id="TRACECLKIN" name="DEBUG Trace clock input"/>
+    <output_clock_signal id="ENET1588TSCLK" name="ENET 1588 timestamp clock" available="hasPeripheral(`ENET`)"/>
+    <output_clock_signal id="RMIICLK" name="ENET RMII clock" available="hasPeripheral(`ENET`)"/>
+    <output_clock_signal id="SDHCCLK" name="SDHC clock" available="hasPeripheral(`SDHC`)"/>
+    <output_clock_signal id="CLKOUT" name="FlexBus clock output"/>
+    <output_clock_signal id="LPUARTCLK" name="LPUART clock output" available="hasPeripheral(`LPUART0`)"/>
+    <output_clock_signal id="TPMCLK" name="TPM clock output" available="hasPeripheral(`TPM0`) || hasPeripheral(`TPM1`) || hasPeripheral(`TPM2`)"/>
+    <output_clock_signal id="USBSLCLK" name="USBSLCLK slow clock output" available="hasPeripheral(`USBPHY`)"/>
+    <pin id="USB_CLKIN" name="USB clock input" available="hasPeripheral(`USB0`) &amp;&amp; queryFeature(`PinSignal`,`USB0.CLKIN`,`Exists`)">
+      <peripheral_signal_ref signal="USB0.CLKIN"/>
+    </pin>
+    <pin id="ENET_1588_CLKIN" name="ENET 1588 clock input" available="hasPeripheral(`ENET`) &amp;&amp; queryFeature(`PinSignal`,`ENET.CLKIN_1588`,`Exists`)">
+      <peripheral_signal_ref signal="ENET.CLKIN_1588"/>
+    </pin>
+    <pin id="SDHC0_CLKIN" name="SDHC clock input" available="hasPeripheral(`SDHC`) &amp;&amp; queryFeature(`PinSignal`,`SDHC.CLKIN`,`Exists`)">
+      <peripheral_signal_ref signal="SDHC.CLKIN"/>
+    </pin>
+  </interface>
+  <implementation>
+    <prescaler id="OUTDIV1" name="OUTDIV1" description="Core and system clock divider">
+      <input signal="MCGOUTCLK_IN"/>
+      <interlock_master/>
+      <divide expr="1+CLKDIV1[OUTDIV1]"/>
+    </prescaler>
+    <prescaler id="OUTDIV2" name="OUTDIV2" description="Bus clock divider">
+      <input signal="MCGOUTCLK_IN"/>
+      <interlock_slave master="OUTDIV1" integer_divide_freq="true" max_ratio="8"/>
+      <divide expr="1+CLKDIV1[OUTDIV2]"/>
+      <constraint cond_expr="OUTDIV2.outFreq == 0 || (OUTDIV1.outFreq / OUTDIV2.outFreq) &lt;= 8" description="OUTDIV2 output frequency must be an integer divide of OUTDIV1 and the maximum divide ratio that can be programmed between core/system clock and the other divided clocks is divide by 8"/>
+    </prescaler>
+    <prescaler id="OUTDIV3" name="OUTDIV3" description="FlexBus clock divider" available="hasPeripheral(`FB`)">
+      <input signal="MCGOUTCLK_IN"/>
+      <interlock_slave master="OUTDIV1" integer_divide_freq="true" max_ratio="8"/>
+      <divide expr="1+CLKDIV1[OUTDIV3]"/>
+      <constraint cond_expr="OUTDIV3.outFreq == 0 || (OUTDIV1.outFreq / OUTDIV3.outFreq) &lt;= 8" description="OUTDIV3 output frequency must be an integer divide of OUTDIV1 and the maximum divide ratio that can be programmed between core/system clock and the other divided clocks is divide by 8"/>
+    </prescaler>
+    <prescaler id="OUTDIV4" name="OUTDIV4" description="Flash clock divider">
+      <input signal="MCGOUTCLK_IN"/>
+      <interlock_slave master="OUTDIV1" integer_divide_freq="true" max_ratio="8"/>
+      <divide expr="1+CLKDIV1[OUTDIV4]"/>
+      <constraint cond_expr="OUTDIV4.outFreq == 0 || ((OUTDIV1.outFreq / OUTDIV4.outFreq) &lt;= 8)" description="OUTDIV4 output frequency must be an integer divide of OUTDIV1 and the maximum divide ratio that can be programmed between core/system clock and the other divided clocks is divide by 8"/>
+    </prescaler>
+    <clock_select id="PLLFLLSEL" name="PLLFLLSEL" description="PLL/FLL clock select. Selects the high frequency clock for various peripheral clocking options.">
+      <value_map expr="SOPT2[PLLFLLSEL]">
+        <input ctrl_value="0" signal="MCGFLLCLK_IN" description="MCG FLL clock"/>
+        <input ctrl_value="1" signal="MCGPLLCLK_IN" description="MCG PLL clock"/>
+        <input ctrl_value="2" signal="USBPFDCLK_IN" description="USBPHY PFD clock"/>
+        <input ctrl_value="3" signal="IRC48MCLK_IN" description="IRC 48MHz clock"/>
+      </value_map>
+    </clock_select>
+    <clock_select id="RTCCLKOUTSEL" name="RTC_CLKOUT_SEL" description="Selects either the RTC 1 Hz clock or the 32.768kHz clock to be output on the RTC_CLKOUT pin." available="hasPeripheral(`RTC`)">
+      <value_map expr="SOPT2[RTCCLKOUTSEL]">
+        <input ctrl_value="0" signal="RTC1HzCLK_IN" name="RTC 1Hz clock"/>
+        <input ctrl_value="1" signal="RTC32KCLK_IN" name="RTC 32.768kHz clock" description="RTC 32kHz output clock"/>
+      </value_map>
+      <enable cond_expr="RTCCLKOUTConfig == `yes`" description="This clock selector can be enabled/disabled by the {{RTCCLKOUTConfig}} settings in the RTC_CLKOUT clock output."/>
+    </clock_select>
+    <clock_select id="OSC32KSEL" name="OSC32KSEL" description="Selection of an external 32kHz clock signal or 1kHz LPO for some peripherals.">
+      <value_map expr="SOPT1[OSC32KSEL]">
+        <input ctrl_value="0" signal="OSC32KCLK_IN"/>
+        <input ctrl_value="2" signal="RTC32KCLK_IN"/>
+        <input ctrl_value="3" signal="LPOCLK_IN"/>
+      </value_map>
+    </clock_select>
+    <prescaler id="USBFRAC" name="USB clock divider fraction" description="Multiply value of USB fractional clock divider" available="hasPeripheral(`USB0`)">
+      <input signal="PLLFLLSEL.clk"/>
+      <multiply expr="CLKDIV2[USBFRAC]+1"/>
+      <enable power_modes="HSRUN RUN WAIT" cond_expr="(USBClkConfig == `yes`) &amp;&amp; (SOPT2[USBSRC] == 1)" description="USB clock is active in RUN, WAIT and HSRUN (if supported by the MCU) power mode. It can be enabled/disabled by the {{USBClkConfig}} settings in the USB FS clock output when this clock path is selected in the USBSRCSEL clock selector."/>
+    </prescaler>
+    <prescaler id="USBDIV" name="USB clock divider divisor" description="Divide value of USB fractional clock divider" available="hasPeripheral(`USB0`)">
+      <input signal="USBFRAC.clk"/>
+      <divide expr="CLKDIV2[USBDIV]+1"/>
+      <enable power_modes="HSRUN RUN WAIT" cond_expr="(USBClkConfig == `yes`) &amp;&amp; (SOPT2[USBSRC] == 1)" description="USB clock is active in RUN, WAIT and HSRUN (if supported by the MCU) power mode. It can be enabled/disabled by the {{USBClkConfig}} settings in the USB FS clock output when this clock path is selected in the USBSRCSEL clock selector."/>
+    </prescaler>
+    <clock_source id="USBCLK_EXT" name="USB clock input" description="USB external clock input" available="hasPeripheral(`USB0`) &amp;&amp; queryFeature(`PinSignal`,`USB0.CLKIN`,`Exists`)">
+      <external_source default_freq="48 MHz">
+        <pin id="USB_CLKIN"/>
+        <range min_freq="48 MHz" max_freq="48 MHz"/>
+      </external_source>
+      <enable power_modes="HSRUN RUN WAIT" description="USB clock is active in RUN, WAIT and HSRUN (if supported by the MCU) power mode."/>
+    </clock_source>
+    <clock_select id="USBSRCSEL" name="USB clock select" description="USB clock source select" available="hasPeripheral(`USB0`)">
+      <value_map expr="SOPT2[USBSRC]">
+        <input ctrl_value="0" signal="USBCLK_EXT.clk"/>
+        <input ctrl_value="1" signal="USBDIV.clk" name="PLLFLLSEL output (MCG PLL/FLL/IRC48M/USB1PFD) - divided"/>
+      </value_map>
+      <enable power_modes="HSRUN RUN WAIT" cond_expr="USBClkConfig == `yes`" description="USB clock is active in RUN, WAIT and HSRUN (if supported by the MCU) power mode. It can be enabled/disabled by the {{USBClkConfig}} settings in the USB FS clock output."/>
+      <constraint cond_expr="SOPT2[PLLFLLSEL] != 0" when="SOPT2[USBSRC] == 1" description="When the MCG PLL/FLL clock is selected by this clock selector as the USB clock source the FLL output cannot be used due to high jitter (i.e. the PLLFLLSEL clock selector must not select the FLL clock)."/>
+    </clock_select>
+    <clock_select id="USBSLSRCSEL" name="USBPHY/HS slow clock select" description="The USBPHY and HS Controller slow clock source, used to detect wakeup and resume events." available="hasPeripheral(`USBPHY`)">
+      <value_map expr="SOPT2[USBSLSRC]">
+        <input ctrl_value="0" signal="MCGIRCLK_IN"/>
+        <input ctrl_value="1" signal="RTC32KCLK_IN"/>
+      </value_map>
+      <enable power_modes="HSRUN RUN WAIT" cond_expr="(USBSLClkConfig == `yes`) || (USBPHYConfig != `no`)" description="USBPHY/HS clock is active in RUN, WAIT and HSRUN (if supported by the MCU) power mode. It can be enabled/disabled by the {{USBSLClkConfig}} settings in the USBSLCLK slow clock output."/>
+    </clock_select>
+    <clock_select id="TRACECLKSEL" name="Debug Trace clock" description="Debug trace clock source select">
+      <value_map expr="SOPT2[TRACECLKSEL]">
+        <input ctrl_value="0" signal="TRACEDIV.clk" name="MCGOUTCLK (divided)" description="MCGOUTCLK divided by trace fractional divider"/>
+        <input ctrl_value="1" signal="OUTDIV1.clk" name="Core/system clock" description="Core/system clock"/>
+      </value_map>
+      <enable cond_expr="TraceClkConfig == `yes`" description="This clock selector initialization can be enabled/disabled by the {{TraceClkConfig}} settings in the DEBUG Trace clock input."/>
+    </clock_select>
+    <prescaler id="TRACEFRAC" name="Debug trace clock divider fraction" description="Multiply value of the debug trace fractional clock divider">
+      <input signal="MCGOUTCLK_IN"/>
+      <multiply expr="CLKDIV4[TRACEFRAC]+1"/>
+      <enable cond_expr="TraceClkConfig == `yes`" description="This fractional prescaler can be enabled/disabled by the {{TraceClkConfig}} settings in the DEBUG Trace clock input."/>
+    </prescaler>
+    <prescaler id="TRACEDIV" name="Debug trace clock divider divisor" description="Divide value of debug trace fractional clock divider">
+      <input signal="TRACEFRAC.clk"/>
+      <divide expr="CLKDIV4[TRACEDIV]+1"/>
+      <enable cond_expr="TraceClkConfig == `yes`" description="This fractional prescaler can be enabled/disabled by the {{TraceClkConfig}} settings in the DEBUG Trace clock input."/>
+    </prescaler>
+    <clock_source id="ENET_1588_CLK_EXT" name="ENET 1588 clock input" description="Ethernet IEEE 1588 external clock input" available="hasPeripheral(`ENET`) &amp;&amp; queryFeature(`PinSignal`,`ENET.CLKIN_1588`,`Exists`)">
+      <external_source default_freq="50 MHz">
+        <pin id="ENET_1588_CLKIN"/>
+        <range min_freq="0 Hz" max_freq="120 MHz"/>
+      </external_source>
+      <enable power_modes="HSRUN RUN WAIT" description="Ethernet clock is active in RUN, WAIT and HSRUN (if supported by the MCU) power mode."/>
+    </clock_source>
+    <clock_select id="TIMESRCSEL" name="Ethernet timestamp clock select" description="Ethernet IEEE 1588 timestamp clock select" available="hasPeripheral(`ENET`)">
+      <value_map expr="SOPT2[TIMESRC]">
+        <input ctrl_value="0" signal="OUTDIV1.clk" description="Core/system clock"/>
+        <input ctrl_value="1" signal="PLLFLLSEL.clk" name="PLLFLLSEL output (MCG PLL/FLL/IRC48M/USB1PFD)" description="PLL, FLL or IRC48M clock signal (depend on PLLFLLSEL)"/>
+        <input ctrl_value="2" signal="OSCERCLK_IN" description="OSCERCLK clock"/>
+        <input ctrl_value="3" signal="ENET_1588_CLK_EXT.clk" description="External clock source"/>
+      </value_map>
+      <enable power_modes="HSRUN RUN WAIT" cond_expr="ENETTimeSrcConfig == `yes`" description="Ethernet clock is active in RUN, WAIT and HSRUN (if supported by the MCU) power mode. It can be enabled/disabled by the {{ENETTimeSrcConfig}} settings in the ENET 1588 timestamp clock output."/>
+    </clock_select>
+    <clock_select id="RMIICLKSEL" name="RMII clock select" description="Ethernet RMII clock select" available="hasPeripheral(`ENET`)">
+      <value_map expr="SOPT2[RMIISRC]">
+        <input ctrl_value="0" signal="OSCERCLK_IN" description="OSCERCLK clock"/>
+        <input ctrl_value="1" signal="ENET_1588_CLK_EXT.clk" description="External clock source"/>
+      </value_map>
+      <enable power_modes="HSRUN RUN WAIT" cond_expr="RMIISrcConfig == `yes`" description="Ethernet clock is active in RUN, WAIT and HSRUN (if supported by the MCU) power mode. It can be enabled/disabled by the {{RMIISrcConfig}} settings in the ENET RMII clock output."/>
+    </clock_select>
+    <clock_source id="SDHC0_CLK_EXT" name="SDHC clock input" description="SDHC external clock input" available="hasPeripheral(`SDHC`) &amp;&amp; queryFeature(`PinSignal`,`SDHC.CLKIN`,`Exists`)">
+      <external_source default_freq="50 MHz">
+        <pin id="SDHC0_CLKIN"/>
+        <range min_freq="1 Hz" max_freq="50 MHz"/>
+      </external_source>
+      <enable power_modes="HSRUN RUN WAIT STOP VLPR VLPW VLPS" description="SDHC clock is active in RUN, WAIT, HSRUN, STOP, VLPR, VLPW and VLPS (if supported by the MCU) power mode."/>
+    </clock_source>
+    <clock_select id="SDHCSRCSEL" name="SDHC clock select" description="SDHC clock select" available="hasPeripheral(`SDHC`)">
+      <value_map expr="SOPT2[SDHCSRC]">
+        <input ctrl_value="0" signal="OUTDIV1.clk" description="Core/system clock"/>
+        <input ctrl_value="1" signal="PLLFLLSEL.clk" name="PLLFLLSEL output (MCG PLL/FLL/IRC48M/USB1PFD)" description="PLLFLLSEL"/>
+        <input ctrl_value="2" signal="OSCERCLK_IN" description="OSCERCLK"/>
+        <input ctrl_value="3" signal="SDHC0_CLK_EXT.clk" description="SDHC external clock"/>
+      </value_map>
+      <enable power_modes="HSRUN RUN WAIT STOP VLPR VLPW VLPS" cond_expr="SDHCClkConfig == `yes`" description="SDHC clock is active in RUN, WAIT, HSRUN, STOP, VLPR, VLPW and VLPS (if supported by the MCU) power mode. It can be enabled/disabled by the {{SDHCClkConfig}} settings in the SDHC clock output."/>
+    </clock_select>
+    <clock_select id="CLKOUTSEL" name="CLKOUT select (FlexBus clock)" description="Selects the clock to output on the CLKOUT pin (FlexBus clock).">
+      <value_map expr="SOPT2[CLKOUTSEL]">
+        <input ctrl_value="0" signal="OUTDIV3.clk" name="FlexBus clock"/>
+        <input ctrl_value="2" signal="OUTDIV4.clk" name="Flash clock"/>
+        <input ctrl_value="3" signal="LPOCLK_IN" name="LPOCLK" description="LPO clock 1kHz"/>
+        <input ctrl_value="4" signal="MCGIRCLK_IN" name="MCGIRCLK" description="MCG IRC signal (MCGIRCLK)"/>
+        <input ctrl_value="5" signal="RTC32KCLK_IN" name="RTC32KCLK" description="RTC 32kHz output clock"/>
+        <input ctrl_value="6" signal="OSCERCLK_IN" name="OSCERCLK" description="System Oscilator - External Reference Clock"/>
+        <input ctrl_value="7" signal="IRC48MCLK_IN" name="IRC48MCLK" description="IRC 48MHz clock"/>
+      </value_map>
+      <enable cond_expr="CLKOUTConfig == `yes`" description="This clock selector can be enabled/disabled by the {{CLKOUTConfig}} settings in the CLKOUT FlexBus clock output."/>
+    </clock_select>
+    <prescaler id="PLLFLLFRAC" name="PLL/FLL clock divider fraction" description="Multiply value of the PLL/FLL fractional clock divider">
+      <input signal="PLLFLLSEL.clk"/>
+      <multiply expr="CLKDIV3[PLLFLLFRAC]+1"/>
+      <enable power_modes="HSRUN RUN WAIT STOP" description="PLL/FLL clock is active in RUN, HSRUN (if supported by the MCU), WAIT and STOP power modes when the selected PLL/FLL is enabled."/>
+    </prescaler>
+    <prescaler id="PLLFLLDIV" name="PLL/FLL clock divider divisor" description="Divide value of PLL/FLL fractional clock divider">
+      <input signal="PLLFLLFRAC.clk"/>
+      <divide expr="CLKDIV3[PLLFLLDIV]+1"/>
+      <enable power_modes="HSRUN RUN WAIT STOP" description="PLL/FLL clock is active in RUN, HSRUN (if supported by the MCU), WAIT and STOP power modes when the selected PLL/FLL is enabled."/>
+    </prescaler>
+    <clock_select id="LPUARTSRCSEL" name="LPUART clock select" description="LPUART clock source select" available="hasPeripheral(`LPUART0`)">
+      <value_map expr="SOPT2[LPUARTSRC]">
+        <input ctrl_value="1" signal="PLLFLLDIV.clk" name="PLLFLLSEL output (MCG PLL/FLL/IRC48M/USB1PFD) - divided"/>
+        <input ctrl_value="2" signal="OSCERCLK_IN"/>
+        <input ctrl_value="3" signal="MCGIRCLK_IN"/>
+        <no_clock ctrl_value="0" name="Disabled" description="Clock disabled."/>
+      </value_map>
+      <enable power_modes="HSRUN RUN WAIT STOP VLPR VLPW VLPS" cond_expr="LPUARTClkConfig == `yes`" description="LPUART clock (device) can be used in HSRUN, RUN, WAIT, STOP, VLPR, VLPW and VLPS power modes. It can be enabled/disabled by the {{LPUARTClkConfig}} settings in the LPUART clock output."/>
+    </clock_select>
+    <clock_select id="TPMSRCSEL" name="TPM clock select" description="TPM clock source select" available="hasPeripheral(`TPM0`) || hasPeripheral(`TPM1`) || hasPeripheral(`TPM2`)">
+      <value_map expr="SOPT2[TPMSRC]">
+        <input ctrl_value="1" signal="PLLFLLDIV.clk" name="PLLFLLSEL output (MCG PLL/FLL/IRC48M/USB1PFD) - divided"/>
+        <input ctrl_value="2" signal="OSCERCLK_IN"/>
+        <input ctrl_value="3" signal="MCGIRCLK_IN"/>
+        <no_clock ctrl_value="0" name="Disabled" description="Clock disabled."/>
+      </value_map>
+      <enable power_modes="HSRUN RUN WAIT STOP VLPR VLPW VLPS" cond_expr="TPMClkConfig == `yes`" description="TPM clock (device) can be used in HSRUN, RUN, WAIT, STOP, VLPR, VLPW and VLPS power modes. It can be enabled/disabled by the {{TPMClkConfig}} settings in the TPM clock output."/>
+    </clock_select>
+    <map_output id="CORECLK">
+      <input signal="OUTDIV1.clk"/>
+      <disable cond_expr="powerMode==`WAIT` || powerMode==`VLPW` || powerMode==`STOP` || powerMode==`PSTOP1` || powerMode==`PSTOP2` || powerMode==`VLPS`  || powerMode==`LLS`  || powerMode==`VLLS0`  || powerMode==`VLLS1`  || powerMode==`VLLS2` || powerMode==`VLLS3` || powerMode==`BAT`" description="Core clock is disabled in all wait and stop modes"/>
+    </map_output>
+    <map_output id="SYSTEMCLK">
+      <input signal="OUTDIV1.clk"/>
+      <disable cond_expr="powerMode==`STOP` || powerMode==`PSTOP1` || powerMode==`PSTOP2` || powerMode==`VLPS`  || powerMode==`LLS`  || powerMode==`VLLS0`  || powerMode==`VLLS1`  || powerMode==`VLLS2` || powerMode==`VLLS3` || powerMode==`BAT`" description="System clock is disabled in all stop modes"/>
+    </map_output>
+    <map_output id="BUSCLK">
+      <input signal="OUTDIV2.clk"/>
+      <disable cond_expr="powerMode==`STOP` || powerMode==`PSTOP1` || powerMode==`VLPS`  || powerMode==`LLS`  || powerMode==`VLLS0`  || powerMode==`VLLS1`  || powerMode==`VLLS2` || powerMode==`VLLS3` || powerMode==`BAT`" description="Bus clock is disabled in all stop modes (except partial Stop2 mode when supported)."/>
+    </map_output>
+    <map_output id="FLEXBUSCLK" available="hasPeripheral(`FB`)">
+      <input signal="OUTDIV3.clk"/>
+      <disable cond_expr="powerMode==`STOP`|| powerMode==`PSTOP1` || powerMode==`PSTOP2`  || powerMode==`VLPS`  || powerMode==`LLS`  || powerMode==`VLLS0`  || powerMode==`VLLS1`  || powerMode==`VLLS2` || powerMode==`VLLS3` || powerMode==`BAT`" description="FlexBus clock is disabled in all stop modes."/>
+      <constraint cond_expr="OUTDIV3.outFreq &lt;= OUTDIV2.outFreq" description="The FlexBus clock frequency must be programmed to be less than or equal to the bus clock frequency."/>
+    </map_output>
+    <map_output id="FLASHCLK">
+      <input signal="OUTDIV4.clk"/>
+      <disable cond_expr="powerMode==`STOP` || powerMode==`PSTOP1` || powerMode==`VLPS`  || powerMode==`LLS`  || powerMode==`VLLS0`  || powerMode==`VLLS1`  || powerMode==`VLLS2` || powerMode==`VLLS3` || powerMode==`BAT`" description="Flash clock is disabled in all stop modes (except partial Stop2 mode when supported)."/>
+      <constraint cond_expr="OUTDIV4.outFreq &lt;= OUTDIV2.outFreq" description="The Flash clock frequency must be programmed to be less than or equal to the bus clock frequency."/>
+    </map_output>
+    <map_output id="IRC48MCLK">
+      <input signal="IRC48MCLK_IN"/>
+    </map_output>
+    <map_output id="RTC32KCLK" available="hasPeripheral(`RTC`)">
+      <input signal="RTC32KCLK_IN"/>
+    </map_output>
+    <map_output id="PLLFLLCLK">
+      <input signal="PLLFLLSEL.clk"/>
+    </map_output>
+    <map_output id="ERCLK32K">
+      <input signal="OSC32KSEL.clk"/>
+    </map_output>
+    <map_output id="RTCCLKOUT" available="hasPeripheral(`RTC`)">
+      <input signal="RTCCLKOUTSEL.clk"/>
+      <disable cond_expr="(RTCCLKOUTConfig == `no`) || powerMode==`LLS` || powerMode==`VLLS0` || powerMode==`VLLS1` || powerMode==`VLLS2` || powerMode==`VLLS3`" description="RTC output clock is disabled in LLS and VLLSx modes. This clock selector can be enabled/disabled by the {{RTCCLKOUTConfig}} settings in the RTC_CLKOUT clock output."/>
+    </map_output>
+    <map_output id="OSCCLK">
+      <input signal="OSCCLK_IN"/>
+    </map_output>
+    <map_output id="OSCERCLK">
+      <input signal="OSCERCLK_IN"/>
+    </map_output>
+    <map_output id="OSCERCLK_UNDIV">
+      <input signal="OSCERCLK_UNDIV_IN"/>
+    </map_output>
+    <map_output id="MCGIRCLK">
+      <input signal="MCGIRCLK_IN"/>
+    </map_output>
+    <map_output id="MCGFFCLK">
+      <input signal="MCGFFCLK_IN"/>
+    </map_output>
+    <map_output id="USB48MCLK" available="hasPeripheral(`USB0`)">
+      <input signal="USBSRCSEL.clk"/>
+      <enable power_modes="HSRUN RUN WAIT" cond_expr="USBClkConfig == `yes`" description="The USB 48 MHz clock is enabled in RUN, WAIT (or HSRUN if supported by the MCU) mode. It can be enabled/disabled by the {{USBClkConfig}} settings in the USB FS clock output."/>
+    </map_output>
+    <map_output id="USBSLCLK" available="hasPeripheral(`USBPHY`)">
+      <input signal="USBSLSRCSEL.clk"/>
+      <enable power_modes="HSRUN RUN WAIT" cond_expr="(USBSLClkConfig == `yes`) || (USBPHYConfig != `no`)" description="The USBPHY/HS slow clock is enabled in RUN, WAIT and HSRUN (if supported by the MCU) mode. It can be enabled/disabled by the {{USBSLClkConfig}} settings in the USBSLCLK slow clock output."/>
+    </map_output>
+    <map_output id="TRACECLKIN">
+      <input signal="TRACECLKSEL.clk"/>
+      <enable cond_expr="TraceClkConfig == `yes`" description="This clock selector can be enabled/disabled by the {{TraceClkConfig}} settings in the DEBUG Trace clock input."/>
+    </map_output>
+    <map_output id="ENET1588TSCLK" available="hasPeripheral(`ENET`)">
+      <input signal="TIMESRCSEL.clk"/>
+      <enable power_modes="HSRUN RUN WAIT" cond_expr="ENETTimeSrcConfig == `yes`" description="The ENET 1588 Timestamp clock is enabled in RUN, WAIT and HSRUN (if supported by the MCU) mode. It can be enabled/disabled by the {{ENETTimeSrcConfig}} settings in the ENET 1588 timestamp clock output."/>
+    </map_output>
+    <map_output id="RMIICLK" available="hasPeripheral(`ENET`)">
+      <input signal="RMIICLKSEL.clk"/>
+      <enable power_modes="HSRUN RUN WAIT" cond_expr="RMIISrcConfig == `yes`" description="The ENET RMII clock is enabled in RUN, WAIT and HSRUN (if supported by the MCU) mode. It can be enabled/disabled by the {{RMIISrcConfig}} settings in the ENET RMII clock output."/>
+    </map_output>
+    <map_output id="SDHCCLK" available="hasPeripheral(`SDHC`)">
+      <input signal="SDHCSRCSEL.clk"/>
+      <enable power_modes="HSRUN RUN WAIT STOP VLPR VLPW VLPS" cond_expr="SDHCClkConfig == `yes`" description="SDHC clock is active in RUN, WAIT, HSRUN, STOP, VLPR, VLPW and VLPS (if supported by the MCU) power mode. It can be enabled/disabled by the {{SDHCClkConfig}} settings in the SDHC clock output."/>
+    </map_output>
+    <map_output id="CLKOUT">
+      <input signal="CLKOUTSEL.clk"/>
+      <enable cond_expr="CLKOUTConfig == `yes`"/>
+    </map_output>
+    <map_output id="LPUARTCLK" available="hasPeripheral(`LPUART0`)">
+      <input signal="LPUARTSRCSEL.clk"/>
+      <enable power_modes="HSRUN RUN WAIT STOP VLPR VLPW VLPS" description="LPUART clock (device) can be used in HSRUN, RUN, WAIT, STOP, VLPR, VLPW and VLPS power modes. It can be enabled/disabled by the {{LPUARTClkConfig}} settings in the LPUART clock output."/>
+    </map_output>
+    <map_output id="TPMCLK" available="hasPeripheral(`TPM0`) || hasPeripheral(`TPM1`) || hasPeripheral(`TPM2`)">
+      <input signal="TPMSRCSEL.clk"/>
+      <enable power_modes="HSRUN RUN WAIT STOP VLPR VLPW VLPS" description="TPM clock (device) can be used in HSRUN, RUN, WAIT, STOP, VLPR, VLPW and VLPS power modes. It can be enabled/disabled by the {{TPMClkConfig}} settings in the TPM clock output."/>
+    </map_output>
+  </implementation>
+</clocks:component>

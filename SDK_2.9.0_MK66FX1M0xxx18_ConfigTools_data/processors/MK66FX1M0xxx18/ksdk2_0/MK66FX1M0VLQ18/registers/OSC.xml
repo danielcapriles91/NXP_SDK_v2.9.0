@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="8" name="CR" description="OSC Control Register">
+    <alias type="CMSIS" value="CR"/>
+    <bit_field offset="0" width="1" name="SC16P" access="RW" reset_value="0" description="Oscillator 16 pF Capacitor Load Configure">
+      <alias type="CMSIS" value="OSC_CR_SC16P(x)"/>
+      <bit_field_value name="CR_SC16P_DISABLE" value="0b0" description="Disable the selection."/>
+      <bit_field_value name="CR_SC16P_ENABLE" value="0b1" description="Add 16 pF capacitor to the oscillator load."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="SC8P" access="RW" reset_value="0" description="Oscillator 8 pF Capacitor Load Configure">
+      <alias type="CMSIS" value="OSC_CR_SC8P(x)"/>
+      <bit_field_value name="CR_SC8P_DISABLE" value="0b0" description="Disable the selection."/>
+      <bit_field_value name="CR_SC8P_ENABLE" value="0b1" description="Add 8 pF capacitor to the oscillator load."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SC4P" access="RW" reset_value="0" description="Oscillator 4 pF Capacitor Load Configure">
+      <alias type="CMSIS" value="OSC_CR_SC4P(x)"/>
+      <bit_field_value name="CR_SC4P_DISABLE" value="0b0" description="Disable the selection."/>
+      <bit_field_value name="CR_SC4P_ENABLE" value="0b1" description="Add 4 pF capacitor to the oscillator load."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="SC2P" access="RW" reset_value="0" description="Oscillator 2 pF Capacitor Load Configure">
+      <alias type="CMSIS" value="OSC_CR_SC2P(x)"/>
+      <bit_field_value name="CR_SC2P_DISABLE" value="0b0" description="Disable the selection."/>
+      <bit_field_value name="CR_SC2P_ENABLE" value="0b1" description="Add 2 pF capacitor to the oscillator load."/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <bit_field offset="5" width="1" name="EREFSTEN" access="RW" reset_value="0" description="External Reference Stop Enable">
+      <alias type="CMSIS" value="OSC_CR_EREFSTEN(x)"/>
+      <bit_field_value name="CR_EREFSTEN_DISABLE" value="0b0" description="External reference clock is disabled in Stop mode."/>
+      <bit_field_value name="CR_EREFSTEN_ENABLE" value="0b1" description="External reference clock stays enabled in Stop mode if ERCLKEN is set before entering Stop mode."/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <bit_field offset="7" width="1" name="ERCLKEN" access="RW" reset_value="0" description="External Reference Enable">
+      <alias type="CMSIS" value="OSC_CR_ERCLKEN(x)"/>
+      <bit_field_value name="CR_ERCLKEN_DISABLE" value="0b0" description="External reference clock is inactive."/>
+      <bit_field_value name="CR_ERCLKEN_ENABLE" value="0b1" description="External reference clock is enabled."/>
+    </bit_field>
+  </register>
+  <register offset="0x2" width="8" name="DIV" description="OSC_DIV">
+    <alias type="CMSIS" value="DIV"/>
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <bit_field offset="6" width="2" name="ERPS" access="RW" reset_value="0" description="ERCLK prescaler. These two bits are used to divide the ERCLK output. The un-divided ERCLK output is not affected by these two bits.">
+      <alias type="CMSIS" value="OSC_DIV_ERPS(x)"/>
+      <bit_field_value name="DIV_ERPS_DIV1" value="0b00" description="The divisor ratio is 1."/>
+      <bit_field_value name="DIV_ERPS_DIV2" value="0b01" description="The divisor ratio is 2."/>
+      <bit_field_value name="DIV_ERPS_DIV4" value="0b10" description="The divisor ratio is 4."/>
+      <bit_field_value name="DIV_ERPS_DIV8" value="0b11" description="The divisor ratio is 8."/>
+    </bit_field>
+  </register>
+</regs:peripheral>

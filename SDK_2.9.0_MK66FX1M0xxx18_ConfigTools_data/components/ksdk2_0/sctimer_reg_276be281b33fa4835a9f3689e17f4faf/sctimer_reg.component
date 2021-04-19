@@ -1,0 +1,1307 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="sctimer_reg" label="SCTimer" category="Register init" global_only="false" registers_init="true"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-9.0.xsd" 
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+   options="UI_COMPONENT_MODE_HIDDEN">
+<!--   <sw_comp_ref name="platform.drivers.sctimer" version="2.0.0" match_type="greaterOrEqual"/>-->
+   <description>SCTimer</description>
+   <mode id="general" label="Single 32-bit timer">
+      <description>Single 32-bit module of SCTimer/PWM</description>
+      <config_set_refs>
+         <config_set_ref>sctimerConfig</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>SCT</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <user_functions>
+      <function_def id="get_timer_tab">
+         () -> $this.getFullID().regexMatch(`sctimerConfig.main.SCT_L.*`) ? $configSet.main.SCT_L : ($this.getFullID().regexMatch(`sctimerConfig.main.SCT_H.*`) ? $configSet.main.SCT_H : false)
+      </function_def>
+      <function_def id="get_other_available_timer_tab">
+         () -> $this.getFullID().regexMatch(`sctimerConfig.main.SCT_L.*`) ? $configSet.main.SCT_H.getValue(false) : ($this.getFullID().regexMatch(`sctimerConfig.main.SCT_H.*`) ? $configSet.main.SCT_L.getValue(false) : false)
+      </function_def>
+      <function_def id="find_free_enum_value_in_array">
+         <!-- detries to find unused enum value in array containing structure with this enum -->
+         (enum, array, index) -> enumItemsOf(enum).size() &gt;= array.size() ? (enumItemsOf(enum).findFirst(i->(array.searchInArray(j -> (j.getSetting(enum.getID()).getValue() == i.getId()) &amp;&amp; (j.getID() != index.getID())) == -1)).getId()) : false
+      </function_def>
+      <function_def id="find_free_int_value_in_array">
+         <!-- detries to find unused enum value in array containing structure with this enum -->
+         (unused, used, id) -> unused.size() == 0 ? 0 : (unused.noneMatch(x -> x == 0) &amp;&amp; used.exactMatch(y -> ((y.getSetting(id).getType()==`enum` ? y.getSetting(id).getEnumItemValue().toInt() : y.getSetting(id).getValue().toInt()) == 0), 1) ? 0 : unused.findFirst(i -> (used.searchInArray(j -> ((j.getSetting(id).getType()==`enum`? j.getSetting(id).getEnumItemValue().toInt() : j.getSetting(id).getValue().toInt()) == i)) == -1)))
+      </function_def>
+   </user_functions>
+   <config_set id="sctimerConfig" label="General configuration" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN" from_source="fsl_sctimer.h">
+      <description>SCTimer configuration</description>
+      <generated_types/>
+      <user_types>      
+         <dynamic_enum id="ev_match_t" items="get_timer_tab().getSetting(`resources.match_cap_regs`).arrayToEnumItems(
+            x -> x.getSetting(`REGMODE`).getValue() == 0,
+            x -> x.getSetting(`uid`).getValue(),
+            x -> x.getSetting(`reg_id`).getValue(),
+            x -> x.getSetting(`reg`).getEnumItemLabel(),
+            x -> x.getSetting(`description`).getValue() + ` (Match register ` + x.getSetting(`reg`).getEnumItemValue() + `)`)
+            .addItemToList(`noMatch`, `N/A`, 0, get_timer_tab().getSetting(`resources.match_cap_regs`).filter(x -> x.getSetting(`REGMODE`).getValue() == 0).size()==0)">
+            <description>SCTimer match register selection.</description>
+            <validation>
+               <constraint cond_expr="$this.getValue()!=`noMatch`" level="error" description="No match register defined. Add a match register in resources."/>
+            </validation>
+         </dynamic_enum>
+         <dynamic_enum id="ev_cap_t" items="get_timer_tab().getSetting(`resources.match_cap_regs`).arrayToEnumItems(
+            x -> x.getSetting(`REGMODE`).getValue() == 1,
+            x -> x.getSetting(`uid`).getValue(),
+            x -> x.getSetting(`reg_id`).getValue(),
+            x -> x.getSetting(`reg`).getEnumItemLabel(),
+            x ->  x.getSetting(`description`).getValue() + ` (Capture register ` + x.getSetting(`reg`).getEnumItemValue() + `)`)
+            .addItemToList(`noCap`, `N/A`, 0, get_timer_tab().getSetting(`resources.match_cap_regs`).filter(x -> x.getSetting(`REGMODE`).getValue() == 1).size()==0)">
+            <description>SCTimer capture register selection.</description>
+            <validation>
+               <constraint cond_expr="$this.getValue()!=`noCap`" level="error" description="No capture register defined. Add a capture register in resources."/>
+            </validation>
+         </dynamic_enum>
+         <dynamic_enum id="ev_input_t" label="Input" options="REGISTERS_REFRESH" items="get_timer_tab().getSetting(`resources.inputs`).arrayToEnumItems(
+            x -> true,
+            x -> x.getSetting(`uid`).getValue(),
+            x -> x.getSetting(`in_id`).getValue(),
+            x -> x.getSetting(`in`).getEnumItemValue(),
+            x -> x.getSetting(`description`).getValue() + ` (Input ` + x.getSetting(`in`).getEnumItemValue() + `)`).merge(
+            get_other_available_timer_tab() == false ? createArray() : get_other_available_timer_tab().getSetting(`resources.inputs`).arrayToEnumItems(
+            x -> true,
+            x -> x.getSetting(`uid`).getValue(),
+            x -> x.getSetting(`in_id`).getValue() + `    (` + get_other_available_timer_tab().getLabel() + `)`,
+            x -> x.getSetting(`in`).getEnumItemValue(),
+            x -> x.getSetting(`description`).getValue() + ` (Input ` + x.getSetting(`in`).getEnumItemValue() + `)`))
+            .addItemToList(`noInput`, `N/A`, `0`, get_timer_tab().getSetting(`resources.inputs`).merge(get_other_available_timer_tab()==false ? createArray() : get_other_available_timer_tab().getSetting(`resources.inputs`)).size()==0)">
+            <description>Selects the input signal that contains the condition for the event to occur.</description>
+            <validation>
+               <constraint cond_expr="$this.getValue()!=`noInput`" level="error" description="Input signal not defined. Add an input in resources."/>
+            </validation>
+         </dynamic_enum>
+         <dynamic_enum id="ev_output_t" label="Output" items="get_timer_tab().getSetting(`resources.outputs`).arrayToEnumItems(
+            x -> true,
+            x -> x.getSetting(`uid`).getValue(),
+            x -> x.getSetting(`out_id`).getValue(),
+            x -> x.getSetting(`out`).getEnumItemValue(),
+            x -> x.getSetting(`description`).getValue() + ` (Output ` + x.getSetting(`out`).getEnumItemValue() + `)`).merge(
+            get_other_available_timer_tab() == false ? createArray() : get_other_available_timer_tab().getSetting(`resources.outputs`).arrayToEnumItems(
+            x -> true,
+            x -> x.getSetting(`uid`).getValue(),
+            x -> x.getSetting(`out_id`).getValue() + `    (` + get_other_available_timer_tab().getLabel() + `)`,
+            x -> x.getSetting(`out`).getEnumItemValue(),
+            x -> x.getSetting(`description`).getValue() + ` (Output ` + x.getSetting(`out`).getEnumItemValue() + `)`))
+            .addItemToList(`noOutput`, `N/A`, `0`, get_timer_tab().getSetting(`resources.outputs`).merge(get_other_available_timer_tab()==false ? createArray() : get_other_available_timer_tab().getSetting(`resources.outputs`)).size()==0)">
+            <description>Selects the output signal that contains the condition for the event to occur.</description>
+            <validation>
+               <constraint cond_expr="$this.getValue()!=`noOutput`" level="error" description="Output signal not defined. Add an output in resources."/>
+            </validation>
+         </dynamic_enum>
+         <dynamic_enum id="state_t" label="States" items="get_timer_tab().getSetting(`states_tab.states`).arrayToEnumItems(
+            x -> true,
+            x -> x.getSetting(`uid`).getValue(),
+            x -> x.getSetting(`state_id`).getValue(),
+            x -> x.getSetting(`state_number`).getValue(),
+            x -> x.getSetting(`description`).getValue() + ` (State ` + x.getSetting(`state_number`).getEnumItemValue() + `)`)">
+            <description>SCTimer state selection.</description>
+            <validation>
+               <constraint cond_expr="$this.getValue()!=`noState`" level="error" description="State not defined. Add a state."/>
+            </validation>
+         </dynamic_enum> 
+         
+         <struct id="config_common_t" label="SCTimer configuration structure" from="_sctimer_config">
+            <description>Configuration settings for the SCTimer peripheral.</description>
+            <enum id="UNIFY" label="Timer mode" options="REGISTERS_REFRESH">
+               <description>Timer works as single 32-bit module or two independent 16-bit modules.</description>
+               <assign when="true">
+                  <register name="CONFIG" bitfield="UNIFY" value="$this.getValue().toInt()"
+                   reverse_value="x -> x"/>
+               </assign>
+               <item id="0" label="Two 16-bit"></item>
+               <item id="1" label="Single 32-bit"></item>
+            </enum>
+            <variable id="clockFreq" value="$parent.CLKMODE.getValue() == `0` ? $parent.systemClock.calculatedFreq.getValue() : $parent.asyncClock.calculatedFreq.getValue()"></variable>
+            <enum id="CLKMODE" label="Clock mode" options="REGISTERS_REFRESH">
+               <description>SCT clock mode</description>
+               <assign when="true">
+                  <register name="CONFIG" bitfield="CLKMODE" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+               </assign>
+               <item id="0" label="System clock mode">
+                  <description>
+In system clock mode, the **System clock** clocks the entire SCT module including the counter(s) and counter prescalers.
+                  </description>
+               </item>
+               <item id="1" label="Sampled system clock mode">
+                  <description>
+In sampled system clock mode, the **System clock** clocks the SCT module, but the counter and prescalers are only enabled to count when the designated edge is
+detected on the input selected by the *Clock select* field in **SCT input clock** configuration.  
+The minimum pulse width on  the selected clock-gate input is 1 bus clock period. This mode is the high-performance, sampled-clock mode.
+                  </description>
+               </item>
+               <item id="2" label="Synchronous SCT input clock mode">
+                  <description>
+In sysnchronous SCT input clock mode, the input/edge selected by the *Clock select* field in **SCT input clock** clocks the SCT module, including the counters and prescalers, after first being
+synchronized to the **System clock**.  
+The minimum width of the positive and negative phases of the clock input must each be greater than one full period of the bus/system clock.
+                  </description>
+               </item>
+               <item id="3" label="Asynchronous mode">
+                  <description>
+In asynchronous mode, the entire SCT module is clocked directly by the input/edge selected by the *Clock select* field in **SCT input clock**. The SCT outputs are switched synchronously to the **SCT input clock** 
+and not the **System clock**.  
+The input clock rate must be at least half the system clock rate and can be the same or faster than the system clock.
+                  </description>
+               </item>
+            </enum>
+            <struct id="systemClock" label="System clock">
+               <description>The system clock configuration.</description>
+               <variable id="clockSourceUId" value="`SynchronousFunctionClock`"/>
+               <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="createArray().addItemToList($parent.clockSourceUId.getValue(), getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()), ($instance.getPeripheral() + `_CLK_SRC`),true)" >
+                  <description>System clock source</description>
+                  <validation>
+                     <dependency resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                        description_expr="getPeripheralClockSignal($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + ` is inactive.`"
+                        level="Error">
+                        <feature name="frequency" evaluation="greaterThan">
+                           <data expr="0" unit="Hz" type="Frequency"/>
+                        </feature>
+                     </dependency>
+                  </validation>
+               </dynamic_enum>
+               <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" 
+                  items="createArray().merge(
+                  getClockFunctionalGroups().arrayToEnumItems(
+                  enumItem -> true,
+                  enumItem -> enumItem,
+                  enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)) + ` (` + enumItem + `)`,
+                  enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)))" >
+                  <description>Selection of the system clock source frequency</description>
+                  <validation>
+                     <constraint cond_expr="$this.getEnumItemValue().toHertz() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+                  </validation>
+                  <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+               </dynamic_enum>
+               <info id="calculateFreqPeriod" label="Clock frequency/period" 
+                  value="system::calculateFreqPeriod(1,$parent.clockSourceFreq.getEnumItemValue())">
+                  <description>Clock frequency and period of one tick (in time units).</description>
+               </info>
+               <variable id="calculatedFreq" value="system::calculateRealFreq(1, $parent.clockSourceFreq.getEnumItemValue())"/>
+            </struct>
+            <struct id="asyncClock" label="SCT input clock" enable="$parent.CLKMODE.getValue()!=`0`">
+               <description expr="$configSet.common_config.CLKMODE.getEnumItemDescription()"></description>
+               <enum id="CKSEL" label="Clock select" options="REGISTERS_REFRESH">
+                  <description>SCT input clock select. The specific functionality of the designated input/edge is dependent on the CLKMODE bit selection</description>
+                  <validation>
+                     <dependency resource_type="PeripheralUnifiedSignal"
+                        resource_id_expr="$instance.getPeripheral() + `.in.` + $parent.inputSelection.getValue()"
+                        description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`input ` + $parent.inputSelection.getValue(), $instance.getPeripheral())"
+                        level="Warning">
+                        <feature name="routed" evaluation="equal">
+                           <data expr="true"/>
+                        </feature>
+                     </dependency>
+                  </validation>
+                  <assign when="true">
+                     <register name="CONFIG" bitfield="CKSEL" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                  </assign>
+                  <item id="0" value="kSCTIMER_Clock_On_Rise_Input_0" label="Rising edges on input 0" available="hasPeripheralClockSignal($instance.getPeripheral(),`AsynchronousFunctionClock0`)"/>
+                  <item id="1" value="kSCTIMER_Clock_On_Fall_Input_0" label="Falling edges on input 0" available="hasPeripheralClockSignal($instance.getPeripheral(),`AsynchronousFunctionClock0`)"/>
+                  <item id="2" value="kSCTIMER_Clock_On_Rise_Input_1" label="Rising edges on input 1" available="hasPeripheralClockSignal($instance.getPeripheral(),`AsynchronousFunctionClock1`)"/>
+                  <item id="3" value="kSCTIMER_Clock_On_Fall_Input_1" label="Falling edges on input 1" available="hasPeripheralClockSignal($instance.getPeripheral(),`AsynchronousFunctionClock1`)"/>
+                  <item id="4" value="kSCTIMER_Clock_On_Rise_Input_2" label="Rising edges on input 2" available="hasPeripheralClockSignal($instance.getPeripheral(),`AsynchronousFunctionClock2`)"/>
+                  <item id="5" value="kSCTIMER_Clock_On_Fall_Input_2" label="Falling edges on input 2" available="hasPeripheralClockSignal($instance.getPeripheral(),`AsynchronousFunctionClock2`)"/>
+                  <item id="6" value="kSCTIMER_Clock_On_Rise_Input_3" label="Rising edges on input 3" available="hasPeripheralClockSignal($instance.getPeripheral(),`AsynchronousFunctionClock3`)"/>
+                  <item id="7" value="kSCTIMER_Clock_On_Fall_Input_3" label="Falling edges on input 3" available="hasPeripheralClockSignal($instance.getPeripheral(),`AsynchronousFunctionClock3`)"/>
+                  <item id="8" value="kSCTIMER_Clock_On_Rise_Input_4" label="Rising edges on input 4" available="hasPeripheralClockSignal($instance.getPeripheral(),`AsynchronousFunctionClock4`)"/>
+                  <item id="9" value="kSCTIMER_Clock_On_Fall_Input_4" label="Falling edges on input 4" available="hasPeripheralClockSignal($instance.getPeripheral(),`AsynchronousFunctionClock4`)"/>
+                  <item id="10" value="kSCTIMER_Clock_On_Rise_Input_5" label="Rising edges on input 5" available="hasPeripheralClockSignal($instance.getPeripheral(),`AsynchronousFunctionClock5`)"/>
+                  <item id="11" value="kSCTIMER_Clock_On_Fall_Input_5" label="Falling edges on input 5" available="hasPeripheralClockSignal($instance.getPeripheral(),`AsynchronousFunctionClock5`)"/>
+                  <item id="12" value="kSCTIMER_Clock_On_Rise_Input_6" label="Rising edges on input 6" available="hasPeripheralClockSignal($instance.getPeripheral(),`AsynchronousFunctionClock6`)"/>
+                  <item id="13" value="kSCTIMER_Clock_On_Fall_Input_6" label="Falling edges on input 6" available="hasPeripheralClockSignal($instance.getPeripheral(),`AsynchronousFunctionClock6`)"/>
+                  <item id="14" value="kSCTIMER_Clock_On_Rise_Input_7" label="Rising edges on input 7" available="hasPeripheralClockSignal($instance.getPeripheral(),`AsynchronousFunctionClock7`)"/>
+                  <item id="15" value="kSCTIMER_Clock_On_Fall_Input_7" label="Falling edges on input 7" available="hasPeripheralClockSignal($instance.getPeripheral(),`AsynchronousFunctionClock7`)"/>
+               </enum>
+               <variable id="inputSelection" value="$parent.CKSEL.getEnumItemValue().regexSubstr(`.*_Input_(\d+)`, 1)"></variable>
+               <variable id="clockSourceUId" value="`AsynchronousFunctionClock` + $parent.inputSelection.getValue() "/>
+               <variable id="isClockSignalDefined" value="getPeripheralClockType($instance.getPeripheral(), $parent.clockSourceUId.getValue())==`INPUT_SIGNAL`"></variable>
+               <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" available="$parent.isClockSignalDefined.getValue()"
+                  items="createArray().addItemToList(
+                  $parent.clockSourceUId.getValue(), getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()),
+                  ($instance.getPeripheral() + `_CLK_SRC`),true)" >
+                  <description>SCT input clock source</description>
+                  <validation>
+                     <dependency when_expr="getPeripheralClockType($instance.getPeripheral(), $parent.clockSource.getEnumItemId())==`INPUT_SIGNAL`" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                        description_expr="getPeripheralClockSignal($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + ` is inactive.`"
+                        level="Error">
+                        <feature name="frequency" evaluation="greaterThan">
+                           <data expr="0" unit="Hz" type="Frequency"/>
+                        </feature>
+                     </dependency>
+                  </validation>
+               </dynamic_enum>
+               <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" available="$parent.isClockSignalDefined.getValue()"
+                  items="createArray().merge(
+                  getClockFunctionalGroups().arrayToEnumItems(
+                  enumItem -> true,
+                  enumItem -> enumItem,
+                  enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)) + ` (` + enumItem + `)`,
+                  enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)))" >
+                  <description>Selection of the SCT input clock source frequency</description>
+                  <validation>
+                     <constraint when_expr="$this.getEnumItemValue()!=``" cond_expr="$this.getEnumItemValue().toHertz() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+                  </validation>
+                  <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+               </dynamic_enum>
+               <bool id="enableUserClockFreq" label="Set clock source frequency" available="!$parent.isClockSignalDefined.getValue()">
+                  <description>Enable setting the input clock frequency that is used for resulting counter input clock calculation.</description>
+               </bool>
+               <string id="userClockFreq" label="Clock source frequency" validation_expr="x -> system::validateValueFreq(x, 0, 0xFFFFFFFF)" available="!$parent.isClockSignalDefined.getValue()" enable="$parent.enableUserClockFreq.getValue(false)">
+                  <description>SCT input clock source frequency</description>
+                  <validation>
+                     <constraint when_expr="$parent.calculatedFreq.getValue()!=`N/A` &amp;&amp; $parent.getParent().getSetting(`CLKMODE`).getValue()==1" cond_expr="$parent.calculatedFreq.getValue() &lt;= $configSet.common_config.systemClock.calculatedFreq.getValue()" level="warning" description="The minimum pulse width of the selected clock source is 1 bus clock period in the Sampled system clock mode (clock source frequency &lt;= system clock frequency)."/>
+                     <constraint when_expr="$parent.calculatedFreq.getValue()!=`N/A` &amp;&amp; $parent.getParent().getSetting(`CLKMODE`).getValue()==2" cond_expr="$parent.calculatedFreq.getValue() &lt;= $configSet.common_config.systemClock.calculatedFreq.getValue()/2" level="warning" description="The minimum pulse width of the selected clock source is 2 bus clock period in Synchronous SCT input clock mode (clock source frequency &lt;= system clock frequency/2)."/>
+                     <constraint when_expr="$parent.calculatedFreq.getValue()!=`N/A` &amp;&amp; $parent.getParent().getSetting(`CLKMODE`).getValue()==3" cond_expr="$parent.calculatedFreq.getValue() &gt;= $configSet.common_config.systemClock.calculatedFreq.getValue()/2" level="warning" description="The selected clock source frequency must be at least half of the system clock frequency in Asynchronous mode."/>
+                  </validation>
+               </string>
+               <info id="calculateFreqPeriod" label="Clock frequency/period" enable="$parent.isClockSignalDefined.getValue() || (!$parent.isClockSignalDefined.getValue() &amp;&amp; $parent.enableUserClockFreq.getValue())"
+                  value="system::calculateFreqPeriod(1, $parent.calculatedFreq.getValue())">
+                  <description>Clock frequency and period of one tick (in time units).</description>
+               </info>
+               <variable id="calculatedFreq" value="system::calculateRealFreq(1,  $parent.isClockSignalDefined.getValue() ? $parent.clockSourceFreq.getEnumItemValue() : $parent.userClockFreq.getValue(`N/A`))"/>
+            </struct>
+         </struct>
+         <struct id="output_res_t" options="REGISTERS_REFRESH"> 
+            <description>Output signal</description>
+            <integer id="uid" type="int64_t" enable="false"/>
+            <string id="out_id" label="Output ID">
+               <description expr="`User identifier of the output signal: ` + $parent.out_id_def.getValue()"/>
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="$this.getLabel() +` &quot;` + $this.getValue() + `&quot; is not valid C identifier!`"/>
+                  <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> (x.getValue() == $parent.out_id_def.getValue()))" level="warning" description_expr="$this.getLabel() +` &quot;` + $this.getValue() + `&quot; is a duplicate (` + $parent.out_id_def.getValue() + `).`"/>  
+               </validation>
+            </string>
+            <variable id="out_id_def" value="$configSet.inst_ID_def.getValue() + `_` + toUpperCase($parent.out_id.getValue())" options="id_check"></variable>
+            <dynamic_enum id="out" label="Number" options="UI_SORT_CONTENT_AS=ASC_NATURAL;UI_SORT_TARGET=LABEL;REGISTERS_REFRESH"
+               items="getPeripheralSignals($instance.getPeripheral())
+               .arrayToEnumItems(
+               enumItem -> enumItem.getValue().regexMatch(`.*out.*`),
+               enumItem -> enumItem.getID(),
+               enumItem -> enumItem.getLabel().regexSubstr(`\d+.*`,0),
+               enumItem -> enumItem.getID().extractChannelID(),
+               enumItem -> `Output ` + enumItem.getID().extractChannelID()
+               )">
+               <description>SCTimer output signal selection.</description>
+               <validation>
+                  <constraint cond_expr="$parent.getParent().merge(get_other_available_timer_tab() != false ? get_other_available_timer_tab().getSetting(`resources.outputs`) : createArray()).findDuplicates(x->x.getSetting(`out`).getValue()).noneMatch(x -> x.getSetting(`out`).getValue() == $this.getValue())"
+                     level="error" description_expr="`The output ` + $this.getEnumItemValue() + ` is used more than once.`"/>
+                  <dependency resource_type="PeripheralUnifiedSignal"
+                     resource_id_expr="$instance.getPeripheral() + `.out.` + $this.getEnumItemValue()"
+                     description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`output ` + $this.getEnumItemValue(), $instance.getPeripheral())"
+                     level="warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <variable id="out_number" value="$parent.out.getEnumItemValue().toInt()"></variable>
+            <enum id="OUTPUT" label="Initial state" options="REGISTERS_REFRESH">
+               <description>Initial state of the output</description>
+               <assign when="bitfieldExists($instance.getPeripheral(), `OUTPUT`, `OUT`)"> 
+                  <register name="OUTPUT"  bitfield="OUT"
+                     value="system::IntToBool($this.getValue()).system::maskBitfield(`OUTPUT`, `OUT`, 1 &lt;&lt; $parent.out_number.getValue())" 
+                     reverse_value="x -> 1 &amp; (1 &gt;&gt; $parent.out_number.getValue())"/> 
+               </assign>
+               <assign when="bitfieldExists($instance.getPeripheral(), `OUTPUT`, `OUT` +  $parent.out_number.getValue())"> 
+                  <register name="OUTPUT"  bitfield_expr="`OUT` +  $parent.out_number.getValue()"  
+                     value="$this.getValue().toInt()" 
+                     reverse_value="x -> x"/> 
+               </assign>
+               <item id="0" label="Logical 0"/>
+               <item id="1" label="Logical 1"/>
+            </enum>
+            <enum id="RES" label="Conflict resolution" options="REGISTERS_REFRESH">
+               <description>
+The output conflict resolution register specifies what action should be taken if multiple events (or even the same event) dictate that a given output should be both *set* and *cleared* at the same time.
+               </description>
+               <assign when="true"> 
+                  <register name="RES"  bitfield_expr="`O`+ $parent.out_number.getValue() + `RES`"
+                     value="$this.getValue().toInt()" reverse_value="x -> x"/> 
+               </assign>  
+               <item id="0" label="No change" value="0"><description>No change.</description></item>
+               <item id="1" label="Set output" value="1"><description>Set output (or clear when reversed in bidirectional mode).</description></item>
+               <item id="2" label="Clear output" value="2"><description>Clear output (or set when reversed in bidirectional mode).</description></item>
+               <item id="3" label="Toggle output" value="3"><description>Toggle output.</description></item>
+            </enum>
+            <enum id="CONEN" label="Conflict interrupt" options="REGISTERS_REFRESH">
+               <description>Enables confilict interrupt for the output.</description>
+               <assign when="bitfieldExists($instance.getPeripheral(), `CONEN`, `NCEN`)"> 
+                  <register name="CONEN"  bitfield="NCEN"
+                     value="system::IntToBool($this.getValue()).system::maskBitfield(`CONEN`, `NCEN`, 1 &lt;&lt; $parent.out_number.getValue())" 
+                     reverse_value="x -> 1 &amp; (x &gt;&gt; $parent.out_number.getValue())"/> 
+               </assign>
+               <assign when="bitfieldExists($instance.getPeripheral(), `CONEN`, `NCEN` +  $parent.out_number.getValue())"> 
+                  <register name="CONEN"  bitfield_expr="`NCEN` +  $parent.out_number.getValue()"  
+                     value="$this.getValue().toInt()" 
+                     reverse_value="x -> x"/> 
+               </assign>
+               <item id="0" label="Disabled"></item>
+               <item id="1" label="Enabled"></item>
+            </enum>
+            <enum id="OUTPUTDIRCTRL" label="Direction impact" options="REGISTERS_REFRESH" enable="get_timer_tab().getSetting(`general.BIDIR`).getValue() == 1">
+               <description>For bidirectional mode, specifies the impact of the counting direction on the meaning of set and clear operations on the output.</description>
+               <assign when="true"> 
+                  <register name="OUTPUTDIRCTRL"  bitfield_expr="`SETCLR`+ $parent.out_number.getValue()"
+                     value="$this.getValue().toInt()" reverse_value="x -> x"/> 
+               </assign>  
+               <item id="0" label="No influence">
+                  <description>Set and clear do not depend on the direction of any counter.</description>
+               </item>
+               <item id="1" label="Reversed when counting down" available="get_timer_tab().getID()==`SCT_L`">
+                  <description>Set and clear are reversed when counter is counting down.</description>
+               </item>
+               <item id="2" label="Reversed when counting down" available="get_timer_tab().getID()==`SCT_H`">
+                  <description>Set and clear are reversed when counter is counting down.</description>
+               </item>
+            </enum>
+            <string id="description" label="Description"/>
+         </struct>
+         <struct id="input_res_t"> 
+            <description>Input signal</description>
+            <integer id="uid" type="int64_t" enable="false"/>
+            <string id="in_id" label="Input ID">
+               <description expr="`User identifier of the input signal: ` + $parent.in_id_def.getValue()"/>
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="$this.getLabel() +` &quot;` + $this.getValue() + `&quot; is not valid C identifier!`"/>
+                  <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> (x.getValue() == $parent.in_id_def.getValue()))" level="warning" description_expr="$this.getLabel() +` &quot;` + $this.getValue() + `&quot; is a duplicate (` + $parent.in_id_def.getValue() + `).`"/>  
+               </validation>
+            </string>
+            <variable id="in_id_def" value="$configSet.inst_ID_def.getValue() + `_` + toUpperCase($parent.in_id.getValue())" options="id_check"></variable>
+            <dynamic_enum id="in" label="Number" options="UI_SORT_CONTENT_AS=ASC_NATURAL;UI_SORT_TARGET=LABEL;REGISTERS_REFRESH"
+               items="getPeripheralSignals($instance.getPeripheral())
+               .arrayToEnumItems(
+               enumItem -> enumItem.getValue().regexMatch(`.*in.*`),
+               enumItem -> enumItem.getID(),
+               enumItem -> enumItem.getLabel().regexSubstr(`\d+.*`,0),
+               enumItem -> enumItem.getID().extractChannelID(),
+               enumItem -> `Input ` + enumItem.getID().extractChannelID()
+               )">
+               <description>SCTimer input signal selection.</description>
+               <validation>
+                  <constraint cond_expr="$parent.getParent().merge(get_other_available_timer_tab() != false ? get_other_available_timer_tab().getSetting(`resources.inputs`) : createArray()).findDuplicates(x->x.getSetting(`in`).getValue()).noneMatch(x -> x.getSetting(`in`).getValue() == $this.getValue())"
+                     level="error" description_expr="`The input ` + $this.getEnumItemValue() + ` is used more than once.`"/>
+                  <dependency resource_type="PeripheralUnifiedSignal"
+                     resource_id_expr="$instance.getPeripheral() + `.in.` + $this.getEnumItemValue()"
+                     description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`input ` + $this.getEnumItemValue(), $instance.getPeripheral())"
+                     level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <enum id="sync" label="Synchronization" options="REGISTERS_REFRESH">
+               <description>
+Synchronization for the selected input signal to the SCT clock, before it is used to create an event.
+This synchronization injects a two SCT-clock delay in the input path.  
+
+*Note:* For system clock mode, sampled system clock mode or synchronous SCT input clock mode the input is synchronized with System (bus) clock, 
+for asynchronous mode the input is synchronized with the selected asynchronous input clock. 
+               </description>
+               <assign when="$parent.in.getEnumItemValue().isInt()"> 
+                  <register name="CONFIG"  bitfield="INSYNC"  
+                     value="system::IntToBool($this.getValue().toInt()).system::maskBitfield(`CONFIG`, `INSYNC`, 1 &lt;&lt; $parent.in.getEnumItemValue().toInt())" 
+                     reverse_value="x -> 1 &amp; (x &gt;&gt; $parent.in.getEnumItemValue().toInt())"/> 
+               </assign>    
+               <item id="0" label="Disabled"></item>
+               <item id="1" label="Enabled"></item>
+            </enum>
+            <string id="description" label="Description"/>
+         </struct>
+
+         <struct id="match_cap_res_t"> 
+            <description>Match/capture register</description>
+            <integer id="uid" type="int64_t" enable="false"/>
+            <string id="reg_id" label="Register ID">
+               <description expr="`User identifier of the match/capture register: ` + $parent.reg_id_def.getValue()"/>
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="$this.getLabel() +` &quot;` + $this.getValue() + `&quot; is not valid C identifier!`"/>
+                  <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> (x.getValue() == $parent.reg_id_def.getValue()))" level="warning" description_expr="$this.getLabel() +` &quot;` + $this.getValue() + `&quot; is a duplicate (` + $parent.reg_id_def.getValue() + `).`"/>  
+               </validation>
+            </string>
+            <variable id="reg_id_def" value="$configSet.inst_ID_def.getValue() + `_` + toUpperCase($parent.reg_id.getValue())" options="id_check"></variable>
+            <dynamic_enum id="reg" label="Number" options="UI_SORT_CONTENT_AS=ASC_NATURAL;UI_SORT_TARGET=LABEL;REGISTERS_REFRESH"
+               items="createArray(0, 1, $configSet.main.getSetting(`max_match_cap`).getValue()-1)
+               .arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> `REG.` + enumItem,
+               enumItem -> enumItem,
+               enumItem -> enumItem,
+               enumItem -> $parent.REGMODE.getEnumItemLabel() + ` ` + enumItem
+               )">
+               <description>SCTimer input signal selection.</description>
+               <validation>
+                  <constraint cond_expr="$parent.getParent().findDuplicates(x->x.getSetting(`reg`).getValue()).noneMatch(x -> x.getSetting(`reg`).getValue() == $this.getValue())"
+                     level="error" description_expr="`The match/capture register ` + $this.getEnumItemLabel() + ` is used more than once.`"/>
+               </validation>
+            </dynamic_enum>  
+            <enum id="REGMODE" label="Mode" options="REGISTERS_REFRESH">
+               <description>Mode of the register</description>
+               <assign when="bitfieldExists($instance.getPeripheral(), `REGMODE`, `REGMOD_`+  get_timer_tab().getSetting(`timer_type`).getValue() + $parent.reg.getEnumItemLabel().toInt())"> 
+                  <register name="REGMODE"  bitfield_expr="`REGMOD_`+  get_timer_tab().getSetting(`timer_type`).getValue() + $parent.reg.getEnumItemLabel().toInt()"  
+                     value="$this.getValue().toInt()" 
+                     reverse_value="x -> x"/> 
+               </assign>
+               <assign when="bitfieldExists($instance.getPeripheral(), `REGMODE`, `REGMOD_`+  get_timer_tab().getSetting(`timer_type`).getValue())">
+                  <register name="REGMODE"  bitfield_expr="`REGMOD_`+  get_timer_tab().getSetting(`timer_type`).getValue()"  
+                     value="system::IntToBool($this.getValue()).system::maskBitfield(`REGMODE`, `REGMOD_`+  get_timer_tab().getSetting(`timer_type`).getValue(), 1 &lt;&lt; $parent.reg.getEnumItemLabel().toInt() )" 
+                     reverse_value="x -> 1 &amp; (x &gt;&gt; $parent.reg.getEnumItemLabel().toInt())"/> 
+               </assign>
+               <item id="0" label="Match" value="match"/>
+               <item id="1" label="Capture" value="capture"/>
+            </enum>
+            <string id="MATCH" label="Match value" available="$parent.REGMODE.getEnumItemValue()==`match`" options="REGISTERS_REFRESH">
+               <description>Match value for the match register which is compared to the counter. The value can be set in ticks, frequency units or time units.</description>
+               <validation>
+                  <constraint when_expr="get_timer_tab().getSetting(`general.conterClockFreq`).getValue()==`N/A`" cond_expr="$parent.match_div.getValue()!=`N/A`" level="error" description="Value can't be calculated. Set missing clock source frequency in general configuration or insert value in ticks."/>
+                  <constraint cond_expr="system::validateValueFreqPeriod($this.getValue(), 0, $configSet.isUnified.getValue() ? 0xFFFFFFFF : 0xFFFF)" level="error" 
+                     description_expr="`Invalid match value. Value must be in range: 0 - ` + ($configSet.isUnified.getValue() ? 0xFFFFFFFF : 0xFFFF)"/>
+               </validation>
+               <assign when="!$configSet.isUnified.getValue()  &amp;&amp; $parent.REGMODE.getEnumItemValue()==`match`"> 
+                  <register name_expr="`MATCH` + $parent.reg.getEnumItemValue()"  bitfield_expr="`MATCHn_` + get_timer_tab().getSetting(`timer_type`).getValue()"  
+                     value="$parent.match_val.getValue() &amp; 0x0000FFFF"
+                     reverse_value="x -> x" unknown_bits_expr="$parent.match_div.getValue()!=`N/A` ? 0 : 0xFFFF" />
+               </assign>  
+               <assign when="$configSet.isUnified.getValue() &amp;&amp; $parent.REGMODE.getEnumItemValue()==`match`"> 
+                  <register name_expr="`MATCH` + $parent.reg.getEnumItemValue()"  bitfield="MATCHn_L"  
+                     value="($parent.match_val.getValue() &amp; 0x0000FFFF) &gt;&gt; 0" 
+                     reverse_value="x -> ($parent.match_val.getValue() &amp; ~0x0000FFFF) | (toInt(x &amp; 0xFFFF) &lt;&lt; 0)"
+                     unknown_bits_expr="$parent.match_div.getValue()!=`N/A` ? 0 : 0xFFFF"/> 
+               </assign>    
+               <assign when="$configSet.isUnified.getValue() &amp;&amp; $parent.REGMODE.getEnumItemValue()==`match`"> 
+                  <register name_expr="`MATCH` + $parent.reg.getEnumItemValue()"  bitfield="MATCHn_H"  
+                     value="($parent.match_val.getValue() &amp; 0xFFFF0000) &gt;&gt; 16" 
+                     reverse_value="x -> ($parent.match_val.getValue() &amp; ~0xFFFF0000) | (toInt(x &amp; 0xFFFF) &lt;&lt; 16)"
+                     unknown_bits_expr="$parent.match_div.getValue()!=`N/A` ? 0 : 0xFFFF"/> 
+               </assign>
+            </string>
+            
+            <variable id="match_div" value="system::getRealDividerValue($parent.MATCH.getValue(0), get_timer_tab().getSetting(`general.conterClockFreq`).getValue())"/>
+            <variable id="match_val" value="$parent.match_div.getValue()!=`N/A` ? $parent.match_div.getValue().toInt() : 0 "/>
+            <info id="match_info" label="Match" value="system::calculateTicksFreqPeriod($parent.match_div.getValue(), get_timer_tab().getSetting(`general.conterClockFreq`).getValue())" available="$parent.REGMODE.getEnumItemValue()==`match`"/>
+            <string id="MATCHREL" label="Reload value" options="REGISTERS_REFRESH" available="$parent.REGMODE.getEnumItemValue()==`match` "
+               enable="get_timer_tab().getSetting(`general.NORELOAD`).getValue()==false">
+               <description>Reload value for the match register. The value can be set in ticks, frequency units or time units.</description>
+               <validation>
+                  <constraint when_expr="get_timer_tab().getSetting(`general.conterClockFreq`).getValue()==`N/A`" cond_expr="$parent.matchrel_div.getValue()!=`N/A`" level="error" description="Value can't be calculated. Set missing clock source frequency in general configuration or insert value in ticks."/>
+                  <constraint cond_expr="system::validateValueFreqPeriod($this.getValue(), 0, $configSet.isUnified.getValue() ? 0xFFFFFFFF : 0xFFFF)" level="error" 
+                     description_expr="`Invalid match reload value. Value must be in range: 0 - ` + ($configSet.isUnified.getValue() ? 0xFFFFFFFF : 0xFFFF)"/>
+               </validation>
+               <assign when="!$configSet.isUnified.getValue()  &amp;&amp; $parent.REGMODE.getEnumItemValue()==`match`"> 
+                  <register name_expr="`MATCHREL` + $parent.reg.getEnumItemValue()"  bitfield_expr="`RELOADn_` + get_timer_tab().getSetting(`timer_type`).getValue()"  
+                     value="$parent.matchrel_val.getValue() &amp; 0x0000FFFF"
+                     reverse_value="x -> x" unknown_bits_expr="$parent.matchrel_div.getValue()!=`N/A` ? 0 : 0xFFFF" />
+               </assign>  
+               <assign when="$configSet.isUnified.getValue() &amp;&amp; $parent.REGMODE.getEnumItemValue()==`match`"> 
+                  <register name_expr="`MATCHREL` + $parent.reg.getEnumItemValue()"  bitfield="RELOADn_L"  
+                     value="($parent.matchrel_val.getValue() &amp; 0x0000FFFF) &gt;&gt; 0" 
+                     reverse_value="x -> ($parent.matchrel_val.getValue() &amp; ~0x0000FFFF) | (toInt(x &amp; 0xFFFF) &lt;&lt; 0)"
+                     unknown_bits_expr="$parent.matchrel_div.getValue()!=`N/A` ? 0 : 0xFFFF"/> 
+               </assign>    
+               <assign when="$configSet.isUnified.getValue() &amp;&amp; $parent.REGMODE.getEnumItemValue()==`match`"> 
+                  <register name_expr="`MATCHREL` + $parent.reg.getEnumItemValue()"  bitfield="RELOADn_H"  
+                     value="($parent.matchrel_val.getValue() &amp; 0xFFFF0000) &gt;&gt; 16" 
+                     reverse_value="x -> ($parent.matchrel_val.getValue() &amp; ~0xFFFF0000) | (toInt(x &amp; 0xFFFF) &lt;&lt; 16)"
+                     unknown_bits_expr="$parent.matchrel_div.getValue()!=`N/A` ? 0 : 0xFFFF"/> 
+               </assign>
+            </string>
+            
+            <variable id="matchrel_div" value="system::getRealDividerValue($parent.MATCHREL.getValue(0), get_timer_tab().getSetting(`general.conterClockFreq`).getValue())"/>
+            <variable id="matchrel_val" value="$parent.matchrel_div.getValue()!=`N/A` ? $parent.matchrel_div.getValue().toInt() : 0 "/>
+            <info id="matchrel_info" label="Reload" value="$this.isEnabled() ? system::calculateTicksFreqPeriod($parent.matchrel_div.getValue(), get_timer_tab().getSetting(`general.conterClockFreq`).getValue()) : `N/A`" 
+               available="$parent.REGMODE.getEnumItemValue()==`match`" enable="get_timer_tab().getSetting(`general.NORELOAD`).getValue()==false"/>
+            <enum id="AUTOLIMIT" label="Autolimit" available="$parent.REGMODE.getEnumItemValue() == `match` &amp;&amp; $parent.reg.getValue() == `REG.0`" options="REGISTERS_REFRESH">
+               <description>Automatically limits the counter when the match value is reached. This feature is available only for register 0.</description>
+               <assign when="$parent.REGMODE.getEnumItemValue() == `match` &amp;&amp; $parent.reg.getValue() == `REG.0`">
+                  <register name="CONFIG" bitfield_expr="`AUTOLIMIT_` + get_timer_tab().getSetting(`timer_type`).getValue()" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+               </assign>
+               <item id="0" label="Disabled"></item>
+               <item id="1" label="Enabled"></item>
+            </enum>
+            <string id="description" label="Description"/>
+         </struct>
+         <struct id="state_res_t" label="State">
+            <description>SCTimer state</description>
+            <integer id="uid" type="int64_t" enable="false"/>
+            <string id="state_id" label="State ID">
+               <description expr="`User identifier of the state: ` + $parent.state_id_def.getValue()"/>
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="$this.getLabel() +` &quot;` + $this.getValue() + `&quot; is not valid C identifier!`"/>
+                  <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> (x.getValue() == $parent.state_id_def.getValue()))" level="warning" description_expr="$this.getLabel() +` &quot;` + $this.getValue() + `&quot; is a duplicate (` + $parent.state_id_def.getValue() + `).`"/>  
+               </validation>
+            </string>
+            <variable id="state_id_def" value="$configSet.inst_ID_def.getValue() + `_` + toUpperCase($parent.state_id.getValue())" options="id_check"></variable>
+            <dynamic_enum id="state_number" label="Number" items="createArray(0,1,(featureDefined(`FSL_FEATURE_SCT_NUMBER_OF_STATES`) ? getFeature(`SCT_NUMBER_OF_STATES`) : 32)-1).arrayToEnumItems(
+               x -> true,
+               x -> x,
+               x -> x,
+               x -> x,
+               x -> `State ` + x)">
+               <description>Timer state number selection.</description>
+               <validation>
+                  <constraint cond_expr="$parent.getParent().findDuplicates(x->x.getSetting(`state_number`).getValue()).noneMatch(x -> x.getSetting(`state_number`).getValue() == $this.getValue())"
+                     level="error" description_expr="`The state ` + $this.getValue() + ` is used more than once.`"/>
+               </validation>
+            </dynamic_enum>
+            <string id="description" label="Description"/>
+         </struct>
+         <struct id="ev_capture_t">
+            <variable id="event_number" value="$parent.getParent().getParent().getParent().getSetting(`event_number`).getValue().toInt()"></variable>
+            <reference type="ev_cap_t" id="cap_reg" label="Capture" options="REGISTERS_REFRESH">
+               <description>SCTimer capture register selection.</description>
+               <validation>
+                  <constraint cond_expr="$parent.getParent().maxMatch(x->x.getSetting(`cap_reg`).getValue() == $this.getValue(),1)" level="error" description_expr="`Event actions: Capture register ` + $this.getEnumItemLabel() + ` is used more than once.`"/>
+               </validation>
+               <assign when="$parent.cap_reg.getEnumItemValue().isInt()">
+                  <register name_expr="`CAPCTRL` + $parent.cap_reg.getEnumItemValue()" bitfield_expr="`CAPCONn_` + get_timer_tab().getSetting(`timer_type`).getValue()"
+                     value="system::maskBitfield(true,
+                     `CAPCTRL` + $parent.cap_reg.getEnumItemValue(),
+                     `CAPCONn_` + get_timer_tab().getSetting(`timer_type`).getValue(),
+                     1 &lt;&lt; $parent.event_number.getValue())"/>
+               </assign>
+            </reference>
+         </struct>
+         <struct id="ev_state_t">
+            <variable id="event_number" value="$parent.getParent().getParent().getParent().getSetting(`event_number`).getValue().toInt()"/>
+            <reference type="state_t" id="state" options="REGISTERS_REFRESH">
+               <description>Selects in which states the event is allowed.</description>
+               <validation>
+                  <constraint when_expr="$this.getEnumItemValue().isInt()" cond_expr="$parent.getParent().findDuplicates(x->x.getSetting(`state`).getEnumItemValue()).noneMatch(x -> x.getSetting(`state`).getEnumItemValue() == $this.getEnumItemValue())"
+                     level="error" description_expr="`The state ` + $this.getEnumItemLabel() + ` is used more than once in event ` + $parent.event_number.getValue() + `.`"/>
+               </validation>
+               <assign when="bitfieldExists($instance.getPeripheral(), `EV` + $parent.event_number.getValue() + `_STATE`, `STATEMSKn`) &amp;&amp; $this.getEnumItemValue().isInt()">
+                  <register name_expr="`EV` + $parent.event_number.getValue() + `_STATE`" bitfield="STATEMSKn" 
+                     value="system::maskBitfield(true, `EV` + $parent.event_number.getValue() + `_STATE`, `STATEMSKn`,
+                     1 &lt;&lt; $this.getEnumItemValue().toInt())"/>
+               </assign>
+               <assign when="$this.getEnumItemValue().isInt() &amp;&amp; bitfieldExists($instance.getPeripheral(), `EV` + $parent.event_number.getValue() + `_STATE`, `STATEMSK` + $this.getEnumItemValue().toInt())">
+                  <register name_expr="`EV` + $parent.event_number.getValue() + `_STATE`" bitfield_expr="`STATEMSK` + $this.getEnumItemValue().toInt()" 
+                     value="1"/>
+               </assign>
+            </reference>
+         </struct>
+         <struct id="output_action_t" >
+            <variable id="event_number" value="$parent.getParent().getParent().getParent().getSetting(`event_number`).getValue().toInt()"></variable>
+            <reference id="output" label="Output" type="ev_output_t">
+               <validation>
+                  <constraint cond_expr="$parent.getParent().maxMatch(x->x.getSetting(`output`).getValue() == $this.getValue(),1)" level="error" description_expr="`Event actions: Output ` + $this.getEnumItemLabel() + ` is used more than once.`"/>
+               </validation>
+            </reference>
+            <enum id="action" label="Action" options="REGISTERS_REFRESH">
+               <description>
+Event sets, clears or toggles the selected output.  
+*Note:* When the counter is used in bi-directional mode, it is possible to reverse the action (SET and CLEAR) when counting down.
+See the **Direction impact** setting in resources tab (outputs).
+               </description>
+               <validation>
+                  <constraint when_expr="$parent.output.getEnumItemValue().isInt() &amp;&amp; $this.getValue()==`toggle`" 
+                     cond_expr="get_timer_tab().getSetting(`resources.outputs`).getValue()
+                     .merge(get_other_available_timer_tab() != false ? get_other_available_timer_tab().getSetting(`resources.outputs`).getValue() : createArray())
+                     .findFirst(x->x.getSetting(`out_number`).getValue() == $parent.output.getEnumItemValue())
+                     .getSetting(`RES`).getValue()==3"
+                     level="warning" description_expr="$parent.output.getEnumItemLabel() + ` conflict resolution is not set to toggle (resources).`"/>
+               </validation>
+               <assign when="$parent.output.getEnumItemValue().isInt()">
+                  <register name_expr="`OUT`+ $parent.output.getEnumItemValue().toInt() + `_SET`" bitfield="SET" 
+                     value="system::maskBitfield($this.getValue() != `clear`, `OUT`+ $parent.output.getEnumItemValue().toInt() + `_SET`, `SET`, 1 &lt;&lt; $parent.event_number.getValue())" />
+               </assign>
+               <assign when="$parent.output.getEnumItemValue().isInt()">
+                  <register name_expr="`OUT`+ $parent.output.getEnumItemValue().toInt() + `_CLR`" bitfield="CLR" 
+                     value="system::maskBitfield($this.getValue() != `set`, `OUT`+ $parent.output.getEnumItemValue().toInt() + `_CLR`, `CLR`, 1 &lt;&lt; $parent.event_number.getValue())" />
+               </assign>
+               <item id="clear" label="Clear"/>
+               <item id="set" label="Set"/>
+               <item id="toggle" label="Toggle"/>
+            </enum>
+         </struct>
+
+         <struct id="event_t">
+            <string id="event_id" label="Event ID">
+               <description expr="`User identifier of the event: ` + $parent.event_id_def.getValue()"/>
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="$this.getLabel() +` &quot;` + $this.getValue() + `&quot; is not valid C identifier!`"/>
+                  <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> (x.getValue() == $parent.event_id_def.getValue()))" level="warning" description_expr="$this.getLabel() +` &quot;` + $this.getValue() + `&quot; is a duplicate (` + $parent.event_id_def.getValue() + `).`"/>  
+               </validation>
+            </string>
+            <variable id="event_id_def" value="$configSet.inst_ID_def.getValue() + `_` + toUpperCase($parent.event_id.getValue())" options="id_check"></variable>
+            <dynamic_enum id="event_number" label="Number" options="REGISTERS_REFRESH" items="createArray(0,1, $configSet.main.max_event.getValue()-1).arrayToEnumItems(
+               x -> true,
+               x -> x,
+               x -> x,
+               x -> x,
+               x -> `Event ` + x)">
+               <validation>
+                  <constraint cond_expr="$parent.getParent().merge(get_other_available_timer_tab() != false ? get_other_available_timer_tab().getSetting(`events_tab.events`) : createArray()).findDuplicates(x->x.getSetting(`event_number`).getValue()).noneMatch(x -> x.getSetting(`event_number`).getValue() == $this.getValue())"
+                     level="error" description_expr="`The event ` + $this.getValue() + ` is used more than once.`"/>
+               </validation>
+               <assign when="true">
+                  <register name_expr="`EV`+ $this.getValue().toInt() +`_CTRL`" bitfield="HEVENT" value="get_timer_tab().getSetting(`timer_type`).getValue() == `H` ? 1 : 0"/>
+               </assign>
+            </dynamic_enum>
+            <string id="description" label="Description"/>
+            <struct id="ev_config" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN;UI_MULTI_COLUMN=2">
+               <variable id="event_number" value="$parent.getParent().getSetting(`event_number`).getEnumItemValue()"></variable>
+               <struct id="event_ctrl" label="Event occurrence">
+                  <enum id="COMBMODE" label="Condition mode" options="REGISTERS_REFRESH">
+                     <assign when="true">
+                        <register name_expr="`EV`+ $parent.getParent().getSetting(`event_number`).getValue().toInt() +`_CTRL`" bitfield="COMBMODE" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                     </assign>
+                     <item id="0" label="Match OR I/O signal"><description>OR mode. The event occurs when either the specified match or signal (I/O) condition occurs.</description></item>
+                     <item id="1" label="Match"><description>MATCH mode. Uses the specified match only.</description></item>
+                     <item id="2" label="I/O signal"><description>I/O mode. Uses the specified signal (I/O) condition only.</description></item>
+                     <item id="3" label="Match AND I/O signal"><description>AND mode. The event occurs when the specified match and signal (I/O) condition occur simultaneously.</description></item>
+                  </enum>
+                  <info value="`Match`" id="match_line" options="UI_LINE_BREAK;UI_LABEL_HIDDEN" available="$parent.COMBMODE.getValue() != 2"></info>
+                  <enum id="DIRECTION" label="Direction qualifier" options="REGISTERS_REFRESH" available="$parent.COMBMODE.getValue() != 2" enable="get_timer_tab().getSetting(`general.BIDIR`).getValue() == 1">
+                     <description>
+                        Direction qualifier for event generation. This field only applies when the counters are operating in **bidirectional mode**.
+                     </description>
+                     <assign when="true">
+                        <register name_expr="`EV`+ $parent.getParent().getSetting(`event_number`).getValue().toInt() +`_CTRL`" bitfield="DIRECTION" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                     </assign>
+                     <item id="0" label="Direction independent"><description>The event is triggered regardless of the count direction.</description></item>
+                     <item id="1" label="Counting up"><description>The event is triggered only during up-counting.</description></item>
+                     <item id="2" label="Counting down"><description>The event is triggered only during down-counting.</description></item>
+                  </enum>
+                  <enum id="MATCHMEM" label="Match activation" options="REGISTERS_REFRESH" available="$parent.COMBMODE.getValue() != 2">
+                     <description>
+**Disbled** - A match is only be active during the cycle when the counter is **equal** to the match value.  
+**Enabled** - A match is considered to be active whenever the counter value is **greater than or equal to** the value specified in the match register when counting up,
+**less than or equal to** the match value when counting down.  
+                     </description>
+                     <assign when="true">
+                        <register name_expr="`EV`+ $parent.getParent().getSetting(`event_number`).getValue().toInt() +`_CTRL`" bitfield="MATCHMEM" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                     </assign>
+                     <item id="0" label="COUNTER equal to MATCH">
+                        <description>
+A match is only be active during the cycle when the counter is **equal** to the match value.
+                        </description>
+                     </item>
+                     <item id="1" label_expr="get_timer_tab().getSetting(`general.BIDIR`).getValue() == 0 ? `COUNTER &gt;= MATCH` : 
+                        ($parent.DIRECTION.getValue() == 1 ? `COUNTER &gt;= MATCH` :
+                        ($parent.DIRECTION.getValue() == 2 ? `COUNTER &lt;= MATCH` : 
+                        `Up: &gt;= MATCH | Down: &lt;= MATCH`))">
+                        <description>
+A match is considered to be active whenever the counter value is **greater than or equal to** the value specified in the match register when counting up,
+**less than or equal to** the match value when counting down.
+                        </description>
+                     </item>
+                  </enum>
+                  <reference id="ev_match" type="ev_match_t" label="Match register" options="REGISTERS_REFRESH" available="$parent.COMBMODE.getValue() != 2">
+                     <description>Selects the match register that contains the match condition for the event to occur.</description>
+                     <assign when="true">
+                        <register name_expr="`EV`+ $parent.getParent().getSetting(`event_number`).getValue().toInt() +`_CTRL`" bitfield="MATCHSEL"
+                           value="($this.getValue()!=`noMatch` &amp;&amp; $this.getEnumItemValue()!=``) ? $this.getEnumItemValue().toInt() : 0"
+                           reverse_value="x -> get_timer_tab().getSetting(`resources.match_cap_regs`).anyMatch(y -> y.getSetting(`reg`).getEnumItemLabel() == x) ?
+                           get_timer_tab().getSetting(`resources.match_cap_regs`).findFirst(y -> y.getSetting(`reg`).getEnumItemLabel() == x).getSetting(`uid`).getValue() : `noMatch`"
+                           unknown_bits_expr="($this.getValue()!=`noMatch` &amp;&amp; $this.getEnumItemValue()!=``) ? 0 : 0xF"/>
+                     </assign>
+                  </reference>
+                  <variable id="match_reg_setting" value="($parent.ev_match.getValue(``) == ``|| $parent.ev_match.getValue() == `noMatch`) || get_timer_tab().getSetting(`resources.match_cap_regs`).noneMatch(x -> x.getSetting(`uid`).getValue()==$parent.ev_match.getValue(``)) ? `` :  get_timer_tab().getSetting(`resources.match_cap_regs`).findFirst(x -> x.getSetting(`uid`).getValue()==$parent.ev_match.getValue())"/>
+                  <info id="match_val_info" label="Match value" value="$parent.match_reg_setting.getValue() == `` ? `N/A` :  $parent.match_reg_setting.getValue().getSetting(`match_info`).getValue(`N/A`)" available="$parent.COMBMODE.getValue() != 2"></info>
+                  <info id="matchrel_val_info" label="Match reload value" value="$parent.match_reg_setting.getValue() == `` ? `N/A` : $parent.match_reg_setting.getValue().getSetting(`matchrel_info`).getValue(`N/A`)" available="get_timer_tab().getSetting(`general.NORELOAD`).getValue()==false &amp;&amp; !($parent.match_reg_setting.getValue() == ``) &amp;&amp; $parent.match_reg_setting.getValue().getSetting(`matchrel_info`).getValue(`N/A`) != $parent.match_val_info.getValue(`N/A`)"></info>
+                  <info value="`I/O signal`" id="signal_line" options="UI_LINE_BREAK;UI_LABEL_HIDDEN" available="$parent.COMBMODE.getValue() != 1"></info>
+                  <enum id="OUTSEL" label="I/O signal type" options="REGISTERS_REFRESH" available="$parent.COMBMODE.getValue() != 1">
+                     <description>Selects inputs or outputs as event occurrence signal.</description>
+                     <assign when="true">
+                        <register name_expr="`EV`+ $parent.getParent().getSetting(`event_number`).getValue().toInt() +`_CTRL`" bitfield="OUTSEL" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                     </assign>
+                     <item id="0" label="Input"></item>
+                     <item id="1" label="Output"></item>
+                  </enum>
+                  <reference  id="input_sel" type="ev_input_t" label="Input" available="$parent.COMBMODE.getValue() != 1 &amp;&amp; $parent.OUTSEL.getValue() == 0" options="REGISTERS_REFRESH">
+                     <description>Selects the input signal conditioning the event occurrence.</description>
+                     <assign when="$parent.COMBMODE.getValue() != 1 &amp;&amp; $parent.OUTSEL.getValue() == 0">
+                        <register name_expr="`EV`+ $parent.getParent().getSetting(`event_number`).getValue().toInt() +`_CTRL`" bitfield="IOSEL" 
+                           value="$this.getEnumItemValue().isInt() ? $this.getEnumItemValue().toInt() : 0" 
+                           reverse_value="x -> get_timer_tab().getSetting(`resources.inputs`).anyMatch(y -> y.getSetting(`in`).getEnumItemValue() == x) ?
+                           get_timer_tab().getSetting(`resources.inputs`).findFirst(y -> y.getSetting(`in`).getEnumItemValue() == x).getSetting(`uid`).getValue() : 
+                           (get_other_available_timer_tab() != false &amp;&amp; get_other_available_timer_tab().getSetting(`resources.inputs`).anyMatch(y -> y.getSetting(`in`).getEnumItemValue() == x) ?
+                           get_other_available_timer_tab().getSetting(`resources.inputs`).findFirst(y -> y.getSetting(`in`).getEnumItemValue() == x).getSetting(`uid`).getValue() :
+                           `noInput`)"
+                           unknown_bits_expr="$this.getEnumItemValue().isInt() ? 0 : 0xF"/>
+                     </assign>
+                  </reference>
+                  <reference id="output_sel" type="ev_output_t" label="Output" available="$parent.COMBMODE.getValue() != 1 &amp;&amp; $parent.OUTSEL.getValue() == 1" options="REGISTERS_REFRESH">
+                     <description>Selects the output signal conditioning the event occurrence.</description>
+                     <assign when="$parent.COMBMODE.getValue() != 1 &amp;&amp; $parent.OUTSEL.getValue() == 1">
+                        <register name_expr="`EV`+ $parent.getParent().getSetting(`event_number`).getValue().toInt() +`_CTRL`" bitfield="IOSEL" 
+                           value="$this.getEnumItemValue().isInt() ? $this.getEnumItemValue().toInt() : 0" 
+                           reverse_value="x -> get_timer_tab().getSetting(`resources.outputs`).anyMatch(y -> y.getSetting(`out`).getEnumItemValue() == x) ?
+                           get_timer_tab().getSetting(`resources.outputs`).findFirst(y -> y.getSetting(`out`).getEnumItemValue() == x).getSetting(`uid`).getValue() : 
+                           (get_other_available_timer_tab() != false &amp;&amp; get_other_available_timer_tab().getSetting(`resources.outputs`).anyMatch(y -> y.getSetting(`out`).getEnumItemValue() == x) ?
+                           get_other_available_timer_tab().getSetting(`resources.outputs`).findFirst(y -> y.getSetting(`out`).getEnumItemValue() == x).getSetting(`uid`).getValue() :
+                           `noOutput`)"
+                           unknown_bits_expr="$this.getEnumItemValue().isInt() ? 0 : 0xF"/>
+                     </assign>
+                  </reference>
+                  <enum id="IOCOND" label_expr="$parent.OUTSEL.getEnumItemLabel() + ` condition`" available="$parent.COMBMODE.getValue() != 1" options="REGISTERS_REFRESH">
+                     <description>
+Selects the I/O condition for an event. Defines how the selected input or output triggers the event (edge or level sensitive).  
+*Note:* The detection of edges on outputs lag the conditions that switch the outputs by 1 SCT clock.   
+*Note:* In order to guarantee proper edge/state detection, an input must have a minimum pulse width of at least 1 SCT clock period.  
+                     </description>
+                     <assign when="$parent.COMBMODE.getValue() != 1">
+                        <register name_expr="`EV`+ $parent.getParent().getSetting(`event_number`).getValue().toInt() +`_CTRL`" bitfield="IOCOND" 
+                           value="$this.getEnumItemValue().isInt() ? $this.getEnumItemValue().toInt() : 0" reverse_value="x -> x"/>
+                     </assign>
+                     <item id="0" label="Logical 0 (low)"></item>
+                     <item id="3" label="Logical 1 (high)"></item>
+                     <item id="1" label="Rising edge"></item>
+                     <item id="2" label="Falling edge"></item>
+                  </enum>
+                  <info value="`State`" id="state_line" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+                  <array id="ev_state" label="State" type="ev_state_t" 
+                     options="UI_ARRAY_INDICES_HIDDEN;UI_BORDER_HIDDEN;UI_ARRAY_REORDER;UI_SHOW_CONTENT_AS=TABLE;UI_TABLE_COLUMN_WIDTHS=15"
+                     min_expr="1" max_expr="$configSet.main.max_state.getValue()">
+                     <description>States in which the event is allowed.</description>
+                  </array>
+               </struct>
+               
+               <struct id="event_actions" label="Event actions">
+                  <info value="`State change`" id="state_line" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+                  <enum id="state_handling" label="Change state" options="REGISTERS_REFRESH">
+                     <description>How the state is modified. Applies when this event is the highest-numbered event occurring for the state.</description>
+                     <assign when="true">
+                        <register name_expr="`EV`+ $parent.getParent().getSetting(`event_number`).getValue().toInt() +`_CTRL`" bitfield="STATELD" 
+                           value="$this.getValue() == `absolute` ? 1 : 0" 
+                           reverse_value="x -> x == 1 ? `absolute` : `relative`"/>
+                     </assign>
+                     <item id="same" label="No change"><description>Event does not change the state.</description></item>
+                     <item id="absolute" label="Jump to selected state"></item>
+                     <item id="relative" label="Relative state number change"></item>
+                  </enum>
+                  <reference id="next_state" type="state_t" label="Next state" available="$parent.state_handling.getValue()==`absolute`" options="REGISTERS_REFRESH">
+                     <assign when="$parent.state_handling.getValue()==`absolute`">
+                        <register name_expr="`EV`+ $parent.getParent().getSetting(`event_number`).getValue().toInt() +`_CTRL`" bitfield="STATEV" 
+                           value="$this.getEnumItemValue().isInt() ? $this.getEnumItemValue().toInt() : 0" 
+                           reverse_value="x -> get_timer_tab().getSetting(`states_tab.states`).anyMatch(y -> y.getSetting(`state_number`).getEnumItemValue() == x) ?
+                           get_timer_tab().getSetting(`states_tab.states`).findFirst(y -> y.getSetting(`state_number`).getEnumItemValue() == x).getSetting(`uid`).getValue() : `noState`"/>
+                     </assign> 
+                  </reference>
+                  <integer id="relative_state_change" type="int16_t" min_expr="-31" max_expr="31" options="REGISTERS_REFRESH"
+                     label="Added value " available="$parent.state_handling.getValue()==`relative`">
+                     <assign when="$parent.state_handling.getValue()==`relative` &amp;&amp; $parent.added_value.getValue().isInt()">
+                        <register name_expr="`EV`+ $parent.getParent().getSetting(`event_number`).getValue().toInt() +`_CTRL`" bitfield="STATEV" 
+                           value="$parent.added_value.getValue()" 
+                           reverse_value="x -> x"/>
+                     </assign> 
+                  </integer>
+                  <variable id="added_value" value="($parent.relative_state_change.getValue() &lt; 0 ? ($parent.relative_state_change.getValue() + 32) : $parent.relative_state_change.getValue())"></variable>
+                  <variable id="next_states_var" available="$parent.state_handling.getValue()==`relative`"
+                     value="$parent.getParent().getSetting(`event_ctrl.ev_state`).map(x -> (x.getSetting(`state`).getEnumItemValue().toInt() + $parent.added_value.getValue()) % 32 )"
+                     unavailable_value="createArray()"></variable>
+                  <info id="next_states" label="Next state" available="$parent.state_handling.getValue()==`relative`" 
+                     value="$parent.next_states_var.getValue().size()==0 ? `` : 
+                     $parent.next_states_var.getValue()
+                     .map(x -> ($parent.getParent().getSetting(`event_ctrl.ev_state`).get($parent.next_states_var.getValue().indexOf(x)).getSetting(`state`).getEnumItemLabel() + ` (`
+                     + $parent.getParent().getSetting(`event_ctrl.ev_state`).get($parent.next_states_var.getValue().indexOf(x)).getSetting(`state`).getEnumItemValue() + `) ->  `) +
+                     (get_timer_tab().getSetting(`states_tab.states`).anyMatch(y -> y.getSetting(`state_number`).getEnumItemValue() == x) 
+                     ?
+                     get_timer_tab().getSetting(`states_tab.states`).findFirst(y -> y.getSetting(`state_number`).getEnumItemValue() == x).getSetting(`state_id`).getValue() + ` (` + x + `)` 
+                     :
+                     `N/A (` + x + `)`)).reduce(``, (x,y) -> x + (x == `` ? `` : `\n`) + y)">
+                     <description>Next states that are available after adding the value</description>
+                     <validation>
+                        <constraint cond_expr="$parent.next_states_var.getValue().noneMatch(x->get_timer_tab().getSetting(`states_tab.states`).noneMatch(y -> y.getSetting(`state_number`).getEnumItemValue() == x))" level="warning" 
+                           description_expr="`Event ` + $parent.getParent().getSetting(`event_number`).getValue() + `: Missing next state. If available, add state: ` + $parent.next_states_var.getValue().filter(x -> get_timer_tab().getSetting(`states_tab.states`).noneMatch(y -> y.getSetting(`state_number`).getEnumItemValue() == x))"/>
+                     </validation>
+                  </info>
+                  <info value="`Timer counter`" id="timer_counter_line" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+                  <struct id="timer_counter" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN;UI_MULTI_COLUMN=1">
+                     <reference id="LIMIT" label="Limit" type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                        <options_expr>
+                           <option id="register" expr="`LIMIT`"></option>
+                           <option id="bitfield" expr="`LIMMSK_` + get_timer_tab().getSetting(`timer_type`).getValue()"></option>
+                           <option id="mask" expr="(1 &lt;&lt; $parent.getParent().getParent().getSetting(`event_number`).getValue().toInt())"></option>
+                           <option id="REGISTERS_REFRESH"/>
+                        </options_expr>
+                        <description>Event is used as a counter limit for the counter. Limit the counter means to clear the counter in Unidirectional mode or change its direction in Bidirectional mode.</description>
+                     </reference>
+                     <reference id="HALT" label="Halt" type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                        <options_expr>
+                           <option id="register" expr="`HALT`"></option>
+                           <option id="bitfield" expr="`HALTMSK_` + get_timer_tab().getSetting(`timer_type`).getValue()"></option>
+                           <option id="mask" expr="(1 &lt;&lt; $parent.getParent().getParent().getSetting(`event_number`).getValue().toInt())"></option>
+                           <option id="REGISTERS_REFRESH"/>
+                        </options_expr>
+                        <description>Event sets the HALT bit in the CTRL register. (The counter operation can be resored only by software)</description>
+                     </reference>
+                     <reference id="STOP" label="Stop" type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                        <options_expr>
+                           <option id="register" expr="`STOP`"></option>
+                           <option id="bitfield" expr="`STOPMSK_` + get_timer_tab().getSetting(`timer_type`).getValue()"></option>
+                           <option id="mask" expr="(1 &lt;&lt; $parent.getParent().getParent().getSetting(`event_number`).getValue().toInt())"></option>
+                           <option id="REGISTERS_REFRESH"/>
+                        </options_expr>
+                        <description>Event sets the STOP bit in the CTRL register.</description>
+                     </reference>
+                     <reference id="START" label="Start" type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                        <options_expr>
+                           <option id="register" expr="`START`"></option>
+                           <option id="bitfield" expr="`STARTMSK_` + get_timer_tab().getSetting(`timer_type`).getValue()"></option>
+                           <option id="mask" expr="(1 &lt;&lt; $parent.getParent().getParent().getSetting(`event_number`).getValue().toInt())"></option>
+                           <option id="REGISTERS_REFRESH"/>
+                        </options_expr>
+                        <description>Event clears the STOP bit in the CTRL register.</description>
+                     </reference>
+                  </struct>
+                  <info value="`Interrupt`" id="irq_line" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+                  <reference id="EVEN" label="Interrupt request" type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                     <options_expr>
+                        <option id="register" expr="`EVEN`"></option>
+                        <option id="bitfield" expr="bitfieldExists($instance.getPeripheral(), `EVEN`, `IEN`) ? `IEN` : `IEN` + $parent.getParent().getSetting(`event_number`).getValue().toInt() "></option>
+                        <option id="mask" expr="bitfieldExists($instance.getPeripheral(), `EVEN`, `IEN`) ? (1 &lt;&lt; $parent.getParent().getSetting(`event_number`).getValue().toInt()) : 1"></option>
+                        <option id="REGISTERS_REFRESH"/>
+                     </options_expr>
+                     <description>Event triggers interrupt request.</description>
+                  </reference>
+                  <info value="`DMA`" id="dma_line" options="UI_LINE_BREAK;UI_LABEL_HIDDEN" available="!(featureDefined(`FSL_FEATURE_SCT_HAS_NO_DMA_REQUEST`) &amp;&amp; getFeature(`FSL_FEATURE_SCT_HAS_NO_DMA_REQUEST`))"></info>
+                  <struct id="dma_req" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN;UI_MULTI_COLUMN=1">
+                     <variable id="isLongBitField" value="!(bitfieldExists($instance.getPeripheral(), `DMAREQ0`, `DEV_` + $parent.getParent().getParent().getSetting(`event_number`).getValue().toInt()) &amp;&amp;
+                        getBitFieldWidth($instance.getPeripheral(), `DMAREQ0`, `DEV_` + $parent.getParent().getParent().getSetting(`event_number`).getValue().toInt()) == 1)"></variable>
+                     <reference id="DEV_0" label="DMA request 0" type="registerBit" config_set_id="global_system_definitions" component_id="system"
+                        available="!(featureDefined(`FSL_FEATURE_SCT_HAS_NO_DMA_REQUEST`) &amp;&amp; getFeature(`FSL_FEATURE_SCT_HAS_NO_DMA_REQUEST`))">
+                        <options_expr>
+                           <option id="register" expr="`DMAREQ0`"></option>
+                           <option id="bitfield" expr="$parent.isLongBitField.getValue() ? `DEV_0` : `DEV_` + $parent.getParent().getParent().getSetting(`event_number`).getValue().toInt()"></option>
+                           <option id="mask" expr="$parent.isLongBitField.getValue() ? (1 &lt;&lt; $parent.getParent().getParent().getSetting(`event_number`).getValue().toInt()) : 1"></option>
+                           <option id="REGISTERS_REFRESH"/>
+                        </options_expr>
+                        <description>
+Event triggers DMA request 0.  
+Note: DMA trigger needs to be routed to **SCT0_DMA_REQ_0** signal
+                        </description>
+                     </reference>
+                     <reference id="DEV_1" label="DMA request 1" type="registerBit" config_set_id="global_system_definitions" component_id="system"
+                        available="!(featureDefined(`FSL_FEATURE_SCT_HAS_NO_DMA_REQUEST`) &amp;&amp; getFeature(`FSL_FEATURE_SCT_HAS_NO_DMA_REQUEST`))">
+                        <options_expr>
+                           <option id="register" expr="`DMAREQ1`"></option>
+                           <option id="bitfield" expr="$parent.isLongBitField.getValue() ? `DEV_1` : `DEV_` + $parent.getParent().getParent().getSetting(`event_number`).getValue().toInt()"></option>
+                           <option id="mask" expr="$parent.isLongBitField.getValue() ? (1 &lt;&lt; $parent.getParent().getParent().getSetting(`event_number`).getValue().toInt()) : 1"></option>
+                           <option id="REGISTERS_REFRESH"/>
+                        </options_expr>
+                        <description>
+Event triggers DMA request 1.  
+Note: DMA trigger needs to be routed to **SCT0_DMA_REQ_1** signal
+                        </description>
+                     </reference>
+                  </struct>
+                  <info value="`Output actions`" id="out_line" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+                  <array id="output_actions" label="Outputs" type="output_action_t" options="UI_BORDER_HIDDEN;UI_SHOW_CONTENT_AS=TABLE;UI_ARRAY_INDICES_HIDDEN;UI_TABLE_COLUMN_WIDTHS=15,8;UI_ARRAY_REORDER;" >
+                     <description>Ouput actions performed for the event.</description>
+                  </array>
+                  <info value="`Timer capture`" id="cap_line" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+                  <array id="CAPCTRL" label="Capture" type="ev_capture_t" options="UI_ARRAY_INDICES_HIDDEN;UI_BORDER_HIDDEN;UI_ARRAY_REORDER;UI_SHOW_CONTENT_AS=TABLE;UI_TABLE_COLUMN_WIDTHS=15"
+                     max_expr="$configSet.main.max_match_cap.getValue()">
+                     <description>The event loads listed capture registers.</description>
+                  </array>
+               </struct>
+            </struct>
+         </struct>
+         
+         <struct id="sct_app" options="UI_SHOW_CONTENT_AS=TABS">
+            <quick_selections>
+               <quick_selection id="default" label="Default"> <!-- available="$this.getID()==`SCT_L`" -->
+                  <set id="states_tab.states.0.uid" from_resource="getUniqueInt64()"></set>
+<!--                  <set id="states_tab.states.0.state_number">0</set>-->
+<!--                  <set id="general.STATE">noState</set>-->
+               </quick_selection>
+               <quick_selection id="pwm" label="PWM" available="false"> <!-- available="$this.getID()==`SCT_L`" -->
+                  <set id="states_tab.states.0.uid" from_resource="getUniqueInt64()"></set>
+                  <set id="states_tab.states.0.state_number">0</set>
+                  <set id="resources.outputs.0.uid" from_resource="getUniqueInt64()"></set>
+                  <set id="resources.outputs.1.uid" from_resource="getUniqueInt64()"></set>
+                  <set id="resources.outputs.0.out_id">PHASE_A</set>
+                  <set id="resources.outputs.1.out_id">PHASE_B</set>
+                  <set id="events_tab.events.0.event_id">START</set>
+<!--                  <set id="events_tab.events.0.output" from_resource="$parent.getSetting(`resources.outputs`).get(1).getSetting(`uid`).getValue()"></set>-->
+               </quick_selection>
+            </quick_selections>
+            <variable id="timer_type" unavailable_value="`H`"
+               value="($parent.getValue().getID()==`SCT_L`) ? `L` : (($parent.getValue().getID()==`SCT_H`) ? `H` : `N/A`)"/>
+            <struct id="general" label="General">
+               <enum id="BIDIR" label="Counting direction" options="REGISTERS_REFRESH">
+                  <description>
+The counter counting direction  
+**Up** - The counter counts up to a limit condition, then is cleared to zero.  
+**Up-down** - Bidirectional counter. The counter counts up to a limit, then counts down to a limit condition or to 0.  
+                  </description>
+                  <assign when="$this.isAvailable()">
+                     <register name="CTRL" bitfield_expr="`BIDIR_` + get_timer_tab().getSetting(`timer_type`).getValue()" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                  </assign>
+                  <item id="0" label="Up (Unidirectional mode)"><description>The counter counts up to a limit condition, then is cleared to zero.</description></item>
+                  <item id="1" label="Up-down (Bidirectional mode)"><description>The counter counts up to a limit, then counts down to a limit condition or to 0.</description></item>
+               </enum>
+               <integer id="PRE" label="Prescale value for the counter clock" type="uint32_t" min_expr="1" max_expr="256" options="REGISTERS_REFRESH">
+                  <description>Prescale value used for producing the counter clock (input clock divisor from the range 1..256)</description>
+                  <assign when="$this.isAvailable()">
+                     <register name="CTRL" bitfield_expr="`PRE_` + get_timer_tab().getSetting(`timer_type`).getValue()" value="$this.getValue()-1" reverse_value="x -> x+1"/>
+                  </assign>
+               </integer>
+               <info id="counterClock" label="Counter input clock" value="system::calculateFreqPeriod($parent.PRE.getValue().toInt(), $configSet.common_config.clockFreq.getValue())">
+                  <description>Calculated SCTimer input clock frequency and period. If the value is not available, set used clock frequency in General configuration.</description>
+               </info>
+               <variable id="conterClockFreq" value="system::calculateRealFreq($parent.PRE.getValue().toInt(), $configSet.common_config.clockFreq.getValue())"></variable>               
+               <reference type="state_t" id="STATE" label="Initial state" options="REGISTERS_REFRESH">
+                  <description>Timer initial state selection.</description>
+                  <assign when="$this.getEnumItemValue().isInt()"> 
+                     <register name="STATE" bitfield_expr="`STATE_` + get_timer_tab().getSetting(`timer_type`).getValue()"  
+                        value="$this.getEnumItemValue().isInt() ? $this.getEnumItemValue().toInt() : 0"
+                        reverse_value="x -> get_timer_tab().getSetting(`states_tab.states`).anyMatch(y -> y.getSetting(`state_number`).getEnumItemValue() == x) ?
+                        get_timer_tab().getSetting(`states_tab.states`).findFirst(y -> y.getSetting(`state_number`).getEnumItemValue() == x).getSetting(`uid`).getValue(): `noState`"
+                        unknown_bits_expr="$this.getEnumItemValue().isInt() ? 0 : 0xFF"/> 
+                  </assign> 
+               </reference>
+               <integer id="COUNT" label="Initial counter value" type="uint32_t" max_expr="$configSet.isUnified.getValue() ? 0xFFFFFFFF : 0xFFFF" options="REGISTERS_REFRESH">
+                  <description>Initial value of the counter.</description>
+                  <assign when="!$configSet.isUnified.getValue()"> 
+                     <register name="COUNT"  bitfield_expr="`CTR_` + get_timer_tab().getSetting(`timer_type`).getValue()"  
+                        value="$this.getValue() &amp; 0x0000FFFF"
+                        reverse_value="x -> x"/> 
+                  </assign>  
+                  <assign when="$configSet.isUnified.getValue()"> 
+                     <register name="COUNT"  bitfield="CTR_L"  
+                        value="($this.getValue() &amp; 0x0000FFFF) &gt;&gt; 0" 
+                        reverse_value="x -> ($this.getValue() &amp; ~0x0000FFFF) | (toInt(x &amp; 0xFFFF) &lt;&lt; 0)"/> 
+                  </assign>    
+                  <assign when="$configSet.isUnified.getValue()"> 
+                     <register name="COUNT"  bitfield="CTR_H"  
+                        value="($this.getValue() &amp; 0xFFFF0000) &gt;&gt; 16" 
+                        reverse_value="x -> ($this.getValue() &amp; ~0xFFFF0000) | (toInt(x &amp; 0xFFFF) &lt;&lt; 16)"/> 
+                  </assign>
+               </integer>
+               <enum id="init_action" label="Initial timer action" options="REGISTERS_REFRESH">
+                  <description>
+Timer action after its initialization.  
+  
+**Run** - Timer starts immediately after its initialization.  
+**Halt** - Timer stays halted after its initialization. The register write is accessed and an event cannot restart the timer (only software unhalts the timer).  
+**Stop** - Timer stays stopped after its initialization. The register write is not allowed and an event can restart the timer.
+                  </description>
+                  <assign when="true">
+                     <register name="CTRL" bitfield_expr="`HALT_` + get_timer_tab().getSetting(`timer_type`).getValue()" 
+                        value="$this.getValue() == `halt` ? 1 : 0"
+                        reverse_value="x -> x == 1 ? `halt` : getBitFieldValue($instance.getPeripheral(), `CTRL`, `STOP_` + get_timer_tab().getSetting(`timer_type`).getValue()) == 1 ? `stop`: `run`"/>
+                  </assign>
+                  <assign when="true">
+                     <register name="CTRL" bitfield_expr="`STOP_` + get_timer_tab().getSetting(`timer_type`).getValue()" 
+                        value="$this.getValue() == `stop` ? 1 : 0"
+                        reverse_value="x -> x == 1 ? `stop` : getBitFieldValue($instance.getPeripheral(), `CTRL`, `HALT_` + get_timer_tab().getSetting(`timer_type`).getValue()) == 1 ? `halt`: `run`"/>
+                  </assign>
+                  <item id="halt" label="Halt"><description>Timer stays halted after its initialization. The register write is accessed and an event cannot restart the timer (only software unhalts the timer).</description></item>
+                  <item id="stop" label="Stop"><description>Timer stays stopped after its initialization. The register write is not allowed and an event can restart the timer.</description></item>
+                  <item id="run" label="Run"><description>Timer starts immediately after its initialization.</description></item>
+               </enum>
+               <bool id="NORELOAD" label="Disable reload" options="REGISTERS_REFRESH">
+                  <description>
+This setting prevents the match registers from being reloaded from their respective reload registers.
+This setting eliminates the need to write to the reload registers MATCHREL if the match values are fixed. Software can write to set or clear this bit at any time.  
+Note: This bit applies to both the higher and lower registers when the UNIFY bit is set (Single 32 bit timer mode).
+                  </description>
+                  <assign when="$this.isAvailable()">
+                     <register name="CONFIG" bitfield_expr="`NORELOAD_` + get_timer_tab().getSetting(`timer_type`).getValue()" value="$this.getValue().system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                  </assign>
+               </bool>
+               <reference id="DRL0" label="Match reload DMA request 0" type="registerBit" config_set_id="global_system_definitions" component_id="system"
+                  available="!(featureDefined(`FSL_FEATURE_SCT_HAS_NO_DMA_REQUEST`) &amp;&amp; getFeature(`FSL_FEATURE_SCT_HAS_NO_DMA_REQUEST`))
+                  &amp;&amp; get_timer_tab().getID()==`SCT_L`">
+                  <options_expr>
+                     <option id="register" expr="`DMAREQ0`"></option>
+                     <option id="bitfield" expr="`DRL0`"></option>
+                     <option id="mask" expr="1"></option>
+                     <option id="REGISTERS_REFRESH"/>
+                  </options_expr>
+                  <description>
+Triggers DMA request 0 when it loads the reload values to the match registers.   
+Note: DMA trigger needs to be routed to **SCT0_DMA_REQ_0** signal
+                  </description>
+               </reference>
+               <reference id="DRL1" label="Match reload DMA request 1" type="registerBit" config_set_id="global_system_definitions" component_id="system"
+                  available="!(featureDefined(`FSL_FEATURE_SCT_HAS_NO_DMA_REQUEST`) &amp;&amp; getFeature(`FSL_FEATURE_SCT_HAS_NO_DMA_REQUEST`))
+                  &amp;&amp; get_timer_tab().getID()==`SCT_L`">
+                  <options_expr>
+                     <option id="register" expr="`DMAREQ1`"></option>
+                     <option id="bitfield" expr="`DRL1`"></option>
+                     <option id="mask" expr="1"></option>
+                     <option id="REGISTERS_REFRESH"/>
+                  </options_expr>
+                  <description>
+Triggers DMA request 1 when it loads the reload values to the match registers.   
+Note: DMA trigger needs to be routed to **SCT0_DMA_REQ_1** signal
+                  </description>
+               </reference>
+            </struct>
+            <struct id="resources" label="Resources" >
+               <info id="IO_info" label="Note" value="`Inputs and outputs are shared between SCT low and SCT high` "
+                  available="get_other_available_timer_tab() != false"></info>
+               <!--inputs-->
+               <info id="in_line" value="`Input signals`" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+               <variable id="free_inputs" value="getPeripheralSignals($instance.getPeripheral()).filter(x->x.getValue().regexMatch(`.*in.*`)).filter(
+                  e -> $parent.inputs.getChildren().merge(get_other_available_timer_tab()!=false ? get_other_available_timer_tab().getSetting(`resources.inputs`).getChildren() : createArray())
+                  .map(x -> x.getSetting(`in`).getValue())
+                  .noneMatch(x -> x == e.getID())).map(x->x.getID()).sort((item1, item2) -> stringCompare(item1,item2))"/>
+               <info id="free_inputs_count" label="Available inputs" value="$parent.free_inputs.getValue().map(x->x.extractChannelId()) + ` Count: ` + $parent.free_inputs.getValue().size()"></info>
+               <info id="other_timer_inputs" label_expr="get_other_available_timer_tab()== false ? `` : get_other_available_timer_tab().getLabel() + ` inputs`" available="get_other_available_timer_tab() != false &amp;&amp; get_other_available_timer_tab().getSetting(`resources.inputs`).size() != 0" 
+                  value="get_other_available_timer_tab().getSetting(`resources.inputs`).map(x -> x.getSetting(`in_id`).getValue() + ` (` + x.getSetting(`in`).getEnumItemValue() + `)`).reduce(``, (x,y) -> x + (x == `` ? `` : `, `) + y)" >
+                  <description expr="`Input signals used in ` + get_other_available_timer_tab().getLabel() + ` that can be also used in `+ get_timer_tab().getLabel() +` events.`"></description>
+               </info>
+               <array id="inputs" label="Inputs" type="input_res_t" 
+                  options="UI_ARRAY_REORDER;UI_BORDER_HIDDEN;UI_SHOW_CONTENT_AS=TABLE;UI_ARRAY_INDICES_HIDDEN;UI_TABLE_COLUMN_WIDTHS=0,15,6,10,20"
+                  key_selector_expr="x -> x.getSetting(`in_id`).getValue() + ` [` + x.getSetting(`in`).getValue() + `]`" 
+                  max_expr="$configSet.main.max_input.getValue() - toInt(get_other_available_timer_tab()==false ? 0 : get_other_available_timer_tab().getSetting(`resources.inputs`).size())">
+                  <item_defaults>
+                     <set_default id="uid" value_expr="x -> getUniqueInt64()"/>
+                     <set_default id="in" value_expr=""/>
+                     <set_default id="in" value_expr="x -> `IN.` + $parent.free_inputs.getValue().map(x -> x.extractChannelID()).find_free_int_value_in_array(x.getParent().merge(get_other_available_timer_tab() == false ? createArray() : get_other_available_timer_tab().getSetting(`resources.inputs`)), `in`)"/>
+                     <set_default id="in_id" value_expr="x-> `INPUT_` + x.getSetting(`in`).getEnumItemValue()"/>
+                     <set_default id="sync" value_expr="x -> 1"/>
+                  </item_defaults>
+               </array>
+               <!--outputs-->
+               <info id="out_line" value="`Output signals`" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+               <variable id="free_outputs" value="getPeripheralSignals($instance.getPeripheral()).filter(x->x.getValue().regexMatch(`.*out.*`)).filter(
+                  e -> $parent.outputs.getChildren().merge(get_other_available_timer_tab()!=false ? get_other_available_timer_tab().getSetting(`resources.outputs`).getChildren() : createArray())
+                  .map(x -> x.getSetting(`out`).getValue())
+                  .noneMatch(x -> x == e.getID())).map(x->x.getID()).sort((item1, item2) -> stringCompare(item1,item2))"/>
+               <info id="free_outputs_count" label="Available outputs" value="$parent.free_outputs.getValue().map(x->x.extractChannelId())  + ` Count: ` +  $parent.free_outputs.getValue().size()"></info>
+               <info id="other_timer_outputs" label_expr="get_other_available_timer_tab()== false ? `` : get_other_available_timer_tab().getLabel() + ` outputs`" available="get_other_available_timer_tab() != false &amp;&amp; get_other_available_timer_tab().getSetting(`resources.outputs`).size() != 0" 
+                  value="get_other_available_timer_tab().getSetting(`resources.outputs`).map(x -> x.getSetting(`out_id`).getValue() + `(` + x.getSetting(`out`).getEnumItemValue() + `)`).reduce(``, (x,y) -> x + (x == `` ? `` : `, `) + y)" >
+                  <description expr="`Output signals used in ` + get_other_available_timer_tab().getLabel() + ` that can be also used in `+ get_timer_tab().getLabel() +` events.`"></description>
+               </info>
+               <array id="outputs" label="Outputs" type="output_res_t" options="UI_ARRAY_REORDER;UI_ARRAY_INDICES_HIDDEN;UI_BORDER_HIDDEN;UI_SHOW_CONTENT_AS=TABLE;UI_TABLE_COLUMN_WIDTHS=0,15,6,7,11,11,11,20"
+                  key_selector_expr="x -> x.getSetting(`out_id`).getValue() + ` [` + x.getSetting(`out`).getValue() + `]`"
+                  max_expr="$configSet.main.max_output.getValue() - toInt(get_other_available_timer_tab()==false ? 0 : get_other_available_timer_tab().getSetting(`resources.outputs`).size())">
+                  <item_defaults>
+                     <set_default id="uid" value_expr="x -> getUniqueInt64()"/>
+                     <set_default id="out" value_expr="x -> `OUT.` + $parent.free_outputs.getValue().map(x -> x.extractChannelID()).find_free_int_value_in_array(x.getParent().merge(get_other_available_timer_tab() == false ? createArray() : get_other_available_timer_tab().getSetting(`resources.outputs`)), `out`)"/>
+                     <set_default id="out_id" value_expr="x-> `OUTPUT_` + x.getSetting(`out`).getEnumItemValue()"/>
+                  </item_defaults>
+               </array>
+               <!--match/capture-->
+               <info id="match_cap_line" value="`Match/capture registers`" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+               <variable id="free_regs" value="createArray(0, 1, $configSet.main.max_match_cap.getValue() - 1)
+                  .sort((item1, item2) -> stringCompare(item1,item2))
+                  .filter(e -> $parent.match_cap_regs.getChildren()
+                  .map(x -> x.getSetting(`reg`).getEnumItemLabel().toInt())
+                  .noneMatch(x -> x == e))"/>
+               <info id="free_regs_count" label="Available registers" value="$parent.free_regs.getValue() + ` Count: ` + $parent.free_regs.getValue().size()"></info>
+               <array id="match_cap_regs" label="Match/capture" type="match_cap_res_t" 
+                  options="UI_ARRAY_REORDER;UI_BORDER_HIDDEN;UI_SHOW_CONTENT_AS=TABLE;UI_ARRAY_INDICES_HIDDEN;UI_TABLE_COLUMN_WIDTHS=0,15,6,6,9,9,9,9,7,20"
+                  key_selector_expr="x -> x.getSetting(`reg_id`).getValue() + ` [` + x.getSetting(`reg`).getValue() + `]`" max_expr="$configSet.main.max_match_cap.getValue()">
+                  <item_defaults>
+                     <set_default id="uid" value_expr="x -> getUniqueInt64()"/>
+                     <set_default id="reg" value_expr="x -> `REG.` + $parent.free_regs.getValue().find_free_int_value_in_array(x.getParent(), `reg`)"/>
+                     <set_default id="reg_id" value_expr="x -> `REG_` + x.getSetting(`reg`).getEnumItemLabel() + (get_other_available_timer_tab() != false ? `_` + get_timer_tab().getSetting(`timer_type`).getValue() : ``)"/>
+                     <set_default id="MATCH" value_expr="x -> 0"/>
+                     <set_default id="MATCHREL" value_expr="x -> 0"/>
+                  </item_defaults>
+               </array>   
+            </struct>               
+
+            <struct id="states_tab" label="States">
+               <variable id="free_states" value="createArray(0, 1, (featureDefined(`FSL_FEATURE_SCT_NUMBER_OF_STATES`) ? getFeature(`SCT_NUMBER_OF_STATES`) : 32) - 1)
+                  .sort((item1, item2) -> stringCompare(item1,item2))
+                  .filter(e -> $parent.states.getChildren()
+                  .map(x -> x.getSetting(`state_number`).getValue().toInt())
+                  .noneMatch(x -> x == e))"/>
+               <info id="free_states_count" label="Available states" value="$parent.free_states.getValue() + ` Count: ` +  $parent.free_states.getValue().size()"></info>               
+               <array id="states" label="States" type="state_res_t" min_expr="1" options="UI_BORDER_HIDDEN;UI_ARRAY_INDICES_HIDDEN;UI_SHOW_CONTENT_AS=TABLE;UI_ARRAY_REORDER;UI_TABLE_COLUMN_WIDTHS=0,15,6,40" 
+                  key_selector_expr="x -> `[` + x.getSetting(`state_number`).getValue() + `] ` + x.getSetting(`state_id`).getValue()"
+                  max_expr="$configSet.main.max_state.getValue().toInt()">
+                  <item_defaults>
+                     <set_default id="uid" value_expr="x -> getUniqueInt64()"/>
+                     <set_default id="state_number" value_expr="x -> $parent.free_states.getValue().find_free_int_value_in_array(x.getParent(), `state_number`)"/>
+                     <set_default id="state_id" value_expr="x -> `STATE_` + x.getSetting(`state_number`).getEnumItemValue()"/> <!-- + (get_other_available_timer_tab() != false ? `_` + get_timer_tab().getSetting(`timer_type`).getValue() : ``) -->
+                  </item_defaults>                  
+               </array>
+            </struct> 
+            
+            <struct id="events_tab" label="Events">
+               <variable id="free_events" value="createArray(0, 1, $configSet.main.max_event.getValue() - 1)
+                  .sort((item1, item2) -> stringCompare(item1,item2))
+                  .filter(e -> $parent.events.getChildren().merge(get_other_available_timer_tab()!=false ? get_other_available_timer_tab().getSetting(`events_tab.events`).getChildren() : createArray())
+                  .map(x -> x.getSetting(`event_number`).getValue().toInt())
+                  .noneMatch(x -> x == e))"/>
+               <info id="free_event_count" label="Available events" value="$parent.free_events.getValue() + ` Count: ` + $parent.free_events.getValue().size()"></info>
+               <array id="events" label="Events" type="event_t" max_expr="$configSet.main.max_event.getValue() - toInt(get_other_available_timer_tab()==false ? 0 : get_other_available_timer_tab().getSetting(`events_tab.events`).size())"
+                  options="ShowContentAs=MasterDetail;UI_ARRAY_REPRESENTATIONS=MASTER_DETAIL,TABS;UI_ARRAY_REORDER;UI_BORDER_HIDDEN;UI_TABLE_COLUMN_WIDTHS=12" 
+                      key_selector_expr="(x) -> (x.getSetting(`event_number`).getValue() + `: ` + x.getSetting(`event_id`).getValue())">
+                  <item_defaults>
+                     <set_default id="event_number" value_expr="x -> $parent.free_events.getValue().find_free_int_value_in_array(x.getParent().merge(get_other_available_timer_tab() == false ? createArray() : get_other_available_timer_tab().getSetting(`events_tab.events`)), `event_number`)"/>
+                     <set_default id="event_id" value_expr="x -> `EVENT_` + x.getSetting(`event_number`).getValue()"/>
+                     <set_default id="ev_config.event_ctrl.ev_input.0" value_expr="x -> ``"/>
+                     <set_default id="ev_config.event_ctrl.ev_output.0" value_expr="x -> ``"/>
+                     <set_default id="ev_config.event_ctrl.ev_state.0" value_expr="x -> ``"/>
+                  </item_defaults>
+               </array>
+            </struct>
+            
+         </struct>
+      </user_types>
+      <!-- **************************** settings *************************************** -->
+      <settings>
+         <!-- UI -->
+         <variable id="isUnified" value="$configSet.common_config.UNIFY.getValue() == `1`" options="REGISTERS_REFRESH">
+         </variable>
+         <reference id="common_config" label="General configuration" type="config_common_t"/>  
+         <struct id="main" label="Main" options="UI_LABEL_HIDDEN;UI_SHOW_CONTENT_AS=TABS">
+            <variable id="max_input" value="getPeripheralSignals($instance.getPeripheral()).countOccurrences(i -> i.getValue().regexMatch(`.*in.*`))"></variable>
+            <variable id="max_output" value="featureDefined(`FSL_FEATURE_SCT_NUMBER_OF_OUTPUTS`) ? getFeature(`FSL_FEATURE_SCT_NUMBER_OF_OUTPUTS`) : getPeripheralSignals($instance.getPeripheral()).countOccurrences(i -> i.getValue().regexMatch(`.*out.*`))"></variable>
+            <variable id="max_match_cap" value="featureDefined(`FSL_FEATURE_SCT_NUMBER_OF_MATCH_CAPTURE`) ? getFeature(`FSL_FEATURE_SCT_NUMBER_OF_MATCH_CAPTURE`) : 16"></variable>
+            <variable id="max_event" value="featureDefined(`FSL_FEATURE_SCT_NUMBER_OF_EVENTS`) ? getFeature(`FSL_FEATURE_SCT_NUMBER_OF_EVENTS`) : 16"></variable>
+            <variable id="max_state" value="featureDefined(`FSL_FEATURE_SCT_NUMBER_OF_STATES`) ? getFeature(`SCT_NUMBER_OF_STATES`) : 32"></variable>
+                       
+            <reference id="SCT_L" label="SCT low" label_expr="$configSet.isUnified.getValue() ? `SCT unified` : `SCT low`"  type="sct_app"/>            
+            <reference id="SCT_H" label="SCT high" type="sct_app" available="!$configSet.isUnified.getValue()"/>
+         </struct>
+         <bool id="enable_interrupt" label="Enable interrupt" options="UI_LABEL_BOLD">
+            <description>Enables initialization of the interrupt vector in the NVIC (Nested Vectored Interrupt Controller peripheral) and provides a definition of the interrupt routine name.</description>
+         </bool>
+         <reference id="interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" 
+            component_id="system" enable="$parent.enable_interrupt.value()" options="UI_LABEL_HIDDEN"/>
+         <!-- Config -->
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+         <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+         <variable id="clocksMacro" value="`SCT_CLOCKS`"></variable>
+         <variable id="resetsMacro" value="featureDefined(`WRITE_ZERO_ASSERT_RESET_PERIPHERAL`) &amp;&amp; getFeature(`WRITE_ZERO_ASSERT_RESET_PERIPHERAL`) ? `SCT_RSTS_N` : `SCT_RSTS`"></variable>
+         <struct id="sctimer_params">
+            <variable id="PERIPHERAL" value="$instance.getPeripheral()"></variable>
+            <variable id="VPREFIX" value="$configSet.inst_ID_def.getValue()"></variable>
+            <variable id="MATCH_REGS" value="$configSet.main.SCT_L.resources.match_cap_regs.getValue().merge($configSet.main.SCT_H.isAvailable() 
+               ?
+               $configSet.main.SCT_H.resources.match_cap_regs.getValue()
+               :
+               createArray()).filter(x -> x.getSetting(`REGMODE`).getValue() == 0).map(x->x.getSetting(`reg`).getEnumItemValue()).removeDuplicates(x -> x)"></variable>
+            <variable id="CAP_REGS" value="$configSet.main.SCT_L.resources.match_cap_regs.getValue().merge($configSet.main.SCT_H.isAvailable() 
+               ?
+               $configSet.main.SCT_H.resources.match_cap_regs.getValue()
+               :
+               createArray()).filter(x -> x.getSetting(`REGMODE`).getValue() == 1).map(x->x.getSetting(`reg`).getEnumItemValue()).removeDuplicates(x -> x)"></variable>
+            <variable id="OUT_REGS" value="$configSet.main.SCT_L.resources.outputs.getValue().merge($configSet.main.SCT_H.isAvailable() 
+               ?
+               $configSet.main.SCT_H.resources.outputs.getValue()
+               :
+               createArray()).map(x -> x.getSetting(`out`).getEnumItemValue()).removeDuplicates(x -> x)"></variable>
+            <variable id="EVENT_REGS" value="$configSet.main.SCT_L.events_tab.events.getValue().merge($configSet.main.SCT_H.isAvailable() 
+               ?
+               $configSet.main.SCT_H.events_tab.events.getValue()
+               :
+               createArray()).map(x -> x.getSetting(`event_number`).getEnumItemValue()).removeDuplicates(x -> x)"></variable>
+         </struct>
+         
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+         <def fragment="sct_defines">
+            <fragment id="define" for_elements_of="$this.resources.inputs">
+               <param id="name" expr="$this.in_id_def.getValue()"/>
+               <param id="value" expr="$this.in.getEnumItemValue() + `U`"/>
+               <param id="description" expr="`Input ` + $this.in.getEnumItemValue() + ` - `+ $this.in_id.getValue() +  ($this.description.getValue()==``? `` : `: ` + $this.description.getValue())"/>
+            </fragment>
+            <fragment id="define" for_elements_of="$this.resources.outputs">
+               <param id="name" expr="$this.out_id_def.getValue()"/>
+               <param id="value" expr="$this.out.getEnumItemValue() + `U`"/>
+               <param id="description" expr="`Output ` + $this.out.getEnumItemValue() + ` - `+ $this.out_id.getValue() +  ($this.description.getValue()==``? `` : `: ` + $this.description.getValue())"/>
+            </fragment>
+            <fragment id="define" for_elements_of="$this.resources.match_cap_regs">
+               <param id="name" expr="$this.reg_id_def.getValue()"/>
+               <param id="value" expr="$this.reg.getEnumItemValue() + `U`"/>
+               <param id="description" expr="$this.REGMODE.getEnumItemLabel() + ` register ` + $this.reg.getEnumItemValue() + ` - ` + $this.reg_id.getValue() + ($this.description.getValue()==``? `` : `: ` + $this.description.getValue())"/>
+            </fragment>
+            <fragment id="define" for_elements_of="$this.states_tab.states">
+               <param id="name" expr="$this.state_id_def.getValue()"/>
+               <param id="value" expr="$this.state_number.getEnumItemValue() + `U`"/>
+               <param id="description" expr="`State ` + $this.state_number.getValue() +  ` - ` +  $this.state_id.getValue() + ($this.description.getValue()==``? `` : `: ` + $this.description.getValue())"/>
+            </fragment>
+            <fragment id="define" for_elements_of="$this.events_tab.events">
+               <param id="name" expr="$this.event_id_def.getValue()"/>
+               <param id="value" expr="$this.event_number.getEnumItemValue() + `U`"/>
+               <param id="description" expr="`Event ` + $this.event_number.getEnumItemValue() + ` - `+ $this.event_id.getValue() + ($this.description.getValue()==``? `` : `: ` + $this.description.getValue())"/>
+            </fragment>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">clock</param>
+               <param id="filename">fsl_clock.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">reset</param>
+               <param id="filename">fsl_reset.h</param>
+            </fragment>
+         </section>
+        <section target="defines">
+           <if expr="!$configSet.isUnified.getValue()">
+              <text>/* SCT Low definitions */</text>
+              <br/>
+           </if>
+           <fragment id="sct_defines" apply_to="$configSet.main.SCT_L" if_expr="$configSet.main.SCT_L.isAvailable()"></fragment>
+           <if expr="!$configSet.isUnified.getValue()">
+              <text>/* SCT High definitions */</text>
+              <br/>
+           </if>
+           <fragment id="sct_defines" apply_to="$configSet.main.SCT_H" if_expr="$configSet.main.SCT_H.isAvailable()"></fragment>
+            <fragment id="all_assigned_regs_init">
+               <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+            </fragment>
+           <fragment id="IRQ_definitions" apply_to="$this.interrupt" if_expr="$this.interrupt.isEnabled()"></fragment>
+         </section>
+         <section target="global_vars">
+            <fragment id="global_var">
+               <param id="name" expr="$configSet.inst_ID.getValue() + `_sctClocks[] = ` + $configSet.clocksMacro.getValue()"/>
+               <param id="description">Enable the clock gate</param>
+               <param id="type">static const clock_ip_name_t</param>
+            </fragment>
+            <fragment id="global_var">
+               <param id="name" expr="$configSet.inst_ID.getValue() + `_sctResets[] = ` + $configSet.resetsMacro.getValue()"/>
+               <param id="description">Reset peripheral</param>
+               <param id="type">static const reset_ip_name_t</param>
+            </fragment>
+         </section>
+         <section target="init_function_body">
+            <fragment id="init_line">
+               <param id="code" expr="`CLOCK_EnableClock(`+ $configSet.inst_ID.getValue() + `_sctClocks[` + $instance.getPeripheral().getPeriphInstanceIndex() +  `]);`"></param>
+               <param id="description">Enable the clock gate</param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <fragment id="init_line">
+               <param id="code" expr="`RESET_PeripheralReset(`+ $configSet.inst_ID.getValue() + `_sctResets[` + $instance.getPeripheral().getPeriphInstanceIndex() +  `]);`"></param>
+               <param id="description">Reset peripheral</param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <fragment id="template" apply_to="$configSet.sctimer_params">
+               <param id="file">sctimer.template</param>
+               <param id="setting" expr="$this"></param>
+               <param id="separators"></param>
+               <param id="description" expr="$configSet.inst_ID.getValue() + ` general initialization`"></param>
+            </fragment>
+            <fragment id="IRQn_set_priority_default" apply_to="$this.interrupt" if_expr="$this.interrupt.isEnabled()"/>
+            <fragment id="IRQn_enable_default" apply_to="$this.interrupt" if_expr="$this.interrupt.isEnabled()"/>
+         </section>
+      </code>
+      <quick_selections>
+         <quick_selection id="default" label="Default">
+            <set id="common_config.CLKMODE">0</set>
+            <set id="common_config.UNIFY">1</set>
+         </quick_selection>
+         <default>default</default>
+      </quick_selections>
+   </config_set>
+</component:config_component>

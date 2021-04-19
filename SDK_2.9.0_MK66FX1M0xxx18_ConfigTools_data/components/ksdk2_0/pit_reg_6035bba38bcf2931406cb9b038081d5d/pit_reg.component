@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component:config_component
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd"
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0"
+   id="pit_reg" label="PIT" category="Register init" registers_init="true" options="UI_COMPONENT_MODE_HIDDEN">
+   
+   <description>Periodic Interrupt Timer (PIT)</description>
+   <mode id="PIT_GENERAL" label="General">
+      <description>General PIT initialization</description>
+      <config_set_refs>
+         <config_set_ref>pit_reg</config_set_ref>
+      </config_set_refs>
+      <master_peripheral exclusive="true">
+         <peripheral_type>PIT</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="pit_reg" label="General PIT configuration" from_source="mine">
+      <description>General PIT configuration</description>
+      <generated_types/>
+      <user_types>
+            <enum id="clock_source_t" label="Clock source selection" from="mine">            
+                <item id="kAltClock0" label="Bus clock" value="AltClock0"/> <!-- value = clock_unify_ID -->
+                <item id="kAltClock1" label="Source 1" value="AltClock1"/>               
+                <item id="kAltClock2" label="Source 2" value="AltClock2"/>               
+                <item id="kAltClock3" label="Source 3" value="AltClock3"/>                                       
+            </enum>  
+            <struct id="clockConfig_t" label="Clock configuration" from="clock">
+                <reference id="_clockSource" label="Clock source" type="clock_source_t" options="remove_from_struct_init" available="false"/> <!-- item used for ClockSource dynamic enum implementation only -->
+                <variable id="clockSourceUId" value="$parent.clockSource.getEnumItemValue()"/>
+                <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="enumItemsOf($parent._clockSource).arrayToEnumItems(
+                   enumItem -> (getPeripheralClockType($instance.getPeripheral(), enumItem.getValue()) != `NOT_CONNECTED`),
+                   enumItem -> enumItem.getID(),
+                   enumItem -> getPeripheralClock($instance.getPeripheral(), enumItem.getValue()),
+                   enumItem -> enumItem.getValue())">                   
+                   <description>Clock source selection</description>
+                   <validation>
+                      <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.clockSourceUId.getValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() == `GetFreq`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                         description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                         level="Warning">
+                         <feature name="frequency" evaluation="greaterThan">
+                            <data expr="0" unit="Hz" type="Frequency"/>
+                         </feature>
+                      </dependency>
+                      <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.clockSourceUId.getValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                         description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                         level="Error">
+                         <feature name="frequency" evaluation="greaterThan">
+                            <data expr="0" unit="Hz" type="Frequency"/>
+                         </feature>
+                      </dependency>
+                   </validation>
+                   <assign when="true">
+                        <register name="CTRL" bitfield="CLKSEL" value="$this.getEnumItemId().regexSubstr(`.*kAltClock(\d*)`,1).toInt()" reverse_value="x -> `kAltClock` + x"/>                 
+                   </assign>
+                </dynamic_enum>                
+                <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" items="createArray()
+                  .merge(getClockFunctionalGroups().arrayToEnumItems(
+                  enumItem -> true,
+                  enumItem -> enumItem,
+                  enumItem -> (getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSourceUId.getValue(), enumItem)) + ` Hz (`+ enumItem + `)`,
+                  enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSourceUId.getValue() , enumItem)))">                  
+                  <description>Selection of the clock source frequency</description>
+                  <validation>
+                     <constraint cond_expr="$this.getEnumItemValue().toHertz() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>           
+                  </validation>
+                  <custom_value_support default="0" validation_expr="x -> toHertz(x) >= 0" />
+                </dynamic_enum>
+                <variable id="clockSource_Hz" value="($parent.clockSource.isAvailable() ? ($parent.clockSourceFreq.getEnumItemValue().toHertz()) : `N/A`)"/>
+                <enum id="prescaler" label="Prescaler" from="mine" options="remove_from_struct_init">
+                    <description>Prescales the Clock source frequency to create clock for the PIT counter, see the Calculated clock item.</description>
+                    <assign when="true">
+                        <register name="CTRL" bitfield="PRESCALER" value="$this.getEnumItemValue().toInt()" reverse_value="x -> `p` + x"/>              
+                    </assign>
+                    <item id="p0" label="1" value="0"/>
+                    <item id="p1" label="2" value="1"/>
+                    <item id="p2" label="4" value="2"/>
+                    <item id="p3" label="8" value="3"/>
+                    <item id="p4" label="16" value="4"/>
+                    <item id="p5" label="32" value="5"/>
+                    <item id="p6" label="64" value="6"/>
+                    <item id="p7" label="128" value="7"/>
+                    <item id="p8" label="256" value="8"/>
+                    <item id="p9"  label="512" value="9"/>
+                    <item id="p10" label="1024" value="10"/>
+                    <item id="p11" label="2048" value="11"/>
+                    <item id="p12" label="4096" value="12"/>
+                    <item id="p13" label="8192" value="13"/>
+                    <item id="p14" label="16384" value="14"/>
+                    <item id="p15" label="32768" value="15"/>
+                </enum>
+                <info id="calculated_clock" label="Calculated clock" value="(($parent.clockSourceFreq.getEnumItemValue() != ``) ? system::calculateFreqPeriodRationalClk($parent.prescaler.getEnumItemLabel().toInt(), $parent.clockSourceFreq.getEnumItemValue().toHertz()) : `N/A`)">
+                    <description>
+                      Clock calculated as the Clock source frequency/Prescaler.
+                    </description>
+                </info>
+                <variable id="calculated_clock_v" value="(($parent.clockSourceFreq.getEnumItemValue() != ``) ? system::calculateRealFreqRationalClk($parent.prescaler.getEnumItemLabel().toInt(), $parent.clockSourceFreq.getEnumItemValue().toHertz()) : `N/A`)"/>               
+                <integer type="uint32_t" id="modulo" label="Modulo register value" min_expr="0" max_expr="$instance.getPeripheral().registerExists(`MOD_L`) &amp;&amp; $instance.getPeripheral().registerExists(`MOD_H`) ? 0xFFFFFFFF : 0xFFFF">
+                    <description>Initialization value of the Modulo register.</description>
+                    <assign when="$instance.getPeripheral().registerExists(`MOD_L`) &amp;&amp; $instance.getPeripheral().registerExists(`MOD_H`)">
+                        <register name="MOD_H" bitfield="MODULO_VALUE" value="$this.getValue().toInt() &gt;&gt; 16" reverse_value="x -> ($this.getValue().toInt() &amp; 0xffff) | (x &lt;&lt; 16)"/>
+                        <register name="MOD_L" bitfield="MODULO_VALUE" value="$this.getValue().toInt() &amp; 0xffff" reverse_value="x -> ($this.getValue().toInt() &amp; 0xffff0000) | (x)"/>
+                    </assign>
+                    <assign when="$instance.getPeripheral().registerExists(`MOD`)">
+                        <register name="MOD" bitfield="MODULO_VALUE" value="$this.getValue()" reverse_value="x -> x"/>
+                    </assign>
+                </integer>
+                <info id="period" label="Calculated roll-over period" value="(($parent.calculated_clock_v.getValue() != `N/A`) ? system::calculateFreqPeriodRationalClk(($parent.modulo.getValue()), $parent.calculated_clock_v.getValue().toHertz()) : `N/A`)">
+                    <description>
+                      Roll-over period calculated as the Calculated clock/Modulo register value.
+                    </description>
+                </info>
+                <variable id="calculated_rollover_clock_v" value="(($parent.calculated_clock_v.getValue() != `N/A`) ? system::calculateRealFreqRationalClk(($parent.modulo.getValue()), $parent.calculated_clock_v.getValue().toHertz()) : `N/A`)"/>
+            </struct>
+            <!-- Software reset -->
+            <variable id="softwareReset" value="0">           
+                <assign when="true">
+                    <register peripheral_expr="system::getInstanceSwResetPeripheral()" name_expr="system::getInstanceSwResetRegister()" bitfield_expr="system::getInstanceSwResetBitfield()" value="system::getInstanceSwResetDisableValue()"/>              
+                </assign>
+            </variable>
+            <struct id="pit_template_params_t" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+                <variable id="PERIPHERAL" value="$instance.getPeripheral()"></variable>
+                <variable id="VPREFIX" value="$configSet.inst_ID_def.getValue()"></variable>
+                <!-- Software reset -->
+                <variable id="SW_RESET_CONTROL_PERIPHERAL" value="system::getInstanceSwResetPeripheral()"></variable>
+                <variable id="SW_RESET_CONTROL_REGISTER" value="system::getInstanceSwResetRegister()"></variable>
+                <variable id="SW_RESET_CONTROL_BITFIELD" value="system::getInstanceSwResetBitfield()"></variable>
+            </struct>            
+      </user_types>
+      <settings>
+        <reference id="clock_config" label="Clock configuration" type="clockConfig_t">
+            <description>PIT clock configuration - clock source and prescaler selection.</description>
+        </reference>
+        <bool id="slaveMode" label="Slave mode">
+            <description>
+               Run PIT synchronously with master PIT.
+            </description>
+            <assign when="true">
+                <register name="CTRL" bitfield="SLAVE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+            </assign>
+        </bool>
+        <info id="simMaster" label="PIT Master" value="`Setting in the SIM component (MISC0[PIT_MSTR] bitfield).`" available="peripheralExists(`SIM`) &amp;&amp; bitfieldExists(`SIM`, `MISC0`, `PIT_MSTR`)">
+            <description>
+              There is additional PIT master selection in the SIM module, see MISC0[PIT_MSTR] bitfield.
+            </description>
+        </info>
+        <bool id="enableCounter" label="Enable counter in initialization">
+            <description>
+               Enable PIT counter in initialization.
+            </description>
+            <assign when="true">
+                <register name="CTRL" bitfield="CNT_EN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+            </assign>
+        </bool>
+        <bool id="enableRollOverInterruptSource" label="Enable roll-over interrupt">
+            <description>
+               Enable PIT roll-over interrupt.
+            </description>
+            <validation>
+                <constraint when_expr="$this.getValue()"
+                cond_expr="$parent.enable_irq.getValue()"
+                level="warning"
+                description_expr="`Interrupt source is enabled, but the INTC settings not. See Enable interrupt vector item.`"/>
+            </validation>
+            <assign when="true">
+                <register name="CTRL" bitfield="PRIE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+            </assign>
+        </bool>
+        <bool id="enable_irq" label="Enable interrupt vector" options="UI_LABEL_BOLD;REGISTERS_REFRESH">
+            <description>
+               Enable interrupts initialization, like priority and enablement in the INITC and SIM.
+            </description>
+            <validation>
+                <constraint when_expr="$this.value()"
+                cond_expr="$parent.enableRollOverInterruptSource.getValue()"
+                level="warning"
+                description_expr="`INTC settings are initialized, but the Interrupt source is not enabled. See Enable roll-over interrupt item.`"/>
+            </validation>
+        </bool>
+        <reference id="interrupt" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_irq.getValue()" options="UI_LABEL_HIDDEN"/>
+        <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+        <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+        <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+        <variable id="clockGate" value="1">
+            <assign when="true">
+            <register peripheral_expr="system::getInstanceClockGatePeripheral()" name_expr="system::getInstanceClockGateRegister()" bitfield_expr="system::getInstanceClockGateBitfield()" value="system::getInstanceClockGateEnableValue()"/>
+            </assign>
+         </variable>
+        <!-- Template parameters -->
+        <reference id="pit_template_params" type="pit_template_params_t" label="" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+        </reference>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+                <param id="name">device_registers</param>
+                <param id="filename">fsl_device_registers.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <fragment id="comment">
+               <param id="content" expr="$instance.getFnGroupName() + ` defines for ` + $instance.getPeripheral()"/>
+               <param id="paddingLevel" expr="0"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="$configSet.inst_peripheral_ID.getValue()"/>
+               <param id="value" expr="$instance.getPeripheral()"/>
+               <param id="description">Definition of peripheral ID.</param>
+            </fragment>
+            <fragment id="define" if_expr="$this.getSetting(`clock_config.clockSource_Hz`).getValue() != `N/A`">
+                <param id="name" expr="$configSet.inst_ID_def.getValue() + `_CLK_SOURCE_FREQ_HZ`"/>
+                <param id="value" expr="$this.getSetting(`clock_config.clockSource_Hz`).getValue().toHertz() + `U`"/>
+                <param id="description" expr="`Definition of the ` + $instance.getPeripheral() + ` clock source frequency in Hertz`"></param>
+            </fragment>
+            <fragment id="define" if_expr="$this.getSetting(`clock_config.calculated_clock_v`).getValue() != `N/A`">
+               <param id="name" expr="$configSet.inst_ID_def.getValue() + `_COUNTER_CLK_SOURCE_FREQ_HZ`"/>
+               <param id="value" expr="$this.getSetting(`clock_config.calculated_clock_v`).getValue().toHertz() + `U`"/>
+               <param id="description" expr="`Definition of the ` + $instance.getPeripheral() +  ` counter clock source frequency in Hertz divided by prescaler`"></param>
+            </fragment>
+            <fragment id="define" if_expr="$this.getSetting(`clock_config.calculated_rollover_clock_v`).getValue() != `N/A`">
+               <param id="name" expr="$configSet.inst_ID_def.getValue() + `_ROLLOVER_FREQ_HZ`"/>
+               <param id="value" expr="$this.getSetting(`clock_config.calculated_rollover_clock_v`).getValue().toHertz() + `U`"/>
+               <param id="description" expr="`Definition of the ` + $instance.getPeripheral() +  ` counter roll-over frequency in Hertz`"></param>
+            </fragment>
+            <fragment id="all_assigned_regs_init">
+                <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+            </fragment>  
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt" if_expr="$this.enable_irq.value()"/>
+         </section>
+         <section target="global_vars">
+         </section>
+         <section target="global_vars_extern">
+         </section>
+         <section target="common_pre_init_function">
+            <!-- Clock gate enable -->
+            <fragment id="clock_gate_enable_init"></fragment>
+         </section>
+         <section target="init_function_body">
+            <fragment id="template" apply_to="$configSet.pit_template_params">
+                <param id="file">fsl_pit.template</param>
+                <param id="setting" expr="$this"></param>
+                <param id="separators"></param>
+                <param id="description" expr="$instance.getPeripheral() + ` initialization`"></param>
+            </fragment>            
+         </section>
+      </code>
+      <quick_selections>
+         <quick_selection id="QS_PIT_1" label="Default">
+            <description>Default setting for PIT.</description>
+            <set id="enable_irq">false</set>
+         </quick_selection>
+         <default>QS_PIT_1</default>
+      </quick_selections>
+   </config_set>
+</component:config_component>

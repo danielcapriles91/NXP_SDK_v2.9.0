@@ -1,0 +1,129 @@
+#ifndef __USB_${idSnakeCase}$_APP_H__
+#define __USB_${idSnakeCase}$_APP_H__
+
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+#define DFU_EVENT_QUEUE_MAX (16)
+
+#define USB_PROTOCOL_DFU_APP_MODE (0x01) /**< Protocol code DFU subclass uses in DFU Program Mode */
+#define USB_PROTOCOL_DFU_PROGRAM_MODE (0x02) /**< Protocol code DFU subclass uses in DFU Program Mode */
+
+/*! @brief DFU state definition. */
+typedef enum _usb_dfu_state_struct
+{
+    kState_AppIdle = 0U,         /* App idle */
+    kState_AppDetach,            /* App detach */
+    kState_DfuIdle,              /* DFU idle */
+    kState_DfuDnLoadSync,        /* DFU dnload sync */
+    kState_DfuDnBusy,            /* DFU dnload busy */
+    kState_DfuDnLoadIdle,        /* DFU dnload idle */
+    kState_DfuManifestSync,      /* DFU manifest sync */
+    kState_DfuManifest,          /* DFU manifest */
+    kState_DfuManifestWaitReset, /* DFU manifest wait reset */
+    kState_DfuUpLoadIdle,        /* DFU upload idle */
+    kState_DfuError,
+} usb_dfu_state_struct_t;
+
+/*! @brief DFU file suffix definition. */
+typedef struct _usb_dfu_suffix_struct
+{
+    uint8_t bcdDevice[2];      /* release number of the device associated with firmware file */
+    uint8_t idProduct[2];      /* product ID */
+    uint8_t idVendor[2];       /* Vendor ID */
+    uint8_t bcdDFU[2];         /* DFU specification number */
+    uint8_t ucDfuSignature[3]; /* DFU signature */
+    uint8_t bLength;           /* Length of DFU suffix */
+    uint8_t dwCRC[4];          /* The CRC of entire file */
+} usb_dfu_suffix_struct_t;
+
+/*! @brief DFU status definition. */
+typedef struct _usb_dfu_status_struct
+{
+    uint8_t bStatus;           /* status result */
+    uint8_t bwPollTimeout[3U]; /* The minimum time host should wait before sending
+                                  a subsequent DFU GETSTATUS request */
+    uint8_t bState;            /* dfu state */
+    uint8_t iString;           /* Index of status description in string table */
+} usb_dfu_status_struct_t;
+
+/*! @brief DFU device definition. */
+typedef struct _usb_dfu_struct
+{
+    usb_dfu_status_struct_t dfuStatus;
+    uint32_t dfuFirmwareBlockLength;
+    uint32_t dfuIsTheFirstBlock;
+    uint32_t dfuCRC;
+    uint8_t *dfuFirmwareBlock;
+    uint8_t dfuFirmwareBlockStatus;
+    uint8_t dfuIsDownloadingFinished;
+    uint8_t dfuManifestationPhaseStatus;
+    uint32_t dfuFirmwareAddress;
+    uint32_t dfuFirmwareSize;
+    uint32_t dfuCurrentUploadLenght;
+    uint8_t dfuSuffix[0xFF];
+    uint8_t dfuReboot;
+    uint8_t crcCheck;
+    uint8_t dfuTimerId;
+} usb_dfu_struct_t;
+
+/*! @brief DFU device event definition. */
+typedef enum _usb_device_dfu_state_event
+{
+    kUSB_DeviceDfuEventDetachReq,
+    kUSB_DeviceDfuEventGetStatusReq,
+    kUSB_DeviceDfuEventClearStatusReq,
+    kUSB_DeviceDfuEventGetStateReq,
+    kUSB_DeviceDfuEventDnloadReq,
+    kUSB_DeviceDfuEventAbortReq,
+    kUSB_DeviceDfuEventUploadReq,
+    kUSB_DeviceDfuEventDetachTimeout,
+    kUSB_DeviceDfuEventPollTimeout,
+} usb_device_dfu_state_event_t;
+
+/* Define DFU event struct */
+typedef struct _usb_device_dfu_event_struct
+{
+    usb_device_dfu_state_event_t name;
+    uint16_t wValue;
+    uint16_t wLength;
+} usb_device_dfu_event_struct_t;
+
+/* Define DFU_ENET queue struct */
+typedef struct _dfu_queue
+{
+    uint32_t head;
+    uint32_t tail;
+    uint32_t maxSize;
+    uint32_t curSize;
+    osa_mutex_handle_t mutex;
+    usb_device_dfu_event_struct_t qArray[DFU_EVENT_QUEUE_MAX];
+} dfu_queue_t;
+
+/*******************************************************************************
+ * API
+ ******************************************************************************/
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+usb_status_t USB_Device${idCamelCase}$DetachReqest(uint16_t wTimeout);
+usb_status_t USB_Device${idCamelCase}$DownLoadReqest(uint16_t wLength, uint8_t **data);
+usb_status_t USB_Device${idCamelCase}$UpLoadReqest(uint32_t *length, uint8_t **data);
+usb_status_t USB_Device${idCamelCase}$GetStatusReqest(uint8_t *length, uint8_t **data);
+usb_status_t USB_Device${idCamelCase}$ClearStatusReqest(void);
+usb_status_t USB_Device${idCamelCase}$GetStateReqest(uint8_t *length, uint8_t **data);
+usb_status_t USB_Device${idCamelCase}$AbortReqest(void);
+
+void USB_Device${idCamelCase}$BusReset(void);
+void USB_Device${idCamelCase}$AppInit(void);
+void USB_Device${idCamelCase}$Dnload(void);
+void USB_Device${idCamelCase}$Manifest(void);
+void USB_Device${idCamelCase}$SwitchMode(void);
+usb_status_t USB_DeviceStateUpdate(void);
+usb_dfu_state_struct_t USB_Device${idCamelCase}$GetState(void);
+
+#if defined(__cplusplus)
+}
+#endif
+#endif /* __USB_${idSnakeCase}$_H__ */

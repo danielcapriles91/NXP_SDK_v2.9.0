@@ -1,0 +1,1240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component:config_component
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd"
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0" options="UI_COMPONENT_MODE_HIDDEN"
+   id="qtmr_reg" label="QTMR" category="Register init" registers_init="true">
+    <description>Quad Timer (TMR)</description>
+    <mode id="general" label="General">
+        <description>Quad Timer operation using interrupts (interrupt routines are defined by users)</description>
+        <config_set_refs>
+            <config_set_ref>generalConfig</config_set_ref>
+        </config_set_refs>
+        <master_peripheral exclusive="true">
+            <peripheral_type>TMR</peripheral_type>
+        </master_peripheral>
+    </mode>
+    <config_set label="Quad Timer general configuration" id="generalConfig" from_source="fsl_qtmr.h">
+        <description>Quad Timer general configuration.</description>
+        <generated_types>
+        </generated_types>
+        <user_types>
+            <enum id="qtmr_primary_count_source_t" label="Quad Timer primary clock source selection" from="_qtmr_primary_count_source">
+                <description></description>
+                <item id="0" label="Counter 0 input pin" value="0">
+                    <description>Counter 0 input pin is used as timer primary clock source.</description>
+                </item>
+                <item id="1" label="Counter 1 input pin" value="1">
+                    <description>Counter 1 input pin is used as timer primary clock source.</description>
+                </item>
+                <item id="2" label="Counter 2 input pin" value="2">
+                    <description>Counter 2 input pin is used as timer primary clock source.</description>
+                </item>
+                <item id="3" label="Counter 3 input pin" value="3">
+                    <description>Counter 3 input pin is used as timer primary clock source.</description>
+                </item>
+                <item id="4" label="Counter 0 output" value="4">
+                    <description>Counter 0 output is used as the timer primary clock source.</description>
+                </item>
+                <item id="5" label="Counter 1 output" value="5">
+                    <description>Counter 1 output is used as the timer primary clock source.</description>
+                </item>
+                <item id="6" label="Counter 2 output" value="6">
+                    <description>Counter 2 output is used as the timer primary clock source.</description>
+                </item>
+                <item id="7" label="Counter 3 output" value="7">
+                    <description>Counter 3 output is used as the timer primary clock source.</description>
+                </item>
+                <item id="8" label="Bus clock divided by 1" value="8">
+                    <description>Bus clock divide by 1 prescaler</description>
+                </item>
+                <item id="9" label="Bus clock divided by 2" value="9">
+                    <description>Bus clock divide by 2 prescaler</description>
+                </item>
+                <item id="10" label="Bus clock divided by 4" value="10">
+                    <description>Bus clock divide by 4 prescaler</description>
+                </item>
+                <item id="11" label="Bus clock divided by 8" value="11">
+                    <description>Bus clock divide by 8 prescaler</description>
+                </item>
+                <item id="12" label="Bus clock divided by 16" value="12">
+                    <description>Bus clock divide by 16 prescaler</description>
+                </item>
+                <item id="13" label="Bus clock divided by 32" value="13">
+                    <description>Bus clock divide by 32 prescaler</description>
+                </item>
+                <item id="14" label="Bus clock divided by 64" value="14">
+                    <description>Bus clock divide by 64 prescaler</description>
+                </item>
+                <item id="15" label="Bus clock divided by 128" value="15">
+                    <description>Bus clock divide by 128 prescaler</description>
+                </item>
+            </enum>
+            <enum id="qtmr_input_source_t" label="Quad Timer secondary clock sources selection" from="_qtmr_input_source">
+                <description></description>
+                <item id="0" label="Counter 0 input pin" value="0">
+                    <description>Counter 0 input pin is used as timer secondary clock source.</description>
+                </item>
+                <item id="1" label="Counter 1 input pin" value="1">
+                    <description>Counter 1 input pin is used as timer secondary clock source.</description>
+                </item>
+                <item id="2" label="Counter 2 input pin" value="2">
+                    <description>Counter 2 input pin is used as timer secondary clock source.</description>
+                </item>
+                <item id="3" label="Counter 3 input pin" value="3">
+                    <description>Counter 3 input pin is used as timer secondary clock source.</description>
+                </item>
+            </enum>
+            <enum id="qtmr_counting_mode_t" label="Quad Timer counting mode selection" from="_qtmr_counting_mode">
+                <description></description>
+                <item id="0" label="No counting operation" value="0">
+                    <description>No counting operation of the timer, i.e. the timer is stopped and the source clock is not selected.</description>
+                </item>
+                <item id="1" label="Rising edges of primary source" value="1">
+                    <description>Timer counts rising edges of primary clock source (or falling edge when inverted input polarity is selected in the Input capture mode)</description>
+                </item>
+                <item id="2" label="Rising and falling edges of primary source" value="2">
+                    <description>Timer counts rising and falling edges of primary clock source.</description>
+                </item>
+                <item id="3" label="Rising edges of primary source while secondary input high active" value="3">
+                    <description>Timer counts rising edges of the primary clock source while secondary input high active, i.e. the secondary clock input is used for controlling of the counting operation.</description>
+                </item>
+                <item id="4" label="Quadrature count mode, uses primary and secondary sources" value="4">
+                    <description>Quadrature count mode of the timer that uses primary and secondary clocks sources.</description>
+                </item>
+                <item id="5" label="Count rising edges of primary source; secondary source specifies direction" value="5">
+                    <description>Timer count rising edges of the primary clock source (or falling edge when inverted input polarity is selected in the Input capture mode); the secondary clock source specifies direction of counting.</description>
+                </item>
+                <item id="6" label="Edge of secondary source triggers primary count until compare" value="6">
+                    <description>Edge (positive or negative edge - it depends on the input polarity setting) of the secondary clock source triggers counting of primary clock source. Counting will continue until a compare event occurs or another positive input transition is deteced.</description>
+                </item>
+                <item id="7" label="Cascaded count mode (up/down)" value="7">
+                    <description>Cascaded count mode (up/down). The primary clock source must be set to one of the counter outputs (e.g. Counter 0 output).</description>
+                </item>
+            </enum>
+            <enum id="qtmr_output_mode_t" label="Quad Timer output mode selection" from="_qtmr_output_mode">
+                <description></description>
+                <item id="0" label="Asserted while counter is active"  value="0">
+                    <description>Assert timer output signal (OFLAG) while counter is active (counting).</description>
+                </item>
+                <item id="1" label="Clear on successful compare" value="1">
+                    <description>Clear timer output signal (OFLAG) on successful compare.</description>
+                </item>
+                <item id="2" label="Set on successful compare" value="2">
+                    <description>Set timer output signal (OFLAG) on successful compare</description>
+                </item>
+                <item id="3" label="Toggle on successful compare" value="3">
+                    <description>Toggle timer output signal (OFLAG) on successful compare</description>
+                </item>
+                <item id="4" label="Toggle using alternating compare registers" value="4">
+                    <description>Toggle timer output signal (OFLAG) using alternating compare registers.</description>
+                </item>
+                <item id="5" label="Set on compare, clear on secondary source input edge" value="5">
+                    <description>Set timer output signal (OFLAG) on compare, clear on secondary source input edge.</description>
+                </item>
+                <item id="6" label="Set on compare, clear on counter rollover" value="6">
+                    <description>Set timer output signal (OFLAG) on compare, clear on counter rollover</description>
+                </item>
+                <item id="7" label="Enable gated clock output while count is active" value="7">
+                    <description>When selected the counter will output a pulse stream of pulses that has the same frequency of the selected clock source, and the number of output pulses is equal tothe compare value minus the init value.</description>
+                </item>
+            </enum>
+            <enum id="qtmr_input_capture_edge_t" label="Quad Timer input capture edge mode, rising edge, or falling edge" from="_qtmr_input_capture_edge">
+                <description></description>
+                <item id="0" label="Disabled" value="0">
+                    <description>Capture is disabled</description>
+                </item>
+                <item id="1" label="Rising edge" value="1">
+                    <description>Capture on rising edge (input polarity is not inverted) or falling edge (input polarity is inverted)</description>
+                </item>
+                <item id="2" label="Falling edge" value="2">
+                    <description>Capture on falling edge (input polarity is not inverted) or rising edge (input polarity is inverted)</description>
+                </item>
+                <item id="3" label="Both edges" value="3">
+                    <description>Capture on both edges</description>
+                </item>
+            </enum>
+            <enum id="qtmr_debug_action_t" label="Quad Timer options for the Debug mode" from="_qtmr_debug_action">
+                <description></description>
+                <item id="0" label="Normal operation" value="0">
+                    <description>Continue with normal operation</description>
+                </item>
+                <item id="1" label="Halt counter" value="1">
+                    <description>Halt counter</description>
+                </item>
+                <item id="2" label="Force output to logic 0" value="2">
+                    <description>Force output to logic 0</description>
+                </item>
+                <item id="3" label="Halt counter and force output to logic 0" value="3">
+                    <description>Halt counter and force output to logic 0</description>
+                </item>
+            </enum>
+            <!-- Interrupt sources -->
+            <struct id="qtmr_interrupt_enable_t" label="Quad Timer interrupts"> <!--options="UI_MULTI_COLUMN=2"--> 
+                <description>Quad timer interrupt request sources</description>
+                <!-- SCTRL[TCFIE] -->
+                <reference id="kQTMR_CompareInterruptEnable" label="Compare 1 or 2" type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                    <options_expr>
+                        <option id="register" expr="`SCTRL`+ $parent.getParent().getSetting(`channel`).getValue()"></option>
+                        <option id="bitfield" expr="`TCFIE`"/>
+                        <option id="mask" expr="1"/>
+                    </options_expr>
+                    <description>Enables the compare interrupt when a successfull compare occurs (Compare 1 or Compare 2).</description>
+                </reference>
+                <!-- Clearing interrupt flag -->
+                <variable id="kQTMR_CompareInterruptEnable_clearFlagCode" value="$parent.kQTMR_CompareInterruptEnable.getValue()
+                    ?  leftPadding(`/* Clear the compare interrupt flag. */`, 1) + `&#10;` +
+                    leftPadding(`` + $instance.getPeripheral() + `->CHANNEL[` + $parent.getParent().getSetting(`channel`).getValue() + `].SCTRL &amp;= ~TMR_SCTRL_TCF_MASK;`, 1) + `&#10;`
+                    : ``">
+                </variable>
+                <!-- CSCTRL[TCF1EN] -->
+                <reference id="kQTMR_Compare1InterruptEnable" label="Compare 1" type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                    <options_expr>
+                        <option id="register" expr="`CSCTRL`+ $parent.getParent().getSetting(`channel`).getValue()"></option>
+                        <option id="bitfield" expr="`TCF1EN`"/>
+                        <option id="mask" expr="1"/>
+                    </options_expr>
+                    <description>Enables the compare 1 interrupt when a successfull compare 1 occurs.</description>
+                </reference>
+                <!-- Clearing interrupt flag -->
+                <variable id="kQTMR_Compare1InterruptEnable_clearFlagCode" value="$parent.kQTMR_Compare1InterruptEnable.getValue()
+                    ?  leftPadding(`/* Clear the compare 1 interrupt flag. */`, 1) + `&#10;` +
+                    leftPadding(`` + $instance.getPeripheral() + `->CHANNEL[` + $parent.getParent().getSetting(`channel`).getValue() + `].CSCTRL &amp;= ~TMR_CSCTRL_TCF1_MASK;`, 1) + `&#10;`
+                    : ``">
+                </variable>
+                <!-- CSCTRL[TCF2EN] -->
+                <reference id="kQTMR_Compare2InterruptEnable" label="Compare 2" type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                    <options_expr>
+                        <option id="register" expr="`CSCTRL`+ $parent.getParent().getSetting(`channel`).getValue()"></option>
+                        <option id="bitfield" expr="`TCF2EN`"/>
+                        <option id="mask" expr="1"/>
+                    </options_expr>
+                    <description>Enables the compare 2 interrupt when a successfull compare 2 occurs.</description>
+                </reference>
+                <!-- Clearing interrupt flag -->
+                <variable id="kQTMR_Compare2InterruptEnable_clearFlagCode" value="$parent.kQTMR_Compare2InterruptEnable.getValue()
+                    ?  leftPadding(`/* Clear the compare 2 interrupt flag. */`, 1) + `&#10;` +
+                    leftPadding(`` + $instance.getPeripheral() + `->CHANNEL[` + $parent.getParent().getSetting(`channel`).getValue() + `].CSCTRL &amp;= ~TMR_CSCTRL_TCF2_MASK;`, 1) + `&#10;`
+                    : ``">
+                </variable>
+                <!-- SCTRL[TOFIE] -->
+                <reference id="kQTMR_OverflowInterruptEnable" label="Timer overflow" type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                    <options_expr>
+                        <option id="register" expr="`SCTRL`+ $parent.getParent().getSetting(`channel`).getValue()"></option>
+                        <option id="bitfield" expr="`TOFIE`"/>
+                        <option id="mask" expr="1"/>
+                    </options_expr>
+                    <description>Enables timer overflow interrupt.</description>
+                </reference>
+                <!-- Clearing interrupt flag -->
+                <variable id="kQTMR_OverflowInterruptEnable_clearFlagCode" value="$parent.kQTMR_OverflowInterruptEnable.getValue()
+                    ?  leftPadding(`/* Clear the timer overflow interrupt flag. */`, 1) + `&#10;` +
+                    leftPadding(`` + $instance.getPeripheral() + `->CHANNEL[` + $parent.getParent().getSetting(`channel`).getValue() + `].SCTRL &amp;= ~TMR_SCTRL_TOF_MASK;`, 1) + `&#10;`
+                    : ``">
+                </variable>
+                <!-- SCTRL[IEFIE] -->
+                <reference id="kQTMR_EdgeInterruptEnable" label="Input edge (Capture)" type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                    <options_expr>
+                        <option id="register" expr="`SCTRL`+ $parent.getParent().getSetting(`channel`).getValue()"></option>
+                        <option id="bitfield" expr="`IEFIE`"/>
+                        <option id="mask" expr="1"/>
+                    </options_expr>
+                    <description>Enables Input Edge Flag interrupt that is invoked by a proper input capture event in the capture mode of the timer.</description>
+                    <validation>
+                        <constraint when_expr="$this.getValue()" cond_expr="!$parent.getParent().getSetting(`dma.kQTMR_InputEdgeFlagDmaEnable`).getValue()" level="error" description="The Input edge (Capture) dma request and the Input edge (capture) interrupt source can not be enabled together."/>
+                    </validation>
+                </reference>                
+                <!-- Clearing interrupt flag -->
+                <variable id="kQTMR_EdgeInterruptEnable_clearFlagCode" value="$parent.kQTMR_EdgeInterruptEnable.getValue()
+                    ?  leftPadding(`/* Clear the input edge interrupt flag. */`, 1) + `&#10;` +
+                    leftPadding(`` + $instance.getPeripheral() + `->CHANNEL[` + $parent.getParent().getSetting(`channel`).getValue() + `].SCTRL &amp;= ~TMR_SCTRL_IEF_MASK;`, 1) + `&#10;`
+                    : ``">
+                </variable>
+            </struct>
+            <!-- DMA requests -->
+            <struct id="qtmr_dma_enable_t" label="List of Quad Timer DMA enable">
+                <description>Quad timer dma request sources</description>
+                <!-- DMAn[IEFDE] -->
+                <reference id="kQTMR_InputEdgeFlagDmaEnable" label="Input edge (Capture)" type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                    <options_expr>
+                        <option id="register" expr="`DMA`+ $parent.getParent().getSetting(`channel`).getValue()"></option>
+                        <option id="bitfield" expr="`IEFDE`"/>
+                        <option id="mask" expr="1"/>
+                    </options_expr>
+                    <description>Enables Input Edge Flag (Capture) DMA request that is invoked by a proper input capture event in the capture mode of the timer.</description>
+                    <validation>
+                        <constraint when_expr="$this.getValue()" cond_expr="!$parent.getParent().getSetting(`interruptSources.kQTMR_EdgeInterruptEnable`).getValue()" level="error" description="The Input edge (Capture) dma request and the Input edge (capture) interrupt source can not be enabled together."/>
+                    </validation>
+                </reference>  
+                <!-- DMAn[CMPLD1DE] -->
+                <reference id="kQTMR_ComparatorPreload1DmaEnable" label="Comparator preload register 1" type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                    <options_expr>
+                        <option id="register" expr="`DMA`+ $parent.getParent().getSetting(`channel`).getValue()"></option>
+                        <option id="bitfield" expr="`CMPLD1DE`"/>
+                        <option id="mask" expr="1"/>
+                    </options_expr>
+                    <description>Enables the comparator preload register 1 DMA request whenever data is transfered from the comparator load register into compare register.</description>
+                </reference>  
+                <!-- DMAn[CMPLD2DE] -->
+                <reference id="kQTMR_ComparatorPreload2DmaEnable" label="Comparator preload register 2" type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                    <options_expr>
+                        <option id="register" expr="`DMA`+ $parent.getParent().getSetting(`channel`).getValue()"></option>
+                        <option id="bitfield" expr="`CMPLD2DE`"/>
+                        <option id="mask" expr="1"/>
+                    </options_expr>
+                    <description>Enables the comparator preload register 2 DMA request whenever data is transfered from the comparator load register into compare register.</description>
+                </reference>  
+            </struct>
+            <!-- Quad timer channel enumeration type -->
+            <enum id="qtmr_channel_selection_t" label="List of channel selection" from="_qtmr_channel_selection">
+                <description></description>
+                <item id="0" label="Channel 0" value="0">
+                    <description>Quad timer channel 0</description>
+                </item>
+                <item id="1" label="Channel 1" value="1">
+                    <description>Quad timer channel 1</description>
+                </item>
+                <item id="2" label="Channel 2" value="2">
+                    <description>Quad timer channel 2</description>
+                </item>
+                <item id="3" label="Channel 3" value="3">
+                    <description>Quad timer channel 3</description>
+                </item>
+            </enum>
+            <enum id="count_length_t">
+                <item id="0" label="Free running" value="0">
+                    <description>Count until roll over at 0xFFFF and then continue by re-initializing the counter from the load register.</description>    
+                </item>
+                <item id="1" label="Count to compare" value="1">
+                    <description>
+Count until compare, then re-initialize using the LOAD regsiter. If counting up, a successful compare occurs when the counter reaches a Compare 1 value. 
+If counting down, a successful compare occurs when the counter reaches a COMP2 value. 
+When output mode #4 (Toggle output signal using alternating compare registers) is used, alternating values of Compare 1 and Compare 2 are used to generate successful comparisons. 
+                    </description>    
+                </item>
+            </enum>
+            <enum id="count_direction_t">
+                <item id="0" label="Up" value="0">
+                    <description>Normal count direction up.</description>    
+                </item>
+                <item id="1" label="Down" value="1">
+                    <description>Reverse count direction down.</description>    
+                </item>
+            </enum>
+            <enum id="triggered_count_mode_t">
+                <item id="0" label="Stop on second trigger" value="0">
+                    <description>Stop counter upon receiving a second trigger event while still counting from the first trigger event.</description>    
+                </item>
+                <item id="1" label="Reload on second trigger" value="1">
+                    <description>Reload the counter upon receiving a second trigger event while still counting from the first trigger event.</description>    
+                </item>
+            </enum>
+            <enum id="compare_load_mode_t">
+                <item id="0" label="Never preload" value="0">
+                    <description>Never preload the compare register.</description>    
+                </item>
+                <item id="1" label="Load on Compare 1" value="1">
+                    <description>Load upon successful compare with the value in the Compare 1 register.</description>    
+                </item>
+                <item id="2" label="Load on Compare 2" value="2">
+                    <description>Load upon successful compare with the value in the Compare 2 register.</description>    
+                </item>
+            </enum>
+            <enum id="output_value_t" label="Output value type">
+                <item id="0" label="0" value="0">
+                    <description>The low level (0) of the output.</description>
+                </item>    
+                <item id="1" label="1" value="1">
+                    <description>The high level (1) of the output.</description>
+                </item>    
+            </enum>
+            <!-- Timer channel enable type -->
+            <struct id="timer_channel_t">
+                <!-- ENBL[ENBL] -->
+                <reference id="enableTimerChannel" label="Enable timer channel  " type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                    <options_expr>
+                        <option id="register" expr="`ENBL`"></option>
+                        <option id="bitfield" expr="`ENBL`"/>
+                        <option id="mask" expr="1 &lt;&lt; $parent.getID().toInt()"/>
+                    </options_expr>
+                    <description> These setting enable the prescaler (if it is being used) and counter of the channel. Multiple enable bits (ENBL) can be set at the same time to synchronize the start of separate counters. 
+                      If the timer channel is enabled (the ENBL bit is set) then the channel starts its counter as soon as the Counting mode is not "No counting operation". When the timer channel is disabled (the ENBL bit is clear) the corresponding counter maintains its current value.
+                    </description>
+                </reference> 
+                <!-- Clock gate enable -->
+                <variable id="clockGate" value="1">
+                    <assign when="true">
+                        <register peripheral_expr="system::getClockGatePeripheral($instance.getPeripheral(), `CH` + $parent.getId())" 
+                            name_expr="system::getClockGateRegister($instance.getPeripheral(), `CH` + $parent.getId())" 
+                            bitfield_expr="system::getClockGateBitfield($instance.getPeripheral(), `CH` + $parent.getId())"
+                            value="system::getClockGateEnableValue($instance.getPeripheral(), `CH` + $parent.getId())"/>
+                    </assign>
+                </variable>
+            </struct>
+            <!-- Input filter configuration strcuture -->
+            <struct id="input_filter_t" options="REGISTERS_REFRESH">
+                <description>Input filter configuration.</description>
+                <string id="inputFilterPeriod" label="Sample period"  
+                    validation_expr="x -> system::validateValueFreqPeriod(x, 0, 255)">
+                    <description>
+                        The input filter sampling period value in number of bus clock cycles, frequency units or time units. This period is used for sampling of the timer input signal. When the value 0 is selected the filter is bypassed.
+                        
+                        An integer number in range 1 - 255 (0xFF) is processed as a value in ticks of bus clock, a frequency value must be in format &quot;float_number [Hz, kHz, MHz or GHz]&quot;, a period value must be in format &quot;float_number [ns, us, ms, s, m, h or d]&quot;.&lt;br/&gt;
+                        Frequency units and time units can only be used when clock source frequency is selected (clock must not be disabled).&lt;br/&gt;
+                    </description>
+                    <!--                    <validation>
+                            <constraint when_expr="$parent.freq_value.getValue() != `N/A`" cond_expr="($parent.freq_value.getValue().toInt() &lt;= 0xFFFF) &amp;&amp; ($parent.freq_value.getValue().toInt() &gt; 0)"  level="error" description="The timer period in ticks must be in range 1 - 0xFFFF (65535) because of the 16 bits width of the timer. Adjust the PWM frequency/period and/or the timer input frequency."/>
+                        </validation>-->
+                    <assign when="true">
+                        <register name_expr="`FILT`+ $parent.getID()" bitfield="FILT_PER" 
+                            value="$parent.inputFilterPeriod_value.getValue().isInt() ? $parent.inputFilterPeriod_value.getValue() : 0" 
+                            reverse_value="x -> x"/>
+                    </assign>
+                </string>
+                <variable id="inputFilterPeriod_value" value="system::getIntDividerValue($parent.inputFilterPeriod.getValue(), $configSet.clockSourceFreq.getEnumItemValue())"/>
+                <info id="inputFilterPeriod_info" label="Calculated period [ticks/Hz/sec]" 
+                    value=" system::calculateTicksFreqPeriod($parent.inputFilterPeriod_value.getValue(), $configSet.clockSourceFreq.getEnumItemValue())">
+                    <description>The calculated input filter sampling period in number of ticks of bus clock cycles, sampling frequency and time period.</description>
+                </info>
+                <!-- register value = Input filter count value - 3 -->
+                <!-- FILTn[FILT_CNT] -->
+                <integer id="inputFilterCount" label="Input filter count" min_expr="3" max_expr="10" type="uint8_t">
+                    <description>The input filter count value (range 3 - 10) represent the number of consecutive samples that must agree prior to the input filter accepting an input transition. The value of FILT_CNT affects the input latency.</description>
+                    <assign when="true">
+                        <register name_expr="`FILT`+ $parent.getID()" bitfield="FILT_CNT" value="$this.getValue().toInt()-3" reverse_value="x -> (x+3)"/>
+                    </assign>
+                </integer>
+                <!-- Turning on the input filter (setting FILT_PER to a non-zero value) introduces a latency of (((FILT_CNT + 3) x FILT_PER) + 2) IP bus clock periods. -->
+                <info id="inputFilterLatency" label="Input filter latency" value="($parent.inputFilterPeriod_value.getValue().isInt() &amp;&amp; ($parent.inputFilterPeriod_value.getValue() != 0)) 
+                    ? system::calculatePeriod(($parent.inputFilterCount.getValue() *  $parent.inputFilterPeriod_value.getValue()) + 2, $configSet.clockSourceFreq.getEnumItemValue())
+                    : `Input filter bypassed`" >
+                    <description>
+                        When the input filter is enabled (non-zero value of the Filter sampling period setting) the filter introduce a latency that is computed as:
+                        (Filter sampling period * Input filter count + 2) * bus clock cycle
+                    </description>
+                </info>                
+            </struct>
+            <!-- Quad timer main configuration structure -->
+            <struct id="qtmr_config_t" label="Quad Timer config structure" from="_qtmr_config">
+                <description>Global configuration settings of the Quad Timer peripheral.</description>
+<!--                <string id="channel_prefix_id" label="Channel ID">
+                   <description>The identifier that is used as a part of the timer channel identifier definition in the header file.</description>
+                   <validation>
+                       <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description="The channel name is not a valid C identifier."/>
+                       <constraint cond_expr="($parent.getParent().searchInArray(item -> (($parent.getID() != item.getID()) &amp;&amp; 
+                           ((item.getSetting(`channel_prefix_id`).getValue())  ==  ($this.getValue())))) &lt; 0)" 
+                           level="error" description_expr="`The identifier ` + $this.getValue() + ` is duplicated, i.e. it is already used for another channel.`"/>
+                   </validation>
+                </string>-->
+                <reference id="channel" label="Timer channel" type="qtmr_channel_selection_t" options="REGISTERS_REFRESH">
+                    <validation>
+                        <!-- constraint for checking of duplicated channels -->
+                        <constraint cond_expr="($parent.getParent().searchInArray(item -> (($parent.getID() != item.getID()) &amp;&amp; 
+                                          ((item.getSetting(`channel`).getValue())  ==  ($this.getValue())))) &lt; 0)" level="error" 
+                                          description_expr="`Duplicated channel (` + $this.getValue() + `) is selected. Select each channel once only.`"/>
+                    </validation>
+                </reference>
+<!--                <variable id="channel_ID" value="$configSet.inst_ID.getValue() + `_` + $parent.channel_prefix_id.getValue()"></variable>
+                <variable id="channel_ID_def" value="toUpperCase($parent.channel_ID.getValue() + `_CHANNEL`)"></variable>
+                <variable id="channel_clock_src_ID" value="toUpperCase($configSet.inst_ID_def.getValue() + `_` + $parent.channel_prefix_id.getValue() + `_CLOCK_SOURCE`)"></variable>-->
+                <variable id="channel_ID" value="$configSet.inst_ID.getValue() + `_Channel_` + $parent.channel.getEnumItemId()"/>
+                <variable id="channel_clock_src_ID" value="toUpperCase($configSet.inst_ID_def.getValue() + `_CHANNEL_` + $parent.channel.getEnumItemId() + `_CLOCK_SOURCE`)"/>
+                <!-- Clock gate enable -->
+<!--                <variable id="clockGate" value="1">
+                    <assign when="true">
+                        <register peripheral_expr="system::getClockGatePeripheral($instance.getPeripheral(), `CH` + $parent.channel.getEnumItemValue())" 
+                                  name_expr="system::getClockGateRegister($instance.getPeripheral(), `CH` + $parent.channel.getEnumItemValue())" 
+                                  bitfield_expr="system::getClockGateBitfield($instance.getPeripheral(), `CH` + $parent.channel.getEnumItemValue())"
+                                  value="system::getClockGateEnableValue($instance.getPeripheral(), `CH` + $parent.channel.getEnumItemValue())"/>
+                    </assign>
+                </variable>-->
+                <!-- Channel configuration settings -->
+                <struct id="channelConfig" label="Channel configuration" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+                    <quick_selections>
+                        <quick_selection id="default" label="No counting">
+                            <description>Default after reset setting (no counting mode of the counter).</description>
+                            <set id="primarySource">0</set>
+                            <set id="primarySourceFreq">N/A</set>
+                            <set id="secondarySource">0</set>
+<!--                            <set id="inputFilterPeriod">0</set>-->
+                            <set id="countingMode">0</set>
+                            <set id="countLength">0</set>
+                            <set id="compare1Period">0</set>
+                            <set id="compare2Period">0</set>
+                            <set id="compareLoad1">0</set>
+                            <set id="compareLoad2">0</set>
+                            <set id="counterLoad">0</set>
+                            <set id="counterInit">0</set>
+                            <set id="outputMode">0</set>
+                            <set id="outputEnabled">false</set>
+                            <set id="enableTimerInInit">true</set>
+                        </quick_selection>
+<!--                        <quick_selection id="TimerInt" label="Periodic interrupt">
+                            <description>Generating periodic interrupt with period driven by the Compare 1 register. When compare 1 occurs the interrupt is invoked. The interrupt function must be implemented is the user code.</description>
+                            <set id="primarySource">9</set>
+                            <set id="countingMode">1</set>
+                            <set id="countLength">1</set>
+                            <set id="compare1Period">1000</set>
+                            <set id="compare2Period">0</set>
+                            <set id="compareLoad1">1000</set>
+                            <set id="compareLoad2">0</set>
+                            <set id="counterLoad">0</set>
+                            <set id="counterInit">0</set>
+                            <set id="interruptSources.kQTMR_Compare1InterruptEnable">true</set>
+                            <set id="enable_irq">true</set>
+                            <set id="interrupt.dsc_enable_interrrupt">iprVal1</set>
+                            <set id="enableTimerInInit">true</set>
+                        </quick_selection>
+                        <quick_selection id="TimerOut" label="Periodic output">
+                            <description>Generating periodic output signal (50% duty) with period driven by the Compare 1 register. When compare 1 occurs the output is toggled - the compare 1 value corresponds the half of the period.</description>
+                            <set id="primarySource">9</set>
+                            <set id="countingMode">1</set>
+                            <set id="countLength">1</set>
+                            <set id="compare1Period">1000</set>
+                            <set id="compare2Period">0</set>
+                            <set id="compareLoad1">1000</set>
+                            <set id="compareLoad2">0</set>
+                            <set id="counterLoad">0</set>
+                            <set id="counterInit">0</set>
+                            <set id="outputMode">3</set>
+                            <set id="outputEnabled">true</set>
+                            <set id="enableTimerInInit">true</set>
+                        </quick_selection>
+                        <quick_selection id="PWM" label="PWM output">
+                            <description>Generating PWM output signal with period driven by the counter register (counter is counting down in free running mode). The signal duty is driven by the Compare 2 value. When compare 2 occurs the output is set and when counter overflow (0 value) the output is set.</description>
+                            <set id="primarySource">9</set>
+                            <set id="countingMode">1</set>
+                            <set id="countLength">0</set>
+                            <set id="countDirection">1</set>
+                            <set id="compare1Period">0</set>
+                            <set id="compare2Period">10000</set>
+                            <set id="compareLoad1">0</set>
+                            <set id="compareLoad2">0</set>
+                            <set id="counterLoad">0</set>
+                            <set id="counterInit">0</set>
+                            <set id="outputMode">6</set>
+                            <set id="outputEnabled">true</set>
+                            <set id="enableTimerInInit">true</set>
+                        </quick_selection>
+                        <quick_selection id="varFreqPWM" label="Variable frequency PWM">
+                            <description>Generating variable frequency PWM output signal with period driven by the Compare 1 and Compare 2 registers. The Compare 1 drives the active level of the output signal period and the compare 2 register drives the inactive part of the output signal period occurs. The frequency is driven by summary value of the Compare 1 and Compare 2 registers.</description>
+                            <set id="primarySource">9</set>
+                            <set id="countingMode">1</set>
+                            <set id="countLength">1</set>
+                            <set id="countDirection">0</set>
+                            <set id="compare1Period">2000</set>
+                            <set id="compare2Period">1000</set>
+                            <set id="compareLoad1">0</set>
+                            <set id="compareLoad2">0</set>
+                            <set id="counterLoad">0</set>
+                            <set id="counterInit">0</set>
+                            <set id="outputMode">4</set>
+                            <set id="outputEnabled">true</set>
+                            <set id="enableTimerInInit">true</set>
+                        </quick_selection>
+                        <quick_selection id="inputCapture" label="Input capture">
+                            <description>input capture mode of the free running timer. When a falling edge occurs on the secondary source the counter value is stored into the Capture register of the channel..</description>
+                            <set id="primarySource">9</set>
+                            <set id="countingMode">1</set>
+                            <set id="countLength">0</set>
+                            <set id="countDirection">0</set>
+                            <set id="compare1Period">0</set>
+                            <set id="compare2Period">0</set>
+                            <set id="compareLoad1">0</set>
+                            <set id="compareLoad2">0</set>
+                            <set id="counterLoad">0</set>
+                            <set id="counterInit">0</set>
+                            <set id="outputMode">0</set>
+                            <set id="outputEnabled">false</set>
+                            <set id="captureMode">2</set>
+                            <set id="interruptSources.kQTMR_EdgeInterruptEnable">true</set>
+                            <set id="enable_irq">true</set>
+                            <set id="interrupt.dsc_enable_interrrupt">iprVal1</set>
+                            <set id="enableTimerInInit">true</set>
+                        </quick_selection>-->
+                        <default>default</default>
+                    </quick_selections>
+                    <!-- copy of the channel number -->
+                    <variable id="channel" value="$parent.getParent().getSetting(`channel`).getEnumItemValue()" ></variable>
+                    <info value="`Input configuration`" id="lineChannelConfig" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+                    <!-- CTRLn[SCS] -->
+                    <reference id="primarySource" label="Primary timer/counter source" type="qtmr_primary_count_source_t">
+                        <description>Selection of the primary timer/counter clock source.</description>
+                        <validation>
+                            <dependency when_expr="$this.getValue().regexMatch(`[0123]`)" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_sec_in.` +  $this.getValue().regexSubstr(`(.?)`, 1)" description_expr="`Timer input ` + $this.getValue().regexSubstr(`(.?)`, 1) + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                                <feature name="routed" evaluation="equal">
+                                   <data expr="true"/>
+                                </feature>
+                            </dependency>
+                            <constraint when_expr="$this.getValue().regexMatch(`[4567]`)" cond_expr="$parent.getParent().getSetting(`channel`).getEnumItemValue() != $parent.counterOutputChannel.getValue()" level="error" description_expr="`The counter output of the same channel cannot be used as a reference clock.`"/>
+                            <constraint when_expr="$this.getValue().regexMatch(`[4567]`)" cond_expr="$configSet.qtmr_channels.anyMatch(ch -> (ch.getSetting(`channel`).getEnumItemValue() == $parent.counterOutputChannel.getValue()))" level="warning" description_expr="`The selected channel ` + $parent.counterOutputChannel.getValue() + ` is not initialized in this component. It will not provide any reference clock.`"/>
+                        </validation>
+                        <assign when="true">
+                            <register name_expr="`CTRL`+ $parent.channel.getValue()" bitfield="PCS" 
+                                value="$this.getEnumItemValue().toInt()" 
+                                reverse_value="x -> x"/>
+                        </assign>
+                    </reference>
+                    <variable id="counterOutputChannel" value="$parent.primarySource.getValue().regexMatch(`[4567]`) ? ($parent.primarySource.getValue().regexSubstr(`(.?)`, 1).toInt() - 4) : (-1)" ></variable>
+                    <variable id="primary_mapping_divider" value="toArray(0,0,0,0,0,0,0,0,1,2,4,8,16,32,64,128)"></variable>
+                    <string id="primarySourceFreq" label="Primary source frequency" options="remove_from_struct_init" available="$parent.primary_mapping_divider.getValue().get($parent.primarySource.getEnumItemValue().isInt() ? $parent.primarySource.getEnumItemValue().toInt() : 0) == 0"
+                        validation_expr="x -> ((x.isFreq() &amp;&amp; (x != `0`)) || (x == `N/A`))">
+                        <description>Selection of the primary clock source frequency that is used for timer clocking calculations or N/A (use this value when there is not any periodic signal). This setting is used when the bus clock is not selected as the primary source.</description>
+                    </string> 
+                    <!-- When the ($parent.primary_mapping_divider.getValue().get($parent.primarySource.getEnumItemValue().toInt()) &gt; 0) is true the pre-divided bus clock source is selected -->
+                    <variable id="timerInputFreq" value="($parent.primary_mapping_divider.getValue().get($parent.primarySource.getEnumItemValue().toInt()) &gt; 0) 
+                        ? system::calculateRealFreqRationalClk($parent.primary_mapping_divider.getValue().get($parent.primarySource.getEnumItemValue().toInt()), $configSet.clockSourceFreq.getEnumItemValue().toHertz())
+                        : ((($parent.primarySourceFreq.getValue() != ``) &amp;&amp; ($parent.primarySourceFreq.getValue() != `N/A`)) ? system::calculateRealFreqRationalClk(1, $parent.primarySourceFreq.getValue().toHertz()) : 0)"/>
+                    <!-- Timer input frequency based on the selected mode (for the rising and failing edges mode is mutliplied by 2)-->
+                    <variable id="timerInputFreqMode" value="($parent.countingMode.getValue() == `2`)
+                        ? $parent.timerInputFreq.getValue() * 2 
+                        : $parent.timerInputFreq.getValue()">
+                    </variable>
+                    <info id="timerInputFreqPeriod" label="Primary input frequency/period" value="system::calculateFreqPeriod(1, $parent.timerInputFreq.getValue())">
+                        <description>Input frequency of the timer/counter provided by the primary clock source (external reference clock, predivided bus clock or other channel output clock).</description>
+                        <validation>
+                            <constraint cond_expr="(($parent.primarySourceFreq.isAvailable()) &amp;&amp; ($parent.primarySourceFreq.getValue() == `N/A`)) || (($parent.timerInputFreq.getValue() != `0`) &amp;&amp; ($parent.timerInputFreq.getValue().isInt()))" level="error" description="The timer input clocks must be specified as a valid non-zero frequency (integer value) or specified as N/A."/>
+                        </validation>
+                    </info>
+                    <!-- CTRLn[SCS] -->
+                    <reference id="secondarySource" label="Secondary timer/counter source" type="qtmr_input_source_t">
+                        <description>Selection of the secondary timer/counter clock source.</description>
+                        <validation>
+                            <dependency when_expr="$this.getValue().regexMatch(`[0123]`)" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_sec_in.` +  $this.getValue().regexSubstr(`(.?)`, 1)" description_expr="`Timer input ` + $this.getValue().regexSubstr(`(.?)`, 1) + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                                <feature name="routed" evaluation="equal">
+                                   <data expr="true"/>
+                                </feature>
+                            </dependency>
+                        </validation>
+                        <assign when="true">
+                            <register name_expr="`CTRL`+ $parent.channel.getValue()" bitfield="SCS" 
+                                value="$this.getEnumItemValue().toInt()" 
+                                reverse_value="x -> x"/>
+                        </assign>
+                    </reference>
+                    <!-- SCTRLn[IPS] -->
+                    <bool id="inputPolarity" label="Inverted input polarity">
+                        <description>When enabled the polarity of the counter input pins (selectable as primary and secondary timer/counter sources) is inverted. The IP bus clock and timer output clock sources (selectable as primary timer/counter source) are not impacted by this setting. </description>
+                        <validation>
+                            <constraint when_expr="($parent.primarySource.getValue() == `8`) &amp;&amp; ($parent.countingMode.getValue() == `1`)" cond_expr="!$this.getValue()" level="warning" 
+                                description="When the primary count source is the bus clock divide by 1, only rising edges are counted regardless of the inverted input polarity setting selection."/>
+                        </validation>
+                        <assign when="true">
+                            <register name_expr="`SCTRL`+ $parent.channel.getValue()" bitfield="IPS" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                        </assign>
+                    </bool>
+                    <!-- CSCTRLn[FAULT] -->
+                    <bool id="inputFault" label="Enable fault on secondary input">
+                        <description>
+                            When enabled the selected secondary input acts as a fault signal so that the timer OFLAG is cleared when the 
+                            secondary input is set. When the secondary input is used in this mode, there is no resynchronization of the 
+                            input so that there is a combinational path to clear the OFLAG. Fault inputs less than two clock periods 
+                            wide will not be latched. Latched faults will be cleared the next time that the counter logic sets the OFLAG.
+                        </description>
+                        <assign when="true">
+                            <register name_expr="`CSCTRL`+ $parent.channel.getValue()" bitfield="FAULT" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                        </assign>
+                    </bool>
+                    
+<!--                    <info value="`Input filter configuration`" id="lineFilter" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+                    <string id="inputFilterPeriod" label="Input filter sample period"  
+                        validation_expr="x -> system::validateValueFreqPeriod(x, 0, 255)">
+                        <description>
+The input filter sampling period value in number of bus clock cycles, frequency units or time units. This period is used for sampling of the timer input signal. When the value 0 is selected the filter is bypassed.
+
+An integer number in range 1 - 255 (0xFF) is processed as a value in ticks of bus clock, a frequency value must be in format &quot;float_number [Hz, kHz, MHz or GHz]&quot;, a period value must be in format &quot;float_number [ns, us, ms, s, m, h or d]&quot;.&lt;br/&gt;
+Frequency units and time units can only be used when clock source frequency is selected (clock must not be disabled).&lt;br/&gt;
+                        </description>
+                        <!-\-                    <validation>
+                            <constraint when_expr="$parent.freq_value.getValue() != `N/A`" cond_expr="($parent.freq_value.getValue().toInt() &lt;= 0xFFFF) &amp;&amp; ($parent.freq_value.getValue().toInt() &gt; 0)"  level="error" description="The timer period in ticks must be in range 1 - 0xFFFF (65535) because of the 16 bits width of the timer. Adjust the PWM frequency/period and/or the timer input frequency."/>
+                        </validation>-\->
+                        <assign when="true">
+                            <register name_expr="`FILT`+ $parent.channel.getValue()" bitfield="FILT_PER" 
+                                value="$parent.inputFilterPeriod_value.getValue().isInt() ? $parent.inputFilterPeriod_value.getValue() : 0" 
+                                reverse_value="x -> x"/>
+                        </assign>
+                    </string>
+                    <variable id="inputFilterPeriod_value" value="system::getIntDividerValue($parent.inputFilterPeriod.getValue(), $configSet.clockSourceFreq.getEnumItemValue())"/>
+                    <info id="inputFilterPeriod_info" label="Filter sampling period" 
+                        value=" system::calculateTicksFreqPeriod($parent.inputFilterPeriod_value.getValue(), $configSet.clockSourceFreq.getEnumItemValue())">
+                        <description>The input filter sampling period in number of ticks of bus clock cycles, sampling frequency and time period.</description>
+                    </info>
+                    <!-\- register value = Input filter count value - 3 -\->
+                    <!-\- FILTn[FILT_CNT] -\->
+                    <integer id="inputFilterCount" label="Input filter count" min_expr="3" max_expr="10" type="uint8_t">
+                        <description>The input filter count value represent the number of consecutive samples that must agree prior to the input filter accepting an input transition. The value of FILT_CNT affects the input latency.</description>
+                        <assign when="true">
+                            <register name_expr="`FILT`+ $parent.channel.getValue()" bitfield="FILT_CNT" value="$this.getValue().toInt()-3" reverse_value="x -> (x+3)"/>
+                        </assign>
+                    </integer>
+                    <!-\- Turning on the input filter (setting FILT_PER to a non-zero value) introduces a latency of (((FILT_CNT + 3) x FILT_PER) + 2) IP bus clock periods. -\->
+                    <info id="inputFilterLatency" label="Input filter latency" value="($parent.inputFilterPeriod_value.getValue().isInt() &amp;&amp; ($parent.inputFilterPeriod_value.getValue() != 0)) 
+                        ? system::calculatePeriod(($parent.inputFilterCount.getValue() *  $parent.inputFilterPeriod_value.getValue()) + 2, $configSet.clockSourceFreq.getEnumItemValue())
+                        : `Input filter bypassed`" >
+                        <description>
+                            When the input filter is enabled (non-zero value of the Filter sampling period setting) the filter introduce a latency that is computed as:
+                            (Filter sampling period * Input filter count + 2) * bus clock cycle
+                        </description>
+                    </info>-->
+                    
+                    <info value="`Counter configuration`" id="lineCounter" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+                    <!-- Channel mode configuration -->
+                    <!-- CTRLn[CM] -->
+                    <reference  id="countingMode" label="Counting mode" type="qtmr_counting_mode_t">
+                        <description>Selection of the timer counting mode and behavior.</description>
+                        <validation>
+                            <constraint when_expr="$parent.primarySource.getValue() == `kQTMR_ClockDivide_1`" cond_expr="$this.getValue() != `kQTMR_PriSrcRiseAndFallEdge`" level="error" 
+                                description="When the primary count source is the bus clock divide by 1 this counting mode (rising and falling edges) is not supported by the quad timer peripheral."/>
+                            <constraint when_expr="$this.getValue() == `7`" 
+                                cond_expr="($parent.primarySource.getValue() == `4`) || ($parent.primarySource.getValue() == `5`) || ($parent.primarySource.getValue() == `6`) || ($parent.primarySource.getValue() == `7`)" 
+                                        level="error"
+                                        description="When the cascade count mode is selected the primary source setting must be set to one of the counter outputs (0,1,2,3)"/>
+                        </validation>
+                        <assign when="true">
+                            <register name_expr="`CTRL`+ $parent.channel.getValue()" bitfield="CM" 
+                                value="$this.getEnumItemValue().toInt()" 
+                                reverse_value="x -> x"/>
+                        </assign>
+                    </reference>
+                    <!-- CTRLn[ONCE] -->
+                    <bool id="enableCountOnce" label="One shot counting mode">
+                        <description>
+When enabled the timer counts until compare and then stop. If counting up, a successful compare occurs when the counter reaches a COMP1 value. 
+If counting down, a successful compare occurs when the counter reaches a Compare 2 value. 
+
+When output mode #4 (Toggle output signal using alternating compare registers) is used, the counter re-initializes after reaching the COMP1 value, 
+continues to count to the COMP2 value, and then stops.
+                        </description> 
+                        <assign when="true">
+                            <register name_expr="`CTRL`+ $parent.channel.getValue()" bitfield="ONCE" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                        </assign>
+                    </bool>
+                    <!-- CTRLn[LENGTH] -->
+                    <reference id="countLength" label="Count length" type="count_length_t"> 
+                        <description>
+This setting provides selection of the count length mode:
+
+*Count to compare* - counts to the compare value and then re-initializes itself to the value specified in the load (or Compare load 2) register.
+
+*Free running* - continues counting past the compare value to the binary roll over of the counter.
+                        </description> 
+                        <assign when="true">
+                            <register name_expr="`CTRL`+ $parent.channel.getValue()" bitfield="LENGTH" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                        </assign>
+                    </reference>
+<!--                    <variable id="compare1Period_value"  
+                        value=" system::getIntDividerValue(0xFFFF, $parent.timerInputFreqMode.getValue())">
+                        <description>The Compare 1 register value in number of timer ticks.</description>
+                    </variable>-->
+                    <info id="counterPeriod_info" label="Counter period in ticks/frequency/period" 
+                          value="($parent.countLength.getEnumItemId() == `0`) 
+                                ? system::calculateTicksFreqPeriod(0xFFFF, $parent.timerInputFreqMode.getValue())
+                                : `Period depends on the Compare 1/Compare 2 values and mode of operation`"
+                          available="($parent.countingMode.getEnumItemId() == `1`) || ($parent.countingMode.getEnumItemId() == `2`) || ($parent.countingMode.getEnumItemId() == `7`)">
+                        <description>The Compare 1 register value in number of timer ticks, frequency and period.</description>
+                    </info>
+                    <!-- CSCTRLn[ALT_LOAD] -->
+                    <bool id="inputAltLoad" label="Enable alternative load">
+                        <description>
+                            This seeting allows using an alternative method for loading the counter during modulo counting. Normally, the
+                            counter can be loaded only with the value from the LOAD register. When this setting is enabled, the counter is
+                            loaded from the LOAD register when counting up and a match with COMP1 occurs, or the counter is
+                            loaded from the CMPLD2 register when counting down and a match with COMP2 occurs.
+                        </description>
+                        <assign when="true">
+                            <register name_expr="`CSCTRL`+ $parent.channel.getValue()" bitfield="ALT_LOAD" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                        </assign>
+                    </bool>
+                    <!-- CTRLn[DIR] -->
+                    <reference id="countDirection" label="Count direction" type="count_direction_t"> 
+                        <description>This setting provides selection of the count direction - either normal count direction up or the reverse direction down.</description> 
+                        <assign when="true">
+                            <register name_expr="`CTRL`+ $parent.channel.getValue()" bitfield="DIR" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                        </assign>
+                    </reference>
+                    <!-- CSCTRLn[TCI] -->
+                    <reference id="triggeredCountInit" label="Triggered count mode" type="triggered_count_mode_t"> 
+                        <description>
+This setting is used when "Edge of secondary source triggers primary count until compare" is chosen for Counting mode (CTRL[CM] = 6) to enable the counter to be re-initialized 
+when a second trigger occurs while the counter is still counting. Normally, the second trigger causes the counting to stop/pause until a third trigger occurs.  
+With the Reload on second trigger is selected, a second trigger event causes the counter to re-initialize and continue counting.
+                        </description> 
+                        <assign when="true">
+                            <register name_expr="`CSCTRL`+ $parent.channel.getValue()" bitfield="TCI" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                        </assign>
+                    </reference>
+                    
+                    <!-- SCTRLn[MSTR] -->
+                    <bool id="enableMasterMode" label="Enable master mode">
+                        <description>Enables/disables the compare function's output to be broadcasted to the other counters/timers in the module. This signal then can be used to re-initialize the other counters and/or force their OFLAG signal outputs.</description>
+                        <assign when="true">
+                            <register name_expr="`SCTRL`+ $parent.channel.getValue()" bitfield="MSTR" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                        </assign>
+                    </bool>
+                    <!-- SCTRLn[EEOF] -->
+                    <bool id="enableExternalForce" label="Enable external output flag force">
+                        <description>Enables the compare from another counter/timer within the same quad timer module to force the state of this counter's (OFLAG) output signal.</description>
+                        <assign when="true">
+                            <register name_expr="`SCTRL`+ $parent.channel.getValue()" bitfield="EEOF" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                        </assign>
+                    </bool>
+                    <!-- CTRLn[COINIT] -->
+                    <bool id="enableCoChannelReinit" label="Enable co-channel reinitialization">
+                        <description>When enabled another counter/timer within the module (quad timer peripheral instance) may force the re-initialization of this counter/timer when it has an active compare event.</description>
+                        <assign when="true">
+                            <register name_expr="`CTRL`+ $parent.channel.getValue()" bitfield="COINIT" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                        </assign>
+                    </bool>
+                    <!-- Output configuration -->
+                    <info value="`Output configuration`" id="lineOutput" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+                    <!-- CTRLn[OUTMODE] -->
+                    <reference id="outputMode" label="Output mode" type="qtmr_output_mode_t"> 
+                        <description>This setting provides selection of the output signal (OFLAG) mode.</description> 
+                        <assign when="true">
+                            <register name_expr="`CTRL`+ $parent.channel.getValue()" bitfield="OUTMODE" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                        </assign>
+                    </reference>
+                    <!-- SCTRLn[FORCE] -->
+                    <bool id="forceOutputValue" label="Force output value">
+                        <description>When enabled the selected value of the Forced output value setting is set to output signal (OFLAG) in the initialization (the FORCE command during initialization).</description>
+                        <assign when="true">
+                            <register name_expr="`SCTRL`+ $parent.channel.getValue()" bitfield="FORCE" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                        </assign>
+                    </bool>
+                    <!-- SCTRLn[VAL] -->
+                    <reference id="forcedOutputValue" label="Forced output value" type="output_value_t">
+                        <description>This settings determines the value of the OFLAG output signal when software triggers a FORCE command.</description>
+                        <assign when="true">
+                            <register name_expr="`SCTRL`+ $parent.channel.getValue()" bitfield="VAL" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                        </assign>
+                    </reference>
+                    <!-- SCTRLn[OPS] -->
+                    <bool id="outputPolarity" label="Inverted output polarity">
+                        <description>When checked the polarity of the PWM output signal will be inverted.</description>
+                        <assign when="true">
+                            <register name_expr="`SCTRL`+ $parent.channel.getValue()" bitfield="OPS" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                        </assign>
+                    </bool>
+                    <!-- SCTRLn[OEN] -->
+                    <bool id="outputEnabled" label="Drive output signal OFLAG to the pin">
+                        <description>
+                            When enabled the output signal is driven on the external pin (if properly routed). Other timers (of the same instance of the quad timner) using this external pin as
+                            their input see the driven value. The polarity of the signal is determined by the output polarity setting (the OPS bit).
+                        </description>
+                        <validation>
+                            <dependency when_expr="$this.getValue()" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_out.` +  $parent.channel.getValue()" description_expr="msg::message(`err_routed_signal`,`OUT, ` + $parent.channel.getValue(), $instance.getPeripheral())" level="Warning">
+                                <feature name="routed" evaluation="equal">
+                                    <data expr="true"/>
+                                </feature>
+                            </dependency>
+                        </validation>
+                        <assign when="true">
+                            <register name_expr="`SCTRL`+ $parent.channel.getValue()" bitfield="OEN" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                        </assign>
+                    </bool>
+                    <!-- Capture configuration -->
+                    <info value="`Capture configuration`" id="lineCapture" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+                    <!-- SCTRLn[CAPTURE_MODE] -->
+                    <reference id="captureMode" label="Capture mode" type="qtmr_input_capture_edge_t">
+                        <description>Selection of the capture mode, i.e. the selection of the input signal edge that cause the capture event. The input source is the secondary timer/counter source.</description>
+                        <assign when="true">
+                            <register name_expr="`SCTRL`+ $parent.channel.getValue()" bitfield="CAPTURE_MODE" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                        </assign>                
+                    </reference>                
+                    <!-- CSCTRLn[ROC] -->
+                    <bool id="reloadOnCapture" label="Reload on capture">
+                        <description>When checked the capture event cause reload of the counter from the load register.</description>
+                        <assign when="true">
+                            <register name_expr="`CSCTRL`+ $parent.channel.getValue()" bitfield="ROC" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                        </assign>
+                    </bool>
+                    <!-- Compare registers and their control bits -->
+                    <info value="`Compare registers`" id="lineCompareRegs" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+                    <!-- COMP1[COMPARISON_1] -->
+                    <string id="compare1Period" label="Compare 1"  
+                        validation_expr="x -> system::validateValueFreqPeriod(x, 0, 0xFFFF)">
+                        <description>
+The channel compare 1 register value in timer ticks (register value), frequency units or time units that is used for comparison with the counter value in count up mode or alternating mode. 
+
+An integer number in range 0 - 65535 (0xFFFF) is processed as a value in ticks, a frequency value must be in format &quot;float_number [Hz, kHz, MHz or GHz]&quot;, a period value must be in format &quot;float_number [ns, us, ms, s, m, h or d]&quot;.&lt;br/&gt;
+Frequency units and time units can only be used when clock source frequency is selected (clock must not be disabled).&lt;br/&gt;
+                        </description>
+                        <validation>
+                            <constraint when_expr="$parent.compare1Period_value.getValue() != `N/A`" cond_expr="($parent.compare1Period_value.getValue() &gt;= 0) &amp;&amp; ($parent.compare1Period_value.getValue() &lt;= 0xFFFF)" level="error" description="The Compare 1 value must be in the range 0 - 65535 (0xFFFF) ticks."/>
+                            <constraint cond_expr="$parent.compare1Period_value.getValue() != `N/A`" level="error" description="When the primary source frequency is not specified (N/A) the Compare 1 value must be specified as a number of ticks."/>
+                        </validation>
+                        <assign when="true">
+                            <register name_expr="`COMP1`+ $parent.channel.getValue()" bitfield="COMPARISON_1" 
+                                value="$parent.compare1Period_value.getValue().isInt() ? $parent.compare1Period_value.getValue() : 0" 
+                                reverse_value="x -> x"/>
+                        </assign>
+                    </string>
+                    <variable id="compare1Period_value" 
+                        value=" system::getIntDividerValue($parent.compare1Period.getValue(), $parent.timerInputFreqMode.getValue())">
+                        <description>The Compare 1 register value in number of timer ticks.</description>
+                    </variable>
+                    <info id="compare1Period_info" label="Compare 1 in ticks/frequency/period" 
+                        value=" system::calculateTicksFreqPeriod($parent.compare1Period_value.getValue(), $parent.timerInputFreqMode.getValue())">
+                        <description>The Compare 1 register value in number of timer ticks, frequency and period.</description>
+                    </info>
+                    <!-- CSCTRLn[CL1] -->
+                    <reference id="compareLoadControl1" label="Compare 1 load mode" type="compare_load_mode_t"> 
+                        <description>This setting allows selection when the Compare 1 register is preloaded with the value from Compare preload 1 register.</description> 
+                        <assign when="true">
+                            <register name_expr="`CSCTRL`+ $parent.channel.getValue()" bitfield="CL1" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                        </assign>
+                    </reference>
+                    <!-- COMP2[COMPARISON_2] -->
+                    <string id="compare2Period" label="Compare 2"  
+                        validation_expr="x -> system::validateValueFreqPeriod(x, 0, 0xFFFF)">
+                        <description>
+The channel compare 2 register value in timer ticks (register value), frequency units or time units that is used for comparison with the counter value in count down mode or alternating mode. 
+
+An integer number in range 0 - 65535 (0xFFFF) is processed as a value in ticks, a frequency value must be in format &quot;float_number [Hz, kHz, MHz or GHz]&quot;, a period value must be in format &quot;float_number [ns, us, ms, s, m, h or d]&quot;.&lt;br/&gt;
+Frequency units and time units can only be used when clock source frequency is selected (clock must not be disabled).&lt;br/&gt;
+                        </description>
+                        <validation>
+                            <constraint when_expr="$parent.compare2Period_value.getValue() != `N/A`" cond_expr="($parent.compare2Period_value.getValue() &gt;= 0) &amp;&amp; ($parent.compare2Period_value.getValue() &lt;= 0xFFFF)" level="error" description="The Compare 2 value must be in the range 0 - 65535 (0xFFFF) ticks."/>
+                            <constraint cond_expr="$parent.compare2Period_value.getValue() != `N/A`" level="error" description="When the primary source frequency is not specified (N/A) the Compare 2 value must be specified as a number of ticks."/>
+                        </validation>
+                        <assign when="true">
+                            <register name_expr="`COMP2`+ $parent.channel.getValue()" bitfield="COMPARISON_2" 
+                                value="$parent.compare2Period_value.getValue().isInt() ? $parent.compare2Period_value.getValue() : 0" 
+                                reverse_value="x -> x"/>
+                        </assign>
+                    </string>
+                    <variable id="compare2Period_value" 
+                        value=" system::getIntDividerValue($parent.compare2Period.getValue(), $parent.timerInputFreqMode.getValue())">
+                        <description>The Compare 2 register value in number of timer ticks.</description>
+                    </variable>
+                    <info id="compare2Period_info" label="Compare 2 in ticks/frequency/period" 
+                        value=" system::calculateTicksFreqPeriod($parent.compare2Period_value.getValue(), $parent.timerInputFreqMode.getValue())">
+                        <description>The Compare 2 register value in number of timer ticks, frequency and period.</description>
+                    </info>
+                    <!-- CSCTRLn[CL2] -->
+                    <reference id="compareLoadControl2" label="Compare 2 load mode" type="compare_load_mode_t"> 
+                        <description>This setting allows selection when the Compare 2 register is preloaded with the value from Compare preload 2 register.</description> 
+                        <assign when="true">
+                            <register name_expr="`CSCTRL`+ $parent.channel.getValue()" bitfield="CL2" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                        </assign>
+                    </reference>
+    
+                    <!-- Comparator preload registers -->
+                    <info id="lineComparatorPreloadRegs" value="`Comparator preload registers`"  options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+                    <!-- CMPLD1[COMPARATOR_LOAD_1] -->
+                    <string id="compareLoad1" label="Comparator preload 1"  
+                        validation_expr="x -> system::validateValueFreqPeriod(x, 0, 0xFFFF)">
+                        <description>
+The comparator 1 preload value for the Compare 1 register. The value can be set in timer ticks (register value), frequency units or time units. 
+
+An integer number in range 0 - 65535 (0xFFFF) is processed as a value in ticks, a frequency value must be in format &quot;float_number [Hz, kHz, MHz or GHz]&quot;, a period value must be in format &quot;float_number [ns, us, ms, s, m, h or d]&quot;.&lt;br/&gt;
+Frequency units and time units can only be used when clock source frequency is selected (clock must not be disabled).&lt;br/&gt;
+                        </description>
+                        <validation>
+                            <constraint when_expr="$parent.compareLoad1_value.getValue() != `N/A`" cond_expr="($parent.compareLoad1_value.getValue() &gt;= 0) &amp;&amp; ($parent.compareLoad1_value.getValue() &lt;= 0xFFFF)" level="error" description="The comparator preload 1 value must be in the range 0 - 65535 (0xFFFF) ticks."/>
+                            <constraint cond_expr="$parent.compareLoad1_value.getValue() != `N/A`" level="error" description="When the primary source frequency is not specified (N/A) the Compare preload 1 value must be specified as a number of ticks."/>
+                        </validation>
+                        <assign when="true">
+                            <register name_expr="`CMPLD1`+ $parent.channel.getValue()" bitfield="COMPARATOR_LOAD_1" 
+                                value="$parent.compareLoad1_value.getValue().isInt() ? $parent.compareLoad1_value.getValue() : 0" 
+                                reverse_value="x -> x"/>
+                        </assign>
+                    </string>
+                    <variable id="compareLoad1_value" 
+                        value=" system::getIntDividerValue($parent.compareLoad1.getValue(), $parent.timerInputFreqMode.getValue())">
+                        <description>The comparator 1 preload value in number of timer ticks.</description>
+                    </variable>
+                    <info id="compareLoad1_info" label="Comparator preload 1 in ticks/frequency/period" 
+                        value=" system::calculateTicksFreqPeriod($parent.compareLoad1_value.getValue(), $parent.timerInputFreqMode.getValue())">
+                        <description>The comparator 1 preload value in number of timer ticks, frequency and period.</description>
+                    </info>
+                    <!-- CMPLD2[COMPARATOR_LOAD_2] -->
+                    <string id="compareLoad2" label="Comparator preload 2"  
+                        validation_expr="x -> system::validateValueFreqPeriod(x, 0, 0xFFFF)">
+                        <description>
+The comparator 2 preload value for the Compare 2 register. The value can be set in timer ticks (register value), frequency units or time units. 
+
+An integer number in range 0 - 65535 (0xFFFF) is processed as a value in ticks, a frequency value must be in format &quot;float_number [Hz, kHz, MHz or GHz]&quot;, a period value must be in format &quot;float_number [ns, us, ms, s, m, h or d]&quot;.&lt;br/&gt;
+Frequency units and time units can only be used when clock source frequency is selected (clock must not be disabled).&lt;br/&gt;
+                        </description>
+                        <validation>
+                            <constraint when_expr="$parent.compareLoad2_value.getValue() != `N/A`" cond_expr="($parent.compareLoad2_value.getValue() &gt;= 0) &amp;&amp; ($parent.compareLoad2_value.getValue() &lt;= 0xFFFF)" level="error" description="The comparator preload 2 value must be in the range 0 - 65535 (0xFFFF) ticks."/>
+                            <constraint cond_expr="$parent.compareLoad2_value.getValue() != `N/A`" level="error" description="When the primary source frequency is not specified (N/A) the Compare preload 2 value must be specified as a number of ticks."/>
+                        </validation>
+                        <assign when="true">
+                            <register name_expr="`CMPLD2`+ $parent.channel.getValue()" bitfield="COMPARATOR_LOAD_2" 
+                                value="$parent.compareLoad2_value.getValue().isInt() ? $parent.compareLoad2_value.getValue() : 0" 
+                                reverse_value="x -> x"/>
+                        </assign>
+                    </string>
+                    <variable id="compareLoad2_value" 
+                        value=" system::getIntDividerValue($parent.compareLoad2.getValue(), $parent.timerInputFreqMode.getValue())">
+                        <description>The comparator 2 preload value in number of timer ticks.</description>
+                    </variable>
+                    <info id="compareLoad2_info" label="Comparator preload 2 in ticks/frequency/period" 
+                        value=" system::calculateTicksFreqPeriod($parent.compareLoad2_value.getValue(), $parent.timerInputFreqMode.getValue())">
+                        <description>The comparator 2 preload value in number of timer ticks, frequency and period.</description>
+                    </info>
+    
+                    <!-- Counter load register -->
+                    <info id="lineLoaddRegs" value="`Load register`"  options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+                    <!-- LOAD[LOAD] -->
+                    <string id="counterLoad" label="Counter load"  
+                        validation_expr="x -> system::validateValueFreqPeriod(x, 0, 0xFFFF)">
+                        <description>
+The counter load value for initialization of the counter after a compare or a reinitialization events. The value can be set in timer ticks (register value), frequency units or time units. 
+
+An integer number in range 0 - 65535 (0xFFFF) is processed as a value in ticks, a frequency value must be in format &quot;float_number [Hz, kHz, MHz or GHz]&quot;, a period value must be in format &quot;float_number [ns, us, ms, s, m, h or d]&quot;.&lt;br/&gt;
+Frequency units and time units can only be used when clock source frequency is selected (clock must not be disabled).&lt;br/&gt;
+                        </description>
+                        <validation>
+                            <constraint when_expr="$parent.counterLoad_value.getValue() != `N/A`" cond_expr="($parent.counterLoad_value.getValue() &gt;= 0) &amp;&amp; ($parent.counterLoad_value.getValue() &lt;= 0xFFFF)" level="error" description="The Counter load value must be in the range 0 - 65535 (0xFFFF) ticks."/>
+                            <constraint cond_expr="$parent.counterLoad_value.getValue() != `N/A`" level="error" description="When the primary source frequency is not specified (N/A) the Counter load value must be specified as a number of ticks."/>
+                        </validation>
+                        <assign when="true">
+                            <register name_expr="`LOAD`+ $parent.channel.getValue()" bitfield="LOAD" 
+                                value="$parent.counterLoad_value.getValue().isInt() ? $parent.counterLoad_value.getValue() : 0" 
+                                reverse_value="x -> x"/>
+                        </assign>
+                    </string>
+                    <variable id="counterLoad_value" 
+                        value=" system::getIntDividerValue($parent.counterLoad.getValue(), $parent.timerInputFreqMode.getValue())">
+                        <description>The counter load value in number of timer ticks.</description>
+                    </variable>
+                    <info id="counterLoad_info" label="Counter load in ticks/frequency/period" 
+                        value=" system::calculateTicksFreqPeriod($parent.counterLoad_value.getValue(), $parent.timerInputFreqMode.getValue())">
+                        <description>The counter load value in number of timer ticks, frequency and period.</description>
+                    </info>
+    
+                    <!-- Counter register -->
+                    <info id="lineCounterRegs" value="`Counter register`"  options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+                    <!-- CNTRn[COUNTER] -->
+                    <string id="counterInit" label="Counter initial value"  
+                        validation_expr="x -> system::validateValueFreqPeriod(x, 0, 0xFFFF)">
+                        <description>
+The counter initial value for initialization of the counter in the generated code (usually set to 0). The value can be set in timer ticks (register value), frequency units or time units. 
+
+An integer number in range 0 - 65535 (0xFFFF) is processed as a value in ticks, a frequency value must be in format &quot;float_number [Hz, kHz, MHz or GHz]&quot;, a period value must be in format &quot;float_number [ns, us, ms, s, m, h or d]&quot;.&lt;br/&gt;
+Frequency units and time units can only be used when clock source frequency is selected (clock must not be disabled).&lt;br/&gt;
+                        </description>
+                        <validation>
+                            <constraint when_expr="$parent.counterInit_value.getValue() != `N/A`" cond_expr="($parent.counterInit_value.getValue() &gt;= 0) &amp;&amp; ($parent.counterInit_value.getValue() &lt;= 0xFFFF)" level="error" description="The Counter initial value must be in the range 0 - 65535 (0xFFFF) ticks."/>
+                            <constraint cond_expr="$parent.counterInit_value.getValue() != `N/A`" level="error" description="When the primary source frequency is not specified (N/A) the Counter initial value must be specified as a number of ticks."/>
+                        </validation>
+                        <assign when="true">
+                            <register name_expr="`CNTR`+ $parent.channel.getValue()" bitfield="COUNTER" 
+                                value="$parent.counterInit_value.getValue().isInt() ? $parent.counterInit_value.getValue() : 0" 
+                                reverse_value="x -> x"/>
+                        </assign>
+                    </string>
+                    <variable id="counterInit_value" 
+                        value=" system::getIntDividerValue($parent.counterInit.getValue(), $parent.timerInputFreqMode.getValue())">
+                        <description>The counter initial value in number of timer ticks.</description>
+                    </variable>
+                    <info id="counterInit_info" label="Counter initial value in ticks/frequency/period" 
+                        value=" system::calculateTicksFreqPeriod($parent.counterInit_value.getValue(), $parent.timerInputFreqMode.getValue())">
+                        <description>The counter initial value in number of timer ticks, frequency and period.</description>
+                    </info>
+                    <!-- Debug options -->
+                    <info value="`Debug options`" id="lineDebug" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+                    <!-- CSCTRLn[DBG_EN] -->
+                    <reference id="debugMode" label="Operation in Debug mode" type="qtmr_debug_action_t">
+                        <description>Operation of the quad timer module in the debug mode.</description>
+                        <assign when="true">
+                            <register name_expr="`CSCTRL`+ $parent.channel.getValue()" bitfield="DBG_EN" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                        </assign>  
+                    </reference>
+<!--                    <info value="``" id="lineOther" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+                    <!-\- ENBL[ENBL] -\->
+                    <reference id="enableTimerInInit" label="Enable timer in initialization" type="registerBit" config_set_id="global_system_definitions" component_id="system" options="UI_LABEL_BOLD">
+                        <options_expr>
+                            <option id="register" expr="`ENBL`"></option>
+                            <option id="bitfield" expr="`ENBL`"/>
+                            <option id="mask" expr="1 &lt;&lt; $parent.channel.getValue().toInt()"/>
+                        </options_expr>
+                        <description>When enabled the timer is started in the initialization code by using the corresponding enable bit of the enable register that is shared by all four timers. 
+                            All enabled timers (channels) are synchronously enabled at the same time by writing into the enable register.</description>
+                    </reference>--> 
+                    <info value="`Interrupts and DMA`" id="lineInterrupts" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+                    <!-- INTERRUPT SOURCES -->
+                    <reference id="interruptSources" label="Interrupt sources" type="qtmr_interrupt_enable_t" >
+                        <description>Selection of timer channel interrupt requests sources.</description>
+                    </reference>
+                    <bool id="enable_irq" label="Enable timer interrupt" options="UI_LABEL_BOLD">
+                        <description expr="`Enable initialization of the interrupt vector in the ` + $parent.interrupt.intControllerName.getValue() + ` and providing definition of the interrupt routine name.`"></description>
+                    </bool>
+                    <variable id="noIntSourceSelected" 
+                        value="($parent.interruptSources.kQTMR_CompareInterruptEnable.getValue() || 
+                        $parent.interruptSources.kQTMR_Compare1InterruptEnable.getValue() ||
+                        $parent.interruptSources.kQTMR_Compare2InterruptEnable.getValue() ||
+                        $parent.interruptSources.kQTMR_OverflowInterruptEnable.getValue() ||
+                        $parent.interruptSources.kQTMR_EdgeInterruptEnable.getValue())
+                        ? ``
+                        : leftPadding(`/* Clear the corresponding interrupt flags, for examle the Compare 1 flag. */`, 1) + `&#10;` +
+                        leftPadding(`/* ` + $instance.getPeripheral() + `->CHANNEL[` + $parent.channel.getValue() + `].CSCTRL &amp;= ~TMR_CSCTRL_TCF1_MASK; */`, 1) + `&#10;`" ></variable>
+                    <reference id="interrupt" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN" enable="$parent.enable_irq.getValue()">
+                        <options_expr>
+                            <option id="irq_channel" expr="$parent.channel.getValue()"/>
+                            <option id="irq_handler_insert" expr="
+                                $parent.interruptSources.kQTMR_CompareInterruptEnable_clearFlagCode.getValue() + 
+                                $parent.interruptSources.kQTMR_Compare1InterruptEnable_clearFlagCode.getValue() + 
+                                $parent.interruptSources.kQTMR_Compare2InterruptEnable_clearFlagCode.getValue() + 
+                                $parent.interruptSources.kQTMR_OverflowInterruptEnable_clearFlagCode.getValue() + 
+                                $parent.interruptSources.kQTMR_EdgeInterruptEnable_clearFlagCode.getValue() + 
+                                $parent.noIntSourceSelected.getValue() + `&#10;` + 
+                                leftPadding(`/* Place your code here */`, 1) + `&#10;`
+                                "/>
+                            <option id="irq_custom_name" expr="toUpperCase($parent.getParent().getSetting(`channel_ID`).getValue())"/>
+                        </options_expr>
+                        <description>Interrupt vector initialization setting.</description>
+                    </reference>
+                    <!-- DMA requests -->
+                    <reference id="dma" label="DMA requests" type="qtmr_dma_enable_t">
+                        <description>Configuration of the DMA timer requests and channels configuration in eDMA and DMAMUX.</description>
+                    </reference>
+                </struct> <!-- end of the channel configuration settings -->
+                <struct id="template_params" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+                    <variable id="PERIPHERAL" value="$instance.getPeripheral()"></variable>
+                    <variable id="VPREFIX" value="$configSet.inst_ID_def.getValue()"></variable>
+                    <variable id="CHANNEL" value="$parent.getParent().getSetting(`channel`).getEnumItemValue()"></variable>
+                </struct>
+            </struct>
+        </user_types>
+        <settings>
+            <variable id="clockSourceUId" value="`BusInterfaceClock`"/>
+            <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="createArray().addItemToList($configSet.clockSourceUId.getValue(), getPeripheralClock($instance.getPeripheral(), $configSet.clockSourceUId.getValue()), ($instance.getPeripheral() + `_CLK_SRC`),true)" >
+               <description>Quad timer clock source.</description>
+               <validation>
+                  <dependency when_expr="$configSet.qtmr_channels.anyMatch(channel -> (channel.getSetting(`channelConfig.primarySource`).getEnumItemValue().toInt() &gt; 0))" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" 
+                   items="createArray().merge(
+                      getClockFunctionalGroups().arrayToEnumItems(
+                         enumItem -> true,
+                         enumItem -> enumItem,
+                         enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $configSet.clockSource.getEnumItemId(), enumItem)) + ` (` + enumItem + `)`,
+                         enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $configSet.clockSource.getEnumItemId(), enumItem)))" >
+               <description>Selection of the clock source frequency that can be selected by timers (channels of the quad timer).</description>
+               <validation>
+                  <constraint cond_expr="$this.getEnumItemValue().toHertz() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+            </dynamic_enum>
+            <array id="enable_timer_channels" label="Timer channel synchronous start" size="4" options="UI_SHOW_CONTENT_AS=TABLE;UI_ARRAY_LAYOUT_HORIZONTAL;REGISTERS_REFRESH;UI_TABLE_COLUMN_WIDTHS=12,7,7,7,7" type="timer_channel_t"
+                key_selector_expr="x -> (`Channel ` + x.getID())">
+                <description>Configuration of synchronous start of all timer channels by using the ENBL bits.</description>
+                <item_defaults>
+                    <set_default id="enableTimerChannel" value_expr="x -> true"/>
+                </item_defaults>
+            </array>            
+            <array id="input_filters" label="Input filters" size="4" options="UI_SHOW_CONTENT_AS=TABLE;REGISTERS_REFRESH;UI_TABLE_COLUMN_WIDTHS=6,10,15,10,15" type="input_filter_t"
+                key_selector_expr="x -> (`Input ` + x.getID())">
+                <description>Configuration of input filters that are dedicated for each timer input (these inputs are shared across all quad timer channels).</description>
+                <item_defaults>
+                    <set_default id="inputFilterPeriod" value_expr="x -> `0`"/>
+                    <set_default id="inputFilterCount" value_expr="x -> 3"/>
+                </item_defaults>
+            </array>            
+            <array id="qtmr_channels" label="Quad timer channels" min_expr="0" max_expr="4" options="UI_SHOW_CONTENT_AS=TABS;REGISTERS_REFRESH" type="qtmr_config_t" key_selector_expr="x -> x.getSetting(`channel`).getEnumItemLabel()">
+               <item_defaults>
+                   <set_default id="channel" value_expr="x -> (x.getID()==`0`) ? (`0`) : (`` + ((x.getParent().get(x.getID().toInt() - 1).getSetting(`channel`).getEnumItemValue().toInt() &lt; 3) ? (x.getParent().get(x.getID().toInt() - 1).getSetting(`channel`).getEnumItemValue().toInt() + 1) : `3`))"/>
+<!--                   <set_default id="channel_prefix_id" value_expr="x -> (x.getID()==`0`) ? (`Channel_0`) : (`Channel_` + (x.getParent().get(x.getID().toInt() - 1).getSetting(`channel`).getEnumItemValue().toInt() + 1))"/>-->
+               </item_defaults>
+            </array>            
+            <!-- IDs used for an instance of this component -->
+            <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+            <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+            <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+            <!-- quad timer global settings -->
+            <struct id="qtmr_params" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+                <variable id="PERIPHERAL" value="$instance.getPeripheral()"></variable>
+                <variable id="VPREFIX" value="$configSet.inst_ID_def.getValue()"></variable>
+            </struct>
+            <!-- Enable always the CH0 clock gate because of using enable bits of the ENBL register that is available in the CH0 register. -->
+<!--            <variable id="clockGateCh0" value="1" available="$configSet.qtmr_channels.noneMatch(ch -> ch.getSetting(`channel`).getEnumItemValue() == `0`)">
+                <assign when="true">
+                    <register peripheral_expr="system::getClockGatePeripheral($instance.getPeripheral(), `CH0`)" 
+                        name_expr="system::getClockGateRegister($instance.getPeripheral(), `CH0`)" 
+                        bitfield_expr="system::getClockGateBitfield($instance.getPeripheral(), `CH0`)"
+                        value="system::getClockGateEnableValue($instance.getPeripheral(), `CH0`)"/>
+                </assign>
+            </variable>-->
+        </settings>
+        <fragment_defs>
+            <import>
+                <from component_id="system" config_set_id="common_code_templates"/>
+                <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+                <from component_id="system" config_set_id="fsl_edma_peripheral"/>
+            </import>
+        </fragment_defs>
+        <code>
+            <section target="includes">
+                <fragment id="include">
+                    <param id="name">fsl_device_registers</param>
+                    <param id="filename">fsl_device_registers.h</param>
+                </fragment>
+            </section>
+            <section target="defines">
+                <fragment id="define">
+                    <param id="name" expr="$this.inst_peripheral_ID.getValue()"/>
+                    <param id="value" expr="$instance.getPeripheral()"/>
+                    <param id="description">Definition of peripheral ID</param>
+                </fragment>
+<!--                <fragment id="define" for_elements_of="$configSet.qtmr_channels">
+                    <param id="name" expr="$this.channel_ID_def.getValue()"/>
+                    <param id="value" expr="$this.channel.getEnumItemValue()"/>
+                    <param id="description" expr="`Definition of the timer channel ` + $this.channel_prefix_id.getValue() + `.`"></param>
+                </fragment>-->
+                <fragment id="define" for_elements_of="$configSet.qtmr_channels">
+                    <param id="name" expr="$this.channel_clock_src_ID.getValue()"/>
+                    <param id="value" expr="$this.channelConfig.timerInputFreq.getValue().toHertz() + `UL`"/>
+                    <param id="description" expr="`Definition of the timer channel ` + $this.channel.getValue() + ` clock source frequency.`"></param>
+                </fragment>
+                <!-- The quad timer component always initialize all channels -->
+                <fragment id="define">
+                    <param id="name" expr="$this.qtmr_params.VPREFIX.getValue() + `_ENBL_INIT_MASK`"/>
+                    <param id="value" expr="`TMR_ENBL_ENBL_MASK`"/>
+                    <param id="description" expr="`Definition of the timer enable mask for all channels.`"></param>
+                </fragment>
+                <fragment id="all_assigned_regs_init">
+                    <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+                </fragment>
+                <!-- Interrupt definitions -->
+                <fragment id="IRQ_definitions" for_elements_of="$configSet.qtmr_channels.filter(ch -> ch.getSetting(`channelConfig.enable_irq`).getValue()).map(x -> x.getSetting(`channelConfig.interrupt`))"/>
+            </section>
+            <section target="common_pre_init_function">
+                <!-- Enable always the CH0 clock gate because of using enable bits of the ENBL register that is available in the CH0 register. -->
+                <fragment id="clock_gate_enable_init" if_expr="$configSet.qtmr_channels.noneMatch(ch -> ch.getSetting(`channel`).getEnumItemValue() == `0`)">
+                    <param id="submodule" expr="`CH0`"/>
+                </fragment>
+                <!-- Clock gate enable -->
+                <fragment id="clock_gate_enable_init" for_elements_of="$configSet.qtmr_channels">
+                    <param id="submodule" expr="`CH` + $this.channel.getEnumItemValue()"/>
+                </fragment>
+            </section>   
+            <section target="init_function_body">
+            <fragment id="template" for_elements_of="$configSet.qtmr_channels">
+                <param id="file">fsl_qtmr_channel.template</param>
+                <param id="setting" expr="$this.template_params"></param>
+                <param id="separators"></param>
+                <param id="description" expr="`Channel ` + $this.template_params.CHANNEL.getValue() + ` initialization`"></param>
+            </fragment>
+            <fragment id="template" apply_to="$configSet.qtmr_params">
+                <param id="file">fsl_qtmr.template</param>
+                <param id="setting" expr="$this"></param>
+                <param id="separators"></param>
+                <param id="description" expr="`Quad timer global initialization`"></param>
+            </fragment>
+            </section>   
+        </code>
+    <quick_selections>
+    </quick_selections>
+    </config_set>    
+</component:config_component>

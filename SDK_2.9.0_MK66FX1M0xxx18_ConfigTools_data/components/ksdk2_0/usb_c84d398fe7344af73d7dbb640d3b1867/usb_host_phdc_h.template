@@ -1,0 +1,54 @@
+#ifndef __USB_HOST_${idSnakeCase}$_H__
+#define __USB_HOST_${idSnakeCase}$_H__
+
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+
+/*******************************************************************************
+ * API
+ ******************************************************************************/
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+/*!
+ * @brief host mouse initialization function.
+ *
+ * This function handles mouse class-specific setup.
+ *
+ * @return A USB error code or kStatus_USB_Success.
+ */
+usb_status_t USB_Host${idCamelCase}$Init(void);
+
+/*!
+* @brief host phdc manager task function.
+*
+* This function implements the host phdc manager action, it is used to create task.
+*
+* @param param   the host phdc manager instance pointer.
+*/
+void USB_Host${idCamelCase}$Task(void);
+
+/*!
+ * @brief host phdc manager callback function.
+ *
+ * This function should be called in the host callback function.
+ *
+ * @param deviceHandle           device handle.
+ * @param configurationHandle    attached device\'s configuration descriptor information.
+ * @param eventCode              callback event code, please reference to enumeration host_event_t.
+ * @param processedInterfaces    array of already processed interface flags.
+ *
+ * @retval kStatus_USB_Success              The host is initialized successfully.
+ * @retval kStatus_USB_NotSupported         The configuration don\'t contain hid mouse interface.
+ */
+usb_status_t USB_Host${idCamelCase}$Event(usb_device_handle deviceHandle,
+                                          usb_host_configuration_handle configurationHandle,
+                                          uint32_t eventCode,
+                                          uint8_t *processedInterfaces);
+
+#if defined(__cplusplus)
+}
+#endif
+#endif /* __USB_HOST_${idSnakeCase}$_H__ */

@@ -1,0 +1,354 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="8" name="C1" description="MCG Control 1 Register">
+    <alias type="CMSIS" value="C1"/>
+    <bit_field offset="0" width="1" name="IREFSTEN" access="RW" reset_value="0" description="Internal Reference Stop Enable">
+      <alias type="CMSIS" value="MCG_C1_IREFSTEN(x)"/>
+      <bit_field_value name="C1_IREFSTEN_DISABLED" value="0b0" description="Internal reference clock is disabled in Stop mode."/>
+      <bit_field_value name="C1_IREFSTEN_ENABLED" value="0b1" description="Internal reference clock is enabled in Stop mode if IRCLKEN is set or if MCG is in FEI, FBI, or BLPI modes before entering Stop mode."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="IRCLKEN" access="RW" reset_value="0" description="Internal Reference Clock Enable">
+      <alias type="CMSIS" value="MCG_C1_IRCLKEN(x)"/>
+      <bit_field_value name="C1_IRCLKEN_INACTIVE" value="0b0" description="MCGIRCLK inactive."/>
+      <bit_field_value name="C1_IRCLKEN_ACTIVE" value="0b1" description="MCGIRCLK active."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="IREFS" access="RW" reset_value="0x1" description="Internal Reference Select">
+      <alias type="CMSIS" value="MCG_C1_IREFS(x)"/>
+      <bit_field_value name="C1_IREFS_ERC" value="0b0" description="External reference clock is selected."/>
+      <bit_field_value name="C1_IREFS_SLOW_IRC" value="0b1" description="The slow internal reference clock is selected."/>
+    </bit_field>
+    <bit_field offset="3" width="3" name="FRDIV" access="RW" reset_value="0" description="FLL External Reference Divider">
+      <alias type="CMSIS" value="MCG_C1_FRDIV(x)"/>
+      <bit_field_value name="C1_FRDIV_DIV1_32" value="0b000" description="If RANGE = 0 or OSCSEL=1 , Divide Factor is 1; for all other RANGE values, Divide Factor is 32."/>
+      <bit_field_value name="C1_FRDIV_DIV2_64" value="0b001" description="If RANGE = 0 or OSCSEL=1 , Divide Factor is 2; for all other RANGE values, Divide Factor is 64."/>
+      <bit_field_value name="C1_FRDIV_DIV4_128" value="0b010" description="If RANGE = 0 or OSCSEL=1 , Divide Factor is 4; for all other RANGE values, Divide Factor is 128."/>
+      <bit_field_value name="C1_FRDIV_DIV8_256" value="0b011" description="If RANGE = 0 or OSCSEL=1 , Divide Factor is 8; for all other RANGE values, Divide Factor is 256."/>
+      <bit_field_value name="C1_FRDIV_DIV16_512" value="0b100" description="If RANGE = 0 or OSCSEL=1 , Divide Factor is 16; for all other RANGE values, Divide Factor is 512."/>
+      <bit_field_value name="C1_FRDIV_DIV32_1024" value="0b101" description="If RANGE = 0 or OSCSEL=1 , Divide Factor is 32; for all other RANGE values, Divide Factor is 1024."/>
+      <bit_field_value name="C1_FRDIV_DIV64_1280" value="0b110" description="If RANGE = 0 or OSCSEL=1 , Divide Factor is 64; for all other RANGE values, Divide Factor is 1280 ."/>
+      <bit_field_value name="C1_FRDIV_DIV128_1536" value="0b111" description="If RANGE = 0 or OSCSEL=1 , Divide Factor is 128; for all other RANGE values, Divide Factor is 1536 ."/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="CLKS" access="RW" reset_value="0" description="Clock Source Select">
+      <alias type="CMSIS" value="MCG_C1_CLKS(x)"/>
+      <bit_field_value name="C1_CLKS_PLLFLL" value="0b00" description="Encoding 0 - Output of FLL or PLLCS is selected (depends on PLLS control bit)."/>
+      <bit_field_value name="C1_CLKS_IRC" value="0b01" description="Encoding 1 - Internal reference clock is selected."/>
+      <bit_field_value name="C1_CLKS_ERC" value="0b10" description="Encoding 2 - External reference clock is selected."/>
+      <bit_field_value name="C1_CLKS_RESERVED3" value="0b11" description="Encoding 3 - Reserved."/>
+    </bit_field>
+  </register>
+  <register offset="0x1" width="8" name="C2" description="MCG Control 2 Register">
+    <alias type="CMSIS" value="C2"/>
+    <bit_field offset="0" width="1" name="IRCS" access="RW" reset_value="0" description="Internal Reference Clock Select">
+      <alias type="CMSIS" value="MCG_C2_IRCS(x)"/>
+      <bit_field_value name="C2_IRCS_SLOW" value="0b0" description="Slow internal reference clock selected."/>
+      <bit_field_value name="C2_IRCS_FAST" value="0b1" description="Fast internal reference clock selected."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="LP" access="RW" reset_value="0" description="Low Power Select">
+      <alias type="CMSIS" value="MCG_C2_LP(x)"/>
+      <bit_field_value name="C2_LP_NOT_DISABLED" value="0b0" description="FLL or PLL is not disabled in bypass modes."/>
+      <bit_field_value name="C2_LP_DISABLED" value="0b1" description="FLL or PLL is disabled in bypass modes (lower power)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="EREFS" access="RW" reset_value="0" description="External Reference Select">
+      <alias type="CMSIS" value="MCG_C2_EREFS(x)"/>
+      <alias type="id" value="EREFS0"/>
+      <bit_field_value name="C2_EREFS_ERC" value="0b0" description="External reference clock requested."/>
+      <bit_field_value name="C2_EREFS_OSC" value="0b1" description="Oscillator requested."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="HGO" access="RW" reset_value="0" description="High Gain Oscillator Select">
+      <alias type="CMSIS" value="MCG_C2_HGO(x)"/>
+      <alias type="id" value="HGO0"/>
+      <bit_field_value name="C2_HGO_LOW_POWER" value="0b0" description="Configure crystal oscillator for low-power operation."/>
+      <bit_field_value name="C2_HGO_HIGH_GAIN" value="0b1" description="Configure crystal oscillator for high-gain operation."/>
+    </bit_field>
+    <bit_field offset="4" width="2" name="RANGE" access="RW" reset_value="0" description="Frequency Range Select">
+      <alias type="CMSIS" value="MCG_C2_RANGE(x)"/>
+      <alias type="id" value="RANGE0"/>
+      <bit_field_value name="C2_RANGE_LOW" value="0b00" description="Encoding 0 - Low frequency range selected for the crystal oscillator ."/>
+      <bit_field_value name="C2_RANGE_HIGH" value="0b01" description="Encoding 1 - High frequency range selected for the crystal oscillator ."/>
+      <bit_field_value name="C2_RANGE_VERY_HIGH" value="0b1?" description="Encoding 2 - Very high frequency range selected for the crystal oscillator ."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="FCFTRIM" access="RW" reset_value="0" description="Fast Internal Reference Clock Fine Trim">
+      <alias type="CMSIS" value="MCG_C2_FCFTRIM(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="LOCRE0" access="RW" reset_value="0x1" description="Loss of Clock Reset Enable">
+      <alias type="CMSIS" value="MCG_C2_LOCRE0(x)"/>
+      <bit_field_value name="C2_LOCRE0_IRQ" value="0b0" description="Interrupt request is generated on a loss of OSC0 external reference clock."/>
+      <bit_field_value name="C2_LOCRE0_RESET" value="0b1" description="Generate a reset request on a loss of OSC0 external reference clock."/>
+    </bit_field>
+  </register>
+  <register offset="0x2" width="8" name="C3" description="MCG Control 3 Register">
+    <alias type="CMSIS" value="C3"/>
+    <bit_field offset="0" width="8" name="SCTRIM" access="RW" reset_value="0" reset_mask="0" description="Slow Internal Reference Clock Trim Setting">
+      <alias type="CMSIS" value="MCG_C3_SCTRIM(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x3" width="8" name="C4" description="MCG Control 4 Register">
+    <alias type="CMSIS" value="C4"/>
+    <bit_field offset="0" width="1" name="SCFTRIM" access="RW" reset_value="0" reset_mask="0" description="Slow Internal Reference Clock Fine Trim">
+      <alias type="CMSIS" value="MCG_C4_SCFTRIM(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="4" name="FCTRIM" access="RW" reset_value="0" reset_mask="0" description="Fast Internal Reference Clock Trim Setting">
+      <alias type="CMSIS" value="MCG_C4_FCTRIM(x)"/>
+    </bit_field>
+    <bit_field offset="5" width="2" name="DRST_DRS" access="RW" reset_value="0" description="DCO Range Select">
+      <alias type="CMSIS" value="MCG_C4_DRST_DRS(x)"/>
+      <bit_field_value name="C4_DRST_DRS_LOW" value="0b00" description="Encoding 0 - Low range (reset default)."/>
+      <bit_field_value name="C4_DRST_DRS_MID" value="0b01" description="Encoding 1 - Mid range."/>
+      <bit_field_value name="C4_DRST_DRS_MID_HIGH" value="0b10" description="Encoding 2 - Mid-high range."/>
+      <bit_field_value name="C4_DRST_DRS_HIGH" value="0b11" description="Encoding 3 - High range."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="DMX32" access="RW" reset_value="0" description="DCO Maximum Frequency with 32.768 kHz Reference">
+      <alias type="CMSIS" value="MCG_C4_DMX32(x)"/>
+      <bit_field_value name="C4_DMX32_WIDE" value="0b0" description="DCO has a default range of 25%."/>
+      <bit_field_value name="C4_DMX32_NARROW" value="0b1" description="DCO is fine-tuned for maximum frequency with 32.768 kHz reference."/>
+    </bit_field>
+  </register>
+  <register offset="0x4" width="8" name="C5" description="MCG Control 5 Register">
+    <alias type="CMSIS" value="C5"/>
+    <bit_field offset="0" width="3" name="PRDIV" access="RW" reset_value="0" description="PLL External Reference Divider">
+      <alias type="CMSIS" value="MCG_C5_PRDIV(x)"/>
+      <bit_field_value name="C5_PRDIV_DIV_1" value="0b000" description="Divide Factor is 1"/>
+      <bit_field_value name="C5_PRDIV_DIV_2" value="0b001" description="Divide Factor is 2"/>
+      <bit_field_value name="C5_PRDIV_DIV_3" value="0b010" description="Divide Factor is 3"/>
+      <bit_field_value name="C5_PRDIV_DIV_4" value="0b011" description="Divide Factor is 4"/>
+      <bit_field_value name="C5_PRDIV_DIV_5" value="0b100" description="Divide Factor is 5"/>
+      <bit_field_value name="C5_PRDIV_DIV_6" value="0b101" description="Divide Factor is 6"/>
+      <bit_field_value name="C5_PRDIV_DIV_7" value="0b110" description="Divide Factor is 7"/>
+      <bit_field_value name="C5_PRDIV_DIV_8" value="0b111" description="Divide Factor is 8"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="2" reset_value="0"/>
+    <bit_field offset="5" width="1" name="PLLSTEN" access="RW" reset_value="0" description="PLL Stop Enable">
+      <alias type="CMSIS" value="MCG_C5_PLLSTEN(x)"/>
+      <alias type="id" value="PLLSTEN0"/>
+      <bit_field_value name="C5_PLLSTEN_DISABLED" value="0b0" description="MCGPLLCLK and MCGPLLCLK2X are disabled in any of the Stop modes."/>
+      <bit_field_value name="C5_PLLSTEN_ENABLED" value="0b1" description="MCGPLLCLK and MCGPLLCLK2X are enabled if system is in Normal Stop mode."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="PLLCLKEN" access="RW" reset_value="0" description="PLL Clock Enable">
+      <alias type="CMSIS" value="MCG_C5_PLLCLKEN(x)"/>
+      <alias type="id" value="PLLCLKEN0"/>
+      <bit_field_value name="C5_PLLCLKEN_INACTIVE" value="0b0" description="MCGPLLCLK is inactive."/>
+      <bit_field_value name="C5_PLLCLKEN_ACTIVE" value="0b1" description="MCGPLLCLK is active."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x5" width="8" name="C6" description="MCG Control 6 Register">
+    <alias type="CMSIS" value="C6"/>
+    <bit_field offset="0" width="5" name="VDIV" access="RW" reset_value="0" description="VCO Divider">
+      <alias type="CMSIS" value="MCG_C6_VDIV(x)"/>
+      <bit_field_value name="C6_VDIV_MUL_16" value="0b00000" description="Multiply Factor is 16"/>
+      <bit_field_value name="C6_VDIV_MUL_17" value="0b00001" description="Multiply Factor is 17"/>
+      <bit_field_value name="C6_VDIV_MUL_18" value="0b00010" description="Multiply Factor is 18"/>
+      <bit_field_value name="C6_VDIV_MUL_19" value="0b00011" description="Multiply Factor is 19"/>
+      <bit_field_value name="C6_VDIV_MUL_20" value="0b00100" description="Multiply Factor is 20"/>
+      <bit_field_value name="C6_VDIV_MUL_21" value="0b00101" description="Multiply Factor is 21"/>
+      <bit_field_value name="C6_VDIV_MUL_22" value="0b00110" description="Multiply Factor is 22"/>
+      <bit_field_value name="C6_VDIV_MUL_23" value="0b00111" description="Multiply Factor is 23"/>
+      <bit_field_value name="C6_VDIV_MUL_24" value="0b01000" description="Multiply Factor is 24"/>
+      <bit_field_value name="C6_VDIV_MUL_25" value="0b01001" description="Multiply Factor is 25"/>
+      <bit_field_value name="C6_VDIV_MUL_26" value="0b01010" description="Multiply Factor is 26"/>
+      <bit_field_value name="C6_VDIV_MUL_27" value="0b01011" description="Multiply Factor is 27"/>
+      <bit_field_value name="C6_VDIV_MUL_28" value="0b01100" description="Multiply Factor is 28"/>
+      <bit_field_value name="C6_VDIV_MUL_29" value="0b01101" description="Multiply Factor is 29"/>
+      <bit_field_value name="C6_VDIV_MUL_30" value="0b01110" description="Multiply Factor is 30"/>
+      <bit_field_value name="C6_VDIV_MUL_31" value="0b01111" description="Multiply Factor is 31"/>
+      <bit_field_value name="C6_VDIV_MUL_32" value="0b10000" description="Multiply Factor is 32"/>
+      <bit_field_value name="C6_VDIV_MUL_33" value="0b10001" description="Multiply Factor is 33"/>
+      <bit_field_value name="C6_VDIV_MUL_34" value="0b10010" description="Multiply Factor is 34"/>
+      <bit_field_value name="C6_VDIV_MUL_35" value="0b10011" description="Multiply Factor is 35"/>
+      <bit_field_value name="C6_VDIV_MUL_36" value="0b10100" description="Multiply Factor is 36"/>
+      <bit_field_value name="C6_VDIV_MUL_37" value="0b10101" description="Multiply Factor is 37"/>
+      <bit_field_value name="C6_VDIV_MUL_38" value="0b10110" description="Multiply Factor is 38"/>
+      <bit_field_value name="C6_VDIV_MUL_39" value="0b10111" description="Multiply Factor is 39"/>
+      <bit_field_value name="C6_VDIV_MUL_40" value="0b11000" description="Multiply Factor is 40"/>
+      <bit_field_value name="C6_VDIV_MUL_41" value="0b11001" description="Multiply Factor is 41"/>
+      <bit_field_value name="C6_VDIV_MUL_42" value="0b11010" description="Multiply Factor is 42"/>
+      <bit_field_value name="C6_VDIV_MUL_43" value="0b11011" description="Multiply Factor is 43"/>
+      <bit_field_value name="C6_VDIV_MUL_44" value="0b11100" description="Multiply Factor is 44"/>
+      <bit_field_value name="C6_VDIV_MUL_45" value="0b11101" description="Multiply Factor is 45"/>
+      <bit_field_value name="C6_VDIV_MUL_46" value="0b11110" description="Multiply Factor is 46"/>
+      <bit_field_value name="C6_VDIV_MUL_47" value="0b11111" description="Multiply Factor is 47"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="CME0" access="RW" reset_value="0" description="Clock Monitor Enable">
+      <alias type="CMSIS" value="MCG_C6_CME0(x)"/>
+      <alias type="id" value="CME"/>
+      <bit_field_value name="C6_CME0_DISABLED" value="0b0" description="External clock monitor is disabled for OSC0."/>
+      <bit_field_value name="C6_CME0_ENABLED" value="0b1" description="External clock monitor is enabled for OSC0."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="PLLS" access="RW" reset_value="0" description="PLL Select">
+      <alias type="CMSIS" value="MCG_C6_PLLS(x)"/>
+      <bit_field_value name="C6_PLLS_FLL" value="0b0" description="FLL is selected."/>
+      <bit_field_value name="C6_PLLS_PLL" value="0b1" description="PLLCS output clock is selected (PRDIV0 bits of PLL in the C5 register need to be programmed to the correct divider to generate a PLL reference clock in the range specified in the data sheet (fpll_ref) prior to setting the PLLS bit)."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="LOLIE0" access="RW" reset_value="0" description="Loss of Lock Interrrupt Enable">
+      <alias type="CMSIS" value="MCG_C6_LOLIE0(x)"/>
+      <alias type="id" value="LOLIE"/>
+      <bit_field_value name="C6_LOLIE0_NO_IRQ" value="0b0" description="No interrupt request is generated on loss of lock."/>
+      <bit_field_value name="C6_LOLIE0_IRQ" value="0b1" description="Generate an interrupt request on loss of lock."/>
+    </bit_field>
+  </register>
+  <register offset="0x6" width="8" name="S" description="MCG Status Register">
+    <alias type="CMSIS" value="S"/>
+    <bit_field offset="0" width="1" name="IRCST" access="RO" reset_value="0" description="Internal Reference Clock Status">
+      <alias type="CMSIS" value="MCG_S_IRCST(x)"/>
+      <bit_field_value name="S_IRCST_SLOW" value="0b0" description="Source of internal reference clock is the slow clock (32 kHz IRC)."/>
+      <bit_field_value name="S_IRCST_FAST" value="0b1" description="Source of internal reference clock is the fast clock (4 MHz IRC)."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="OSCINIT0" access="RO" reset_value="0" description="OSC Initialization">
+      <alias type="CMSIS" value="MCG_S_OSCINIT0(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="2" name="CLKST" access="RO" reset_value="0" description="Clock Mode Status">
+      <alias type="CMSIS" value="MCG_S_CLKST(x)"/>
+      <bit_field_value name="S_CLKST_FLL" value="0b00" description="Encoding 0 - Output of the FLL is selected (reset default)."/>
+      <bit_field_value name="S_CLKST_IRC" value="0b01" description="Encoding 1 - Internal reference clock is selected."/>
+      <bit_field_value name="S_CLKST_ERC" value="0b10" description="Encoding 2 - External reference clock is selected."/>
+      <bit_field_value name="S_CLKST_PLL" value="0b11" description="Encoding 3 - Output of the PLL is selected."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="IREFST" access="RO" reset_value="0x1" description="Internal Reference Status">
+      <alias type="CMSIS" value="MCG_S_IREFST(x)"/>
+      <bit_field_value name="S_IREFST_ERC" value="0b0" description="Source of FLL reference clock is the external reference clock."/>
+      <bit_field_value name="S_IREFST_IRC" value="0b1" description="Source of FLL reference clock is the internal reference clock."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="PLLST" access="RO" reset_value="0" description="PLL Select Status">
+      <alias type="CMSIS" value="MCG_S_PLLST(x)"/>
+      <bit_field_value name="S_PLLST_FLL" value="0b0" description="Source of PLLS clock is FLL clock."/>
+      <bit_field_value name="S_PLLST_PLL" value="0b1" description="Source of PLLS clock is PLLCS output clock."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="LOCK0" access="RO" reset_value="0" description="Lock Status">
+      <alias type="CMSIS" value="MCG_S_LOCK0(x)"/>
+      <bit_field_value name="S_LOCK0_UNLOCKED" value="0b0" description="PLL is currently unlocked."/>
+      <bit_field_value name="S_LOCK0_LOCKED" value="0b1" description="PLL is currently locked."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="LOLS0" access="W1C" reset_value="0" description="Loss of Lock Status">
+      <alias type="CMSIS" value="MCG_S_LOLS0(x)"/>
+      <bit_field_value name="S_LOLS0_NOT_LOST" value="0b0" description="PLL has not lost lock since LOLS 0 was last cleared."/>
+      <bit_field_value name="S_LOLS0_LOST" value="0b1" description="PLL has lost lock since LOLS 0 was last cleared."/>
+    </bit_field>
+  </register>
+  <register offset="0x8" width="8" name="SC" description="MCG Status and Control Register">
+    <alias type="CMSIS" value="SC"/>
+    <bit_field offset="0" width="1" name="LOCS0" access="W1C" reset_value="0" description="OSC0 Loss of Clock Status">
+      <alias type="CMSIS" value="MCG_SC_LOCS0(x)"/>
+      <bit_field_value name="SC_LOCS0_NOT_OCCURRED" value="0b0" description="Loss of OSC0 has not occurred."/>
+      <bit_field_value name="SC_LOCS0_OCCURRED" value="0b1" description="Loss of OSC0 has occurred."/>
+    </bit_field>
+    <bit_field offset="1" width="3" name="FCRDIV" access="RW" reset_value="0x1" description="Fast Clock Internal Reference Divider">
+      <alias type="CMSIS" value="MCG_SC_FCRDIV(x)"/>
+      <bit_field_value name="SC_FCRDIV_DIV1" value="0b000" description="Divide Factor is 1"/>
+      <bit_field_value name="SC_FCRDIV_DIV2" value="0b001" description="Divide Factor is 2."/>
+      <bit_field_value name="SC_FCRDIV_DIV4" value="0b010" description="Divide Factor is 4."/>
+      <bit_field_value name="SC_FCRDIV_DIV8" value="0b011" description="Divide Factor is 8."/>
+      <bit_field_value name="SC_FCRDIV_DIV16" value="0b100" description="Divide Factor is 16"/>
+      <bit_field_value name="SC_FCRDIV_DIV32" value="0b101" description="Divide Factor is 32"/>
+      <bit_field_value name="SC_FCRDIV_DIV64" value="0b110" description="Divide Factor is 64"/>
+      <bit_field_value name="SC_FCRDIV_DIV128" value="0b111" description="Divide Factor is 128."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="FLTPRSRV" access="RW" reset_value="0" description="FLL Filter Preserve Enable">
+      <alias type="CMSIS" value="MCG_SC_FLTPRSRV(x)"/>
+      <bit_field_value name="SC_FLTPRSRV_RESET" value="0b0" description="FLL filter and FLL frequency will reset on changes to currect clock mode."/>
+      <bit_field_value name="SC_FLTPRSRV_RETAIN" value="0b1" description="Fll filter and FLL frequency retain their previous values during new clock mode change."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="ATMF" access="W1C" reset_value="0" description="Automatic Trim Machine Fail Flag">
+      <alias type="CMSIS" value="MCG_SC_ATMF(x)"/>
+      <bit_field_value name="SC_ATMF_OK" value="0b0" description="Automatic Trim Machine completed normally."/>
+      <bit_field_value name="SC_ATMF_FAILED" value="0b1" description="Automatic Trim Machine failed."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="ATMS" access="RW" reset_value="0" description="Automatic Trim Machine Select">
+      <alias type="CMSIS" value="MCG_SC_ATMS(x)"/>
+      <bit_field_value name="SC_ATMS_IRC_32K" value="0b0" description="32 kHz Internal Reference Clock selected."/>
+      <bit_field_value name="SC_ATMS_IRC_4M" value="0b1" description="4 MHz Internal Reference Clock selected."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="ATME" access="RW" reset_value="0" description="Automatic Trim Machine Enable">
+      <alias type="CMSIS" value="MCG_SC_ATME(x)"/>
+      <bit_field_value name="SC_ATME_DISABLED" value="0b0" description="Auto Trim Machine disabled."/>
+      <bit_field_value name="SC_ATME_ENABLED" value="0b1" description="Auto Trim Machine enabled."/>
+    </bit_field>
+  </register>
+  <register offset="0xA" width="8" name="ATCVH" description="MCG Auto Trim Compare Value High Register">
+    <alias type="CMSIS" value="ATCVH"/>
+    <bit_field offset="0" width="8" name="ATCVH" access="RW" reset_value="0" description="ATM Compare Value High">
+      <alias type="CMSIS" value="MCG_ATCVH_ATCVH(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xB" width="8" name="ATCVL" description="MCG Auto Trim Compare Value Low Register">
+    <alias type="CMSIS" value="ATCVL"/>
+    <bit_field offset="0" width="8" name="ATCVL" access="RW" reset_value="0" description="ATM Compare Value Low">
+      <alias type="CMSIS" value="MCG_ATCVL_ATCVL(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xC" width="8" name="C7" description="MCG Control 7 Register">
+    <alias type="CMSIS" value="C7"/>
+    <bit_field offset="0" width="2" name="OSCSEL" access="RW" reset_value="0" description="MCG OSC Clock Select">
+      <alias type="CMSIS" value="MCG_C7_OSCSEL(x)"/>
+      <bit_field_value name="C7_OSCSEL_OSCCLK0" value="0b00" description="Selects Oscillator (OSCCLK0)."/>
+      <bit_field_value name="C7_OSCSEL_RTC" value="0b01" description="Selects 32 kHz RTC Oscillator."/>
+      <bit_field_value name="C7_OSCSEL_OSCCLK1" value="0b10" description="Selects Oscillator (OSCCLK1)."/>
+      <bit_field_value name="C7_OSCSEL_RESERVED3" value="0b11" description="RESERVED"/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="4" reset_value="0"/>
+    <reserved_bit_field offset="6" width="2" reset_value="0"/>
+  </register>
+  <register offset="0xD" width="8" name="C8" description="MCG Control 8 Register">
+    <alias type="CMSIS" value="C8"/>
+    <bit_field offset="0" width="1" name="LOCS1" access="W1C" reset_value="0" description="RTC Loss of Clock Status">
+      <alias type="CMSIS" value="MCG_C8_LOCS1(x)"/>
+      <bit_field_value name="C8_LOCS1_NOT_OCCURRED" value="0b0" description="Loss of RTC has not occur."/>
+      <bit_field_value name="C8_LOCS1_OCCURRED" value="0b1" description="Loss of RTC has occur"/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="4" reset_value="0"/>
+    <bit_field offset="5" width="1" name="CME1" access="RW" reset_value="0" description="Clock Monitor Enable1">
+      <alias type="CMSIS" value="MCG_C8_CME1(x)"/>
+      <bit_field_value name="C8_CME1_DISABLED" value="0b0" description="External clock monitor is disabled for RTC clock."/>
+      <bit_field_value name="C8_CME1_ENABLED" value="0b1" description="External clock monitor is enabled for RTC clock."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="LOLRE" access="RW" reset_value="0" description="PLL Loss of Lock Reset Enable">
+      <alias type="CMSIS" value="MCG_C8_LOLRE(x)"/>
+      <bit_field_value name="C8_LOLRE_IRQ" value="0b0" description="Interrupt request is generated on a PLL loss of lock indication. The PLL loss of lock interrupt enable bit must also be set to generate the interrupt request."/>
+      <bit_field_value name="C8_LOLRE_RESET" value="0b1" description="Generate a reset request on a PLL loss of lock indication."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="LOCRE1" access="RW" reset_value="0x1" description="Loss of Clock Reset Enable">
+      <alias type="CMSIS" value="MCG_C8_LOCRE1(x)"/>
+      <bit_field_value name="C8_LOCRE1_IRQ" value="0b0" description="Interrupt request is generated on a loss of RTC external reference clock."/>
+      <bit_field_value name="C8_LOCRE1_RESET" value="0b1" description="Generate a reset request on a loss of RTC external reference clock"/>
+    </bit_field>
+  </register>
+  <register offset="0xE" width="8" name="C9" description="MCG Control 9 Register">
+    <alias type="CMSIS" value="C9"/>
+    <bit_field offset="0" width="1" name="EXT_PLL_LOCS" access="W1C" reset_value="0" description="External PLL Loss of Clock Status">
+      <alias type="CMSIS" value="MCG_C9_EXT_PLL_LOCS(x)"/>
+      <bit_field_value name="C9_EXT_PLL_LOCS_NOT_OCCURRED" value="0b0" description="Loss of MCG EXT_PLL has not occurred."/>
+      <bit_field_value name="C9_EXT_PLL_LOCS_OCCURRED" value="0b1" description="Loss of MCG EXT_PLL has occurred."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="3" reset_value="0"/>
+    <bit_field offset="4" width="1" name="PLL_LOCRE" access="RW" reset_value="0x1" description="MCG External PLL Loss of Clock Reset Enable">
+      <alias type="CMSIS" value="MCG_C9_PLL_LOCRE(x)"/>
+      <bit_field_value name="C9_PLL_LOCRE_IRQ" value="0b0" description="Interrupt request is generated on a invalid or loss of the MCG external PLL clock."/>
+      <bit_field_value name="C9_PLL_LOCRE_RESET" value="0b1" description="Generates a system reset request on a invalid or loss of the MCG external PLL clock."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="PLL_CME" access="RW" reset_value="0" description="MCG External PLL Clock Monitor Enable">
+      <alias type="CMSIS" value="MCG_C9_PLL_CME(x)"/>
+      <bit_field_value name="C9_PLL_CME_DISABLED" value="0b0" description="External clock monitor is disabled for EXT_PLL clock."/>
+      <bit_field_value name="C9_PLL_CME_ENABLED" value="0b1" description="External clock monitor is enabled for EXT_PLL clock."/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="2" reset_value="0"/>
+  </register>
+  <register offset="0x10" width="8" name="C11" description="MCG Control 11 Register">
+    <alias type="CMSIS" value="C11"/>
+    <reserved_bit_field offset="0" width="4" reset_value="0"/>
+    <bit_field offset="4" width="1" name="PLLCS" access="RW" reset_value="0" description="PLL Clock Select">
+      <alias type="CMSIS" value="MCG_C11_PLLCS(x)"/>
+      <bit_field_value name="C11_PLLCS_PLL" value="0b0" description="PLL0 output clock is selected."/>
+      <bit_field_value name="C11_PLLCS_EXT_PLL" value="0b1" description="External PLL clock is selected."/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="3" reset_value="0"/>
+  </register>
+  <register offset="0x12" width="8" name="S2" description="MCG Status 2 Register">
+    <alias type="CMSIS" value="S2"/>
+    <reserved_bit_field offset="0" width="4" reset_value="0"/>
+    <bit_field offset="4" width="1" name="PLLCST" access="RO" reset_value="0" description="PLL Clock Select Status">
+      <alias type="CMSIS" value="MCG_S2_PLLCST(x)"/>
+      <bit_field_value name="S2_PLLCST_PLL" value="0b0" description="Source of PLLCS is PLL clock."/>
+      <bit_field_value name="S2_PLLCST_EXT_PLL" value="0b1" description="Source of PLLCS is EXT_PLL clock."/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="3" reset_value="0"/>
+  </register>
+</regs:peripheral>

@@ -1,0 +1,954 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="8" name="PERID" description="Peripheral ID register">
+    <alias type="CMSIS" value="PERID"/>
+    <bit_field offset="0" width="6" name="ID" access="RO" reset_value="0x4" description="Peripheral Identification">
+      <alias type="CMSIS" value="USB_PERID_ID(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="2" reset_value="0"/>
+  </register>
+  <register offset="0x4" width="8" name="IDCOMP" description="Peripheral ID Complement register">
+    <alias type="CMSIS" value="IDCOMP"/>
+    <bit_field offset="0" width="6" name="NID" access="RO" reset_value="0x3B" description="Ones' complement of PERID[ID]. bits.">
+      <alias type="CMSIS" value="USB_IDCOMP_NID(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="2" reset_value="0x3"/>
+  </register>
+  <register offset="0x8" width="8" name="REV" description="Peripheral Revision register">
+    <alias type="CMSIS" value="REV"/>
+    <bit_field offset="0" width="8" name="REV" access="RO" reset_value="0x33" description="Revision">
+      <alias type="CMSIS" value="USB_REV_REV(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xC" width="8" name="ADDINFO" description="Peripheral Additional Info register">
+    <alias type="CMSIS" value="ADDINFO"/>
+    <bit_field offset="0" width="1" name="IEHOST" access="RO" reset_value="0x1" description="This bit is set if host mode is enabled.">
+      <alias type="CMSIS" value="USB_ADDINFO_IEHOST(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="2" reset_value="0"/>
+    <reserved_bit_field offset="3" width="5" reset_value="0"/>
+  </register>
+  <register offset="0x10" width="8" name="OTGISTAT" description="OTG Interrupt Status register">
+    <alias type="CMSIS" value="OTGISTAT"/>
+    <bit_field offset="0" width="1" name="AVBUSCHG" access="RW" reset_value="0" description="This bit is set when a change in VBUS is detected on an A device.">
+      <alias type="CMSIS" value="USB_OTGISTAT_AVBUSCHG(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="1" name="B_SESS_CHG" access="RW" reset_value="0" description="This bit is set when a change in VBUS is detected on a B device.">
+      <alias type="CMSIS" value="USB_OTGISTAT_B_SESS_CHG(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="SESSVLDCHG" access="RW" reset_value="0" description="This bit is set when a change in VBUS is detected indicating a session valid or a session no longer valid.">
+      <alias type="CMSIS" value="USB_OTGISTAT_SESSVLDCHG(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <bit_field offset="5" width="1" name="LINE_STATE_CHG" access="RW" reset_value="0" description="This interrupt is set when the USB line state (CTL[SE0] and CTL[JSTATE] bits) are stable without change for 1 millisecond, and the value of the line state is different from the last time when the line state was stable. It is set on transitions between SE0 and J-state, SE0 and K-state, and J-state and K-state. Changes in J-state while SE0 is true do not cause an interrupt. This interrupt can be used in detecting Reset, Resume, Connect, and Data Line Pulse signaling.">
+      <alias type="CMSIS" value="USB_OTGISTAT_LINE_STATE_CHG(x)"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="ONEMSEC" access="RW" reset_value="0" description="This bit is set when the 1 millisecond timer expires. This bit stays asserted until cleared by software. The interrupt must be serviced every millisecond to avoid losing 1msec counts.">
+      <alias type="CMSIS" value="USB_OTGISTAT_ONEMSEC(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="IDCHG" access="RW" reset_value="0" description="This bit is set when a change in the ID Signal from the USB connector is sensed.">
+      <alias type="CMSIS" value="USB_OTGISTAT_IDCHG(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x14" width="8" name="OTGICR" description="OTG Interrupt Control register">
+    <alias type="CMSIS" value="OTGICR"/>
+    <bit_field offset="0" width="1" name="AVBUSEN" access="RW" reset_value="0" description="A VBUS Valid Interrupt Enable">
+      <alias type="CMSIS" value="USB_OTGICR_AVBUSEN(x)"/>
+      <bit_field_value name="OTGICR_AVBUSEN_0b0" value="0b0" description="Disables the AVBUSCHG interrupt."/>
+      <bit_field_value name="OTGICR_AVBUSEN_0b1" value="0b1" description="Enables the AVBUSCHG interrupt."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="1" name="BSESSEN" access="RW" reset_value="0" description="B Session END Interrupt Enable">
+      <alias type="CMSIS" value="USB_OTGICR_BSESSEN(x)"/>
+      <bit_field_value name="OTGICR_BSESSEN_0b0" value="0b0" description="Disables the B_SESS_CHG interrupt."/>
+      <bit_field_value name="OTGICR_BSESSEN_0b1" value="0b1" description="Enables the B_SESS_CHG interrupt."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="SESSVLDEN" access="RW" reset_value="0" description="Session Valid Interrupt Enable">
+      <alias type="CMSIS" value="USB_OTGICR_SESSVLDEN(x)"/>
+      <bit_field_value name="OTGICR_SESSVLDEN_0b0" value="0b0" description="Disables the SESSVLDCHG interrupt."/>
+      <bit_field_value name="OTGICR_SESSVLDEN_0b1" value="0b1" description="Enables the SESSVLDCHG interrupt."/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <bit_field offset="5" width="1" name="LINESTATEEN" access="RW" reset_value="0" description="Line State Change Interrupt Enable">
+      <alias type="CMSIS" value="USB_OTGICR_LINESTATEEN(x)"/>
+      <bit_field_value name="OTGICR_LINESTATEEN_0b0" value="0b0" description="Disables the LINE_STAT_CHG interrupt."/>
+      <bit_field_value name="OTGICR_LINESTATEEN_0b1" value="0b1" description="Enables the LINE_STAT_CHG interrupt."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="ONEMSECEN" access="RW" reset_value="0" description="One Millisecond Interrupt Enable">
+      <alias type="CMSIS" value="USB_OTGICR_ONEMSECEN(x)"/>
+      <bit_field_value name="OTGICR_ONEMSECEN_0b0" value="0b0" description="Diables the 1ms timer interrupt."/>
+      <bit_field_value name="OTGICR_ONEMSECEN_0b1" value="0b1" description="Enables the 1ms timer interrupt."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="IDEN" access="RW" reset_value="0" description="ID Interrupt Enable">
+      <alias type="CMSIS" value="USB_OTGICR_IDEN(x)"/>
+      <bit_field_value name="OTGICR_IDEN_0b0" value="0b0" description="The ID interrupt is disabled"/>
+      <bit_field_value name="OTGICR_IDEN_0b1" value="0b1" description="The ID interrupt is enabled"/>
+    </bit_field>
+  </register>
+  <register offset="0x18" width="8" name="OTGSTAT" description="OTG Status register">
+    <alias type="CMSIS" value="OTGSTAT"/>
+    <bit_field offset="0" width="1" name="AVBUSVLD" access="RW" reset_value="0" description="A VBUS Valid">
+      <alias type="CMSIS" value="USB_OTGSTAT_AVBUSVLD(x)"/>
+      <bit_field_value name="OTGSTAT_AVBUSVLD_0b0" value="0b0" description="The VBUS voltage is below the A VBUS Valid threshold."/>
+      <bit_field_value name="OTGSTAT_AVBUSVLD_0b1" value="0b1" description="The VBUS voltage is above the A VBUS Valid threshold."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="1" name="BSESSEND" access="RW" reset_value="0" description="B Session End">
+      <alias type="CMSIS" value="USB_OTGSTAT_BSESSEND(x)"/>
+      <bit_field_value name="OTGSTAT_BSESSEND_0b0" value="0b0" description="The VBUS voltage is above the B session end threshold."/>
+      <bit_field_value name="OTGSTAT_BSESSEND_0b1" value="0b1" description="The VBUS voltage is below the B session end threshold."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="SESS_VLD" access="RW" reset_value="0" description="Session Valid">
+      <alias type="CMSIS" value="USB_OTGSTAT_SESS_VLD(x)"/>
+      <bit_field_value name="OTGSTAT_SESS_VLD_0b0" value="0b0" description="The VBUS voltage is below the B session valid threshold"/>
+      <bit_field_value name="OTGSTAT_SESS_VLD_0b1" value="0b1" description="The VBUS voltage is above the B session valid threshold."/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <bit_field offset="5" width="1" name="LINESTATESTABLE" access="RW" reset_value="0" description="Indicates that the internal signals that control the LINE_STATE_CHG field of OTGISTAT are stable for at least 1 ms. This bit is used to provide a hardware debounce of the linestate in detection of Connect, Disconnect and Resume signaling. First read LINE_STATE_CHG field and then read this field. If this field reads as 1, then the value of LINE_STATE_CHG can be considered stable.">
+      <alias type="CMSIS" value="USB_OTGSTAT_LINESTATESTABLE(x)"/>
+      <bit_field_value name="OTGSTAT_LINESTATESTABLE_0b0" value="0b0" description="The LINE_STAT_CHG bit is not yet stable."/>
+      <bit_field_value name="OTGSTAT_LINESTATESTABLE_0b1" value="0b1" description="The LINE_STAT_CHG bit has been debounced and is stable."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="ONEMSECEN" access="RW" reset_value="0" description="This bit is reserved for the 1ms count, but it is not useful to software.">
+      <alias type="CMSIS" value="USB_OTGSTAT_ONEMSECEN(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="ID" access="RW" reset_value="0" description="Indicates the current state of the ID pin on the USB connector">
+      <alias type="CMSIS" value="USB_OTGSTAT_ID(x)"/>
+      <bit_field_value name="OTGSTAT_ID_0b0" value="0b0" description="Indicates a Type A cable is plugged into the USB connector."/>
+      <bit_field_value name="OTGSTAT_ID_0b1" value="0b1" description="Indicates no cable is attached or a Type B cable is plugged into the USB connector."/>
+    </bit_field>
+  </register>
+  <register offset="0x1C" width="8" name="OTGCTL" description="OTG Control register">
+    <alias type="CMSIS" value="OTGCTL"/>
+    <reserved_bit_field offset="0" width="2" reset_value="0"/>
+    <bit_field offset="2" width="1" name="OTGEN" access="RW" reset_value="0" description="On-The-Go pullup/pulldown resistor enable">
+      <alias type="CMSIS" value="USB_OTGCTL_OTGEN(x)"/>
+      <bit_field_value name="OTGCTL_OTGEN_0b0" value="0b0" description="If USB_EN is 1 and HOST_MODE is 0 in the Control Register (CTL), then the D+ Data Line pull-up resistors are enabled. If HOST_MODE is 1 the D+ and D- Data Line pull-down resistors are engaged."/>
+      <bit_field_value name="OTGCTL_OTGEN_0b1" value="0b1" description="The pull-up and pull-down controls in this register are used."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="DMLOW" access="RW" reset_value="0" description="D- Data Line pull-down resistor enable">
+      <alias type="CMSIS" value="USB_OTGCTL_DMLOW(x)"/>
+      <bit_field_value name="OTGCTL_DMLOW_DISABLED" value="0b0" description="D- pulldown resistor is not enabled."/>
+      <bit_field_value name="OTGCTL_DMLOW_ENABLED" value="0b1" description="D- pulldown resistor is enabled."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="DPLOW" access="RW" reset_value="0" description="D+ Data Line pull-down resistor enable">
+      <alias type="CMSIS" value="USB_OTGCTL_DPLOW(x)"/>
+      <bit_field_value name="OTGCTL_DPLOW_DISABLED" value="0b0" description="D+ pulldown resistor is not enabled."/>
+      <bit_field_value name="OTGCTL_DPLOW_ENABLED" value="0b1" description="D+ pulldown resistor is enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <bit_field offset="7" width="1" name="DPHIGH" access="RW" reset_value="0" description="D+ Data Line pullup resistor enable">
+      <alias type="CMSIS" value="USB_OTGCTL_DPHIGH(x)"/>
+      <bit_field_value name="OTGCTL_DPHIGH_DISABLED" value="0b0" description="D+ pullup resistor is not enabled"/>
+      <bit_field_value name="OTGCTL_DPHIGH_ENABLED" value="0b1" description="D+ pullup resistor is enabled"/>
+    </bit_field>
+  </register>
+  <register offset="0x80" width="8" name="ISTAT" description="Interrupt Status register">
+    <alias type="CMSIS" value="ISTAT"/>
+    <bit_field offset="0" width="1" name="USBRST" access="W1C" reset_value="0" description="This bit is set when the USB Module has decoded a valid USB reset. This informs the processor that it should write 0x00 into the address register and enable endpoint 0. USBRST is set after a USB reset has been detected for 2.5 microseconds. It is not asserted again until the USB reset condition has been removed and then reasserted.">
+      <alias type="CMSIS" value="USB_ISTAT_USBRST(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="ERROR" access="W1C" reset_value="0" description="This bit is set when any of the error conditions within Error Interrupt Status (ERRSTAT) register occur. The processor must then read the ERRSTAT register to determine the source of the error.">
+      <alias type="CMSIS" value="USB_ISTAT_ERROR(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SOFTOK" access="W1C" reset_value="0" description="This bit is set when the USB Module receives a Start Of Frame (SOF) token. In Host mode this field is set when the SOF threshold is reached, so that software can prepare for the next SOF.">
+      <alias type="CMSIS" value="USB_ISTAT_SOFTOK(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="TOKDNE" access="W1C" reset_value="0" description="This bit is set when the current token being processed has completed. The processor must immediately read the STATUS (STAT) register to determine the EndPoint and BD used for this token. Clearing this bit (by writing a one) causes STAT to be cleared or the STAT holding register to be loaded into the STAT register.">
+      <alias type="CMSIS" value="USB_ISTAT_TOKDNE(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="SLEEP" access="W1C" reset_value="0" description="This bit is set when the USB Module detects a constant idle on the USB bus for 3 ms. The sleep timer is reset by activity on the USB bus.">
+      <alias type="CMSIS" value="USB_ISTAT_SLEEP(x)"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="RESUME" access="W1C" reset_value="0" description="This bit is set when a K-state is observed on the DP/DM signals for 2.5 us. When not in suspend mode this interrupt must be disabled.">
+      <alias type="CMSIS" value="USB_ISTAT_RESUME(x)"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="ATTACH" access="W1C" reset_value="0" description="Attach Interrupt">
+      <alias type="CMSIS" value="USB_ISTAT_ATTACH(x)"/>
+      <bit_field_value name="ISTAT_ATTACH_0b0" value="0b0" description="No Attach is detected since the last time the ATTACH bit was cleared."/>
+      <bit_field_value name="ISTAT_ATTACH_0b1" value="0b1" description="A peripheral is now present and must be configured (a stable non-SE0 state is detected for more than 2.5 us)."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="STALL" access="W1C" reset_value="0" description="Stall Interrupt">
+      <alias type="CMSIS" value="USB_ISTAT_STALL(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x84" width="8" name="INTEN" description="Interrupt Enable register">
+    <alias type="CMSIS" value="INTEN"/>
+    <bit_field offset="0" width="1" name="USBRSTEN" access="RW" reset_value="0" description="USBRST Interrupt Enable">
+      <alias type="CMSIS" value="USB_INTEN_USBRSTEN(x)"/>
+      <bit_field_value name="INTEN_USBRSTEN_0b0" value="0b0" description="Disables the USBRST interrupt."/>
+      <bit_field_value name="INTEN_USBRSTEN_0b1" value="0b1" description="Enables the USBRST interrupt."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="ERROREN" access="RW" reset_value="0" description="ERROR Interrupt Enable">
+      <alias type="CMSIS" value="USB_INTEN_ERROREN(x)"/>
+      <bit_field_value name="INTEN_ERROREN_0b0" value="0b0" description="Disables the ERROR interrupt."/>
+      <bit_field_value name="INTEN_ERROREN_0b1" value="0b1" description="Enables the ERROR interrupt."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SOFTOKEN" access="RW" reset_value="0" description="SOFTOK Interrupt Enable">
+      <alias type="CMSIS" value="USB_INTEN_SOFTOKEN(x)"/>
+      <bit_field_value name="INTEN_SOFTOKEN_0b0" value="0b0" description="Disbles the SOFTOK interrupt."/>
+      <bit_field_value name="INTEN_SOFTOKEN_0b1" value="0b1" description="Enables the SOFTOK interrupt."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="TOKDNEEN" access="RW" reset_value="0" description="TOKDNE Interrupt Enable">
+      <alias type="CMSIS" value="USB_INTEN_TOKDNEEN(x)"/>
+      <bit_field_value name="INTEN_TOKDNEEN_0b0" value="0b0" description="Disables the TOKDNE interrupt."/>
+      <bit_field_value name="INTEN_TOKDNEEN_0b1" value="0b1" description="Enables the TOKDNE interrupt."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="SLEEPEN" access="RW" reset_value="0" description="SLEEP Interrupt Enable">
+      <alias type="CMSIS" value="USB_INTEN_SLEEPEN(x)"/>
+      <bit_field_value name="INTEN_SLEEPEN_0b0" value="0b0" description="Disables the SLEEP interrupt."/>
+      <bit_field_value name="INTEN_SLEEPEN_0b1" value="0b1" description="Enables the SLEEP interrupt."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="RESUMEEN" access="RW" reset_value="0" description="RESUME Interrupt Enable">
+      <alias type="CMSIS" value="USB_INTEN_RESUMEEN(x)"/>
+      <bit_field_value name="INTEN_RESUMEEN_0b0" value="0b0" description="Disables the RESUME interrupt."/>
+      <bit_field_value name="INTEN_RESUMEEN_0b1" value="0b1" description="Enables the RESUME interrupt."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="ATTACHEN" access="RW" reset_value="0" description="ATTACH Interrupt Enable">
+      <alias type="CMSIS" value="USB_INTEN_ATTACHEN(x)"/>
+      <bit_field_value name="INTEN_ATTACHEN_0b0" value="0b0" description="Disables the ATTACH interrupt."/>
+      <bit_field_value name="INTEN_ATTACHEN_0b1" value="0b1" description="Enables the ATTACH interrupt."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="STALLEN" access="RW" reset_value="0" description="STALL Interrupt Enable">
+      <alias type="CMSIS" value="USB_INTEN_STALLEN(x)"/>
+      <bit_field_value name="INTEN_STALLEN_0b0" value="0b0" description="Diasbles the STALL interrupt."/>
+      <bit_field_value name="INTEN_STALLEN_0b1" value="0b1" description="Enables the STALL interrupt."/>
+    </bit_field>
+  </register>
+  <register offset="0x88" width="8" name="ERRSTAT" description="Error Interrupt Status register">
+    <alias type="CMSIS" value="ERRSTAT"/>
+    <bit_field offset="0" width="1" name="PIDERR" access="W1C" reset_value="0" description="This bit is set when the PID check field fails.">
+      <alias type="CMSIS" value="USB_ERRSTAT_PIDERR(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="CRC5EOF" access="W1C" reset_value="0" description="This error interrupt has two functions. When the USB Module is operating in peripheral mode (HOSTMODEEN=0), this interrupt detects CRC5 errors in the token packets generated by the host. If set the token packet was rejected due to a CRC5 error. When the USB Module is operating in host mode (HOSTMODEEN=1), this interrupt detects End Of Frame (EOF) error conditions. This occurs when the USB Module is transmitting or receiving data and the SOF counter reaches zero. This interrupt is useful when developing USB packet scheduling software to ensure that no USB transactions cross the start of the next frame.">
+      <alias type="CMSIS" value="USB_ERRSTAT_CRC5EOF(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="CRC16" access="W1C" reset_value="0" description="This bit is set when a data packet is rejected due to a CRC16 error.">
+      <alias type="CMSIS" value="USB_ERRSTAT_CRC16(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="DFN8" access="W1C" reset_value="0" description="This bit is set if the data field received was not 8 bits in length. USB Specification 1.0 requires that data fields be an integral number of bytes. If the data field was not an integral number of bytes, this bit is set.">
+      <alias type="CMSIS" value="USB_ERRSTAT_DFN8(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="BTOERR" access="W1C" reset_value="0" description="This bit is set when a bus turnaround timeout error occurs. The USB module contains a bus turnaround timer that keeps track of the amount of time elapsed between the token and data phases of a SETUP or OUT TOKEN or the data and handshake phases of a IN TOKEN. If more than 16 bit times are counted from the previous EOP before a transition from IDLE, a bus turnaround timeout error occurs.">
+      <alias type="CMSIS" value="USB_ERRSTAT_BTOERR(x)"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="DMAERR" access="W1C" reset_value="0" description="This bit is set if the USB Module has requested a DMA access to read a new BDT but has not been given the bus before it needs to receive or transmit data. If processing a TX transfer this would cause a transmit data underflow condition. If processing a RX transfer this would cause a receive data overflow condition. This interrupt is useful when developing device arbitration hardware for the microprocessor and the USB module to minimize bus request and bus grant latency. This bit is also set if a data packet to or from the host is larger than the buffer size allocated in the BDT. In this case the data packet is truncated as it is put in buffer memory.">
+      <alias type="CMSIS" value="USB_ERRSTAT_DMAERR(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <bit_field offset="7" width="1" name="BTSERR" access="W1C" reset_value="0" description="This bit is set when a bit stuff error is detected. If set, the corresponding packet is rejected due to the error.">
+      <alias type="CMSIS" value="USB_ERRSTAT_BTSERR(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x8C" width="8" name="ERREN" description="Error Interrupt Enable register">
+    <alias type="CMSIS" value="ERREN"/>
+    <bit_field offset="0" width="1" name="PIDERREN" access="RW" reset_value="0" description="PIDERR Interrupt Enable">
+      <alias type="CMSIS" value="USB_ERREN_PIDERREN(x)"/>
+      <bit_field_value name="ERREN_PIDERREN_DISABLED" value="0b0" description="Disables the PIDERR interrupt."/>
+      <bit_field_value name="ERREN_PIDERREN_ENABLED" value="0b1" description="Enters the PIDERR interrupt."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="CRC5EOFEN" access="RW" reset_value="0" description="CRC5/EOF Interrupt Enable">
+      <alias type="CMSIS" value="USB_ERREN_CRC5EOFEN(x)"/>
+      <bit_field_value name="ERREN_CRC5EOFEN_DISABLED" value="0b0" description="Disables the CRC5/EOF interrupt."/>
+      <bit_field_value name="ERREN_CRC5EOFEN_ENABLED" value="0b1" description="Enables the CRC5/EOF interrupt."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="CRC16EN" access="RW" reset_value="0" description="CRC16 Interrupt Enable">
+      <alias type="CMSIS" value="USB_ERREN_CRC16EN(x)"/>
+      <bit_field_value name="ERREN_CRC16EN_DISABLED" value="0b0" description="Disables the CRC16 interrupt."/>
+      <bit_field_value name="ERREN_CRC16EN_ENABLED" value="0b1" description="Enables the CRC16 interrupt."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="DFN8EN" access="RW" reset_value="0" description="DFN8 Interrupt Enable">
+      <alias type="CMSIS" value="USB_ERREN_DFN8EN(x)"/>
+      <bit_field_value name="ERREN_DFN8EN_DISABLED" value="0b0" description="Disables the DFN8 interrupt."/>
+      <bit_field_value name="ERREN_DFN8EN_ENABLED" value="0b1" description="Enables the DFN8 interrupt."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="BTOERREN" access="RW" reset_value="0" description="BTOERR Interrupt Enable">
+      <alias type="CMSIS" value="USB_ERREN_BTOERREN(x)"/>
+      <bit_field_value name="ERREN_BTOERREN_DISABLED" value="0b0" description="Disables the BTOERR interrupt."/>
+      <bit_field_value name="ERREN_BTOERREN_ENABLED" value="0b1" description="Enables the BTOERR interrupt."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="DMAERREN" access="RW" reset_value="0" description="DMAERR Interrupt Enable">
+      <alias type="CMSIS" value="USB_ERREN_DMAERREN(x)"/>
+      <bit_field_value name="ERREN_DMAERREN_DISABLED" value="0b0" description="Disables the DMAERR interrupt."/>
+      <bit_field_value name="ERREN_DMAERREN_ENABLED" value="0b1" description="Enables the DMAERR interrupt."/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <bit_field offset="7" width="1" name="BTSERREN" access="RW" reset_value="0" description="BTSERR Interrupt Enable">
+      <alias type="CMSIS" value="USB_ERREN_BTSERREN(x)"/>
+      <bit_field_value name="ERREN_BTSERREN_DISABLED" value="0b0" description="Disables the BTSERR interrupt."/>
+      <bit_field_value name="ERREN_BTSERREN_ENABLED" value="0b1" description="Enables the BTSERR interrupt."/>
+    </bit_field>
+  </register>
+  <register offset="0x90" width="8" name="STAT" description="Status register">
+    <alias type="CMSIS" value="STAT"/>
+    <reserved_bit_field offset="0" width="2" reset_value="0"/>
+    <bit_field offset="2" width="1" name="ODD" access="RO" reset_value="0" description="This bit is set if the last buffer descriptor updated was in the odd bank of the BDT.">
+      <alias type="CMSIS" value="USB_STAT_ODD(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="TX" access="RO" reset_value="0" description="Transmit Indicator">
+      <alias type="CMSIS" value="USB_STAT_TX(x)"/>
+      <bit_field_value name="STAT_TX_0b0" value="0b0" description="The most recent transaction was a receive operation."/>
+      <bit_field_value name="STAT_TX_0b1" value="0b1" description="The most recent transaction was a transmit operation."/>
+    </bit_field>
+    <bit_field offset="4" width="4" name="ENDP" access="RO" reset_value="0" description="This four-bit field encodes the endpoint address that received or transmitted the previous token. This allows the processor core to determine the BDT entry that was updated by the last USB transaction.">
+      <alias type="CMSIS" value="USB_STAT_ENDP(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x94" width="8" name="CTL" description="Control register">
+    <alias type="CMSIS" value="CTL"/>
+    <bit_field offset="0" width="1" name="USBENSOFEN" access="RW" reset_value="0" description="USB Enable">
+      <alias type="CMSIS" value="USB_CTL_USBENSOFEN(x)"/>
+      <bit_field_value name="CTL_USBENSOFEN_DISABLED" value="0b0" description="Disables the USB Module."/>
+      <bit_field_value name="CTL_USBENSOFEN_ENABLED" value="0b1" description="Enables the USB Module."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="ODDRST" access="RW" reset_value="0" description="Setting this bit to 1 resets all the BDT ODD ping/pong fields to 0, which then specifies the EVEN BDT bank.">
+      <alias type="CMSIS" value="USB_CTL_ODDRST(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="RESUME" access="RW" reset_value="0" description="When set to 1 this bit enables the USB Module to execute resume signaling. This allows the USB Module to perform remote wake-up. Software must set RESUME to 1 for the required amount of time and then clear it to 0. If the HOSTMODEEN bit is set, the USB module appends a Low Speed End of Packet to the Resume signaling when the RESUME bit is cleared. For more information on RESUME signaling see Section 7.1.4.5 of the USB specification version 1.0.">
+      <alias type="CMSIS" value="USB_CTL_RESUME(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="HOSTMODEEN" access="RW" reset_value="0" description="When set to 1, this bit enables the USB Module to operate in Host mode. In host mode, the USB module performs USB transactions under the programmed control of the host processor.">
+      <alias type="CMSIS" value="USB_CTL_HOSTMODEEN(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="RESET" access="RW" reset_value="0" description="Setting this bit enables the USB Module to generate USB reset signaling. This allows the USB Module to reset USB peripherals. This control signal is only valid in Host mode (HOSTMODEEN=1). Software must set RESET to 1 for the required amount of time and then clear it to 0 to end reset signaling. For more information on reset signaling see Section 7.1.4.3 of the USB specification version 1.0.">
+      <alias type="CMSIS" value="USB_CTL_RESET(x)"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="TXSUSPENDTOKENBUSY" access="RW" reset_value="0" description="In Host mode, TOKEN_BUSY is set when the USB module is busy executing a USB token. Software must not write more token commands to the Token Register when TOKEN_BUSY is set. Software should check this field before writing any tokens to the Token Register to ensure that token commands are not lost. In Target mode, TXD_SUSPEND is set when the SIE has disabled packet transmission and reception. Clearing this bit allows the SIE to continue token processing. This bit is set by the SIE when a SETUP Token is received allowing software to dequeue any pending packet transactions in the BDT before resuming token processing.">
+      <alias type="CMSIS" value="USB_CTL_TXSUSPENDTOKENBUSY(x)"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="SE0" access="RW" reset_value="0" description="Live USB Single Ended Zero signal">
+      <alias type="CMSIS" value="USB_CTL_SE0(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="JSTATE" access="RW" reset_value="0" description="Live USB differential receiver JSTATE signal">
+      <alias type="CMSIS" value="USB_CTL_JSTATE(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x98" width="8" name="ADDR" description="Address register">
+    <alias type="CMSIS" value="ADDR"/>
+    <bit_field offset="0" width="7" name="ADDR" access="RW" reset_value="0" description="USB Address">
+      <alias type="CMSIS" value="USB_ADDR_ADDR(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="LSEN" access="RW" reset_value="0" description="Low Speed Enable bit">
+      <alias type="CMSIS" value="USB_ADDR_LSEN(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x9C" width="8" name="BDTPAGE1" description="BDT Page register 1">
+    <alias type="CMSIS" value="BDTPAGE1"/>
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <bit_field offset="1" width="7" name="BDTBA" access="RW" reset_value="0" description="Provides address bits 15 through 9 of the BDT base address.">
+      <alias type="CMSIS" value="USB_BDTPAGE1_BDTBA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xA0" width="8" name="FRMNUML" description="Frame Number register Low">
+    <alias type="CMSIS" value="FRMNUML"/>
+    <bit_field offset="0" width="8" name="FRM" access="RW" reset_value="0" description="This 8-bit field and the 3-bit field in the Frame Number Register High are used to compute the address where the current Buffer Descriptor Table (BDT) resides in system memory.">
+      <alias type="CMSIS" value="USB_FRMNUML_FRM(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xA4" width="8" name="FRMNUMH" description="Frame Number register High">
+    <alias type="CMSIS" value="FRMNUMH"/>
+    <bit_field offset="0" width="3" name="FRM" access="RW" reset_value="0" description="This 3-bit field and the 8-bit field in the Frame Number Register Low are used to compute the address where the current Buffer Descriptor Table (BDT) resides in system memory.">
+      <alias type="CMSIS" value="USB_FRMNUMH_FRM(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="5" reset_value="0"/>
+  </register>
+  <register offset="0xA8" width="8" name="TOKEN" description="Token register">
+    <alias type="CMSIS" value="TOKEN"/>
+    <bit_field offset="0" width="4" name="TOKENENDPT" access="RW" reset_value="0" description="Holds the Endpoint address for the token command. The four bit value written must be a valid endpoint.">
+      <alias type="CMSIS" value="USB_TOKEN_TOKENENDPT(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="4" name="TOKENPID" access="RW" reset_value="0" description="Contains the token type executed by the USB module.">
+      <alias type="CMSIS" value="USB_TOKEN_TOKENPID(x)"/>
+      <bit_field_value name="TOKEN_TOKENPID_0b0001" value="0b0001" description="OUT Token. USB Module performs an OUT (TX) transaction."/>
+      <bit_field_value name="TOKEN_TOKENPID_0b1001" value="0b1001" description="IN Token. USB Module performs an In (RX) transaction."/>
+      <bit_field_value name="TOKEN_TOKENPID_0b1101" value="0b1101" description="SETUP Token. USB Module performs a SETUP (TX) transaction"/>
+    </bit_field>
+  </register>
+  <register offset="0xAC" width="8" name="SOFTHLD" description="SOF Threshold register">
+    <alias type="CMSIS" value="SOFTHLD"/>
+    <bit_field offset="0" width="8" name="CNT" access="RW" reset_value="0" description="Represents the SOF count threshold in byte times.">
+      <alias type="CMSIS" value="USB_SOFTHLD_CNT(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xB0" width="8" name="BDTPAGE2" description="BDT Page Register 2">
+    <alias type="CMSIS" value="BDTPAGE2"/>
+    <bit_field offset="0" width="8" name="BDTBA" access="RW" reset_value="0" description="Provides address bits 23 through 16 of the BDT base address that defines the location of Buffer Descriptor Table resides in system memory.">
+      <alias type="CMSIS" value="USB_BDTPAGE2_BDTBA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xB4" width="8" name="BDTPAGE3" description="BDT Page Register 3">
+    <alias type="CMSIS" value="BDTPAGE3"/>
+    <bit_field offset="0" width="8" name="BDTBA" access="RW" reset_value="0" description="Provides address bits 31 through 24 of the BDT base address that defines the location of Buffer Descriptor Table resides in system memory.">
+      <alias type="CMSIS" value="USB_BDTPAGE3_BDTBA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xC0" width="8" name="ENDPT0" description="Endpoint Control register">
+    <alias type="CMSIS" value="ENDPOINT[0].ENDPT"/>
+    <bit_field offset="0" width="1" name="EPHSHK" access="RW" reset_value="0" description="When set this bit enables an endpoint to perform handshaking during a transaction to this endpoint. This bit is generally 1 unless the endpoint is Isochronous.">
+      <alias type="CMSIS" value="USB_ENDPT_EPHSHK(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="EPSTALL" access="RW" reset_value="0" description="When set this bit indicates that the endpoint is called. This bit has priority over all other control bits in the EndPoint Enable Register, but it is only valid if EPTXEN=1 or EPRXEN=1. Any access to this endpoint causes the USB Module to return a STALL handshake. After an endpoint is stalled it requires intervention from the Host Controller.">
+      <alias type="CMSIS" value="USB_ENDPT_EPSTALL(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="EPTXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for TX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPTXEN(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="EPRXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for RX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPRXEN(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="EPCTLDIS" access="RW" reset_value="0" description="This bit, when set, disables control (SETUP) transfers. When cleared, control transfers are enabled. This applies if and only if the EPRXEN and EPTXEN bits are also set. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPCTLDIS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <bit_field offset="6" width="1" name="RETRYDIS" access="RW" reset_value="0" description="This is a Host mode only bit and is present in the control register for endpoint 0 (ENDPT0) only. When set this bit causes the host to not retry NAK'ed (Negative Acknowledgement) transactions. When a transaction is NAKed, the BDT PID field is updated with the NAK PID, and the TOKEN_DNE interrupt is set. When this bit is cleared, NAKed transactions are retried in hardware. This bit must be set when the host is attempting to poll an interrupt endpoint.">
+      <alias type="CMSIS" value="USB_ENDPT_RETRYDIS(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="HOSTWOHUB" access="RW" reset_value="0" description="Host without a hub This is a Host mode only field and is present in the control register for endpoint 0 (ENDPT0) only.">
+      <alias type="CMSIS" value="USB_ENDPT_HOSTWOHUB(x)"/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b0" value="0b0" description="Low-speed device connected to Host through a hub. PRE_PID will be generated as required."/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b1" value="0b1" description="Low-speed device directly connected. No hub, or no low-speed device attached."/>
+    </bit_field>
+  </register>
+  <register offset="0xC4" width="8" name="ENDPT1" description="Endpoint Control register">
+    <alias type="CMSIS" value="ENDPOINT[1].ENDPT"/>
+    <bit_field offset="0" width="1" name="EPHSHK" access="RW" reset_value="0" description="When set this bit enables an endpoint to perform handshaking during a transaction to this endpoint. This bit is generally 1 unless the endpoint is Isochronous.">
+      <alias type="CMSIS" value="USB_ENDPT_EPHSHK(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="EPSTALL" access="RW" reset_value="0" description="When set this bit indicates that the endpoint is called. This bit has priority over all other control bits in the EndPoint Enable Register, but it is only valid if EPTXEN=1 or EPRXEN=1. Any access to this endpoint causes the USB Module to return a STALL handshake. After an endpoint is stalled it requires intervention from the Host Controller.">
+      <alias type="CMSIS" value="USB_ENDPT_EPSTALL(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="EPTXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for TX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPTXEN(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="EPRXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for RX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPRXEN(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="EPCTLDIS" access="RW" reset_value="0" description="This bit, when set, disables control (SETUP) transfers. When cleared, control transfers are enabled. This applies if and only if the EPRXEN and EPTXEN bits are also set. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPCTLDIS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <bit_field offset="6" width="1" name="RETRYDIS" access="RW" reset_value="0" description="This is a Host mode only bit and is present in the control register for endpoint 0 (ENDPT0) only. When set this bit causes the host to not retry NAK'ed (Negative Acknowledgement) transactions. When a transaction is NAKed, the BDT PID field is updated with the NAK PID, and the TOKEN_DNE interrupt is set. When this bit is cleared, NAKed transactions are retried in hardware. This bit must be set when the host is attempting to poll an interrupt endpoint.">
+      <alias type="CMSIS" value="USB_ENDPT_RETRYDIS(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="HOSTWOHUB" access="RW" reset_value="0" description="Host without a hub This is a Host mode only field and is present in the control register for endpoint 0 (ENDPT0) only.">
+      <alias type="CMSIS" value="USB_ENDPT_HOSTWOHUB(x)"/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b0" value="0b0" description="Low-speed device connected to Host through a hub. PRE_PID will be generated as required."/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b1" value="0b1" description="Low-speed device directly connected. No hub, or no low-speed device attached."/>
+    </bit_field>
+  </register>
+  <register offset="0xC8" width="8" name="ENDPT2" description="Endpoint Control register">
+    <alias type="CMSIS" value="ENDPOINT[2].ENDPT"/>
+    <bit_field offset="0" width="1" name="EPHSHK" access="RW" reset_value="0" description="When set this bit enables an endpoint to perform handshaking during a transaction to this endpoint. This bit is generally 1 unless the endpoint is Isochronous.">
+      <alias type="CMSIS" value="USB_ENDPT_EPHSHK(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="EPSTALL" access="RW" reset_value="0" description="When set this bit indicates that the endpoint is called. This bit has priority over all other control bits in the EndPoint Enable Register, but it is only valid if EPTXEN=1 or EPRXEN=1. Any access to this endpoint causes the USB Module to return a STALL handshake. After an endpoint is stalled it requires intervention from the Host Controller.">
+      <alias type="CMSIS" value="USB_ENDPT_EPSTALL(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="EPTXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for TX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPTXEN(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="EPRXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for RX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPRXEN(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="EPCTLDIS" access="RW" reset_value="0" description="This bit, when set, disables control (SETUP) transfers. When cleared, control transfers are enabled. This applies if and only if the EPRXEN and EPTXEN bits are also set. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPCTLDIS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <bit_field offset="6" width="1" name="RETRYDIS" access="RW" reset_value="0" description="This is a Host mode only bit and is present in the control register for endpoint 0 (ENDPT0) only. When set this bit causes the host to not retry NAK'ed (Negative Acknowledgement) transactions. When a transaction is NAKed, the BDT PID field is updated with the NAK PID, and the TOKEN_DNE interrupt is set. When this bit is cleared, NAKed transactions are retried in hardware. This bit must be set when the host is attempting to poll an interrupt endpoint.">
+      <alias type="CMSIS" value="USB_ENDPT_RETRYDIS(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="HOSTWOHUB" access="RW" reset_value="0" description="Host without a hub This is a Host mode only field and is present in the control register for endpoint 0 (ENDPT0) only.">
+      <alias type="CMSIS" value="USB_ENDPT_HOSTWOHUB(x)"/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b0" value="0b0" description="Low-speed device connected to Host through a hub. PRE_PID will be generated as required."/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b1" value="0b1" description="Low-speed device directly connected. No hub, or no low-speed device attached."/>
+    </bit_field>
+  </register>
+  <register offset="0xCC" width="8" name="ENDPT3" description="Endpoint Control register">
+    <alias type="CMSIS" value="ENDPOINT[3].ENDPT"/>
+    <bit_field offset="0" width="1" name="EPHSHK" access="RW" reset_value="0" description="When set this bit enables an endpoint to perform handshaking during a transaction to this endpoint. This bit is generally 1 unless the endpoint is Isochronous.">
+      <alias type="CMSIS" value="USB_ENDPT_EPHSHK(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="EPSTALL" access="RW" reset_value="0" description="When set this bit indicates that the endpoint is called. This bit has priority over all other control bits in the EndPoint Enable Register, but it is only valid if EPTXEN=1 or EPRXEN=1. Any access to this endpoint causes the USB Module to return a STALL handshake. After an endpoint is stalled it requires intervention from the Host Controller.">
+      <alias type="CMSIS" value="USB_ENDPT_EPSTALL(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="EPTXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for TX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPTXEN(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="EPRXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for RX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPRXEN(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="EPCTLDIS" access="RW" reset_value="0" description="This bit, when set, disables control (SETUP) transfers. When cleared, control transfers are enabled. This applies if and only if the EPRXEN and EPTXEN bits are also set. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPCTLDIS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <bit_field offset="6" width="1" name="RETRYDIS" access="RW" reset_value="0" description="This is a Host mode only bit and is present in the control register for endpoint 0 (ENDPT0) only. When set this bit causes the host to not retry NAK'ed (Negative Acknowledgement) transactions. When a transaction is NAKed, the BDT PID field is updated with the NAK PID, and the TOKEN_DNE interrupt is set. When this bit is cleared, NAKed transactions are retried in hardware. This bit must be set when the host is attempting to poll an interrupt endpoint.">
+      <alias type="CMSIS" value="USB_ENDPT_RETRYDIS(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="HOSTWOHUB" access="RW" reset_value="0" description="Host without a hub This is a Host mode only field and is present in the control register for endpoint 0 (ENDPT0) only.">
+      <alias type="CMSIS" value="USB_ENDPT_HOSTWOHUB(x)"/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b0" value="0b0" description="Low-speed device connected to Host through a hub. PRE_PID will be generated as required."/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b1" value="0b1" description="Low-speed device directly connected. No hub, or no low-speed device attached."/>
+    </bit_field>
+  </register>
+  <register offset="0xD0" width="8" name="ENDPT4" description="Endpoint Control register">
+    <alias type="CMSIS" value="ENDPOINT[4].ENDPT"/>
+    <bit_field offset="0" width="1" name="EPHSHK" access="RW" reset_value="0" description="When set this bit enables an endpoint to perform handshaking during a transaction to this endpoint. This bit is generally 1 unless the endpoint is Isochronous.">
+      <alias type="CMSIS" value="USB_ENDPT_EPHSHK(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="EPSTALL" access="RW" reset_value="0" description="When set this bit indicates that the endpoint is called. This bit has priority over all other control bits in the EndPoint Enable Register, but it is only valid if EPTXEN=1 or EPRXEN=1. Any access to this endpoint causes the USB Module to return a STALL handshake. After an endpoint is stalled it requires intervention from the Host Controller.">
+      <alias type="CMSIS" value="USB_ENDPT_EPSTALL(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="EPTXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for TX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPTXEN(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="EPRXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for RX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPRXEN(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="EPCTLDIS" access="RW" reset_value="0" description="This bit, when set, disables control (SETUP) transfers. When cleared, control transfers are enabled. This applies if and only if the EPRXEN and EPTXEN bits are also set. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPCTLDIS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <bit_field offset="6" width="1" name="RETRYDIS" access="RW" reset_value="0" description="This is a Host mode only bit and is present in the control register for endpoint 0 (ENDPT0) only. When set this bit causes the host to not retry NAK'ed (Negative Acknowledgement) transactions. When a transaction is NAKed, the BDT PID field is updated with the NAK PID, and the TOKEN_DNE interrupt is set. When this bit is cleared, NAKed transactions are retried in hardware. This bit must be set when the host is attempting to poll an interrupt endpoint.">
+      <alias type="CMSIS" value="USB_ENDPT_RETRYDIS(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="HOSTWOHUB" access="RW" reset_value="0" description="Host without a hub This is a Host mode only field and is present in the control register for endpoint 0 (ENDPT0) only.">
+      <alias type="CMSIS" value="USB_ENDPT_HOSTWOHUB(x)"/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b0" value="0b0" description="Low-speed device connected to Host through a hub. PRE_PID will be generated as required."/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b1" value="0b1" description="Low-speed device directly connected. No hub, or no low-speed device attached."/>
+    </bit_field>
+  </register>
+  <register offset="0xD4" width="8" name="ENDPT5" description="Endpoint Control register">
+    <alias type="CMSIS" value="ENDPOINT[5].ENDPT"/>
+    <bit_field offset="0" width="1" name="EPHSHK" access="RW" reset_value="0" description="When set this bit enables an endpoint to perform handshaking during a transaction to this endpoint. This bit is generally 1 unless the endpoint is Isochronous.">
+      <alias type="CMSIS" value="USB_ENDPT_EPHSHK(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="EPSTALL" access="RW" reset_value="0" description="When set this bit indicates that the endpoint is called. This bit has priority over all other control bits in the EndPoint Enable Register, but it is only valid if EPTXEN=1 or EPRXEN=1. Any access to this endpoint causes the USB Module to return a STALL handshake. After an endpoint is stalled it requires intervention from the Host Controller.">
+      <alias type="CMSIS" value="USB_ENDPT_EPSTALL(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="EPTXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for TX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPTXEN(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="EPRXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for RX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPRXEN(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="EPCTLDIS" access="RW" reset_value="0" description="This bit, when set, disables control (SETUP) transfers. When cleared, control transfers are enabled. This applies if and only if the EPRXEN and EPTXEN bits are also set. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPCTLDIS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <bit_field offset="6" width="1" name="RETRYDIS" access="RW" reset_value="0" description="This is a Host mode only bit and is present in the control register for endpoint 0 (ENDPT0) only. When set this bit causes the host to not retry NAK'ed (Negative Acknowledgement) transactions. When a transaction is NAKed, the BDT PID field is updated with the NAK PID, and the TOKEN_DNE interrupt is set. When this bit is cleared, NAKed transactions are retried in hardware. This bit must be set when the host is attempting to poll an interrupt endpoint.">
+      <alias type="CMSIS" value="USB_ENDPT_RETRYDIS(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="HOSTWOHUB" access="RW" reset_value="0" description="Host without a hub This is a Host mode only field and is present in the control register for endpoint 0 (ENDPT0) only.">
+      <alias type="CMSIS" value="USB_ENDPT_HOSTWOHUB(x)"/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b0" value="0b0" description="Low-speed device connected to Host through a hub. PRE_PID will be generated as required."/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b1" value="0b1" description="Low-speed device directly connected. No hub, or no low-speed device attached."/>
+    </bit_field>
+  </register>
+  <register offset="0xD8" width="8" name="ENDPT6" description="Endpoint Control register">
+    <alias type="CMSIS" value="ENDPOINT[6].ENDPT"/>
+    <bit_field offset="0" width="1" name="EPHSHK" access="RW" reset_value="0" description="When set this bit enables an endpoint to perform handshaking during a transaction to this endpoint. This bit is generally 1 unless the endpoint is Isochronous.">
+      <alias type="CMSIS" value="USB_ENDPT_EPHSHK(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="EPSTALL" access="RW" reset_value="0" description="When set this bit indicates that the endpoint is called. This bit has priority over all other control bits in the EndPoint Enable Register, but it is only valid if EPTXEN=1 or EPRXEN=1. Any access to this endpoint causes the USB Module to return a STALL handshake. After an endpoint is stalled it requires intervention from the Host Controller.">
+      <alias type="CMSIS" value="USB_ENDPT_EPSTALL(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="EPTXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for TX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPTXEN(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="EPRXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for RX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPRXEN(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="EPCTLDIS" access="RW" reset_value="0" description="This bit, when set, disables control (SETUP) transfers. When cleared, control transfers are enabled. This applies if and only if the EPRXEN and EPTXEN bits are also set. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPCTLDIS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <bit_field offset="6" width="1" name="RETRYDIS" access="RW" reset_value="0" description="This is a Host mode only bit and is present in the control register for endpoint 0 (ENDPT0) only. When set this bit causes the host to not retry NAK'ed (Negative Acknowledgement) transactions. When a transaction is NAKed, the BDT PID field is updated with the NAK PID, and the TOKEN_DNE interrupt is set. When this bit is cleared, NAKed transactions are retried in hardware. This bit must be set when the host is attempting to poll an interrupt endpoint.">
+      <alias type="CMSIS" value="USB_ENDPT_RETRYDIS(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="HOSTWOHUB" access="RW" reset_value="0" description="Host without a hub This is a Host mode only field and is present in the control register for endpoint 0 (ENDPT0) only.">
+      <alias type="CMSIS" value="USB_ENDPT_HOSTWOHUB(x)"/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b0" value="0b0" description="Low-speed device connected to Host through a hub. PRE_PID will be generated as required."/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b1" value="0b1" description="Low-speed device directly connected. No hub, or no low-speed device attached."/>
+    </bit_field>
+  </register>
+  <register offset="0xDC" width="8" name="ENDPT7" description="Endpoint Control register">
+    <alias type="CMSIS" value="ENDPOINT[7].ENDPT"/>
+    <bit_field offset="0" width="1" name="EPHSHK" access="RW" reset_value="0" description="When set this bit enables an endpoint to perform handshaking during a transaction to this endpoint. This bit is generally 1 unless the endpoint is Isochronous.">
+      <alias type="CMSIS" value="USB_ENDPT_EPHSHK(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="EPSTALL" access="RW" reset_value="0" description="When set this bit indicates that the endpoint is called. This bit has priority over all other control bits in the EndPoint Enable Register, but it is only valid if EPTXEN=1 or EPRXEN=1. Any access to this endpoint causes the USB Module to return a STALL handshake. After an endpoint is stalled it requires intervention from the Host Controller.">
+      <alias type="CMSIS" value="USB_ENDPT_EPSTALL(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="EPTXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for TX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPTXEN(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="EPRXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for RX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPRXEN(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="EPCTLDIS" access="RW" reset_value="0" description="This bit, when set, disables control (SETUP) transfers. When cleared, control transfers are enabled. This applies if and only if the EPRXEN and EPTXEN bits are also set. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPCTLDIS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <bit_field offset="6" width="1" name="RETRYDIS" access="RW" reset_value="0" description="This is a Host mode only bit and is present in the control register for endpoint 0 (ENDPT0) only. When set this bit causes the host to not retry NAK'ed (Negative Acknowledgement) transactions. When a transaction is NAKed, the BDT PID field is updated with the NAK PID, and the TOKEN_DNE interrupt is set. When this bit is cleared, NAKed transactions are retried in hardware. This bit must be set when the host is attempting to poll an interrupt endpoint.">
+      <alias type="CMSIS" value="USB_ENDPT_RETRYDIS(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="HOSTWOHUB" access="RW" reset_value="0" description="Host without a hub This is a Host mode only field and is present in the control register for endpoint 0 (ENDPT0) only.">
+      <alias type="CMSIS" value="USB_ENDPT_HOSTWOHUB(x)"/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b0" value="0b0" description="Low-speed device connected to Host through a hub. PRE_PID will be generated as required."/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b1" value="0b1" description="Low-speed device directly connected. No hub, or no low-speed device attached."/>
+    </bit_field>
+  </register>
+  <register offset="0xE0" width="8" name="ENDPT8" description="Endpoint Control register">
+    <alias type="CMSIS" value="ENDPOINT[8].ENDPT"/>
+    <bit_field offset="0" width="1" name="EPHSHK" access="RW" reset_value="0" description="When set this bit enables an endpoint to perform handshaking during a transaction to this endpoint. This bit is generally 1 unless the endpoint is Isochronous.">
+      <alias type="CMSIS" value="USB_ENDPT_EPHSHK(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="EPSTALL" access="RW" reset_value="0" description="When set this bit indicates that the endpoint is called. This bit has priority over all other control bits in the EndPoint Enable Register, but it is only valid if EPTXEN=1 or EPRXEN=1. Any access to this endpoint causes the USB Module to return a STALL handshake. After an endpoint is stalled it requires intervention from the Host Controller.">
+      <alias type="CMSIS" value="USB_ENDPT_EPSTALL(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="EPTXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for TX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPTXEN(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="EPRXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for RX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPRXEN(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="EPCTLDIS" access="RW" reset_value="0" description="This bit, when set, disables control (SETUP) transfers. When cleared, control transfers are enabled. This applies if and only if the EPRXEN and EPTXEN bits are also set. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPCTLDIS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <bit_field offset="6" width="1" name="RETRYDIS" access="RW" reset_value="0" description="This is a Host mode only bit and is present in the control register for endpoint 0 (ENDPT0) only. When set this bit causes the host to not retry NAK'ed (Negative Acknowledgement) transactions. When a transaction is NAKed, the BDT PID field is updated with the NAK PID, and the TOKEN_DNE interrupt is set. When this bit is cleared, NAKed transactions are retried in hardware. This bit must be set when the host is attempting to poll an interrupt endpoint.">
+      <alias type="CMSIS" value="USB_ENDPT_RETRYDIS(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="HOSTWOHUB" access="RW" reset_value="0" description="Host without a hub This is a Host mode only field and is present in the control register for endpoint 0 (ENDPT0) only.">
+      <alias type="CMSIS" value="USB_ENDPT_HOSTWOHUB(x)"/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b0" value="0b0" description="Low-speed device connected to Host through a hub. PRE_PID will be generated as required."/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b1" value="0b1" description="Low-speed device directly connected. No hub, or no low-speed device attached."/>
+    </bit_field>
+  </register>
+  <register offset="0xE4" width="8" name="ENDPT9" description="Endpoint Control register">
+    <alias type="CMSIS" value="ENDPOINT[9].ENDPT"/>
+    <bit_field offset="0" width="1" name="EPHSHK" access="RW" reset_value="0" description="When set this bit enables an endpoint to perform handshaking during a transaction to this endpoint. This bit is generally 1 unless the endpoint is Isochronous.">
+      <alias type="CMSIS" value="USB_ENDPT_EPHSHK(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="EPSTALL" access="RW" reset_value="0" description="When set this bit indicates that the endpoint is called. This bit has priority over all other control bits in the EndPoint Enable Register, but it is only valid if EPTXEN=1 or EPRXEN=1. Any access to this endpoint causes the USB Module to return a STALL handshake. After an endpoint is stalled it requires intervention from the Host Controller.">
+      <alias type="CMSIS" value="USB_ENDPT_EPSTALL(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="EPTXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for TX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPTXEN(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="EPRXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for RX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPRXEN(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="EPCTLDIS" access="RW" reset_value="0" description="This bit, when set, disables control (SETUP) transfers. When cleared, control transfers are enabled. This applies if and only if the EPRXEN and EPTXEN bits are also set. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPCTLDIS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <bit_field offset="6" width="1" name="RETRYDIS" access="RW" reset_value="0" description="This is a Host mode only bit and is present in the control register for endpoint 0 (ENDPT0) only. When set this bit causes the host to not retry NAK'ed (Negative Acknowledgement) transactions. When a transaction is NAKed, the BDT PID field is updated with the NAK PID, and the TOKEN_DNE interrupt is set. When this bit is cleared, NAKed transactions are retried in hardware. This bit must be set when the host is attempting to poll an interrupt endpoint.">
+      <alias type="CMSIS" value="USB_ENDPT_RETRYDIS(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="HOSTWOHUB" access="RW" reset_value="0" description="Host without a hub This is a Host mode only field and is present in the control register for endpoint 0 (ENDPT0) only.">
+      <alias type="CMSIS" value="USB_ENDPT_HOSTWOHUB(x)"/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b0" value="0b0" description="Low-speed device connected to Host through a hub. PRE_PID will be generated as required."/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b1" value="0b1" description="Low-speed device directly connected. No hub, or no low-speed device attached."/>
+    </bit_field>
+  </register>
+  <register offset="0xE8" width="8" name="ENDPT10" description="Endpoint Control register">
+    <alias type="CMSIS" value="ENDPOINT[10].ENDPT"/>
+    <bit_field offset="0" width="1" name="EPHSHK" access="RW" reset_value="0" description="When set this bit enables an endpoint to perform handshaking during a transaction to this endpoint. This bit is generally 1 unless the endpoint is Isochronous.">
+      <alias type="CMSIS" value="USB_ENDPT_EPHSHK(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="EPSTALL" access="RW" reset_value="0" description="When set this bit indicates that the endpoint is called. This bit has priority over all other control bits in the EndPoint Enable Register, but it is only valid if EPTXEN=1 or EPRXEN=1. Any access to this endpoint causes the USB Module to return a STALL handshake. After an endpoint is stalled it requires intervention from the Host Controller.">
+      <alias type="CMSIS" value="USB_ENDPT_EPSTALL(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="EPTXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for TX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPTXEN(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="EPRXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for RX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPRXEN(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="EPCTLDIS" access="RW" reset_value="0" description="This bit, when set, disables control (SETUP) transfers. When cleared, control transfers are enabled. This applies if and only if the EPRXEN and EPTXEN bits are also set. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPCTLDIS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <bit_field offset="6" width="1" name="RETRYDIS" access="RW" reset_value="0" description="This is a Host mode only bit and is present in the control register for endpoint 0 (ENDPT0) only. When set this bit causes the host to not retry NAK'ed (Negative Acknowledgement) transactions. When a transaction is NAKed, the BDT PID field is updated with the NAK PID, and the TOKEN_DNE interrupt is set. When this bit is cleared, NAKed transactions are retried in hardware. This bit must be set when the host is attempting to poll an interrupt endpoint.">
+      <alias type="CMSIS" value="USB_ENDPT_RETRYDIS(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="HOSTWOHUB" access="RW" reset_value="0" description="Host without a hub This is a Host mode only field and is present in the control register for endpoint 0 (ENDPT0) only.">
+      <alias type="CMSIS" value="USB_ENDPT_HOSTWOHUB(x)"/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b0" value="0b0" description="Low-speed device connected to Host through a hub. PRE_PID will be generated as required."/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b1" value="0b1" description="Low-speed device directly connected. No hub, or no low-speed device attached."/>
+    </bit_field>
+  </register>
+  <register offset="0xEC" width="8" name="ENDPT11" description="Endpoint Control register">
+    <alias type="CMSIS" value="ENDPOINT[11].ENDPT"/>
+    <bit_field offset="0" width="1" name="EPHSHK" access="RW" reset_value="0" description="When set this bit enables an endpoint to perform handshaking during a transaction to this endpoint. This bit is generally 1 unless the endpoint is Isochronous.">
+      <alias type="CMSIS" value="USB_ENDPT_EPHSHK(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="EPSTALL" access="RW" reset_value="0" description="When set this bit indicates that the endpoint is called. This bit has priority over all other control bits in the EndPoint Enable Register, but it is only valid if EPTXEN=1 or EPRXEN=1. Any access to this endpoint causes the USB Module to return a STALL handshake. After an endpoint is stalled it requires intervention from the Host Controller.">
+      <alias type="CMSIS" value="USB_ENDPT_EPSTALL(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="EPTXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for TX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPTXEN(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="EPRXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for RX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPRXEN(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="EPCTLDIS" access="RW" reset_value="0" description="This bit, when set, disables control (SETUP) transfers. When cleared, control transfers are enabled. This applies if and only if the EPRXEN and EPTXEN bits are also set. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPCTLDIS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <bit_field offset="6" width="1" name="RETRYDIS" access="RW" reset_value="0" description="This is a Host mode only bit and is present in the control register for endpoint 0 (ENDPT0) only. When set this bit causes the host to not retry NAK'ed (Negative Acknowledgement) transactions. When a transaction is NAKed, the BDT PID field is updated with the NAK PID, and the TOKEN_DNE interrupt is set. When this bit is cleared, NAKed transactions are retried in hardware. This bit must be set when the host is attempting to poll an interrupt endpoint.">
+      <alias type="CMSIS" value="USB_ENDPT_RETRYDIS(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="HOSTWOHUB" access="RW" reset_value="0" description="Host without a hub This is a Host mode only field and is present in the control register for endpoint 0 (ENDPT0) only.">
+      <alias type="CMSIS" value="USB_ENDPT_HOSTWOHUB(x)"/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b0" value="0b0" description="Low-speed device connected to Host through a hub. PRE_PID will be generated as required."/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b1" value="0b1" description="Low-speed device directly connected. No hub, or no low-speed device attached."/>
+    </bit_field>
+  </register>
+  <register offset="0xF0" width="8" name="ENDPT12" description="Endpoint Control register">
+    <alias type="CMSIS" value="ENDPOINT[12].ENDPT"/>
+    <bit_field offset="0" width="1" name="EPHSHK" access="RW" reset_value="0" description="When set this bit enables an endpoint to perform handshaking during a transaction to this endpoint. This bit is generally 1 unless the endpoint is Isochronous.">
+      <alias type="CMSIS" value="USB_ENDPT_EPHSHK(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="EPSTALL" access="RW" reset_value="0" description="When set this bit indicates that the endpoint is called. This bit has priority over all other control bits in the EndPoint Enable Register, but it is only valid if EPTXEN=1 or EPRXEN=1. Any access to this endpoint causes the USB Module to return a STALL handshake. After an endpoint is stalled it requires intervention from the Host Controller.">
+      <alias type="CMSIS" value="USB_ENDPT_EPSTALL(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="EPTXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for TX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPTXEN(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="EPRXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for RX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPRXEN(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="EPCTLDIS" access="RW" reset_value="0" description="This bit, when set, disables control (SETUP) transfers. When cleared, control transfers are enabled. This applies if and only if the EPRXEN and EPTXEN bits are also set. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPCTLDIS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <bit_field offset="6" width="1" name="RETRYDIS" access="RW" reset_value="0" description="This is a Host mode only bit and is present in the control register for endpoint 0 (ENDPT0) only. When set this bit causes the host to not retry NAK'ed (Negative Acknowledgement) transactions. When a transaction is NAKed, the BDT PID field is updated with the NAK PID, and the TOKEN_DNE interrupt is set. When this bit is cleared, NAKed transactions are retried in hardware. This bit must be set when the host is attempting to poll an interrupt endpoint.">
+      <alias type="CMSIS" value="USB_ENDPT_RETRYDIS(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="HOSTWOHUB" access="RW" reset_value="0" description="Host without a hub This is a Host mode only field and is present in the control register for endpoint 0 (ENDPT0) only.">
+      <alias type="CMSIS" value="USB_ENDPT_HOSTWOHUB(x)"/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b0" value="0b0" description="Low-speed device connected to Host through a hub. PRE_PID will be generated as required."/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b1" value="0b1" description="Low-speed device directly connected. No hub, or no low-speed device attached."/>
+    </bit_field>
+  </register>
+  <register offset="0xF4" width="8" name="ENDPT13" description="Endpoint Control register">
+    <alias type="CMSIS" value="ENDPOINT[13].ENDPT"/>
+    <bit_field offset="0" width="1" name="EPHSHK" access="RW" reset_value="0" description="When set this bit enables an endpoint to perform handshaking during a transaction to this endpoint. This bit is generally 1 unless the endpoint is Isochronous.">
+      <alias type="CMSIS" value="USB_ENDPT_EPHSHK(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="EPSTALL" access="RW" reset_value="0" description="When set this bit indicates that the endpoint is called. This bit has priority over all other control bits in the EndPoint Enable Register, but it is only valid if EPTXEN=1 or EPRXEN=1. Any access to this endpoint causes the USB Module to return a STALL handshake. After an endpoint is stalled it requires intervention from the Host Controller.">
+      <alias type="CMSIS" value="USB_ENDPT_EPSTALL(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="EPTXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for TX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPTXEN(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="EPRXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for RX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPRXEN(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="EPCTLDIS" access="RW" reset_value="0" description="This bit, when set, disables control (SETUP) transfers. When cleared, control transfers are enabled. This applies if and only if the EPRXEN and EPTXEN bits are also set. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPCTLDIS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <bit_field offset="6" width="1" name="RETRYDIS" access="RW" reset_value="0" description="This is a Host mode only bit and is present in the control register for endpoint 0 (ENDPT0) only. When set this bit causes the host to not retry NAK'ed (Negative Acknowledgement) transactions. When a transaction is NAKed, the BDT PID field is updated with the NAK PID, and the TOKEN_DNE interrupt is set. When this bit is cleared, NAKed transactions are retried in hardware. This bit must be set when the host is attempting to poll an interrupt endpoint.">
+      <alias type="CMSIS" value="USB_ENDPT_RETRYDIS(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="HOSTWOHUB" access="RW" reset_value="0" description="Host without a hub This is a Host mode only field and is present in the control register for endpoint 0 (ENDPT0) only.">
+      <alias type="CMSIS" value="USB_ENDPT_HOSTWOHUB(x)"/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b0" value="0b0" description="Low-speed device connected to Host through a hub. PRE_PID will be generated as required."/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b1" value="0b1" description="Low-speed device directly connected. No hub, or no low-speed device attached."/>
+    </bit_field>
+  </register>
+  <register offset="0xF8" width="8" name="ENDPT14" description="Endpoint Control register">
+    <alias type="CMSIS" value="ENDPOINT[14].ENDPT"/>
+    <bit_field offset="0" width="1" name="EPHSHK" access="RW" reset_value="0" description="When set this bit enables an endpoint to perform handshaking during a transaction to this endpoint. This bit is generally 1 unless the endpoint is Isochronous.">
+      <alias type="CMSIS" value="USB_ENDPT_EPHSHK(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="EPSTALL" access="RW" reset_value="0" description="When set this bit indicates that the endpoint is called. This bit has priority over all other control bits in the EndPoint Enable Register, but it is only valid if EPTXEN=1 or EPRXEN=1. Any access to this endpoint causes the USB Module to return a STALL handshake. After an endpoint is stalled it requires intervention from the Host Controller.">
+      <alias type="CMSIS" value="USB_ENDPT_EPSTALL(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="EPTXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for TX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPTXEN(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="EPRXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for RX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPRXEN(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="EPCTLDIS" access="RW" reset_value="0" description="This bit, when set, disables control (SETUP) transfers. When cleared, control transfers are enabled. This applies if and only if the EPRXEN and EPTXEN bits are also set. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPCTLDIS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <bit_field offset="6" width="1" name="RETRYDIS" access="RW" reset_value="0" description="This is a Host mode only bit and is present in the control register for endpoint 0 (ENDPT0) only. When set this bit causes the host to not retry NAK'ed (Negative Acknowledgement) transactions. When a transaction is NAKed, the BDT PID field is updated with the NAK PID, and the TOKEN_DNE interrupt is set. When this bit is cleared, NAKed transactions are retried in hardware. This bit must be set when the host is attempting to poll an interrupt endpoint.">
+      <alias type="CMSIS" value="USB_ENDPT_RETRYDIS(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="HOSTWOHUB" access="RW" reset_value="0" description="Host without a hub This is a Host mode only field and is present in the control register for endpoint 0 (ENDPT0) only.">
+      <alias type="CMSIS" value="USB_ENDPT_HOSTWOHUB(x)"/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b0" value="0b0" description="Low-speed device connected to Host through a hub. PRE_PID will be generated as required."/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b1" value="0b1" description="Low-speed device directly connected. No hub, or no low-speed device attached."/>
+    </bit_field>
+  </register>
+  <register offset="0xFC" width="8" name="ENDPT15" description="Endpoint Control register">
+    <alias type="CMSIS" value="ENDPOINT[15].ENDPT"/>
+    <bit_field offset="0" width="1" name="EPHSHK" access="RW" reset_value="0" description="When set this bit enables an endpoint to perform handshaking during a transaction to this endpoint. This bit is generally 1 unless the endpoint is Isochronous.">
+      <alias type="CMSIS" value="USB_ENDPT_EPHSHK(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="EPSTALL" access="RW" reset_value="0" description="When set this bit indicates that the endpoint is called. This bit has priority over all other control bits in the EndPoint Enable Register, but it is only valid if EPTXEN=1 or EPRXEN=1. Any access to this endpoint causes the USB Module to return a STALL handshake. After an endpoint is stalled it requires intervention from the Host Controller.">
+      <alias type="CMSIS" value="USB_ENDPT_EPSTALL(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="EPTXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for TX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPTXEN(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="EPRXEN" access="RW" reset_value="0" description="This bit, when set, enables the endpoint for RX transfers. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPRXEN(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="EPCTLDIS" access="RW" reset_value="0" description="This bit, when set, disables control (SETUP) transfers. When cleared, control transfers are enabled. This applies if and only if the EPRXEN and EPTXEN bits are also set. See">
+      <alias type="CMSIS" value="USB_ENDPT_EPCTLDIS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <bit_field offset="6" width="1" name="RETRYDIS" access="RW" reset_value="0" description="This is a Host mode only bit and is present in the control register for endpoint 0 (ENDPT0) only. When set this bit causes the host to not retry NAK'ed (Negative Acknowledgement) transactions. When a transaction is NAKed, the BDT PID field is updated with the NAK PID, and the TOKEN_DNE interrupt is set. When this bit is cleared, NAKed transactions are retried in hardware. This bit must be set when the host is attempting to poll an interrupt endpoint.">
+      <alias type="CMSIS" value="USB_ENDPT_RETRYDIS(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="HOSTWOHUB" access="RW" reset_value="0" description="Host without a hub This is a Host mode only field and is present in the control register for endpoint 0 (ENDPT0) only.">
+      <alias type="CMSIS" value="USB_ENDPT_HOSTWOHUB(x)"/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b0" value="0b0" description="Low-speed device connected to Host through a hub. PRE_PID will be generated as required."/>
+      <bit_field_value name="ENDPOINT_HOSTWOHUB_0b1" value="0b1" description="Low-speed device directly connected. No hub, or no low-speed device attached."/>
+    </bit_field>
+  </register>
+  <register offset="0x100" width="8" name="USBCTRL" description="USB Control register">
+    <alias type="CMSIS" value="USBCTRL"/>
+    <reserved_bit_field offset="0" width="6" reset_value="0"/>
+    <bit_field offset="6" width="1" name="PDE" access="RW" reset_value="0x1" description="Enables the weak pulldowns on the USB transceiver.">
+      <alias type="CMSIS" value="USB_USBCTRL_PDE(x)"/>
+      <bit_field_value name="USBCTRL_PDE_DISABLED" value="0b0" description="Weak pulldowns are disabled on D+ and D-."/>
+      <bit_field_value name="USBCTRL_PDE_ENABLED" value="0b1" description="Weak pulldowns are enabled on D+ and D-."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="SUSP" access="RW" reset_value="0x1" description="Places the USB transceiver into the suspend state.">
+      <alias type="CMSIS" value="USB_USBCTRL_SUSP(x)"/>
+      <bit_field_value name="USBCTRL_SUSP_NORMAL" value="0b0" description="USB transceiver is not in suspend state."/>
+      <bit_field_value name="USBCTRL_SUSP_SUSPENDED" value="0b1" description="USB transceiver is in suspend state."/>
+    </bit_field>
+  </register>
+  <register offset="0x104" width="8" name="OBSERVE" description="USB OTG Observe register">
+    <alias type="CMSIS" value="OBSERVE"/>
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <reserved_bit_field offset="1" width="3" reset_value="0"/>
+    <bit_field offset="4" width="1" name="DMPD" access="RO" reset_value="0x1" description="Provides observability of the D- Pulldown enable at the USB transceiver.">
+      <alias type="CMSIS" value="USB_OBSERVE_DMPD(x)"/>
+      <bit_field_value name="OBSERVE_DMPD_DISABLED" value="0b0" description="D- pulldown disabled."/>
+      <bit_field_value name="OBSERVE_DMPD_ENABLED" value="0b1" description="D- pulldown enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <bit_field offset="6" width="1" name="DPPD" access="RO" reset_value="0x1" description="Provides observability of the D+ Pulldown enable at the USB transceiver.">
+      <alias type="CMSIS" value="USB_OBSERVE_DPPD(x)"/>
+      <bit_field_value name="OBSERVE_DPPD_DISABLED" value="0b0" description="D+ pulldown disabled."/>
+      <bit_field_value name="OBSERVE_DPPD_ENABLED" value="0b1" description="D+ pulldown enabled."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="DPPU" access="RO" reset_value="0" description="Provides observability of the D+ Pullup enable at the USB transceiver.">
+      <alias type="CMSIS" value="USB_OBSERVE_DPPU(x)"/>
+      <bit_field_value name="OBSERVE_DPPU_DISABLED" value="0b0" description="D+ pullup disabled."/>
+      <bit_field_value name="OBSERVE_DPPU_ENABLED" value="0b1" description="D+ pullup enabled."/>
+    </bit_field>
+  </register>
+  <register offset="0x108" width="8" name="CONTROL" description="USB OTG Control register">
+    <alias type="CMSIS" value="CONTROL"/>
+    <reserved_bit_field offset="0" width="4" reset_value="0"/>
+    <bit_field offset="4" width="1" name="DPPULLUPNONOTG" access="RW" reset_value="0" description="Provides control of the DP Pullup in USBOTG, if USB is configured in non-OTG device mode.">
+      <alias type="CMSIS" value="USB_CONTROL_DPPULLUPNONOTG(x)"/>
+      <bit_field_value name="CONTROL_DPPULLUPNONOTG_DISABLED" value="0b0" description="DP Pullup in non-OTG device mode is not enabled."/>
+      <bit_field_value name="CONTROL_DPPULLUPNONOTG_ENABLED" value="0b1" description="DP Pullup in non-OTG device mode is enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="3" reset_value="0"/>
+  </register>
+  <register offset="0x10C" width="8" name="USBTRC0" description="USB Transceiver Control register 0">
+    <alias type="CMSIS" value="USBTRC0"/>
+    <bit_field offset="0" width="1" name="USB_RESUME_INT" access="RO" reset_value="0" description="USB Asynchronous Interrupt">
+      <alias type="CMSIS" value="USB_USBTRC0_USB_RESUME_INT(x)"/>
+      <bit_field_value name="USBTRC0_USB_RESUME_INT_NO_INTERRUPT" value="0b0" description="No interrupt was generated."/>
+      <bit_field_value name="USBTRC0_USB_RESUME_INT_INTERRUPT" value="0b1" description="Interrupt was generated because of the USB asynchronous interrupt."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="SYNC_DET" access="RO" reset_value="0" description="Synchronous USB Interrupt Detect">
+      <alias type="CMSIS" value="USB_USBTRC0_SYNC_DET(x)"/>
+      <bit_field_value name="USBTRC0_SYNC_DET_DETECTED" value="0b0" description="Synchronous interrupt has not been detected."/>
+      <bit_field_value name="USBTRC0_SYNC_DET_NOT_DETECTED" value="0b1" description="Synchronous interrupt has been detected."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="USB_CLK_RECOVERY_INT" access="RO" reset_value="0" description="Combined USB Clock Recovery interrupt status">
+      <alias type="CMSIS" value="USB_USBTRC0_USB_CLK_RECOVERY_INT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="2" reset_value="0"/>
+    <bit_field offset="5" width="1" name="USBRESMEN" access="RW" reset_value="0" description="Asynchronous Resume Interrupt Enable">
+      <alias type="CMSIS" value="USB_USBTRC0_USBRESMEN(x)"/>
+      <bit_field_value name="USBTRC0_USBRESMEN_DISABLED" value="0b0" description="USB asynchronous wakeup from suspend mode disabled."/>
+      <bit_field_value name="USBTRC0_USBRESMEN_ENABLED" value="0b1" description="USB asynchronous wakeup from suspend mode enabled. The asynchronous resume interrupt differs from the synchronous resume interrupt in that it asynchronously detects K-state using the unfiltered state of the D+ and D- pins. This interrupt should only be enabled when the Transceiver is suspended."/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <bit_field offset="7" width="1" name="USBRESET" access="WO" reset_value="0" description="USB Reset">
+      <alias type="CMSIS" value="USB_USBTRC0_USBRESET(x)"/>
+      <bit_field_value name="USBTRC0_USBRESET_NORMAL" value="0b0" description="Normal USB module operation."/>
+      <bit_field_value name="USBTRC0_USBRESET_RESET" value="0b1" description="Returns the USB module to its reset state."/>
+    </bit_field>
+  </register>
+  <register offset="0x114" width="8" name="USBFRMADJUST" description="Frame Adjust Register">
+    <alias type="CMSIS" value="USBFRMADJUST"/>
+    <bit_field offset="0" width="8" name="ADJ" access="RW" reset_value="0" description="Frame Adjustment">
+      <alias type="CMSIS" value="USB_USBFRMADJUST_ADJ(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x140" width="8" name="CLK_RECOVER_CTRL" description="USB Clock recovery control">
+    <alias type="CMSIS" value="CLK_RECOVER_CTRL"/>
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="2" reset_value="0"/>
+    <bit_field offset="5" width="1" name="RESTART_IFRTRIM_EN" access="RW" reset_value="0" description="Restart from IFR trim value">
+      <alias type="CMSIS" value="USB_CLK_RECOVER_CTRL_RESTART_IFRTRIM_EN(x)"/>
+      <bit_field_value name="CLK_RECOVER_CTRL_RESTART_IFRTRIM_EN_PREVIOUS" value="0b0" description="Trim fine adjustment always works based on the previous updated trim fine value (default)"/>
+      <bit_field_value name="CLK_RECOVER_CTRL_RESTART_IFRTRIM_EN_IFR" value="0b1" description="Trim fine restarts from the IFR trim value whenever bus_reset/bus_resume is detected or module enable is desasserted"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="RESET_RESUME_ROUGH_EN" access="RW" reset_value="0" description="Reset/resume to rough phase enable">
+      <alias type="CMSIS" value="USB_CLK_RECOVER_CTRL_RESET_RESUME_ROUGH_EN(x)"/>
+      <bit_field_value name="CLK_RECOVER_CTRL_RESET_RESUME_ROUGH_EN_TRACKING" value="0b0" description="Always works in tracking phase after the 1st time rough to track transition (default)"/>
+      <bit_field_value name="CLK_RECOVER_CTRL_RESET_RESUME_ROUGH_EN_ROUGH" value="0b1" description="Go back to rough stage whenever bus reset or bus resume occurs"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="CLOCK_RECOVER_EN" access="RW" reset_value="0" description="Crystal-less USB enable">
+      <alias type="CMSIS" value="USB_CLK_RECOVER_CTRL_CLOCK_RECOVER_EN(x)"/>
+      <bit_field_value name="CLK_RECOVER_CTRL_CLOCK_RECOVER_EN_DISABLED" value="0b0" description="Disable clock recovery block (default)"/>
+      <bit_field_value name="CLK_RECOVER_CTRL_CLOCK_RECOVER_EN_ENABLED" value="0b1" description="Enable clock recovery block"/>
+    </bit_field>
+  </register>
+  <register offset="0x144" width="8" name="CLK_RECOVER_IRC_EN" description="IRC48M oscillator enable register">
+    <alias type="CMSIS" value="CLK_RECOVER_IRC_EN"/>
+    <bit_field offset="0" width="1" name="REG_EN" access="RW" reset_value="0x1" description="IRC48M regulator enable">
+      <alias type="CMSIS" value="USB_CLK_RECOVER_IRC_EN_REG_EN(x)"/>
+      <bit_field_value name="CLK_RECOVER_IRC_EN_REG_EN_DISABLED" value="0b0" description="IRC48M local regulator is disabled"/>
+      <bit_field_value name="CLK_RECOVER_IRC_EN_REG_EN_ENABLED" value="0b1" description="IRC48M local regulator is enabled (default)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="IRC_EN" access="RW" reset_value="0" description="IRC48M enable">
+      <alias type="CMSIS" value="USB_CLK_RECOVER_IRC_EN_IRC_EN(x)"/>
+      <bit_field_value name="CLK_RECOVER_IRC_EN_IRC_EN_DISABLED" value="0b0" description="Disable the IRC48M module (default)"/>
+      <bit_field_value name="CLK_RECOVER_IRC_EN_IRC_EN_ENABLED" value="0b1" description="Enable the IRC48M module"/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="6" reset_value="0"/>
+  </register>
+  <register offset="0x154" width="8" name="CLK_RECOVER_INT_EN" description="Clock recovery combined interrupt enable">
+    <alias type="CMSIS" value="CLK_RECOVER_INT_EN"/>
+    <reserved_bit_field offset="0" width="4" reset_value="0"/>
+    <bit_field offset="4" width="1" name="OVF_ERROR_EN" access="RW" reset_value="0x1" description="Determines whether OVF_ERROR condition signal is used in generation of USB_CLK_RECOVERY_INT.">
+      <alias type="CMSIS" value="USB_CLK_RECOVER_INT_EN_OVF_ERROR_EN(x)"/>
+      <bit_field_value name="CLK_RECOVER_INT_EN_OVF_ERROR_EN_0b0" value="0b0" description="The interrupt will be masked"/>
+      <bit_field_value name="CLK_RECOVER_INT_EN_OVF_ERROR_EN_0b1" value="0b1" description="The interrupt will be enabled (default)"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="3" reset_value="0"/>
+  </register>
+  <register offset="0x15C" width="8" name="CLK_RECOVER_INT_STATUS" description="Clock recovery separated interrupt status">
+    <alias type="CMSIS" value="CLK_RECOVER_INT_STATUS"/>
+    <reserved_bit_field offset="0" width="4" reset_value="0"/>
+    <bit_field offset="4" width="1" name="OVF_ERROR" access="W1C" reset_value="0" description="Indicates that the USB clock recovery algorithm has detected that the frequency trim adjustment needed for the IRC48M output clock is outside the available TRIM_FINE adjustment range for the IRC48M module.">
+      <alias type="CMSIS" value="USB_CLK_RECOVER_INT_STATUS_OVF_ERROR(x)"/>
+      <bit_field_value name="CLK_RECOVER_INT_STATUS_OVF_ERROR_NO_INTERRUPT" value="0b0" description="No interrupt is reported"/>
+      <bit_field_value name="CLK_RECOVER_INT_STATUS_OVF_ERROR_INTERRUPT" value="0b1" description="Unmasked interrupt has been generated"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="3" reset_value="0"/>
+  </register>
+</regs:peripheral>

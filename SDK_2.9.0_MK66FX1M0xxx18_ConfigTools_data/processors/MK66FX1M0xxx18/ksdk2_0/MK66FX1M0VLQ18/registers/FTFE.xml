@@ -1,0 +1,372 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="8" name="FSTAT" description="Flash Status Register">
+    <alias type="CMSIS" value="FSTAT"/>
+    <bit_field offset="0" width="1" name="MGSTAT0" access="RO" reset_value="0" description="Memory Controller Command Completion Status Flag">
+      <alias type="CMSIS" value="FTFE_FSTAT_MGSTAT0(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="3" reset_value="0"/>
+    <bit_field offset="4" width="1" name="FPVIOL" access="W1C" reset_value="0" description="Flash Protection Violation Flag">
+      <alias type="CMSIS" value="FTFE_FSTAT_FPVIOL(x)"/>
+      <bit_field_value name="FSTAT_FPVIOL_0b0" value="0b0" description="No protection violation detected"/>
+      <bit_field_value name="FSTAT_FPVIOL_0b1" value="0b1" description="Protection violation detected"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="ACCERR" access="W1C" reset_value="0" description="Flash Access Error Flag">
+      <alias type="CMSIS" value="FTFE_FSTAT_ACCERR(x)"/>
+      <bit_field_value name="FSTAT_ACCERR_0b0" value="0b0" description="No access error detected"/>
+      <bit_field_value name="FSTAT_ACCERR_0b1" value="0b1" description="Access error detected"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="RDCOLERR" access="W1C" reset_value="0" description="FTFE Read Collision Error Flag">
+      <alias type="CMSIS" value="FTFE_FSTAT_RDCOLERR(x)"/>
+      <bit_field_value name="FSTAT_RDCOLERR_0b0" value="0b0" description="No collision error detected"/>
+      <bit_field_value name="FSTAT_RDCOLERR_0b1" value="0b1" description="Collision error detected"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="CCIF" access="W1C" reset_value="0" description="Command Complete Interrupt Flag">
+      <alias type="CMSIS" value="FTFE_FSTAT_CCIF(x)"/>
+      <bit_field_value name="FSTAT_CCIF_0b0" value="0b0" description="FTFE command or EEPROM file system operation in progress"/>
+      <bit_field_value name="FSTAT_CCIF_0b1" value="0b1" description="FTFE command or EEPROM file system operation has completed"/>
+    </bit_field>
+  </register>
+  <register offset="0x1" width="8" name="FCNFG" description="Flash Configuration Register">
+    <alias type="CMSIS" value="FCNFG"/>
+    <bit_field offset="0" width="1" name="EEERDY" access="RO" reset_value="0" description="For devices with FlexNVM: This flag indicates if the EEPROM backup data has been copied to the FlexRAM and is therefore available for read access. During the reset sequence, the EEERDY flag remains clear while CCIF=0 and only sets if the FlexNVM block is partitioned for EEPROM. For devices without FlexNVM: This bit is reserved and always has the value 0.">
+      <alias type="CMSIS" value="FTFE_FCNFG_EEERDY(x)"/>
+      <bit_field_value name="FCNFG_EEERDY_0b0" value="0b0" description="For devices with FlexNVM: FlexRAM is not available for EEPROM operation For devices without FlexNVM: See RAMRDY for availability of programming acceleration RAM"/>
+      <bit_field_value name="FCNFG_EEERDY_0b1" value="0b1" description="For devices with FlexNVM: FlexRAM is available for EEPROM operations where: reads from the FlexRAM return data previously written to the FlexRAM in EEPROM mode and writes launch an EEPROM operation to store the written data in the FlexRAM and EEPROM backup For devices without FlexNVM: Reserved"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="RAMRDY" access="RO" reset_value="0" description="RAM Ready">
+      <alias type="CMSIS" value="FTFE_FCNFG_RAMRDY(x)"/>
+      <bit_field_value name="FCNFG_RAMRDY_0b0" value="0b0" description="For devices with FlexNVM: FlexRAM is not available for traditional RAM access For devices without FlexNVM: Programming acceleration RAM is not available"/>
+      <bit_field_value name="FCNFG_RAMRDY_0b1" value="0b1" description="For devices with FlexNVM: FlexRAM is available as traditional RAM only; writes to the FlexRAM do not trigger EEPROM operations For devices without FlexNVM: Programming acceleration RAM is available"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="PFLSH" access="RO" reset_value="0" description="FTFE configuration">
+      <alias type="CMSIS" value="FTFE_FCNFG_PFLSH(x)"/>
+      <bit_field_value name="FCNFG_PFLSH_0b0" value="0b0" description="For devices with FlexNVM: FTFE configuration supports two or three program flash blocks and two FlexNVM blocks For devices with program flash only: Reserved"/>
+      <bit_field_value name="FCNFG_PFLSH_0b1" value="0b1" description="For devices with FlexNVM: Reserved For devices with program flash only: FTFE configuration supports four program flash blocks"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="SWAP" access="RO" reset_value="0" description="Swap">
+      <alias type="CMSIS" value="FTFE_FCNFG_SWAP(x)"/>
+      <bit_field_value name="FCNFG_SWAP_0b0" value="0b0" description="For devices with FlexNVM: Program flash 0 block is located at relative address 0x0000 For devices with program flash only: Program flash 0/1 blocks are located at relative address 0x0000"/>
+      <bit_field_value name="FCNFG_SWAP_0b1" value="0b1" description="For devices with FlexNVM: Reserved For devices with program flash only: Program flash 2/3 blocks are located at relative address 0x0000"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="ERSSUSP" access="RW" reset_value="0" description="Erase Suspend">
+      <alias type="CMSIS" value="FTFE_FCNFG_ERSSUSP(x)"/>
+      <bit_field_value name="FCNFG_ERSSUSP_0b0" value="0b0" description="No suspend requested"/>
+      <bit_field_value name="FCNFG_ERSSUSP_0b1" value="0b1" description="Suspend the current Erase Flash Sector command execution"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="ERSAREQ" access="RO" reset_value="0" description="Erase All Request">
+      <alias type="CMSIS" value="FTFE_FCNFG_ERSAREQ(x)"/>
+      <bit_field_value name="FCNFG_ERSAREQ_0b0" value="0b0" description="No request or request complete"/>
+      <bit_field_value name="FCNFG_ERSAREQ_0b1" value="0b1" description="Request to: run the Erase All Blocks command, verify the erased state, program the security byte in the Flash Configuration Field to the unsecure state, and release MCU security by setting the FSEC[SEC] field to the unsecure state"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="RDCOLLIE" access="RW" reset_value="0" description="Read Collision Error Interrupt Enable">
+      <alias type="CMSIS" value="FTFE_FCNFG_RDCOLLIE(x)"/>
+      <bit_field_value name="FCNFG_RDCOLLIE_0b0" value="0b0" description="Read collision error interrupt disabled"/>
+      <bit_field_value name="FCNFG_RDCOLLIE_0b1" value="0b1" description="Read collision error interrupt enabled. An interrupt request is generated whenever an FTFE read collision error is detected (see the description of FSTAT[RDCOLERR])."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="CCIE" access="RW" reset_value="0" description="Command Complete Interrupt Enable">
+      <alias type="CMSIS" value="FTFE_FCNFG_CCIE(x)"/>
+      <bit_field_value name="FCNFG_CCIE_0b0" value="0b0" description="Command complete interrupt disabled"/>
+      <bit_field_value name="FCNFG_CCIE_0b1" value="0b1" description="Command complete interrupt enabled. An interrupt request is generated whenever the FSTAT[CCIF] flag is set."/>
+    </bit_field>
+  </register>
+  <register offset="0x2" width="8" name="FSEC" description="Flash Security Register">
+    <alias type="CMSIS" value="FSEC"/>
+    <bit_field offset="0" width="2" name="SEC" access="RO" reset_value="0" reset_mask="0" description="Flash Security">
+      <alias type="CMSIS" value="FTFE_FSEC_SEC(x)"/>
+      <bit_field_value name="FSEC_SEC_0b00" value="0b00" description="MCU security status is secure"/>
+      <bit_field_value name="FSEC_SEC_0b01" value="0b01" description="MCU security status is secure"/>
+      <bit_field_value name="FSEC_SEC_0b10" value="0b10" description="MCU security status is unsecure (The standard shipping condition of the FTFE is unsecure.)"/>
+      <bit_field_value name="FSEC_SEC_0b11" value="0b11" description="MCU security status is secure"/>
+    </bit_field>
+    <bit_field offset="2" width="2" name="FSLACC" access="RO" reset_value="0" reset_mask="0" description="Freescale Failure Analysis Access Code">
+      <alias type="CMSIS" value="FTFE_FSEC_FSLACC(x)"/>
+      <bit_field_value name="FSEC_FSLACC_0b00" value="0b00" description="Freescale factory access granted"/>
+      <bit_field_value name="FSEC_FSLACC_0b01" value="0b01" description="Freescale factory access denied"/>
+      <bit_field_value name="FSEC_FSLACC_0b10" value="0b10" description="Freescale factory access denied"/>
+      <bit_field_value name="FSEC_FSLACC_0b11" value="0b11" description="Freescale factory access granted"/>
+    </bit_field>
+    <bit_field offset="4" width="2" name="MEEN" access="RO" reset_value="0" reset_mask="0" description="Mass Erase Enable Bits">
+      <alias type="CMSIS" value="FTFE_FSEC_MEEN(x)"/>
+      <bit_field_value name="FSEC_MEEN_0b00" value="0b00" description="Mass erase is enabled"/>
+      <bit_field_value name="FSEC_MEEN_0b01" value="0b01" description="Mass erase is enabled"/>
+      <bit_field_value name="FSEC_MEEN_0b10" value="0b10" description="Mass erase is disabled"/>
+      <bit_field_value name="FSEC_MEEN_0b11" value="0b11" description="Mass erase is enabled"/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="KEYEN" access="RO" reset_value="0" reset_mask="0" description="Backdoor Key Security Enable">
+      <alias type="CMSIS" value="FTFE_FSEC_KEYEN(x)"/>
+      <bit_field_value name="FSEC_KEYEN_0b00" value="0b00" description="Backdoor key access disabled"/>
+      <bit_field_value name="FSEC_KEYEN_0b01" value="0b01" description="Backdoor key access disabled (preferred KEYEN state to disable backdoor key access)"/>
+      <bit_field_value name="FSEC_KEYEN_0b10" value="0b10" description="Backdoor key access enabled"/>
+      <bit_field_value name="FSEC_KEYEN_0b11" value="0b11" description="Backdoor key access disabled"/>
+    </bit_field>
+  </register>
+  <register offset="0x3" width="8" name="FOPT" description="Flash Option Register">
+    <alias type="CMSIS" value="FOPT"/>
+    <bit_field offset="0" width="8" name="OPT" access="RO" reset_value="0" reset_mask="0" description="Nonvolatile Option">
+      <alias type="CMSIS" value="FTFE_FOPT_OPT(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x4" width="8" name="FCCOB3" description="Flash Common Command Object Registers">
+    <alias type="CMSIS" value="FCCOB3"/>
+    <bit_field offset="0" width="8" name="CCOBn" access="RW" reset_value="0" description="The FCCOB register provides a command code and relevant parameters to the memory controller. The individual registers that compose the FCCOB data set can be written in any order, but you must provide all needed values, which vary from command to command. First, set up all required FCCOB fields and then initiate the command's execution by writing a 1 to the FSTAT[CCIF] bit. This clears the CCIF bit, which locks all FCCOB parameter fields and they cannot be changed by the user until the command completes (CCIF returns to 1). No command buffering or queueing is provided; the next command can be loaded only after the current command completes. Some commands return information to the FCCOB registers. Any values returned to FCCOB are available for reading after the FSTAT[CCIF] flag returns to 1 by the memory controller. The following table shows a generic FTFE command format. The first FCCOB register, FCCOB0, always contains the command code. This 8-bit value defines the command to be executed. The command code is followed by the parameters required for this specific FTFE command, typically an address and/or data values. The command parameter table is written in terms of FCCOB Number (which is equivalent to the byte number). This number is a reference to the FCCOB register name and is not the register address. FCCOB NumberRefers to FCCOB register name, not register address Typical Command Parameter Contents [7:0] 0 FCMD (a code that defines the FTFE command) 1 Flash address [23:16] 2 Flash address [15:8] 3 Flash address [7:0] 4 Data Byte 0 5 Data Byte 1 6 Data Byte 2 7 Data Byte 3 8 Data Byte 4 9 Data Byte 5 A Data Byte 6 B Data Byte 7 FCCOB Endianness and Multi-Byte Access: The FCCOB register group uses a big endian addressing convention. For all command parameter fields larger than 1 byte, the most significant data resides in the lowest FCCOB register number. The FCCOB register group may be read and written as individual bytes, aligned words (2 bytes) or aligned longwords (4 bytes).">
+      <alias type="CMSIS" value="FTFE_FCCOB3_CCOBn(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x5" width="8" name="FCCOB2" description="Flash Common Command Object Registers">
+    <alias type="CMSIS" value="FCCOB2"/>
+    <bit_field offset="0" width="8" name="CCOBn" access="RW" reset_value="0" description="The FCCOB register provides a command code and relevant parameters to the memory controller. The individual registers that compose the FCCOB data set can be written in any order, but you must provide all needed values, which vary from command to command. First, set up all required FCCOB fields and then initiate the command's execution by writing a 1 to the FSTAT[CCIF] bit. This clears the CCIF bit, which locks all FCCOB parameter fields and they cannot be changed by the user until the command completes (CCIF returns to 1). No command buffering or queueing is provided; the next command can be loaded only after the current command completes. Some commands return information to the FCCOB registers. Any values returned to FCCOB are available for reading after the FSTAT[CCIF] flag returns to 1 by the memory controller. The following table shows a generic FTFE command format. The first FCCOB register, FCCOB0, always contains the command code. This 8-bit value defines the command to be executed. The command code is followed by the parameters required for this specific FTFE command, typically an address and/or data values. The command parameter table is written in terms of FCCOB Number (which is equivalent to the byte number). This number is a reference to the FCCOB register name and is not the register address. FCCOB NumberRefers to FCCOB register name, not register address Typical Command Parameter Contents [7:0] 0 FCMD (a code that defines the FTFE command) 1 Flash address [23:16] 2 Flash address [15:8] 3 Flash address [7:0] 4 Data Byte 0 5 Data Byte 1 6 Data Byte 2 7 Data Byte 3 8 Data Byte 4 9 Data Byte 5 A Data Byte 6 B Data Byte 7 FCCOB Endianness and Multi-Byte Access: The FCCOB register group uses a big endian addressing convention. For all command parameter fields larger than 1 byte, the most significant data resides in the lowest FCCOB register number. The FCCOB register group may be read and written as individual bytes, aligned words (2 bytes) or aligned longwords (4 bytes).">
+      <alias type="CMSIS" value="FTFE_FCCOB2_CCOBn(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x6" width="8" name="FCCOB1" description="Flash Common Command Object Registers">
+    <alias type="CMSIS" value="FCCOB1"/>
+    <bit_field offset="0" width="8" name="CCOBn" access="RW" reset_value="0" description="The FCCOB register provides a command code and relevant parameters to the memory controller. The individual registers that compose the FCCOB data set can be written in any order, but you must provide all needed values, which vary from command to command. First, set up all required FCCOB fields and then initiate the command's execution by writing a 1 to the FSTAT[CCIF] bit. This clears the CCIF bit, which locks all FCCOB parameter fields and they cannot be changed by the user until the command completes (CCIF returns to 1). No command buffering or queueing is provided; the next command can be loaded only after the current command completes. Some commands return information to the FCCOB registers. Any values returned to FCCOB are available for reading after the FSTAT[CCIF] flag returns to 1 by the memory controller. The following table shows a generic FTFE command format. The first FCCOB register, FCCOB0, always contains the command code. This 8-bit value defines the command to be executed. The command code is followed by the parameters required for this specific FTFE command, typically an address and/or data values. The command parameter table is written in terms of FCCOB Number (which is equivalent to the byte number). This number is a reference to the FCCOB register name and is not the register address. FCCOB NumberRefers to FCCOB register name, not register address Typical Command Parameter Contents [7:0] 0 FCMD (a code that defines the FTFE command) 1 Flash address [23:16] 2 Flash address [15:8] 3 Flash address [7:0] 4 Data Byte 0 5 Data Byte 1 6 Data Byte 2 7 Data Byte 3 8 Data Byte 4 9 Data Byte 5 A Data Byte 6 B Data Byte 7 FCCOB Endianness and Multi-Byte Access: The FCCOB register group uses a big endian addressing convention. For all command parameter fields larger than 1 byte, the most significant data resides in the lowest FCCOB register number. The FCCOB register group may be read and written as individual bytes, aligned words (2 bytes) or aligned longwords (4 bytes).">
+      <alias type="CMSIS" value="FTFE_FCCOB1_CCOBn(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x7" width="8" name="FCCOB0" description="Flash Common Command Object Registers">
+    <alias type="CMSIS" value="FCCOB0"/>
+    <bit_field offset="0" width="8" name="CCOBn" access="RW" reset_value="0" description="The FCCOB register provides a command code and relevant parameters to the memory controller. The individual registers that compose the FCCOB data set can be written in any order, but you must provide all needed values, which vary from command to command. First, set up all required FCCOB fields and then initiate the command's execution by writing a 1 to the FSTAT[CCIF] bit. This clears the CCIF bit, which locks all FCCOB parameter fields and they cannot be changed by the user until the command completes (CCIF returns to 1). No command buffering or queueing is provided; the next command can be loaded only after the current command completes. Some commands return information to the FCCOB registers. Any values returned to FCCOB are available for reading after the FSTAT[CCIF] flag returns to 1 by the memory controller. The following table shows a generic FTFE command format. The first FCCOB register, FCCOB0, always contains the command code. This 8-bit value defines the command to be executed. The command code is followed by the parameters required for this specific FTFE command, typically an address and/or data values. The command parameter table is written in terms of FCCOB Number (which is equivalent to the byte number). This number is a reference to the FCCOB register name and is not the register address. FCCOB NumberRefers to FCCOB register name, not register address Typical Command Parameter Contents [7:0] 0 FCMD (a code that defines the FTFE command) 1 Flash address [23:16] 2 Flash address [15:8] 3 Flash address [7:0] 4 Data Byte 0 5 Data Byte 1 6 Data Byte 2 7 Data Byte 3 8 Data Byte 4 9 Data Byte 5 A Data Byte 6 B Data Byte 7 FCCOB Endianness and Multi-Byte Access: The FCCOB register group uses a big endian addressing convention. For all command parameter fields larger than 1 byte, the most significant data resides in the lowest FCCOB register number. The FCCOB register group may be read and written as individual bytes, aligned words (2 bytes) or aligned longwords (4 bytes).">
+      <alias type="CMSIS" value="FTFE_FCCOB0_CCOBn(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x8" width="8" name="FCCOB7" description="Flash Common Command Object Registers">
+    <alias type="CMSIS" value="FCCOB7"/>
+    <bit_field offset="0" width="8" name="CCOBn" access="RW" reset_value="0" description="The FCCOB register provides a command code and relevant parameters to the memory controller. The individual registers that compose the FCCOB data set can be written in any order, but you must provide all needed values, which vary from command to command. First, set up all required FCCOB fields and then initiate the command's execution by writing a 1 to the FSTAT[CCIF] bit. This clears the CCIF bit, which locks all FCCOB parameter fields and they cannot be changed by the user until the command completes (CCIF returns to 1). No command buffering or queueing is provided; the next command can be loaded only after the current command completes. Some commands return information to the FCCOB registers. Any values returned to FCCOB are available for reading after the FSTAT[CCIF] flag returns to 1 by the memory controller. The following table shows a generic FTFE command format. The first FCCOB register, FCCOB0, always contains the command code. This 8-bit value defines the command to be executed. The command code is followed by the parameters required for this specific FTFE command, typically an address and/or data values. The command parameter table is written in terms of FCCOB Number (which is equivalent to the byte number). This number is a reference to the FCCOB register name and is not the register address. FCCOB NumberRefers to FCCOB register name, not register address Typical Command Parameter Contents [7:0] 0 FCMD (a code that defines the FTFE command) 1 Flash address [23:16] 2 Flash address [15:8] 3 Flash address [7:0] 4 Data Byte 0 5 Data Byte 1 6 Data Byte 2 7 Data Byte 3 8 Data Byte 4 9 Data Byte 5 A Data Byte 6 B Data Byte 7 FCCOB Endianness and Multi-Byte Access: The FCCOB register group uses a big endian addressing convention. For all command parameter fields larger than 1 byte, the most significant data resides in the lowest FCCOB register number. The FCCOB register group may be read and written as individual bytes, aligned words (2 bytes) or aligned longwords (4 bytes).">
+      <alias type="CMSIS" value="FTFE_FCCOB7_CCOBn(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x9" width="8" name="FCCOB6" description="Flash Common Command Object Registers">
+    <alias type="CMSIS" value="FCCOB6"/>
+    <bit_field offset="0" width="8" name="CCOBn" access="RW" reset_value="0" description="The FCCOB register provides a command code and relevant parameters to the memory controller. The individual registers that compose the FCCOB data set can be written in any order, but you must provide all needed values, which vary from command to command. First, set up all required FCCOB fields and then initiate the command's execution by writing a 1 to the FSTAT[CCIF] bit. This clears the CCIF bit, which locks all FCCOB parameter fields and they cannot be changed by the user until the command completes (CCIF returns to 1). No command buffering or queueing is provided; the next command can be loaded only after the current command completes. Some commands return information to the FCCOB registers. Any values returned to FCCOB are available for reading after the FSTAT[CCIF] flag returns to 1 by the memory controller. The following table shows a generic FTFE command format. The first FCCOB register, FCCOB0, always contains the command code. This 8-bit value defines the command to be executed. The command code is followed by the parameters required for this specific FTFE command, typically an address and/or data values. The command parameter table is written in terms of FCCOB Number (which is equivalent to the byte number). This number is a reference to the FCCOB register name and is not the register address. FCCOB NumberRefers to FCCOB register name, not register address Typical Command Parameter Contents [7:0] 0 FCMD (a code that defines the FTFE command) 1 Flash address [23:16] 2 Flash address [15:8] 3 Flash address [7:0] 4 Data Byte 0 5 Data Byte 1 6 Data Byte 2 7 Data Byte 3 8 Data Byte 4 9 Data Byte 5 A Data Byte 6 B Data Byte 7 FCCOB Endianness and Multi-Byte Access: The FCCOB register group uses a big endian addressing convention. For all command parameter fields larger than 1 byte, the most significant data resides in the lowest FCCOB register number. The FCCOB register group may be read and written as individual bytes, aligned words (2 bytes) or aligned longwords (4 bytes).">
+      <alias type="CMSIS" value="FTFE_FCCOB6_CCOBn(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xA" width="8" name="FCCOB5" description="Flash Common Command Object Registers">
+    <alias type="CMSIS" value="FCCOB5"/>
+    <bit_field offset="0" width="8" name="CCOBn" access="RW" reset_value="0" description="The FCCOB register provides a command code and relevant parameters to the memory controller. The individual registers that compose the FCCOB data set can be written in any order, but you must provide all needed values, which vary from command to command. First, set up all required FCCOB fields and then initiate the command's execution by writing a 1 to the FSTAT[CCIF] bit. This clears the CCIF bit, which locks all FCCOB parameter fields and they cannot be changed by the user until the command completes (CCIF returns to 1). No command buffering or queueing is provided; the next command can be loaded only after the current command completes. Some commands return information to the FCCOB registers. Any values returned to FCCOB are available for reading after the FSTAT[CCIF] flag returns to 1 by the memory controller. The following table shows a generic FTFE command format. The first FCCOB register, FCCOB0, always contains the command code. This 8-bit value defines the command to be executed. The command code is followed by the parameters required for this specific FTFE command, typically an address and/or data values. The command parameter table is written in terms of FCCOB Number (which is equivalent to the byte number). This number is a reference to the FCCOB register name and is not the register address. FCCOB NumberRefers to FCCOB register name, not register address Typical Command Parameter Contents [7:0] 0 FCMD (a code that defines the FTFE command) 1 Flash address [23:16] 2 Flash address [15:8] 3 Flash address [7:0] 4 Data Byte 0 5 Data Byte 1 6 Data Byte 2 7 Data Byte 3 8 Data Byte 4 9 Data Byte 5 A Data Byte 6 B Data Byte 7 FCCOB Endianness and Multi-Byte Access: The FCCOB register group uses a big endian addressing convention. For all command parameter fields larger than 1 byte, the most significant data resides in the lowest FCCOB register number. The FCCOB register group may be read and written as individual bytes, aligned words (2 bytes) or aligned longwords (4 bytes).">
+      <alias type="CMSIS" value="FTFE_FCCOB5_CCOBn(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xB" width="8" name="FCCOB4" description="Flash Common Command Object Registers">
+    <alias type="CMSIS" value="FCCOB4"/>
+    <bit_field offset="0" width="8" name="CCOBn" access="RW" reset_value="0" description="The FCCOB register provides a command code and relevant parameters to the memory controller. The individual registers that compose the FCCOB data set can be written in any order, but you must provide all needed values, which vary from command to command. First, set up all required FCCOB fields and then initiate the command's execution by writing a 1 to the FSTAT[CCIF] bit. This clears the CCIF bit, which locks all FCCOB parameter fields and they cannot be changed by the user until the command completes (CCIF returns to 1). No command buffering or queueing is provided; the next command can be loaded only after the current command completes. Some commands return information to the FCCOB registers. Any values returned to FCCOB are available for reading after the FSTAT[CCIF] flag returns to 1 by the memory controller. The following table shows a generic FTFE command format. The first FCCOB register, FCCOB0, always contains the command code. This 8-bit value defines the command to be executed. The command code is followed by the parameters required for this specific FTFE command, typically an address and/or data values. The command parameter table is written in terms of FCCOB Number (which is equivalent to the byte number). This number is a reference to the FCCOB register name and is not the register address. FCCOB NumberRefers to FCCOB register name, not register address Typical Command Parameter Contents [7:0] 0 FCMD (a code that defines the FTFE command) 1 Flash address [23:16] 2 Flash address [15:8] 3 Flash address [7:0] 4 Data Byte 0 5 Data Byte 1 6 Data Byte 2 7 Data Byte 3 8 Data Byte 4 9 Data Byte 5 A Data Byte 6 B Data Byte 7 FCCOB Endianness and Multi-Byte Access: The FCCOB register group uses a big endian addressing convention. For all command parameter fields larger than 1 byte, the most significant data resides in the lowest FCCOB register number. The FCCOB register group may be read and written as individual bytes, aligned words (2 bytes) or aligned longwords (4 bytes).">
+      <alias type="CMSIS" value="FTFE_FCCOB4_CCOBn(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xC" width="8" name="FCCOBB" description="Flash Common Command Object Registers">
+    <alias type="CMSIS" value="FCCOBB"/>
+    <bit_field offset="0" width="8" name="CCOBn" access="RW" reset_value="0" description="The FCCOB register provides a command code and relevant parameters to the memory controller. The individual registers that compose the FCCOB data set can be written in any order, but you must provide all needed values, which vary from command to command. First, set up all required FCCOB fields and then initiate the command's execution by writing a 1 to the FSTAT[CCIF] bit. This clears the CCIF bit, which locks all FCCOB parameter fields and they cannot be changed by the user until the command completes (CCIF returns to 1). No command buffering or queueing is provided; the next command can be loaded only after the current command completes. Some commands return information to the FCCOB registers. Any values returned to FCCOB are available for reading after the FSTAT[CCIF] flag returns to 1 by the memory controller. The following table shows a generic FTFE command format. The first FCCOB register, FCCOB0, always contains the command code. This 8-bit value defines the command to be executed. The command code is followed by the parameters required for this specific FTFE command, typically an address and/or data values. The command parameter table is written in terms of FCCOB Number (which is equivalent to the byte number). This number is a reference to the FCCOB register name and is not the register address. FCCOB NumberRefers to FCCOB register name, not register address Typical Command Parameter Contents [7:0] 0 FCMD (a code that defines the FTFE command) 1 Flash address [23:16] 2 Flash address [15:8] 3 Flash address [7:0] 4 Data Byte 0 5 Data Byte 1 6 Data Byte 2 7 Data Byte 3 8 Data Byte 4 9 Data Byte 5 A Data Byte 6 B Data Byte 7 FCCOB Endianness and Multi-Byte Access: The FCCOB register group uses a big endian addressing convention. For all command parameter fields larger than 1 byte, the most significant data resides in the lowest FCCOB register number. The FCCOB register group may be read and written as individual bytes, aligned words (2 bytes) or aligned longwords (4 bytes).">
+      <alias type="CMSIS" value="FTFE_FCCOBB_CCOBn(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xD" width="8" name="FCCOBA" description="Flash Common Command Object Registers">
+    <alias type="CMSIS" value="FCCOBA"/>
+    <bit_field offset="0" width="8" name="CCOBn" access="RW" reset_value="0" description="The FCCOB register provides a command code and relevant parameters to the memory controller. The individual registers that compose the FCCOB data set can be written in any order, but you must provide all needed values, which vary from command to command. First, set up all required FCCOB fields and then initiate the command's execution by writing a 1 to the FSTAT[CCIF] bit. This clears the CCIF bit, which locks all FCCOB parameter fields and they cannot be changed by the user until the command completes (CCIF returns to 1). No command buffering or queueing is provided; the next command can be loaded only after the current command completes. Some commands return information to the FCCOB registers. Any values returned to FCCOB are available for reading after the FSTAT[CCIF] flag returns to 1 by the memory controller. The following table shows a generic FTFE command format. The first FCCOB register, FCCOB0, always contains the command code. This 8-bit value defines the command to be executed. The command code is followed by the parameters required for this specific FTFE command, typically an address and/or data values. The command parameter table is written in terms of FCCOB Number (which is equivalent to the byte number). This number is a reference to the FCCOB register name and is not the register address. FCCOB NumberRefers to FCCOB register name, not register address Typical Command Parameter Contents [7:0] 0 FCMD (a code that defines the FTFE command) 1 Flash address [23:16] 2 Flash address [15:8] 3 Flash address [7:0] 4 Data Byte 0 5 Data Byte 1 6 Data Byte 2 7 Data Byte 3 8 Data Byte 4 9 Data Byte 5 A Data Byte 6 B Data Byte 7 FCCOB Endianness and Multi-Byte Access: The FCCOB register group uses a big endian addressing convention. For all command parameter fields larger than 1 byte, the most significant data resides in the lowest FCCOB register number. The FCCOB register group may be read and written as individual bytes, aligned words (2 bytes) or aligned longwords (4 bytes).">
+      <alias type="CMSIS" value="FTFE_FCCOBA_CCOBn(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xE" width="8" name="FCCOB9" description="Flash Common Command Object Registers">
+    <alias type="CMSIS" value="FCCOB9"/>
+    <bit_field offset="0" width="8" name="CCOBn" access="RW" reset_value="0" description="The FCCOB register provides a command code and relevant parameters to the memory controller. The individual registers that compose the FCCOB data set can be written in any order, but you must provide all needed values, which vary from command to command. First, set up all required FCCOB fields and then initiate the command's execution by writing a 1 to the FSTAT[CCIF] bit. This clears the CCIF bit, which locks all FCCOB parameter fields and they cannot be changed by the user until the command completes (CCIF returns to 1). No command buffering or queueing is provided; the next command can be loaded only after the current command completes. Some commands return information to the FCCOB registers. Any values returned to FCCOB are available for reading after the FSTAT[CCIF] flag returns to 1 by the memory controller. The following table shows a generic FTFE command format. The first FCCOB register, FCCOB0, always contains the command code. This 8-bit value defines the command to be executed. The command code is followed by the parameters required for this specific FTFE command, typically an address and/or data values. The command parameter table is written in terms of FCCOB Number (which is equivalent to the byte number). This number is a reference to the FCCOB register name and is not the register address. FCCOB NumberRefers to FCCOB register name, not register address Typical Command Parameter Contents [7:0] 0 FCMD (a code that defines the FTFE command) 1 Flash address [23:16] 2 Flash address [15:8] 3 Flash address [7:0] 4 Data Byte 0 5 Data Byte 1 6 Data Byte 2 7 Data Byte 3 8 Data Byte 4 9 Data Byte 5 A Data Byte 6 B Data Byte 7 FCCOB Endianness and Multi-Byte Access: The FCCOB register group uses a big endian addressing convention. For all command parameter fields larger than 1 byte, the most significant data resides in the lowest FCCOB register number. The FCCOB register group may be read and written as individual bytes, aligned words (2 bytes) or aligned longwords (4 bytes).">
+      <alias type="CMSIS" value="FTFE_FCCOB9_CCOBn(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xF" width="8" name="FCCOB8" description="Flash Common Command Object Registers">
+    <alias type="CMSIS" value="FCCOB8"/>
+    <bit_field offset="0" width="8" name="CCOBn" access="RW" reset_value="0" description="The FCCOB register provides a command code and relevant parameters to the memory controller. The individual registers that compose the FCCOB data set can be written in any order, but you must provide all needed values, which vary from command to command. First, set up all required FCCOB fields and then initiate the command's execution by writing a 1 to the FSTAT[CCIF] bit. This clears the CCIF bit, which locks all FCCOB parameter fields and they cannot be changed by the user until the command completes (CCIF returns to 1). No command buffering or queueing is provided; the next command can be loaded only after the current command completes. Some commands return information to the FCCOB registers. Any values returned to FCCOB are available for reading after the FSTAT[CCIF] flag returns to 1 by the memory controller. The following table shows a generic FTFE command format. The first FCCOB register, FCCOB0, always contains the command code. This 8-bit value defines the command to be executed. The command code is followed by the parameters required for this specific FTFE command, typically an address and/or data values. The command parameter table is written in terms of FCCOB Number (which is equivalent to the byte number). This number is a reference to the FCCOB register name and is not the register address. FCCOB NumberRefers to FCCOB register name, not register address Typical Command Parameter Contents [7:0] 0 FCMD (a code that defines the FTFE command) 1 Flash address [23:16] 2 Flash address [15:8] 3 Flash address [7:0] 4 Data Byte 0 5 Data Byte 1 6 Data Byte 2 7 Data Byte 3 8 Data Byte 4 9 Data Byte 5 A Data Byte 6 B Data Byte 7 FCCOB Endianness and Multi-Byte Access: The FCCOB register group uses a big endian addressing convention. For all command parameter fields larger than 1 byte, the most significant data resides in the lowest FCCOB register number. The FCCOB register group may be read and written as individual bytes, aligned words (2 bytes) or aligned longwords (4 bytes).">
+      <alias type="CMSIS" value="FTFE_FCCOB8_CCOBn(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x10" width="8" name="FPROT3" description="Program Flash Protection Registers">
+    <alias type="CMSIS" value="FPROT3"/>
+    <bit_field offset="0" width="8" name="PROT" access="RW" reset_value="0" reset_mask="0" description="Program Flash Region Protect">
+      <alias type="CMSIS" value="FTFE_FPROT3_PROT(x)"/>
+      <bit_field_value name="FPROT3_PROT_0b00000000" value="0b00000000" description="Program flash region is protected."/>
+      <bit_field_value name="FPROT3_PROT_0b00000001" value="0b00000001" description="Program flash region is not protected"/>
+    </bit_field>
+  </register>
+  <register offset="0x11" width="8" name="FPROT2" description="Program Flash Protection Registers">
+    <alias type="CMSIS" value="FPROT2"/>
+    <bit_field offset="0" width="8" name="PROT" access="RW" reset_value="0" reset_mask="0" description="Program Flash Region Protect">
+      <alias type="CMSIS" value="FTFE_FPROT2_PROT(x)"/>
+      <bit_field_value name="FPROT2_PROT_0b00000000" value="0b00000000" description="Program flash region is protected."/>
+      <bit_field_value name="FPROT2_PROT_0b00000001" value="0b00000001" description="Program flash region is not protected"/>
+    </bit_field>
+  </register>
+  <register offset="0x12" width="8" name="FPROT1" description="Program Flash Protection Registers">
+    <alias type="CMSIS" value="FPROT1"/>
+    <bit_field offset="0" width="8" name="PROT" access="RW" reset_value="0" reset_mask="0" description="Program Flash Region Protect">
+      <alias type="CMSIS" value="FTFE_FPROT1_PROT(x)"/>
+      <bit_field_value name="FPROT1_PROT_0b00000000" value="0b00000000" description="Program flash region is protected."/>
+      <bit_field_value name="FPROT1_PROT_0b00000001" value="0b00000001" description="Program flash region is not protected"/>
+    </bit_field>
+  </register>
+  <register offset="0x13" width="8" name="FPROT0" description="Program Flash Protection Registers">
+    <alias type="CMSIS" value="FPROT0"/>
+    <bit_field offset="0" width="8" name="PROT" access="RW" reset_value="0" reset_mask="0" description="Program Flash Region Protect">
+      <alias type="CMSIS" value="FTFE_FPROT0_PROT(x)"/>
+      <bit_field_value name="FPROT0_PROT_0b00000000" value="0b00000000" description="Program flash region is protected."/>
+      <bit_field_value name="FPROT0_PROT_0b00000001" value="0b00000001" description="Program flash region is not protected"/>
+    </bit_field>
+  </register>
+  <register offset="0x16" width="8" name="FEPROT" description="EEPROM Protection Register">
+    <alias type="CMSIS" value="FEPROT"/>
+    <bit_field offset="0" width="8" name="EPROT" access="RW" reset_value="0" reset_mask="0" description="EEPROM Region Protect">
+      <alias type="CMSIS" value="FTFE_FEPROT_EPROT(x)"/>
+      <bit_field_value name="FEPROT_EPROT_0b00000000" value="0b00000000" description="For devices with program flash only: Reserved For devices with FlexNVM: EEPROM region is protected"/>
+      <bit_field_value name="FEPROT_EPROT_0b00000001" value="0b00000001" description="For devices with program flash only: Reserved For devices with FlexNVM: EEPROM region is not protected"/>
+    </bit_field>
+  </register>
+  <register offset="0x17" width="8" name="FDPROT" description="Data Flash Protection Register">
+    <alias type="CMSIS" value="FDPROT"/>
+    <bit_field offset="0" width="8" name="DPROT" access="RW" reset_value="0" reset_mask="0" description="Data Flash Region Protect">
+      <alias type="CMSIS" value="FTFE_FDPROT_DPROT(x)"/>
+      <bit_field_value name="FDPROT_DPROT_0b00000000" value="0b00000000" description="Data Flash region is protected"/>
+      <bit_field_value name="FDPROT_DPROT_0b00000001" value="0b00000001" description="Data Flash region is not protected"/>
+    </bit_field>
+  </register>
+  <register offset="0x18" width="8" name="XACCH3" description="Execute-only Access Registers">
+    <alias type="CMSIS" value="XACCH3"/>
+    <bit_field offset="0" width="8" name="XA" access="RO" reset_value="0" reset_mask="0" description="Execute-only access control">
+      <alias type="CMSIS" value="FTFE_XACCH3_XA(x)"/>
+      <bit_field_value name="XACCH3_XA_0b00000000" value="0b00000000" description="Associated segment is accessible in execute mode only (as an instruction fetch)"/>
+      <bit_field_value name="XACCH3_XA_0b00000001" value="0b00000001" description="Associated segment is accessible as data or in execute mode"/>
+    </bit_field>
+  </register>
+  <register offset="0x19" width="8" name="XACCH2" description="Execute-only Access Registers">
+    <alias type="CMSIS" value="XACCH2"/>
+    <bit_field offset="0" width="8" name="XA" access="RO" reset_value="0" reset_mask="0" description="Execute-only access control">
+      <alias type="CMSIS" value="FTFE_XACCH2_XA(x)"/>
+      <bit_field_value name="XACCH2_XA_0b00000000" value="0b00000000" description="Associated segment is accessible in execute mode only (as an instruction fetch)"/>
+      <bit_field_value name="XACCH2_XA_0b00000001" value="0b00000001" description="Associated segment is accessible as data or in execute mode"/>
+    </bit_field>
+  </register>
+  <register offset="0x1A" width="8" name="XACCH1" description="Execute-only Access Registers">
+    <alias type="CMSIS" value="XACCH1"/>
+    <bit_field offset="0" width="8" name="XA" access="RO" reset_value="0" reset_mask="0" description="Execute-only access control">
+      <alias type="CMSIS" value="FTFE_XACCH1_XA(x)"/>
+      <bit_field_value name="XACCH1_XA_0b00000000" value="0b00000000" description="Associated segment is accessible in execute mode only (as an instruction fetch)"/>
+      <bit_field_value name="XACCH1_XA_0b00000001" value="0b00000001" description="Associated segment is accessible as data or in execute mode"/>
+    </bit_field>
+  </register>
+  <register offset="0x1B" width="8" name="XACCH0" description="Execute-only Access Registers">
+    <alias type="CMSIS" value="XACCH0"/>
+    <bit_field offset="0" width="8" name="XA" access="RO" reset_value="0" reset_mask="0" description="Execute-only access control">
+      <alias type="CMSIS" value="FTFE_XACCH0_XA(x)"/>
+      <bit_field_value name="XACCH0_XA_0b00000000" value="0b00000000" description="Associated segment is accessible in execute mode only (as an instruction fetch)"/>
+      <bit_field_value name="XACCH0_XA_0b00000001" value="0b00000001" description="Associated segment is accessible as data or in execute mode"/>
+    </bit_field>
+  </register>
+  <register offset="0x1C" width="8" name="XACCL3" description="Execute-only Access Registers">
+    <alias type="CMSIS" value="XACCL3"/>
+    <bit_field offset="0" width="8" name="XA" access="RO" reset_value="0" reset_mask="0" description="Execute-only access control">
+      <alias type="CMSIS" value="FTFE_XACCL3_XA(x)"/>
+      <bit_field_value name="XACCL3_XA_0b00000000" value="0b00000000" description="Associated segment is accessible in execute mode only (as an instruction fetch)"/>
+      <bit_field_value name="XACCL3_XA_0b00000001" value="0b00000001" description="Associated segment is accessible as data or in execute mode"/>
+    </bit_field>
+  </register>
+  <register offset="0x1D" width="8" name="XACCL2" description="Execute-only Access Registers">
+    <alias type="CMSIS" value="XACCL2"/>
+    <bit_field offset="0" width="8" name="XA" access="RO" reset_value="0" reset_mask="0" description="Execute-only access control">
+      <alias type="CMSIS" value="FTFE_XACCL2_XA(x)"/>
+      <bit_field_value name="XACCL2_XA_0b00000000" value="0b00000000" description="Associated segment is accessible in execute mode only (as an instruction fetch)"/>
+      <bit_field_value name="XACCL2_XA_0b00000001" value="0b00000001" description="Associated segment is accessible as data or in execute mode"/>
+    </bit_field>
+  </register>
+  <register offset="0x1E" width="8" name="XACCL1" description="Execute-only Access Registers">
+    <alias type="CMSIS" value="XACCL1"/>
+    <bit_field offset="0" width="8" name="XA" access="RO" reset_value="0" reset_mask="0" description="Execute-only access control">
+      <alias type="CMSIS" value="FTFE_XACCL1_XA(x)"/>
+      <bit_field_value name="XACCL1_XA_0b00000000" value="0b00000000" description="Associated segment is accessible in execute mode only (as an instruction fetch)"/>
+      <bit_field_value name="XACCL1_XA_0b00000001" value="0b00000001" description="Associated segment is accessible as data or in execute mode"/>
+    </bit_field>
+  </register>
+  <register offset="0x1F" width="8" name="XACCL0" description="Execute-only Access Registers">
+    <alias type="CMSIS" value="XACCL0"/>
+    <bit_field offset="0" width="8" name="XA" access="RO" reset_value="0" reset_mask="0" description="Execute-only access control">
+      <alias type="CMSIS" value="FTFE_XACCL0_XA(x)"/>
+      <bit_field_value name="XACCL0_XA_0b00000000" value="0b00000000" description="Associated segment is accessible in execute mode only (as an instruction fetch)"/>
+      <bit_field_value name="XACCL0_XA_0b00000001" value="0b00000001" description="Associated segment is accessible as data or in execute mode"/>
+    </bit_field>
+  </register>
+  <register offset="0x20" width="8" name="SACCH3" description="Supervisor-only Access Registers">
+    <alias type="CMSIS" value="SACCH3"/>
+    <bit_field offset="0" width="8" name="SA" access="RO" reset_value="0" reset_mask="0" description="Supervisor-only access control">
+      <alias type="CMSIS" value="FTFE_SACCH3_SA(x)"/>
+      <bit_field_value name="SACCH3_SA_0b00000000" value="0b00000000" description="Associated segment is accessible in supervisor mode only"/>
+      <bit_field_value name="SACCH3_SA_0b00000001" value="0b00000001" description="Associated segment is accessible in user or supervisor mode"/>
+    </bit_field>
+  </register>
+  <register offset="0x21" width="8" name="SACCH2" description="Supervisor-only Access Registers">
+    <alias type="CMSIS" value="SACCH2"/>
+    <bit_field offset="0" width="8" name="SA" access="RO" reset_value="0" reset_mask="0" description="Supervisor-only access control">
+      <alias type="CMSIS" value="FTFE_SACCH2_SA(x)"/>
+      <bit_field_value name="SACCH2_SA_0b00000000" value="0b00000000" description="Associated segment is accessible in supervisor mode only"/>
+      <bit_field_value name="SACCH2_SA_0b00000001" value="0b00000001" description="Associated segment is accessible in user or supervisor mode"/>
+    </bit_field>
+  </register>
+  <register offset="0x22" width="8" name="SACCH1" description="Supervisor-only Access Registers">
+    <alias type="CMSIS" value="SACCH1"/>
+    <bit_field offset="0" width="8" name="SA" access="RO" reset_value="0" reset_mask="0" description="Supervisor-only access control">
+      <alias type="CMSIS" value="FTFE_SACCH1_SA(x)"/>
+      <bit_field_value name="SACCH1_SA_0b00000000" value="0b00000000" description="Associated segment is accessible in supervisor mode only"/>
+      <bit_field_value name="SACCH1_SA_0b00000001" value="0b00000001" description="Associated segment is accessible in user or supervisor mode"/>
+    </bit_field>
+  </register>
+  <register offset="0x23" width="8" name="SACCH0" description="Supervisor-only Access Registers">
+    <alias type="CMSIS" value="SACCH0"/>
+    <bit_field offset="0" width="8" name="SA" access="RO" reset_value="0" reset_mask="0" description="Supervisor-only access control">
+      <alias type="CMSIS" value="FTFE_SACCH0_SA(x)"/>
+      <bit_field_value name="SACCH0_SA_0b00000000" value="0b00000000" description="Associated segment is accessible in supervisor mode only"/>
+      <bit_field_value name="SACCH0_SA_0b00000001" value="0b00000001" description="Associated segment is accessible in user or supervisor mode"/>
+    </bit_field>
+  </register>
+  <register offset="0x24" width="8" name="SACCL3" description="Supervisor-only Access Registers">
+    <alias type="CMSIS" value="SACCL3"/>
+    <bit_field offset="0" width="8" name="SA" access="RO" reset_value="0" reset_mask="0" description="Supervisor-only access control">
+      <alias type="CMSIS" value="FTFE_SACCL3_SA(x)"/>
+      <bit_field_value name="SACCL3_SA_0b00000000" value="0b00000000" description="Associated segment is accessible in supervisor mode only"/>
+      <bit_field_value name="SACCL3_SA_0b00000001" value="0b00000001" description="Associated segment is accessible in user or supervisor mode"/>
+    </bit_field>
+  </register>
+  <register offset="0x25" width="8" name="SACCL2" description="Supervisor-only Access Registers">
+    <alias type="CMSIS" value="SACCL2"/>
+    <bit_field offset="0" width="8" name="SA" access="RO" reset_value="0" reset_mask="0" description="Supervisor-only access control">
+      <alias type="CMSIS" value="FTFE_SACCL2_SA(x)"/>
+      <bit_field_value name="SACCL2_SA_0b00000000" value="0b00000000" description="Associated segment is accessible in supervisor mode only"/>
+      <bit_field_value name="SACCL2_SA_0b00000001" value="0b00000001" description="Associated segment is accessible in user or supervisor mode"/>
+    </bit_field>
+  </register>
+  <register offset="0x26" width="8" name="SACCL1" description="Supervisor-only Access Registers">
+    <alias type="CMSIS" value="SACCL1"/>
+    <bit_field offset="0" width="8" name="SA" access="RO" reset_value="0" reset_mask="0" description="Supervisor-only access control">
+      <alias type="CMSIS" value="FTFE_SACCL1_SA(x)"/>
+      <bit_field_value name="SACCL1_SA_0b00000000" value="0b00000000" description="Associated segment is accessible in supervisor mode only"/>
+      <bit_field_value name="SACCL1_SA_0b00000001" value="0b00000001" description="Associated segment is accessible in user or supervisor mode"/>
+    </bit_field>
+  </register>
+  <register offset="0x27" width="8" name="SACCL0" description="Supervisor-only Access Registers">
+    <alias type="CMSIS" value="SACCL0"/>
+    <bit_field offset="0" width="8" name="SA" access="RO" reset_value="0" reset_mask="0" description="Supervisor-only access control">
+      <alias type="CMSIS" value="FTFE_SACCL0_SA(x)"/>
+      <bit_field_value name="SACCL0_SA_0b00000000" value="0b00000000" description="Associated segment is accessible in supervisor mode only"/>
+      <bit_field_value name="SACCL0_SA_0b00000001" value="0b00000001" description="Associated segment is accessible in user or supervisor mode"/>
+    </bit_field>
+  </register>
+  <register offset="0x28" width="8" name="FACSS" description="Flash Access Segment Size Register">
+    <alias type="CMSIS" value="FACSS"/>
+    <bit_field offset="0" width="8" name="SGSIZE" access="RO" reset_value="0" reset_mask="0" description="Segment Size">
+      <alias type="CMSIS" value="FTFE_FACSS_SGSIZE(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x2B" width="8" name="FACSN" description="Flash Access Segment Number Register">
+    <alias type="CMSIS" value="FACSN"/>
+    <bit_field offset="0" width="8" name="NUMSG" access="RO" reset_value="0" reset_mask="0" description="Number of Segments Indicator">
+      <alias type="CMSIS" value="FTFE_FACSN_NUMSG(x)"/>
+      <bit_field_value name="FACSN_NUMSG_0b00110000" value="0b00110000" description="Program flash memory is divided into 48 segments (768 Kbytes, 1.5 Mbytes)"/>
+      <bit_field_value name="FACSN_NUMSG_0b01000000" value="0b01000000" description="Program flash memory is divided into 64 segments (512 Kbytes, 1 Mbyte, 2 Mbytes)"/>
+    </bit_field>
+  </register>
+</regs:peripheral>

@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-7.0.xsd"
+	xmlns:component="http://swtools.freescale.net/XSD/component/1.0"
+	id="gpio" label="GPIO" category="Peripheral driver" options="UI_COMPONENT_MODE_HIDDEN">
+	
+	<sw_comp_ref name="platform.drivers.gpio" version="2.4.0" match_type="greaterOrEqual" until_version="2.5.9"/>
+	<description>General Purpose Input/Output (GPIO)</description>
+	<mode id="GPIO" label="General" available="true">
+		<description>Basic GPIO operation initialization</description>
+		<config_set_refs>
+			<config_set_ref>fsl_gpio</config_set_ref>
+		</config_set_refs>
+		<master_peripheral>
+			<peripheral_type>GPIO</peripheral_type>
+		</master_peripheral>
+	</mode>
+	
+	<config_set id="fsl_gpio" label="GPIO configuration" from_source="fsl_gpio.h">
+		<description>General settings for GPIO pin</description>
+		<generated_types>
+			<enum id="gpio_pin_direction_t" label="GPIO direction definition" from="_gpio_pin_direction">
+				<description></description>
+				<item id="kGPIO_DigitalInput" label="Set current pin as digital input"/>
+				<item id="kGPIO_DigitalOutput" label="Set current pin as digital output"/>
+			</enum>
+			<enum id="gpio_checker_attribute_t" label="GPIO checker attribute" available="(featureDefined(`FSL_FEATURE_GPIO_HAS_ATTRIBUTE_CHECKER`) &amp;&amp; getFeature(`FSL_FEATURE_GPIO_HAS_ATTRIBUTE_CHECKER`))" from="_gpio_checker_attribute">
+				<description></description>
+				<item id="kGPIO_UsernonsecureRWUsersecureRWPrivilegedsecureRW" label="User nonsecure:Read+Write; User Secure:Read+Write; Privileged Secure:Read+Write"/>
+				<item id="kGPIO_UsernonsecureRUsersecureRWPrivilegedsecureRW" label="User nonsecure:Read; User Secure:Read+Write; Privileged Secure:Read+Write"/>
+				<item id="kGPIO_UsernonsecureNUsersecureRWPrivilegedsecureRW" label="User nonsecure:None; User Secure:Read+Write; Privileged Secure:Read+Write"/>
+				<item id="kGPIO_UsernonsecureRUsersecureRPrivilegedsecureRW" label="User nonsecure:Read; User Secure:Read; Privileged Secure:Read+Write"/>
+				<item id="kGPIO_UsernonsecureNUsersecureRPrivilegedsecureRW" label="User nonsecure:None; User Secure:Read; Privileged Secure:Read+Write"/>
+				<item id="kGPIO_UsernonsecureNUsersecureNPrivilegedsecureRW" label="User nonsecure:None; User Secure:None; Privileged Secure:Read+Write"/>
+				<item id="kGPIO_UsernonsecureNUsersecureNPrivilegedsecureR" label="User nonsecure:None; User Secure:None; Privileged Secure:Read"/>
+				<item id="kGPIO_UsernonsecureNUsersecureNPrivilegedsecureN" label="User nonsecure:None; User Secure:None; Privileged Secure:None"/>
+				<item id="kGPIO_IgnoreAttributeCheck" label="Ignores the attribute check"/>
+			</enum>
+			<struct id="gpio_pin_config_t" label="The GPIO pin configuration structure" from="_gpio_pin_config">
+				<description>Each pin can only be configured as either an output pin or an input pin at a time. If configured as an input pin, leave the outputConfig unused. Note that in some use cases, the corresponding port property should be configured in advance with the PORT_SetPinConfig().</description>
+				<reference id="pinDirection" label="GPIO direction, input or output" type="gpio_pin_direction_t">
+					<description>GPIO direction, input or output</description>
+				</reference>
+				<integer id="outputLogic" label="Set a default output logic, which has no use in input" type="uint8_t">
+					<description>Set a default output logic, which has no use in input</description>
+				</integer>
+			</struct>
+			<enum id="gpio_interrupt_config_t" label="Configures the interrupt generation condition" available="(featureDefined(`FSL_FEATURE_PORT_HAS_NO_INTERRUPT`) &amp;&amp; getFeature(`FSL_FEATURE_PORT_HAS_NO_INTERRUPT`))" from="_gpio_interrupt_config">
+				<description></description>
+				<item id="kGPIO_InterruptStatusFlagDisabled" label="Interrupt status flag is disabled"/>
+				<item id="kGPIO_DMARisingEdge" label="ISF flag and DMA request on rising edge"/>
+				<item id="kGPIO_DMAFallingEdge" label="ISF flag and DMA request on falling edge"/>
+				<item id="kGPIO_DMAEitherEdge" label="ISF flag and DMA request on either edge"/>
+				<item id="kGPIO_FlagRisingEdge" label="Flag sets on rising edge"/>
+				<item id="kGPIO_FlagFallingEdge" label="Flag sets on falling edge"/>
+				<item id="kGPIO_FlagEitherEdge" label="Flag sets on either edge"/>
+				<item id="kGPIO_InterruptLogicZero" label="Interrupt when logic zero"/>
+				<item id="kGPIO_InterruptRisingEdge" label="Interrupt on rising edge"/>
+				<item id="kGPIO_InterruptFallingEdge" label="Interrupt on falling edge"/>
+				<item id="kGPIO_InterruptEitherEdge" label="Interrupt on either edge"/>
+				<item id="kGPIO_InterruptLogicOne" label="Interrupt when logic one"/>
+				<item id="kGPIO_ActiveHighTriggerOutputEnable" label="Enable active high-trigger output"/>
+				<item id="kGPIO_ActiveLowTriggerOutputEnable" label="Enable active low-trigger output"/>
+			</enum>
+		</generated_types>
+		<user_types>
+			<enum id="gpio_pin_direction_t" label="GPIO direction definition." from="_gpio_pin_direction">
+				<item id="kGPIO_DigitalInput" label="Input"/>
+				<item id="kGPIO_DigitalOutput" label="Output"/>
+			</enum>
+			<enum id="port_interrupt_t" label="GPIO direction definition." from="_port_interrupt">
+				<item id="kPORT_InterruptOrDMADisabled" label="Interrupt/DMA request is disabled"/>
+				<item id="kPORT_DMARisingEdge" label="DMA request on rising edge" available="featureDefined(`FSL_FEATURE_PORT_HAS_DMA_REQUEST`) &amp;&amp; getFeature(`FSL_FEATURE_PORT_HAS_DMA_REQUEST`)"/>
+				<item id="kPORT_DMAFallingEdge" label="DMA request on falling edge" available="featureDefined(`FSL_FEATURE_PORT_HAS_DMA_REQUEST`) &amp;&amp; getFeature(`FSL_FEATURE_PORT_HAS_DMA_REQUEST`)"/>
+				<item id="kPORT_DMAEitherEdge" label="DMA request on either edge" available="featureDefined(`FSL_FEATURE_PORT_HAS_DMA_REQUEST`) &amp;&amp; getFeature(`FSL_FEATURE_PORT_HAS_DMA_REQUEST`)"/>
+				<item id="kPORT_FlagRisingEdge" label="Flag sets on rising edge" available="featureDefined(`FSL_FEATURE_PORT_HAS_IRQC_FLAG`) &amp;&amp; getFeature(`FSL_FEATURE_PORT_HAS_IRQC_FLAG`)"/>
+				<item id="kPORT_FlagFallingEdge" label="Flag sets on falling edge" available="featureDefined(`FSL_FEATURE_PORT_HAS_IRQC_FLAG`) &amp;&amp; getFeature(`FSL_FEATURE_PORT_HAS_IRQC_FLAG`)"/>
+				<item id="kPORT_FlagEitherEdge" label="Flag sets on either edge" available="featureDefined(`FSL_FEATURE_PORT_HAS_IRQC_FLAG`) &amp;&amp; getFeature(`FSL_FEATURE_PORT_HAS_IRQC_FLAG`)"/>
+				<item id="kPORT_InterruptLogicZero" label="Interrupt when logic zero" />
+				<item id="kPORT_InterruptRisingEdge" label="Interrupt on rising edge" />
+				<item id="kPORT_InterruptFallingEdge" label="Interrupt on falling edge" />
+				<item id="kPORT_InterruptEitherEdge" label="Interrupt on either edge" />
+				<item id="kPORT_InterruptLogicOne" label="Interrupt when logic one" />
+				<item id="kPORT_ActiveHighTriggerOutputEnable" label="Enable active high-trigger output" available="featureDefined(`FSL_FEATURE_PORT_HAS_IRQC_TRIGGER`) &amp;&amp; getFeature(`FSL_FEATURE_PORT_HAS_IRQC_TRIGGER`)"/>
+				<item id="kPORT_ActiveLowTriggerOutputEnable" label="Enable active low-trigger output" available="featureDefined(`FSL_FEATURE_PORT_HAS_IRQC_TRIGGER`) &amp;&amp; getFeature(`FSL_FEATURE_PORT_HAS_IRQC_TRIGGER`)"/>
+			</enum>
+			
+			<enum id="gpio_pin_output_logic_t" label="GPIO direction definition" from="_gpio_pin_output_logic">
+				<item id="0U" label="0"/>
+				<item id="1U" label="1"/>
+			</enum>
+			
+			<struct id="gpio_pin_config_t" label="The general GPIO pin configuration structure" from="gpio_general_pin_config_t">
+				<description>
+					Each pin can only be configured as either an output pin or an input pin at a time. If configured as an input pin, leave the outputConfig unused. Note that in some use cases, the corresponding port property should be configured in advance
+					with the PORT_SetPinConfig()
+				</description>
+				<validation>
+				   <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.port.` + $this.signal_number.getCValue().extractChannelID()" description_expr="$components.system.#global.err_routed_signal_channel.getValue().formatMessage($this.signal_number.getCValue().extractChannelID(), $instance.getPeripheral())" level="Warning">
+						<feature name="routed">
+							<data expr="true"></data>
+						</feature>
+					</dependency>
+					<dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.port.` + $this.signal_number.getCValue().extractChannelID()" description_expr="`Direction of channel ` + $this.signal_number.getCValue().extractChannelID() + ` of peripheral ` + $instance.getPeripheral() + ` does not match with direction in pins tool.`" level="Warning">
+						<feature name="direction" evaluation="equal">
+							<data expr="($this.pinDirection.value() == `kGPIO_DigitalInput`) ? `INPUT` : `OUTPUT`"></data>
+						</feature>
+					</dependency>
+					<dependency when_expr="$this.interrupt_configuration.value() != `kPORT_InterruptOrDMADisabled`" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.port.` + $this.signal_number.getCValue().extractChannelID()" description_expr="`Channel ` + $this.signal_number.getCValue().extractChannelID() + ` of peripheral ` + $instance.getPeripheral() + ` has no interrupt feature.`" level="Warning">
+						<feature name="features" evaluation="includes">
+							<data expr="`interrupt`"></data>
+						</feature>
+					</dependency>
+				</validation>
+				<dynamic_enum items="getPeripheralSignals($instance.getPeripheral())" id="signal_number" label="Signal (pin)" options="remove_from_struct_init"></dynamic_enum>
+				<reference id="pinDirection" label="Direction" type="gpio_pin_direction_t">
+					<description>GPIO direction, input or output</description>
+				</reference>
+				<reference id="interrupt_configuration" label="Interrupt/DMA request" type="port_interrupt_t" enable="($parent.pinDirection.value() == `kGPIO_DigitalInput`) &amp;&amp; ($instance.fsl_gpio.enable_irq.value())" options="remove_from_struct_init">
+					<description>Optionally select a source of interrupt from port (only if the pin is configured as input and interrupts from port are enabled)</description>
+				</reference>
+				<reference id="outputLogic" label="Output value" type="gpio_pin_output_logic_t" enable="$parent.pinDirection.value() == `kGPIO_DigitalOutput`">
+					<description>Set a default output logic (only if the pin is configured as input)</description>
+				</reference>
+			</struct>
+			<array id="gpioConfig" label="GPIO pins initialization" type="gpio_pin_config_t" options="ShowContentAs=Table">
+				<validation>
+					<constraint cond_expr="$this.findDuplicates(item -> item.getSetting(`signal_number`).value()).length() == 0"
+						level="warning"
+						description="There are some duplicated GPIO channels in the configuration"/>
+				</validation>
+			</array>
+		</user_types>
+		<settings>
+			<dynamic_enum items="getPeripheralSignals($instance.getPeripheral())" id="listOfSignals" available="false"/>
+			<variable id="interrupt_handler_code" value="`
+ /* Get pin flags */ &#10;
+ uint32_t pin_flags = GPIO_PortGetInterruptFlags(` + $instance.getPeripheral() + `); &#10;&#10;
+ /* Place your interrupt code here */ &#10;&#10;
+ /* Clear pin flags */ &#10;
+ GPIO_PortClearInterruptFlags(`+ $instance.getPeripheral() + `, pin_flags); &#10;`" />
+            <bool id="enable_irq" label="Enable interrupt request">
+				<description>This component allows to enable interrupt for whole GPIO port. It enables interrupt request in the NVIC (Nested Interrupt Vector Controller) of the CPU</description>
+				<validation>
+					<constraint cond_expr="($this.getValue() || ($parent.listOfSignals.enumItemsOf().countOccurrences(item -> item.getLabel().regexMatch(`.*\x{BB}.*`)) &lt;= 0))" description_expr=" `When ` + $instance.getPeripheral() + ` interrupt is disabled, the interrupt requests from ` + $instance.getPeripheral() + ` pins will not be functional.`" level="warning"/>
+				</validation>
+			</bool>
+			<reference id="port_interrupt" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_irq.value()">
+				<options_expr>
+					<option id="irq_handler_insert" expr="$parent.interrupt_handler_code.getValue()"/>
+				</options_expr>
+			</reference>
+			<reference id="gpio_config" type="gpioConfig" label="GPIO pins initialization" available="$this.size() &gt; 0">
+				<validation>
+					<constraint cond_expr="$this.size() == 0" level="warning" description="Initialization of GPIO pins has been moved to Pins Tool."/>
+				</validation>
+			</reference>
+		</settings>
+	   <validation>
+	      <dependency resource_type="SWComponent" resource_id="platform.drivers.port" level="Warning" description_expr="$components.system.#global.err_missing_driver.getValue().formatMessage(`fsl_port`, ` (required for the GPIO driver)`)">
+	         <feature name="enabled" evaluation="equal">
+	            <data expr="true"/>
+	         </feature>
+	      </dependency>
+	      <dependency resource_type="SWComponent" resource_id="platform.drivers.port" level="Warning" description_expr="$components.system.#global.err_driver_version.getValue().formatMessage(`fsl_port`, ` (required for the GPIO driver)`)">
+	         <feature name="version" evaluation="compatible">
+	            <data type="Version" expr="`2.1.0`"/>
+	         </feature>
+	      </dependency>
+	   </validation>
+		<fragment_defs>
+			<import>
+				<from component_id="system" config_set_id="common_code_templates"/>
+				<from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+			</import>
+			<def fragment="gpio_init_call">
+				<fragment id="init_line">
+					<param id="code" expr="`GPIO_PinInit(` + toUpperCase($param.prefix) + `_GPIO, ` + $this.signal_number.getCValue().extractChannelID() + `U, &amp;` + $param.prefix + `_config[` + $this.getID() + `]);`"></param>
+					<param id="description" expr="`Initialize GPIO functionality on pin PT` + $instance.getPeripheral().regexSubstr(`GPIO(.)`, 1) + $this.signal_number.getCValue().extractChannelID()"></param>
+					<param id="paddingLevel" expr="1"></param>
+				</fragment>
+			</def>
+			<def fragment="port_interrupt_config">
+				<fragment id="init_line" if_expr="($this.interrupt_configuration.value() != `kPORT_InterruptOrDMADisabled`) &amp;&amp; ($this.pinDirection.value() == `kGPIO_DigitalInput`)">
+					<param id="code" expr="`PORT_SetPinInterruptConfig(` + toUpperCase($param.prefix) + `_PORT, ` + $this.signal_number.getCValue().extractChannelID() + `U, ` + $this.interrupt_configuration.value() + `);`"></param>
+					<param id="description" expr="`Configure interrupt from pin PT` + $instance.getPeripheral().regexSubstr(`GPIO(.)`, 1) + $this.signal_number.getCValue().extractChannelID()"></param>
+					<param id="paddingLevel" expr="1"></param>
+				</fragment>
+			</def>
+			<def fragment="gpio_pin">
+				<expr>leftPadding(`{`, 1)</expr>
+				<br/>
+				<fragment id="field" for_elements_of="$this">
+					<param id="paddingLevel" expr="2"></param>
+				</fragment>
+				<expr>leftPadding(`}`, 1)</expr>
+				<expr> ($param._last ? `` : `,`) </expr>
+				<br/>
+			</def>
+			
+			<def fragment="gpio_pins_array">
+				<expr>$param.type + ` ` + $param.name + `[` + $this.length() + `] = {` </expr>
+				<br/>
+				<fragment id="gpio_pin" for_elements_of="$this"/>
+				<text>};</text>
+				<br/>
+			</def>
+		</fragment_defs>
+		<code>
+			<section target="includes">
+				<fragment id="include">
+					<param id="name">common</param>
+					<param id="filename">fsl_common.h</param>
+				</fragment>
+				<fragment id="include">
+					<param id="name">gpio</param>
+					<param id="filename">fsl_gpio.h</param>
+				</fragment>
+				<fragment id="include">
+					<param id="name">port</param>
+					<param id="filename">fsl_port.h</param>
+				</fragment>
+			</section>
+			<section target="defines">
+				<fragment id="define">
+					<param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getId()) + `_GPIO`"/>
+					<param id="value" expr="$instance.getPeripheral()"/>
+					<param id="description" expr="`Alias for ` + $instance.getPeripheral() + ` peripheral`"/>
+				</fragment>
+				<fragment id="define" if_expr="$this.enable_irq.value()">
+					<param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getId()) + `_PORT`"/>
+					<param id="value" expr="`PORT` + $instance.getPeripheral().regexSubstr(`GPIO(.)`, 1)"/>
+					<param id="description" expr="`Alias for PORT` + $instance.getPeripheral().regexSubstr(`GPIO(.)`, 1)"/>
+				</fragment>
+				<fragment id="IRQ_definitions" apply_to="$this.port_interrupt" if_expr="$this.enable_irq.value()"></fragment>
+			</section>
+			<section target="global_vars">
+				<fragment id="gpio_pins_array" if_expr="$this.gpio_config.length() &gt; 0" apply_to="$this.gpio_config">
+					<param id="name" expr="$instance.getFnGroupPrefix() + $instance.getId() + `_config`" />
+					<param id="type">gpio_pin_config_t</param>
+				</fragment>
+			</section>
+			<section target="global_vars_extern">
+				<fragment if_expr="$this.gpio_config.length() &gt; 0" id="extern_var_array">
+					<param id="name" expr="$instance.getFnGroupPrefix() + $instance.getId() + `_config`" />
+					<param id="type">gpio_pin_config_t</param>
+					<param id="size" expr="$this.gpio_config.length()"></param>
+				</fragment>
+			</section>
+			<section target="init_function_preinit0">
+				<fragment id="comment">
+					<param id="content" expr="`Make sure, the clock gate for port ` + $instance.getPeripheral().regexSubstr(`GPIO(.)`, 1) + ` is enabled (e. g. in pin_mux.c)`"></param>
+					<param id="paddingLevel" expr="1"></param>
+				</fragment>
+				<fragment id="port_interrupt_config" for_elements_of="$this.gpio_config">
+					<param id="prefix" expr="$instance.getFnGroupPrefix() +  $instance.getId()" />
+				</fragment>
+			</section>
+			<section target="init_function_body">
+				<fragment id="IRQn_set_priority_default" apply_to="$this.port_interrupt" if_expr="$this.port_interrupt.enable_priority.value()"/>
+				<fragment id="IRQn_enable_default" apply_to="$this.port_interrupt" if_expr="$this.enable_irq.value()"/>
+			</section>
+			<section target="init_function_postinit0">
+				<fragment id="gpio_init_call" for_elements_of="$this.gpio_config">
+					<param id="prefix" expr="$instance.getFnGroupPrefix() +  $instance.getId()" />
+				</fragment>
+			</section>
+		</code>
+		<quick_selections>
+			<quick_selection id="QS_GPIO_1" label="Default">
+				<description>Default settings for GPIO (disabled interrupts, no configured channels)</description>
+				<set id="enable_irq">false</set>
+				<set id="port_interrupt.enable_priority">false</set>
+				<set id="port_interrupt.enable_custom_name">false</set>
+			</quick_selection>
+			<default>QS_GPIO_1</default>
+		</quick_selections>
+	</config_set>
+</component:config_component>

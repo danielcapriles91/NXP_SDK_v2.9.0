@@ -1,0 +1,75 @@
+#ifndef __DFU_FLASH_H__
+#define __DFU_FLASH_H__
+#include "usb.h"
+/* USB DFU config*/
+/*! @brief DFU application address and size*/${<code>
+interfaces.forEach(function(interface) {
+    switch (interface.interfaceClass) {
+        case CONST.USB_CLASS_APPLICATION_SPECIFIC:
+            var appAddress=interface.firmwareAddress>>>0;
+            var appSize=interface.firmwareSize>>>0;
+</code>}$
+#define USB_DFU_APP_ADDRESS (0x${appAddress.toString(16)}$U)
+#define USB_DFU_APP_SIZE (0x${appSize.toString(16)}$U)${<code>
+            break;
+    }
+});</code>}$
+///*******************************************************************************
+// * Definitions
+// ******************************************************************************/
+typedef enum _dfu_memory_status
+{
+    kStatus_USB_MemorySuccess = 0U,
+    kStatus_USB_MemoryErrorSecure,
+    kStatus_USB_MemoryErrorErase,
+    kStatus_USB_MemoryErrorEraseVerify,
+    kStatus_USB_MemoryErrorProgram,
+    kStatus_USB_MemoryErrorProgramAddress,
+    kStatus_USB_MemoryErrorProgramVerify,
+    kStatus_USB_MemoryErrorUnknown,
+} usb_memory_status_t;
+/*******************************************************************************
+ * API
+ ******************************************************************************/
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+/*!
+ * @brief USB memory initialization function.
+ *
+ * This function initializes the memory driver structure and variables.
+ *
+ * @return A FLASH error or kStatus_FLASH_Success.
+ */
+extern usb_memory_status_t USB_MemoryInit(void);
+
+/*!
+ * @brief USB memory erasing function.
+ *
+ * This function erases the memory area from start address to the end.
+ *
+ * @param address  The start address.
+ * @param address  The erase size.
+ *
+ * @return A FLASH error or kStatus_FLASH_Success.
+ */
+extern usb_memory_status_t USB_MemoryErase(uint32_t address, uint32_t size);
+
+/*!
+ * @brief USB memory programming function.
+ *
+ * This function programs memory with data at locations passed in through parameters.
+ *
+ * @param address The start address to be programmed.
+ * @param buffer  Pointer to buffer data.
+ * @param length  The length of data in byte.
+ *
+ * @return A FLASH error or kStatus_FLASH_Success.
+ */
+extern usb_memory_status_t USB_MemoryProgram(uint32_t address, uint8_t *buffer, uint32_t length);
+
+#if defined(__cplusplus)
+}
+#endif
+#endif /* __DFU_FLASH_H__ */

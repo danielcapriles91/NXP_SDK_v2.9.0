@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="cmt" label="CMT" category="Peripheral driver" global_only="false" 
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-5.0.xsd" 
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <sw_comp_ref name="platform.drivers.cmt" version="2.0.1"/>
+   <description>Carrier Modulator Transmitter (CMT)</description>
+   <mode id="kCMT_DirectIROCtl" label="Direct IRO Control" >
+      <description>Carrier modulator is disabled and the Infrared output (IRO) is under software control, i.e. there is not any modulator timer functionality provided.</description>
+      <config_set_refs>
+         <config_set_ref>fsl_cmt</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>CMT</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="kCMT_TimeMode" label="Time mode" >
+      <description>Time mode of the Carrier Modulator Transmitter. The modulator can gate the carrier frequency onto the modulator output.</description>
+      <config_set_refs>
+         <config_set_ref>fsl_cmt</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>CMT</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="kCMT_FSKMode" label="FSK Mode" >
+      <description>Frequency shift key (FSK) mode of the Carrier Modulator Transmitter. The modulator can count carrier periods and instruct the 
+         carrier generator to alternate between two carrier frequencies whenever a modulation period consisting of mark and space counts.</description>
+      <config_set_refs>
+         <config_set_ref>fsl_cmt</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>CMT</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="kCMT_BasebandMode" label="Baseband mode" >
+      <description>Baseband mode of the Carrier Modulator Transmitter. The modulator can control the logic level of the modulator output (no carrirer frequency signal is generated).</description>
+      <config_set_refs>
+         <config_set_ref>fsl_cmt</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>CMT</peripheral_type>
+      </master_peripheral>
+   </mode>
+   
+   <config_set id="fsl_cmt" label="Carrier Modulator Transmitter configuration" from_source="fsl_cmt.h">
+      <description>Carrier Modulator Transmitter configuration.</description>
+      <generated_types>
+         <enum id="cmt_mode_t" label="The modes of CMT" from="_cmt_mode">
+            <item id="kCMT_DirectIROCtl" label="Carrier modulator is disabled and the IRO signal is directly in software control"/>
+            <item id="kCMT_TimeMode" label="Carrier modulator is enabled in time mode"/>
+            <item id="kCMT_FSKMode" label="Carrier modulator is enabled in FSK mode"/>
+            <item id="kCMT_BasebandMode" label="Carrier modulator is enabled in baseband mode"/>
+         </enum>
+         <enum id="cmt_primary_clkdiv_t" label="The CMT clock divide primary prescaler" from="_cmt_primary_clkdiv">
+            <item id="kCMT_PrimaryClkDiv1" label="The intermediate frequency is the bus clock divided by 1"/>
+            <item id="kCMT_PrimaryClkDiv2" label="The intermediate frequency is the bus clock divided by 2"/>
+            <item id="kCMT_PrimaryClkDiv3" label="The intermediate frequency is the bus clock divided by 3"/>
+            <item id="kCMT_PrimaryClkDiv4" label="The intermediate frequency is the bus clock divided by 4"/>
+            <item id="kCMT_PrimaryClkDiv5" label="The intermediate frequency is the bus clock divided by 5"/>
+            <item id="kCMT_PrimaryClkDiv6" label="The intermediate frequency is the bus clock divided by 6"/>
+            <item id="kCMT_PrimaryClkDiv7" label="The intermediate frequency is the bus clock divided by 7"/>
+            <item id="kCMT_PrimaryClkDiv8" label="The intermediate frequency is the bus clock divided by 8"/>
+            <item id="kCMT_PrimaryClkDiv9" label="The intermediate frequency is the bus clock divided by 9"/>
+            <item id="kCMT_PrimaryClkDiv10" label="The intermediate frequency is the bus clock divided by 10"/>
+            <item id="kCMT_PrimaryClkDiv11" label="The intermediate frequency is the bus clock divided by 11"/>
+            <item id="kCMT_PrimaryClkDiv12" label="The intermediate frequency is the bus clock divided by 12"/>
+            <item id="kCMT_PrimaryClkDiv13" label="The intermediate frequency is the bus clock divided by 13"/>
+            <item id="kCMT_PrimaryClkDiv14" label="The intermediate frequency is the bus clock divided by 14"/>
+            <item id="kCMT_PrimaryClkDiv15" label="The intermediate frequency is the bus clock divided by 15"/>
+            <item id="kCMT_PrimaryClkDiv16" label="The intermediate frequency is the bus clock divided by 16"/>
+         </enum>
+         <enum id="cmt_second_clkdiv_t" label="The CMT clock divide secondary prescaler" from="_cmt_second_clkdiv">
+            <item id="kCMT_SecondClkDiv1" label="The CMT clock is the intermediate frequency frequency divided by 1"/>
+            <item id="kCMT_SecondClkDiv2" label="The CMT clock is the intermediate frequency frequency divided by 2"/>
+            <item id="kCMT_SecondClkDiv4" label="The CMT clock is the intermediate frequency frequency divided by 4"/>
+            <item id="kCMT_SecondClkDiv8" label="The CMT clock is the intermediate frequency frequency divided by 8"/>
+         </enum>
+         <enum id="cmt_infrared_output_polarity_t" label="The CMT infrared output polarity" from="_cmt_infrared_output_polarity">
+            <item id="kCMT_IROActiveLow" label="The CMT infrared output signal polarity is active-low"/>
+            <item id="kCMT_IROActiveHigh" label="The CMT infrared output signal polarity is active-high"/>
+         </enum>
+         <enum id="cmt_infrared_output_state_t" label="The CMT infrared output signal state control" from="_cmt_infrared_output_state">
+            <item id="kCMT_IROCtlLow" label="The CMT Infrared output signal state is controlled to low"/>
+            <item id="kCMT_IROCtlHigh" label="The CMT Infrared output signal state is controlled to high"/>
+         </enum>
+         <struct id="cmt_modulate_config_t" label="CMT carrier generator and modulator configuration structure" from="_cmt_modulate_config">
+            <integer id="highCount1" label="The high-time for carrier generator first register" type="uint8_t">
+               <description>The high-time for carrier generator first register.</description>
+            </integer>
+            <integer id="lowCount1" label="The low-time for carrier generator first register" type="uint8_t">
+               <description>The low-time for carrier generator first register.</description>
+            </integer>
+            <integer id="highCount2" label="The high-time for carrier generator second register for FSK mode" type="uint8_t">
+               <description>The high-time for carrier generator second register for FSK mode.</description>
+            </integer>
+            <integer id="lowCount2" label="The low-time for carrier generator second register for FSK mode" type="uint8_t">
+               <description>The low-time for carrier generator second register for FSK mode.</description>
+            </integer>
+            <integer id="markCount" label="The mark time for the modulator gate" type="uint16_t">
+               <description>The mark time for the modulator gate.</description>
+            </integer>
+            <integer id="spaceCount" label="The space time for the modulator gate" type="uint16_t">
+               <description>The space time for the modulator gate.</description>
+            </integer>
+         </struct>
+         <struct id="cmt_config_t" label="CMT basic configuration structure" from="_cmt_config">
+            <bool id="isInterruptEnabled" label="Timer interrupt 0-disable, 1-enable">
+               <description>Timer interrupt 0-disable, 1-enable.</description>
+            </bool>
+            <bool id="isIroEnabled" label="The IRO output 0-disabled, 1-enabled">
+               <description>The IRO output 0-disabled, 1-enabled.</description>
+            </bool>
+            <reference id="iroPolarity" label="The IRO polarity" type="cmt_infrared_output_polarity_t">
+               <description>The IRO polarity.</description>
+            </reference>
+            <reference id="divider" label="The CMT clock divide prescaler" type="cmt_second_clkdiv_t">
+               <description>The CMT clock divide prescaler.</description>
+            </reference>
+         </struct>
+      </generated_types>
+      <user_types>
+         <enum id="cmt_mode_t" label="The modes of CMT" from="_cmt_mode">
+            <item id="kCMT_DirectIROCtl" label="Direct software control of the IRO signal"/>
+            <item id="kCMT_TimeMode" label="Time mode"/>
+            <item id="kCMT_FSKMode" label="FSK mode"/>
+            <item id="kCMT_BasebandMode" label="Baseband mode"/>
+         </enum>
+         <enum id="cmt_primary_clkdiv_t" label="CMT primary prescaler" from="_cmt_primary_clkdiv">
+            <item id="kCMT_PrimaryClkDiv1" label="divided by 1"/>
+            <item id="kCMT_PrimaryClkDiv2" label="divided by 2"/>
+            <item id="kCMT_PrimaryClkDiv3" label="divided by 3"/>
+            <item id="kCMT_PrimaryClkDiv4" label="divided by 4"/>
+            <item id="kCMT_PrimaryClkDiv5" label="divided by 5"/>
+            <item id="kCMT_PrimaryClkDiv6" label="divided by 6"/>
+            <item id="kCMT_PrimaryClkDiv7" label="divided by 7"/>
+            <item id="kCMT_PrimaryClkDiv8" label="divided by 8"/>
+            <item id="kCMT_PrimaryClkDiv9" label="divided by 9"/>
+            <item id="kCMT_PrimaryClkDiv10" label="divided by 10"/>
+            <item id="kCMT_PrimaryClkDiv11" label="divided by 11"/>
+            <item id="kCMT_PrimaryClkDiv12" label="divided by 12"/>
+            <item id="kCMT_PrimaryClkDiv13" label="divided by 13"/>
+            <item id="kCMT_PrimaryClkDiv14" label="divided by 14"/>
+            <item id="kCMT_PrimaryClkDiv15" label="divided by 15"/>
+            <item id="kCMT_PrimaryClkDiv16" label="divided by 16"/>
+         </enum>
+         <enum id="cmt_second_clkdiv_t" label="CMT secondary prescaler" from="_cmt_second_clkdiv">
+            <item id="kCMT_SecondClkDiv1" label="divided by 1" value="1"/>
+            <item id="kCMT_SecondClkDiv2" label="divided by 2" value="2"/>
+            <item id="kCMT_SecondClkDiv4" label="divided by 4" value="4"/>
+            <item id="kCMT_SecondClkDiv8" label="divided by 8" value="8"/>
+         </enum>
+         <enum id="cmt_infrared_output_polarity_t" label="CMT infrared output polarity" from="_cmt_infrared_output_polarity">
+            <item id="kCMT_IROActiveLow" label="active-low"/>
+            <item id="kCMT_IROActiveHigh" label="active-high"/>
+         </enum>
+         <enum id="cmt_infrared_output_state_t" label="CMT infrared output signal state" from="_cmt_infrared_output_state">
+            <item id="kCMT_IROCtlLow" label="low"/>
+            <item id="kCMT_IROCtlHigh" label="high"/>
+         </enum>
+         <struct id="cmt_modulate_config_t" label="CMT carrier generator and modulator configuration structure" from="_cmt_modulate_config">
+            <integer id="highCount1" label="Carrier generator high-time (primary)" type="uint8_t" min_expr="1" max_expr="255">
+               <description>The high-time value for carrier generator primary register. It specify the time of high level of the output period in ticks of the carrier modulator input frequency.&lt;br/&gt;
+                  Frequency of the carrier generator (primary) = Carrier modulator input frequency / (high-time value + low-time value)  
+               </description>
+            </integer>
+            <integer id="lowCount1" label="Carrier generator low-time (primary)" type="uint8_t" min_expr="1" max_expr="255">
+               <description>The low-time value for carrier generator primary register. It specify the time of low level of the output period in ticks of the carrier modulator input frequency.&lt;br/&gt;
+                  Frequency of the carrier generator (primary) = Carrier modulator input frequency / (high-time value + low-time value)</description>
+            </integer>
+            <info id="carrierGeneratorFreq1" label="Carrier generator frequency (primary)" value="frequencyToString($configSet.cmt_config.cmtFrequency.getValue().toHertz().toInt() / ($parent.highCount1.getValue() + $parent.lowCount1.getValue()))" >
+               <description>Carier generator generator frequency that modulates the output signal (in the Time and FSK modes)</description>
+            </info>
+            <integer id="highCount2" label="Carrier generator high-time (secondary)" type="uint8_t" min_expr="1" max_expr="255" available="$instance.getMode() == `kCMT_FSKMode`">
+               <description>The high-time value for carrier generator secondary register that is used in FSK mode. It specify the time of high level of the output period in ticks of the carrier modulator input frequency.&lt;br/&gt;
+                  Frequency of the carrier generator (secondary) = Carrier modulator input frequency / (high-time value + low-time value)</description>
+            </integer>
+            <integer id="lowCount2" label="Carrier generator low-time (secondary)" type="uint8_t" min_expr="1" max_expr="255" available="$instance.getMode() == `kCMT_FSKMode`">
+               <description>The low-time value for carrier generator secondary register that is used in FSK mode. It specify the time of low level of the output period in ticks of the carrier modulator input frequency.&lt;br/&gt;
+                  Frequency of the carrier generator (secondary) = Carrier modulator input frequency / (high-time value + low-time value)</description>
+            </integer>
+            <info id="carrierGeneratorFreq2" label="Carrier generator frequency (secondary)" value="frequencyToString($configSet.cmt_config.cmtFrequency.getValue().toHertz().toInt() / ($parent.highCount2.getValue() + $parent.lowCount2.getValue()))" available="$instance.getMode() == `kCMT_FSKMode`">
+               <description>Carier generator generator frequency that modulates the output signal (secondary frequency in the FSK mode)</description>
+            </info>
+            <integer id="markCount" label="Modulator mark period" min_expr="1" max_expr="0xFFFF" type="uint16_t">
+               <description>The mark period value for the modulator. The mark period is represented by carrier generator output frequncy on the output (or the active level for the baseband mode).&lt;br/&gt;
+               &lt;b&gt;Time mode and baseband mode:&lt;/b&gt; &lt;br/&gt;
+               mark time = 1 / (Carrier modulator input frequency / 8 / mark period value) &lt;br/&gt; 
+               &lt;b&gt;FSK mode:&lt;/b&gt; &lt;br/&gt; 
+               mark time (primary) = 1 / (Carrier generator frequency (primary) / 8 / (mark period value + 1)) &lt;br/&gt; 
+               mark time (secondary) = 1 / (Carrier generator frequency (secondary) / 8 / (mark period value + 1)) &lt;br/&gt; 
+               </description>
+            </integer>
+            <info id="markTime1" label="Mark time (primary)" value="($instance.getMode() == `kCMT_FSKMode`) ? timeToString((getTime($parent.carrierGeneratorFreq1.getValue().toHertz().toInt(),`ns`,`Hz`) * ($parent.markCount.getValue().toInt() + 1)) / 1000.0) : timeToString((getTime($configSet.cmt_config.cmtFrequency.getValue(),`ns`,`Hz`) * 8 * ($parent.markCount.getValue().toInt() + 1)) / 1000.0)" >
+               <description>Mark time period duration that is calculated on the Modulator mark period value.</description>
+            </info>
+            <info id="markTime2" label="Mark time (secondary)" value="timeToString((getTime($parent.carrierGeneratorFreq2.getValue().toHertz().toInt(),`ns`,`Hz`) * ($parent.markCount.getValue().toInt() + 1)) / 1000.0)" available="$instance.getMode() == `kCMT_FSKMode`">
+               <description>Mark time period duration (secondary; used in the FSK mode only) that is calculated on the Modulator mark period value and secondary carrier generator frequency.</description>
+            </info>
+            <integer id="spaceCount" label="Modulator space period" min_expr="0" max_expr="65535" type="uint16_t">
+               <description>The space period value for the modulator. The space period define the inactive signal (level) of the output. &lt;br/&gt;
+               &lt;b&gt;Time mode and baseband mode:&lt;/b&gt; &lt;br/&gt;
+               space time = 1 / (Carrier modulator input frequency / 8 / space period value) &lt;br/&gt; 
+               &lt;b&gt;FSK mode:&lt;/b&gt;&lt;br/&gt; 
+               space time (primary) = 1 / (Carrier generator frequency (primary) / 8 / (space period value + 1)) &lt;br/&gt; 
+               space time (secondary) = 1 / (Carrier generator frequency (secondary) / 8 / (space period value + 1)) &lt;br/&gt; 
+               </description>
+            </integer>
+            <info id="spaceTime1" label="Space time (primary)" value="($instance.getMode() == `kCMT_FSKMode`) ? timeToString((getTime($parent.carrierGeneratorFreq1.getValue().toHertz().toInt(),`ns`,`Hz`) * ($parent.spaceCount.getValue().toInt())) / 1000.0) : timeToString((getTime($configSet.cmt_config.cmtFrequency.getValue().toHertz().toInt(),`ns`,`Hz`) * 8 * ($parent.spaceCount.getValue().toInt())) / 1000.0)" >
+               <description>Space time period duration that is calculated on the Modulator space period value.</description>
+            </info>
+            <info id="spaceTime2" label="Space time (secondary)" value="timeToString((getTime($parent.carrierGeneratorFreq2.getValue().toHertz().toInt(),`ns`,`Hz`) * ($parent.spaceCount.getValue().toInt())) / 1000.0)" available="$instance.getMode() == `kCMT_FSKMode`" >
+               <description>Space time period duration (secondary; used in the FSK mode only) that is calculated on the Modulator space period value and secondary carrier generator frequency.</description>
+            </info>
+         </struct>
+         <struct id="cmt_config_t" label="CMT basic configuration structure" from="_cmt_config">
+            <!-- Clock Source Unified ID -->
+            <variable id="clockSourceUId" value="`BusInterfaceClock`"/>
+            <variable id="clockSourceSDKId" value="`kCLOCK_BusClk`"/>
+            <variable id="defaultIntermediateFrequncy" value="8000000"/>
+            <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="createArray().addItemToList($parent.clockSourceUId.getValue(), getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()), ($instance.getPeripheral() + `_CLK_SRC`),true)" >
+               <description>CMT clock source.</description>
+               <validation>
+                  <dependency when_expr="$parent.clockSourceFreq.getEnumItemId() == `GetFreq`" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Warning">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="($parent.clockSourceFreq.getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" 
+               items="createArray().addItemToList(`GetFreq`,`Runtime calculation by CLOCK_GetFreq()`,`GetFreq`,true).merge(
+                  getClockFunctionalGroups().arrayToEnumItems(
+                     enumItem -> true,
+                     enumItem -> enumItem,
+                     enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)) + ` (` + enumItem + `)`,
+                     enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)))" >
+               <description>Selection of the clock source frequency</description>
+               <validation>
+                  <constraint when_expr="$parent.clockSourceFreq.getEnumItemId() != `GetFreq`" cond_expr="$this.getEnumItemValue().toHertz() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+                  <constraint when_expr="$parent.clockSourceFreq.getEnumItemId() == `custom`" cond_expr="($parent.clockSourceFreq.getEnumItemValue().toHertz().toInt() - (($parent.clockSourceFreq.getEnumItemValue().toHertz().toInt() / $parent.defaultIntermediateFrequncy.getValue()) * $parent.defaultIntermediateFrequncy.getValue())) == 0" level="warning"
+                              description="The clock source frequency should be integer multiplication of the 8 MHz frequency (the only supported frequency of the modulator)"/>
+                  <constraint when_expr="$parent.clockSourceFreq.getEnumItemId() == `custom`" cond_expr="$parent.clockSourceFreq.getEnumItemValue().toHertz().toInt() >= 8000000" level="warning"
+                              description="The clock source frequency should be at least 8 MHz (minimum supported frequency of the modulator)"/>
+                   <dependency when_expr="($this.getEnumItemId() != `custom`) &amp;&amp; ($this.getEnumItemId() != `GetFreq`)" 
+                       resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())" 
+                       level="Warning"
+                       description="The clock source frequency should be at least 8 MHz (minimum supported frequency of the modulator)">
+                       <feature name="frequency" evaluation="greaterOrEqual">
+                           <data expr="8000000" unit="Hz" type="Frequency"></data>
+                       </feature>
+                   </dependency>
+                   <dependency when_expr="($this.getEnumItemId() != `custom`) &amp;&amp; ($this.getEnumItemId() != `GetFreq`)" 
+                       resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())" 
+                       level="Warning"
+                       description="The clock source frequency should be integer multiplication of the 8 MHz frequency (the only supported frequency of the modulator)">
+                       <feature name="frequency" evaluation="matchesAny">
+                           <data expr="toArray(8,16,24,32,40,48,56,64,72,80,88,96,104,112,120,128,136,144,152,160,168,172,180)" unit="MHz" type="Frequency"></data>
+                       </feature>
+                   </dependency>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+            </dynamic_enum> 
+            <!-- Previdivder value (PPS) based on the calculation that is used in the CMT_Init() function in the fsl_cmt.c driver. -->
+            <variable id="predividerValue"  value="($parent.clockSourceFreq.getEnumItemId() != `GetFreq`) ? $parent.clockSourceFreq.getEnumItemValue().toHertz().toInt() / $parent.defaultIntermediateFrequncy.getValue() : `N/A`"/> 
+            <info id="intermediateFrequency" label="Intermediate frequency" value="(($parent.clockSourceFreq.getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.predividerValue.getValue().toInt() != 0)) ? frequencyToString((($parent.clockSourceFreq.getEnumItemValue().toHertz().toInt() / $parent.predividerValue.getValue().toInt()))) : `8 MHz`">
+               <description>Intermediate frequency (IF) of the CMT must be approximately equal to 8 MHz. This frequency is consumed by the Clock prescaler of the CMT.&lt;br/&gt;
+                   Note: When the CMT clock source frequency is not selected (Runtime calculation by CLOCK_GetFreq() is selected) the default frequency 8 MHz is used for calculations.</description>
+            </info> 
+            <reference id="divider" label="Clock prescaler" type="cmt_second_clkdiv_t">
+               <description>The CMT clock divide prescaler. The output of the divider is used as the carrier modulator input frequency.</description>
+            </reference>
+            <info id="cmtFrequency" label="Carrier modulator input frequency" value="frequencyToString($parent.intermediateFrequency.getValue().toHertz().toInt() / $parent.divider.getEnumItemValue().toInt())">
+               <description>Carrier modulator frequency that is used for generating the carrier output signal and modulator base frequency (the mark and space period generating).&lt;br/&gt;
+                   Note: When the CMT clock source frequency is not selected in the Clock source frequency settings (Runtime calculation by CLOCK_GetFreq() is selected) the default frequency 8 MHz is used for calculations.</description>
+            </info> 
+            <bool id="isIroEnabled" label="IRO output enabled">
+               <description>Enabling of the Infrared Output (IRO).</description>
+               <validation>
+                  <dependency when_expr="$this.getValue()" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.cmt_iro`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`IRO`, $instance.getPeripheral())"  level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </bool>
+            <reference id="iroPolarity" label="IRO polarity" type="cmt_infrared_output_polarity_t">
+               <description>The Infrared Output (IRO) polarity selection.</description>
+            </reference>
+            <bool id="isInterruptEnabled" label="Interrupt enabled">
+               <description>Enabling of the interrupt. The interrupt is invoked when: &lt;br/&gt;
+                  The modulator is not currently active and CMT is enabled (MSC[MCGEN] is set) to begin the initial CMT transmission. &lt;br/&gt;
+                  At the end of each modulation cycle when the counter is reloaded from the mark registers.
+               </description>
+            </bool>
+            <reference id="interrupt" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;remove_from_struct_init;irq_function=timer_reference" enable="$parent.isInterruptEnabled.getValue()"/>
+         </struct>
+      </user_types>
+      <settings>
+         <reference id="cmt_config" label="Main settings" type="cmt_config_t">
+            <description>Main configuration settings of the Carrier Modulator Transmitter device.</description>
+         </reference>
+         <reference id="modulator_config" label="Modulator configuration" type="cmt_modulate_config_t" available="$instance.getMode() != `kCMT_DirectIROCtl`">
+            <description>Main configuration settings of the Carrier Modulator Transmitter device.</description>
+         </reference>
+            
+         <bool id="setModeEnabled" label="Initialize modulator" available="$instance.getMode() != `kCMT_DirectIROCtl`" >
+            <description>When enabled the modulator is initialized, the CMT mode is selected and the device starts working (the CMT_SetMode() function is called).</description>
+         </bool>
+         <!-- IDs used for an instance of this component -->
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+         <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+         <variable id="inst_clock_src_ID" value="$parent.inst_ID_def.getValue() + `_CLOCK_SOURCE`"></variable>
+         <variable id="inst_mode_ID" value="$parent.inst_ID_def.getValue() + `_MODE`"></variable>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">cmt</param>
+               <param id="filename">fsl_cmt.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">clock</param>
+               <param id="filename">fsl_clock.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <fragment id="define">
+               <param id="name" expr="$this.inst_peripheral_ID.getValue()"/>
+               <param id="value" expr="$instance.getPeripheral()"/>
+               <param id="description">Definition of peripheral ID</param>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="$this.inst_clock_src_ID.getValue()"/>
+               <param id="value" expr="($this.cmt_config.clockSourceFreq.getEnumItemId() == `GetFreq`) ? 
+                  (`CLOCK_GetFreq(` + $this.cmt_config.clockSourceSDKId.getValue() + `)`) 
+                  : ($this.cmt_config.clockSourceFreq.getEnumItemValue().toHertz() + `UL`)
+                  "/> 
+               <param id="description">Definition of the clock source frequency</param>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="$this.inst_mode_ID.getValue()"/>
+               <param id="value" expr="$instance.getMode()"/> 
+               <param id="description">Definition of the CMT mode</param>
+            </fragment>
+            <!-- Interrupt definitions -->
+            <fragment id="IRQ_definitions" apply_to="$this.cmt_config.interrupt" if_expr="$this.cmt_config.isInterruptEnabled.getValue()"/>
+         </section>                  
+         <section target="global_vars">
+            <fragment id="const_struct" apply_to="$this.cmt_config">
+               <param id="name" expr="$configSet.inst_ID.getValue() + `_config`" />
+               <param id="type" >cmt_config_t</param>
+            </fragment>
+            <fragment id="global_struct" apply_to="$this.modulator_config" if_expr="$instance.getMode() != `kCMT_DirectIROCtl`">
+               <param id="name" expr="$configSet.inst_ID.getValue() + `_modulator_config`" />
+               <param id="type" >cmt_modulate_config_t</param>
+            </fragment>
+         </section>
+         <section target="global_vars_extern">
+            <fragment id="extern_const_var" apply_to="$this.cmt_config">
+               <param id="name" expr="$configSet.inst_ID.getValue() + `_config`" />
+               <param id="type" >cmt_config_t</param>
+            </fragment>
+            <fragment id="extern_var" apply_to="$this.modulator_config" if_expr="$instance.getMode() != `kCMT_DirectIROCtl`">
+               <param id="name" expr="$configSet.inst_ID.getValue() + `_modulator_config`" />
+               <param id="type" >cmt_modulate_config_t</param>
+            </fragment>
+         </section>
+         <section target="init_function_body">
+            <!-- Interrupt initialization -->
+            <fragment id="IRQn_set_priority_default" if_expr="$this.cmt_config.isInterruptEnabled.getValue()" apply_to="$this.cmt_config.interrupt"/>
+            <expr>leftPadding(`/* The ` + $this.cmt_config.interrupt.IRQn.getEnumItemValue() + ` interrupt request (in the NVIC) is controlled by the CMT_Init() function. */`,1)</expr><br/>
+<!--        The interrupt request (in the NVIC) is controlled by the CMT_Init() function.     
+            <fragment id="IRQn_enable_default" if_expr="$this.cmt_config.isInterruptEnabled.getValue()" apply_to="$this.cmt_config.interrupt"/> -->
+            <expr>leftPadding(`CMT_Init(` + $this.inst_peripheral_ID.getValue() + `, &amp;` + $this.inst_ID.getValue() + `_config, ` + $this.inst_clock_src_ID.getValue() + `);`, 1)</expr><br/>
+            <!-- When a modulator configuration is selected and the initialization is enabled call the CMT_SetMode() function  -->
+            <expr if_expr="($instance.getMode() != `kCMT_DirectIROCtl`) &amp;&amp; $this.setModeEnabled.getValue()">
+               leftPadding(`CMT_SetMode(` + $this.inst_peripheral_ID.getValue() + `, ` + $this.inst_mode_ID.getValue() + `, &amp;` + $this.inst_ID.getValue() + `_modulator_config` + `);&#xA;`, 1)</expr>
+            <!-- When a modulator configuration is selected and the initialization is disabled the comment if of the CMT_SetMode() function is provided -->
+            <expr if_expr="($instance.getMode() != `kCMT_DirectIROCtl`) &amp;&amp; (!$this.setModeEnabled.getValue())">
+               leftPadding(`/* The modulator configuration and the CMT mode can be initialized by the CMT_SetMode() function, see the following example:&#xA;`,1)+
+               leftPadding(`CMT_SetMode(` + $this.inst_peripheral_ID.getValue() + `, ` + $this.inst_mode_ID.getValue() + `, &amp;` + $this.inst_ID.getValue() + `_modulator_config` + `); */&#xA;`, 1)
+            </expr>
+         </section>
+      </code>
+      <validation/>
+      <quick_selections>
+         <quick_selection id="default" label="Default">
+            <description>Default configuration</description>
+            <set id="cmt_config.isInterruptEnabled">false</set>
+            <set id="cmt_config.isIroEnabled">true</set>
+            <set id="cmt_config.cmt_infrared_output_polarity_t">kCMT_IROActiveHigh</set>
+            <set id="cmt_config.cmt_second_clkdiv_t">kCMT_SecondClkDiv1</set>
+         </quick_selection>
+         <default>default</default>
+      </quick_selections>
+   </config_set>
+</component:config_component>

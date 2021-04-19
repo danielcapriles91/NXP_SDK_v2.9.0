@@ -1,0 +1,152 @@
+#ifndef __USB_HOST_COMMON_H__
+#define __USB_HOST_COMMON_H__
+
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+
+/*! @brief HID class buffer size for receiving report descriptor and data */
+#define HID_BUFFER_SIZE (200U)
+
+/*! @brief CDC class host application run status */
+typedef enum _usb_host_cdc_run_state
+{
+    kUSB_HostCdcRunIdle = 0,                /*!< idle */
+    kUSB_HostCdcRunSetControlInterface,     /*!< execute set interface code */
+    kUSB_HostCdcRunWaitSetControlInterface, /*!< wait set interface done */
+    kUSB_HostCdcRunSetControlInterfaceDone, /*!< set interface is done, execute next step */
+    kUSB_HostCdcRunSetDataInterface,        /*!< execute set interface code */
+    kUSB_HostCdcRunWaitSetDataInterface,    /*!< wait set interface done */
+    kUSB_HostCdcRunSetDataInterfaceDone,    /*!< set interface is done, execute next step */
+    kUSB_HostCdcRunWaitDataReceived,        /*!< wait data receive done */
+    kUSB_HostCdcRunDataReceivedDone,        /*!< data receive is done, execute next step  */
+    kUSB_HostCdcRunWaitGetState,            /*!< wait get state done*/
+    kUSB_HostCdcRunGetStateDone,            /*!< get state done , execute next step*/
+    kUSB_HostCdcRunWaitDataSend,            /*!< wait data send done */
+    kUSB_HostCdcRunCheckData,               /*!< check whether uart has store data in send buffer*/
+    kUSB_HostCdcRunPrimeDateSend,           /*!< prime bulk out send ,  execute data send*/
+    kUSB_HostCdcRunPrimeDateReceive,        /*!< prime bulk in receive,  start data receive */
+    kUSB_HostCdcRunWaitGetLineCode,         /*!< wait get line code  */
+    kUSB_HostCdcRunGetLineCodeDone,         /*!< get line code done, execute next step*/
+    kUSB_HostCdcRunWaitSetCtrlState,        /*!< wait set control state*/
+    kUSB_HostCdcRunSetCtrlStateDone,        /*!< set control state done , execute next step*/
+} usb_host_cdc_run_state_t;
+
+/*! @brief HID class host application run status */
+typedef enum _usb_host_hid_run_state
+{
+    kUSB_HostHidRunIdle = 0,                /*!< idle */
+    kUSB_HostHidRunSetInterface,            /*!< execute set interface code */
+    kUSB_HostHidRunWaitSetInterface,        /*!< wait set interface done */
+    kUSB_HostHidRunSetInterfaceDone,        /*!< set interface is done, execute next step */
+    kUSB_HostHidRunWaitSetIdle,             /*!< wait set idle done */
+    kUSB_HostHidRunSetIdleDone,             /*!< set idle is done, execute next step */
+    kUSB_HostHidRunWaitGetReportDescriptor, /*!< wait get report descriptor done */
+    kUSB_HostHidRunGetReportDescriptorDone, /*!< get report descriptor is done, execute next step */
+    kUSB_HostHidRunWaitSetProtocol,         /*!< wait set protocol done */
+    kUSB_HostHidRunSetProtocolDone,         /*!< set protocol is done, execute next step */
+    kUSB_HostHidRunWaitDataReceived,        /*!< wait interrupt in data */
+    kUSB_HostHidRunDataReceived,            /*!< interrupt in data received */
+    kUSB_HostHidRunPrimeDataReceive,        /*!< prime interrupt in receive */
+} usb_host_hid_run_state_t;
+
+/*! @brief Printer class host application run status */
+typedef enum _usb_host_printer_run_state
+{
+    kUSB_HostPrinterRunIdle = 0,            /*!< idle */
+    kUSB_HostPrinterRunSetInterface,        /*!< execute set interface code */
+    kUSB_HostPrinterRunWaitSetInterface,    /*!< wait set interface done */
+    kUSB_HostPrinterRunGetDeviceId,         /*!< get device id, get all the string */
+    kUSB_HostPrinterRunWaitGetDeviceId,     /*!< wait get device id callback */
+    kUSB_HostPrinterRunGetDeviceIdDone,     /*!< get device id success */
+    kUSB_HostPrinterRunWaitGetDeviceIdAll,  /*!< get whole device id */
+    kUSB_HostPrinterRunGetDeviceIdAllDone,  /*!< get whole device id done */
+    kUSB_HostPrinterRunGetDeviceIdAllError, /*!< get whole device id error */
+    kUSB_HostPrinterRunPrinterTest,         /*!< test the device printer */
+    kUSB_HostPrinterRunPrimeReceive,        /*!< prime receive */
+    kUSB_HostPrinterRunDataReceived,        /*!< receive data done */
+    kUSB_HostPrinterRunParseDeviceId,       /*!< parse device id */
+} usb_host_printer_run_state_t;
+
+/*! @brief PHDC class manager state: disconnected */
+#define IEEE11073_MANAGER_DISCONNECTED (0x00U)
+/*! @brief PHDC class manager state: unassociated */
+#define IEEE11073_MANAGER_CONNECTED_UNASSOCIATED (0x01U)
+/*! @brief PHDC class manager state: waiting configuration */
+#define IEEE11073_MANAGER_CONNECTED_ASSOCIATED_CONFIGURING_WAITING (0x02U)
+/*! @brief PHDC class manager state: checking configuration */
+#define IEEE11073_MANAGER_CONNECTED_ASSOCIATED_CONFIGURING_CHECKING_CONFIG (0x03U)
+/*! @brief PHDC class manager state: operating */
+#define IEEE11073_MANAGER_CONNECTED_ASSOCIATED_OPERATING (0x04U)
+/*! @brief PHDC class manager state: disassociating */
+#define IEEE11073_MANAGER_DISASSOCIATING (0x05U)
+
+/*! @brief PHDC class application protocol data unit header size */
+#define APDU_HEADER_SIZE (0x04U)
+/*! @brief PHDC class association response header size */
+#define ASSOC_RSP_HEADER_SIZE (0x02U)
+/*! @brief PHDC class association abort header size */
+#define ASSOC_ABRT_HEADER_SIZE (0x02U)
+/*! @brief PHDC class association release response header size */
+#define ASSOC_RLRE_HEADER_SIZE (0x02U)
+/*! @brief PHDC class association release request header size */
+#define ASSOC_RLRQ_HEADER_SIZE (0x02U)
+/*! @brief PHDC class association presentation protocol data unit header size */
+#define ASSOC_PRST_HEADER_SIZE (0x08U)
+/*! @brief PHDC class any defined header size */
+#define ANY_HEADER_SIZE (0x02U)
+/*! @brief PHDC class event report result simple header size */
+#define EVT_REPORT_RESULT_SIMPLE_HEADER_SIZE (0x0AU)
+
+/*! @brief PHDC class host application run status */
+typedef enum _host_phdc_manager_run_state
+{
+    kUSB_HostPhdcRunIdle = 0U,        /*!< idle */
+    kUSB_HostPhdcRunSetInterface,     /*!< execute set interface code */
+    kUSB_HostPhdcRunWaitSetInterface, /*!< wait set interface done */
+    kUSB_HostPhdcRunSetInterfaceDone, /*!< set interface is done, execute next step */
+    kUSB_HostPhdcRunWaitDataReceived, /*!< wait interrupt in or bulk in data */
+    kUSB_HostPhdcRunDataReceived,     /*!< interrupt in or bulk in data received */
+    kUSB_HostPhdcRunPrimeDataReceive, /*!< prime interrupt in or bulk in receive */
+} host_phdc_manager_run_state_t;
+
+/*! @brief host app run status */
+typedef enum __host_audio_app_runState
+{
+    kUSB_HostAudioRunIdle = 0,                    /*!< idle */
+    kUSB_HostAudioRunSetControlInterface,         /*!< execute set control interface code */
+    kUSB_HostAudioRunSetControlInterfaceDone,     /*!<  set control interface done */
+    kUSB_HostAudioRunWaitSetControlInterface,     /*!< wait control interface done */
+    kUSB_HostAudioRunWaitSetStreamInterface,      /*!< wait steam interface done */
+    kUSB_HostAudioRunSetInterfaceDone,            /*!< set interface done */
+    kUSB_HostAudioRunWaitGetStreamDescriptor,     /*!< wait get stream descriotor */
+    kUSB_HostAudioRunGetStreamDescriptorDone,     /*!< get stream descriotor done */
+    /*audio 1.0 only state machine start*/
+    kUSB_HostAudioRunWaitAudioGetMinVolume,       /*!< wait get minimum volume command done */
+    kUSB_HostAudioRunAudioGetMaxVolume,           /*!< execute get maximum volume command done */
+    kUSB_HostAudioRunWaitAudioGetMaxVolume,       /*!< wait get maximum volume command done */
+    kUSB_HostAudioRunAudioGetResVolume,           /*!< execute get res volume command done */
+    kUSB_HostAudioRunWaitAudioGetResVolume,       /*!< wait get res volume command done */
+    /*audio 1.0 state machine end*/
+    kUSB_HostAudioRunAudioConfigChannel,          /*!< execute config audio channel */
+    kUSB_HostAudioRunWaitAudioConfigChannel,      /*!< wait config audio channel */
+    kUSB_HostAudioRunAudioConfigChannel1Vol,      /*!< execute config audio channel 1*/
+    kUSB_HostAudioRunWaitAudioConfigChannel1Vol,  /*!< wait config audio channel 1*/
+    kUSB_HostAudioRunAudioConfigChannel2Vol,      /*!< execute config audio channel 2*/
+    kUSB_HostAudioRunWaitAudioConfigChannel2Vol,  /*!< wait config audio channel 2*/
+    kUSB_HostAudioRunWaitAudioSetCurSamplingFreq, /*!< wait config audio set sampling freq*/
+    kUSB_HostAudioRunAudioSetCurSamplingFreq,     /*!< execute audio set current sampling freq*/
+    kUSB_HostAudioRunAudioConfigMute,             /*!< execute audio config mute*/
+    kUSB_HostAudioRunWaitAudioConfigMute,         /*!< wait audio config mute*/
+    kUSB_HostAudioRunAudioDone,                   /*!< audio done */
+    /*the followign state is used in audio2.0 only*/
+    kUSB_HostAudioRunWaitAudioGetVolumeRang,       /*!< wait get volume rang command done */
+    kUSB_HostAudioRunAudioGetSampleFrequencyRange,          /*!< get sample frequency range */
+    kUSB_HostAudioRunWaitAudioGetSampleFrequencyRange,          /*!< wait get sample frequency range */
+    kUSB_HostAudioRunAudioGetAllSampleFrequencyRange,          /*!< get all sample frequency range */
+    kUSB_HostAudioRunWaitAudioGetAllSampleFrequencyRange,      /*!< wait get all sample frequency range */
+    kUSB_HostAudioRunAudioGetCurrentVolume,               /*!< get current volume*/
+    kUSB_HostAudioRunWaitAudioGetCurrentVolumeDone,          /*!< wait get current volume */
+} host_audio_app_runState_t;
+
+#endif /* __USB_HOST_COMMON_H__ */

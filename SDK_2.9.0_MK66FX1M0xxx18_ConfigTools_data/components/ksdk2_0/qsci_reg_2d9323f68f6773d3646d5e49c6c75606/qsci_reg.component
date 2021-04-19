@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="qsci_reg" label="QSCI" category="Register init" registers_init="true" global_only="false" hidden="false" options="UI_COMPONENT_MODE_HIDDEN"
+xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd" 
+xmlns:component="http://swtools.freescale.net/XSD/component/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <description>Queued Serial Communications Interface (QSCI)</description>
+    <mode id="general" label="General">
+        <description>QSCI general configuration.</description>
+        <config_set_refs>
+            <config_set_ref>fsl_qsci</config_set_ref>
+        </config_set_refs>
+        <master_peripheral exclusive="true">
+            <peripheral_type>QSCI</peripheral_type>
+        </master_peripheral>
+    </mode>
+    <config_set id="fsl_qsci" label="General configuration" from_source="fsl_qsci.h">
+        <description>General configuration of the QSCI.</description>
+        <generated_types/>
+        <user_types>   
+            <enum id="ReceiverSource_t" label="Receiver source">
+                <item id="0" label="Transmitter output" value ="0">
+                    <description>Receiver input internally connected to transmitter output.</description>
+                </item>
+                <item id="1" label="TxD pin" value="1">
+                    <description>Receiver input connected to TXD pin.</description>
+                </item>
+            </enum>          
+            <enum id="WakeUpCondition_t" label="Wake-up condition">
+                <item id="0" label="Idle line wake-up" value="0"/>
+                <item id="1" label="Address mark wake-up" value="1"/>
+            </enum>            
+            <enum id="qsci_parity_mode_t" label="QSCI parity mode">
+                <description></description>
+                <item id="0" label="Even parity" value="0">
+                    <description>Event parity enabled, bit setting</description>
+                </item>
+                <item id="1" label="Odd parity" value="1">
+                    <description>odd parity enabled, bit setting</description>
+                </item>
+            </enum>
+            <enum id="qsci_data_bit_count_t" label="QSCI data bit count">
+                <description></description>
+                <item id="0" label="8 data bits" value="0">
+                    <description>Data format: 1 start bit, 8 data bits, 1 stop bit</description>
+                </item>
+                <item id="1" label="9 data bits" value="1">
+                    <description>Data format: 1 start bit, 9 data bits, 1 stop bit.</description>
+                </item>
+            </enum>
+            <enum id="qsci_polarity_mode_t" label="QSCI signal polarity mode">
+                <description></description>
+                <item id="0" label="Normal" value="0">
+                    <description>Normal mode of the transmitter and receiver - no inversion.</description>
+                </item>
+                <item id="1" label="Inverted" value="1">
+                    <description>Inverted mode of the transmitter and receiver signals.</description>
+                </item>
+            </enum>
+            <struct id="qsci_config_t" label="QSCI configuration structure" from="_qsci_config">
+                <description>Common configuration of the QSCI.</description>
+                <variable id="clockSourceUId" value="`BusInterfaceClock`"/>
+                <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init;REGISTERS_REFRESH" items="createArray().addItemToList(`BusInterfaceClock`, getPeripheralClock($instance.getPeripheral(), `BusInterfaceClock`), ($instance.getPeripheral() + `_CLK_SRC`),true)" >
+                    <description>QSCI clock source.</description>
+                    <validation>
+                        <dependency when_expr="$parent.clockSourceFreq.getEnumItemId() != `custom`" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                            description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                            level="Error">
+                            <feature name="frequency" evaluation="greaterThan">
+                                <data expr="0" unit="Hz" type="Frequency"/>
+                            </feature>
+                        </dependency>
+                    </validation>
+                </dynamic_enum>
+                <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init;REGISTERS_REFRESH" 
+                    items="createArray().merge(
+                    getClockFunctionalGroups().arrayToEnumItems(
+                    enumItem -> true,
+                    enumItem -> enumItem,
+                    enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)) + ` (` + enumItem + `)`,
+                    enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)))" >
+                    <description>Selection of the clock source frequency</description>
+                    <validation>
+                        <constraint cond_expr="(($this.getEnumItemValue() == `GetFreq`) || ($this.getEnumItemValue().toHertz() != 0))" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+                    </validation>
+                    <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+                </dynamic_enum> 
+                <string id="DividerBaudRateStr" label="Divider / Baud rate" options="REGISTERS_REFRESH"
+                    validation_expr="x -> system::validateValueBps(x, 2, ($parent.maxRegDividerValue.getValue().toInt() * 2))">
+                    <description>
+The divider or baud rate value for initialization of the QSCI. The value can be set in divider (register value) or in baud rate [bps]. 
+
+Supported formats of values:
+* An integer number in range 2 - 1 048 574 (0xFFFFE) is processed as a divider value.
+* A baud rate value must be in format &quot;integer_number [bps or Bps]&quot; eg. 9600 bps.&lt;br/&gt;     
+Baud rate units can only be used when clock source frequency is selected (clock must not be disabled).&lt;br/&gt;
+                    </description>
+                    <validation>
+                        <constraint cond_expr="$parent.DividerBaudRateValue_temp.getValue() == `N/A` ? false : (($parent.DividerBaudRateValue.getValue().toInt() &gt;&gt; 1 ) &gt; 0) &amp;&amp; ($parent.DividerBaudRateValue.getValue().toInt() &gt;&gt; 1) &lt;= $parent.maxRegDividerValue.getValue().toInt()" 
+                        level="error" description_expr="`The divider value is out of range 2 - ` + ($parent.maxRegDividerValue.getValue() * 2)"/>
+                    </validation>
+                    <assign when="true">
+                        <register name="RATE" bitfield="FRAC_SBR" 
+                            value="(($parent.DividerBaudRateValue.getValue().toInt() &gt;&gt; 1) &amp; 0x0007)" 
+                            reverse_value="x -> ((x | (getBitFieldValue($instance.getPeripheral(), `RATE`,`SBRL`).toInt() &lt;&lt; 3) | (getBitFieldValue($instance.getPeripheral(), `CTRL3`,`SBRH`).toInt() &lt;&lt; 16)) &lt;&lt; 1)"/>
+                    </assign>
+                    <assign when="true">
+                        <register name="RATE" bitfield="SBRL" 
+                            value="((($parent.DividerBaudRateValue.getValue().toInt() &gt;&gt; 1) &amp; 0xFFF8) &gt;&gt; 3)" 
+                            reverse_value="x -> ((getBitFieldValue($instance.getPeripheral(), `RATE`,`FRAC_SBR`).toInt() | (x.toInt() &lt;&lt; 3) | (getBitFieldValue($instance.getPeripheral(), `CTRL3`,`SBRH`).toInt() &lt;&lt; 16)) &lt;&lt; 1)"/>
+                    </assign>
+                    <assign when="true">
+                        <register name="CTRL3" bitfield="SBRH"
+                            value="(($parent.DividerBaudRateValue.getValue().toInt() &gt;&gt; 1) &gt;&gt; 16)" 
+                            reverse_value="x -> ((getBitFieldValue($instance.getPeripheral(), `RATE`,`FRAC_SBR`).toInt() | (getBitFieldValue($instance.getPeripheral(), `RATE`,`SBRL`).toInt() &lt;&lt; 3) | (x.toInt() &lt;&lt; 16)) &lt;&lt; 1)"/>
+                    </assign>
+                </string>
+                <variable id="DividerBaudRateValue_temp" value="system::getIntDividerValueBps($parent.DividerBaudRateStr.getValue(), $parent.clockSourceFreq.getEnumItemValue().toHertz().toInt())"></variable> 
+                <variable id="DividerBaudRateValue" value="$parent.DividerBaudRateValue_temp.getValue() == `N/A` ? 0 : ($parent.DividerBaudRateValue_temp.getValue() &amp; (~1))"></variable> 
+
+                <variable id="maxRegDividerValue" value="0x7FFFF" ></variable>
+                <info id="calculatedValues" label="Calculated divider / baud rate" value="$parent.calculatedDivider.getValue() + `;` + $parent.calculatedBaudrate.getValue() + ` bps`">
+                <description>The value of the divider stored in the registers and real value of the baud rate.</description>
+                </info>
+                <variable id="calculatedDivider" value="(($parent.DividerBaudRateValue_temp.getValue() == `N/A`) || (($parent.DividerBaudRateValue.getValue() &gt;&gt; 1) == 0) || (($parent.DividerBaudRateValue.getValue() &gt;&gt; 1) &gt; $parent.maxRegDividerValue.getValue().toInt()))
+                    ? `N/A`
+                    : ((getBitFieldValue($instance.getPeripheral(), `RATE`,`FRAC_SBR`).toInt() | (getBitFieldValue($instance.getPeripheral(), `RATE`,`SBRL`).toInt() &lt;&lt; 3) | (getBitFieldValue($instance.getPeripheral(), `CTRL3`,`SBRH`).toInt() &lt;&lt; 16)) &lt;&lt; 1)" >
+                    <description>The value of the divider stored in the registers.</description>
+                </variable>
+                <variable id="calculatedBaudrate" value="($parent.calculatedDivider.getValue() == `N/A`) || ($parent.calculatedDivider.getValue() == 0)
+                    ? `N/A`
+                    : ($parent.clockSourceFreq.getEnumItemValue().toHertz() / $parent.calculatedDivider.getValue())" >
+                    <description>The baud rate calculated from the value of the divider stored in the registers.</description>
+                </variable>
+                <bool id="parityEnable" label="Enable parity" options="REGISTERS_REFRESH">
+                    <description>Parity enable.</description>
+                    <assign when="true">
+                            <register name="CTRL1" bitfield="PE" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                    </assign>
+                </bool>
+                <reference id="parityMode" label="Parity mode" type="qsci_parity_mode_t" options="REGISTERS_REFRESH">
+                    <description>Selection mode of the parity.</description>
+                    <assign when="true">
+                        <register name="CTRL1" bitfield="PT" 
+                            value="$this.getEnumItemValue().toInt()" 
+                            reverse_value="x -> x"/>
+                    </assign>
+                </reference>
+                <reference id="dataBitCount" label="Number of data bits" type="qsci_data_bit_count_t" options="REGISTERS_REFRESH">
+                    <description>Number of data bits transmitted in one word.</description>
+                    <assign when="true">
+                        <register name="CTRL1" bitfield="M" 
+                            value="$this.getEnumItemValue().toInt()" 
+                            reverse_value="x -> x"/>
+                    </assign>
+                </reference>
+                <reference id="polarityMode" label="Tx/Rx signal polarity" type="qsci_polarity_mode_t" options="REGISTERS_REFRESH">
+                    <description>Polarity of the transmitter and receiver signal.</description>
+                    <assign when="true">
+                        <register name="CTRL1" bitfield="POL" 
+                            value="$this.getEnumItemValue().toInt()" 
+                            reverse_value="x -> x"/>
+                    </assign>
+                </reference>
+                <bool id="fifoEn" label="Enable Tx/Rx FIFO" options="REGISTERS_REFRESH">
+                    <description>Enable Tx/Rx FIFO</description>
+                    <assign when="true">
+                        <register name="CTRL2" bitfield="FIFO_EN" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                    </assign>
+                </bool>
+                <integer id="txFifoWatermark" label="Tx FIFO watermark" type="uint8_t" min_expr="0" max_expr="3" options="REGISTERS_REFRESH">
+                    <description>
+Transmitter FIFO watermark in words (number of words when the transmit data register empty flag is set).
+The supported range is 0 - 3 words.
+                    </description>
+                    <assign when="true">
+                        <register name="CTRL2" bitfield="TFWM" 
+                            value="$this.getValue()" 
+                            reverse_value="x -> x"/>
+                    </assign>
+                </integer>
+                <integer id="rxFifoWatermark" label="Rx FIFO watermark" type="uint8_t" min_expr="1" max_expr="4" options="remove_from_struct_init;REGISTERS_REFRESH">
+                    <description>
+Receiver FIFO watermark in words (number of words when the receive data register full flag is set).
+The supported range is 1 - 4 words.
+                    </description>
+                    <assign when="true">
+                        <register name="CTRL2" bitfield="RFWM" 
+                            value="$this.getValue()-1" 
+                            reverse_value="x -> (x+1)"/>
+                    </assign>
+                </integer>
+                <bool id="enableTx" label="Enable Tx" options="REGISTERS_REFRESH">
+                    <description>Enable transmitter of the QSCI.</description>
+                    <validation>
+                        <dependency when_expr="$this.getValue()" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.uart_tx`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`TX`, $instance.getPeripheral())" level="Warning">
+                            <feature name="routed" evaluation="equal">
+                                <data expr="true"/>
+                            </feature>
+                        </dependency>
+                    </validation>
+                    <assign when="true">
+                        <register name="CTRL1" bitfield="TE" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                    </assign>
+                </bool>
+                <bool id="enableRx" label="Enable Rx" options="REGISTERS_REFRESH">
+                    <description>Enable receiver of the QSCI.</description>
+                    <validation>
+                        <dependency when_expr="$this.getValue()" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.uart_rx`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`RX`, $instance.getPeripheral())"  level="Warning">
+                            <feature name="routed" evaluation="equal">
+                                <data expr="true"/>
+                            </feature>
+                        </dependency>
+                    </validation>
+                    <assign when="true">
+                        <register name="CTRL1" bitfield="RE" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                    </assign>
+                </bool>
+                <info value="``" id="OtherLine" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+                <bool id="LINSlaveEnable" label="Enable LIN slave mode" options="REGISTERS_REFRESH">
+                    <description>
+This bit should be used only in Local Interconnect Network (LIN) applications.       
+If disabled, the LIN auto baud feature is disabled and the RATE register maintains whatever value the processor writes to it.       
+If enabled, the LIN slave functionality is enabled. This includes a search for the break character followed by a sync character (0x55) from the master LIN device. When the break is detected (11 consecutive samples of zero), the subsequent sync character is used to measure the baud rate of the transmitting master, and the RATE register is automatically reloaded with the value needed to "match" that baud rate.</description>
+                    <assign when="true">
+                            <register name="CTRL2" bitfield="LINMODE" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                    </assign>
+                </bool>
+                <bool id="LoopEnable" label="Enable loop mode" options="REGISTERS_REFRESH">
+                    <description>
+This bit enables loop operation. In loop operation the RXD pin is disconnected from the SCI, and the
+transmitter output goes into the receiver input. Both the transmitter and the receiver must be enabled to
+use the internal loop function as opposed to single wire operation, which requires only one or the other to
+be enabled.
+The receiver input is determined by Receiver source setting. The transmitter output is controlled by Transmitter enable setting. If
+the setting is set and loop mode is enabled, the transmitter output appears on the TXD pin. If Transmitter enable setting is clear and loop mode is enabled,
+the TXD pin is high-impedance.
+                </description>
+                    <assign when="true">
+                            <register name="CTRL1" bitfield="LOOP" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                    </assign>
+                </bool>
+                <reference id = "ReceiverSource" label="Rx source in loop mode" type="ReceiverSource_t" options="REGISTERS_REFRESH">
+                    <description>When loop mode enabled this setting determines the internal feedback path for the receiver. Receiver input can be internally connected to transmitter output or to TxD pin.</description>
+                    <assign when="true">
+                            <register name="CTRL1" bitfield="RSRC" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                    </assign>
+                </reference>
+                <bool id="WaitEnable" label="Stop in wait mode" options="REGISTERS_REFRESH">
+                    <description>This bit disables the SCI in wait mode.</description>
+                    <assign when="true">
+                            <register name="CTRL1" bitfield="SWAI" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                    </assign>
+                </bool>
+                <bool id="StopHoldEnable" label="Enable stop mode entry hold off" options="REGISTERS_REFRESH">
+                    <description>When enabled, if chip level stop mode occurs and transmiter or receiver is still busy, QSCI will hold off stop mode until both transmiter and receiver are idle.</description>
+                    <assign when="true">
+                            <register name="CTRL3" bitfield="SHEN" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                    </assign>
+                </bool>
+                <bool id="StandbyEnable" label="Set Rx standby state" options="REGISTERS_REFRESH">
+                    <description>This setting enables the wake-up function and inhibits further receiver interrupt requests (Standby mode). Normally, hardware wakes the receiver by automatically clearing this bit.</description>
+                    <assign when="true">
+                            <register name="CTRL1" bitfield="RWU" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                    </assign>
+                </bool>
+                <reference id="WakeUpCondition" label="Wake-up condition" type="WakeUpCondition_t" options="REGISTERS_REFRESH">
+                    <description>
+This bit determines which condition wakes the SCI: a one (address mark) in the most significant bit position of a received data character or an idle condition on the RXD pin.                 
+                    </description>
+                    <assign when="true">
+                            <register name="CTRL1" bitfield="WAKE" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                    </assign>
+                </reference>
+                <info value="`DMA`" id="dmaLine" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+                <bool id="txDMAEn" label="Enable Tx DMA request" options="REGISTERS_REFRESH">
+                    <description>\
+Enable Tx DMA request of the QSCI. 
+Note: The fsl_qsci driver does not support DMA transfers. The QSCI DMA transfers must be implemented in a user code (the eDMA component can be used for configuration of DMA channels).
+                    </description>
+                    <assign when="true">
+                        <register name="CTRL2" bitfield="TDE" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                    </assign>
+                </bool>
+                <bool id="rxDMAEn" label="Enable Rx DMA request" options="REGISTERS_REFRESH">
+                    <description>\
+Enable Rx DMA request of the QSCI. 
+Note: The fsl_qsci driver does not support DMA transfers. The QSCI DMA transfers must be implemented in a user code (the eDMA component can be used for configuration of DMA channels).
+                    </description>
+                    <assign when="true">
+                        <register name="CTRL2" bitfield="RDE" value="$this.getValue().system::boolToInt()" reverse_value="x -> x.system::IntToBool()"/>
+                    </assign>
+                </bool>
+                <struct id="interrupt_vectors" label="Interrupt configuration">
+                    <!-- Interrupt sources -->
+                    <set id="interrupt_types" label="Interrupt sources" options="REGISTERS_REFRESH">
+                        <item id="kQSCI_TxDataRegEmptyInterrupt" label="Tx data register empty">
+                            <assign when="true">
+                                <register name="CTRL1" bitfield="TEIE" 
+                                    value="$this.getValue().system::boolToInt()" 
+                                    reverse_value="x -> x.system::IntToBool()"/>
+                            </assign>
+                        </item>                
+                        <item id="kQSCI_TxIdleInterrupt" label="Tx idle line">
+                            <assign when="true">
+                                <register name="CTRL1" bitfield="TIIE" 
+                                    value="$this.getValue().system::boolToInt()" 
+                                    reverse_value="x -> x.system::IntToBool()"/>
+                            </assign>
+                        </item>
+                        <item id="kQSCI_RxDataRegFullInterrupt" label="Rx data register full">
+                            <assign when="true">
+                                <register name="CTRL1" bitfield="RFIE" 
+                                    value="$this.getValue().system::boolToInt()" 
+                                    reverse_value="x -> x.system::IntToBool()"/>
+                            </assign>
+                        </item>
+                        <item id="kQSCI_RxErrorInterrupt" label="Rx error">
+                            <assign when="true">
+                                <register name="CTRL1" bitfield="REIE" 
+                                    value="$this.getValue().system::boolToInt()" 
+                                    reverse_value="x -> x.system::IntToBool()"/>
+                            </assign>
+                        </item>
+                        <item id="kQSCI_RxInputEdgeInterrupt" label="Rx input active edge">
+                            <assign when="true">
+                                <register name="CTRL2" bitfield="RIEIE" 
+                                    value="$this.getValue().system::boolToInt()" 
+                                    reverse_value="x -> x.system::IntToBool()"/>
+                            </assign>
+                        </item>
+                        <item id="kQSCI_RxIdleLineInterrupt" label="Rx idle line">
+                            <assign when="true">
+                                <register name="CTRL2" bitfield="RIIE" 
+                                    value="$this.getValue().system::boolToInt()" 
+                                    reverse_value="x -> x.system::IntToBool()"/>
+                            </assign>
+                        </item>
+                    </set>
+                    <!-- Checking number of interrupt for the QSCI, when dedicated interrupt vector for QSCI is available, the error irq selection is available  -->
+                    <bool id="enable_tx_irq" label="Enable Tx interrupt vector" options="UI_LABEL_BOLD">
+                        <description>Enable transmitter interrupt vector.</description>
+                    </bool>
+                    <reference id="interrupt_tx" label="Tx interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=serial_tx;UI_LABEL_HIDDEN" enable="$parent.enable_tx_irq.getValue()">
+                        <options_expr>
+                            <option id="irq_handler_insert" expr="
+                                leftPadding(`/*`, 1) + `&#10;` +
+                                leftPadding(`Transmit Data Register Empty flag can be cleared by writing to the SCI data register without first reading STAT with TDRE set.`,2) + `&#10;` +
+                                leftPadding(`For example:`, 2) + `&#10;` +
+                                leftPadding(`uint16_t intData = 0x10;`, 4) + `&#10;` +
+                                leftPadding($instance.getPeripheral() + `->STAT = intData;`, 4) + `&#10;&#10;` +
+                                leftPadding(`See the reference manual for more details of each flag.`, 2) + `&#10;` +
+                                leftPadding(`*/`, 1) + `&#10;&#10;` +
+                                leftPadding(`/* Place your code here */`, 1) + `&#10;`
+                                "/>
+                        </options_expr>
+                    </reference>
+                    <bool id="enable_rx_irq" label="Enable Rx interrupt vector" options="UI_LABEL_BOLD">
+                        <description>Enable receiver interrupt vector.</description>
+                    </bool>
+                    <reference id="interrupt_rx" label="Rx interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=serial_rx;UI_LABEL_HIDDEN" enable="$parent.enable_rx_irq.getValue()">
+                        <options_expr>
+                            <option id="irq_handler_insert" expr="
+                                leftPadding(`/* Reading all interrupt flags of status register */`, 1) + `&#10;` +
+                                leftPadding(`uint16_t intStatus = ` + $instance.getPeripheral() + `->STAT;`, 1) + `&#10;&#10;` +
+                                leftPadding(`/*`, 1) + `&#10;` +
+                                leftPadding(`Receive Data Register Full flag can be cleared by reading STAT with RDRF set and then reading the SCI data register`,2) + `&#10;` +
+                                leftPadding(`until CTRL2[RFCNT] is no longer above CTRL2[RFWM]. If CTRL2[FIFO_EN] or CTRL2[RDE] is set, `,2) + `&#10;` +
+                                leftPadding(`then you can clear RDRF by reading the SCI data register without first reading STAT with RDRF set.`,2) + `&#10;` +
+                                leftPadding(`For example, the STAT register reading (see above) is followed by:`, 2) + `&#10;` +
+                                leftPadding(`uint16_t intData = ` + $instance.getPeripheral() + `->DATA;`, 4) + `&#10;` +
+                                leftPadding(`Receiver Input Edge flag can be cleared by writing a 1 to the bit position in the status register.`,2) + `&#10;` +
+                                leftPadding(`For example:`, 2) + `&#10;` +
+                                leftPadding($instance.getPeripheral() + `->STAT |= QSCI_STAT_RIEF_MASK;`, 4) + `&#10;` +
+                                leftPadding(`Overrun flag can be cleared by writing the SCI status register with any value.`,2) + `&#10;` +
+                                leftPadding(`For example:`, 2) + `&#10;` +
+                                leftPadding($instance.getPeripheral() + `->STAT &amp;= ~QSCI_STAT_OR_MASK;`, 4) + `&#10;&#10;` +
+                                leftPadding(`See the reference manual for more details of each flag.`, 2) + `&#10;` +
+                                leftPadding(`*/`, 1) + `&#10;&#10;` +
+                                leftPadding(`/* Place your code here */`, 1) + `&#10;`
+                                "/>
+                        </options_expr>
+                    </reference>                
+                    <bool id="enable_rx_err_irq" label="Enable Rx error interrupt vector" options="UI_LABEL_BOLD">
+                        <description>Enable receiver error interrupt vector.</description>
+                    </bool>
+                    <reference id="interrupt_rx_err" label="Rx error interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=serial_rx_err;UI_LABEL_HIDDEN" enable="$parent.enable_rx_err_irq.getValue()">
+                        <options_expr>
+                            <option id="irq_handler_insert" expr="
+                                leftPadding(`/* Reading all interrupt flags of status register */`, 1) + `&#10;` +
+                                leftPadding(`uint16_t intStatus = ` + $instance.getPeripheral() + `->STAT;`, 1) + `&#10;&#10;` +
+                                leftPadding(`/*`, 1) + `&#10;` +
+                                leftPadding(`Overrun, Noise, Framing Error, Parity Error and LIN Sync flags can be cleared by writing the SCI status register with any value.`,2) + `&#10;` +
+                                leftPadding(`For example:`, 2) + `&#10;` +
+                                leftPadding($instance.getPeripheral() + `->STAT &amp;= ~QSCI_STAT_NF_MASK;`, 4) + `&#10;&#10;` +
+                                leftPadding(`See the reference manual for more details of each flag.`, 2) + `&#10;` +
+                                leftPadding(`*/`, 1) + `&#10;&#10;` +
+                                leftPadding(`/* Place your code here */`, 1) + `&#10;`
+                                "/>
+                        </options_expr>
+                    </reference>
+                    <bool id="enable_tridle_irq" label="Enable Tx/Rx idle interrupt vector" options="UI_LABEL_BOLD">
+                        <description>Enable transmitter interrupt vector.</description>
+                    </bool>
+                    <reference id="interrupt_tridle" label="Tx/Rx idle interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=serial_tridle;UI_LABEL_HIDDEN" enable="$parent.enable_tridle_irq.getValue()">
+                        <options_expr>
+                            <option id="irq_handler_insert" expr="
+                                leftPadding(`/* Reading all interrupt flags of status register */`, 1) + `&#10;` +
+                                leftPadding(`uint16_t intStatus = ` + $instance.getPeripheral() + `->STAT;`, 1) + `&#10;&#10;` +
+                                leftPadding(`/*`, 1) + `&#10;` +
+                                leftPadding(`Transmitter Idle flag can be cleared by writing to the SCI data register.`,2) + `&#10;` +
+                                leftPadding(`For example:`, 2) + `&#10;` +
+                                leftPadding(`uint16_t intData = 0x10;`, 4) + `&#10;` +
+                                leftPadding($instance.getPeripheral() + `->DATA = intData;`, 4) + `&#10;` +
+                                leftPadding(`Receiver Idle Line flag can be cleared by reading the SCI data register.`,2) + `&#10;` +
+                                leftPadding(`For example:`, 2) + `&#10;` +
+                                leftPadding(`uint16_t intData = ` + $instance.getPeripheral() + `->DATA;`, 4) + `&#10;&#10;` +
+                                leftPadding(`See the reference manual for more details of each flag.`, 2) + `&#10;` +
+                                leftPadding(`*/`, 1) + `&#10;&#10;` +
+                                leftPadding(`/* Place your code here */`, 1) + `&#10;`
+                                "/>
+                        </options_expr>
+                    </reference>
+                </struct>
+            </struct>
+        </user_types>
+        <settings>
+            <reference id="qsciConfig" label="QSCI Configuration" type="qsci_config_t" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN"/>
+            <!-- Enable clock gate -->
+           <variable id="clockGate" value="1">                
+               <assign when="true"> 
+                   <register peripheral_expr="system::getInstanceClockGatePeripheral()" 
+                       name_expr="system::getInstanceClockGateRegister()" 
+                       bitfield_expr="system::getInstanceClockGateBitfield()" 
+                       value="system::getInstanceClockGateEnableValue()"/>
+               </assign>     
+           </variable> 
+           <!-- Software reset -->
+           <variable id="softwareReset" value="0">           
+               <assign when="true">
+                   <register peripheral_expr="system::getInstanceSwResetPeripheral()" name_expr="system::getInstanceSwResetRegister()" bitfield_expr="system::getInstanceSwResetBitfield()" value="system::getInstanceSwResetDisableValue()"/>              
+               </assign>
+           </variable>
+           <!-- Fragment variables -->
+            <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+            <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+            <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+            <!-- SIM template params -->
+            <struct id="qsci_params" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+                <variable id="PERIPHERAL" value="$instance.getPeripheral()"></variable>
+                <variable id="VPREFIX" value="$configSet.inst_ID_def.getValue()"></variable>
+                <!-- Software reset -->
+                <variable id="SW_RESET_CONTROL_PERIPHERAL" value="system::getInstanceSwResetPeripheral()"></variable>
+                <variable id="SW_RESET_CONTROL_REGISTER" value="system::getInstanceSwResetRegister()"></variable>
+                <variable id="SW_RESET_CONTROL_BITFIELD" value="system::getInstanceSwResetBitfield()"></variable>
+            </struct>
+        </settings>
+        <fragment_defs>
+            <import>
+               <from component_id="system" config_set_id="common_code_templates"/>
+               <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+           </import>
+        </fragment_defs>
+        <code>
+            <section target="includes">
+                <fragment id="include">
+                    <param id="name">device_registers</param>
+                    <param id="filename">fsl_device_registers.h</param>
+                </fragment>
+            </section>
+            <section target="common_pre_init_function"> 
+                <!-- Clock gate enable --> 
+                <fragment id="clock_gate_enable_init"></fragment> 
+            </section>
+            
+            <section target="defines">
+                <!--<fragment id="define">
+                   <param id="name" expr="$this.inst_peripheral_ID.getValue()"/>
+                   <param id="value" expr="$instance.getPeripheral()"/>
+                   <param id="description">Definition of peripheral ID</param>
+                </fragment>-->
+                <!-- RX/TX interrupt definitions -->
+                <fragment id="IRQ_definitions" if_expr="$this.qsciConfig.interrupt_vectors.enable_tx_irq.getValue()" apply_to="$this.qsciConfig.interrupt_vectors.interrupt_tx"/>
+                <fragment id="IRQ_definitions" if_expr="$this.qsciConfig.interrupt_vectors.enable_rx_irq.getValue()" apply_to="$this.qsciConfig.interrupt_vectors.interrupt_rx"/>
+                <!-- Rx Error interrupt definitions -->
+                <fragment id="IRQ_definitions" if_expr="$this.qsciConfig.interrupt_vectors.enable_rx_err_irq.getValue()" apply_to="$this.qsciConfig.interrupt_vectors.interrupt_rx_err"/>
+                <!-- Tx/Rx idle interrupt definitions -->
+                <fragment id="IRQ_definitions" if_expr="$this.qsciConfig.interrupt_vectors.enable_tridle_irq.getValue()" apply_to="$this.qsciConfig.interrupt_vectors.interrupt_tridle"/>
+                
+                <fragment id="all_assigned_regs_init">
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               </fragment>
+            </section> 
+            
+            <section target="init_function_body">
+               <fragment id="template">
+                   <param id="file">fsl_qsci.template</param>
+                   <param id="setting" expr="$configSet.qsci_params"></param>
+                   <param id="separators"></param>
+                   <param id="description" expr="$configSet.inst_ID.getValue() + ` initialization`"></param>
+               </fragment>
+           </section>
+        </code>
+        <validation/>
+        <quick_selections>
+            <quick_selection id="QSCI_QS1" label="Default">
+                <set id="qsciConfig.DividerBaudRateStr">1024</set>
+                <set id="qsciConfig.LINSlaveEnable">false</set>
+                <set id="qsciConfig.StandbyEnable">false</set>
+                <set id="qsciConfig.StopHoldEnable">false</set>
+                <set id="qsciConfig.LoopEnable">false</set>
+                <set id="qsciConfig.ReceiverSource">0</set>
+                <set id="qsciConfig.WaitEnable">false</set>
+                <set id="qsciConfig.WakeUpCondition">0</set>
+                <set id="qsciConfig.parityEnable">false</set>
+                <set id="qsciConfig.parityMode">0</set>
+                <set id="qsciConfig.dataBitCount">0</set>
+                <set id="qsciConfig.polarityMode">0</set>
+                <set id="qsciConfig.txFifoWatermark">0</set>
+                <set id="qsciConfig.rxFifoWatermark">1</set>
+                <set id="qsciConfig.fifoEn">false</set>
+                <set id="qsciConfig.txDMAEn">false</set>
+                <set id="qsciConfig.rxDMAEn">false</set>
+                <set id="qsciConfig.enableTx">false</set>
+                <set id="qsciConfig.enableRx">false</set>
+                <set id="qsciConfig.interrupt_vectors.interrupt_types.kQSCI_TxDataRegEmptyInterrupt">false</set>
+                <set id="qsciConfig.interrupt_vectors.interrupt_types.kQSCI_RxDataRegFullInterrupt">false</set>
+                <set id="qsciConfig.interrupt_vectors.interrupt_types.kQSCI_RxInputEdgeInterrupt">false</set>
+                <set id="qsciConfig.interrupt_vectors.interrupt_types.kQSCI_TxIdleInterrupt">false</set>
+                <set id="qsciConfig.interrupt_vectors.interrupt_types.kQSCI_RxErrorInterrupt">false</set>
+                <set id="qsciConfig.interrupt_vectors.interrupt_types.kQSCI_RxIdleLineInterrupt">false</set>
+                <set id="qsciConfig.interrupt_vectors.enable_tx_irq">false</set>
+                <set id="qsciConfig.interrupt_vectors.enable_rx_irq">false</set>
+                <set id="qsciConfig.interrupt_vectors.enable_rx_err_irq">false</set>
+                <set id="qsciConfig.interrupt_vectors.enable_tridle_irq">false</set>
+            </quick_selection>
+            <default>QSCI_QS1</default>
+        </quick_selections>
+    </config_set>
+</component:config_component>

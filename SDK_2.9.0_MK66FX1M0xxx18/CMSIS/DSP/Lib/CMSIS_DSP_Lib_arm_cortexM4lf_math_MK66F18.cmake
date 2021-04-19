@@ -1,0 +1,5 @@
+if(NOT CMSIS_DSP_LIB_ARM_CORTEXM4LF_MATH_MK66F18_INCLUDED)
+    
+    set(CMSIS_DSP_LIB_ARM_CORTEXM4LF_MATH_MK66F18_INCLUDED true CACHE BOOL "CMSIS_DSP_Lib_arm_cortexM4lf_math component is included.")
+
+endif()

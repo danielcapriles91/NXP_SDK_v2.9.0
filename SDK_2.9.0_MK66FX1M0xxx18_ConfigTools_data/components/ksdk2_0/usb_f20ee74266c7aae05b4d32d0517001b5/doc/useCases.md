@@ -1,0 +1,2 @@
+##Use Cases
+Following pages describe default conditions resulting from individual presets. Since each preset is a starting point for several use cases, we will focus on the default behaviour of each preset.

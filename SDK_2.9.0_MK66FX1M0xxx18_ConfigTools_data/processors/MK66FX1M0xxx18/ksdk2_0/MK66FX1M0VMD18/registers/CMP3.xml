@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="8" name="CR0" description="CMP Control Register 0">
+    <alias type="CMSIS" value="CR0"/>
+    <bit_field offset="0" width="2" name="HYSTCTR" access="RW" reset_value="0" description="Comparator hard block hysteresis control">
+      <alias type="CMSIS" value="CMP_CR0_HYSTCTR(x)"/>
+      <bit_field_value name="CR0_HYSTCTR_0b00" value="0b00" description="Level 0"/>
+      <bit_field_value name="CR0_HYSTCTR_0b01" value="0b01" description="Level 1"/>
+      <bit_field_value name="CR0_HYSTCTR_0b10" value="0b10" description="Level 2"/>
+      <bit_field_value name="CR0_HYSTCTR_0b11" value="0b11" description="Level 3"/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="3" name="FILTER_CNT" access="RW" reset_value="0" description="Filter Sample Count">
+      <alias type="CMSIS" value="CMP_CR0_FILTER_CNT(x)"/>
+      <bit_field_value name="CR0_FILTER_CNT_0b000" value="0b000" description="Filter is disabled. If SE = 1, then COUT is a logic 0. This is not a legal state, and is not recommended. If SE = 0, COUT = COUTA."/>
+      <bit_field_value name="CR0_FILTER_CNT_0b001" value="0b001" description="One sample must agree. The comparator output is simply sampled."/>
+      <bit_field_value name="CR0_FILTER_CNT_0b010" value="0b010" description="2 consecutive samples must agree."/>
+      <bit_field_value name="CR0_FILTER_CNT_0b011" value="0b011" description="3 consecutive samples must agree."/>
+      <bit_field_value name="CR0_FILTER_CNT_0b100" value="0b100" description="4 consecutive samples must agree."/>
+      <bit_field_value name="CR0_FILTER_CNT_0b101" value="0b101" description="5 consecutive samples must agree."/>
+      <bit_field_value name="CR0_FILTER_CNT_0b110" value="0b110" description="6 consecutive samples must agree."/>
+      <bit_field_value name="CR0_FILTER_CNT_0b111" value="0b111" description="7 consecutive samples must agree."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x1" width="8" name="CR1" description="CMP Control Register 1">
+    <alias type="CMSIS" value="CR1"/>
+    <bit_field offset="0" width="1" name="EN" access="RW" reset_value="0" description="Comparator Module Enable">
+      <alias type="CMSIS" value="CMP_CR1_EN(x)"/>
+      <bit_field_value name="CR1_EN_0b0" value="0b0" description="Analog Comparator is disabled."/>
+      <bit_field_value name="CR1_EN_0b1" value="0b1" description="Analog Comparator is enabled."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="OPE" access="RW" reset_value="0" description="Comparator Output Pin Enable">
+      <alias type="CMSIS" value="CMP_CR1_OPE(x)"/>
+      <bit_field_value name="CR1_OPE_0b0" value="0b0" description="CMPO is not available on the associated CMPO output pin. If the comparator does not own the pin, this field has no effect."/>
+      <bit_field_value name="CR1_OPE_0b1" value="0b1" description="CMPO is available on the associated CMPO output pin. The comparator output (CMPO) is driven out on the associated CMPO output pin if the comparator owns the pin. If the comparator does not own the field, this bit has no effect."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="COS" access="RW" reset_value="0" description="Comparator Output Select">
+      <alias type="CMSIS" value="CMP_CR1_COS(x)"/>
+      <bit_field_value name="CR1_COS_0b0" value="0b0" description="Set the filtered comparator output (CMPO) to equal COUT."/>
+      <bit_field_value name="CR1_COS_0b1" value="0b1" description="Set the unfiltered comparator output (CMPO) to equal COUTA."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="INV" access="RW" reset_value="0" description="Comparator INVERT">
+      <alias type="CMSIS" value="CMP_CR1_INV(x)"/>
+      <bit_field_value name="CR1_INV_0b0" value="0b0" description="Does not invert the comparator output."/>
+      <bit_field_value name="CR1_INV_0b1" value="0b1" description="Inverts the comparator output."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="PMODE" access="RW" reset_value="0" description="Power Mode Select">
+      <alias type="CMSIS" value="CMP_CR1_PMODE(x)"/>
+      <bit_field_value name="CR1_PMODE_0b0" value="0b0" description="Low-Speed (LS) Comparison mode selected. In this mode, CMP has slower output propagation delay and lower current consumption."/>
+      <bit_field_value name="CR1_PMODE_0b1" value="0b1" description="High-Speed (HS) Comparison mode selected. In this mode, CMP has faster output propagation delay and higher current consumption."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="TRIGM" access="RW" reset_value="0" description="Trigger Mode Enable">
+      <alias type="CMSIS" value="CMP_CR1_TRIGM(x)"/>
+      <bit_field_value name="CR1_TRIGM_0b0" value="0b0" description="Trigger mode is disabled."/>
+      <bit_field_value name="CR1_TRIGM_0b1" value="0b1" description="Trigger mode is enabled."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="WE" access="RW" reset_value="0" description="Windowing Enable">
+      <alias type="CMSIS" value="CMP_CR1_WE(x)"/>
+      <bit_field_value name="CR1_WE_0b0" value="0b0" description="Windowing mode is not selected."/>
+      <bit_field_value name="CR1_WE_0b1" value="0b1" description="Windowing mode is selected."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="SE" access="RW" reset_value="0" description="Sample Enable">
+      <alias type="CMSIS" value="CMP_CR1_SE(x)"/>
+      <bit_field_value name="CR1_SE_0b0" value="0b0" description="Sampling mode is not selected."/>
+      <bit_field_value name="CR1_SE_0b1" value="0b1" description="Sampling mode is selected."/>
+    </bit_field>
+  </register>
+  <register offset="0x2" width="8" name="FPR" description="CMP Filter Period Register">
+    <alias type="CMSIS" value="FPR"/>
+    <bit_field offset="0" width="8" name="FILT_PER" access="RW" reset_value="0" description="Filter Sample Period">
+      <alias type="CMSIS" value="CMP_FPR_FILT_PER(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x3" width="8" name="SCR" description="CMP Status and Control Register">
+    <alias type="CMSIS" value="SCR"/>
+    <bit_field offset="0" width="1" name="COUT" access="RO" reset_value="0" description="Analog Comparator Output">
+      <alias type="CMSIS" value="CMP_SCR_COUT(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="CFF" access="W1C" reset_value="0" description="Analog Comparator Flag Falling">
+      <alias type="CMSIS" value="CMP_SCR_CFF(x)"/>
+      <bit_field_value name="SCR_CFF_0b0" value="0b0" description="Falling-edge on COUT has not been detected."/>
+      <bit_field_value name="SCR_CFF_0b1" value="0b1" description="Falling-edge on COUT has occurred."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="CFR" access="W1C" reset_value="0" description="Analog Comparator Flag Rising">
+      <alias type="CMSIS" value="CMP_SCR_CFR(x)"/>
+      <bit_field_value name="SCR_CFR_0b0" value="0b0" description="Rising-edge on COUT has not been detected."/>
+      <bit_field_value name="SCR_CFR_0b1" value="0b1" description="Rising-edge on COUT has occurred."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="IEF" access="RW" reset_value="0" description="Comparator Interrupt Enable Falling">
+      <alias type="CMSIS" value="CMP_SCR_IEF(x)"/>
+      <bit_field_value name="SCR_IEF_0b0" value="0b0" description="Interrupt is disabled."/>
+      <bit_field_value name="SCR_IEF_0b1" value="0b1" description="Interrupt is enabled."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="IER" access="RW" reset_value="0" description="Comparator Interrupt Enable Rising">
+      <alias type="CMSIS" value="CMP_SCR_IER(x)"/>
+      <bit_field_value name="SCR_IER_0b0" value="0b0" description="Interrupt is disabled."/>
+      <bit_field_value name="SCR_IER_0b1" value="0b1" description="Interrupt is enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <bit_field offset="6" width="1" name="DMAEN" access="RW" reset_value="0" description="DMA Enable Control">
+      <alias type="CMSIS" value="CMP_SCR_DMAEN(x)"/>
+      <bit_field_value name="SCR_DMAEN_0b0" value="0b0" description="DMA is disabled."/>
+      <bit_field_value name="SCR_DMAEN_0b1" value="0b1" description="DMA is enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x4" width="8" name="DACCR" description="DAC Control Register">
+    <alias type="CMSIS" value="DACCR"/>
+    <bit_field offset="0" width="6" name="VOSEL" access="RW" reset_value="0" description="DAC Output Voltage Select">
+      <alias type="CMSIS" value="CMP_DACCR_VOSEL(x)"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="VRSEL" access="RW" reset_value="0" description="Supply Voltage Reference Source Select">
+      <alias type="CMSIS" value="CMP_DACCR_VRSEL(x)"/>
+      <bit_field_value name="DACCR_VRSEL_0b0" value="0b0" description="Vin1 is selected as resistor ladder network supply reference."/>
+      <bit_field_value name="DACCR_VRSEL_0b1" value="0b1" description="Vin2 is selected as resistor ladder network supply reference."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="DACEN" access="RW" reset_value="0" description="DAC Enable">
+      <alias type="CMSIS" value="CMP_DACCR_DACEN(x)"/>
+      <bit_field_value name="DACCR_DACEN_0b0" value="0b0" description="DAC is disabled."/>
+      <bit_field_value name="DACCR_DACEN_0b1" value="0b1" description="DAC is enabled."/>
+    </bit_field>
+  </register>
+  <register offset="0x5" width="8" name="MUXCR" description="MUX Control Register">
+    <alias type="CMSIS" value="MUXCR"/>
+    <bit_field offset="0" width="3" name="MSEL" access="RW" reset_value="0" description="Minus Input Mux Control">
+      <alias type="CMSIS" value="CMP_MUXCR_MSEL(x)"/>
+      <bit_field_value name="MUXCR_MSEL_0b000" value="0b000" description="IN0"/>
+      <bit_field_value name="MUXCR_MSEL_0b001" value="0b001" description="IN1"/>
+      <bit_field_value name="MUXCR_MSEL_0b010" value="0b010" description="IN2"/>
+      <bit_field_value name="MUXCR_MSEL_0b011" value="0b011" description="IN3"/>
+      <bit_field_value name="MUXCR_MSEL_0b100" value="0b100" description="IN4"/>
+      <bit_field_value name="MUXCR_MSEL_0b101" value="0b101" description="IN5"/>
+      <bit_field_value name="MUXCR_MSEL_0b110" value="0b110" description="IN6"/>
+      <bit_field_value name="MUXCR_MSEL_0b111" value="0b111" description="IN7"/>
+    </bit_field>
+    <bit_field offset="3" width="3" name="PSEL" access="RW" reset_value="0" description="Plus Input Mux Control">
+      <alias type="CMSIS" value="CMP_MUXCR_PSEL(x)"/>
+      <bit_field_value name="MUXCR_PSEL_0b000" value="0b000" description="IN0"/>
+      <bit_field_value name="MUXCR_PSEL_0b001" value="0b001" description="IN1"/>
+      <bit_field_value name="MUXCR_PSEL_0b010" value="0b010" description="IN2"/>
+      <bit_field_value name="MUXCR_PSEL_0b011" value="0b011" description="IN3"/>
+      <bit_field_value name="MUXCR_PSEL_0b100" value="0b100" description="IN4"/>
+      <bit_field_value name="MUXCR_PSEL_0b101" value="0b101" description="IN5"/>
+      <bit_field_value name="MUXCR_PSEL_0b110" value="0b110" description="IN6"/>
+      <bit_field_value name="MUXCR_PSEL_0b111" value="0b111" description="IN7"/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <bit_field offset="7" width="1" name="PSTM" access="RW" reset_value="0" description="Pass Through Mode Enable">
+      <alias type="CMSIS" value="CMP_MUXCR_PSTM(x)"/>
+      <bit_field_value name="MUXCR_PSTM_0b0" value="0b0" description="Pass Through Mode is disabled."/>
+      <bit_field_value name="MUXCR_PSTM_0b1" value="0b1" description="Pass Through Mode is enabled."/>
+    </bit_field>
+  </register>
+</regs:peripheral>

@@ -1,0 +1,1153 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd"
+    xmlns:component="http://swtools.freescale.net/XSD/component/1.0" id="freemaster" label="FreeMASTER"
+    category="Middleware" global_only="false" options="UI_COMPONENT_MODE_HIDDEN">
+    <sw_comp_ref name="middleware.fmstr" version="3.0.1"/>
+    <description>FreeMASTER (FMSTR)</description>
+    <mode id="general" label="General">
+        <description>FreeMASTER configuration</description>
+        <config_set_refs>
+            <config_set_ref>freemaster_config</config_set_ref>
+        </config_set_refs>
+    </mode>
+    <script file="freemaster_codegenerator.js"/>
+    <user_functions>
+        <function_def id="boolToInt">x -> (x.system::boolToInt())</function_def>
+    </user_functions>
+    <config_set id="freemaster_config" label="General configuration">
+        <description>General configuration of FreeMASTER module</description>
+        <generated_types/>
+        <user_types>
+            <enum id="fmstr_platforms">
+                <item id="default" value="FMSTR_PLATFORM_CORTEX_M"></item>
+                <item id="56F800E" value="FMSTR_PLATFORM_56F800E"></item> <!-- DSC family -->
+                <item id="s12z" value="FMSTR_PLATFORM_S12Z"></item> <!-- not supported yet -->
+                <item id="s32s" value="FMSTR_PLATFORM_S32S"></item> <!-- not supported yet -->
+                <item id="pa32" value="FMSTR_PLATFORM_PA32"></item> <!-- not supported yet -->
+            </enum>
+            <struct id="buffer_t" label="Buffer">
+                <!--options_expr>
+                    <option id="bufferSuffix" expr="`_Buffer`"></option>
+                    <option id="bufferType" expr="`uint32_t`"></option>
+                    <otption id="bufferSizeDef" expr="`SIZE`"
+                </options_expr-->
+                <description>Declaration of external buffer that needs to be defined in user code.</description>
+                <variable id="bufferSizeDef" value="$parent.hasOption(`bufferSizeDef`) ? $parent.optionValue(`bufferSizeDef`) : `BUFFER_SIZE`"></variable>
+                <bool id="customBuffer" label="Custom buffer">
+                    <description>Enable custom external buffer definition</description>
+                </bool>
+                <string id="bufferAddress" label="Buffer address expression" available="$parent.customBuffer.getValue(false)">
+                    <description>
+Buffer expression used in generated code to initialize configuration strucrures.  
+*Examples:*  
+- `0x80004000`
+- `MyBuffer`
+- `MyBuffer[16]`
+                    </description>
+                    <validation>
+                        <constraint cond_expr="$this.getValue() != ``" level="error"  description="The buffer address is missing."/>
+                    </validation>
+                </string>
+                <string id="bufferExternDef" label="External definition " available="$parent.customBuffer.getValue(false)">
+                    <description>
+External defitinion of the buffer (including the type) that is defined in user code.   
+*Examples:*  
+- `uint32_t MyBuffer[16]`  
+- `const int MyBuffer[32U]`  
+- `unisgned char Mybuffer[]`
+                    </description>
+                </string>
+                <info id="defaultBufferInfo" label="Default buffer" value="$parent.usedBufferDeclaration.getValue(``)" available="!$parent.customBuffer.getValue(false)">
+                    <description>Default buffer external definition. This buffer had to be defined in user code.</description>
+                </info>
+                <info id="customBufferInfo" label="Code preview" available="$parent.customBuffer.getValue(false)"
+                    value="($parent.bufferExternDef.getValue(``)!=``) ? (`extern ` + $parent.usedBufferDeclaration.getValue() + `;`) : `No buffer external definition`"></info>
+                <string id="bufferSize" label="Buffer size">
+                    <description>
+Set user defined buffer size. The buffer size has to be at least 16 bits.   
+*Examples:*  
+- `16`  
+- `32U`   
+- `sizeof(MyBuffer)`  
+                    </description>
+                    <validation>
+                        <constraint cond_expr="$this.getValue() != ``" level="error"  description="The buffer size is missing."/>
+                    </validation>
+                </string>
+                <!-- Default buffer id -->
+                <variable id="defaultBufferType"  value="($parent.hasOption(`bufferType`) ? ($parent.optionValue(`bufferType`) + ` `) : ``)"></variable>
+                <variable id="defaultBufferVar" value="$instance.getFnGroupPrefix() + $instance.getID() + ($parent.hasOption(`bufferSuffix`) ? $parent.optionValue(`bufferSuffix`) : `_buffer`)">
+                </variable>
+                <!-- Resulting buffer name -->
+                <variable id="usedBufferAddress" value="$parent.customBuffer.getValue(false) ? $parent.bufferAddress.getValue() : $parent.defaultBufferVar.getValue(``)"></variable>
+                <variable id="usedBufferDeclaration" value="$parent.customBuffer.getValue(false)  ? $parent.bufferExternDef.getValue() : ($parent.defaultBufferType.getValue(``) + $parent.defaultBufferVar.getValue(``) + `[`+$parent.bufferSizeDef.getValue(``) +`]`)"></variable>
+                <variable id="usedBufferSize" value="$parent.bufferSize.getValue(``)"></variable>
+            </struct>
+            <struct id="customID_t" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN;remove_from_struct_init">
+                <variable id="objectName"  value="$parent.getLabel()" ></variable>
+                <variable id="objectSuffix" value="$parent.hasOption(`suffix`) ? $parent.optionValue(`suffix`) : ($parent.getParent().getParent().getType() ==`array` ? `_` + $parent.getParent().getID() : `` )"></variable>
+                <bool id="enableCustomID" label="Custom ID">
+                    <description expr="`Enable custom ID of FreeMASTER `+ $parent.objectName.getValue() + ` instance.`"></description>
+                </bool>
+                <string id="customID" label_expr="$parent.objectName.getValue()+` ID`" available="$parent.enableCustomID.getValue()" >
+                    <description expr="`FreeMASTER `+ $parent.objectName.getValue() + ` instance ID used in generated code.`"></description>
+                    <validation>
+                        <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="`The ID: `+ $this.getCValue() +` is not valid C identifier!`"/>
+                    </validation>
+                </string>
+                <info id="defaultID" label_expr="$parent.objectName.getValue()+` ID`"  available="!$parent.enableCustomID.getValue()"
+                    value="$instance.getFnGroupPrefix() + $instance.getID() + `_`+ $parent.objectName.getValue().replaceText(` `,`_`) + $parent.objectSuffix.getValue()">
+                    <description expr="$parent.customID.getDescription()"></description>
+                </info>
+                <variable id="resultID" value="$parent.enableCustomID.getValue() ? $parent.customID.getValue() : $parent.defaultID.getValue()"></variable>
+            </struct>
+            <struct id="pipe_t">
+                <variable id="pID" value="$parent.getID().toInt() + 1"></variable>
+                <variable id="pipeRxSizeDef" value="$configSet.inst_ID_def.getValue() + `_RX_PIPE_` + $parent.pID.getValue() + `_SIZE`"></variable>
+                <variable id="pipeTxSizeDef" value="$configSet.inst_ID_def.getValue() + `_TX_PIPE_` +  $parent.pID.getValue() + `_SIZE`"></variable>
+                <variable id="rxBufferGlobalVar" value="$parent.rxBuffer.usedBufferDeclaration.getValue()"></variable>
+                <variable id="txBufferGlobalVar" value="$parent.txBuffer.usedBufferDeclaration.getValue()"></variable>
+                <reference type="customID_t" label="Pipe handle" id="pipeID">
+                    <options_expr>
+                        <option id="suffix" expr="`_` + $parent.pID.getValue()"/>
+                    </options_expr>
+                </reference>
+                <string id="namePipe" label="Description" options="remove_from_struct_init"><description>String description of the pipe instance (e.g. "PWM Reload Interrupt", or "Timer interrupt").</description></string>
+                <integer type="uint8_t" id="pipePort" label="Port number" options="remove_from_struct_init" min_expr="1" max_expr="126">
+                    <description>Port number of the pipe instance</description>
+                </integer>
+                <bool id="enablePipeHandler" label="Enable pipe handler">
+                    <description>Enable callback function that is registered as a pipe communication handler. It gets automatically invoked when the FreeMASTER PC Host tool services open the pipe. 
+                        This handler is called any time the pipe receives the data or when PC probes if pipe has anything to transmit.</description>
+                </bool>
+                <string id="callbackFunction" label="Callback function name" enable="$parent.enablePipeHandler.getValue(false)">
+                    <description>The callback function name that is used in the pipe initialization.
+                        User has to provide the definition of this function. This function is registered as a pipe communication handler. It gets automatically invoked when the
+                        FreeMASTER PC Host tool services open the pipe. This handler is called any time the pipe receives the data or when PC probes if pipe has anything to transmit.
+                    </description>
+                    <validation>
+                        <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description="The callback function name must be a valid identifier."/> 
+                    </validation>
+                </string>
+                <reference id="rxBuffer" label="Rx buffer" type="buffer_t">
+                    <options_expr>
+                        <option id="bufferSuffix" expr="`_RxPipe` + $parent.pID.getValue()"></option>
+                        <option id="bufferType" expr="`FMSTR_U8`"></option>
+                        <option id="bufferSizeDef" expr="$parent.pipeRxSizeDef.getValue()"/>
+                    </options_expr>
+                </reference>
+                <reference id="txBuffer" label="Tx buffer" type="buffer_t">
+                    <options_expr>
+                        <option id="bufferSuffix" expr="`_TxPipe` + $parent.pID.getValue()"></option>
+                        <option id="bufferType" expr="`FMSTR_U8`"></option>
+                        <option id="bufferSizeDef" expr="$parent.pipeTxSizeDef.getValue()"/>
+                    </options_expr>
+                </reference>
+                <enum id="terminalFormat" label="Terminal format" available="false">
+                    <description>Pipe type constants to be used with FMSTR_PipeOpen() function.</description>
+                    <item id="FMSTR_PIPE_TYPE_ANSI_TERMINAL" label="ANSI"></item>
+                    <item id="FMSTR_PIPE_TYPE_UNICODE_TERMINAL" label="UNICODE"></item>
+                </enum>
+                <variable id="typeConstant" value="0"></variable>
+                <bool id="pipeInit" label="Initialize pipe" options="remove_from_struct_init">
+                    <description expr="`Initialize FreeMASTER pipe object by calling FMSTR_PipeOpen() function in ` + $instance.getFnGroupName() + ` functional group.`"></description>
+                </bool>
+            </struct>
+            <struct id="recorder_t">
+                <variable id="recSizeDef" value="$configSet.inst_ID_def.getValue() + `_REC_` +$parent.getID() + `_SIZE`"></variable>
+                <reference type="customID_t" id="recID" label="Recorder"></reference>
+                <string id="nameRec" label="Description" options="remove_from_struct_init"><description>String description of recorder sampling point etc. (e.g. "PWM Reload Interrupt", or "Timer interrupt").</description></string>
+                <reference type="buffer_t" id="recBuff" label="Recorder buffer" options="remove_from_struct_init">
+                    <options_expr>
+                        <option id="bufferSuffix" expr="`_RecBuffer` + $parent.getID()"></option>
+                        <option id="bufferType" expr="`FMSTR_U8`"></option>
+                        <option id="bufferSizeDef" expr="$parent.recSizeDef.getValue()"/>
+                    </options_expr>
+                    <description>Recorder's sampling buffer declaration that needs to be defined in user code.</description>
+                </reference>
+                <variable value="`&quot;` + $parent.nameRec.getValue() + `&quot;`" id="name" options="add_to_struct"></variable>
+                <variable value="`(FMSTR_ADDR)`+ $parent.recBuff.usedBufferAddress.getValue()" id="addr" options="add_to_struct"></variable>         
+                <variable value="$parent.recSizeDef.getValue()" id="size" options="add_to_struct"></variable>
+                <variable value="$parent.recBuff.usedBufferDeclaration.getValue()" id="recorderGlobalVar"></variable>
+                <integer type="uint32_t" id="basePeriod_ns" label="Base period [ns]">
+                    <description>
+Recorder time base, specifies how often the recorder is called in the user application.
+Set 0 to unknown for runtime configuration by calling `FMSTR_RecorderSetTimeBase()`.
+Base speed of recorder sampling is in nanoseconds. Client may request to sample at multiples of this value. </description>
+                </integer>
+                <bool id="recInit" label="Initialize recorder" options="remove_from_struct_init">
+                    <description expr="`Initialize FreeMASTER recorder object by calling FMSTR_RecorderCreate() function in ` + $instance.getFnGroupName() + ` functional group.`"></description>
+                </bool>
+            </struct>
+            <struct id="usbConfig_t">
+                <bool id="enableUserInit" label="Enable custom initialization" options="UI_LABEL_BOLD"></bool>
+                <struct id="user_init_t" enable="$parent.enableUserInit.getValue(false)" options="UI_LABEL_HIDDEN">
+                    <!-- Template -->
+                    <variable id="functionBody" value="`&#10;` + leftPadding(`/* Place your code here */`,1) + `&#10;`"></variable>
+                    <variable id="templateText" value="`void ` + $parent.initFunctionID.getValue(``) + `(void){&#10;` + $parent.functionBody.getValue(``) + `&#10;};`"></variable>
+                    <string id="initFunctionID" label="User init function">
+                        <description expr="`Set extern initialization function ID of USB communication interface. Define following function in your code: ` + ($this.getValue(``)==`` ? `N/A` : (`void ` + $this.getValue(``) + `(void)`)) "></description>
+                        <validation>
+                            <constraint cond_expr="isCIdentifier($this.getValue())" level="error"  description_expr="$this.getValue() + ` is not a valid C identifier!`"/>
+                        </validation>
+                    </string>
+                    <info id="functionTemplate" label="Function template" options="UI_INFO_COPY_BUTTON" value="$parent.templateText.getValue(``)">
+                        <description>Copy this template of user init function into your code and define it.</description>
+                    </info>
+                </struct>
+            </struct>
+            <struct id="dsc_eonce_config_t">
+                <info value="`Interrupt configuration`" id="line_Irq_cfg" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"/>
+                <bool id="txRegInterruptEnable" label="Tx interrupt enable" options="UI_LABEL_BOLD" enable="$configSet.generalConfig.interruptMode.getValue()!=`polling`">
+                    <description>Enables initialization of the Tx interrupt vector</description>
+                </bool>
+                <reference id="tx_interrupt_vector" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" 
+                    enable="$parent.txRegInterruptEnable.getValue(false)">
+                    <options_expr>
+                        <option id="UI_LABEL_HIDDEN"/>
+                        <option id="irq_device" expr="`Core`"/>
+                        <option id="irq_function" expr="`tx_reg`"/>
+                        <option id="irq_generate_handler"/>
+                        <option id="irq_handler_insert" expr="leftPadding(`FMSTR_SerialIsr();`,1)"/>
+                        <option id="irq_handler_remove_arm_errata_838869"/>
+                        <option id="irq_custom_name" expr="$configSet.inst_ID_def.getValue() + `_TX`"/>                        
+                    </options_expr>
+                </reference>
+                <bool id="rxRegInterruptEnable" label="Rx interrupt enable" options="UI_LABEL_BOLD" enable="$configSet.generalConfig.interruptMode.getValue()!=`polling`">
+                    <description>Enables initialization of the Rx interrupt vector</description>
+                </bool>
+                <reference id="rx_interrupt_vector" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" 
+                     enable="$parent.rxRegInterruptEnable.getValue(false)">
+                    <options_expr>
+                        <option id="UI_LABEL_HIDDEN"/>
+                        <option id="irq_device" expr="`Core`"/>
+                        <option id="irq_function" expr="`rx_reg`"/>
+                        <option id="irq_generate_handler"/>
+                        <option id="irq_handler_insert" expr="leftPadding(`FMSTR_SerialIsr();`,1)"/>
+                        <option id="irq_handler_remove_arm_errata_838869"/>
+                        <option id="irq_custom_name" expr="$configSet.inst_ID_def.getValue() + `_RX`"/>                        
+                    </options_expr>
+                </reference>
+            </struct>
+            <struct id="config_t" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+                <!-- Supported platforms 
+                default: Cortex-M
+                56F800E: DSC family
+                -->
+                <variable id="current_platform" value="getFamily().toLowerCase()==`dsc` ? `56F800E` : `default`"></variable>
+                <variable id="FMSTR_PLATFORM" value="enumItemsOfType($configSet, `fmstr_platforms`).findFirst(x->x.getID()==$parent.current_platform.getValue()).getValue()">
+                    <description>
+Macro: **FMSTR_PLATFORM_CORTEX_M**  
+This option must be selected for any Cortex-M device. See *freemaster.h* for list of other supported platforms. 
+                    </description>
+                </variable>
+                <info value="`Communication mode configuration`" id="line_mode" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+                <variable id="pdbdm_enable" value="getFamily().toUpperCase() != `DSC`"></variable>
+                <variable id="dsc_eonce_enable" value="getFamily().toUpperCase() == `DSC`"></variable>
+                <variable id="can_enable" value="(getPeripherals(`CAN`).size() + getPeripherals(`MSCAN`).size()) &gt; 0"></variable>
+                <enum id="commInterface" label="Communication interface">
+                    <description>
+Macro: **FMSTR_TRANSPORT**  
+Select FreeMASTER communication (transport) interface type.
+                    </description>
+                    <item id="serial" value="FMSTR_SERIAL" label="SERIAL">
+                        <description>Standard serial transport protocol utilizing various types of UART peripherals and their low-level drivers.</description>
+                    </item>
+                    <item id="can" value="FMSTR_CAN" label="CAN" available="$parent.can_enable.getValue()">
+                        <description>FreeMASTER-over-CAN transport protocol utilizing various types of CAN peripherals with their low-level drivers.</description>
+                    </item>
+                    <item id="usb" value="FMSTR_SERIAL" label="USB-CDC" available="false">
+                        <description>Standard serial transport protocol using USB stack and USB-CDC communication.</description>
+                    </item>
+                    <item id="pdbdm" value="FMSTR_PDBDM" label="Packet-driven BDM" available="$parent.pdbdm_enable.getValue()">
+                        <description>Packet-driven BDM uses direct memory access via JTAG, SWD or BDM debug probes to establish communication. This option is only needed when protocol features like Recorder or Pipes are required when using JTAG or BDM access. You may disable the FreeMASTER driver completely (Disable FreeMASTER setting) when only basic memory access is used - FreeMASTER is able to perform the access transparently, without a communication driver involved.</description>
+                    </item> 
+                    <item id="dsc_eonce" value="FMSTR_SERIAL" label="JTAG/EOnCE" available="$parent.dsc_eonce_enable.getValue()">
+                        <description>JTAG/EOnCE (Enhanced On-Chip Emulation) RTD unit. Silicon bug in older DSC cores makes the TDF bit unusable (TDF gets reset too early), RDF is used as an indication of !TDF.</description>
+                    </item> 
+                </enum>
+                <variable id="FMSTR_TRANSPORT" value="$parent.commInterface.getEnumItemValue()"></variable>
+                <variable id="initTypeVar" value="$parent.initType.getValue(true)"></variable>
+                <enum id="interruptMode" label="Interrupt mode" options="UI_REFRESH">
+                    <description>
+Select driver interrupt operation mode. When **Shot** or **Long** interrupt modes are selected, the application code should handle 
+the communication peripheral interrupts and call `FMSTR_SerialIsr` or `FMSTR_CanIsr` functions from the application interrupt service routine.  
+  
+Macro: **FMSTR_POLL_DRIVEN**: No interrupt enabled, polling only.  
+Macro: **FMSTR_SHORT_INTR**: Queuing done in interrupt.  
+Macro: **FMSTR_LONG_INTR**: Complete message processing in interrupt.  
+                    </description>
+                    <validation>
+                        <constraint when_expr="$this.getValue()!=`polling` &amp;&amp; !$parent.initType.getValue(false)" level="warning" description_expr="$this.getEnumItemLabel() +` mode requires interrupt initialization.`"
+                            cond_expr="($parent.canConfig.filter(item->(item.getType()==`struct` &amp;&amp; item.nodeExists(`IRQn`) &amp;&amp; item.isAvailable() &amp;&amp; item.isEnabled()), false).size() + 
+                            $parent.serialConfig.filter(item->(item.getType()==`struct` &amp;&amp; item.nodeExists(`IRQn`) &amp;&amp; item.isAvailable() &amp;&amp; item.isEnabled()), false).size() +
+                            $parent.dsc_eonce_config.filter(item->(item.getType()==`struct` &amp;&amp; item.nodeExists(`IRQn`) &amp;&amp; item.isAvailable() &amp;&amp; item.isEnabled()), false).size() ) != 0"/>
+                    </validation>
+                    <item id="polling" label="Polling mode" value="FMSTR_POLL_DRIVEN"><description>No interrupt enabled, polling only.</description></item>
+                    <item id="shortInterrupt" label="Short interrupt" value="FMSTR_SHORT_INTR" available="$parent.FMSTR_TRANSPORT.getValue()!=`FMSTR_PDBDM`"><description>Data queuing done in interrupt service routine, protocol decoder polled.</description></item>
+                    <item id="longInterrupt" label="Long interrupt" value="FMSTR_LONG_INTR" available="$parent.FMSTR_TRANSPORT.getValue()!=`FMSTR_PDBDM`"><description>Complete message processing and protocol decoding in interrupt service routine.</description></item>
+                </enum>
+                <variable id="FMSTR_LONG_INTR" value="$parent.interruptMode.getValue()==`longInterrupt` ? `1` : `0`">
+                    <description>
+Macro:**FMSTR_LONG_INTR**  
+Complete message processing in interrupt.
+                    </description>
+                </variable>
+                <variable id="FMSTR_SHORT_INTR" value="$parent.interruptMode.getValue()==`shortInterrupt` ? `1` : `0`">
+                    <description>
+Macro: **FMSTR_SHORT_INTR**  
+Queuing done in interrupt.
+                    </description>
+                </variable>
+                <variable id="FMSTR_POLL_DRIVEN" value="$parent.interruptMode.getValue()==`polling` ? `1` : `0`">
+                    <description>
+Macro: **FMSTR_POLL_DRIVEN**  
+No interrupt enabled, polling only.
+                    </description>
+                </variable>
+                <bool id="initType" label="Custom communication init"
+                    available="$parent.commInterface.getValue()!=`pdbdm` &amp;&amp; 
+                    $parent.commInterface.getValue()!=`usb` &amp;&amp;
+                    $parent.commInterface.getValue()!=`dsc_eonce`"><!--options="UI_SHOW_CONTENT_AS=RADIO_GROUP;UI_RADIO_GROUP_HORIZONTAL"-->
+                    <description>
+Select the type of the initialization of the communication interface. The communication interface can be initialized by other supported component,
+or by calling the user init function.
+  
+- **Disabled** - The selected communication interface is initialized in FreeMASTER component.  
+- **Enabled** - The selected communication interface is initialized by user (by calling user init function defined in application code).  
+                    </description>
+                </bool>
+                <reference type="dsc_eonce_config_t" id="dsc_eonce_config" label="JTAG EOnCE interface" available="$parent.commInterface.getValue()==`dsc_eonce`"></reference>
+                <reference type="usbConfig_t" id="usbConfig" label="USB communication interface" available="$parent.commInterface.getValue()==`usb`"></reference>
+                <reference type="peripheral_config_t" id="canConfig" label="CAN communication interface" config_set_id="global_can" component_id="generic_can" available="$parent.commInterface.getValue()==`can`">
+                    <options_expr>
+                        <option id="UI_REFRESH"/>
+                        <!-- Config -->
+                        <option id="genericCanPeripheralSelect" available="!$parent.initTypeVar.getValue()"/>
+                        <option id="genericCanRxPinDependencyPeripheralSetting"/>
+                        <option id="genericCanTxPinDependencyPeripheralSetting"/>
+                        <option id="genericCanClocks"/>
+                        <option id="genericCanBaudrate" available="!$parent.initTypeVar.getValue()"/>
+                        <option id="genericCanDriverVersions"/>
+                        <option id="genericCanDriverDependencyPeripheralSetting"/>
+                        <option id="genericCanInlcudeDriverDisable" available="$parent.initTypeVar.getValue()"/>
+                        <option id="genericCanMcanImprovedTimingCalc"/>
+                        <!-- IRQ -->
+                        <option id="genericCanFlexcanInterruptMBVector" available="!$parent.initTypeVar.getValue()"/>
+                        <option id="genericCanFlexcanInterruptMBVectorDisable" available="$parent.interruptMode.getValue()==`polling`"/>
+                        <option id="genericCanFlexcanInterruptMB_irq_handler_insert" expr="leftPadding(`FMSTR_CanIsr();`,1)"/>
+                        <option id="genericCanFlexcanInterruptMB_irq_generate_handler"/>
+                        <option id="genericCanFlexcanInterruptBusoffVector" available="!$parent.initTypeVar.getValue()"/>
+                        <option id="genericCanFlexcanInterruptBusoffVectorDisable" available="$parent.interruptMode.getValue()==`polling`"/>
+                        <option id="genericCanFlexcanInterruptBusoff_irq_handler_insert" expr="leftPadding(`FMSTR_CanIsr();`,1)"/>
+                        <option id="genericCanFlexcanInterruptBusoff_irq_generate_handler"/>
+                        <option id="genericCanFlexcanInterruptErrorVector" available="!$parent.initTypeVar.getValue()"/>
+                        <option id="genericCanFlexcanInterruptErrorVectorDisable" available="$parent.interruptMode.getValue()==`polling`"/>
+                        <option id="genericCanFlexcanInterruptError_irq_handler_insert" expr="leftPadding(`FMSTR_CanIsr();`,1)"/>
+                        <option id="genericCanFlexcanInterruptError_irq_generate_handler"/>
+                        <option id="genericCanFlexcanInterruptTxWarnVector" available="!$parent.initTypeVar.getValue()"/>
+                        <option id="genericCanFlexcanInterruptTxWarnVectorDisable" available="$parent.interruptMode.getValue()==`polling`"/>
+                        <option id="genericCanFlexcanInterruptTxWarn_irq_handler_insert" expr="leftPadding(`FMSTR_CanIsr();`,1)"/>
+                        <option id="genericCanFlexcanInterruptTxWarn_irq_generate_handler"/>
+                        <option id="genericCanFlexcanInterruptRxWarnVector" available="!$parent.initTypeVar.getValue()"/>
+                        <option id="genericCanFlexcanInterruptRxWarnVectorDisable" available="$parent.interruptMode.getValue()==`polling`"/>
+                        <option id="genericCanFlexcanInterruptRxWarn_irq_handler_insert" expr="leftPadding(`FMSTR_CanIsr();`,1)"/>
+                        <option id="genericCanFlexcanInterruptRxWarn_irq_generate_handler"/>
+                        <option id="genericCanFlexcanInterruptWakeupVector" available="!$parent.initTypeVar.getValue()"/>
+                        <option id="genericCanFlexcanInterruptWakeupVectorDisable" available="$parent.interruptMode.getValue()==`polling`"/>
+                        <option id="genericCanFlexcanInterruptWakeup_irq_handler_insert" expr="leftPadding(`FMSTR_CanIsr();`,1)"/>
+                        <option id="genericCanFlexcanInterruptWakeup_irq_generate_handler"/>
+
+                        <option id="genericCanMcanInterruptCan0Vector" available="!$parent.initTypeVar.getValue()"/>
+                        <option id="genericCanMcanInterruptCan0custom"/>
+                        <option id="genericCanMcanInterruptCan0VectorDisable" available="$parent.interruptMode.getValue()==`polling`"/>
+                        <option id="genericCanMcanInterruptCan0_irq_handler_insert" expr="leftPadding(`FMSTR_CanIsr();`,1)"/>
+                        <option id="genericCanMcanInterruptCan0_irq_generate_handler"/>
+
+                        <option id="genericCanMscanInterruptTxVector" available="!$parent.initTypeVar.getValue()"/>
+                        <option id="genericCanMscanInterruptTxVectorDisable" available="$parent.interruptMode.getValue()==`polling`"/>
+                        <option id="genericCanMscanInterruptTx_irq_handler_insert" expr="leftPadding(`FMSTR_CanIsr();`,1)"/>
+                        <option id="genericCanMscanInterruptTx_irq_generate_handler"/>
+                        
+                        <option id="genericCanMscanInterruptRxVector" available="!$parent.initTypeVar.getValue()"/>
+                        <option id="genericCanMscanInterruptRxVectorDisable" available="$parent.interruptMode.getValue()==`polling`"/>
+                        <option id="genericCanMscanInterruptRx_irq_handler_insert" expr="leftPadding(`FMSTR_CanIsr();`,1)"/>
+                        <option id="genericCanMscanInterruptRx_irq_generate_handler"/>
+                        
+                        <!-- User init -->
+                        <option id="genericCanUserInit" available="$parent.initTypeVar.getValue() &amp;&amp; ($this.can_peripherals_size.getValue() &gt; 0)"/>
+                    </options_expr>
+                    <validation>
+                        <constraint cond_expr="$this.can_peripherals_size.getValue() &gt; 0" level="error" description="Any CAN peripheral is not supported"/>
+                    </validation>
+                </reference>
+                <reference type="peripheral_config_t" id="serialConfig" label="Serial communication interface" config_set_id="global_uart" component_id="generic_uart" available="$parent.commInterface.getValue()==`serial`">
+                    <options_expr>
+                        <option id="UI_REFRESH"/>
+                        <!-- Config -->
+                        <option id="genericUartPeripheralIuartNotSupported"/>
+                        <option id="genericUartPeripheralSelect" available="!$parent.initTypeVar.getValue()"/>
+                        <option id="genericUartRxPinDependencyPeripheralSetting"/>
+                        <option id="genericUartTxPinDependencyPeripheralSetting"/>
+                        <option id="genericUartDriverDependencyPeripheralSetting"/>
+                        <option id="genericUartIncludeDriverDisable" available="$parent.initTypeVar.getValue()"/>
+                        <!--option id="genericUartDriverVersions"/-->
+                        <option id="genericUartClocks"/>
+                        <option id="genericUartBaudrate" available="!$parent.initTypeVar.getValue()"/>
+                        <option id="genericUartParityMode" available="!$parent.initTypeVar.getValue()"/>
+                        <option id="genericUartStopBitCount" available="!$parent.initTypeVar.getValue()"/>
+                        <option id="genericUartPolarityMode" available="!$parent.initTypeVar.getValue()"/>
+                        <option id="genericUartDataLength" available="!$parent.initTypeVar.getValue()"/>
+                        <!-- IRQ -->
+                        <option id="genericUartInterruptRxTxVectors" available="!$parent.initTypeVar.getValue()"/>
+                        <option id="genericUartInterruptRxTxVectorsDisable" available="$parent.interruptMode.getValue()==`polling`"/>
+                        <option id="genericUartInterruptRxTx_irq_handler_insert" expr="leftPadding(`FMSTR_SerialIsr();`,1)"></option>
+                        <option id="genericUartInterruptRxTx_irq_generate_handler"/>
+                        <option id="genericUartInterruptTx_irq_handler_insert" expr="leftPadding(`FMSTR_SerialIsr();`,1)"></option>
+                        <option id="genericUartInterruptTx_irq_generate_handler"/>
+                        <option id="genericUartInterruptRx_irq_handler_insert" expr="leftPadding(`FMSTR_SerialIsr();`,1)"></option>
+                        <option id="genericUartInterruptRx_irq_generate_handler"/>
+                        
+                        <option id="genericUartInterruptErrorVector" available="!$parent.initTypeVar.getValue()"/>
+                        <option id="genericUartInterruptErrorVectorsDisable" available="$parent.interruptMode.getValue()==`polling`"/>
+                        <option id="genericUartInterruptError_irq_handler_insert" expr="leftPadding(`FMSTR_SerialIsr();`,1)"></option>
+                        <option id="genericUartInterruptError_irq_generate_handler"/>
+                        <option id="genericUartInterruptTridleVector" available="!$parent.initTypeVar.getValue()"/>
+                        <option id="genericUartInterruptTridleVectorsDisable" available="$parent.interruptMode.getValue()==`polling`"/>
+                        <option id="genericUartInterruptTridle_irq_handler_insert" expr="leftPadding(`FMSTR_SerialIsr();`,1)"></option>
+                        <option id="genericUartInterruptTridle_irq_generate_handler"/>
+                        <!--option id="genericUartInterruptRxTx_without_handler_settings"/-->
+                        <!-- User init -->
+                        <option id="genericUartUserInit" available="$parent.initTypeVar.getValue() &amp;&amp; ($this.serial_port_uart_peripherals_size.getValue() &gt; 0)"/>
+                    </options_expr>
+                    <validation>
+                        <constraint cond_expr="$this.serial_port_uart_peripherals_size.getValue() &gt; 0" level="error" description="Any UART peripheral is not supported"/>
+                    </validation>
+                </reference>
+                <variable id="FMSTR_SERIAL_DRV" value="$parent.commInterface.getValue()==`serial` ? $parent.serialConfig.generic_uart_sdk_serial_freemaster_id.getValue() : 
+                    ($parent.commInterface.getValue()==`usb` ? `FMSTR_SERIAL_MCUX_USB` : 
+                    ($parent.commInterface.getValue()==`dsc_eonce` ? `FMSTR_SERIAL_56F800E_EONCE` : ``))"></variable>
+                <variable id="serialBase" value="$parent.serialConfig.generic_uart_peripheral_alias.getValue()"></variable>
+                <variable id="serialBaseDef" value="`#define FMSTR_SERIAL_BASE       ` + $parent.serialBase.getValue()"></variable>
+                <variable id="FMSTR_CAN_DRV" value="$parent.commInterface.getValue()==`can` ? $parent.canConfig.generic_can_sdk_freemaster_id.getValue() : ``"></variable>
+                <variable id="canBase" value="$parent.canConfig.generic_can_peripheral_alias.getValue()"></variable>
+                <variable id="canBaseDef" value="`#define FMSTR_CAN_BASE       ` + $parent.canBase.getValue()"></variable>
+                <variable id="FMSTR_BASE_ADDR" value="$parent.commInterface.getValue()==`serial` ? $parent.serialBaseDef.getValue(``) : ($parent.commInterface.getValue()==`can`? $parent.canBaseDef.getValue(``) : ``) "></variable>
+                <integer type="uint16_t" id="FMSTR_FLEXCAN_TXMB" label="Tx buffer number" available="$parent.FMSTR_CAN_DRV.isAvailable() &amp;&amp; ($parent.FMSTR_CAN_DRV.getValue()==`FMSTR_CAN_MCUX_FLEXCAN` || $parent.FMSTR_CAN_DRV.getValue()==`FMSTR_CAN_MCUX_DSCFLEXCAN`)" max_expr="63">
+                    <description>
+Macro: **FMSTR_FLEXCAN_TXMB**  
+FlexCAN-specific, specify the message buffer number (index) which will be used for transmission (may be the same as used for receiving).
+                    </description>
+                </integer>
+                <integer type="uint16_t" id="FMSTR_FLEXCAN_RXMB" label="Rx buffer number" available="$parent.FMSTR_CAN_DRV.isAvailable() &amp;&amp; ($parent.FMSTR_CAN_DRV.getValue()==`FMSTR_CAN_MCUX_FLEXCAN` || $parent.FMSTR_CAN_DRV.getValue()==`FMSTR_CAN_MCUX_DSCFLEXCAN`)" max_expr="63">
+                    <description>
+Macro: **FMSTR_FLEXCAN_RXMB**  
+FlexCAN-specific, specify the message buffer number (index) which will be used for receiving (may be the same as used for transmission).
+                    </description>
+                </integer>
+                <struct id="mcanRamConfig" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN" available="$parent.FMSTR_CAN_DRV.isAvailable() &amp;&amp; $parent.FMSTR_CAN_DRV.getValue()==`FMSTR_CAN_MCUX_MCAN`">
+                    <enum id="RAMbufferType" label="CAN memory allocation">
+                        <description>Use custom MCAN-specific shared RAM memory address or buffer for Tx and Rx buffers.</description>
+                        <item id="default" label="Default buffer"></item>
+                        <item id="buffer" label="Custom buffer"></item> 
+                        <item id="address" label="Address value"></item>
+                    </enum>
+                    <integer type="uint32_t" id="bufferAddressValue" label="Address value" available="$parent.RAMbufferType.getValue(`default`)==`address`">
+                        <description>
+Macro: **FMSTR_MCAN_SHAREDMEMORY_OFFSET** 
+MCAN-specific, specify the shared RAM memory address for Tx and Rx buffer.
+                        </description>
+                    </integer>
+                    <string id="bufferAddress" label="Address expression" available="$parent.RAMbufferType.getValue(`default`)==`buffer`">
+                        <description>
+Address (buffer) expression used in generated code. Note, syntax is not validated by the tool.  
+*Examples:*  
+- `MyBuffer`
+- `MyBuffer[16]`
+                        </description>
+                        <validation>
+                            <constraint cond_expr="$this.getValue() != ``" level="error"  description="The buffer address is missing."/>
+                        </validation>
+                    </string>
+                    <string id="bufferExternDef" label="External definition " available="$parent.RAMbufferType.getValue(`default`)==`buffer`">
+                        <description>
+External defitinion of the buffer (including the type) that is defined in user code. Note, syntax is not validated by the tool.   
+*Examples:*  
+- `uint32_t MyBuffer[16]`  
+- `const int MyBuffer[32U]`  
+- `unisgned char Mybuffer[]`
+                        </description>
+                        <validation>
+                            <constraint cond_expr="$this.getValue() != ``" level="error"  description="The buffer external definition is missing."/>
+                        </validation>
+                    </string>
+                    <info id="defaultBufferInfo" label="Default buffer" value="`uint32_t ` + $instance.getFnGroupPrefix() + $instance.getID() + `_MCAN_RAM[9]`" available="$parent.RAMbufferType.getValue(``)==`default`">
+                        <description>Default buffer external definition. This buffer had to be defined in user code.</description>
+                    </info>
+                    <info id="customBufferInfo" label="Code preview" available="$parent.RAMbufferType.getValue(`default`)==`buffer`"
+                        value="($parent.bufferExternDef.getValue(``)!=``) ? (`extern ` + $parent.bufferExternDef.getValue() + `;`) : `No buffer external definition`"></info>
+                    <!-- Default buffer id -->
+                    <variable id="defaultBufferVar" value="`(uint32_t)` + $instance.getFnGroupPrefix() + $instance.getID() + `_MCAN_RAM`"></variable>
+                    <!-- Resulting buffer name -->
+                    <variable id="FMSTR_MCAN_SHAREDMEMORY_OFFSET" value="($parent.RAMbufferType.getValue(`default`)==`buffer` ? $parent.bufferAddress.getValue(``) : 
+                        ($parent.RAMbufferType.getValue(`default`)==`address` ? toString($parent.bufferAddressValue.getValue(0),16) + `U` : $parent.defaultBufferVar.getValue(``)))">
+                    </variable>
+                    <variable id="FMSTR_MCAN_SHAREDMEMORY_EXTERN" value="$parent.RAMbufferType.getValue(`default`)==`buffer` ? $parent.bufferExternDef.getValue(``) : $parent.defaultBufferInfo.getValue(``)"></variable>
+                    <integer type="uint16_t" id="mcan_tx" label="Tx buffer offset" available="$parent.RAMbufferType.getValue(``)!=`default`">
+                        <description>
+Macro: **FMSTR_MCAN_TXMB_OFFSET**  
+MCAN-specific, specify the message buffer offset which will be used for transmission.
+                        </description>
+                        <validation>
+                            <constraint cond_expr="($this.getValue()%16)==0" level="warning" description="MCAN Tx buffer offset must be aligned on 16 bytes."/>
+                        </validation>
+                    </integer>
+                    <integer type="uint16_t" id="mcan_rx" label="Rx buffer offset" available="$parent.RAMbufferType.getValue(``)!=`default`">
+                        <description>
+Macro: **FMSTR_MCAN_RXMB_OFFSET**  
+MCAN-specific, specify the message buffer offset which will be used for receiving.
+                        </description>
+                        <validation>
+                            <constraint cond_expr="($this.getValue()%16)==0" level="warning" description="MCAN Rx buffer offset must be aligned on 16 bytes."/>
+                        </validation>
+                    </integer>
+                </struct>
+                <variable id="FMSTR_MCAN_TXMB_OFFSET" value="$parent.mcanRamConfig.mcan_tx.getValue(20)"></variable>
+                <variable id="FMSTR_MCAN_RXMB_OFFSET" value="$parent.mcanRamConfig.mcan_rx.getValue(4)"></variable>
+                <dynamic_enum id="FMSTR_COMM_BUFFER_SIZE" label="FreeMASTER buffer size"
+                    items="createArray().addItemToList(
+                    `autoSize`,`Auto size (0)`, 0 ,true).addItemToList(
+                    `minimum`,`Minimum size (32)`, 32 ,true).addItemToList(
+                    `maximum`,`Maximum size (240)`, 240 ,true)">
+                    <description>
+Macro: **FMSTR_COMM_BUFFER_SIZE**  
+Internal FreeMASTER communication buffer size.   
+**Values:**  
+- Automatically determined size: **0**  
+- Minimum buffer size: **32**  
+- Maximum buffer size: **240**  
+                    </description>
+                    <custom_value_support default="64" validation_expr="x -> (x.regexMatch(system::decHexNumRegExpr()) &amp;&amp; (x.toInt() &lt;= 240) &amp;&amp; (x.toInt() &gt;= 32))"></custom_value_support>
+                </dynamic_enum>
+                <integer type="uint32_t" id="FMSTR_COMM_RQUEUE_SIZE" label="Short interrupt queue size" enable="$parent.FMSTR_SHORT_INTR.getValue()==`1`" max_expr="255">
+                    <description>
+Macro: **FMSTR_COMM_RQUEUE_SIZE**  
+Intermediate receive buffer (FIFO queue) size. The buffer is used in short interrupt mode only to enqueue characters received in the interrupt routine.
+The buffer is processed in the main polling call. Set 0 for "default."
+                    </description>
+                </integer>
+               
+                <info value="`FreeMASTER oscilloscope configuration`" id="line_scope" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+                <integer type="uint32_t" id="FMSTR_USE_SCOPE" label="Simultaneously running oscilloscopes"  max_expr="16">
+                    <description>
+Macro: **FMSTR_USE_SCOPE**  
+Specify maximum number of simultaneously running oscilloscopes supported by the FreeMASTER driver.
+FreeMASTER GUI tool will be able to open even more oscilloscope graphs on the screen, however only the number of oscilloscope instances defined here
+are going to use speed-optimized protocol. When more oscilloscopes are open in GUI, the other instances use sequential non-optimized variable reads.
+                    </description>
+                </integer>
+                <integer type="uint32_t" id="FMSTR_MAX_SCOPE_VARS" label="Oscilloscope variables count" min_expr="2" max_expr="64" enable="$parent.FMSTR_USE_SCOPE.getValue()!=0">
+                    <description>
+Macro: **FMSTR_MAX_SCOPE_VARS**  
+Specify maximum number of scope variables per one oscilloscope.
+                    </description>
+                </integer>
+                <info value="`FreeMASTER recorder configuration`" id="line_rec" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+                <variable id="FMSTR_USE_RECORDER" value="$parent.recorders.size().toInt()">
+                </variable>
+                <!--integer type="uint32_t" id="FMSTR_REC_BUFF_SIZE" label="Recorder buffer Size">
+                    <description>
+Macro: **FMSTR_REC_BUFF_SIZE**  
+Built-in buffer size of recorder #0. Set to 0 to use runtime settings.
+                    </description>
+                </integer>
+                <integer type="uint32_t" id="FMSTR_REC_TIMEBASE" label="Recorder time base">
+                    <description>
+Macro: **FMSTR_REC_TIMEBASE**  
+Recorder time base, specifies how often the recorder is called in the user application. Set 0 to unknown.
+                    </description>
+                </integer-->
+                <bool id="FMSTR_REC_FLOAT_TRIG" label="Enable floating-point trigger">
+                    <description>
+Macro: **FMSTR_REC_FLOAT_TRIG**  
+Enable floating point triggering.
+                    </description>
+                </bool>
+                <array type="recorder_t" id="recorders" label="Recorders" options="UI_SHOW_CONTENT_AS=TABS;UI_TABLE_COLUMN_WIDTHS=4;"  
+                     key_selector_expr="x->`Rec` + x.getID()" max_expr="16">
+                    <description>
+Macro: **FMSTR_USE_RECORDER**  
+Specify maximum number of simultaneously running recorders supported by the FreeMASTER driver. This number of recorders are going to be able
+to be operate concurrently. Identify the each recorder instance when calling the `FMSTR_Recorder()` API function.
+                    </description>
+                    <item_defaults>
+                        <set_default id="recID.customID" value_expr="x -> x.getSetting(`recID.defaultID`).getValue()"/>
+                        <set_default id="nameRec" value_expr="x -> `Description of recorder ` + x.getId()"/>
+                        <set_default id="recBuff.bufferAddress" value_expr="x -> `FreeMASTER_RecBuffer` + x.getId()"/>
+                        <set_default id="recBuff.bufferExternDef" value_expr="x -> `FMSTR_U8 FreeMASTER_RecBuffer` + x.getId() + `[1024]`"/>
+                        <set_default id="recBuff.bufferSize" value_expr="x -> 1024"/>
+                        <set_default id="addrRec" value_expr="x -> `FreeMASTER_Recorder` + x.getId()"/>
+                        <set_default id="recInit" value_expr="x -> true"/>
+                    </item_defaults>
+                </array>
+                <info value="`Target-side address translation configuration (TSA)`" id="line_tsa" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+                <bool id="FMSTR_USE_TSA" label="Enable TSA">
+                    <description>
+Macro: **FMSTR_USE_TSA**  
+Enable Target-side address translation (TSA) functionality.
+When enabled, the user application code may define so-called *TSA tables* which describe accessible variables by the FreeMASTER GUI tool.
+Declare these variables in your application code.  
+Using TSA tables eliminates the need of loading the *ELF* or *MAP* file by the FreeMASTER tool.
+Refer to **TSA feature specification** in the FreeMASTER Communication Driver User Guide.
+                    </description>
+                </bool>
+                <bool id="FMSTR_USE_TSA_INROM" label="Const TSA declaration" enable="$parent.FMSTR_USE_TSA.getValue()">
+                    <description>
+Macro: **FMSTR_USE_TSA_INROM**  
+Declare TSA tables as *const* so the linker places the data in read-only Flash memory. This option is typically enabled.
+
+                    </description>
+                </bool>  
+                <bool id="FMSTR_USE_TSA_SAFETY" label="Enable TSA memory protection" enable="$parent.FMSTR_USE_TSA.getValue()">
+                    <description>
+Macro: **FMSTR_USE_TSA_SAFETY**  
+Enable TSA memory protection. When selected, the FreeMASTER driver will enable access only to variables described in TSA tables.
+The FreeMASTER driver will deny access to any other memory areas. It will also deny write access to variables declared as read-only in TSA tables.
+                    </description>
+                </bool>
+                <bool id="FMSTR_USE_TSA_DYNAMIC" label="Enable dynamic TSA" enable="$parent.FMSTR_USE_TSA.getValue()">
+                    <description>
+Macro: **FMSTR_USE_TSA_DYNAMIC**  
+Enable dynamic TSA entries to be added in runtime. Use the `FMSTR_SetUpTsaBuff()` and `FMSTR_TsaAddVar()` API calls.
+                    </description>
+                </bool>
+                <bool id="tsaBufferInit" label="Initialize dynamic TSA buffer" enable="$parent.FMSTR_USE_TSA_DYNAMIC.getValue()" options="UI_LABEL_BOLD" available="$parent.FMSTR_USE_TSA_DYNAMIC.getValue(false)"></bool>
+                <reference type="buffer_t" id="tsaBuff" enable="$parent.tsaBufferInit.getValue(false)" available="$parent.FMSTR_USE_TSA_DYNAMIC.getValue(false)" options="UI_LABEL_HIDDEN">
+                    <options_expr>
+                        <option id="bufferSuffix" expr="`_TSA_buffer`"></option>
+                        <option id="bufferType" expr="`FMSTR_ADDR`"></option>
+                        <option id="bufferSizeDef" expr="`TSA_TABLE_SIZE`"></option>
+                    </options_expr>
+                </reference>
+                <variable id="tableText" value="
+                    `/* TSA table template example. &#10;`+
+                    `* Refer to TSA table-building macros (freemaster_tsa.h) &#10;` + 
+                    `*/ &#10;` +
+                    `FMSTR_TSA_TABLE_BEGIN(tsa_table_id) &#10;` + 
+                    leftPadding(`// FMSTR_TSA_RW_VAR(name, type)  // read/write variable entry`,1) + `&#10;` +
+                    leftPadding(`// FMSTR_TSA_RO_VAR(name, type)  // read-only variable entry`,1) + `&#10;` +
+                    leftPadding(`// FMSTR_TSA_STRUCT(struct_name)  // structure type entry`,1) + `&#10;` +
+                    leftPadding(`// FMSTR_TSA_MEMBER(struct_name, member_name, type)  // structure member entry`,1) + `&#10;` +
+                    leftPadding(`// FMSTR_TSA_RW_MEM(name, type, address, size)  // read/write memory block`,1) + `&#10;` +
+                    leftPadding(`// FMSTR_TSA_RO_MEM(name, type, address, size)  // read-only memory block`,1) + `&#10;` +
+                    leftPadding(`// ... `,1) + `&#10;` +
+                    `FMSTR_TSA_TABLE_END()&#10;&#10;`+
+                    
+                    `/* This list describes all TSA tables which should be exported to the FreeMASTER application. */ &#10;` +
+                    `FMSTR_TSA_TABLE_LIST_BEGIN()&#10;` +
+                    leftPadding(`FMSTR_TSA_TABLE(tsa_table_id)`,1) + `&#10;` +
+                    leftPadding(`// FMSTR_TSA_TABLE(tsa_table_2)`,1) + `&#10;` +
+                    leftPadding(`// FMSTR_TSA_TABLE(tsa_table_3)`,1) + `&#10;` +
+                    leftPadding(`// ... `,1) + `&#10;` +
+                    `FMSTR_TSA_TABLE_LIST_END()`">
+                </variable>
+                <info id="tableTemplate" label="TSA template" value="$parent.tableText.getValue()" options="UI_INFO_COPY_BUTTON" enable="$parent.FMSTR_USE_TSA.getValue()">
+                    <description>
+Template of the **TSA table** and **TSA tables list** that need to be defined in user application code, to access the *FreeMASTER varables* declared in user application code.</description>
+                </info>
+                <info value="`FreeMASTER pipes configuration`" id="line_data" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+                <variable  id="FMSTR_USE_PIPES" value="$parent.pipes.size().toInt()" ></variable>
+                <array type="pipe_t" id="pipes" label="Pipes" options="UI_SHOW_CONTENT_AS=TABS;UI_TABLE_COLUMN_WIDTHS=2"  
+                     key_selector_expr="x->`Pipe` + x.getSetting(`pID`).getValue()" max_expr="126">
+                    <description>
+Macro: **FMSTR_USE_PIPES**  
+Specify maximum number of FreeMASTER Pipe objects supported by the FreeMASTER driver.
+Each pipe is able to stream data in and out between the MCU application and the FreeMASTER GUI tool.
+                    </description>
+                    <item_defaults>
+                        <set_default id="pipeID.customID" value_expr="x -> x.getSetting(`pipeID.defaultID`).getValue()"/>
+                        <set_default id="rxBuffer.bufferAddress" value_expr="x -> `FreeMASTER_RxPipe` + x.getSetting(`pID`).getValue()"/>
+                        <set_default id="rxBuffer.bufferExternDef" value_expr="x -> `FMSTR_U8 FreeMASTER_RxPipe` + x.getSetting(`pID`).getValue() + `[32]`"/>
+                        <set_default id="rxBuffer.bufferSize" value_expr="x -> 32"/>
+                        <set_default id="txBuffer.bufferAddress" value_expr="x -> `FreeMASTER_TxPipe` + x.getSetting(`pID`).getValue()"/>
+                        <set_default id="txBuffer.bufferExternDef" value_expr="x -> `FMSTR_U8 FreeMASTER_TxPipe` + x.getSetting(`pID`).getValue() + `[32]`"/>
+                        <set_default id="txBuffer.bufferSize" value_expr="x -> 32"/>
+                        <set_default id="pipePort" value_expr="x -> x.getSetting(`pID`).getValue()"/>
+                        <set_default id="callbackFunction"  value_expr="x -> `Pipe`+ x.getSetting(`pID`).getValue() + `_Handler`"/>
+                        <set_default id="namePipe" value_expr="x -> `Description of pipe ` + x.getSetting(`pID`).getValue()"/>
+                        <set_default id="pipeInit" value_expr="x -> true"/>
+                    </item_defaults>
+                </array>
+                <info value="`Basic FreeMASTER memory operations`" id="line_mem" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+                <bool id="FMSTR_USE_READMEM" label="Enable memory read">
+                    <description>
+Macro: **FMSTR_USE_READMEM**  
+Enable FreeMASTER to read memory. This option is typically enabled.
+                    </description>
+                </bool>
+                <bool id="FMSTR_USE_WRITEMEM" label="Enable memory write">
+                    <description>
+Macro: **FMSTR_USE_WRITEMEM**  
+Enable FreeMASTER to write memory. This option is typically enabled.
+                    </description>
+                </bool>
+                <bool id="FMSTR_USE_WRITEMEMMASK" label="Enable memory mask write">
+                    <description>
+Macro: **FMSTR_USE_WRITEMEMMASK**  
+Enable FreeMASTER to write memory with AND mask to access bit-fields. This option is typically enabled.
+                    </description>
+                </bool>
+                <info value="`Password protection`" id="line_pass" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+                <string id="passR" label="Read-only access level password">
+                    <description>
+Macro: **FMSTR_RESTRICTED_ACCESS_R_PASSWORD**  
+Define password for read-only access level.
+When defined, the read-only access will be protected and user will need to specify this password or any higher-level passwords
+defined below to get read access to memory content. Leave this field empty when read-only access does not need to be protected.
+
+AVOID SHORT PASSWORDS in production version. Passwords should be at least 20 characters long to prevent dictionary attacks. 
+                    </description>
+                </string>
+                <info id="hashedPassR" label="Read-only access hash" available="$parent.FMSTR_USE_HASHED_PASSWORDS.getValue(false) &amp;&amp; $parent.passR.getValue()!=``"
+                    value="getHash(`SHA1`, $parent.passR.getValue())">
+                </info>
+                <string id="passRW" label="Write access level password">
+                    <description>
+Macro: **FMSTR_RESTRICTED_ACCESS_RW_PASSWORD**  
+Define password for write access level. When defined, the write access will be protected and user will need to specify this password
+or the higher-level password defined below to get write access to memory content. Leave this field empty when write access does not need to be protected.
+
+AVOID SHORT PASSWORDS in production version. Passwords should be at least 20 characters long to prevent dictionary attacks.
+                    </description>
+                </string>
+                <info id="hashedPassRW" label="Write access hash" available="$parent.FMSTR_USE_HASHED_PASSWORDS.getValue(false) &amp;&amp; $parent.passRW.getValue()!=``"
+                    value="getHash(`SHA1`, $parent.passRW.getValue())">
+                </info>
+                <string id="passRWF" label="Flash access level password">
+                    <description>
+Macro: **FMSTR_RESTRICTED_ACCESS_RWF_PASSWORD**  
+Define password for flash-write access level. When defined, the flash programming access will be protected and user will need to specify
+this password to get write access to flash memory. Leave this field empty when flash-write access does not need to be protected.
+
+AVOID SHORT PASSWORDS in production version. Passwords should be at least 20 characters long to prevent dictionary attacks.
+                    </description>
+                </string>
+                <info id="hashedPassRWF" label="Flash access hash" available="$parent.FMSTR_USE_HASHED_PASSWORDS.getValue(false) &amp;&amp; $parent.passRWF.getValue()!=``"
+                    value="getHash(`SHA1`, $parent.passRWF.getValue())">
+                </info>
+                <variable id="noPassword" value="$parent.passR.getValue(``)==`` &amp;&amp; $parent.passRW.getValue(``)==`` &amp;&amp; $parent.passRWF.getValue(``)==``"></variable>
+                <!-- Hash arrays -->
+                <variable id="emptyArray" value="createArray(19,-1,19)"></variable>
+                <variable id="hashR" value="$parent.FMSTR_USE_HASHED_PASSWORDS.getValue() ? $parent.emptyArray.getValue().map(index -> toString(((toInt(`0x` + $parent.hashedPassR.getValue()) >> index*8 ) &amp; 0xFF),16)).replaceText(`[`,`{`).replaceText(`]`,`}`) : ``"></variable>
+                <variable id="hashRW" value="$parent.FMSTR_USE_HASHED_PASSWORDS.getValue() ? $parent.emptyArray.getValue().map(index -> toString(((toInt(`0x` + $parent.hashedPassRW.getValue()) >> index*8 ) &amp; 0xFF),16)).replaceText(`[`,`{`).replaceText(`]`,`}`) : ``"></variable>
+                <variable id="hashRWF" value="$parent.FMSTR_USE_HASHED_PASSWORDS.getValue() ? $parent.emptyArray.getValue().map(index -> toString(((toInt(`0x` + $parent.hashedPassRWF.getValue()) >> index*8 ) &amp; 0xFF),16)).replaceText(`[`,`{`).replaceText(`]`,`}`) : ``"></variable>
+                
+                <bool id="FMSTR_USE_HASHED_PASSWORDS" label="Enable hashed passwords" enable="$parent.noPassword.getValue()!=true">
+                    <description>
+Macro: **FMSTR_USE_HASHED_PASSWORDS**  
+When enabled, the passwords defined above will not be used as open text.
+The 20-byte SHA-1 value will be calculated by the configuration tool and will be stored instead of the plain text format.
+This option makes it harder to locate the passwords in the application code image and improves the security.
+Even with this option, the hash must be generated from a reasonably complex password to prevent dictionary attacks.
+
+*Note:* When enabled, the plain text passwords will be stored in the .MEX file generated by the configuration tool only.
+                    </description>
+                </bool>
+                <info value="`Application commands configuration`" id="line_cmd" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+                <bool id="FMSTR_USE_APPCMD" label="Enable driver app commands">
+                    <description>
+Macro: **FMSTR_USE_APPCMD**  
+Enable FreeMASTER Application Command processing by the driver.
+Application commands may be used as an alternative way to control the MCU application instead of writing control variables.
+This feature is not typically used.
+                    </description>
+                </bool>
+                <integer type="uint32_t" id="FMSTR_APPCMD_BUFF_SIZE" label="Commands buffer size" enable="$parent.FMSTR_USE_APPCMD.getValue()" min_expr="1" max_expr="255">
+                    <description>
+Macro: **FMSTR_APPCMD_BUFF_SIZE**  
+Application command data buffer size.
+                    </description>
+                </integer>
+                <integer type="uint32_t" id="FMSTR_MAX_APPCMD_CALLS" label="Command callbacks count" enable="$parent.FMSTR_USE_APPCMD.getValue()" min_expr="0" max_expr="255">
+                    <description>
+Macro: **FMSTR_MAX_APPCMD_CALLS**  
+Maximum number of application command callbacks that can be installed in runtime.
+The callbacks may be installed using the `FMSTR_RegisterAppCmdCall()` API call to simplify handling of the *Application Commands*.
+                    </description>
+                </integer>
+                <!--info value="`Demo application configuration`" id="line_demo" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+                <bool id="FMSTR_DEMO_ENOUGH_ROM" label="Enough platform ROM">
+                    <description>
+Macro: **FMSTR_DEMO_ENOUGH_ROM**  
+Platform has enough ROM to show most of the FreeMASTER features</description>
+                </bool>
+                <bool id="FMSTR_DEMO_LARGE_ROM" label="Large platform ROM">
+                    <description>
+Macro: **FMSTR_DEMO_LARGE_ROM**  
+Platform has large ROM enough to store the extended data structures used in FreeMASTER demo
+                    </description>
+                </bool>
+                <bool id="FMSTR_DEMO_SUPPORT_I64" label="Support long long type">
+                    <description>
+Macro: **FMSTR_DEMO_SUPPORT_I64**  
+Enable support for long long type.
+                    </description>
+                </bool>
+                <bool id="FMSTR_DEMO_SUPPORT_FLT" label="Support float type">
+                    <description>
+Macro: **FMSTR_DEMO_SUPPORT_FLT**  
+Enable support for float type.
+                    </description>
+                </bool>
+                <bool id="FMSTR_DEMO_SUPPORT_DBL" label="Support double type">
+                    <description>
+Macro: **FMSTR_DEMO_SUPPORT_DBL**  
+Enable support for double type.
+                    </description>
+                </bool-->
+            </struct>
+        </user_types>
+        <settings>
+            <bool id="FMSTR_DISABLE" label="Disable FreeMASTER driver">
+                <description>
+Macro: **FMSTR_DISABLE**  
+Disable FreeMASTER support as a whole. The option disables all FreeMASTER features, exclude the driver code and compile all its API functions empty. 
+                </description>
+            </bool>
+            <bool id="initFreemaster" label="Initialize FreeMASTER">
+                <description expr="`Initialize FreeMASTER by calling FMSTR_Init() function in ` + $instance.getFnGroupName() + ` functional group.`"></description>
+            </bool>
+            <reference type="config_t" id="generalConfig"></reference>
+            <!-- Variables -->
+            <!-- Fragment variables -->
+            <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+            <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+            <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+            <!-- FREEMASTER CODEGENERATOR PARAMETER VARIABLES -->
+            <struct id="freemaster_codegenerator" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+                <variable id="FMSTR_PLATFORM" value="$configSet.generalConfig.FMSTR_PLATFORM.getValue()"></variable>
+                <variable id="FMSTR_DISABLE" value="$configSet.FMSTR_DISABLE.getValue(false).boolToInt()"></variable>
+                <variable id="FMSTR_LONG_INTR" value="$configSet.generalConfig.FMSTR_LONG_INTR.getValue(`0`)"></variable>
+                <variable id="FMSTR_SHORT_INTR" value="$configSet.generalConfig.FMSTR_SHORT_INTR.getValue(`0`)"></variable>
+                <variable id="FMSTR_POLL_DRIVEN" value="$configSet.generalConfig.FMSTR_POLL_DRIVEN.getValue(`0`)"></variable>
+                <variable id="FMSTR_TRANSPORT" value="$configSet.generalConfig.FMSTR_TRANSPORT.getValue(`0`)"></variable>
+                <variable id="FMSTR_SERIAL_DRV" value="$configSet.generalConfig.FMSTR_SERIAL_DRV.getValue(``)"></variable>
+                <variable id="FMSTR_CAN_DRV" value="$configSet.generalConfig.FMSTR_CAN_DRV.getValue(``)"></variable>
+                <variable id="FMSTR_BASE_ADDR" value="$configSet.generalConfig.FMSTR_BASE_ADDR.getValue(``)"></variable>
+                <variable id="FMSTR_FLEXCAN_TXMB" value="$configSet.generalConfig.FMSTR_FLEXCAN_TXMB.getValue(`0`)"></variable>
+                <variable id="FMSTR_FLEXCAN_RXMB" value="$configSet.generalConfig.FMSTR_FLEXCAN_RXMB.getValue(`0`)"></variable>
+                <variable id="FMSTR_MCAN_SHAREDMEMORY_OFFSET" value="$configSet.generalConfig.mcanRamConfig.FMSTR_MCAN_SHAREDMEMORY_OFFSET.getValue(0)"></variable>
+                <variable id="FMSTR_MCAN_SHAREDMEMORY_EXTERN" value="$configSet.generalConfig.mcanRamConfig.FMSTR_MCAN_SHAREDMEMORY_EXTERN.getValue(0)"></variable>
+                <variable id="FMSTR_MCAN_RXMB_OFFSET" value="toString($configSet.generalConfig.FMSTR_MCAN_RXMB_OFFSET.getValue(0),16)"></variable>
+                <variable id="FMSTR_MCAN_TXMB_OFFSET" value="toString($configSet.generalConfig.FMSTR_MCAN_TXMB_OFFSET.getValue(0),16)"></variable>
+                <variable id="FMSTR_COMM_BUFFER_SIZE" value="$configSet.generalConfig.FMSTR_COMM_BUFFER_SIZE.getEnumItemValue(`0`)"></variable>
+                <variable id="FMSTR_COMM_RQUEUE_SIZE" value="$configSet.generalConfig.FMSTR_COMM_RQUEUE_SIZE.getValue(`0`)"></variable>
+                <variable id="FMSTR_USE_APPCMD" value="$configSet.generalConfig.FMSTR_USE_APPCMD.getValue(false).boolToInt()"></variable>
+                <variable id="FMSTR_APPCMD_BUFF_SIZE" value="$configSet.generalConfig.FMSTR_APPCMD_BUFF_SIZE.getValue(`0`)"></variable>
+                <variable id="FMSTR_MAX_APPCMD_CALLS" value="$configSet.generalConfig.FMSTR_MAX_APPCMD_CALLS.getValue(`0`)"></variable>
+                <variable id="FMSTR_USE_SCOPE" value="$configSet.generalConfig.FMSTR_USE_SCOPE.getValue(`0`)"></variable>
+                <variable id="FMSTR_MAX_SCOPE_VARS" value="$configSet.generalConfig.FMSTR_MAX_SCOPE_VARS.getValue(`0`)"></variable>
+                <variable id="FMSTR_USE_RECORDER" value="$configSet.generalConfig.FMSTR_USE_RECORDER.getValue(`0`)"></variable>
+                <variable id="FMSTR_REC_FLOAT_TRIG" value="$configSet.generalConfig.FMSTR_REC_FLOAT_TRIG.getValue(false).boolToInt()"></variable>
+                <variable id="FMSTR_USE_TSA" value="$configSet.generalConfig.FMSTR_USE_TSA.getValue(false).boolToInt()"></variable>
+                <variable id="FMSTR_USE_TSA_INROM" value="$configSet.generalConfig.FMSTR_USE_TSA_INROM.getValue(false).boolToInt()"></variable>
+                <variable id="FMSTR_USE_TSA_SAFETY" value="$configSet.generalConfig.FMSTR_USE_TSA_SAFETY.getValue(false).boolToInt()"></variable>
+                <variable id="FMSTR_USE_TSA_DYNAMIC" value="$configSet.generalConfig.FMSTR_USE_TSA_DYNAMIC.getValue(false).boolToInt()"></variable>
+                <variable id="FMSTR_USE_PIPES" value="$configSet.generalConfig.FMSTR_USE_PIPES.getValue(`0`)"></variable>
+                <variable id="FMSTR_USE_READMEM" value="$configSet.generalConfig.FMSTR_USE_READMEM.getValue(false).boolToInt()"></variable>
+                <variable id="FMSTR_USE_WRITEMEM" value="$configSet.generalConfig.FMSTR_USE_WRITEMEM.getValue(false).boolToInt()"></variable>
+                <variable id="FMSTR_USE_WRITEMEMMASK" value="$configSet.generalConfig.FMSTR_USE_WRITEMEMMASK.getValue(false).boolToInt()"></variable>
+                <variable id="noPassword" value="!$configSet.generalConfig.noPassword.getValue()"></variable>
+                <variable id="FMSTR_RESTRICTED_ACCESS_R_PASSWORD" value="($configSet.generalConfig.FMSTR_USE_HASHED_PASSWORDS.getValue() &amp;&amp; $configSet.generalConfig.passR.getValue(``)!=``) ? `_fmstr_password_r` : `&quot;` + $configSet.generalConfig.passR.getValue(``) + `&quot;`"></variable>
+                <variable id="FMSTR_RESTRICTED_ACCESS_RW_PASSWORD" value="($configSet.generalConfig.FMSTR_USE_HASHED_PASSWORDS.getValue() &amp;&amp; $configSet.generalConfig.passRW.getValue(``)!=``) ? `_fmstr_password_rw` : `&quot;` + $configSet.generalConfig.passRW.getValue(``) + `&quot;`"></variable>
+                <variable id="FMSTR_RESTRICTED_ACCESS_RWF_PASSWORD" value="($configSet.generalConfig.FMSTR_USE_HASHED_PASSWORDS.getValue() &amp;&amp; $configSet.generalConfig.passRWF.getValue(``)!=``) ? `_fmstr_password_rwf` : `&quot;` + $configSet.generalConfig.passRWF.getValue(``) + `&quot;`"></variable>
+                <variable id="FMSTR_USE_HASHED_PASSWORDS" value="$configSet.generalConfig.FMSTR_USE_HASHED_PASSWORDS.getValue(false).boolToInt()"></variable>
+            </struct>
+        </settings>
+        <validation>
+            <constraint level="error" description_expr="msg::message(`err_component_instance`, `FreeMASTER`)"
+                cond_expr="$components.system.#global.all_enabled_instances.getValue().countOccurrences(i -> (i.getType() == $instance.getType()), false) == 1"/>
+        </validation>
+        <fragment_defs>
+            <import>
+                <from component_id="generic_uart" config_set_id="global_uart"/>
+                <from component_id="generic_can" config_set_id="global_can"/>
+                <from component_id="system" config_set_id="common_code_templates"/>
+                <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+            </import>
+            <!-- Defines DEF -->
+            <def fragment="rec_defines_h">
+                <fragment id="define">
+                    <param id="name" expr="$this.recSizeDef.getValue(``)"/>
+                    <param id="value" expr="$this.recBuff.usedBufferSize.getValue(``)"/>
+                    <param id="description" expr="$this.recID.resultID.getValue() + `'s buffer size definition`"/>
+                </fragment>
+            </def>
+            <def fragment="pipe_defines_h">
+                <fragment id="define">
+                    <param id="name" expr="$this.pipeRxSizeDef.getValue(``)"/>
+                    <param id="value" expr="$this.rxBuffer.usedBufferSize.getValue(``)"/>
+                    <param id="description" expr="`Pipe` + $this.pID.getValue() + `'s Rx buffer size definition`"/>
+                </fragment>
+                <fragment id="define">
+                    <param id="name" expr="$this.pipeTxSizeDef.getValue(``)"/>
+                    <param id="value" expr="$this.txBuffer.usedBufferSize.getValue(``)"/>
+                    <param id="description" expr="`Pipe` + $this.pID.getValue() + `'s Tx buffer size definition`"/>
+                </fragment>
+            </def>
+            <def fragment="tsa_defines_h">
+                <fragment id="define">
+                    <param id="name" expr="`TSA_TABLE_SIZE`"/>
+                    <param id="value" expr="$this.usedBufferSize.getValue(``)"/>
+                    <param id="description" expr="`Dynamic TSA table buffer size definition`"/>
+                </fragment>
+            </def>
+            <def fragment="recorders_array_c">
+                <fragment id="global_struct" for_elements_of="$this.generalConfig.recorders">
+                    <param id="description" expr="`Recorders configuration`"></param>
+                    <param id="name" expr="$this.recID.resultID.getValue(``)"/>
+                    <param id="type" expr="`FMSTR_REC_BUFF`"></param>
+                </fragment>
+            </def>
+            <def fragment="dsc_eonce_defines">
+                <fragment id="IRQ_definitions" apply_to="$configSet.generalConfig.dsc_eonce_config.tx_interrupt_vector"
+                    if_expr="$configSet.generalConfig.dsc_eonce_config.txRegInterruptEnable.getValue(false)"/>
+                <fragment id="IRQ_definitions" apply_to="$configSet.generalConfig.dsc_eonce_config.rx_interrupt_vector"
+                    if_expr="$configSet.generalConfig.dsc_eonce_config.rxRegInterruptEnable.getValue(false)"/>
+            </def>
+            <!-- Extern vars DEF -->
+            <def fragment="rec_extern_vars_h">
+                <fragment id="extern_var" if_expr="$this.recBuff.usedBufferDeclaration.getValue()!=``">
+                    <param id="name" expr="$this.recorderGlobalVar.getValue()"/> 
+                    <param id="description" expr="`Recorder` +$this.getID() + ` configuration`"></param>
+                </fragment>
+            </def>
+            <def fragment="pipes_extern_vars_h">
+                <fragment id="extern_var">
+                    <param id="name" expr="$this.pipeID.resultID.getValue()"/> 
+                    <param id="type" expr="`FMSTR_HPIPE`"></param>
+                    <param id="description" expr="`Pipe` +$this.pID.getValue() + ` handle`"></param>
+                </fragment>
+                <fragment id="extern_var" if_expr="$this.rxBuffer.usedBufferDeclaration.getValue()!=``">
+                    <param id="name" expr="$this.rxBufferGlobalVar.getValue()"/> 
+                    <param id="description" expr="`Pipe` +$this.pID.getValue() + ` Rx buffer`"></param>
+                </fragment>
+                <fragment id="extern_var" if_expr="$this.txBuffer.usedBufferDeclaration.getValue()!=``">
+                    <param id="name" expr="$this.txBufferGlobalVar.getValue()"/> 
+                    <param id="description" expr="`Pipe` +$this.pID.getValue() + ` Tx buffer`"></param>
+                </fragment>
+            </def>
+            <def fragment="tsa_extern_vars_h">
+                <fragment id="extern_var" if_expr="$this.usedBufferDeclaration.getValue()!=``">
+                    <param id="name" expr="$this.usedBufferDeclaration.getValue()"/> 
+                    <param id="description" expr="`Dynamic TSA table buffer`"></param>
+                </fragment>
+            </def>
+            <!-- Global vars DEF -->
+            <def fragment="ram_global_var_c">
+                <fragment id="global_var"  if_expr="$this.generalConfig.mcanRamConfig.FMSTR_MCAN_SHAREDMEMORY_EXTERN.getValue(``)!=``">
+                    <param id="name" expr="`SDK_ALIGN(`+ $this.generalConfig.mcanRamConfig.FMSTR_MCAN_SHAREDMEMORY_EXTERN.getValue(``) +`, 0x10000)`"/> 
+                    <param id="description" expr="`CAN RAM shared address`"></param>
+                </fragment>
+            </def>
+            <def fragment="rec_global_vars_c">
+                <fragment id="global_var" if_expr="$this.recBuff.usedBufferDeclaration.getValue()!=``">
+                    <param id="name" expr="$this.recorderGlobalVar.getValue()"/> 
+                    <param id="description" expr="`Recorder` +$this.getID() + ` configuration`"></param>
+                </fragment>
+            </def>
+            <def fragment="pipe_global_vars_c">
+                <fragment id="global_var">
+                    <param id="name" expr="$this.pipeID.resultID.getValue()"/> 
+                    <param id="type" expr="`FMSTR_HPIPE`"></param>
+                    <param id="description" expr="`Pipe` +$this.getID() + ` handle`"></param>
+                </fragment>
+                <fragment id="global_var"  if_expr="$this.rxBuffer.usedBufferDeclaration.getValue()!=``">
+                    <param id="name" expr="$this.rxBufferGlobalVar.getValue()"/> 
+                    <param id="description" expr="`Pipe` +$this.getID() + ` Rx buffer`"></param>
+                </fragment>
+                <fragment id="global_var"  if_expr="$this.txBuffer.usedBufferDeclaration.getValue()!=``">
+                    <param id="name" expr="$this.txBufferGlobalVar.getValue()"/> 
+                    <param id="description" expr="`Pipe` +$this.getID() + ` Tx buffer`"></param>
+                </fragment>
+            </def>
+            <def fragment="tsa_global_vars_c">
+                <fragment id="global_var" if_expr="$this.usedBufferDeclaration.getValue()!=``">
+                    <param id="name" expr="$this.usedBufferDeclaration.getValue()"/> 
+                    <param id="description" expr="`Dynamic TSA table buffer`"></param>
+                </fragment>
+            </def>
+            <def fragment="passwords_global_vars_c">
+                <fragment id="global_var" if_expr=" $this.generalConfig.passR.getValue()!=``">
+                    <param id="name" expr="`_fmstr_password_r[20] = ` + $this.generalConfig.hashR.getValue()"/> 
+                    <param id="type" expr="`char`"></param>
+                    <param id="description" expr="`Read-only access password hash`"></param>
+                </fragment>
+                <fragment id="global_var" if_expr=" $this.generalConfig.passRW.getValue()!=``">
+                    <param id="name" expr="`_fmstr_password_rw[20] = ` + $this.generalConfig.hashRW.getValue()"/> 
+                    <param id="type" expr="`char`"></param>
+                    <param id="description" expr="`Write access password hash`"></param>
+                </fragment>
+                <fragment id="global_var" if_expr=" $this.generalConfig.passRWF.getValue()!=``">
+                    <param id="name" expr="`_fmstr_password_rwf[20] = ` + $this.generalConfig.hashRWF.getValue()"/> 
+                    <param id="type" expr="`char`"></param>
+                    <param id="description" expr="`Flash access password hash`"></param>
+                </fragment>
+            </def>
+            <def fragment="pipe_cb">
+                <fragment id="extern_fcn_def" if_expr="$this.callbackFunction.isEnabled()">
+                     <param id="name" expr="$this.callbackFunction.getValue()"/>
+                     <param id="type">void</param>
+                     <param id="params" expr="`FMSTR_HPIPE`"/>
+                      <param id="description" expr="`Pipe ` + $this.pID.getValue() + ` handler callback function`"/>
+                 </fragment>
+            </def>
+            <def fragment="dsc_eonce_irq_handler_functions">
+                <fragment id="IRQn_handler_function" apply_to="$configSet.generalConfig.dsc_eonce_config.tx_interrupt_vector"
+                    if_expr="$configSet.generalConfig.dsc_eonce_config.txRegInterruptEnable.getValue(false)"/>
+                <fragment id="IRQn_handler_function" apply_to="$configSet.generalConfig.dsc_eonce_config.rx_interrupt_vector"
+                    if_expr="$configSet.generalConfig.dsc_eonce_config.rxRegInterruptEnable.getValue(false)"/>
+            </def>
+            <!-- INIT -->
+            <def fragment="general_init_c">
+                <fragment id="init_line" if_expr="$this.initFreemaster.getValue()">
+                    <param id="code" expr="`FMSTR_Init();`"></param>
+                    <param id="description" expr="$instance.getId() + ` middleware initialization`"></param>
+                    <param id="paddingLevel" expr="1"></param>               
+                </fragment>
+                <fragment id="init_line" apply_to="$this.generalConfig.tsaBuff" if_expr="$this.generalConfig.tsaBufferInit.getValue(false)">
+                    <param id="code" expr="`FMSTR_SetUpTsaBuff((FMSTR_ADDR)` + $this.usedBufferAddress.getValue(``) + `, ` + $this.bufferSizeDef.getValue(``) + `);`"></param>
+                    <param id="description" expr="`Dynamic TSA table initializsation `"></param>
+                    <param id="paddingLevel" expr="1"></param>               
+                </fragment>
+                <fragment id="init_line" for_elements_of="$this.generalConfig.recorders.filter(x -> x.getSetting(`recInit`).getValue(false)==`true`)">
+                    <param id="code" expr="`FMSTR_RecorderCreate(` + $this.getId() + `, &amp;` + $this.recID.resultID.getValue() + `);`"></param>
+                    <param id="description" expr="`FreeMASTER recorder ` + $this.getID() + ` configuration initialization `"></param>
+                    <param id="paddingLevel" expr="1"></param>               
+                </fragment>
+                <fragment id="init_line" for_elements_of="$this.generalConfig.pipes.filter(x -> x.getSetting(`pipeInit`).getValue(false)==`true`)">
+                    <param id="code" expr="$this.pipeID.resultID.getValue() + ` = FMSTR_PipeOpen(` +$this.pipePort.getValue() +`, ` +  
+                        ($this.enablePipeHandler.getValue() ? (`&amp;` + $this.callbackFunction.getValue()) : `NULL`) + 
+                        `, (FMSTR_ADDR)`+ $this.rxBuffer.usedBufferAddress.getValue() + `, ` + $this.pipeRxSizeDef.getValue() +
+                        `,&#10;      (FMSTR_ADDR)`+ $this.txBuffer.usedBufferAddress.getValue() + `, ` + $this.pipeTxSizeDef.getValue() +
+                        `, ` + $this.typeConstant.getValue() + `, &quot;` + $this.namePipe.getValue() +`&quot;);`"></param>
+                    <param id="description" expr="`FreeMASTER pipe ` + $this.pID.getValue() + ` initialization `"></param>
+                    <param id="paddingLevel" expr="1"></param>               
+                </fragment>
+            </def>
+            <def fragment="dsc_eonce_irq_vectors">
+                <fragment id="IRQn_set_priority_default" apply_to="$configSet.generalConfig.dsc_eonce_config.tx_interrupt_vector"
+                    if_expr="$configSet.generalConfig.dsc_eonce_config.txRegInterruptEnable.getValue(false)"/>
+                <fragment id="IRQn_enable_default" apply_to="$configSet.generalConfig.dsc_eonce_config.tx_interrupt_vector"
+                    if_expr="$configSet.generalConfig.dsc_eonce_config.txRegInterruptEnable.getValue(false)"/>
+                <fragment id="IRQn_set_priority_default" apply_to="$configSet.generalConfig.dsc_eonce_config.rx_interrupt_vector"
+                    if_expr="$configSet.generalConfig.dsc_eonce_config.rxRegInterruptEnable.getValue(false)"/>
+                <fragment id="IRQn_enable_default" apply_to="$configSet.generalConfig.dsc_eonce_config.rx_interrupt_vector"
+                    if_expr="$configSet.generalConfig.dsc_eonce_config.rxRegInterruptEnable.getValue(false)"/>
+            </def>
+        </fragment_defs>
+        <code>
+            <!-- h -->
+            <section target="includes">
+                <fragment id="generic_uart_includes" apply_to="$this.generalConfig.serialConfig" if_expr="$this.generalConfig.commInterface.getValue()==`serial`"/>
+                <fragment id="generic_can_includes" apply_to="$this.generalConfig.canConfig" if_expr="$this.generalConfig.commInterface.getValue()==`can`"/>
+                <fragment id="include">
+                    <param id="name">freemaster</param>
+                    <param id="filename">freemaster.h</param>
+                </fragment>
+                <fragment id="include" if_expr="$this.generalConfig.commInterface.getValue()==`serial` &amp;&amp; $this.generalConfig.serialConfig.generic_uart_sdk_serial_freemaster_filename.getValue(-1) != `-1`">
+                    <param id="filename" expr="$this.generalConfig.serialConfig.generic_uart_sdk_serial_freemaster_filename.getValue()"/>
+                </fragment>
+                <fragment id="include" if_expr="$this.generalConfig.commInterface.getValue()==`can` &amp;&amp; $this.generalConfig.canConfig.generic_can_sdk_freemaster_driver_filename.getValue(-1) != `-1`">
+                    <param id="filename" expr="$this.generalConfig.canConfig.generic_can_sdk_freemaster_driver_filename.getValue()"/>
+                </fragment>
+                <fragment id="include" if_expr="$this.generalConfig.commInterface.getValue()==`dsc_eonce`">
+                    <param id="filename">fsl_common.h</param>
+                </fragment>
+                <fragment id="include" if_expr="$this.generalConfig.commInterface.getValue()==`dsc_eonce`">
+                    <param id="filename">freemaster_56F800e_eonce.h</param>
+                </fragment>
+            </section>
+            <section target="defines">
+                <fragment id="rec_defines_h" for_elements_of="$this.generalConfig.recorders"></fragment>
+                <fragment id="pipe_defines_h" for_elements_of="$this.generalConfig.pipes"></fragment>
+                <fragment id="tsa_defines_h" apply_to="$this.generalConfig.tsaBuff" if_expr="$this.generalConfig.tsaBufferInit.getValue(false)"></fragment>
+                <fragment id="generic_uart_defines" apply_to="$this.generalConfig.serialConfig" if_expr="$this.generalConfig.commInterface.getValue()==`serial`"/>
+                <fragment id="generic_can_defines" apply_to="$this.generalConfig.canConfig" if_expr="$this.generalConfig.commInterface.getValue()==`can`"/>
+                <fragment id="dsc_eonce_defines" if_expr="$this.generalConfig.commInterface.getValue()==`dsc_eonce`"/>
+            </section>
+            <section target="global_vars_extern">
+                <fragment id="generic_uart_global_vars_extern" apply_to="$this.generalConfig.serialConfig" if_expr="$this.generalConfig.commInterface.getValue()==`serial` &amp;&amp;  ($this.generalConfig.serialConfig.hasOption(`genericUartUserInit`) &amp;&amp; $this.generalConfig.serialConfig.enableUserInit.getValue() || !$this.generalConfig.initTypeVar.getValue())"/>
+                <fragment id="generic_can_global_vars_extern" apply_to="$this.generalConfig.canConfig" if_expr="$this.generalConfig.commInterface.getValue()==`can` &amp;&amp;  ($this.generalConfig.canConfig.hasOption(`genericCanUserInit`) &amp;&amp; $this.generalConfig.canConfig.enableUserInit.getValue() || !$this.generalConfig.initTypeVar.getValue())"/>
+                <fragment id="rec_extern_vars_h" for_elements_of="$this.generalConfig.recorders"></fragment>
+                <fragment id="pipes_extern_vars_h" for_elements_of="$this.generalConfig.pipes"></fragment>
+                <fragment id="tsa_extern_vars_h" apply_to="$this.generalConfig.tsaBuff" if_expr="$this.generalConfig.tsaBufferInit.getValue(false)"></fragment>
+            </section>
+            <section target="callback_function_extern">
+                <fragment id="pipe_cb" for_elements_of="$this.generalConfig.pipes"></fragment>
+            </section>
+            <!-- c -->
+            <section target="global_vars">
+                <fragment id="generic_uart_global_vars" apply_to="$this.generalConfig.serialConfig" if_expr="$this.generalConfig.commInterface.getValue()==`serial` &amp;&amp; !$this.generalConfig.initTypeVar.getValue()"/>
+                <fragment id="generic_can_global_vars" apply_to="$this.generalConfig.canConfig" if_expr="$this.generalConfig.commInterface.getValue()==`can` &amp;&amp; !$this.generalConfig.initTypeVar.getValue()"/>       
+                <fragment id="ram_global_var_c" if_expr="$this.generalConfig.commInterface.getValue()==`can` &amp;&amp; !$this.generalConfig.initTypeVar.getValue() &amp;&amp; $this.generalConfig.mcanRamConfig.isAvailable()"></fragment>
+                <fragment id="passwords_global_vars_c" if_expr="$this.generalConfig.FMSTR_USE_HASHED_PASSWORDS.getValue()"></fragment>
+                <fragment id="rec_global_vars_c" for_elements_of="$this.generalConfig.recorders"></fragment>
+                <fragment id="pipe_global_vars_c" for_elements_of="$this.generalConfig.pipes"></fragment>
+                <fragment id="tsa_global_vars_c" apply_to="$this.generalConfig.tsaBuff" if_expr="$this.generalConfig.tsaBufferInit.getValue(false)"></fragment>
+                <fragment id="recorders_array_c"></fragment>
+                <fragment id="generic_can_irq_handler_functions" apply_to="$this.generalConfig.canConfig"/>
+                <fragment id="generic_uart_irq_handler_functions" apply_to="$this.generalConfig.serialConfig"/>  
+                <fragment id="dsc_eonce_irq_handler_functions" apply_to="$this.generalConfig.dsc_eonce_config"></fragment>
+            </section>
+            <!--INIT FUNCTION-->
+            <section target="init_function_preinit0">
+                <fragment id="generic_uart_init_function_body" apply_to="$this.generalConfig.serialConfig" if_expr="$this.generalConfig.commInterface.getValue()==`serial` &amp;&amp;  ($this.generalConfig.serialConfig.hasOption(`genericUartUserInit`) &amp;&amp; $this.generalConfig.serialConfig.enableUserInit.getValue() || !$this.generalConfig.initTypeVar.getValue())"/>
+                <fragment id="generic_can_init_function_body" apply_to="$this.generalConfig.canConfig" if_expr="$this.generalConfig.commInterface.getValue()==`can` &amp;&amp; ($this.generalConfig.canConfig.hasOption(`genericCanUserInit`) &amp;&amp; $this.generalConfig.canConfig.enableUserInit.getValue() || !$this.generalConfig.initTypeVar.getValue())"/>
+            </section>
+            <section target="init_function_body">
+                <fragment id="general_init_c"></fragment>
+            </section>
+            
+            <section target="init_function_postinit0">
+                <fragment id="generic_uart_irq_vectors" apply_to="$this.generalConfig.serialConfig"></fragment>
+                <fragment id="generic_can_irq_vectors" apply_to="$this.generalConfig.canConfig"></fragment>
+                <fragment id="dsc_eonce_irq_vectors"></fragment>
+            </section>
+        </code>
+        <quick_selections>
+            <quick_selection id="default" label="Default">
+                <set id="generalConfig.FMSTR_FLEXCAN_TXMB">1</set>
+                <set id="generalConfig.FMSTR_FLEXCAN_RXMB">2</set>
+                <set id="generalConfig.mcanRamConfig.bufferAddressValue">0x20020000</set>
+                <set id="generalConfig.mcanRamConfig.bufferAddress">(uint32_t)FreeMASTER_MCAN_RAM</set>
+                <set id="generalConfig.mcanRamConfig.bufferExternDef">uint32_t FreeMASTER_MCAN_RAM[]</set>
+                <set id="generalConfig.mcanRamConfig.mcan_tx">32</set>
+                <set id="generalConfig.mcanRamConfig.mcan_rx">16</set>
+                <set id="generalConfig.dsc_eonce_config.txRegInterruptEnable">true</set>
+                <set id="generalConfig.dsc_eonce_config.tx_interrupt_vector.useDefaultISR">true</set>
+                <set id="generalConfig.dsc_eonce_config.rxRegInterruptEnable">true</set>
+                <set id="generalConfig.dsc_eonce_config.rx_interrupt_vector.useDefaultISR">true</set>
+                <set id="generalConfig.FMSTR_COMM_RQUEUE_SIZE">32</set>
+                <set id="generalConfig.FMSTR_USE_SCOPE">1</set>
+                <set id="generalConfig.FMSTR_MAX_SCOPE_VARS">8</set>
+                <set id="generalConfig.FMSTR_USE_TSA_INROM">true</set>
+                <set id="generalConfig.FMSTR_USE_TSA_SAFETY">true</set>
+                <set id="generalConfig.FMSTR_USE_TSA_DYNAMIC">false</set>
+                <set id="generalConfig.tsaBuff.bufferAddress">FreeMASTER_TSA_buffer</set>
+                <set id="generalConfig.tsaBuff.bufferExternDef">FMSTR_ADDR FreeMASTER_TSA_buffer[TSA_TABLE_SIZE]</set>
+                <set id="generalConfig.tsaBuff.bufferSize">(5 * sizeof(FMSTR_TSA_ENTRY))</set>
+                <set id="generalConfig.FMSTR_USE_READMEM">true</set>
+                <set id="generalConfig.FMSTR_USE_WRITEMEM">true</set>
+                <set id="generalConfig.FMSTR_USE_WRITEMEMMASK">true</set>
+                <set id="generalConfig.FMSTR_USE_APPCMD">false</set>
+                <set id="generalConfig.FMSTR_APPCMD_BUFF_SIZE">32</set>
+                <set id="generalConfig.FMSTR_MAX_APPCMD_CALLS">8</set>
+                <set id="generalConfig.recorders.0.recInit">true</set>
+                <set id="initFreemaster">true</set>
+            </quick_selection>
+            <default>default</default>
+        </quick_selections>
+    </config_set>
+</component:config_component>

@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="cop_reg" label="COP" category="Register init" registers_init="true" options="UI_COMPONENT_MODE_HIDDEN"
+    xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd" 
+    xmlns:component="http://swtools.freescale.net/XSD/component/1.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <description>Computer Operating Properly (COP) Watchdog</description>
+    <mode id="cop_general" label="General" available="true">
+        <description>General COP initialization.</description>
+        <config_set_refs>
+            <config_set_ref>fsl_cop</config_set_ref>
+        </config_set_refs>
+        <master_peripheral exclusive="false">
+            <peripheral_type>COP</peripheral_type>
+        </master_peripheral>
+    </mode>
+    <config_set id="fsl_cop" label="General configuration" from_source="fsl_cop.h">
+        <description>General configuration</description>
+        <generated_types>
+        </generated_types>
+        <user_types>
+            <enum id="cop_clock_source_t" label="COP clock source selection" from="_cop_clock_source">
+                <description></description>
+                <item id="0" label="COP clock sourced from Relaxation oscillator (ROSC)" value="AltClock0">
+                    <description>COP clock sourced from Relaxation oscillator (ROSC)</description>
+                </item>
+                <item id="1" label="COP clock sourced from Crystal oscillator (COSCs)" value="AltClock1">
+                    <description>COP clock sourced from Crystal oscillator (COSCs)</description>
+                </item>
+                <item id="2" label="COP clock sourced from IP Bus clock" value="AltClock2">
+                    <description>COP clock sourced from IP Bus clock</description>
+                </item>
+                <item id="3" label="COP clock sourced from Low speed oscillator" value="AltClock3">
+                    <description>COP clock sourced from Low speed oscillator</description>
+                </item>
+            </enum>
+            <enum id="cop_clock_prescaler_t" label="Describes the selection of the clock prescaler" from="_cop_clock_prescaler">
+                <description></description>
+                <item id="1" label="1" value="0">
+                    <description>Divided by 1</description>
+                </item>
+                <item id="16" label="16" value="1">
+                    <description>Divided by 16</description>
+                </item>
+                <item id="256" label="256" value="2">
+                    <description>Divided by 256</description>
+                </item>
+                <item id="1024" label="1024" value="3">
+                    <description>Divided by 1024</description>
+                </item>
+            </enum>
+            <struct id="cop_config_t" label="Describes COP configuration structure" from="_cop_config">
+                <description></description>
+                <bool id="writeProtect" label="Enable write protection">
+                    <description>Enable write protection. All other settings will be read-only after initialization.</description>
+                    <assign when="true">
+                        <register name="CTRL" bitfield="CWP" value="$this.getValue()? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                    </assign>
+                </bool>
+                <bool id="enableStop" label="Enable in stop mode">
+                    <description>When enabled, counter runs in stop mode.</description>
+                    <assign when="true">
+                        <register name="CTRL" bitfield="CSEN" value="$this.getValue()? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                    </assign>
+                </bool>
+                <bool id="enableWait" label="Enable in wait mode">
+                    <description>When enabled, counter runs in wait mode.</description>
+                    <assign when="true">
+                        <register name="CTRL" bitfield="CWEN" value="$this.getValue()? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                    </assign>
+                </bool>
+                <bool id="enableLossOfReference" label="Enable PLL loss of reference counter">
+                    <description>Enable PLL loss of reference counter</description>
+                    <assign when="true">
+                        <register name="CTRL" bitfield="CLOREN" value="$this.getValue()? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                    </assign>
+                </bool>
+                <bool id="enableCOP" label="Enable COP">
+                    <description>Enable COP</description>
+                    <assign when="true">
+                        <register name="CTRL" bitfield="CEN" value="$this.getValue()? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                    </assign>
+                </bool>
+
+                <reference id="_clockSource" label="Clock source" type="cop_clock_source_t" options="remove_from_struct_init" available="false"/> 
+                <variable id="clockSourceUId" value="$parent.clockSource1.getEnumItemValue()"/>
+                <dynamic_enum id="clockSource1" label="Clock source" options="remove_from_struct_init" items="enumItemsOf($parent._clockSource).arrayToEnumItems(
+                    enumItem -> true,
+                    enumItem -> enumItem.getID(),
+                    enumItem -> getPeripheralClock($instance.getPeripheral(), enumItem.getValue()),
+                    enumItem -> enumItem.getValue())">
+                    <description>Clock source selection.</description>
+                    <validation>
+                        <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.clockSourceUId.getValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() == `GetFreq`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                            description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                            level="Warning">
+                            <feature name="frequency" evaluation="greaterThan">
+                                <data expr="0" unit="Hz" type="Frequency"/>
+                            </feature>
+                        </dependency>
+                        <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.clockSourceUId.getValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                            description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                            level="Error">
+                            <feature name="frequency" evaluation="greaterThan">
+                                <data expr="0" unit="Hz" type="Frequency"/>
+                            </feature>
+                        </dependency>
+                    </validation>
+                    <assign when="true">
+                        <register name="CTRL" bitfield="CLKSEL" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                    </assign>
+                </dynamic_enum>
+                <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" available="($parent.clockSource1.isAvailable())" 
+                    items="(getClockFunctionalGroups().arrayToEnumItems(
+                    enumItem -> true,
+                    enumItem -> enumItem,
+                    enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource1.getEnumItemValue(), enumItem)) + ` (` + enumItem + `)`,
+                    enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource1.getEnumItemValue(), enumItem)))" >
+                    <description>Selection of the clock source frequency.</description>
+                    <validation>
+                        <constraint cond_expr="(($this.getEnumItemValue() == `GetFreq`) || ($this.getEnumItemValue().toHertz() != 0))" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+                    </validation>
+                    <custom_value_support default="1" validation_expr="x -> x.toHertz() &gt; 0" />
+                </dynamic_enum> 
+
+                <reference id="prescaler" label="Prescaler" type="cop_clock_prescaler_t">
+                    <description>Set clock prescaler value</description>
+                    <assign when="true">
+                        <register name="CTRL" bitfield="PSS" value="$this.getEnumItemValue().toInt()" reverse_value="x -> (x == 0 ? 1 : (x == 1 ? 16 : (x == 2 ? 256 : 1024)))"/>
+                    </assign>
+                </reference>
+                
+                <info id="resultingPeriodFreq" label="Resulting frequency/period" value="system::calculateFreqPeriod($parent.prescaler.getEnumItemId().toInt(), $parent.clockSourceFreq.getEnumItemValue())">
+                    <description>Frequency and period calculated with prescaler value.</description>
+                </info>
+                
+                <variable id="clockSourceFrequency" value="system::calculateFreq($parent.prescaler.getEnumItemId().toInt(), $parent.clockSourceFreq.getEnumItemValue())"/>
+                
+                <integer id="timeoutRegValue" label="Timeout register value" type="uint16_t">
+                    <description>The value in this setting determines the timeout period of the COP counter.</description>
+                    <assign when="true">
+                        <register name="TOUT" bitfield="TIMEOUT" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                    </assign>
+                </integer>
+                
+                <info id="timeoutValueInfo" label="Timeout value" value="system::calculatePeriod($parent.timeoutRegValue.getValue(), $parent.clockSourceFrequency.getValue())">
+                    <description>Timeout value, in time units.</description>
+                </info>
+                
+                <integer id="windowRegValue" label="Window register value" type="uint16_t">
+                    <description>This setting specifies an upper bound on the counter value that must be crossed prior to the counter being serviced.</description>
+                    <assign when="true">
+                        <register name="WINDOW" bitfield="WINDOW_VALUE" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                    </assign>
+                </integer>
+           
+                <info id="windowValueInfo" label="Window value" value="system::calculatePeriod($parent.windowRegValue.getValue(), $parent.clockSourceFrequency.getValue())">
+                    <description>Window value, in time units.</description>
+                </info>
+
+                <integer id="interruptRegValue" label="Interrupt register value" type="uint16_t">
+                    <description>When the count value is equal to this interrupt value, an interrupt is generated if the interrupt is enabled.</description>
+                    <assign when="true">
+                        <register name="INTVAL" bitfield="INTERRUPT_VALUE" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                    </assign>
+                </integer>
+                
+                <info id="interruptValueInfo" label="Interrupt value" value="system::calculatePeriod($parent.interruptRegValue.getValue(), $parent.clockSourceFrequency.getValue())">
+                    <description>Interrupt value, in time units.</description>
+                </info>
+                
+                <bool id="enableInterrupt" label="Enable interrupt">
+                    <description>Enable an interrupt when the counter value reaches the interrupt value.</description>
+                    <assign when="true">
+                        <register name="CTRL" bitfield="INTEN" value="$this.getValue()? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/> 
+                    </assign>
+                </bool>
+
+            </struct>
+        </user_types>
+        <settings>
+            <reference id="copConfig" type="cop_config_t" label="" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN"/>
+            
+            <struct id="interrupt_vector" label="Interrupt vector" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+                <description>Interrupt vector controller ( ` + $parent.interrupt.intControllerName.getValue() + ` ) settings that provide configuration of interrupt vectors and their enabling.</description>
+                <bool id="enable_irq" label="Enable interrupt vector" options="UI_LABEL_BOLD">
+                    <description expr="`Enable initialization of the interrupt vector in the ` + $parent.interrupt.intControllerName.getValue() + ` and providing definition of the interrupt routine name.`"></description>
+                </bool>
+                <reference id="interrupt" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN" enable="$parent.enable_irq.getValue()"/>
+            </struct>
+            
+            <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+            <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+            <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+            <variable id="inst_config_ID" value="$parent.inst_ID.getValue() + `_config`"></variable>
+
+            <struct id="copTemplateVariables" available="false">
+                <variable id="PERIPHERAL" value="$instance.getPeripheral()"/>
+                <variable id="VPREFIX" value="$configSet.inst_ID.getValue()"/>
+            </struct> 
+            
+        </settings>
+        <fragment_defs>
+            <import>
+                <from component_id="system" config_set_id="common_code_templates"/>
+                <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+            </import>
+        </fragment_defs>
+        <code>
+            <!-- #includes -->
+            <section target="includes">
+                <fragment id="include">
+                    <param id="name">device_registers</param>
+                    <param id="filename">fsl_device_registers.h</param>
+                </fragment>
+            </section>
+            <!-- defines -->
+            <section target="defines">
+                <fragment id="comment">
+                    <param id="content" expr="$instance.getFnGroupName() + ` defines for ` + $instance.getPeripheral()"/>
+                    <param id="paddingLevel" expr="0"/>
+                </fragment>
+                <fragment id="define">
+                    <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)"/>
+                    <param id="value" expr="$instance.getPeripheral()"/>
+                    <param id="description">Definition of peripheral ID.</param>
+                </fragment>
+                <fragment id="define">
+                    <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`)"/>
+                    <param id="value" expr="$instance.getPeripheral() + `_CLK_SRC`"/>
+                    <param id="description">Definition of the clock source</param>
+                </fragment> 
+                <fragment id="IRQ_definitions" apply_to="$this.interrupt_vector.interrupt" if_expr="$this.interrupt_vector.enable_irq.value()"/>
+               
+                <fragment id="all_assigned_regs_init">
+                    <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+                </fragment>
+            </section>
+            
+            <!-- global vars extern -->
+            <section target="global_vars_extern">
+            </section>
+            
+            <section target="global_vars">
+            </section>
+            
+            <section target="init_function_body">
+                <fragment id="template">
+                    <param id="file">fsl_cop.template</param>
+                    <param id="setting" expr="$configSet.copTemplateVariables"></param>
+                </fragment> 
+            </section>     
+            
+            <!-- INTC controller section and the IRQ enable fragment with available condition example -->
+            <section target="common_post_init_function">
+                <fragment id="IRQn_enable_default" apply_to="$configSet.interrupt_vector.interrupt" if_expr="$configSet.interrupt_vector.interrupt.isEnabled() &amp;&amp; $configSet.interrupt_vector.interrupt.isAvailable() &amp;&amp; $configSet.interrupt_vector.interrupt.intController.getValue() == `INTC`"/>
+            </section>
+        </code>
+        <validation/>
+        <quick_selections>
+            <quick_selection id="QS_COP" label="Default">
+                <description>Default setting for COP</description> 
+                <set id="copConfig.enableCOP">true</set>
+                <set id="copConfig.prescaler">1024</set>
+                <set id="copConfig.timeoutRegValue">65535</set>
+                <set id="copConfig.windowRegValue">65535</set>
+                <set id="copConfig.interruptRegValue">255</set>
+                <set id="copConfig.countServiceRegValue">65535</set>
+            </quick_selection>
+            <default>QS_COP</default>
+        </quick_selections>
+    </config_set>
+</component:config_component>

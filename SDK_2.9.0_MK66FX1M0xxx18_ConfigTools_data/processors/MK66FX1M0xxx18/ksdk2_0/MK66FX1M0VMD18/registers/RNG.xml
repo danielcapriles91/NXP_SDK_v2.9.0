@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="32" name="CR" description="RNGA Control Register">
+    <alias type="CMSIS" value="CR"/>
+    <bit_field offset="0" width="1" name="GO" access="RW" reset_value="0" description="Go">
+      <alias type="CMSIS" value="RNG_CR_GO(x)"/>
+      <bit_field_value name="CR_GO_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="CR_GO_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="HA" access="RW" reset_value="0" description="High Assurance">
+      <alias type="CMSIS" value="RNG_CR_HA(x)"/>
+      <bit_field_value name="CR_HA_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="CR_HA_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="INTM" access="RW" reset_value="0" description="Interrupt Mask">
+      <alias type="CMSIS" value="RNG_CR_INTM(x)"/>
+      <bit_field_value name="CR_INTM_0b0" value="0b0" description="Not masked"/>
+      <bit_field_value name="CR_INTM_0b1" value="0b1" description="Masked"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="CLRI" access="WORZ" reset_value="0" description="Clear Interrupt">
+      <alias type="CMSIS" value="RNG_CR_CLRI(x)"/>
+      <bit_field_value name="CR_CLRI_0b0" value="0b0" description="Do not clear the interrupt."/>
+      <bit_field_value name="CR_CLRI_0b1" value="0b1" description="Clear the interrupt. When you write 1 to this field, RNGA then resets the error-interrupt indicator (SR[ERRI]). This bit always reads as 0."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="SLP" access="RW" reset_value="0" description="Sleep">
+      <alias type="CMSIS" value="RNG_CR_SLP(x)"/>
+      <bit_field_value name="CR_SLP_0b0" value="0b0" description="Normal mode"/>
+      <bit_field_value name="CR_SLP_0b1" value="0b1" description="Sleep (low-power) mode"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="27" reset_value="0"/>
+  </register>
+  <register offset="0x4" width="32" name="SR" description="RNGA Status Register">
+    <alias type="CMSIS" value="SR"/>
+    <bit_field offset="0" width="1" name="SECV" access="RO" reset_value="0" description="Security Violation">
+      <alias type="CMSIS" value="RNG_SR_SECV(x)"/>
+      <bit_field_value name="SR_SECV_0b0" value="0b0" description="No security violation"/>
+      <bit_field_value name="SR_SECV_0b1" value="0b1" description="Security violation"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="LRS" access="RO" reset_value="0" description="Last Read Status">
+      <alias type="CMSIS" value="RNG_SR_LRS(x)"/>
+      <bit_field_value name="SR_LRS_0b0" value="0b0" description="No underflow"/>
+      <bit_field_value name="SR_LRS_0b1" value="0b1" description="Underflow"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="ORU" access="RO" reset_value="0" description="Output Register Underflow">
+      <alias type="CMSIS" value="RNG_SR_ORU(x)"/>
+      <bit_field_value name="SR_ORU_0b0" value="0b0" description="No underflow"/>
+      <bit_field_value name="SR_ORU_0b1" value="0b1" description="Underflow"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="ERRI" access="RO" reset_value="0" description="Error Interrupt">
+      <alias type="CMSIS" value="RNG_SR_ERRI(x)"/>
+      <bit_field_value name="SR_ERRI_0b0" value="0b0" description="No underflow"/>
+      <bit_field_value name="SR_ERRI_0b1" value="0b1" description="Underflow"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="SLP" access="RO" reset_value="0" description="Sleep">
+      <alias type="CMSIS" value="RNG_SR_SLP(x)"/>
+      <bit_field_value name="SR_SLP_0b0" value="0b0" description="Normal mode"/>
+      <bit_field_value name="SR_SLP_0b1" value="0b1" description="Sleep (low-power) mode"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="3" reset_value="0"/>
+    <bit_field offset="8" width="8" name="OREG_LVL" access="RO" reset_value="0" description="Output Register Level">
+      <alias type="CMSIS" value="RNG_SR_OREG_LVL(x)"/>
+      <bit_field_value name="SR_OREG_LVL_0b00000000" value="0b00000000" description="No words (empty)"/>
+      <bit_field_value name="SR_OREG_LVL_0b00000001" value="0b00000001" description="One word (valid)"/>
+    </bit_field>
+    <bit_field offset="16" width="8" name="OREG_SIZE" access="RO" reset_value="0x1" description="Output Register Size">
+      <alias type="CMSIS" value="RNG_SR_OREG_SIZE(x)"/>
+      <bit_field_value name="SR_OREG_SIZE_0b00000001" value="0b00000001" description="One word (this value is fixed)"/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="8" reset_value="0"/>
+  </register>
+  <register offset="0x8" width="32" name="ER" description="RNGA Entropy Register">
+    <alias type="CMSIS" value="ER"/>
+    <bit_field offset="0" width="32" name="EXT_ENT" access="WORZ" reset_value="0" description="External Entropy">
+      <alias type="CMSIS" value="RNG_ER_EXT_ENT(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xC" width="32" name="OR" description="RNGA Output Register">
+    <alias type="CMSIS" value="OR"/>
+    <bit_field offset="0" width="32" name="RANDOUT" access="RO" reset_value="0" description="Random Output">
+      <alias type="CMSIS" value="RNG_OR_RANDOUT(x)"/>
+      <bit_field_value name="OR_RANDOUT_0b00000000000000000000000000000000" value="0b00000000000000000000000000000000" description="Invalid data (if you read this field when it is 0 and SR[OREG_LVL] is 0, RNGA then writes 1 to SR[ERRI], SR[ORU], and SR[LRS]; when the error interrupt is not masked (CR[INTM]=0), RNGA also asserts an error interrupt request to the interrupt controller)."/>
+    </bit_field>
+  </register>
+</regs:peripheral>

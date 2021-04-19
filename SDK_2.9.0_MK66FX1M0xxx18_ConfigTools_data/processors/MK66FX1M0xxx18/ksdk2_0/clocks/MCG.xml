@@ -1,0 +1,390 @@
+<?xml version="1.0"?>
+<clocks:component xmlns:clocks="http://apif.freescale.net/schemas/clocks/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://apif.freescale.net/schemas/clocks/1.1 http://apif.freescale.net/schemas/clocks/1.1/clocks.xsd" id="MCG">
+  <instance_header>
+    <instance_description>Clock model for the MCG module (parameterized, shared accross all Kinetis parts)</instance_description>
+  </instance_header>
+  <interface>
+    <input_clock_signal id="OSCCLK_IN" name="OSCCLK" description="System oscillator output of the internal oscillator or sourced directly from EXTAL."/>
+    <input_clock_signal id="RTC32kHzCLK_IN" name="RTC32kHzCLK" description="RTC oscillator output for the RTC module."/>
+    <input_clock_signal id="IRC48MCLK_IN" name="IRC48MCLK" description="Internal reference oscillator 48 MHz."/>
+    <input_clock_signal id="EXT_PLL_IN" name="EXT_PLL" description="External PLL clock source"/>
+    <output_clock_signal id="MCGOUTCLK" name="MCGOUTCLK" description="MCG Output Clock"/>
+    <output_clock_signal id="MCGIRCLK" name="MCGIRCLK" description="MCG Internal Reference Clock"/>
+    <output_clock_signal id="MCGFFCLK" name="MCGFFCLK" description="MCG Fixed Frequency clock output of the slow reference clock or a divided MCG external reference clock. Note: Clock is valid only when its frequency is not more than 1/8 of the MCGOUTCLK frequency. When it is not valid, it is disabled and held high. The MCGFFCLK is not available when the MCG is in BLPI mode. This clock is also disabled in Stop mode."/>
+    <output_clock_signal id="MCGFLLCLK" name="MCGFLLCLK" description="FLL output clock"/>
+    <output_clock_signal id="MCGPLLCLK" name="MCGPLLCLK" description="PLL output clock"/>
+  </interface>
+  <implementation>
+    <configuration_element id="MCGMode" name="MCG Mode" description="MCG Multi-clock generator (MCG) mode of operation">
+      <default value="FEI"/>
+      <item id="FEI" description="FEI (FLL Engaged Internal)">
+        <long_description>
+          FLL engaged internal (FEI) is the default mode of operation.
+          In FEI mode, MCGOUTCLK is derived from the FLL clock (DCOCLK) that is controlled by the 32 kHz Internal Reference Clock (IRC). The FLL loop will lock the DCO frequency to the FLL factor times the internal reference frequency. 
+          In FEI mode, the PLL(s) are disabled in a lowpower state unless explicitly enabled (see PLL settings).
+        </long_description>
+        <assigns>
+          <assign register="C1" bit_field="CLKS" value="0"/>
+          <assign register="C1" bit_field="IREFS" value="1"/>
+          <assign register="C6" bit_field="PLLS" value="0"/>
+        </assigns>
+        <constraint power_modes="RUN WAIT HSRUN" description="The FEI mode is available in the RUN, WAIT and HSRUN (if supported) power modes only"/>
+      </item>
+      <item id="FEE" description="FEE (FLL Engaged External)">
+        <long_description>
+          In FEE mode, MCGOUTCLK is derived from the FLL clock (DCOCLK) that is controlled by the external reference clock. The FLL loop will lock the DCO frequency to the FLL factor times the external reference frequency.
+          FRDIV must be written to divide external reference clock to be within the range of 31.25 kHz to 39.0625 kHz.
+          The PLL(s) are disabled in a lowpower state unless explicitly enabled (see PLL settings).
+        </long_description>
+        <assigns>
+          <assign register="C1" bit_field="CLKS" value="0"/>
+          <assign register="C1" bit_field="IREFS" value="0"/>
+          <assign register="C6" bit_field="PLLS" value="0"/>
+        </assigns>
+        <constraint power_modes="RUN WAIT HSRUN" description="The FEE mode is available in the RUN, WAIT and HSRUN (if supported) power modes only"/>
+      </item>
+      <item id="FBI" description="FBI (FLL Bypassed Internal)">
+        <long_description>
+          In FBI mode, the MCGOUTCLK is derived either from the slow (32 kHz IRC) or fast (4 MHz IRC) internal reference clock. The FLL is operational but its output is not used. This mode is useful to allow the FLL to acquire its target frequency while the MCGOUTCLK is driven from the selected internal reference clock. The FLL clock (DCOCLK) is controlled by the slow internal reference clock, and the DCO clock frequency locks to a multiplication factor times the internal reference frequency. 
+          The PLL(s) are disabled in a lowpower state unless explicitly enabled (see PLL settings).
+        </long_description>
+        <assigns>
+          <assign register="C1" bit_field="CLKS" value="1"/>
+          <assign register="C1" bit_field="IREFS" value="1"/>
+          <assign register="C6" bit_field="PLLS" value="0"/>
+          <assign register="C2" bit_field="LP" value="0"/>
+        </assigns>
+        <constraint power_modes="RUN WAIT HSRUN" description="The FBI mode is available in the RUN, WAIT and HSRUN (if supported) power modes only"/>
+      </item>
+      <item id="FBE" description="FBE (FLL Bypassed External)">
+        <long_description>
+          In FBE mode, the MCGOUTCLK is derived from the OSCSEL external reference clock. The FLL is operational but its output is not used. This mode is useful to allow the FLL to acquire its target frequency while the MCGOUTCLK is driven from the external reference clock. The FLL clock (DCOCLK) is controlled by the external reference clock, and the DCO clock frequency locks to multiplication factor times the divided external reference frequency. 
+          FRDIV must be written to divide external reference clock to be within the range of 31.25 kHz to 39.0625 kHz.
+          The PLL(s) are disabled in a lowpower state unless explicitly enabled (see PLL settings).
+        </long_description>
+        <assigns>
+          <assign register="C1" bit_field="CLKS" value="0b10"/>
+          <assign register="C1" bit_field="IREFS" value="0"/>
+          <assign register="C6" bit_field="PLLS" value="0"/>
+          <assign register="C2" bit_field="LP" value="0"/>
+        </assigns>
+        <constraint power_modes="RUN WAIT HSRUN" description="The FBE mode is available in the RUN, WAIT and HSRUN (if supported) power modes only"/>
+      </item>
+      <item id="PEE" description="PEE (PLL Engaged External)">
+        <long_description>
+          In PEE mode, the MCGOUTCLK is derived from the output of PLL which is controlled by a external reference clock. The PLL clock frequency locks to a multiplication factor, as specified by its corresponding VDIV, times the selected PLL reference frequency, as specified by its corresponding PRDIV. The PLL's programmable reference divider must be configured to produce a valid PLL reference clock. The FLL is disabled in a low-power state.
+        </long_description>
+        <assigns>
+          <assign register="C1" bit_field="CLKS" value="0"/>
+          <assign register="C1" bit_field="IREFS" value="0"/>
+          <assign register="C6" bit_field="PLLS" value="1"/>
+          <assign register="C2" bit_field="LP" value="0"/>
+        </assigns>
+        <constraint power_modes="RUN WAIT HSRUN" description="The PEE mode is available in the RUN, WAIT and HSRUN (if supported) power modes only"/>
+      </item>
+      <item id="PBE" description="PBE (PLL Bypassed External)">
+        <long_description>
+          In PBE mode, MCGOUTCLK is derived from the OSCSEL external reference clock; the PLL is operational, but its output clock is not used. This mode is useful to allow the PLL to acquire its target frequency while MCGOUTCLK is driven from the external reference clock. The PLL clock frequency locks to a multiplication factor, as specified by its [VDIV], times the PLL reference frequency, as specified by its [PRDIV]. In preparation for transition to PEE, the PLL's programmable reference divider must be configured to produce a valid PLL reference clock. The FLL is disabled in a lowpower state.
+        </long_description>
+        <assigns>
+          <assign register="C1" bit_field="CLKS" value="0b10"/>
+          <assign register="C1" bit_field="IREFS" value="0"/>
+          <assign register="C6" bit_field="PLLS" value="1"/>
+          <assign register="C2" bit_field="LP" value="0"/>
+        </assigns>
+        <constraint power_modes="RUN WAIT HSRUN" description="The PBE mode is available in the RUN, WAIT and HSRUN (if supported) power modes only"/>
+      </item>
+      <item id="BLPI" description="BLPI (Bypassed Low Power Internal)">
+        <long_description>
+          In BLPI mode, MCGOUTCLK is derived directly from the internal reference clock. The FLL is disabled and PLL is also disabled.
+        </long_description>
+        <assigns>
+          <assign register="C1" bit_field="CLKS" value="1"/>
+          <assign register="C1" bit_field="IREFS" value="1"/>
+          <assign register="C6" bit_field="PLLS" value="0"/>
+          <assign register="C2" bit_field="LP" value="1"/>
+        </assigns>
+      </item>
+      <item id="BLPE" description="BLPE (Bypassed Low Power External)">
+        <long_description>
+          In BLPE mode, MCGOUTCLK is derived directly from the OSCSEL external reference clock. The FLL is disabled and PLL is also disabled.
+        </long_description>
+        <assigns>
+          <assign register="C1" bit_field="CLKS" value="0b10"/>
+          <assign register="C1" bit_field="IREFS" value="0"/>
+          <assign register="C6" bit_field="PLLS" value="0"/>
+          <assign register="C2" bit_field="LP" value="1"/>
+        </assigns>
+      </item>
+    </configuration_element>
+    <clock_source id="FAST_IRCLK" name="FAST_IRCLK" description="Fast internal reference clock (4MHz)">
+      <internal_source>
+        <trimmed default_freq="4 MHz">
+          <range min_freq="3 MHz" max_freq="5 MHz" description="The default factory trim value is 4 MHz. If this default value is not used, the trimming process via debugger or auto-trim feature must be applied (it is not supported by the Clocks tool in the generated code). The clock can be trimmed in the range from 3 MHz to 5 MHz."/>
+        </trimmed>
+      </internal_source>
+      <enable cond_expr="(powerMode == `RUN` || powerMode == `HSRUN` || powerMode == `WAIT` || powerMode == `VLPR` || powerMode == `VLPW` || (powerMode == `STOP` &amp;&amp; C1[IREFSTEN] == 1)) &amp;&amp; (C1[IRCLKEN] == 1 || MCGMode == `FEI` || MCGMode == `FBI` || MCGMode == `BLPI` || MCGMode == `PBI` || MCGMode == `PEI`)" description="When power mode is RUN, HSRUN, WAIT, VLPR or VLPW the fast internal reference clock is enabled:&#13;&#10; - Always enabled when MCG Mode is FEI, FBI, BLPI, PBI or PEI (if supported).&#13;&#10; - In other MCG modes it must be enabled by the MCGIRCLK output setings (C1[IRCLKEN] == 1).&#13;&#10;In STOP power mode this clock source can be enabled by the MCGIRCLK output in Stop mode settings (C1[IREFSTEN] bit)."/>
+    </clock_source>
+    <clock_source id="SLOW_IRCLK" name="SLOW_IRCLK" description="Slow internal reference clock (30-40kHz).">
+      <internal_source>
+        <trimmed default_freq="32.768 kHz">
+          <range min_freq="30 kHz" max_freq="40 kHz" description="The default factory trim value is 32.768 kHz. If this default value is not used, the trimming process via debugger or auto-trim feature must be applied (it is not supported by the Clocks tool in the generated code). The clock can be trimmed in the range from 30 kHz to 40 kHz."/>
+        </trimmed>
+      </internal_source>
+      <enable cond_expr="(powerMode == `RUN` || powerMode == `HSRUN` || powerMode == `WAIT` || (powerMode == `STOP` &amp;&amp; C1[IREFSTEN] == 1)) &amp;&amp; (C1[IRCLKEN] == 1 || MCGMode == `FEI` || MCGMode == `FBI` || MCGMode == `BLPI` || MCGMode == `PBI` || MCGMode == `PEI`)" description="When power mode is RUN, HSRUN or WAIT the slow internal reference clock is enabled:&#13;&#10; - Always enabled when MCG Mode is FEI, FBI, BLPI, PBI or PEI (if supported).&#13;&#10; - In other MCG modes it must be enabled by the MCGIRCLK output setings (C1[IRCLKEN] == 1).&#13;&#10;In STOP power mode this clock source can be enabled by the MCGIRCLK output in Stop mode settings (C1[IREFSTEN] bit)."/>
+    </clock_source>
+    <prescaler id="FCRDIV" name="FCRDIV" description="Fast Clock Internal Reference Divider">
+      <input signal="FAST_IRCLK.clk"/>
+      <divide expr="2**SC[FCRDIV]"/>
+    </prescaler>
+    <clock_select id="IRCS" name="IRCS" description="Internal Reference Clock Select">
+      <value_map expr="C2[IRCS]">
+        <input ctrl_value="0" signal="SLOW_IRCLK.clk" name="Slow internal reference clock"/>
+        <input ctrl_value="1" signal="FCRDIV.clk" name="Fast internal reference clock"/>
+      </value_map>
+    </clock_select>
+    <clock_select id="OSCSEL" name="OSCSEL" description="MCG OSC Clock Select. Selects the MCG FLL/PLL external reference clock." master="true">
+      <value_map expr="C7[OSCSEL]">
+        <input ctrl_value="0" signal="OSCCLK_IN" name="System Oscillator"/>
+        <input ctrl_value="1" signal="RTC32kHzCLK_IN" name="RTC oscillator 32kHz"/>
+        <input ctrl_value="2" signal="IRC48MCLK_IN" name="IRC 48MHz"/>
+      </value_map>
+    </clock_select>
+    <prescaler id="FRDIV" name="FRDIV" description="FLL External Reference Divider. The divider range (1-128 or 32-1536) is selected by the Frequency Range selection of the System Oscillator (OSC) and by selection of the RTC clock signal in the OSCSEL clock selector in the MCG.">
+      <input signal="OSCSEL.clk"/>
+      <enable cond_expr="C1[IREFS]==0" description="FRDIV divider is enabled when the output is used (IREFS clock selector uses the output of the FRDIV)."/>
+      <conditional_block>
+        <case cond_expr="C2[RANGE0]==0 || C7[OSCSEL]==1">
+          <value_map expr="C1[FRDIV]">
+            <divide expr="1" ctrl_value="0b000"/>
+            <divide expr="2" ctrl_value="0b001"/>
+            <divide expr="4" ctrl_value="0b010"/>
+            <divide expr="8" ctrl_value="0b011"/>
+            <divide expr="16" ctrl_value="0b100"/>
+            <divide expr="32" ctrl_value="0b101"/>
+            <divide expr="64" ctrl_value="0b110"/>
+            <divide expr="128" ctrl_value="0b111"/>
+          </value_map>
+        </case>
+        <otherwise>
+          <value_map expr="C1[FRDIV]">
+            <divide expr="32" ctrl_value="0b000"/>
+            <divide expr="64" ctrl_value="0b001"/>
+            <divide expr="128" ctrl_value="0b010"/>
+            <divide expr="256" ctrl_value="0b011"/>
+            <divide expr="512" ctrl_value="0b100"/>
+            <divide expr="1024" ctrl_value="0b101"/>
+            <divide expr="1280" ctrl_value="0b110"/>
+            <divide expr="1536" ctrl_value="0b111"/>
+          </value_map>
+        </otherwise>
+      </conditional_block>
+      <configuration_element id="MCG_C2_RANGE0_FRDIV_CFG" name="Frequency Range" description="Frequency range of the system oscillator. The range impact the range of the crystal oscillator and also FRDIV divider range (1-128 for the low frequency range and 32-1536 for other ranges).">
+        <default value="Low"/>
+        <item id="Low" description="Low frequency range (FRDIV range 1-128)">
+          <long_description>
+            Low frequency range. FRDIV divider range is 1-128. When the RTC external clock source is selected in the OSCSEL the FRDIV divider range is 1 - 128 (the Frequency Range does not control the FRDIV range)..
+          </long_description>
+          <assigns>
+            <assign register="MCG::C2" bit_field="RANGE0" value="0"/>
+          </assigns>
+        </item>
+        <item id="High" description="High frequency range (FRDIV range 32-1536)">
+          <long_description>
+            High frequency range. FRDIV divider range is 32-1536 if the MCG external clock source is not RTC (see the OSCSEL clock selector). When the RTC external clock source is selected in the OSCSEL the FRDIV divider range is 1 - 128.
+          </long_description>
+          <assigns>
+            <assign register="MCG::C2" bit_field="RANGE0" value="1"/>
+          </assigns>
+        </item>
+        <item id="Very_high" description="Very high frequency range (FRDIV range 32-1536)">
+          <long_description>
+            Very high frequency range. FRDIV divider range is 32-1536 if the MCG external clock source is not RTC (see the OSCSEL clock selector). When the RTC external clock source is selected in the OSCSEL the FRDIV divider range is 1 - 128.
+          </long_description>
+          <assigns>
+            <assign register="MCG::C2" bit_field="RANGE0" value="2"/>
+          </assigns>
+        </item>
+      </configuration_element>
+    </prescaler>
+    <clock_select id="IREFS" name="IREFS" description="Internal Reference Select. Selects the reference clock source for the FLL. This clock selector is controlled by the MCG Mode option.">
+      <value_map expr="C1[IREFS]">
+        <input ctrl_value="0" signal="FRDIV.clk" name="External reference clock"/>
+        <input ctrl_value="1" signal="SLOW_IRCLK.clk" name="Slow internal reference clock"/>
+      </value_map>
+    </clock_select>
+    <fll id="FLL" name="FLL" description="FLL (Frequency-locked loop)">
+      <input signal="IREFS.clk"/>
+      <prescaler id="FLL_mul" name="FLL Factor" description="FLL internal multiplier. It allows FLL factors: 640 (out. range 20-25MHz), 732 (out. range 20-25MHz), 1280 (out. range 40-50MHz), 1464 (out. range 40-50MHz), 1920 (out. range 60-75MHz), 2197 (out. range 60-75MHz), 2560 (out. range 80-100MHz), 2929 (out. range 80-100MHz). Note: The FLL factors 732, 1464, 2197 and 2929 are typically used with 32.768 kHz reference clock to provide 24 MHz, 48 MHz, 72 MHz and 96 MHz output frequency.">
+        <value_map expr="{C4[DRST_DRS],C4[DMX32]}">
+          <multiply expr="640" ctrl_value="0b000">
+            <constraint relates_to="input" min_freq="31.25 kHz" max_freq="39.0625 kHz" description="The FLL output range is 20 Mhz - 25 MHz for this FLL multiplication factor (FLL input reference clock 31.25kHz - 39.0625 kHz)"/>
+          </multiply>
+          <multiply expr="732" ctrl_value="0b001">
+            <constraint min_freq="20 MHz" max_freq="25 MHz" description="The FLL output range is 20 Mhz - 25 MHz for this FLL multiplication factor (FLL input reference clock 27.3kHz - 34.16 kHz)"/>
+          </multiply>
+          <multiply expr="1280" ctrl_value="0b010">
+            <constraint relates_to="input" min_freq="31.25 kHz" max_freq="39.0625 kHz" description="The FLL output range is 20 Mhz - 25 MHz for this FLL multiplication factor (FLL input reference clock 31.25kHz - 39.0625 kHz)"/>
+          </multiply>
+          <multiply expr="1464" ctrl_value="0b011">
+            <constraint min_freq="40 MHz" max_freq="50 MHz" description="The FLL output range is 40 Mhz - 50 MHz for this FLL multiplication factor (FLL input reference clock 27.3kHz - 34.16 kHz)"/>
+          </multiply>
+          <multiply expr="1920" ctrl_value="0b100">
+            <constraint relates_to="input" min_freq="31.25 kHz" max_freq="39.0625 kHz" description="The FLL output range is 20 Mhz - 25 MHz for this FLL multiplication factor (FLL input reference clock 31.25kHz - 39.0625 kHz)"/>
+          </multiply>
+          <multiply expr="2197" ctrl_value="0b101">
+            <constraint min_freq="60 MHz" max_freq="75 MHz" description="The FLL output range is 60 Mhz - 75 MHz for this FLL multiplication factor (FLL input reference clock 27.3kHz - 34.16 kHz)"/>
+          </multiply>
+          <multiply expr="2560" ctrl_value="0b110">
+            <constraint relates_to="input" min_freq="31.25 kHz" max_freq="39.0625 kHz" description="The FLL output range is 20 Mhz - 25 MHz for this FLL multiplication factor (FLL input reference clock 31.25kHz - 39.0625 kHz)"/>
+          </multiply>
+          <multiply expr="2929" ctrl_value="0b111">
+            <constraint min_freq="80 MHz" max_freq="100 MHz" description="The FLL output range is 80 Mhz - 100 MHz for this FLL multiplication factor (FLL input reference clock 27.3kHz - 34.16 kHz)"/>
+          </multiply>
+        </value_map>
+      </prescaler>
+      <enable cond_expr="MCGMode==`FBE` || MCGMode==`FEE` || MCGMode==`FEI` || MCGMode==`FBI`" description="FLL is enabled in FBE, FEE, FEI and FBI modes of MCG"/>
+    </fll>
+    <clock_select id="OSCSEL_PLL" name="PLL OSCSEL" description="MCG PLL OSC Clock Select. Selects the MCG PLL external reference clock. This clock selector is controled by the OSCSEL bits that directly control OSCSEL clock selector in MCG.">
+      <value_map expr="C7[OSCSEL]">
+        <input ctrl_value="0" signal="OSCCLK_IN" name="System Oscillator"/>
+        <input ctrl_value="1" signal="OSCCLK_IN" name="System Oscillator"/>
+        <input ctrl_value="2" signal="IRC48MCLK_IN" name="IRC 48MHz"/>
+      </value_map>
+    </clock_select>
+    <pll id="PLL" name="PLL" description="PLL (Phase-locked loop). Minimal PLL input clock frequency is 8 MHz.">
+      <input signal="OSCSEL_PLL.clk"/>
+      <enable cond_expr="(MCGMode==`PBE` || MCGMode==`PEE` || ((C5[PLLCLKEN0]==1) &amp;&amp; (MCGMode ==`FEI` || MCGMode ==`FBI` || MCGMode ==`FBE` || MCGMode ==`FEE`))) &amp;&amp; ((powerMode==`RUN` || powerMode==`WAIT` || powerMode==`HSRUN`) || (powerMode==`STOP` &amp;&amp; C5[PLLSTEN0]==1))" description="PLL is enabled in PBE, PEE or when FEI, FBI, FBE, FEE and C5[PLLCLKEN] in RUN/WAIT/HSRUN power mode or in stop mode when C5[PLLSTEN] is set (BLPI or BLPE modes) "/>
+      <prescaler id="PRDIV" name="PRDIV" description="PLL External Reference Divider">
+        <divide expr="C5[PRDIV]+1"/>
+        <constraint min_freq="8 MHz" max_freq="16 MHz" description="PLL internal clock frequency (after internal divider PRDIV) must be in the range 8-16 Mhz (output of PLL prescaler)."/>
+      </prescaler>
+      <prescaler id="VDIV" name="VDIV" description="PLL clock">
+        <multiply expr="C6[VDIV]+16"/>
+        <constraint min_freq="180 MHz" max_freq="360 MHz" description="PLL output frequency must be in range 180 - 360 MHz."/>
+      </prescaler>
+      <configuration_element id="MCG_C5_PLLCLKEN0_CFG" name="PLL clock" description="Enable PLL independently on the MCG mode, i.e. this settings allows the PLL to be enabled in FEI, FEE, FBI, FBE modes.">
+        <default value="Disabled"/>
+        <item id="Enabled" description="Enabled">
+          <assigns>
+            <assign register="MCG::C5" bit_field="PLLCLKEN0" value="1"/>
+          </assigns>
+        </item>
+        <item id="Disabled" description="Disabled">
+          <assigns>
+            <assign register="MCG::C5" bit_field="PLLCLKEN0" value="0"/>
+          </assigns>
+        </item>
+      </configuration_element>
+      <configuration_element id="MCG_C5_PLLSTEN0_CFG" name="PLL clock in Stop mode" description="Enable PLL clock output in Normal Stop mode.">
+        <default value="Disabled"/>
+        <item id="Enabled" description="Enabled">
+          <assigns>
+            <assign register="MCG::C5" bit_field="PLLSTEN0" value="1"/>
+          </assigns>
+        </item>
+        <item id="Disabled" description="Disabled">
+          <assigns>
+            <assign register="MCG::C5" bit_field="PLLSTEN0" value="0"/>
+          </assigns>
+        </item>
+      </configuration_element>
+    </pll>
+    <prescaler id="PLL_DIV2" name="PLL output divider by 2">
+      <input signal="PLL.clk"/>
+      <divide expr="2"/>
+    </prescaler>
+    <clock_select id="PLLS" name="PLLS" description="PLL Select. Controls whether the PLL or FLL output is selected as the MCG source. This clock selector is controlled by the MCG Mode option.">
+      <value_map expr="C6[PLLS]">
+        <input ctrl_value="0" signal="FLL.clk" name="FLL output"/>
+        <input ctrl_value="1" signal="PLLCS.clk" name="PLL output"/>
+      </value_map>
+    </clock_select>
+    <clock_select id="PLLCS" name="PLLCS" description="PLL clock source source selection. Controls whether the PLL0 output or the external PLL output is selected as PLL source">
+      <value_map expr="C11[PLLCS]">
+        <input ctrl_value="0" signal="PLL_DIV2.clk" name="PLL0 clock"/>
+        <input ctrl_value="1" signal="EXT_PLL_IN" name="External PLL clock"/>
+      </value_map>
+    </clock_select>
+    <clock_select id="CLKS" name="CLKS" description="Clock Source Select. Selects the clock source for MCGOUTCLK. This clock selector is controlled by MCG mode option.">
+      <value_map expr="C1[CLKS]">
+        <input ctrl_value="0" signal="PLLS.clk" name="Output of PLLS (FLL or PLL clock)"/>
+        <input ctrl_value="1" signal="IRCS.clk" name="Internal reference clock"/>
+        <input ctrl_value="2" signal="OSCSEL.clk" name="External reference clock"/>
+      </value_map>
+    </clock_select>
+    <map_output id="MCGOUTCLK">
+      <input signal="CLKS.clk"/>
+      <constraint min_freq="1 Hz" max_freq="180 MHz" when="powerMode==`HSRUN`"/>
+      <constraint min_freq="1 Hz" max_freq="120 MHz" when="powerMode==`RUN` || powerMode==`WAIT`"/>
+      <constraint min_freq="1 Hz" max_freq="16 MHz" when="powerMode==`VLPR` || powerMode==`VLPW`"/>
+    </map_output>
+    <map_output id="MCGIRCLK">
+      <input signal="IRCS.clk"/>
+      <disable cond_expr="C1[IRCLKEN]==0 || (powerMode==`STOP` &amp;&amp; C1[IREFSTEN]==0) || powerMode==`VLPS` || powerMode==`LLS` || powerMode==`VLLS0` || powerMode==`VLLS1` || powerMode==`VLLS2` || powerMode==`VLLS3` || powerMode==`BAT`" description="MCGIRCLK clock is enabled by using 'MCGIRCLK output' settings. To control it's behavior in STOP power mode use the setting: 'MCGIRCLK output in STOP mode'. In VLPS, LLS and VLLS power modes, the MCGIRCLK is disabled."/>
+      <configuration_element id="MCG_C1_IRCLKEN_CFG" name="MCGIRCLK output" description="Enable MCG Internal Reference Clock (MCGIRCLK) output of the MCG.">
+        <default value="Disabled"/>
+        <item id="Enabled" description="Enabled">
+          <assigns>
+            <assign register="MCG::C1" bit_field="IRCLKEN" value="1"/>
+          </assigns>
+        </item>
+        <item id="Disabled" description="Disabled">
+          <assigns>
+            <assign register="MCG::C1" bit_field="IRCLKEN" value="0"/>
+          </assigns>
+        </item>
+      </configuration_element>
+      <configuration_element id="MCG_C1_IREFSTEN_CFG" name="MCGIRCLK output in Stop mode" description="Enable MCG Internal Reference Clock output of the MCG in the Stop mode. ">
+        <default value="Disabled"/>
+        <item id="Enabled" description="Enabled">
+          <long_description>
+            Internal reference clock is enabled in Stop mode if IRCLKEN is set or if MCG is in FEI, FBI, or BLPI modes before entering Stop mode.    
+          </long_description>
+          <assigns>
+            <assign register="MCG::C1" bit_field="IREFSTEN" value="1"/>
+          </assigns>
+        </item>
+        <item id="Disabled" description="Disabled">
+          <long_description>
+            Internal reference clock is disabled in Stop mode.
+          </long_description>
+          <assigns>
+            <assign register="MCG::C1" bit_field="IREFSTEN" value="0"/>
+          </assigns>
+        </item>
+      </configuration_element>
+    </map_output>
+    <map_output id="MCGFFCLK">
+      <input signal="IREFS.clk"/>
+      <enable cond_expr="(MCGMode!=`BLPI`) &amp;&amp; (powerMode!=`STOP`) &amp;&amp;(MCRFFCLKAllowConfig == `yes`)" description="The MCGFFCLK is not available when the MCG is in BLPI mode and in the Stop mode. The clock can be activated by the {{MCRFFCLKAllowConfig}} settings."/>
+      <constraint cond_expr="(IREFS.outFreq == 0) || (CLKS.outFreq == 0) || (IREFS.outFreq &lt;= (1.0 * CLKS.outFreq/8))" description="Valid only when its frequency is not more than 1/8 of the MCGOUTCLK frequency. When it is not valid, it is disabled and held high."/>
+      <configuration_element id="MCRFFCLKAllowConfig" name="Allow MCGFFCLK clock">
+        <default value="yes"/>
+        <item id="yes" description="yes">
+          <long_description>
+            Active the MCGFFCLK clock output and verify the clock gate condition - this clock is synchronized to the peripheral bus clock and is valid only when its frequency is not more than 1/8 of the MCGOUTCLK frequency.
+          </long_description>
+        </item>
+        <item id="no" description="no">
+          <long_description>
+            The MCGFFCLK is validation condtion is not checked.
+          </long_description>
+        </item>
+      </configuration_element>
+    </map_output>
+    <map_output id="MCGFLLCLK">
+      <input signal="FLL.clk"/>
+      <constraint max_freq="100 MHz" when="powerMode==`HSRUN`"/>
+      <constraint max_freq="100 MHz" when="powerMode==`RUN` || powerMode==`WAIT`"/>
+    </map_output>
+    <map_output id="MCGPLLCLK">
+      <input signal="PLLCS.clk"/>
+      <constraint max_freq="180 MHz" when="powerMode==`HSRUN`"/>
+      <constraint max_freq="120 MHz" when="powerMode==`RUN` || powerMode==`WAIT`"/>
+    </map_output>
+    <control_and_constraints>
+      <enable power_modes="HSRUN RUN VLPR STOP WAIT VLPW "/>
+    </control_and_constraints>
+  </implementation>
+</clocks:component>

@@ -1,0 +1,1139 @@
+<?xml version="1.0"?>
+<resource:resource_table xmlns:resource="http://swtools.freescale.net/XSD/resource/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/resource/1.0 http://swtools.freescale.net/XSD/resource/1.0/resource.xsd" id="dmamux">
+  <user_types>
+    <struct id="dmamux" label="DMAMUX channel request">
+      <string id="requestNumber" label="Dmamux Request #"/>
+      <string id="id" label="Request ID"/>
+      <string id="label" label="Label of the request"/>
+      <string id="dmamux_dev" label="ID of DMA MUX device"/>
+      <array id="devices" label="Devices information" type="req_dev"/>
+    </struct>
+    <struct id="req_dev" label="DMA request device">
+      <string id="device" label="ID of the device"/>
+      <string id="function" label="function of the DMA requests"/>
+      <string id="channel" label="channel of the device"/>
+    </struct>
+    <struct id="dma_mux_info" label="Defines mapping from dma device to dmamux">
+      <string id="muxDevice" label="ID of DMA MUX device"/>
+      <string id="dmaDevice" label="ID of DMA device"/>
+      <string id="cores" label="Subset of cores accessing the DMA MUX; space separated list"/>
+      <string id="minChannel" label="Minimal index of DMA connected to DMA MUX"/>
+      <string id="maxChannel" label="Maximal index of DMA connected to DMA MUX"/>
+    </struct>
+  </user_types>
+  <definition>
+    <array id="dmaMuxInfo" label="Defines mapping from dma device to dmamux" type="dma_mux_info"/>
+    <array id="core0" label="DMAMUX requests list" type="dmamux"/>
+  </definition>
+  <data>
+    <array name="dmaMuxInfo">
+      <struct name="0">
+        <setting name="muxDevice" value="DMAMUX"/>
+        <setting name="dmaDevice" value="DMA"/>
+        <setting name="cores" value="core0"/>
+        <setting name="minChannel" value="0"/>
+        <setting name="maxChannel" value="31"/>
+      </struct>
+    </array>
+    <array name="core0">
+      <struct name="0">
+        <setting name="requestNumber" value="0"/>
+        <setting name="id" value="kDmaRequestMux0Disable"/>
+        <setting name="label" value="Disable"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="DMAMUX"/>
+            <setting name="function" value="Disable"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="1">
+        <setting name="requestNumber" value="1"/>
+        <setting name="id" value="kDmaRequestMux0TSI0"/>
+        <setting name="label" value="TSI0"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="TSI0"/>
+            <setting name="function" value="TSI"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="2">
+        <setting name="requestNumber" value="2"/>
+        <setting name="id" value="kDmaRequestMux0UART0Rx"/>
+        <setting name="label" value="UART0 Receive"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="UART0"/>
+            <setting name="function" value="RX"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="3">
+        <setting name="requestNumber" value="3"/>
+        <setting name="id" value="kDmaRequestMux0UART0Tx"/>
+        <setting name="label" value="UART0 Transmit"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="UART0"/>
+            <setting name="function" value="TX"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="4">
+        <setting name="requestNumber" value="4"/>
+        <setting name="id" value="kDmaRequestMux0UART1Rx"/>
+        <setting name="label" value="UART1 Receive"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="UART1"/>
+            <setting name="function" value="RX"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="5">
+        <setting name="requestNumber" value="5"/>
+        <setting name="id" value="kDmaRequestMux0UART1Tx"/>
+        <setting name="label" value="UART1 Transmit"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="UART1"/>
+            <setting name="function" value="TX"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="6">
+        <setting name="requestNumber" value="6"/>
+        <setting name="id" value="kDmaRequestMux0UART2Rx"/>
+        <setting name="label" value="UART2 Receive"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="UART2"/>
+            <setting name="function" value="RX"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="7">
+        <setting name="requestNumber" value="7"/>
+        <setting name="id" value="kDmaRequestMux0UART2Tx"/>
+        <setting name="label" value="UART2 Transmit"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="UART2"/>
+            <setting name="function" value="TX"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="8">
+        <setting name="requestNumber" value="8"/>
+        <setting name="id" value="kDmaRequestMux0UART3Rx"/>
+        <setting name="label" value="UART3 Receive"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="UART3"/>
+            <setting name="function" value="RX"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="9">
+        <setting name="requestNumber" value="9"/>
+        <setting name="id" value="kDmaRequestMux0UART3Tx"/>
+        <setting name="label" value="UART3 Transmit"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="UART3"/>
+            <setting name="function" value="TX"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="10">
+        <setting name="requestNumber" value="10"/>
+        <setting name="id" value="kDmaRequestMux0UART4"/>
+        <setting name="label" value="UART4 Transmit or Receive"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="UART4"/>
+            <setting name="function" value="UART"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="11">
+        <setting name="requestNumber" value="12"/>
+        <setting name="id" value="kDmaRequestMux0I2S0Rx"/>
+        <setting name="label" value="I2S0 Receive"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="I2S0"/>
+            <setting name="function" value="RX"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="12">
+        <setting name="requestNumber" value="13"/>
+        <setting name="id" value="kDmaRequestMux0I2S0Tx"/>
+        <setting name="label" value="I2S0 Transmit"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="I2S0"/>
+            <setting name="function" value="TX"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="13">
+        <setting name="requestNumber" value="14"/>
+        <setting name="id" value="kDmaRequestMux0SPI0Rx"/>
+        <setting name="label" value="SPI0 Receive"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="SPI0"/>
+            <setting name="function" value="RX"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="14">
+        <setting name="requestNumber" value="15"/>
+        <setting name="id" value="kDmaRequestMux0SPI0Tx"/>
+        <setting name="label" value="SPI0 Transmit"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="SPI0"/>
+            <setting name="function" value="TX"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="15">
+        <setting name="requestNumber" value="16"/>
+        <setting name="id" value="kDmaRequestMux0SPI1Rx"/>
+        <setting name="label" value="SPI1 Receive"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="SPI1"/>
+            <setting name="function" value="RX"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="16">
+        <setting name="requestNumber" value="17"/>
+        <setting name="id" value="kDmaRequestMux0SPI1Tx"/>
+        <setting name="label" value="SPI1 Transmit"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="SPI1"/>
+            <setting name="function" value="TX"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="17">
+        <setting name="requestNumber" value="18"/>
+        <setting name="id" value="kDmaRequestMux0I2C0I2C3"/>
+        <setting name="label" value="I2C0 and I2C3"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="I2C0"/>
+            <setting name="function" value="I2C"/>
+          </struct>
+          <struct name="1">
+            <setting name="device" value="I2C3"/>
+            <setting name="function" value="I2C"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="18">
+        <setting name="requestNumber" value="18"/>
+        <setting name="id" value="kDmaRequestMux0I2C0"/>
+        <setting name="label" value="I2C0."/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="I2C0"/>
+            <setting name="function" value="I2C"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="19">
+        <setting name="requestNumber" value="18"/>
+        <setting name="id" value="kDmaRequestMux0I2C3"/>
+        <setting name="label" value="I2C3."/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="I2C3"/>
+            <setting name="function" value="I2C"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="20">
+        <setting name="requestNumber" value="19"/>
+        <setting name="id" value="kDmaRequestMux0I2C1I2C2"/>
+        <setting name="label" value="I2C1 and I2C2"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="I2C1"/>
+            <setting name="function" value="I2C"/>
+          </struct>
+          <struct name="1">
+            <setting name="device" value="I2C2"/>
+            <setting name="function" value="I2C"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="21">
+        <setting name="requestNumber" value="19"/>
+        <setting name="id" value="kDmaRequestMux0I2C1"/>
+        <setting name="label" value="I2C1."/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="I2C1"/>
+            <setting name="function" value="I2C"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="22">
+        <setting name="requestNumber" value="19"/>
+        <setting name="id" value="kDmaRequestMux0I2C2"/>
+        <setting name="label" value="I2C2."/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="I2C2"/>
+            <setting name="function" value="I2C"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="23">
+        <setting name="requestNumber" value="20"/>
+        <setting name="id" value="kDmaRequestMux0FTM0Channel0"/>
+        <setting name="label" value="FTM0 C0V"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM0"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="0"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="24">
+        <setting name="requestNumber" value="21"/>
+        <setting name="id" value="kDmaRequestMux0FTM0Channel1"/>
+        <setting name="label" value="FTM0 C1V"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM0"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="1"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="25">
+        <setting name="requestNumber" value="22"/>
+        <setting name="id" value="kDmaRequestMux0FTM0Channel2"/>
+        <setting name="label" value="FTM0 C2V"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM0"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="2"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="26">
+        <setting name="requestNumber" value="23"/>
+        <setting name="id" value="kDmaRequestMux0FTM0Channel3"/>
+        <setting name="label" value="FTM0 C3V"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM0"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="3"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="27">
+        <setting name="requestNumber" value="24"/>
+        <setting name="id" value="kDmaRequestMux0FTM0Channel4"/>
+        <setting name="label" value="FTM0 C4V"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM0"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="4"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="28">
+        <setting name="requestNumber" value="25"/>
+        <setting name="id" value="kDmaRequestMux0FTM0Channel5"/>
+        <setting name="label" value="FTM0 C5V"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM0"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="5"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="29">
+        <setting name="requestNumber" value="26"/>
+        <setting name="id" value="kDmaRequestMux0FTM0Channel6"/>
+        <setting name="label" value="FTM0 C6V"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM0"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="6"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="30">
+        <setting name="requestNumber" value="27"/>
+        <setting name="id" value="kDmaRequestMux0FTM0Channel7"/>
+        <setting name="label" value="FTM0 C7V"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM0"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="7"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="31">
+        <setting name="requestNumber" value="28"/>
+        <setting name="id" value="kDmaRequestMux0FTM1TPM1Channel0"/>
+        <setting name="label" value="FTM1 C0V and TPM1 C0V"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM1"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="1">
+            <setting name="device" value="TPM1"/>
+            <setting name="function" value="TPM"/>
+            <setting name="channel" value="0"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="32">
+        <setting name="requestNumber" value="28"/>
+        <setting name="id" value="kDmaRequestMux0FTM1Channel0"/>
+        <setting name="label" value="FTM1 C0V."/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM1"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="0"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="33">
+        <setting name="requestNumber" value="28"/>
+        <setting name="id" value="kDmaRequestMux0TPM1Channel0"/>
+        <setting name="label" value="TMP1 C0V."/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="TPM1"/>
+            <setting name="function" value="TPM"/>
+            <setting name="channel" value="0"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="34">
+        <setting name="requestNumber" value="29"/>
+        <setting name="id" value="kDmaRequestMux0FTM1TPM1Channel1"/>
+        <setting name="label" value="FTM1 C1V and TPM1 C1V"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM1"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="1">
+            <setting name="device" value="TPM1"/>
+            <setting name="function" value="TPM"/>
+            <setting name="channel" value="1"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="35">
+        <setting name="requestNumber" value="29"/>
+        <setting name="id" value="kDmaRequestMux0FTM1Channel1"/>
+        <setting name="label" value="FTM1 C1V."/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM1"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="1"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="36">
+        <setting name="requestNumber" value="29"/>
+        <setting name="id" value="kDmaRequestMux0TPM1Channel1"/>
+        <setting name="label" value="TPM1 C1V."/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="TPM1"/>
+            <setting name="function" value="TPM"/>
+            <setting name="channel" value="1"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="37">
+        <setting name="requestNumber" value="30"/>
+        <setting name="id" value="kDmaRequestMux0FTM2TPM2Channel0"/>
+        <setting name="label" value="FTM2 C0V and TPM2 C0V"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM2"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="1">
+            <setting name="device" value="TPM2"/>
+            <setting name="function" value="TPM"/>
+            <setting name="channel" value="0"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="38">
+        <setting name="requestNumber" value="30"/>
+        <setting name="id" value="kDmaRequestMux0FTM2Channel0"/>
+        <setting name="label" value="FTM2 C0V."/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM2"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="0"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="39">
+        <setting name="requestNumber" value="30"/>
+        <setting name="id" value="kDmaRequestMux0TPM2Channel0"/>
+        <setting name="label" value="TPM2 C0V."/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="TPM2"/>
+            <setting name="function" value="TPM"/>
+            <setting name="channel" value="0"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="40">
+        <setting name="requestNumber" value="31"/>
+        <setting name="id" value="kDmaRequestMux0FTM2TPM2Channel1"/>
+        <setting name="label" value="FTM2 C1V and TPM2 C1V"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM2"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="1">
+            <setting name="device" value="TPM2"/>
+            <setting name="function" value="TPM"/>
+            <setting name="channel" value="1"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="41">
+        <setting name="requestNumber" value="31"/>
+        <setting name="id" value="kDmaRequestMux0FTM2Channel1"/>
+        <setting name="label" value="FTM2 C1V."/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM2"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="1"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="42">
+        <setting name="requestNumber" value="31"/>
+        <setting name="id" value="kDmaRequestMux0TPM2Channel1"/>
+        <setting name="label" value="TPM2 C1V."/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="TPM2"/>
+            <setting name="function" value="TPM"/>
+            <setting name="channel" value="1"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="43">
+        <setting name="requestNumber" value="32"/>
+        <setting name="id" value="kDmaRequestMux0FTM3Channel0"/>
+        <setting name="label" value="FTM3 C0V"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM3"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="0"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="44">
+        <setting name="requestNumber" value="33"/>
+        <setting name="id" value="kDmaRequestMux0FTM3Channel1"/>
+        <setting name="label" value="FTM3 C1V"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM3"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="1"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="45">
+        <setting name="requestNumber" value="34"/>
+        <setting name="id" value="kDmaRequestMux0FTM3Channel2"/>
+        <setting name="label" value="FTM3 C2V"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM3"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="2"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="46">
+        <setting name="requestNumber" value="35"/>
+        <setting name="id" value="kDmaRequestMux0FTM3Channel3"/>
+        <setting name="label" value="FTM3 C3V"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM3"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="3"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="47">
+        <setting name="requestNumber" value="36"/>
+        <setting name="id" value="kDmaRequestMux0FTM3Channel4"/>
+        <setting name="label" value="FTM3 C4V"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM3"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="4"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="48">
+        <setting name="requestNumber" value="37"/>
+        <setting name="id" value="kDmaRequestMux0FTM3Channel5"/>
+        <setting name="label" value="FTM3 C5V"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM3"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="5"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="49">
+        <setting name="requestNumber" value="38"/>
+        <setting name="id" value="kDmaRequestMux0FTM3Channel6SPI2Rx"/>
+        <setting name="label" value="FTM3 C6V and SPI2 Receive"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM3"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="6"/>
+          </struct>
+          <struct name="1">
+            <setting name="device" value="SPI2"/>
+            <setting name="function" value="RX"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="50">
+        <setting name="requestNumber" value="38"/>
+        <setting name="id" value="kDmaRequestMux0FTM3Channel6"/>
+        <setting name="label" value="FTM3 C6V."/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM3"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="6"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="51">
+        <setting name="requestNumber" value="38"/>
+        <setting name="id" value="kDmaRequestMux0SPI2Rx"/>
+        <setting name="label" value="SPI2 Receive."/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="SPI2"/>
+            <setting name="function" value="RX"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="52">
+        <setting name="requestNumber" value="39"/>
+        <setting name="id" value="kDmaRequestMux0FTM3Channel7SPI2Tx"/>
+        <setting name="label" value="FTM3 C7V and SPI2 Transmit"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM3"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="7"/>
+          </struct>
+          <struct name="1">
+            <setting name="device" value="SPI2"/>
+            <setting name="function" value="TX"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="53">
+        <setting name="requestNumber" value="39"/>
+        <setting name="id" value="kDmaRequestMux0FTM3Channel7"/>
+        <setting name="label" value="FTM3 C7V."/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="FTM3"/>
+            <setting name="function" value="FTM"/>
+            <setting name="channel" value="7"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="54">
+        <setting name="requestNumber" value="39"/>
+        <setting name="id" value="kDmaRequestMux0SPI2Tx"/>
+        <setting name="label" value="SPI2 Transmit."/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="SPI2"/>
+            <setting name="function" value="TX"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="55">
+        <setting name="requestNumber" value="40"/>
+        <setting name="id" value="kDmaRequestMux0ADC0"/>
+        <setting name="label" value="ADC0"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="ADC0"/>
+            <setting name="function" value="ADC"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="56">
+        <setting name="requestNumber" value="41"/>
+        <setting name="id" value="kDmaRequestMux0ADC1"/>
+        <setting name="label" value="ADC1"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="ADC1"/>
+            <setting name="function" value="ADC"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="57">
+        <setting name="requestNumber" value="42"/>
+        <setting name="id" value="kDmaRequestMux0CMP0"/>
+        <setting name="label" value="CMP0"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="CMP0"/>
+            <setting name="function" value="CMP"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="58">
+        <setting name="requestNumber" value="43"/>
+        <setting name="id" value="kDmaRequestMux0CMP1"/>
+        <setting name="label" value="CMP1"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="CMP1"/>
+            <setting name="function" value="CMP"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="59">
+        <setting name="requestNumber" value="44"/>
+        <setting name="id" value="kDmaRequestMux0CMP2CMP3"/>
+        <setting name="label" value="CMP2 and CMP3"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="CMP2"/>
+            <setting name="function" value="CMP"/>
+          </struct>
+          <struct name="1">
+            <setting name="device" value="CMP3"/>
+            <setting name="function" value="CMP"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="60">
+        <setting name="requestNumber" value="44"/>
+        <setting name="id" value="kDmaRequestMux0CMP2"/>
+        <setting name="label" value="CMP2."/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="CMP2"/>
+            <setting name="function" value="CMP"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="61">
+        <setting name="requestNumber" value="44"/>
+        <setting name="id" value="kDmaRequestMux0CMP3"/>
+        <setting name="label" value="CMP3."/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="CMP3"/>
+            <setting name="function" value="CMP"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="62">
+        <setting name="requestNumber" value="45"/>
+        <setting name="id" value="kDmaRequestMux0DAC0"/>
+        <setting name="label" value="DAC0"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="DAC0"/>
+            <setting name="function" value="DAC"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="63">
+        <setting name="requestNumber" value="46"/>
+        <setting name="id" value="kDmaRequestMux0DAC1"/>
+        <setting name="label" value="DAC1"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="DAC1"/>
+            <setting name="function" value="DAC"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="64">
+        <setting name="requestNumber" value="47"/>
+        <setting name="id" value="kDmaRequestMux0CMT"/>
+        <setting name="label" value="CMT"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="CMT"/>
+            <setting name="function" value="CMT"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="65">
+        <setting name="requestNumber" value="48"/>
+        <setting name="id" value="kDmaRequestMux0PDB"/>
+        <setting name="label" value="PDB0"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="PDB0"/>
+            <setting name="function" value="PDB"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="66">
+        <setting name="requestNumber" value="49"/>
+        <setting name="id" value="kDmaRequestMux0PortA"/>
+        <setting name="label" value="PTA"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="PORTA"/>
+            <setting name="function" value="PORT"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="67">
+        <setting name="requestNumber" value="50"/>
+        <setting name="id" value="kDmaRequestMux0PortB"/>
+        <setting name="label" value="PTB"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="PORTB"/>
+            <setting name="function" value="PORT"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="68">
+        <setting name="requestNumber" value="51"/>
+        <setting name="id" value="kDmaRequestMux0PortC"/>
+        <setting name="label" value="PTC"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="PORTC"/>
+            <setting name="function" value="PORT"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="69">
+        <setting name="requestNumber" value="52"/>
+        <setting name="id" value="kDmaRequestMux0PortD"/>
+        <setting name="label" value="PTD"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="PORTD"/>
+            <setting name="function" value="PORT"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="70">
+        <setting name="requestNumber" value="53"/>
+        <setting name="id" value="kDmaRequestMux0PortE"/>
+        <setting name="label" value="PTE"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="PORTE"/>
+            <setting name="function" value="PORT"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="71">
+        <setting name="requestNumber" value="54"/>
+        <setting name="id" value="kDmaRequestMux0IEEE1588Timer0"/>
+        <setting name="label" value="ENET IEEE 1588 timer 0"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="ENET"/>
+            <setting name="function" value="TIMER0"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="72">
+        <setting name="requestNumber" value="55"/>
+        <setting name="id" value="kDmaRequestMux0IEEE1588Timer1TPM1Overflow"/>
+        <setting name="label" value="ENET IEEE 1588 timer 1 and TPM1"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="TPM1"/>
+            <setting name="function" value="OVERFLOW"/>
+          </struct>
+          <struct name="1">
+            <setting name="device" value="ENET"/>
+            <setting name="function" value="TIMER1"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="73">
+        <setting name="requestNumber" value="55"/>
+        <setting name="id" value="kDmaRequestMux0IEEE1588Timer1"/>
+        <setting name="label" value="ENET IEEE 1588 timer 1 and TPM1"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="ENET"/>
+            <setting name="function" value="TIMER1"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="74">
+        <setting name="requestNumber" value="55"/>
+        <setting name="id" value="kDmaRequestMux0TPM1Overflow"/>
+        <setting name="label" value="ENET IEEE 1588 timer 1 and TPM1"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="TPM1"/>
+            <setting name="function" value="OVERFLOW"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="75">
+        <setting name="requestNumber" value="56"/>
+        <setting name="id" value="kDmaRequestMux0IEEE1588Timer2TPM2Overflow"/>
+        <setting name="label" value="ENET IEEE 1588 timer 2 and TPM2"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="TPM2"/>
+            <setting name="function" value="OVERFLOW"/>
+          </struct>
+          <struct name="1">
+            <setting name="device" value="ENET"/>
+            <setting name="function" value="TIMER2"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="76">
+        <setting name="requestNumber" value="56"/>
+        <setting name="id" value="kDmaRequestMux0IEEE1588Timer2"/>
+        <setting name="label" value="ENET IEEE 1588 timer 2 and TPM2"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="ENET"/>
+            <setting name="function" value="TIMER2"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="77">
+        <setting name="requestNumber" value="56"/>
+        <setting name="id" value="kDmaRequestMux0TPM2Overflow"/>
+        <setting name="label" value="ENET IEEE 1588 timer 2 and TPM2"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="TPM2"/>
+            <setting name="function" value="OVERFLOW"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="78">
+        <setting name="requestNumber" value="57"/>
+        <setting name="id" value="kDmaRequestMux0IEEE1588Timer3"/>
+        <setting name="label" value="ENET IEEE 1588 timer 3"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="ENET"/>
+            <setting name="function" value="TIMER3"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="79">
+        <setting name="requestNumber" value="58"/>
+        <setting name="id" value="kDmaRequestMux0LPUART0Rx"/>
+        <setting name="label" value="LPUART0 Receive"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="LPUART0"/>
+            <setting name="function" value="RX"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="80">
+        <setting name="requestNumber" value="59"/>
+        <setting name="id" value="kDmaRequestMux0LPUART0Tx"/>
+        <setting name="label" value="LPUART0 Transmit"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="LPUART0"/>
+            <setting name="function" value="TX"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="81">
+        <setting name="requestNumber" value="60"/>
+        <setting name="id" value="kDmaRequestMux0AlwaysOn60"/>
+        <setting name="label" value="AlwaysOn 60"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="DMAMUX"/>
+            <setting name="function" value="AlwaysOn"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="82">
+        <setting name="requestNumber" value="61"/>
+        <setting name="id" value="kDmaRequestMux0AlwaysOn61"/>
+        <setting name="label" value="AlwaysOn 61"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="DMAMUX"/>
+            <setting name="function" value="AlwaysOn"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="83">
+        <setting name="requestNumber" value="62"/>
+        <setting name="id" value="kDmaRequestMux0AlwaysOn62"/>
+        <setting name="label" value="AlwaysOn 62"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="DMAMUX"/>
+            <setting name="function" value="AlwaysOn"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="84">
+        <setting name="requestNumber" value="63"/>
+        <setting name="id" value="kDmaRequestMux0AlwaysOn63"/>
+        <setting name="label" value="AlwaysOn 63"/>
+        <setting name="dmamux_dev" value="DMAMUX"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="device" value="DMAMUX"/>
+            <setting name="function" value="AlwaysOn"/>
+          </struct>
+        </array>
+      </struct>
+    </array>
+  </data>
+</resource:resource_table>

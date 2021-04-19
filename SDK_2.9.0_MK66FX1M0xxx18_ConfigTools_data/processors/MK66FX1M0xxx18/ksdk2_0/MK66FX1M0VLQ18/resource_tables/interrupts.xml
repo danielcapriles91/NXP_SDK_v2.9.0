@@ -1,0 +1,2992 @@
+<?xml version="1.0"?>
+<resource:resource_table xmlns:resource="http://swtools.freescale.net/XSD/resource/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/resource/1.0 http://swtools.freescale.net/XSD/resource/1.0/resource.xsd" id="interrupts">
+  <user_types>
+    <struct id="irq_dev" label="Device Info">
+      <string id="id" label="Device ID"/>
+      <string id="function" label="Device Function"/>
+      <string id="channel" label="Device channel"/>
+    </struct>
+    <struct id="irq" label="Interrupt vector">
+      <string id="id" label="Vector ID"/>
+      <string id="handler_id" label="Interrupt Handler ID"/>
+      <array id="devices" label="Devices information" type="irq_dev"/>
+    </struct>
+  </user_types>
+  <definition>
+    <array id="core0" label="Interrupt vector list" type="irq"/>
+  </definition>
+  <data>
+    <array name="core0">
+      <struct name="0">
+        <setting name="id" value="DMA0_DMA16_IRQn"/>
+        <setting name="handler_id" value="DMA0_DMA16_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="16"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="1">
+        <setting name="id" value="DMA1_DMA17_IRQn"/>
+        <setting name="handler_id" value="DMA1_DMA17_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="17"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="2">
+        <setting name="id" value="DMA2_DMA18_IRQn"/>
+        <setting name="handler_id" value="DMA2_DMA18_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="2"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="2"/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="18"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="3">
+        <setting name="id" value="DMA3_DMA19_IRQn"/>
+        <setting name="handler_id" value="DMA3_DMA19_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="3"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="3"/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="19"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="4">
+        <setting name="id" value="DMA4_DMA20_IRQn"/>
+        <setting name="handler_id" value="DMA4_DMA20_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="4"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="4"/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="20"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="5">
+        <setting name="id" value="DMA5_DMA21_IRQn"/>
+        <setting name="handler_id" value="DMA5_DMA21_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="5"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="5"/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="21"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="6">
+        <setting name="id" value="DMA6_DMA22_IRQn"/>
+        <setting name="handler_id" value="DMA6_DMA22_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="6"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="6"/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="22"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="7">
+        <setting name="id" value="DMA7_DMA23_IRQn"/>
+        <setting name="handler_id" value="DMA7_DMA23_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="7"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="7"/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="23"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="8">
+        <setting name="id" value="DMA8_DMA24_IRQn"/>
+        <setting name="handler_id" value="DMA8_DMA24_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="8"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="8"/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="24"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="9">
+        <setting name="id" value="DMA9_DMA25_IRQn"/>
+        <setting name="handler_id" value="DMA9_DMA25_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="9"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="9"/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="25"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="10">
+        <setting name="id" value="DMA10_DMA26_IRQn"/>
+        <setting name="handler_id" value="DMA10_DMA26_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="10"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="10"/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="26"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="11">
+        <setting name="id" value="DMA11_DMA27_IRQn"/>
+        <setting name="handler_id" value="DMA11_DMA27_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="11"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="11"/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="27"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="12">
+        <setting name="id" value="DMA12_DMA28_IRQn"/>
+        <setting name="handler_id" value="DMA12_DMA28_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="12"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="12"/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="28"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="13">
+        <setting name="id" value="DMA13_DMA29_IRQn"/>
+        <setting name="handler_id" value="DMA13_DMA29_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="13"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="13"/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="29"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="14">
+        <setting name="id" value="DMA14_DMA30_IRQn"/>
+        <setting name="handler_id" value="DMA14_DMA30_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="14"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="14"/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="30"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="15">
+        <setting name="id" value="DMA15_DMA31_IRQn"/>
+        <setting name="handler_id" value="DMA15_DMA31_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="15"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="15"/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_DONE"/>
+            <setting name="channel" value="31"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="16">
+        <setting name="id" value="DMA_Error_IRQn"/>
+        <setting name="handler_id" value="DMA_Error_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="16"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_INT_ERROR"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="3">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="4">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="2"/>
+          </struct>
+          <struct name="5">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="3"/>
+          </struct>
+          <struct name="6">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="4"/>
+          </struct>
+          <struct name="7">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="5"/>
+          </struct>
+          <struct name="8">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="6"/>
+          </struct>
+          <struct name="9">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="7"/>
+          </struct>
+          <struct name="10">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="8"/>
+          </struct>
+          <struct name="11">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="9"/>
+          </struct>
+          <struct name="12">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="10"/>
+          </struct>
+          <struct name="13">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="11"/>
+          </struct>
+          <struct name="14">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="12"/>
+          </struct>
+          <struct name="15">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="13"/>
+          </struct>
+          <struct name="16">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="14"/>
+          </struct>
+          <struct name="17">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="15"/>
+          </struct>
+          <struct name="18">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="16"/>
+          </struct>
+          <struct name="19">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="17"/>
+          </struct>
+          <struct name="20">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="18"/>
+          </struct>
+          <struct name="21">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="19"/>
+          </struct>
+          <struct name="22">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="20"/>
+          </struct>
+          <struct name="23">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="21"/>
+          </struct>
+          <struct name="24">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="22"/>
+          </struct>
+          <struct name="25">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="23"/>
+          </struct>
+          <struct name="26">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="24"/>
+          </struct>
+          <struct name="27">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="25"/>
+          </struct>
+          <struct name="28">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="26"/>
+          </struct>
+          <struct name="29">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="27"/>
+          </struct>
+          <struct name="30">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="28"/>
+          </struct>
+          <struct name="31">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="29"/>
+          </struct>
+          <struct name="32">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="30"/>
+          </struct>
+          <struct name="33">
+            <setting name="id" value="DMA"/>
+            <setting name="function" value="DMA_CH_INT_ERR"/>
+            <setting name="channel" value="31"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="17">
+        <setting name="id" value="MCM_IRQn"/>
+        <setting name="handler_id" value="MCM_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="17"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="MCM"/>
+            <setting name="function" value="fpu"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="18">
+        <setting name="id" value="FTFE_IRQn"/>
+        <setting name="handler_id" value="FTFE_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="18"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="FTFE"/>
+            <setting name="function" value="flash_cmdComplete"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="19">
+        <setting name="id" value="Read_Collision_IRQn"/>
+        <setting name="handler_id" value="Read_Collision_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="19"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="FTFE"/>
+            <setting name="function" value="flash_readCollisionError"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="20">
+        <setting name="id" value="LVD_LVW_IRQn"/>
+        <setting name="handler_id" value="LVD_LVW_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="20"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="PMC"/>
+            <setting name="function" value="core_other"/>
+            <setting name="channel" value="LVD"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="21">
+        <setting name="id" value="LLWU_IRQn"/>
+        <setting name="handler_id" value="LLWU_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="21"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="LLWU"/>
+            <setting name="function" value="core_other"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="22">
+        <setting name="id" value="WDOG_EWM_IRQn"/>
+        <setting name="handler_id" value="WDOG_EWM_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="22"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="WDOG"/>
+            <setting name="function" value="watchdog"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="EWM"/>
+            <setting name="function" value="EWM_INT"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="23">
+        <setting name="id" value="RNG_IRQn"/>
+        <setting name="handler_id" value="RNG_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="23"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="RNG"/>
+            <setting name="function" value="rng"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="24">
+        <setting name="id" value="I2C0_IRQn"/>
+        <setting name="handler_id" value="I2C0_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="24"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="I2C0"/>
+            <setting name="function" value="iic"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="25">
+        <setting name="id" value="I2C1_IRQn"/>
+        <setting name="handler_id" value="I2C1_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="25"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="I2C1"/>
+            <setting name="function" value="iic"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="26">
+        <setting name="id" value="SPI0_IRQn"/>
+        <setting name="handler_id" value="SPI0_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="26"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="SPI0"/>
+            <setting name="function" value="serial_rx"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="SPI0"/>
+            <setting name="function" value="serial_tx"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="27">
+        <setting name="id" value="SPI1_IRQn"/>
+        <setting name="handler_id" value="SPI1_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="27"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="SPI1"/>
+            <setting name="function" value="serial_rx"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="SPI1"/>
+            <setting name="function" value="serial_tx"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="28">
+        <setting name="id" value="I2S0_Tx_IRQn"/>
+        <setting name="handler_id" value="I2S0_Tx_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="28"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="I2S0"/>
+            <setting name="function" value="serial_tx"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="29">
+        <setting name="id" value="I2S0_Rx_IRQn"/>
+        <setting name="handler_id" value="I2S0_Rx_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="29"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="I2S0"/>
+            <setting name="function" value="serial_rx"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="30">
+        <setting name="id" value="Reserved46_IRQn"/>
+        <setting name="handler_id" value="Reserved46_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="30"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="31">
+        <setting name="id" value="UART0_RX_TX_IRQn"/>
+        <setting name="handler_id" value="UART0_RX_TX_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="31"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="UART0"/>
+            <setting name="function" value="serial_rx_tx"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="32">
+        <setting name="id" value="UART0_ERR_IRQn"/>
+        <setting name="handler_id" value="UART0_ERR_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="32"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="UART0"/>
+            <setting name="function" value="serial_error"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="33">
+        <setting name="id" value="UART1_RX_TX_IRQn"/>
+        <setting name="handler_id" value="UART1_RX_TX_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="33"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="UART1"/>
+            <setting name="function" value="serial_rx_tx"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="34">
+        <setting name="id" value="UART1_ERR_IRQn"/>
+        <setting name="handler_id" value="UART1_ERR_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="34"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="UART1"/>
+            <setting name="function" value="serial_error"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="35">
+        <setting name="id" value="UART2_RX_TX_IRQn"/>
+        <setting name="handler_id" value="UART2_RX_TX_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="35"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="UART2"/>
+            <setting name="function" value="serial_rx_tx"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="36">
+        <setting name="id" value="UART2_ERR_IRQn"/>
+        <setting name="handler_id" value="UART2_ERR_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="36"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="UART2"/>
+            <setting name="function" value="serial_error"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="37">
+        <setting name="id" value="UART3_RX_TX_IRQn"/>
+        <setting name="handler_id" value="UART3_RX_TX_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="37"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="UART3"/>
+            <setting name="function" value="serial_rx_tx"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="38">
+        <setting name="id" value="UART3_ERR_IRQn"/>
+        <setting name="handler_id" value="UART3_ERR_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="38"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="UART3"/>
+            <setting name="function" value="serial_error"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="39">
+        <setting name="id" value="ADC0_IRQn"/>
+        <setting name="handler_id" value="ADC0_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="39"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="ADC0"/>
+            <setting name="function" value="adc"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="40">
+        <setting name="id" value="CMP0_IRQn"/>
+        <setting name="handler_id" value="CMP0_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="40"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="CMP0"/>
+            <setting name="function" value="acmp"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="41">
+        <setting name="id" value="CMP1_IRQn"/>
+        <setting name="handler_id" value="CMP1_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="41"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="CMP1"/>
+            <setting name="function" value="acmp"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="42">
+        <setting name="id" value="FTM0_IRQn"/>
+        <setting name="handler_id" value="FTM0_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="42"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="FTM0"/>
+            <setting name="function" value="timer_overflow"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="FTM0"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="3">
+            <setting name="id" value="FTM0"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="4">
+            <setting name="id" value="FTM0"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="2"/>
+          </struct>
+          <struct name="5">
+            <setting name="id" value="FTM0"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="3"/>
+          </struct>
+          <struct name="6">
+            <setting name="id" value="FTM0"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="4"/>
+          </struct>
+          <struct name="7">
+            <setting name="id" value="FTM0"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="5"/>
+          </struct>
+          <struct name="8">
+            <setting name="id" value="FTM0"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="6"/>
+          </struct>
+          <struct name="9">
+            <setting name="id" value="FTM0"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="7"/>
+          </struct>
+          <struct name="10">
+            <setting name="id" value="FTM0"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="11">
+            <setting name="id" value="FTM0"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="12">
+            <setting name="id" value="FTM0"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="2"/>
+          </struct>
+          <struct name="13">
+            <setting name="id" value="FTM0"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="3"/>
+          </struct>
+          <struct name="14">
+            <setting name="id" value="FTM0"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="4"/>
+          </struct>
+          <struct name="15">
+            <setting name="id" value="FTM0"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="5"/>
+          </struct>
+          <struct name="16">
+            <setting name="id" value="FTM0"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="6"/>
+          </struct>
+          <struct name="17">
+            <setting name="id" value="FTM0"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="7"/>
+          </struct>
+          <struct name="18">
+            <setting name="id" value="FTM0"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="all"/>
+          </struct>
+          <struct name="19">
+            <setting name="id" value="FTM0"/>
+            <setting name="function" value="timer_fault"/>
+            <setting name="channel" value="all"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="43">
+        <setting name="id" value="FTM1_IRQn"/>
+        <setting name="handler_id" value="FTM1_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="43"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="FTM1"/>
+            <setting name="function" value="timer_overflow"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="FTM1"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="3">
+            <setting name="id" value="FTM1"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="4">
+            <setting name="id" value="FTM1"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="5">
+            <setting name="id" value="FTM1"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="6">
+            <setting name="id" value="FTM1"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="all"/>
+          </struct>
+          <struct name="7">
+            <setting name="id" value="FTM1"/>
+            <setting name="function" value="timer_fault"/>
+            <setting name="channel" value="all"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="44">
+        <setting name="id" value="FTM2_IRQn"/>
+        <setting name="handler_id" value="FTM2_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="44"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="FTM2"/>
+            <setting name="function" value="timer_overflow"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="FTM2"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="3">
+            <setting name="id" value="FTM2"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="4">
+            <setting name="id" value="FTM2"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="5">
+            <setting name="id" value="FTM2"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="6">
+            <setting name="id" value="FTM2"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="all"/>
+          </struct>
+          <struct name="7">
+            <setting name="id" value="FTM2"/>
+            <setting name="function" value="timer_fault"/>
+            <setting name="channel" value="all"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="45">
+        <setting name="id" value="CMT_IRQn"/>
+        <setting name="handler_id" value="CMT_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="45"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="CMT"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="46">
+        <setting name="id" value="RTC_IRQn"/>
+        <setting name="handler_id" value="RTC_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="46"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="RTC"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="47">
+        <setting name="id" value="RTC_Seconds_IRQn"/>
+        <setting name="handler_id" value="RTC_Seconds_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="47"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="RTC"/>
+            <setting name="function" value="SecondsInterrupt"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="48">
+        <setting name="id" value="PIT0_IRQn"/>
+        <setting name="handler_id" value="PIT0_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="48"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="PIT"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="0"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="49">
+        <setting name="id" value="PIT1_IRQn"/>
+        <setting name="handler_id" value="PIT1_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="49"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="PIT"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="1"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="50">
+        <setting name="id" value="PIT2_IRQn"/>
+        <setting name="handler_id" value="PIT2_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="50"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="PIT"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="2"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="51">
+        <setting name="id" value="PIT3_IRQn"/>
+        <setting name="handler_id" value="PIT3_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="51"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="PIT"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="3"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="52">
+        <setting name="id" value="PDB0_IRQn"/>
+        <setting name="handler_id" value="PDB0_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="52"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="PDB0"/>
+            <setting name="function" value="pdb"/>
+            <setting name="channel" value="delay"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="53">
+        <setting name="id" value="USB0_IRQn"/>
+        <setting name="handler_id" value="USB0_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="53"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="USB0"/>
+            <setting name="function" value="usb"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="54">
+        <setting name="id" value="USBDCD_IRQn"/>
+        <setting name="handler_id" value="USBDCD_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="54"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="USBDCD"/>
+            <setting name="function" value="usbdcd"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="55">
+        <setting name="id" value="Reserved71_IRQn"/>
+        <setting name="handler_id" value="Reserved71_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="55"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="56">
+        <setting name="id" value="DAC0_IRQn"/>
+        <setting name="handler_id" value="DAC0_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="56"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="DAC0"/>
+            <setting name="function" value="dac"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="57">
+        <setting name="id" value="MCG_IRQn"/>
+        <setting name="handler_id" value="MCG_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="57"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="58">
+        <setting name="id" value="LPTMR0_IRQn"/>
+        <setting name="handler_id" value="LPTMR0_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="58"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="LPTMR0"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="0"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="59">
+        <setting name="id" value="PORTA_IRQn"/>
+        <setting name="handler_id" value="PORTA_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="59"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="PORTA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="PORTA"/>
+            <setting name="function" value="port"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="3">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="4">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="5">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="2"/>
+          </struct>
+          <struct name="6">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="3"/>
+          </struct>
+          <struct name="7">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="4"/>
+          </struct>
+          <struct name="8">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="5"/>
+          </struct>
+          <struct name="9">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="6"/>
+          </struct>
+          <struct name="10">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="7"/>
+          </struct>
+          <struct name="11">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="8"/>
+          </struct>
+          <struct name="12">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="9"/>
+          </struct>
+          <struct name="13">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="10"/>
+          </struct>
+          <struct name="14">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="11"/>
+          </struct>
+          <struct name="15">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="12"/>
+          </struct>
+          <struct name="16">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="13"/>
+          </struct>
+          <struct name="17">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="14"/>
+          </struct>
+          <struct name="18">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="15"/>
+          </struct>
+          <struct name="19">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="16"/>
+          </struct>
+          <struct name="20">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="17"/>
+          </struct>
+          <struct name="21">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="18"/>
+          </struct>
+          <struct name="22">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="19"/>
+          </struct>
+          <struct name="23">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="20"/>
+          </struct>
+          <struct name="24">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="21"/>
+          </struct>
+          <struct name="25">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="22"/>
+          </struct>
+          <struct name="26">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="23"/>
+          </struct>
+          <struct name="27">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="24"/>
+          </struct>
+          <struct name="28">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="25"/>
+          </struct>
+          <struct name="29">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="26"/>
+          </struct>
+          <struct name="30">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="27"/>
+          </struct>
+          <struct name="31">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="28"/>
+          </struct>
+          <struct name="32">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="29"/>
+          </struct>
+          <struct name="33">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="30"/>
+          </struct>
+          <struct name="34">
+            <setting name="id" value="GPIOA"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="31"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="60">
+        <setting name="id" value="PORTB_IRQn"/>
+        <setting name="handler_id" value="PORTB_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="60"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="PORTB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="PORTB"/>
+            <setting name="function" value="port"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="3">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="4">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="5">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="2"/>
+          </struct>
+          <struct name="6">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="3"/>
+          </struct>
+          <struct name="7">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="4"/>
+          </struct>
+          <struct name="8">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="5"/>
+          </struct>
+          <struct name="9">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="6"/>
+          </struct>
+          <struct name="10">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="7"/>
+          </struct>
+          <struct name="11">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="8"/>
+          </struct>
+          <struct name="12">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="9"/>
+          </struct>
+          <struct name="13">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="10"/>
+          </struct>
+          <struct name="14">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="11"/>
+          </struct>
+          <struct name="15">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="12"/>
+          </struct>
+          <struct name="16">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="13"/>
+          </struct>
+          <struct name="17">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="14"/>
+          </struct>
+          <struct name="18">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="15"/>
+          </struct>
+          <struct name="19">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="16"/>
+          </struct>
+          <struct name="20">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="17"/>
+          </struct>
+          <struct name="21">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="18"/>
+          </struct>
+          <struct name="22">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="19"/>
+          </struct>
+          <struct name="23">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="20"/>
+          </struct>
+          <struct name="24">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="21"/>
+          </struct>
+          <struct name="25">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="22"/>
+          </struct>
+          <struct name="26">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="23"/>
+          </struct>
+          <struct name="27">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="24"/>
+          </struct>
+          <struct name="28">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="25"/>
+          </struct>
+          <struct name="29">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="26"/>
+          </struct>
+          <struct name="30">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="27"/>
+          </struct>
+          <struct name="31">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="28"/>
+          </struct>
+          <struct name="32">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="29"/>
+          </struct>
+          <struct name="33">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="30"/>
+          </struct>
+          <struct name="34">
+            <setting name="id" value="GPIOB"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="31"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="61">
+        <setting name="id" value="PORTC_IRQn"/>
+        <setting name="handler_id" value="PORTC_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="61"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="PORTC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="PORTC"/>
+            <setting name="function" value="port"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="3">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="4">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="5">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="2"/>
+          </struct>
+          <struct name="6">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="3"/>
+          </struct>
+          <struct name="7">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="4"/>
+          </struct>
+          <struct name="8">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="5"/>
+          </struct>
+          <struct name="9">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="6"/>
+          </struct>
+          <struct name="10">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="7"/>
+          </struct>
+          <struct name="11">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="8"/>
+          </struct>
+          <struct name="12">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="9"/>
+          </struct>
+          <struct name="13">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="10"/>
+          </struct>
+          <struct name="14">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="11"/>
+          </struct>
+          <struct name="15">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="12"/>
+          </struct>
+          <struct name="16">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="13"/>
+          </struct>
+          <struct name="17">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="14"/>
+          </struct>
+          <struct name="18">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="15"/>
+          </struct>
+          <struct name="19">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="16"/>
+          </struct>
+          <struct name="20">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="17"/>
+          </struct>
+          <struct name="21">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="18"/>
+          </struct>
+          <struct name="22">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="19"/>
+          </struct>
+          <struct name="23">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="20"/>
+          </struct>
+          <struct name="24">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="21"/>
+          </struct>
+          <struct name="25">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="22"/>
+          </struct>
+          <struct name="26">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="23"/>
+          </struct>
+          <struct name="27">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="24"/>
+          </struct>
+          <struct name="28">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="25"/>
+          </struct>
+          <struct name="29">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="26"/>
+          </struct>
+          <struct name="30">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="27"/>
+          </struct>
+          <struct name="31">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="28"/>
+          </struct>
+          <struct name="32">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="29"/>
+          </struct>
+          <struct name="33">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="30"/>
+          </struct>
+          <struct name="34">
+            <setting name="id" value="GPIOC"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="31"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="62">
+        <setting name="id" value="PORTD_IRQn"/>
+        <setting name="handler_id" value="PORTD_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="62"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="PORTD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="PORTD"/>
+            <setting name="function" value="port"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="3">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="4">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="5">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="2"/>
+          </struct>
+          <struct name="6">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="3"/>
+          </struct>
+          <struct name="7">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="4"/>
+          </struct>
+          <struct name="8">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="5"/>
+          </struct>
+          <struct name="9">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="6"/>
+          </struct>
+          <struct name="10">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="7"/>
+          </struct>
+          <struct name="11">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="8"/>
+          </struct>
+          <struct name="12">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="9"/>
+          </struct>
+          <struct name="13">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="10"/>
+          </struct>
+          <struct name="14">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="11"/>
+          </struct>
+          <struct name="15">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="12"/>
+          </struct>
+          <struct name="16">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="13"/>
+          </struct>
+          <struct name="17">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="14"/>
+          </struct>
+          <struct name="18">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="15"/>
+          </struct>
+          <struct name="19">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="16"/>
+          </struct>
+          <struct name="20">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="17"/>
+          </struct>
+          <struct name="21">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="18"/>
+          </struct>
+          <struct name="22">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="19"/>
+          </struct>
+          <struct name="23">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="20"/>
+          </struct>
+          <struct name="24">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="21"/>
+          </struct>
+          <struct name="25">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="22"/>
+          </struct>
+          <struct name="26">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="23"/>
+          </struct>
+          <struct name="27">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="24"/>
+          </struct>
+          <struct name="28">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="25"/>
+          </struct>
+          <struct name="29">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="26"/>
+          </struct>
+          <struct name="30">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="27"/>
+          </struct>
+          <struct name="31">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="28"/>
+          </struct>
+          <struct name="32">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="29"/>
+          </struct>
+          <struct name="33">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="30"/>
+          </struct>
+          <struct name="34">
+            <setting name="id" value="GPIOD"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="31"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="63">
+        <setting name="id" value="PORTE_IRQn"/>
+        <setting name="handler_id" value="PORTE_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="63"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="PORTE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="PORTE"/>
+            <setting name="function" value="port"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="3">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="4">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="5">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="2"/>
+          </struct>
+          <struct name="6">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="3"/>
+          </struct>
+          <struct name="7">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="4"/>
+          </struct>
+          <struct name="8">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="5"/>
+          </struct>
+          <struct name="9">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="6"/>
+          </struct>
+          <struct name="10">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="7"/>
+          </struct>
+          <struct name="11">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="8"/>
+          </struct>
+          <struct name="12">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="9"/>
+          </struct>
+          <struct name="13">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="10"/>
+          </struct>
+          <struct name="14">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="11"/>
+          </struct>
+          <struct name="15">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="12"/>
+          </struct>
+          <struct name="16">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="13"/>
+          </struct>
+          <struct name="17">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="14"/>
+          </struct>
+          <struct name="18">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="15"/>
+          </struct>
+          <struct name="19">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="16"/>
+          </struct>
+          <struct name="20">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="17"/>
+          </struct>
+          <struct name="21">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="18"/>
+          </struct>
+          <struct name="22">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="19"/>
+          </struct>
+          <struct name="23">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="20"/>
+          </struct>
+          <struct name="24">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="21"/>
+          </struct>
+          <struct name="25">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="22"/>
+          </struct>
+          <struct name="26">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="23"/>
+          </struct>
+          <struct name="27">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="24"/>
+          </struct>
+          <struct name="28">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="25"/>
+          </struct>
+          <struct name="29">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="26"/>
+          </struct>
+          <struct name="30">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="27"/>
+          </struct>
+          <struct name="31">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="28"/>
+          </struct>
+          <struct name="32">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="29"/>
+          </struct>
+          <struct name="33">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="30"/>
+          </struct>
+          <struct name="34">
+            <setting name="id" value="GPIOE"/>
+            <setting name="function" value="extInt"/>
+            <setting name="channel" value="31"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="64">
+        <setting name="id" value="SWI_IRQn"/>
+        <setting name="handler_id" value="SWI_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="64"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value=""/>
+            <setting name="function" value="swi"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="65">
+        <setting name="id" value="SPI2_IRQn"/>
+        <setting name="handler_id" value="SPI2_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="65"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="SPI2"/>
+            <setting name="function" value="serial_rx"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="SPI2"/>
+            <setting name="function" value="serial_tx"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="66">
+        <setting name="id" value="UART4_RX_TX_IRQn"/>
+        <setting name="handler_id" value="UART4_RX_TX_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="66"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="UART4"/>
+            <setting name="function" value="serial_rx_tx"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="67">
+        <setting name="id" value="UART4_ERR_IRQn"/>
+        <setting name="handler_id" value="UART4_ERR_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="67"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="UART4"/>
+            <setting name="function" value="serial_error"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="68">
+        <setting name="id" value="Reserved84_IRQn"/>
+        <setting name="handler_id" value="Reserved84_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="68"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="69">
+        <setting name="id" value="Reserved85_IRQn"/>
+        <setting name="handler_id" value="Reserved85_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="69"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="70">
+        <setting name="id" value="CMP2_IRQn"/>
+        <setting name="handler_id" value="CMP2_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="70"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="CMP2"/>
+            <setting name="function" value="acmp"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="71">
+        <setting name="id" value="FTM3_IRQn"/>
+        <setting name="handler_id" value="FTM3_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="71"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="FTM3"/>
+            <setting name="function" value="timer_overflow"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="FTM3"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="3">
+            <setting name="id" value="FTM3"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="4">
+            <setting name="id" value="FTM3"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="2"/>
+          </struct>
+          <struct name="5">
+            <setting name="id" value="FTM3"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="3"/>
+          </struct>
+          <struct name="6">
+            <setting name="id" value="FTM3"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="4"/>
+          </struct>
+          <struct name="7">
+            <setting name="id" value="FTM3"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="5"/>
+          </struct>
+          <struct name="8">
+            <setting name="id" value="FTM3"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="6"/>
+          </struct>
+          <struct name="9">
+            <setting name="id" value="FTM3"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="7"/>
+          </struct>
+          <struct name="10">
+            <setting name="id" value="FTM3"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="11">
+            <setting name="id" value="FTM3"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="12">
+            <setting name="id" value="FTM3"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="2"/>
+          </struct>
+          <struct name="13">
+            <setting name="id" value="FTM3"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="3"/>
+          </struct>
+          <struct name="14">
+            <setting name="id" value="FTM3"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="4"/>
+          </struct>
+          <struct name="15">
+            <setting name="id" value="FTM3"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="5"/>
+          </struct>
+          <struct name="16">
+            <setting name="id" value="FTM3"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="6"/>
+          </struct>
+          <struct name="17">
+            <setting name="id" value="FTM3"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="7"/>
+          </struct>
+          <struct name="18">
+            <setting name="id" value="FTM3"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="all"/>
+          </struct>
+          <struct name="19">
+            <setting name="id" value="FTM3"/>
+            <setting name="function" value="timer_fault"/>
+            <setting name="channel" value="all"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="72">
+        <setting name="id" value="DAC1_IRQn"/>
+        <setting name="handler_id" value="DAC1_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="72"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="DAC1"/>
+            <setting name="function" value="dac"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="73">
+        <setting name="id" value="ADC1_IRQn"/>
+        <setting name="handler_id" value="ADC1_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="73"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="ADC1"/>
+            <setting name="function" value="adc"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="74">
+        <setting name="id" value="I2C2_IRQn"/>
+        <setting name="handler_id" value="I2C2_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="74"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="I2C2"/>
+            <setting name="function" value="iic"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="75">
+        <setting name="id" value="CAN0_ORed_Message_buffer_IRQn"/>
+        <setting name="handler_id" value="CAN0_ORed_Message_buffer_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="75"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="CAN0"/>
+            <setting name="function" value="can_ored_mb"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="76">
+        <setting name="id" value="CAN0_Bus_Off_IRQn"/>
+        <setting name="handler_id" value="CAN0_Bus_Off_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="76"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="CAN0"/>
+            <setting name="function" value="can_busoff"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="77">
+        <setting name="id" value="CAN0_Error_IRQn"/>
+        <setting name="handler_id" value="CAN0_Error_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="77"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="CAN0"/>
+            <setting name="function" value="can_error"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="78">
+        <setting name="id" value="CAN0_Tx_Warning_IRQn"/>
+        <setting name="handler_id" value="CAN0_Tx_Warning_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="78"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="CAN0"/>
+            <setting name="function" value="can_tx"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="79">
+        <setting name="id" value="CAN0_Rx_Warning_IRQn"/>
+        <setting name="handler_id" value="CAN0_Rx_Warning_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="79"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="CAN0"/>
+            <setting name="function" value="can_rx"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="80">
+        <setting name="id" value="CAN0_Wake_Up_IRQn"/>
+        <setting name="handler_id" value="CAN0_Wake_Up_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="80"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="CAN0"/>
+            <setting name="function" value="can_wakeup"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="81">
+        <setting name="id" value="SDHC_IRQn"/>
+        <setting name="handler_id" value="SDHC_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="81"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="SDHC"/>
+            <setting name="function" value="flashmedia"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="82">
+        <setting name="id" value="ENET_1588_Timer_IRQn"/>
+        <setting name="handler_id" value="ENET_1588_Timer_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="82"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="ENET"/>
+            <setting name="function" value="serial_other"/>
+            <setting name="channel" value="timer"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="83">
+        <setting name="id" value="ENET_Transmit_IRQn"/>
+        <setting name="handler_id" value="ENET_Transmit_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="83"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="ENET"/>
+            <setting name="function" value="serial_tx"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="84">
+        <setting name="id" value="ENET_Receive_IRQn"/>
+        <setting name="handler_id" value="ENET_Receive_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="84"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="ENET"/>
+            <setting name="function" value="serial_rx"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="85">
+        <setting name="id" value="ENET_Error_IRQn"/>
+        <setting name="handler_id" value="ENET_Error_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="85"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="ENET"/>
+            <setting name="function" value="serial_error"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="86">
+        <setting name="id" value="LPUART0_IRQn"/>
+        <setting name="handler_id" value="LPUART0_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="86"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="LPUART0"/>
+            <setting name="function" value="serial_rx_tx"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="LPUART0"/>
+            <setting name="function" value="serial_error"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="3">
+            <setting name="id" value="LPUART0"/>
+            <setting name="function" value="serial_match"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="87">
+        <setting name="id" value="TSI0_IRQn"/>
+        <setting name="handler_id" value="TSI0_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="87"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="TSI0"/>
+            <setting name="function" value="tsi"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="88">
+        <setting name="id" value="TPM1_IRQn"/>
+        <setting name="handler_id" value="TPM1_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="88"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="TPM1"/>
+            <setting name="function" value="timer_overflow"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="TPM1"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="3">
+            <setting name="id" value="TPM1"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="4">
+            <setting name="id" value="TPM1"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="5">
+            <setting name="id" value="TPM1"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="6">
+            <setting name="id" value="TPM1"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="all"/>
+          </struct>
+          <struct name="7">
+            <setting name="id" value="TPM1"/>
+            <setting name="function" value="timer_fault"/>
+            <setting name="channel" value="all"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="89">
+        <setting name="id" value="TPM2_IRQn"/>
+        <setting name="handler_id" value="TPM2_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="89"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="TPM2"/>
+            <setting name="function" value="timer_overflow"/>
+            <setting name="channel" value=""/>
+          </struct>
+          <struct name="2">
+            <setting name="id" value="TPM2"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="3">
+            <setting name="id" value="TPM2"/>
+            <setting name="function" value="timer_capture"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="4">
+            <setting name="id" value="TPM2"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="0"/>
+          </struct>
+          <struct name="5">
+            <setting name="id" value="TPM2"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="1"/>
+          </struct>
+          <struct name="6">
+            <setting name="id" value="TPM2"/>
+            <setting name="function" value="timer_reference"/>
+            <setting name="channel" value="all"/>
+          </struct>
+          <struct name="7">
+            <setting name="id" value="TPM2"/>
+            <setting name="function" value="timer_fault"/>
+            <setting name="channel" value="all"/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="90">
+        <setting name="id" value="USBHSDCD_IRQn"/>
+        <setting name="handler_id" value="USBHSDCD_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="90"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="USBHSDCD"/>
+            <setting name="function" value="usbdcd"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="91">
+        <setting name="id" value="I2C3_IRQn"/>
+        <setting name="handler_id" value="I2C3_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="91"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="I2C3"/>
+            <setting name="function" value="iic"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="92">
+        <setting name="id" value="CMP3_IRQn"/>
+        <setting name="handler_id" value="CMP3_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="92"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="CMP3"/>
+            <setting name="function" value="acmp"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="93">
+        <setting name="id" value="USBHS_IRQn"/>
+        <setting name="handler_id" value="USBHS_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="93"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="USBHS"/>
+            <setting name="function" value="usb"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="94">
+        <setting name="id" value="CAN1_ORed_Message_buffer_IRQn"/>
+        <setting name="handler_id" value="CAN1_ORed_Message_buffer_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="94"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="CAN1"/>
+            <setting name="function" value="can_ored_mb"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="95">
+        <setting name="id" value="CAN1_Bus_Off_IRQn"/>
+        <setting name="handler_id" value="CAN1_Bus_Off_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="95"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="CAN1"/>
+            <setting name="function" value="can_busoff"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="96">
+        <setting name="id" value="CAN1_Error_IRQn"/>
+        <setting name="handler_id" value="CAN1_Error_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="96"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="CAN1"/>
+            <setting name="function" value="can_error"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="97">
+        <setting name="id" value="CAN1_Tx_Warning_IRQn"/>
+        <setting name="handler_id" value="CAN1_Tx_Warning_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="97"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="CAN1"/>
+            <setting name="function" value="can_tx"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="98">
+        <setting name="id" value="CAN1_Rx_Warning_IRQn"/>
+        <setting name="handler_id" value="CAN1_Rx_Warning_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="98"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="CAN1"/>
+            <setting name="function" value="can_rx"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+      <struct name="99">
+        <setting name="id" value="CAN1_Wake_Up_IRQn"/>
+        <setting name="handler_id" value="CAN1_Wake_Up_IRQHandler"/>
+        <array name="devices">
+          <struct name="0">
+            <setting name="id" value="NVIC"/>
+            <setting name="function" value="NVIC"/>
+            <setting name="channel" value="99"/>
+          </struct>
+          <struct name="1">
+            <setting name="id" value="CAN1"/>
+            <setting name="function" value="can_wakeup"/>
+            <setting name="channel" value=""/>
+          </struct>
+        </array>
+      </struct>
+    </array>
+  </data>
+</resource:resource_table>

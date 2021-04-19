@@ -1,0 +1,72 @@
+/* Halt the timer */
+${PERIPHERAL}$->CTRL |= (SCT_CTRL_HALT_L_MASK | SCT_CTRL_HALT_H_MASK);
+
+#ifdef ${VPREFIX}$_CONFIG_INIT
+  ${PERIPHERAL}$->CONFIG = ${VPREFIX}$_CONFIG_INIT;
+#endif /* ${VPREFIX}$_CONFIG_INIT */
+#ifdef ${VPREFIX}$_DMAREQ0_INIT
+  ${PERIPHERAL}$->DMAREQ0 = ${VPREFIX}$_DMAREQ0_INIT;
+#endif /* ${VPREFIX}$_DMAREQ0_INIT */
+#ifdef ${VPREFIX}$_DMAREQ1_INIT
+  ${PERIPHERAL}$->DMAREQ1 = ${VPREFIX}$_DMAREQ1_INIT;
+#endif /* ${VPREFIX}$_DMAREQ1_INIT */
+#ifdef ${VPREFIX}$_EVEN_INIT
+  ${PERIPHERAL}$->EVEN = ${VPREFIX}$_EVEN_INIT;
+#endif /* ${VPREFIX}$_EVEN_INIT */
+#ifdef ${VPREFIX}$_LIMIT_INIT
+  ${PERIPHERAL}$->LIMIT = ${VPREFIX}$_LIMIT_INIT;
+#endif /* ${VPREFIX}$_LIMIT_INIT */
+#ifdef ${VPREFIX}$_HALT_INIT
+  ${PERIPHERAL}$->HALT = ${VPREFIX}$_HALT_INIT;
+#endif /* ${VPREFIX}$_HALT_INIT */
+#ifdef ${VPREFIX}$_STOP_INIT
+  ${PERIPHERAL}$->STOP = ${VPREFIX}$_STOP_INIT;
+#endif /* ${VPREFIX}$_STOP_INIT */
+#ifdef ${VPREFIX}$_START_INIT
+  ${PERIPHERAL}$->START = ${VPREFIX}$_START_INIT;
+#endif /* ${VPREFIX}$_START_INIT */
+#ifdef ${VPREFIX}$_COUNT_INIT
+  ${PERIPHERAL}$->COUNT = ${VPREFIX}$_COUNT_INIT;
+#endif /* ${VPREFIX}$_COUNT_INIT */
+#ifdef ${VPREFIX}$_STATE_INIT
+  ${PERIPHERAL}$->STATE = ${VPREFIX}$_STATE_INIT;
+#endif /* ${VPREFIX}$_STATE_INIT */
+#ifdef ${VPREFIX}$_OUTPUT_INIT
+  ${PERIPHERAL}$->OUTPUT = ${VPREFIX}$_OUTPUT_INIT;
+#endif /* ${VPREFIX}$_OUTPUT_INIT */
+#ifdef ${VPREFIX}$_OUTPUTDIRCTRL_INIT
+  ${PERIPHERAL}$->OUTPUTDIRCTRL = ${VPREFIX}$_OUTPUTDIRCTRL_INIT;
+#endif /* ${VPREFIX}$_OUTPUTDIRCTRL_INIT */
+#ifdef ${VPREFIX}$_RES_INIT
+  ${PERIPHERAL}$->RES = ${VPREFIX}$_RES_INIT;
+#endif /* ${VPREFIX}$_RES_INIT */
+#ifdef ${VPREFIX}$_CONEN_INIT
+  ${PERIPHERAL}$->CONEN = ${VPREFIX}$_CONEN_INIT;
+#endif /* ${VPREFIX}$_CONEN_INIT */
+#ifdef ${VPREFIX}$_REGMODE_INIT
+  ${PERIPHERAL}$->REGMODE = ${VPREFIX}$_REGMODE_INIT;
+#endif /* ${VPREFIX}$_REGMODE_INIT */${<code>MATCH_REGS.forEach(function(x){</code>}$
+#ifdef ${VPREFIX}$_MATCH${x}$_INIT
+  ${PERIPHERAL}$->MATCH[${x}$] = ${VPREFIX}$_MATCH${x}$_INIT;
+#endif /* ${VPREFIX}$_MATCH${x}$_INIT */
+#ifdef ${VPREFIX}$_MATCHREL${x}$_INIT
+  ${PERIPHERAL}$->MATCHREL[${x}$] = ${VPREFIX}$_MATCHREL${x}$_INIT;
+#endif /* ${VPREFIX}$_MATCHREL${x}$_INIT */${<code>;});</code>}$
+${<code>CAP_REGS.forEach(function(x){</code>}$#ifdef ${VPREFIX}$_CAPCTRL${x}$_INIT
+  ${PERIPHERAL}$->CAPCTRL[${x}$] = ${VPREFIX}$_CAPCTRL${x}$_INIT;
+#endif /* ${VPREFIX}$_CAPCTRL${x}$_INIT */
+${<code>;});</code>}$${<code>EVENT_REGS.forEach(function(x){</code>}$#ifdef ${VPREFIX}$_EV${x}$_CTRL_INIT
+  ${PERIPHERAL}$->EV[${x}$].CTRL = ${VPREFIX}$_EV${x}$_CTRL_INIT;
+#endif /* ${VPREFIX}$_EV${x}$_CTRL_INIT */
+#ifdef ${VPREFIX}$_EV${x}$_STATE_INIT
+  ${PERIPHERAL}$->EV[${x}$].STATE = ${VPREFIX}$_EV${x}$_STATE_INIT;
+#endif /* ${VPREFIX}$_EV${x}$_STATE_INIT */
+${<code>;});</code>}$${<code>OUT_REGS.forEach(function(x){</code>}$#ifdef ${VPREFIX}$_OUT${x}$_SET_INIT
+  ${PERIPHERAL}$->OUT[${x}$].SET = ${VPREFIX}$_OUT${x}$_SET_INIT;
+#endif /* ${VPREFIX}$_OUT${x}$_SET_INIT */
+#ifdef ${VPREFIX}$_OUT${x}$_CLR_INIT
+  ${PERIPHERAL}$->OUT[${x}$].CLR = ${VPREFIX}$_OUT${x}$_CLR_INIT;
+#endif /* ${VPREFIX}$_OUT${x}$_CLR_INIT */
+${<code>;});</code>}$#ifdef ${VPREFIX}$_CTRL_INIT
+  ${PERIPHERAL}$->CTRL = ${VPREFIX}$_CTRL_INIT;
+#endif /* ${VPREFIX}$_CTRL_INIT */

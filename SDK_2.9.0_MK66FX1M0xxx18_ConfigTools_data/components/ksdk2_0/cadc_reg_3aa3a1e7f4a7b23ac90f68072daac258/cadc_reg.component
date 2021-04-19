@@ -1,0 +1,1046 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="cadc_reg" label="CADC" category="Register init" registers_init="true"  options="UI_COMPONENT_MODE_HIDDEN"
+    xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd" 
+    xmlns:component="http://swtools.freescale.net/XSD/component/1.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   
+    <description>Cyclic Analog-to-Digital Converter (CADC)</description>
+    <mode id="CADC" label="General" available="true">
+        <description>Cyclic Analog-to-Digital Converter (CADC)</description>
+        <config_set_refs>
+            <config_set_ref>fsl_cadc</config_set_ref>
+        </config_set_refs>
+        <master_peripheral>
+            <peripheral_type>ADC</peripheral_type>
+        </master_peripheral>
+    </mode>
+    <config_set id="fsl_cadc" label="General configuration" from_source="fsl_cadc.h">
+        <description>General configuration of Cyclic Analog-to-Digital Converter</description>
+        <generated_types>
+        </generated_types>
+        <user_types>
+            <enum id="cadc_dual_converter_scan_mode_t" label="Defines the enumeration for dual converter&apos;s scan mode" from="_cadc_dual_converter_scan_mode">
+                <description></description>
+                <item id="kCADC_DualConverterWorkAsOnceSequential" label="Once (single) sequential">
+                    <description>Sequential scan mode: two ADCs closely coupled, can sequentially acquire 16 ADC measurements on one triggered event from any channels.</description>
+                </item>
+                <item id="kCADC_DualConverterWorkAsOnceParallel" label="Once parallel">
+                    <description>Once parallel. In parallel, converter A converts SAMPLEs 0-7, and converter B converts SAMPLEs 8-15.</description>
+                </item>
+                <item id="kCADC_DualConverterWorkAsLoopSequential" label="Loop sequential">
+                    <description>Loop sequential. SAMPLEs 0-15 are taken one at a time until a disabled sample is encountered. Each time a converter completes its current sequence, it immediately restarts its scan sequence.</description>
+                </item>
+                <item id="kCADC_DualConverterWorkAsLoopParallel" label="Loop parallel">
+                    <description>Loop parallel. converter A converts SAMPLEs 0-7, and converter B converts SAMPLEs8-15. Each time a converter completes its current scan, it immediately restarts its scan sequence.</description>
+                </item>
+                <item id="kCADC_DualConverterWorkAsTriggeredSequential" label="Triggered sequential">
+                    <description>Triggered sequential. Samples are taken one at a time starting with SAMPLE0, until the first disabled sample is encountered. If no disabled sample is encountered, conversion concludes after SAMPLE15.</description>
+                </item>
+                <item id="kCADC_DualConverterWorkAsTriggeredParallel" label="Triggered parallel">
+                    <description>Triggered parallel. In parallel, converter A converts SAMPLEs 0-7, and converter B converts SAMPLEs 8-15. When Enable simultaneous mode is true, scanning stops when either converter encounters a disabled sample.</description>
+                </item>
+            </enum>
+            <enum id="cadc_dma_trigger_source_t" label="Defines the enumeration for DMA trigger&apos;s source" from="_cadc_dma_trigger_source">
+                <description></description>
+                <item id="kCADC_DMATriggerSourceAsEndOfScan" label="End of scan interrupt">
+                    <description>DMA trigger source is end of scan interrupt.</description>
+                </item>
+                <item id="kCADC_DMATriggerSourceAsSampleReady" label="RDY bits">
+                    <description>DMA trigger source is RDY bits.</description>
+                </item>
+            </enum>
+            <enum id="cadc_reference_voltage_source_t" label="Defines the enumeration for converter&apos;s reference voltage source" from="_cadc_reference_voltage_source">
+                <description></description>
+                <item id="kCADC_ReferenceVoltageVrefPad" label="VREF pin">
+                    <description>VREF pin.</description>
+                </item>
+                <item id="kCADC_ReferenceVoltageChannelPad" label="ANx2 or ANx3 pin">
+                    <description>ANx2 or ANx3 pin.</description>
+                </item>
+            </enum>
+            <enum id="cadc_channel_gain_t" label="Defines the enumeration for channel&apos;s input gain" from="_cadc_channel_gain">
+                <description></description>
+                <item id="kCADC_ChannelGainx1" label="Gain x1">
+                    <description>Gain x1.</description>
+                </item>
+                <item id="kCADC_ChannelGainx2" label="Gain x2">
+                    <description>Gain x2.</description>
+                </item>
+                <item id="kCADC_ChannelGainx4" label="Gain x4">
+                    <description>Gain x4.</description>
+                </item>
+            </enum>
+            <enum id="cadc_speed_mode_t" label="Defines the enumeration for the converter&apos;s speed mode" from="_cadc_speed_mode">
+                <description></description>
+                <item id="kCADC_SpeedMode0" label="Conversion clock &lt;= 6.25 MHz; current = 6 mA" value="6250000">
+                    <description>Conversion clock frequency &lt;= 6.25 MHz; current consumption per converter = 6 mA.</description>
+                </item>
+                <item id="kCADC_SpeedMode1" label="Conversion clock &lt;= 12.25 MHz; current = 10.8 mA" value="12250000">
+                    <description>Conversion clock frequency &lt;= 12.25 MHz; current consumption per converter = 10.8 mA.</description>
+                </item>
+                <item id="kCADC_SpeedMode2" label="Conversion clock &lt;= 18.75 MHz; current = 18 mA" value="18750000">
+                    <description>Conversion clock frequency &lt;= 18.75 MHz; current consumption per converter = 18 mA.</description>
+                </item>
+                <item id="kCADC_SpeedMode3" label="Conversion clock &lt;= 25 MHz; current = 25.2 mA" value="25000000">
+                    <description>Conversion clock frequency &lt;= 25 MHz; current consumption per converter = 25.2 mA.</description>
+                </item>
+            </enum>
+            <enum id="cadc_zero_crossing_mode_t" label="Defines the enumeration for the sample slot&apos;s zero crossing event" from="_cadc_zero_crossing_mode">
+                <description></description>
+                <item id="kCADC_ZeroCrossingDisabled" label="Disabled">
+                    <description>Zero Crossing disabled.</description>
+                </item>
+                <item id="kCADC_ZeroCrossingForPtoNSign" label="Enabled for positive to negative sign change">
+                    <description>Zero Crossing enabled for positive to negative sign change.</description>
+                </item>
+                <item id="kCADC_ZeroCrossingForNtoPSign" label="Enabled for negative to positive sign change">
+                    <description>Zero Crossing enabled for negative to positive sign change.</description>
+                </item>
+                <item id="kCADC_ZeroCrossingForAnySignChanged" label="Enabled for any sign change">
+                    <description>Zero Crossing enabled for any sign change.</description>
+                </item>
+            </enum>
+            <enum id="cadc_idle_work_mode_t" label="Defines the enumeration for converter&apos;s work mode in idle mode" from="_cadc_idle_work_mode">
+                <description></description>
+                <item id="kCADC_IdleKeepNormal" label="Keep normal">
+                    <description>Keep normal.</description>
+                </item>
+                <item id="kCADC_IdleAutoStandby" label="Fall into standby mode automatically">
+                    <description>Fall into standby mode automatically.</description>
+                </item>
+                <item id="kCADC_IdleAutoPowerDown" label="Fall into power down mode automatically">
+                    <description>Fall into power down mode automatically.</description>
+                </item>
+            </enum>
+            
+            <enum id="cadc_clock_source" label="">
+                <item id="BusInterfaceClock" label="System clock selected" value="BusInterfaceClock"/> <!-- value = clock_unify_ID -->
+                <!-- <item id="Adc8Clock" label="ADC 8 Clock" value="Adc8Clock"/>  - no_signal-->
+            </enum>
+            
+            <struct id="cadc_config_t" label="Defines the structure for configuring the CyclicADC&apos;s common setting" from="_cadc_config">
+                <description></description>  
+                
+                <reference id="_clockSource" label="Clock source" type="cadc_clock_source" options="remove_from_struct_init" available="false"></reference>
+                <variable id="clockSourceUId" value="$parent.clockSource.getEnumItemValue()"/>
+                <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init"
+                    items="enumItemsOf($parent._clockSource).arrayToEnumItems(
+                    enumItem -> true,
+                    enumItem -> enumItem.getID(),
+                    enumItem -> getPeripheralClock($instance.getPeripheral(), enumItem.getValue()),
+                    enumItem -> enumItem.getValue())"> 
+                    <description>
+                        CADC clock selection.
+                    </description>
+                    <validation>
+                        <dependency  resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                            description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                            level="Error">
+                            <feature name="frequency" evaluation="greaterThan">
+                                <data expr="0" unit="Hz" type="Frequency"/>
+                            </feature>
+                        </dependency>
+                    </validation>
+                </dynamic_enum>
+                <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" 
+                    items="createArray().merge(getClockFunctionalGroups().arrayToEnumItems(
+                    enumItem -> true,
+                    enumItem -> enumItem,
+                    enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSourceUId.getValue(), enumItem)) + ` (` + enumItem + `)`,
+                    enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSourceUId.getValue(), enumItem)))" >
+                    <description>Selection of the clock source frequency.</description>
+                    <validation>
+                        <constraint cond_expr="$this.getEnumItemValue() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+                    </validation>
+                    <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+                </dynamic_enum> 
+                <enum id="dualConverterScanMode" label="Dual converter scan mode" from="_cadc_dual_converter_scan_mode">
+                    <assign when="true">
+                        <register name="CTRL1" bitfield="SMODE" value="$this.getEnumItemValue().toInt()" reverse_value="x -> (x == 0 ? `kCADC_DualConverterWorkAsOnceSequential` : 
+                            (x == 1 ? `kCADC_DualConverterWorkAsOnceParallel` : 
+                            (x == 2 ? `kCADC_DualConverterWorkAsLoopSequential` : 
+                            (x == 3 ? `kCADC_DualConverterWorkAsLoopParallel` :
+                            (x == 4 ? `kCADC_DualConverterWorkAsTriggeredSequential` : `kCADC_DualConverterWorkAsTriggeredParallel`)))))"/>                 
+                    </assign>
+                    <item id="kCADC_DualConverterWorkAsOnceSequential" label="Once (single) sequential" value="0">
+                        <description>Sequential scan mode: two ADCs closely coupled, can sequentially acquire 16 ADC measurements on one triggered event from any channels.</description>
+                    </item>
+                    <item id="kCADC_DualConverterWorkAsOnceParallel" label="Once parallel" value="1">
+                        <description>Once parallel. In parallel, converter A converts SAMPLEs 0-7, and converter B converts SAMPLEs 8-15.</description>
+                    </item>
+                    <item id="kCADC_DualConverterWorkAsLoopSequential" label="Loop sequential" value="2">
+                        <description>Loop sequential. SAMPLEs 0-15 are taken one at a time until a disabled sample is encountered. Each time a converter completes its current sequence, it immediately restarts its scan sequence.</description>
+                    </item>
+                    <item id="kCADC_DualConverterWorkAsLoopParallel" label="Loop parallel" value="3">
+                        <description>Loop parallel. converter A converts SAMPLEs 0-7, and converter B converts SAMPLEs8-15. Each time a converter completes its current scan, it immediately restarts its scan sequence.</description>
+                    </item>
+                    <item id="kCADC_DualConverterWorkAsTriggeredSequential" label="Triggered sequential" value="4">
+                        <description>Triggered sequential. Samples are taken one at a time starting with SAMPLE0, until the first disabled sample is encountered. If no disabled sample is encountered, conversion concludes after SAMPLE15.</description>
+                    </item>
+                    <item id="kCADC_DualConverterWorkAsTriggeredParallel" label="Triggered parallel" value="5">
+                        <description>Triggered parallel. In parallel, converter A converts SAMPLEs 0-7, and converter B converts SAMPLEs 8-15. When Enable simultaneous mode is true, scanning stops when either converter encounters a disabled sample.</description>
+                    </item>
+                </enum>
+
+                <bool id="enableSimultaneousMode" label="Enable simultaneous mode">
+                    <description>Enable Simultaneous mode. Simultaneous parallel scans perform the A and b converter scan in lock step using one set of shared controls. Non-simultaneous parallel scans operate the A and B independently, with each converter using its own set of controls. </description>
+                    <assign when="true">
+                        <register name="CTRL2" bitfield="SIMULT" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                    </assign>
+                </bool>
+
+                <enum id="DMATriggerSource" label="DMA trigger source">
+                    <description></description>
+                    <assign when="true">
+                        <register name="CTRL3" bitfield="DMASRC" value="$this.getEnumItemValue().toInt()" reverse_value="x -> ((x == 1) ? `kCADC_DMATriggerSourceAsSampleReady` : `kCADC_DMATriggerSourceAsEndOfScan`)"/>                 
+                    </assign>
+                    <item id="kCADC_DMATriggerSourceAsEndOfScan" label="End of scan interrupt" value="0">
+                        <description>DMA trigger source is end of scan interrupt.</description>
+                    </item>
+                    <item id="kCADC_DMATriggerSourceAsSampleReady" label="RDY bits" value="1">
+                        <description>DMA trigger source is RDY bits.</description>
+                    </item>
+                </enum>
+                
+                <integer id="powerUpDelay" label="Power-up delay count" type="uint16_t" min_expr="0" max_expr="63">
+                    <description>Delay clock count to wait for the clock is stable. Available range is 0-63.</description>
+                    <assign when="true">
+                        <register name="PWR" bitfield="PUDELAY" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                    </assign>
+                </integer>
+
+                <bool id="autoPowerDown" label="Enable auto power down mode">
+                    <description>Auto-powerdown mode powers down converters when not in use for a scan. When the scan is completed, the converter(s) are powered down again.</description>
+                    <assign when="true">
+                        <register name="PWR" bitfield="APD" value="$this.getValue() == `true` ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                    </assign>
+                </bool>
+
+                <info value="`Converter A configuration`" id="lineConverterAConfig" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+
+                <integer id="clockDivisorInt" label="ADC clock divisor" type="uint16_t" min_expr="2" max_expr="64" options="REGISTERS_REFRESH">
+                    <description>Converter&apos;s clock divisor for the clock source. Available setting range is 2-64. Divisor is used for all types of scans except parallel non-simultaneous scans in converter B. </description>
+                    <validation>
+                        <constraint when_expr="!bitfieldExists($instance.getPeripheral(),`CAL`,`EXPOSE_MODE0`) &amp;&amp; $parent.clockFreq.getValue() != `N/A`" cond_expr="$parent.clockFreq.getValue().toInt() &lt;= 25000000" level="warning" description="Clock source frequency can not be greater than 25MHz."/>
+                        <constraint when_expr="bitfieldExists($instance.getPeripheral(),`CAL`,`EXPOSE_MODE0`) &amp;&amp; $parent.clockFreq.getValue() != `N/A`" cond_expr="$parent.clockFreq.getValue().toInt() &lt;= 12500000" level="warning" description="Clock source frequency can not be greater than 12.5MHz."/>
+                    </validation>
+                    <assign when="true">
+                        <register name="CTRL2" bitfield="DIV0" value="($this.getValue() == 0) ? 0 : ($this.getValue().toInt() == 2 ? ($this.getValue().toInt()-2) : ($this.getValue().toInt()-1))" reverse_value="x -> ((x == 0 || x == 1) ? 2 : (x + 1))"/>
+                    </assign>
+                    <assign when="!$parent.clockDivisorIntB.isAvailable()">
+                        <register name="PWR2" bitfield="DIV1" value="($this.getValue() == 0) ? 0 : ($this.getValue().toInt() == 2 ? ($this.getValue().toInt()-2) : ($this.getValue().toInt()-1))" reverse_value="x -> ((x == 0 || x == 1) ? 2 : (x + 1))"/>
+                    </assign>
+                </integer>
+              
+                <variable id="clockFreq" value="($parent.clockDivisorInt.getValue() &gt;=2 &amp;&amp; $parent.clockDivisorInt.getValue() &lt;=64) ? system::calculateFreq($parent.clockDivisorInt.getValue(), $configSet.cadcConfig.clockSourceFreq.getEnumItemValue()).toHertz() : `N/A`"/>
+                
+                <info id="resultingPeriodFreq" label="ADC frequency" value="($parent.clockDivisorInt.getValue() &gt;=2 &amp;&amp; $parent.clockDivisorInt.getValue() &lt;=64) ? system::calculateFreq($parent.clockDivisorInt.getValue(), $configSet.cadcConfig.clockSourceFreq.getEnumItemValue()) : `N/A`"></info>
+
+                <variable id="clockPeriod1" value="($configSet.cadcConfig.clockSourceFreq.getEnumItemValue() == 0 || $parent.clockDivisorInt.getValue() &lt;2 || $parent.clockDivisorInt.getValue() &gt;64) ? 0 : (1.0 / system::calculateRealFreqRationalClk($parent.clockDivisorInt.getValue(), $configSet.cadcConfig.clockSourceFreq.getEnumItemValue().toHertz()))" options="remove_from_struct_init"/>
+                
+                <info id="resultantPowerUpDelayA" label="Resultant power-up delay" value="($configSet.cadcConfig.clockSourceFreq.getEnumItemValue() == 0 || $parent.clockPeriod1.getValue() == 0) ? `N/A` : timeToString(1000000.0 * $parent.powerUpDelay.getValue() * $parent.clockPeriod1.getValue())">
+                    <description>Power-up delay count determines the number of ADC clocks provided to power up an ADC converter</description>
+                </info>
+                
+                <bool id="enableDMA0" label="Enable DMA" options="REGISTERS_REFRESH">
+                    <description>Enable DMA for all types of scans except parallel non-simultaneous scans in converter B.</description>
+                    <assign when="true">
+                        <register name="CTRL1" bitfield="DMAEN0" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                    </assign>
+                    <assign when="!$parent.clockDivisorIntB.isAvailable()">
+                        <register name="CTRL2" bitfield="DMAEN1" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                    </assign>
+                </bool>
+
+                <bool id="enableStop0" label="Enable STOP mode" options="REGISTERS_REFRESH">
+                    <description>When this bit is asserted, the current scan is stopped and no further scans can start. Enable STOP for all types of scans except parallel non-simultaneous scans in converter B.</description>
+                    <assign when="true">
+                        <register name="CTRL1" bitfield="STOP0" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                    </assign>
+                    <assign when="!$parent.clockDivisorIntB.isAvailable()">
+                        <register name="CTRL2" bitfield="STOP1" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                    </assign>
+                </bool>
+             
+                <bool id="startConversion0" label="Start conversion" options="REGISTERS_REFRESH">
+                    <description>When this bit is asserted, a scan is started. Start conversion for all types of scans except parallel non-simultaneous scans in converter B.</description>
+                    <assign when="true">
+                        <register name="CTRL1" bitfield="START0" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                    </assign>
+                    <assign when="!$parent.clockDivisorIntB.isAvailable()">
+                        <register name="CTRL2" bitfield="START1" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                    </assign>
+                </bool>
+                <bool id="enableSYNC0" label="Enable SYNC" options="REGISTERS_REFRESH">
+                    <description>When this bit is deasserted, scan is initiated by enabling Start conversion only. When this bit is asserted, scan is initiated by Enable SYNC or Start conversion. Enable SYNC for all types of scans except parallel non-simultaneous scans in converter B.</description>
+                    <assign when="true">
+                        <register name="CTRL1" bitfield="SYNC0" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                    </assign>
+                    <assign when="!$parent.clockDivisorIntB.isAvailable()">
+                        <register name="CTRL2" bitfield="SYNC1" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                    </assign>
+                </bool>
+                
+                
+                <dynamic_enum id="syncSignalA" label="SYNC input" items="getPeripheralSignals($instance.getPeripheral()).filter(item -> item.getValue().regexMatch(`.*adc_trigger.a.*`))" available="false" options="remove_from_struct_init"></dynamic_enum>
+                <info id="syncAInfo" label="SYNC input" value="$parent.syncSignalA.getEnumItemLabel()" available="$parent.enableSYNC0.getValue()"/>
+                
+
+                <bool id="manualPowerDownA" label="Manual power down" options="remove_from_struct_init">
+                   <description>Manual power down forces converters to power down immediately. The results of a scan will be invalid if this will enabled.</description>
+                   <assign when="true">
+                       <register name="PWR" bitfield="PD0" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>              
+                    </assign>
+                </bool>
+
+                <enum id="highReferenceA" label="High reference">
+                    <assign when="true">
+                        <register name="CAL" bitfield="SEL_VREFH_A" value="$this.getEnumItemValue().toInt()" reverse_value="x -> (x == 0 ? `vdda` : `ana2`)"/>
+                    </assign>
+                    <item id="ana2" label="ANA, 2" value="1"></item>
+                    <item id="vdda" label="VDDA" value="0"></item>
+                </enum>
+                
+                <enum id="lowReferenceA" label="Low reference">
+                    <assign when="true">
+                        <register name="CAL" bitfield="SEL_VREFL_A" value="$this.getEnumItemValue().toInt()" reverse_value="x -> (x == 0 ? `vssa` : `ana3`)"/>
+                    </assign>
+                    <item id="ana3" label="ANA, 3" value="1"></item>
+                    <item id="vssa" label="VSSA" value="0"></item>
+                </enum>
+                
+                
+                <enum id="onChipAnalogInputA" label="ANA6 source">
+                    <description>This bit selects the source of the ADCA6 input as being either the input pin ADCA6 or ADCA temeprature sensor.</description>
+                    <assign when="true">
+                        <register name="CLIST5" bitfield="SEL_TEMP_0" value="$this.getEnumItemValue().toInt()" reverse_value="x -> ((x == 0) ? `normal` : `tempSensor`)"/>
+                    </assign>
+                    <item id="normal" label="Normal" value="0"></item>
+                    <item id="tempSensor" label="Temperature sensor" value="1"></item>
+                </enum>
+                
+                
+                
+                <enum id="tempSensorA" label="ANA7 source" available="!bitfieldExists($instance.getPeripheral(),`CAL`,`EXPOSE_MODE0`)">
+                    <description>This bit selects the source of the ADCA7 input as being either the input pin ADCA7 or ADCA on-chip analog input.</description>
+                    <assign when="true">
+                        <register name="CLIST5" bitfield="SEL_INTERNAL_0" value="$this.getEnumItemValue().toInt()" reverse_value="x -> ((x == 0) ? `normal` : `analogInput`)"/>
+                    </assign>
+                    <item id="normal" label="Normal" value="0"></item>
+                    <item id="analogInput" label="On-chip bandgap output" value="1"></item>
+                </enum>
+                
+                <enum id="temSensorANano" label="ANA7 source" available="bitfieldExists($instance.getPeripheral(),`CAL`,`EXPOSE_MODE0`)">
+                    <description>This bit selects the source of the ADCA7 input as being either the input pin ADCA7 or OPAMPA output.</description>
+                    <assign when="true">
+                        <register name="CLIST5" bitfield="SEL_INTERNAL_0" value="$this.getEnumItemValue().toInt()" reverse_value="x -> ((x == 0) ? `normal` : `analogInput`)"/>
+                    </assign>
+                    <item id="normal" label="Normal" value="0"></item>
+                    <item id="analogInput" label="OPAMPA output" value="1"></item>
+                </enum>
+                
+                <bool id="exposeModeA" label="Enable expose mode" available="bitfieldExists($instance.getPeripheral(),`CAL`,`EXPOSE_MODE0`)">
+                    <description>
+When expose mode is enabled:
+- ANA4 is replaced with 12-bit DAC output.
+- ANA5 is replaced with badgap output (need to enable bandgap output buffer in PMC).
+- ANA6 and ANA7 are replaced with internal test signal.
+                    </description>
+                    <assign when="true">
+                        <register name="CAL" bitfield="EXPOSE_MODE0" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                    </assign>
+                </bool> 
+
+                <info value="`Converter B configuration`" id="lineConverterBConfig" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init" >
+                    <description>Parallel non-simultaneous scans for converter B configuration.</description>
+                </info>
+                
+                
+                <integer id="clockDivisorIntB" label="ADC clock divisor" type="uint16_t" min_expr="2" max_expr="64" options="REGISTERS_REFRESH; UI_REFRESH" available="!($parent.dualConverterScanMode.getEnumItemId().contains(`Sequential`) || $parent.enableSimultaneousMode.getValue()== `true`)">
+                    <description>Converter&apos;s clock divisor for the clock source. Available setting range is 2-64. Divisor is used for parallel non-simultaneous scans in converter B.</description>
+                    <validation>
+                        <constraint when_expr="!bitfieldExists($instance.getPeripheral(),`CAL`,`EXPOSE_MODE0`) &amp;&amp; $parent.clockFreqB.getValue() != `N/A`" cond_expr="$parent.clockFreqB.getValue().toInt() &lt;= 25000000" level="warning" description="Clock source frequency can not be greater than 25MHz."/>
+                        <constraint when_expr="bitfieldExists($instance.getPeripheral(),`CAL`,`EXPOSE_MODE0`) &amp;&amp; $parent.clockFreqB.getValue() != `N/A`" cond_expr="$parent.clockFreqB.getValue().toInt() &lt;= 12500000" level="warning" description="Clock source frequency can not be greater than 12.5MHz."/>
+                    </validation>
+                    <assign when="true">
+                        <register name="PWR2" bitfield="DIV1" value="($this.getValue() == 0) ? 0 : ($this.getValue().toInt() == 2 ? ($this.getValue().toInt()-2) : ($this.getValue().toInt()-1))" reverse_value="x -> ((x == 0 || x == 1) ? 2 : (x + 1))"/>
+                    </assign>
+                </integer>
+
+                <variable id="clockFreqB" value="($parent.clockDivisorIntB.getValue() &gt;=2 &amp;&amp; $parent.clockDivisorIntB.getValue() &lt;=64) ? system::calculateFreq($parent.clockDivisorIntB.getValue(), $configSet.cadcConfig.clockSourceFreq.getEnumItemValue()).toHertz() : `N/A`"/>
+                
+                <info id="resultingPeriodFreqB" label="ADC frequency" value="($parent.clockDivisorIntB.getValue() &gt;=2 &amp;&amp; $parent.clockDivisorIntB.getValue() &lt;=64) ? system::calculateFreq($parent.clockDivisorIntB.getValue(), $configSet.cadcConfig.clockSourceFreq.getEnumItemValue()) : `N/A`" available="$parent.clockDivisorIntB.isAvailable()"></info>
+              
+                <variable id="clockPeriod" value="($configSet.cadcConfig.clockSourceFreq.getEnumItemValue() == 0  || $parent.clockDivisorInt.getValue() &lt; 2 || $parent.clockDivisorInt.getValue() &gt; 64) ? 0 : (1.0 / system::calculateRealFreqRationalClk($parent.clockDivisorInt.getValue(), $configSet.cadcConfig.clockSourceFreq.getEnumItemValue().toHertz()))" options="remove_from_struct_init"/>
+                
+                <variable id="clockPeriodB" value="($configSet.cadcConfig.clockSourceFreq.getEnumItemValue() == 0 || $parent.clockDivisorInt.getValue() &lt; 2 || $parent.clockDivisorInt.getValue() &gt; 64) ? 0 : (1.0 / system::calculateRealFreqRationalClk($parent.clockDivisorIntB.getValue(), $configSet.cadcConfig.clockSourceFreq.getEnumItemValue().toHertz()))" options="remove_from_struct_init"/>
+                
+                <info id="resultantPowerUpDelayB" label="Resultant power-up delay" value="($configSet.cadcConfig.clockSourceFreq.getEnumItemValue() == 0 || $parent.clockPeriodB.getValue() == 0) ? `N/A` : timeToString(1000000.0 * $parent.powerUpDelay.getValue() * $parent.clockPeriodB.getValue())" available="$parent.clockDivisorIntB.isAvailable()">
+                    <description>Power-up delay count determines the number of ADC clocks provided to power up an ADC converter</description>
+                </info>
+
+                <bool id="enableDMA1" label="Enable DMA" available="$parent.clockDivisorIntB.isAvailable()" options="REGISTERS_REFRESH">
+                    <description>Enable DMA for parallel non-simultaneous scans in converter B.</description>
+                    <assign when="true">
+                        <register name="CTRL2" bitfield="DMAEN1" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                    </assign>
+                </bool>
+              
+                <bool id="enableStop1" label="Enable STOP mode" available="$parent.clockDivisorIntB.isAvailable()" options="REGISTERS_REFRESH">
+                    <description>When this bit is asserted, the current scan is stopped and no further scans can start. Enable STOP for parallel non-simultaneous scans in converter B.</description>
+                    <assign when="true">
+                        <register name="CTRL2" bitfield="STOP1" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                    </assign>
+                </bool>
+
+                <bool id="startConversion1" label="Start conversion" available="$parent.clockDivisorIntB.isAvailable()" options="REGISTERS_REFRESH">
+                    <description>When this bit is asserted, a scan is started. Start conversion for parallel non-simultaneous scans in converter B.</description>
+                    <assign when="true">
+                        <register name="CTRL2" bitfield="START1" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                    </assign>
+                </bool>
+               
+                <bool id="enableSYNC1" label="Enable SYNC" available="$parent.clockDivisorIntB.isAvailable()" options="REGISTERS_REFRESH">
+                    <description>When this bit is deasserted, scan is initiated by enabling Start conversion only. When this bit is asserted, scan is initiated by Enable SYNC or Start conversion. Enable SYNC for parallel non-simultaneous scans in converter B.</description>
+                    <assign when="true">
+                        <register name="CTRL2" bitfield="SYNC1" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                    </assign>
+                </bool>
+                
+                <dynamic_enum id="syncSignalB" label="SYNC input" items="getPeripheralSignals($instance.getPeripheral()).filter(item -> item.getValue().regexMatch(`.*adc_trigger.b.*`))" available="false" options="remove_from_struct_init"></dynamic_enum>
+                <info id="syncBInfo" label="SYNC input" value="$parent.syncSignalB.getEnumItemLabel()" available="$parent.enableSYNC1.getValue()"/>
+                
+                
+                <bool id="manualPowerDownB" label="Manual power down">
+                    <description>Manual power down forces converters to power down immediately. The results of a scan will be invalid if this will enabled.</description>
+                    <assign when="true">
+                        <register name="PWR" bitfield="PD1" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>              
+                    </assign>
+                </bool>
+    
+                <enum id="highReferenceB" label="High reference">
+                    <assign when="true">
+                        <register name="CAL" bitfield="SEL_VREFH_B" value="$this.getEnumItemValue().toInt()" reverse_value="x -> (x == 0 ? `vdda` : `anb2`)"/>
+                    </assign>
+                    <item id="anb2" label="ANB, 2" value="1"></item>
+                    <item id="vdda" label="VDDA" value="0"></item>
+                </enum>
+                 
+                <enum id="lowReferenceB" label="Low reference">
+                    <assign when="true">
+                        <register name="CAL" bitfield="SEL_VREFL_B" value="$this.getEnumItemValue().toInt()" reverse_value="x -> (x == 0 ? `vssa` : `anb3`)"/>
+                    </assign>
+                    <item id="anb3" label="ANB, 3" value="1"></item>
+                    <item id="vssa" label="VSSA" value="0"></item>
+                </enum>
+                
+                  
+                <enum id="onChipAnalogInputB" label="ANB6 source">
+                    <description>This bit selects the source of the ADCB6 input as being either the input pin ADCB6 or ADCB temperature sensor.</description>
+                    <assign when="true">
+                        <register name="CLIST5" bitfield="SEL_TEMP_1" value="$this.getEnumItemValue().toInt()" reverse_value="x -> ((x == 0) ? `normal` : `tempSensor`)"/>
+                    </assign>
+                    <item id="normal" label="Normal" value="0"></item>
+                    <item id="tempSensor" label="Temperature sensor" value="1"></item>
+                </enum>
+                
+                <enum id="tempSensorB" label="ANB7 source" available="!bitfieldExists($instance.getPeripheral(),`CAL`,`EXPOSE_MODE1`)">
+                    <description>This bit selects the source of the ADCB6 input as being either the input pin ADCB6 or ADCB on-chip analog input.</description>
+                    <assign when="true">
+                        <register name="CLIST5" bitfield="SEL_INTERNAL_1" value="$this.getEnumItemValue().toInt()" reverse_value="x -> ((x == 0) ? `normal` : `analogInput`)"/>
+                    </assign>
+                    <item id="normal" label="Normal" value="0"></item>
+                    <item id="analogInput" label="On-chip bandgap output" value="1"></item>
+                </enum>
+                
+                <enum id="tempSensorBNano" label="ANB7 source" available="bitfieldExists($instance.getPeripheral(),`CAL`,`EXPOSE_MODE1`)">
+                    <description>This bit selects the source of the ADCB6 input as being either the input pin ADCB6 or OPAMPB output.</description>
+                    <assign when="true">
+                        <register name="CLIST5" bitfield="SEL_INTERNAL_1" value="$this.getEnumItemValue().toInt()" reverse_value="x -> ((x == 0) ? `normal` : `analogInput`)"/>
+                    </assign>
+                    <item id="normal" label="Normal" value="0"></item>
+                    <item id="analogInput" label="OPAMPB output" value="1"></item>
+                </enum>
+                
+                <bool id="exposeModeB" label="Enable expose mode" available="bitfieldExists($instance.getPeripheral(),`CAL`,`EXPOSE_MODE1`)">
+                    <description>
+When expose mode is enabled:
+- ANB4 is replaced with 12-bit DAC output.
+- ANB5 is replaced with badgap output (need to enable bandgap output buffer in PMC).
+- ANB6 and ANB7 are replaced with internal test signal.
+                    </description>
+                    <assign when="true">
+                        <register name="CAL" bitfield="EXPOSE_MODE1" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                    </assign>
+                </bool> 
+                
+            </struct>
+      
+            <enum id="channelMode" label="Channel mode">
+                <assign when="($parent.isHigh.getValue() == 0)">
+                    <register name="CTRL1" bitfield="CHNCFG_L" value="
+                        ((getBitFieldValue($instance.getPeripheral(), `CTRL1`, `CHNCFG_L`) &amp; ~(1 &lt;&lt; $parent.indexChannelBits.getValue().toInt())) | (((($this.getEnumItemId() != `0`) ? 1 : 0) &lt;&lt; $parent.indexChannelBits.getValue().toInt())))" reverse_value="x -> (((x &amp; (1 &lt;&lt; $parent.indexChannelBits.getValue().toInt())) != 0) ? (((getBitFieldValue($instance.getPeripheral(), `CTRL3`, `UPDEN_L`) &amp; (1 &lt;&lt; $parent.indexChannelBits.getValue().toInt())) != 0) ? `2`: `1`) : `0`)"/>
+                    <register name="CTRL3" bitfield="UPDEN_L" value="((getBitFieldValue($instance.getPeripheral(), `CTRL3`, `UPDEN_L`) &amp; ~(1 &lt;&lt; $parent.indexChannelBits.getValue().toInt())) | (((($this.getEnumItemId() == `2`) ? 1 : 0) &lt;&lt; $parent.indexChannelBits.getValue().toInt())))" reverse_value="x -> (((x &amp; (1 &lt;&lt; $parent.indexChannelBits.getValue().toInt())) != 0) ? (((getBitFieldValue($instance.getPeripheral(), `CTRL1`, `CHNCFG_L`) &amp; (1 &lt;&lt; $parent.indexChannelBits.getValue().toInt())) != 0) ? `2` : `0`) : (((getBitFieldValue($instance.getPeripheral(), `CTRL1`, `CHNCFG_L`) &amp; (1 &lt;&lt; $parent.indexChannelBits.getValue().toInt())) != 0) ? `1` : `0`))"/>
+                </assign>
+                <assign when="($parent.isHigh.getValue() != 0)">
+                    <register name="CTRL2" bitfield="CHNCFG_H" value="((getBitFieldValue($instance.getPeripheral(), `CTRL2`, `CHNCFG_H`) &amp; ~(1 &lt;&lt; $parent.indexChannelBits.getValue().toInt())) | (((($this.getEnumItemId() != `0`) ? 1 : 0) &lt;&lt; $parent.indexChannelBits.getValue().toInt())))" reverse_value="x -> (((x &amp; (1 &lt;&lt; $parent.indexChannelBits.getValue().toInt())) != 0) ? (((getBitFieldValue($instance.getPeripheral(), `CTRL3`, `UPDEN_H`) &amp; (1 &lt;&lt; $parent.indexChannelBits.getValue().toInt())) != 0) ? `2`: `1`) : `0`)"/>
+                    <register name="CTRL3" bitfield="UPDEN_H" value="((getBitFieldValue($instance.getPeripheral(), `CTRL3`, `UPDEN_H`) &amp; ~(1 &lt;&lt; $parent.indexChannelBits.getValue().toInt())) | (((($this.getEnumItemId() == `2`) ? 1 : 0) &lt;&lt; $parent.indexChannelBits.getValue().toInt())))" reverse_value="x -> (((x &amp; (1 &lt;&lt; $parent.indexChannelBits.getValue().toInt())) != 0) ? (((getBitFieldValue($instance.getPeripheral(), `CTRL2`, `CHNCFG_H`) &amp; (1 &lt;&lt; $parent.indexChannelBits.getValue().toInt())) != 0) ? `2`: `0`) : (((getBitFieldValue($instance.getPeripheral(), `CTRL2`, `CHNCFG_H`) &amp; (1 &lt;&lt; $parent.indexChannelBits.getValue().toInt())) != 0) ? `1`: `0`))"/>
+                </assign>
+                <item id="0" label="Single-Ended" value="0"></item>
+                <item id="1" label="Fully differential" value="1"></item>
+                <item id="2" label="Unipolar differential" value="2"></item> 
+            </enum>
+            
+            <struct id="channel_config" label="">
+                
+                <variable id="channelNr" value="$parent.getID().toInt()*2 - 8"/>
+                <variable id="channelNrPlus1" value="$parent.channelNr.getValue().toInt() + 1"/>
+                <variable id="chNr" value="$parent.getID().toInt() * 2"/>
+                <variable id="chNrPlus1" value="$parent.chNr.getValue().toInt() + 1"/>
+                
+                <variable id="isHigh" value="($parent.getID().toInt() == 0 || $parent.getID().toInt() == 1 || $parent.getID().toInt() == 4 || $parent.getID().toInt() == 5) ? 0 : 1"/>
+                
+                <variable id="indexChannelBits" value="($parent.getID().toInt() == 0 || $parent.getID().toInt() == 2) ? 0 : 
+                    (($parent.getID().toInt() == 1 || $parent.getID().toInt() == 3) ? 1 :
+                    (($parent.getID().toInt() == 4 || $parent.getID().toInt() == 6) ? 2 : 3))"/>
+                
+                <info id="channelID" label="Channel" value="$parent.getID().toInt() &lt;= 3 ? (`ANA ` + $parent.chNr.getValue() + `,` + $parent.chNrPlus1.getValue()) : (`ANB ` + $parent.channelNr.getValue() + `,` + $parent.channelNrPlus1.getValue())"></info>
+                
+                <reference id="chMode" label="Channel mode" type="channelMode"></reference>  
+            </struct>
+            
+            <struct id="input_gain" label="">
+                <variable id="chNrB" value="$parent.getID().toInt()"/>
+                
+                <variable id="converter" value="$parent.getParent().getID().contains(`A`) ?  `A` : `B`"/>
+
+                <info id="channelName" label="Channel" value="$parent.getParent().getID() == `channels_inputGain_convA` ? 
+                    ($parent.getID().toInt() &lt;= 7 ? (`ANA` + $parent.getID()) : ($parent.getID() == 8 ? `ANA TempSensor` : `ANA OnChipAnalogInput`)) :
+                    ($parent.getID().toInt() &lt;= 7 ? (`ANB` + $parent.getID()) : ($parent.getID() == 8 ? `ANB TempSensor` : `ANB OnChipAnalogInput`))"/>
+                
+                <variable id="registerIndex" value="$parent.converter.getValue() == `A` ? 
+                    ($parent.getID().toInt() &lt; 8 ? 1 : 3) : ($parent.getID().toInt() &lt; 8 ? 2 : 3)"/>
+                
+                <variable id="bitfieldId" value="$parent.registerIndex.getValue().toInt() == 1 ? $parent.getID().toInt() : ($parent.registerIndex.getValue().toInt() == 2 ? ($parent.getID().toInt() + 8) : ($parent.converter.getValue() == `A` ? ($parent.getID().toInt()+8) : ($parent.getID().toInt() + 10)))"/>
+                
+                <!-- GC1 & GC2 -->
+                <enum id="channelGain" label="Input gain">
+                    <description>Input gain registers are used to control amplification of each of the input channels.</description>
+                    <assign when="true">
+                        <register name="" name_expr="`GC`+$parent.registerIndex.getValue()" bitfield="" bitfield_expr="`GAIN`+$parent.bitfieldId.getValue().toInt()" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                    </assign>
+                    <item id="0" label="Gain x1" value="0">
+                        <description>Gain x1.</description>
+                    </item>
+                    <item id="1" label="Gain x2" value="1">
+                        <description>Gain x2.</description>
+                    </item>
+                    <item id="2" label="Gain x4" value="2">
+                        <description>Gain x4.</description>
+                    </item>
+                </enum>
+                
+            </struct>
+            
+            <struct id="inputGain_array" label="Input gain config">
+                <array id="channels_inputGain_convA" label="" type="input_gain" size="10" options="ShowContentAs=Table;UI_BORDER_HIDDEN;UI_LABEL_HIDDEN;UI_ARRAY_INDICES_HIDDEN;UI_ARRAY_LAYOUT_HORIZONTAL;UI_ARRAY_FIXED;UI_TABLE_COLUMN_WIDTHS=4,6,6,6,6,6,6,6,6,10,12">
+                    <description></description>
+                </array>
+                
+                <array id="channels_inputGain_convB" label="" type="input_gain" size="10" options="ShowContentAs=Table;UI_BORDER_HIDDEN;UI_LABEL_HIDDEN;UI_ARRAY_INDICES_HIDDEN;UI_ARRAY_LAYOUT_HORIZONTAL;UI_ARRAY_FIXED;UI_TABLE_COLUMN_WIDTHS=4,6,6,6,6,6,6,6,6,10,12">
+                    <description></description>
+                </array>
+            </struct>
+            
+            
+            <struct id="cadc_sample_config_t" label="Defines the structure for configuring the sample slot" from="_cadc_sample_config">
+                <description></description>
+                <validation>
+                    <dependency resource_type="PeripheralUnifiedSignal" when_expr="$this.channelNumberEnum.getEnumItemValue().contains(`adca`) &amp;&amp; $this.disableSample.getValue() == `false`" resource_id_expr="$instance.getPeripheral() + `.adca.` + $this.channelNumberInt.getValue()" description_expr="$instance.getID() + `: Channel ` + $this.channelNumberInt.getValue() + ` of converter A is not routed.`"  level="Warning">
+                        <feature name="routed">
+                            <data expr="true"></data>
+                        </feature>
+                    </dependency>
+                    <dependency resource_type="PeripheralUnifiedSignal" when_expr="$this.channelNumberEnum.getEnumItemValue().contains(`adcb`) &amp;&amp; $this.disableSample.getValue() == `false`" resource_id_expr="$instance.getPeripheral() + `.adcb.` + $this.channelNumberInt.getValue()" description_expr="$instance.getID() + `: Channel ` + $this.channelNumberInt.getValue() + ` of converter B is not routed.`"  level="Warning">
+                        <feature name="routed">
+                            <data expr="true"></data>
+                        </feature>
+                    </dependency> 
+                </validation>
+                <string id="sampleName" label="Sample ID" options="remove_from_struct_init">
+                    <description>The identifier that is used as part of the sample identifier definition in the header file. The identifier for the each channel must be unique.</description>
+                    <validation>
+                        <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description="The sample name is not a valid C identifier."/>
+                        <constraint cond_expr="($parent.getParent().searchInArray(item -> (($parent.getID() != item.getID()) &amp;&amp; 
+                            ((item.getSetting(`sampleName`).getValue())  ==  ($this.getValue())))) &lt; 0)" 
+                            level="error" description_expr="`The identifier ` + $this.getValue() + ` is duplicated, i.e. it is already used for another sample.`"/>
+                    </validation>
+                </string>
+               
+                <!-- SDIS: DS -->
+                <reference id="disableSample" label="Disable" type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                    <options_expr>
+                        <option id="register" expr="$parent.sampleIdReg.getValue().toInt() &lt;= 15 ? `SDIS` : `SDIS2`"></option>
+                        <option id="bitfield" expr="`DS`"/>
+                        <option id="mask" expr="$parent.sampleIdReg.getValue().toInt() &lt;= 15 ? (1 &lt;&lt; $parent.sampleIdReg.getValue().toInt()) : (1 &lt;&lt; $parent.sampleIdReg.getValue().toInt()-16)"/>
+                    </options_expr>
+                    <description>Disable sample</description>
+                    <validation>
+                        <constraint
+                            when_expr="($configSet.minDisableBits.getValue().toInt() != 100)"
+                            cond_expr="($parent.arrayId.getValue().toInt() &lt; $configSet.minDisableBits.getValue().toInt()) || ($this.getValue() == `true`)"
+                            level="warning" 
+                            description_expr="`All the samples after sample ` + $parent.sampleIdName.getValue() + ` in ` + $parent.adcLetter.getValue() + ` (including sample `+ $parent.sampleIdName.getValue() + `) won't be converted because sample `+ $parent.sampleIdOpposite.getValue() + ` in ` + $configSet.converterNameDisable.getValue() +` is disabled in parallel simultaneous mode.`"/>
+                    </validation>
+                </reference>
+                
+                <variable id="adcLetter" value="$configSet.converterNameDisable.getValue() == `ADCB` ? `ADCA` : `ADCB`"/>
+                <variable id="sampleIdName" value="$parent.adcLetter.getValue() == `ADCA`? $configSet.minDisableBits.getValue() : ($configSet.minDisableBits.getValue() + 8)"/>
+                
+                <variable id="sampleIdOpposite" value="$parent.sampleIdName.getValue() &gt;= 8 ? ($parent.sampleIdName.getValue() - 8) : ($parent.sampleIdName.getValue() + 8)"/>
+
+                <variable id="arrayId" value="$parent.getId()"/>
+
+                <variable id="sampleId" value="$this.getParent().getId()"/>
+                <variable id="sampleIdParallel" value="$parent.sampleId.getValue().toInt() + 8"/>
+
+                <!-- CLIST 1,2,3,4,5 -->
+                <dynamic_enum id="channelNumberEnum" 
+                    label="Channel" options="REGISTERS_REFRESH; UI_REFRESH"
+                    items="getPeripheralSignals($instance.getPeripheral()).addItemToList(`ANA.8`, `ANA TempSensor`, `adca.8`,true).
+                    addItemToList(`ANA.9`, `ANA OnChipAnalogInput`, `adca.9`, !bitfieldExists($instance.getPeripheral(),`CAL`,`EXPOSE_MODE1`)).
+                    addItemToList(`ANA.9`, `OPAMPA output`, `adca.9`, bitfieldExists($instance.getPeripheral(),`CAL`,`EXPOSE_MODE1`)).
+                    addItemToList(`ANB.8`, `ANB TempSensor`, `adcb.8`, true).
+                    addItemToList(`ANB.9`, `ANB OnChipAnalogInput`, `adcb.9`, !bitfieldExists($instance.getPeripheral(),`CAL`,`EXPOSE_MODE1`)).
+                    addItemToList(`ANB.9`, `OPAMPB output`, `adcb.9`, bitfieldExists($instance.getPeripheral(),`CAL`,`EXPOSE_MODE1`)).
+                    filter(item -> 
+                    (($configSet.cadcConfig.dualConverterScanMode.getEnumItemId().contains(`Sequential`) ? 
+                    ($parent.getId().toInt() &lt;= 15 ? item.getValue().regexMatch(`.adc.\.[0-7]+.`) : item.getValue().regexMatch(`adc.\.[8-9]`)) :
+                    (($parent.getParent().getId() == `channels_config_A_parallel`) ? 
+                    ($parent.getId().toInt() &lt;= 7 ? item.getValue().regexMatch(`.adca\.[0-7]+.*`) : item.getValue().regexMatch(`adca\.[8-9]`))
+                    : ($parent.getId().toInt() &lt;= 7 ? item.getValue().regexMatch(`.adcb\.[0-7]+.*`) : item.getValue().regexMatch(`adcb\.[8-9]`))))))" 
+                    >
+                    <assign when="true">
+                        <register name="" name_expr="`CLIST`+$parent.CLISTindex.getValue()" bitfield="" bitfield_expr="`SAMPLE`+$parent.sampleIdReg.getValue().toInt()" value="$parent.getParent().getId() == `channels_config` ? ($parent.sampleIdReg.getValue().toInt() &lt;= 15 ? $parent.channelNumber.getValue().toInt() : ($parent.channelLetter.getValue() == `A` ? ($parent.channelNumberInt.getValue().toInt()-8) : ($parent.channelNumberInt.getValue().toInt()-6))) :($parent.sampleId.getValue().toInt() &lt;= 7 ? $parent.channelNumber.getValue().toInt() : ($parent.channelLetter.getValue() == `A` ? ($parent.channelNumberInt.getValue().toInt()-8) : ($parent.channelNumberInt.getValue().toInt()-6)))" reverse_value="x -> `AN` + $parent.channelLetter.getValue() + `.` + $parent.channelNumberInt.getValue()"/>
+                    </assign>
+                </dynamic_enum>
+                
+                
+                <variable id="CLISTindex" value="($parent.sampleIdReg.getValue().toInt() / 4 == 0 ) ? 1 : 
+                    (($parent.sampleIdReg.getValue().toInt() / 4 == 1) ? 2 : 
+                    (($parent.sampleIdReg.getValue().toInt() / 4 == 2) ? 3 :
+                    (($parent.sampleIdReg.getValue().toInt() / 4 == 3) ? 4 : 5)))"/>
+
+                <variable id="decHexNumRegExpr" value="`(\d+)|(0x[0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,a,b,c,d,e,f]+)`"></variable>
+
+                <variable id="channelLetter" value="$parent.channelNumberEnum.getValue().contains(`ANA`) ? `A` : `B`"/>
+
+                <variable id="channelNumber" value="$parent.channelLetter.getValue() == `A` ? $parent.channelNumberInt.getValue() : $parent.channelNumberInt.getValue()+8" options="add_to_struct">
+                    <description>Channel number. The available range is 0-15.</description>
+                </variable>
+                    
+                <variable id="channelNumberInt" value="$parent.channelNumberEnum.getEnumItemId().regexSubstr($parent.decHexNumRegExpr.getValue(),1).toInt()"/>
+
+                <!-- ZCTRL1 & ZCTRL2 & ZCTRL3 -->
+                <variable id="zeroCrossingIndexReg" value="$parent.sampleIdReg.getValue().toInt() &lt;= 7 ? 1 : ($parent.sampleIdReg.getValue().toInt() &lt;= 15 ? 2 : 3)"></variable>
+                
+                <variable id="sampleIdReg" value="$parent.getParent().getId() == `channels_config_B_parallel` ? 
+                    ($parent.getId().toInt() &lt;= 7 ? $parent.sampleIdParallel.getValue() : ($parent.sampleIdParallel.getValue().toInt() + 2))
+                    : ($parent.getParent().getId() == `channels_config_A_parallel` ?  ($parent.getId().toInt() &lt;= 7 ? $parent.sampleId.getValue() : ($parent.sampleId.getValue().toInt() + 8)) : $parent.getId())"/>
+                
+                <enum id="zeroCrossingMode" label="Zero crossing">
+                    <description>Zero crossing mode.</description>
+                    <assign when="true">
+                        <register name="" name_expr="`ZXCTRL`+$parent.zeroCrossingIndexReg.getValue()" bitfield="" bitfield_expr="`ZCE`+$parent.sampleIdReg.getValue().toInt()" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                    </assign>
+                    <item id="0" label="Disabled" value="0">
+                        <description>Zero Crossing disabled.</description>
+                    </item>
+                    <item id="1" label="Enabled for positive to negative sign change" value="1">
+                        <description>Zero Crossing enabled for positive to negative sign change.</description>
+                    </item>
+                    <item id="2" label="Enabled for negative to positive sign change" value="2">
+                        <description>Zero Crossing enabled for negative to positive sign change.</description>
+                    </item>
+                    <item id="3" label="Enabled for any sign change" value="3">
+                        <description>Zero Crossing enabled for any sign change.</description>
+                    </item>
+                </enum>
+                
+                <integer id="highLimitValue" label="High limit" type="uint16_t"  max_expr="4095">
+                    <description>High limit value. Original value formation as hardware register, with 3-bits left shifted.</description>
+                    <validation>
+                        <constraint cond_expr="$this.getValue().toInt() &gt; $parent.lowLimitValue.getValue().toInt()" level="error" description="High limit should be higher than low limit value."/>
+                    </validation>
+                    <assign when="true">
+                        <register name="" name_expr="$parent.sampleIdReg.getValue().toInt() &lt;= 15 ? (`HILIM` + $parent.sampleIdReg.getValue()) : (`HILIM2` + $parent.sampleIdReg.getValue())" bitfield="HLMT" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                    </assign>
+                    
+                </integer>
+                <integer id="lowLimitValue" label="Low limit" type="uint16_t" max_expr="4095">
+                    <description>Low limit value. Original value formation as hardware register, with 3-bits left shifted.</description>
+                    <validation>
+                        <constraint cond_expr="$this.getValue().toInt() &lt; $parent.highLimitValue.getValue().toInt()" level="error" description="High limit should be higher than low limit value."/>
+                    </validation>
+                    <assign when="true">
+                        <register name="" name_expr="$parent.sampleIdReg.getValue().toInt() &lt;= 15 ? (`LOLIM` + $parent.sampleIdReg.getValue())  : (`LOLIM2` + $parent.sampleIdReg.getValue()) " bitfield="LLMT" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                    </assign>
+                </integer>
+                <integer id="offsetValue" label="Offset" type="uint16_t" max_expr="4095">
+                    <description>Offset value. Original value formation as hardware register, with 3-bits left shifted.</description>
+                    <assign when="true">
+                        <register name="" name_expr="$parent.sampleIdReg.getValue().toInt() &lt;= 15 ? (`OFFST` + $parent.sampleIdReg.getValue()) : (`OFFST2` + $parent.sampleIdReg.getValue())" bitfield="OFFSET" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                    </assign>
+                </integer>
+                
+                <reference id="enableWaitSync" label="Wait sync" type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                    <options_expr>
+                        <option id="register" expr="$parent.sampleIdReg.getValue().toInt() &lt;= 15 ? `SCTRL` : `SCTRL2`"></option>
+                        <option id="bitfield" expr="`SC`"/>
+                        <option id="mask" expr="$parent.sampleIdReg.getValue().toInt() &lt;= 15 ? (1 &lt;&lt; $parent.sampleIdReg.getValue().toInt()) : (1 &lt;&lt; $parent.sampleIdReg.getValue().toInt()-16)"/>
+                    </options_expr>
+                    <description>Wait for sync input to launch this sample&apos;s conversion.</description>
+                </reference>
+
+                <reference id="enableSampleInterrupt" label="Interrupt" type="registerBit" config_set_id="global_system_definitions" component_id="system">
+                    <options_expr>
+                        <option id="register" expr="$parent.sampleIdReg.getValue().toInt() &lt;= 15 ? `SCHLTEN` : `SCHLTEN2`"></option>
+                        <option id="bitfield" expr="`SCHLTEN`"/>
+                        <option id="mask" expr="$parent.sampleIdReg.getValue().toInt() &lt;= 15 ? (1 &lt;&lt; $parent.sampleIdReg.getValue().toInt()) : (1 &lt;&lt; $parent.sampleIdReg.getValue().toInt()-16)"/>
+                    </options_expr>
+                    <description>Enable sample conversion complete interrupt</description>    
+                </reference>
+                
+              
+                <struct id="cadcTemplateSampleVariables" available="false">
+                    <variable id="PERIPHERAL" value="$instance.getPeripheral()"/>
+                    <variable id="VPREFIX" value="$configSet.inst_ID.getValue()"/>
+                    <variable id="SAMPLE_INDEX" value="$parent.getParent().getSetting(`sampleIdReg`).getValue()"></variable>
+                </struct>
+            </struct>
+
+            <set id="interruptTypes" label="Interrupt sources" options="REGISTERS_REFRESH">
+                <description></description>
+                <item id="kCADC_ZeroCrossingInterruptEnable" label="Zero crossing">
+                    <description>Zero crossing interrupt.</description>
+                    <assign when="true">
+                        <register name="CTRL1" bitfield="ZCIE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                    </assign>
+                </item>
+                <item id="kCADC_HighLimitInterruptEnable" label="High limit">
+                    <description>High limit interrupt.</description>
+                    <assign when="true">
+                        <register name="CTRL1" bitfield="HLMTIE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                    </assign>
+                </item>
+                <item id="kCADC_LowLimitInterruptEnable" label="Low limit">
+                    <description>Low limit interrupt</description>
+                    <assign when="true">
+                        <register name="CTRL1" bitfield="LLMTIE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                    </assign>
+                </item>
+                <item id="kCADC_ConverterAEndOfScanInterruptEnable" label="EOS, converter A">
+                    <description>End of Scan (EOS) interrupt, for all types of scans except parallel non-simultaneous scans in converter B.</description>
+                    <assign when="true">
+                        <register name="CTRL1" bitfield="EOSIE0" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                    </assign>
+                    <assign when="!$parent.kCADC_ConverterBEndOfScanInterruptEnable.isAvailable()">
+                        <register name="CTRL2" bitfield="EOSIE1" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                    </assign>
+                </item>
+                <item id="kCADC_ConverterBEndOfScanInterruptEnable" label="EOS, converter B" available="!($configSet.cadcConfig.dualConverterScanMode.getEnumItemId().contains(`Sequential`) || $configSet.cadcConfig.enableSimultaneousMode.getValue()== `true`)">
+                    <description>End of Scan (EOS) interrupt,for parallel non-simultaneous scans in converter B.</description>
+                    <assign when="true">
+                        <register name="CTRL2" bitfield="EOSIE1" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                    </assign>
+                </item>
+            </set>
+
+            <struct id="cadc_interrupt" label="Interrupt configuration">
+                <reference id="interruptSources" type="interruptTypes" label="Interrupt sources"></reference>
+                
+                <bool id="enable_err_irq" label="Enable error interrupt vector" options="UI_LABEL_BOLD">
+                    <description>
+Interrupt sources of this interrupt are: 
+- Zero crossing.
+- Low limit.
+- High Limit.   
+                    </description>
+                    <validation>
+                        <constraint when_expr="$this.getValue() == `true`" cond_expr="(($parent.interruptSources.kCADC_ZeroCrossingInterruptEnable.getValue() == true) || ($parent.interruptSources.kCADC_HighLimitInterruptEnable.getValue() == true) ||  ($parent.interruptSources.kCADC_LowLimitInterruptEnable.getValue() == true))" level="warning" description="Enable the interrupt source, zero crossing, low limit or high limit"/>
+                        <constraint when_expr="$this.getValue() == `false`" cond_expr="(!($parent.interruptSources.kCADC_ZeroCrossingInterruptEnable.getValue() == true) &amp;&amp; !($parent.interruptSources.kCADC_HighLimitInterruptEnable.getValue() == true) &amp;&amp;  !($parent.interruptSources.kCADC_LowLimitInterruptEnable.getValue() == true))" level="warning" description="To invoke zero crossing, low limit, high limit or end of calibration, error interrupt has to be enabled."/>
+                    </validation>
+                </bool>
+                
+                <reference id="interrupt_err" label="Error interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_channel=ZCEL; UI_LABEL_HIDDEN" enable="$parent.enable_err_irq.getValue()"/>
+                
+                <bool id="enable_cc0_irq" label="CC &amp; EOS interrupt vector for converter A" options="UI_LABEL_BOLD">
+                    <description>
+Sample conversion complete (CC) interrupt and End of Scan (EOS) interrupt for any scan type (except converter B scan in non-simultaneous parallel scan mode).
+                    </description>
+                    <validation>
+                        <constraint when_expr="$this.getValue() == `true`" cond_expr="
+                            (
+                                (
+                                    (
+                                        ($configSet.sampleMaskInterrupt.getValue() != `0`) || ($parent.interruptSources.kCADC_ConverterAEndOfScanInterruptEnable.getValue() == true) || ($parent.interruptSources.kCADC_ConverterBEndOfScanInterruptEnable.getValue() == true)
+                                    )
+                                    &amp;&amp; $configSet.channels_config.isAvailable()
+                                 ) 
+                                || 
+                                (
+                                    (
+                                        ($configSet.sampleMaskCC0.getValue() != `0`) || ($parent.interruptSources.kCADC_ConverterAEndOfScanInterruptEnable.getValue() == true)
+                                    ) 
+                                    &amp;&amp; $configSet.channels_config_A_parallel.isAvailable()
+                                )
+                            )" level="warning" description="Enable sample conversion complete interrupt for any type, except converter B in non-simultaneous parallel scan mode or Enable end of scan (converter A or B) interrupt source."/>
+                        <constraint when_expr="$this.getValue() == `false`" cond_expr="
+                            (
+                                (
+                                    (
+                                        ($configSet.sampleMaskInterrupt.getValue() == `0`) &amp;&amp; !($parent.interruptSources.kCADC_ConverterAEndOfScanInterruptEnable.getValue() == true) &amp;&amp; !($parent.interruptSources.kCADC_ConverterBEndOfScanInterruptEnable.getValue() == true)
+                                    )
+                                    &amp;&amp; $configSet.channels_config.isAvailable()
+                                ) 
+                                || 
+                                (
+                                    (
+                                        ($configSet.sampleMaskCC0.getValue()== `0`) &amp;&amp; !($parent.interruptSources.kCADC_ConverterAEndOfScanInterruptEnable.getValue() == true)
+                                    ) 
+                                    &amp;&amp; $configSet.channels_config_A_parallel.isAvailable()
+                                )
+                                )" level="warning" description="To invoke sample conversion complete interrupt for any type, except converter B in non-simultaneous parallel scan mode or end of scan interrupt sources, CCA interrupt has to be enabled."/>
+                    </validation>
+                </bool>
+                <reference id="interrupt_cc0" label="CC &amp; EOS interrupt for converter A" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_channel=A; UI_LABEL_HIDDEN" enable="$parent.enable_cc0_irq.getValue()"/>
+                
+                <bool id="enable_cc1_irq" label="CC &amp; EOS interrupt vector for converter B" options="UI_LABEL_BOLD">
+                    <description>
+Sample conversion complete (CC) interrupt and End of Scan (EOS) for converter B scan in non-simultaneous parallel scan mode.
+                    </description>
+                    <validation>
+                        <constraint when_expr="$this.getValue() == `true`" cond_expr="((($configSet.sampleMaskCC1.getValue() != `0`) &amp;&amp; $configSet.channels_config_B_parallel.isAvailable()) || ($parent.interruptSources.kCADC_ConverterBEndOfScanInterruptEnable.getValue() == true))" level="warning" description="Enable sample conversion complete interrupt of converter B in non-simultaneous parallel scan mode or enable End of scan (converter B) interrupt source."/>
+                        <constraint when_expr="$this.getValue() == `false`" cond_expr="(($configSet.sampleMaskCC1.getValue() == `0` || !$configSet.channels_config_B_parallel.isAvailable()) &amp;&amp; !($parent.interruptSources.kCADC_ConverterBEndOfScanInterruptEnable.getValue() == true))" level="warning" description="To invoke sample conversion complete interrupt of converter B in non-simultaneous parallel scan mode or end of scan interrupt sources, CCB interrupt has to be enabled."/>
+                    </validation>
+                </bool>
+                <reference id="interrupt_cc1" label="CC &amp; EOS interrupt for converter B" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_channel=B; UI_LABEL_HIDDEN" enable="$parent.enable_cc1_irq.getValue()"/>
+                
+            </struct>
+        
+        </user_types>
+        <settings>
+            <reference id="cadcConfig" type="cadc_config_t" label="CADC configuration" options="UI_LABEL_HIDDEN; UI_BORDER_HIDDEN"></reference>
+           
+            <array id="channelConfig" label="Channel configuration" type="channel_config" options="ShowContentAs=Table;UI_ARRAY_LAYOUT_HORIZONTAL;UI_TABLE_COLUMN_WIDTHS=5,9" size="8">   </array>
+
+            <reference id="inputGainConfig" label="Input gain configuration" type="inputGain_array"></reference>
+           
+            <!-- Sample configuration -->
+            <array id="channels_config" label="Sample configuration" type="cadc_sample_config_t"  options="ShowContentAs=Table;UI_TABLE_COLUMN_WIDTHS=4,8,5,11,9,7" size="20" available="$configSet.cadcConfig.dualConverterScanMode.getEnumItemId().contains(`Sequential`)">   
+                <item_defaults>
+                    <set_default id="highLimitValue" value_expr="x -> 4095"/> 
+                    <set_default id="lowLimitValue" value_expr="x -> 0"/> 
+                    <set_default id="offsetValue" value_expr="x -> 0"/> 
+                    <set_default id="sampleName" value_expr="x -> (x.getID()==`0`) ? (`Sample_0`) : (`Sample_` + x.getID())"/>
+                    <set_default id="channelNumberEnum" value_expr="x -> (x.getID().toInt() &lt;= 7 ? (`ANA.`+x.getID()) : (x.getID().toInt() &lt;=15 ? (`ANB.`+(x.getID().toInt()-8)) : (x.getID().toInt() &lt;= 17 ? (`ANA.`+(x.getID().toInt()-8)) : `ANB.`+(x.getID().toInt()-10))))"/>
+                </item_defaults>
+            </array>
+
+            <array id="channels_config_A_parallel" label="Sample configuration for converter A" type="cadc_sample_config_t"  options="ShowContentAs=Table;UI_TABLE_COLUMN_WIDTHS=4,8,5,11,9,7" size="10" available="$configSet.cadcConfig.dualConverterScanMode.getEnumItemId().contains(`Parallel`)">
+                <item_defaults>
+                    <set_default id="highLimitValue" value_expr="x -> 4095"/> 
+                    <set_default id="lowLimitValue" value_expr="x -> 0"/> 
+                    <set_default id="offsetValue" value_expr="x -> 0"/> 
+                    <set_default id="sampleName" value_expr="x -> (`Sample_` + x.getSetting(`sampleIdReg`).getValue())"/>
+                    <set_default id="channelNumberEnum" value_expr="x -> (`ANA.` + x.getID().toInt())"/>
+                </item_defaults>
+            </array>
+
+            <array id="channels_config_B_parallel" label="Sample configuration for converter B" type="cadc_sample_config_t"  options="ShowContentAs=Table;UI_TABLE_COLUMN_WIDTHS=4,8,5,11,9,7" size="10"  available="$configSet.cadcConfig.dualConverterScanMode.getEnumItemId().contains(`Parallel`)">
+                <item_defaults>
+                    <set_default id="highLimitValue" value_expr="x -> 4095"/> 
+                    <set_default id="lowLimitValue" value_expr="x -> 0"/> 
+                    <set_default id="offsetValue" value_expr="x -> 0"/> 
+                    <set_default id="sampleName" value_expr="x -> (`Sample_` + x.getSetting(`sampleIdReg`).getValue())"/>
+                    <set_default id="channelNumberEnum" value_expr="x -> (`ANB.` + x.getID().toInt())"/>
+                </item_defaults>
+            </array>
+                
+            <reference type="cadc_interrupt" id="interrupt" label="Interrupt configuration"/>
+         
+            <!-- mask for CADC_EnableSampleResultReadyInterrupts -->
+            
+            <!-- mask for sequential -->
+            <variable id="sampleMaskInterruptSimple" value="$parent.channels_config.filter(x -> (x.getSetting(`enableSampleInterrupt`).getValue() == `true`)).reduce(0, (x,y) -> x + 2 ** y.getSetting(`sampleId`).getValue().toInt())" /> 
+            <variable id="sampleMaskInterrupt" value="$parent.sampleMaskInterruptSimple.getValue()"></variable>
+            
+            <!-- mask for parallel -->
+            <variable id="sampleMaskParallel_A_Interrupt" value="$parent.channels_config_A_parallel.filter(x -> (x.getSetting(`enableSampleInterrupt`).getValue() == `true`)).reduce(0, (x,y) -> x + 2 ** y.getSetting(`sampleId`).getValue().toInt())"/>
+            <variable id="sampleMaskParallel_B_Interrupt" value="$parent.channels_config_B_parallel.filter(x -> (x.getSetting(`enableSampleInterrupt`).getValue() == `true`)).reduce(0, (x,y) -> x + 2 ** y.getSetting(`sampleIdParallel`).getValue().toInt())"/>
+            <variable id="sampleMaskParallel_Interrupt" value="$parent.sampleMaskParallel_A_Interrupt.getValue() | $parent.sampleMaskParallel_B_Interrupt.getValue()"/>
+         
+            <!-- mask for CC1 -->
+            <variable id="sampleMaskCC1" value="$configSet.cadcConfig.enableSimultaneousMode.getValue() == `false` ? $parent.channels_config_B_parallel.filter(x -> (x.getSetting(`enableSampleInterrupt`).getValue() == `true`)).reduce(0, (x,y) -> x + 2 ** y.getSetting(`sampleIdParallel`).getValue().toInt()) : 0"/>
+            <!-- mask for CC0 -->
+            <variable id="sampleMaskCC0" value="($configSet.cadcConfig.enableSimultaneousMode.getValue() == `false`) ? $parent.sampleMaskParallel_A_Interrupt.getValue() : $parent.sampleMaskParallel_Interrupt.getValue()"/> 
+            
+            <!-- warning for disable bits variable --> 
+            <variable id="disableBitsVarA" value="($configSet.cadcConfig.enableSimultaneousMode.getValue() == `true` &amp;&amp; $configSet.cadcConfig.dualConverterScanMode.getEnumItemId().contains(`Parallel`)) ? $parent.channels_config_A_parallel.reduce(100, (x,y) -> ((y.getSetting(`disableSample`).getValue() == `true` &amp;&amp; y.getSetting(`arrayId`).getValue().toInt() &lt; x) ? y.getSetting(`arrayId`).getValue().toInt() : x )) : 100"/>
+            
+            <variable id="disableBitsVarB" value="($configSet.cadcConfig.enableSimultaneousMode.getValue() == `true` &amp;&amp; $configSet.cadcConfig.dualConverterScanMode.getEnumItemId().contains(`Parallel`)) ? $parent.channels_config_B_parallel.reduce(100, (x,y) -> ((y.getSetting(`disableSample`).getValue() == `true` &amp;&amp; y.getSetting(`arrayId`).getValue().toInt() &lt; x) ? y.getSetting(`arrayId`).getValue().toInt() : x )) : 100"/>
+            
+            <variable id="minDisableBits" value="($parent.disableBitsVarA.getValue() &lt; $parent.disableBitsVarB.getValue()) ? $parent.disableBitsVarA.getValue() : $parent.disableBitsVarB.getValue()"/>
+            
+            <variable id="converterNameDisable" value="$parent.minDisableBits.getValue() == $parent.disableBitsVarA.getValue() ? `ADCA` : `ADCB`"/>
+                
+            <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+            <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+            <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+            <variable id="inst_config_ID" value="$parent.inst_ID.getValue() + `_config`"></variable>
+            
+            <variable id="clockGate" value="1">
+                <assign when="true">
+                    <register peripheral_expr="system::getInstanceClockGatePeripheral()" name_expr="system::getInstanceClockGateRegister()" bitfield_expr="system::getInstanceClockGateBitfield()" value="system::getInstanceClockGateEnableValue()"/>
+                </assign>
+            </variable>
+            
+            <variable id="softwareReset" value="0">           
+                <assign when="true">
+                    <register peripheral_expr="system::getInstanceSwResetPeripheral()" name_expr="system::getInstanceSwResetRegister()" bitfield_expr="system::getInstanceSwResetBitfield()" value="system::getInstanceSwResetDisableValue()"/>              
+                </assign>
+            </variable>
+            
+            <struct id="cadcTemplateVariables" available="false">
+                <variable id="PERIPHERAL" value="$instance.getPeripheral()"/>
+                <variable id="VPREFIX" value="$configSet.inst_ID.getValue()"/>
+                <!-- Software reset -->
+                <variable id="SW_RESET_CONTROL_PERIPHERAL" value="system::getInstanceSwResetPeripheral()"></variable>
+                <variable id="SW_RESET_CONTROL_REGISTER" value="system::getInstanceSwResetRegister()"></variable>
+                <variable id="SW_RESET_CONTROL_BITFIELD" value="system::getInstanceSwResetBitfield()"></variable>
+            </struct>
+            
+        </settings>
+        <fragment_defs>
+            <import>
+                <from component_id="system" config_set_id="common_code_templates"/>
+                <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+            </import>
+        </fragment_defs>
+        <code>
+            <section target="includes">
+                <fragment id="include">
+                    <param id="name">device_registers</param>
+                    <param id="filename">fsl_device_registers.h</param>
+                </fragment>
+            </section>
+            
+            <section target="defines">
+                <fragment id="comment">
+                    <param id="content" expr="$instance.getFnGroupName() + ` defines for ` + $instance.getPeripheral()"></param>
+                    <param id="paddingLevel" expr="0"></param>
+                </fragment>
+                <fragment id="define">
+                    <param id="name" expr="$this.inst_peripheral_ID.getValue()"/>
+                    <param id="value" expr="$instance.getPeripheral()"/>
+                    <param id="description">Definition of peripheral ID</param>
+                </fragment>
+                <fragment id="define">
+                    <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`)"/>
+                    <param id="value" expr="$instance.getPeripheral() + `_CLK_SRC`"/>
+                    <param id="description">Definition of the clock source</param>
+                </fragment> 
+                <fragment id="IRQ_definitions" if_expr="$this.interrupt.enable_err_irq.getValue()" apply_to="$this.interrupt.interrupt_err"/>
+                <fragment id="IRQ_definitions" if_expr="$this.interrupt.enable_cc0_irq.getValue()" apply_to="$this.interrupt.interrupt_cc0"/>
+                <fragment id="IRQ_definitions" if_expr="$this.interrupt.enable_cc1_irq.getValue()" apply_to="$this.interrupt.interrupt_cc1"/>
+                
+                <fragment id="all_assigned_regs_init">
+                    <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+                </fragment>
+            </section>
+            
+            <section target="global_vars">
+            </section>
+            <section target="global_vars_extern">
+            </section>
+            
+            <section target="common_pre_init_function">
+                <fragment id="clock_gate_enable_init"></fragment>
+            </section>
+
+            <section target="init_function_body">
+                <fragment id="template">
+                    <param id="file">fsl_cadc.template</param>
+                    <param id="setting" expr="$configSet.cadcTemplateVariables"></param>
+                </fragment> 
+                <fragment id="template" for_elements_of="$configSet.channels_config">
+                    <param id="file">fsl_cadc_sample.template</param>
+                    <param id="setting" expr="$this.cadcTemplateSampleVariables"></param>
+                </fragment>
+                <fragment id="template" for_elements_of="$configSet.channels_config_A_parallel">
+                    <param id="file">fsl_cadc_sample.template</param>
+                    <param id="setting" expr="$this.cadcTemplateSampleVariables"></param>
+                </fragment>
+                <fragment id="template" for_elements_of="$configSet.channels_config_B_parallel">
+                    <param id="file">fsl_cadc_sample.template</param>
+                    <param id="setting" expr="$this.cadcTemplateSampleVariables"></param>
+                </fragment>
+            </section> 
+
+        </code>
+        <validation/>
+        <quick_selections>
+            <quick_selection id="QS_CADC" label="Default">
+                <description></description>
+                <set id="cadcConfig.dualConverterScanMode">kCADC_DualConverterWorkAsTriggeredParallel</set>
+                <set id="cadcConfig.enableStop0">true</set>
+                <set id="cadcConfig.enableStop1">true</set>
+                <set id="cadcConfig.manualPowerDownA">true</set>
+                <set id="cadcConfig.manualPowerDownB">true</set>
+                <set id="cadcConfig.enableSimultaneousMode">true</set>
+                <set id="cadcConfig.DMATriggerSoruce">kCADC_DMATriggerSourceAsEndOfScan</set>
+                <set id="cadcConfig.idleWorkMode">kCADC_IdleKeepNormal</set>
+                <set id="cadcConfig.powerUpDelay">26</set>
+                <set id="cadcConfig.clockDivisorInt">5</set>
+                <set id="cadcConfig.clockDivisorIntB">5</set>
+                <set id="cadcConfig.enableSYNC0">true</set>
+                <set id="cadcConfig.enableSYNC1">true</set>
+                <set id="cadcConfig.highReferenceA">vdda</set>
+                <set id="cadcConfig.lowReferenceA">vssa</set>
+                <set id="cadcConfig.highReferenceB">vdda</set>
+                <set id="cadcConfig.lowReferenceB">vssa</set>       
+                <set id="cadcConverter.highReferenceVoltageSource">kCADC_ReferenceVoltageVrefPad</set>
+                <set id="cadcConverter.lowReferenceVoltageSource">kCADC_ReferenceVoltageVrefPad</set>
+                <set id="cadcConverter.sampleWindowCount">0</set>
+                <set id="channelConfig.7.singleEnded">false</set>
+                <set id="inputGainConfig.1.0.channelGain">0</set>
+                <set id="channels_config.0.disableSample">false</set>
+                <set id="channels_config_A_parallel.4.disableSample">true</set>
+                <set id="channels_config_A_parallel.5.disableSample">true</set>
+                <set id="channels_config_A_parallel.6.disableSample">true</set>
+                <set id="channels_config_A_parallel.7.disableSample">true</set>
+                <set id="channels_config_A_parallel.8.disableSample">true</set>
+                <set id="channels_config_A_parallel.9.disableSample">true</set>  
+                <set id="channels_config_B_parallel.4.disableSample">true</set>
+                <set id="channels_config_B_parallel.5.disableSample">true</set>
+                <set id="channels_config_B_parallel.6.disableSample">true</set>
+                <set id="channels_config_B_parallel.7.disableSample">true</set>
+                <set id="channels_config_B_parallel.8.disableSample">true</set>
+                <set id="channels_config_B_parallel.9.disableSample">true</set>  
+                <set id="channels_config.4.disableSample">true</set>
+                <set id="channels_config.5.disableSample">true</set>
+                <set id="channels_config.6.disableSample">true</set>
+                <set id="channels_config.7.disableSample">true</set>
+                <set id="channels_config.12.disableSample">true</set>
+                <set id="channels_config.13.disableSample">true</set>
+                <set id="channels_config.14.disableSample">true</set>
+                <set id="channels_config.15.disableSample">true</set>
+                <set id="channels_config.16.disableSample">true</set>
+                <set id="channels_config.17.disableSample">true</set>
+                <set id="channels_config.18.disableSample">true</set>
+                <set id="channels_config.19.disableSample">true</set>
+            </quick_selection>
+            <default>QS_CADC</default>
+        </quick_selections>
+    </config_set>
+</component:config_component>

@@ -1,0 +1,521 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="32" name="FP_CTRL" description="FlashPatch Control Register">
+    <bit_field offset="0" width="1" name="ENABLE" access="RW" reset_value="0" description="Enable bit for the FPB. A Power-on reset clears this bit to 0.">
+      <bit_field_value name="FP_CTRL_ENABLE_0b0" value="0b0" description="FPB disabled."/>
+      <bit_field_value name="FP_CTRL_ENABLE_0b1" value="0b1" description="FPB enabled."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="KEY" access="RW" reset_value="0" description="KEY bit. On any write to FP_CTRL, the FPB unit ignores the write unless this bit is 1. This bit is RAZ."/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="4" name="NUM_CODE_least" access="RO" reset_value="0x3" description="NUM_CODE[3:0]. The least significant bits of NUM_CODE, the number of instruction address comparators. If NUM_CODE[6:0] is zero, the implementation does not support any instruction address comparators."/>
+    <bit_field offset="8" width="4" name="NUM_LIT" access="RO" reset_value="0x1" description="NUM_LIT bits. The number of literal address comparators supported. If this field is zero, the implementation does not support literal comparators."/>
+    <bit_field offset="12" width="3" name="NUM_CODE_most" access="RO" reset_value="0" description="NUM_CODE[6:4]. The most significant bits of NUM_CODE, the number of instruction address comparators, see bits [7:4]."/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x4" width="32" name="FP_REMAP" description="FlashPatch Remap Register">
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <bit_field offset="5" width="24" name="REMAP" access="RW" reset_value="0" description="REMAP bits. If the FPB supports flash patch remap, this field: - holds bits [28:5] of the base address in SRAM to which the FPB remaps the address - has an UNKNOWN value on reset. If the FPB only supports breakpoint functionality this field is UNK/SBZP."/>
+    <bit_field offset="29" width="1" name="RMPSPT" access="RO" reset_value="0" description="RMPSPT bit. Indicates whether the FPB unit supports flash patch remap.">
+      <bit_field_value name="FP_REMAP_RMPSPT_0b0" value="0b0" description="Remapping not supported. The FPB only supports breakpoint functionality."/>
+      <bit_field_value name="FP_REMAP_RMPSPT_0b1" value="0b1" description="Hard-wired remap to SRAM region."/>
+    </bit_field>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x8" width="32" name="FP_COMP0" description="FlashPatch Comparator Register 0">
+    <bit_field offset="0" width="1" name="ENABLE" access="RW" reset_value="0" description="Enable bit for this comparator. A Power-on reset clears this bit to 0.">
+      <bit_field_value name="COMP_ENABLE_0b0" value="0b0" description="Comparator disabled."/>
+      <bit_field_value name="COMP_ENABLE_0b1" value="0b1" description="Comparator enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="27" name="COMP" access="RW" reset_value="0" reset_mask="0x1" description="COMP bits. Bits [28:2] of the address to compare with addresses from the Code memory region. Bits [31:29] and [1:0] of the address for comparison are zero. If a match occurs: - for an instruction address comparator, the REPLACE field defines the required action - for a literal address comparator, the FPB remaps the access. The reset value of this field is UNKNOWN."/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <bit_field offset="30" width="2" name="REPLACE" access="RW" reset_value="0" description="REPLACE[1:0]. For an instruction address comparator: - Defines the behavior when the COMP address is matched. - The reset value of this field is UNKNOWN. For a literal address comparator: - Field is UNK/SBZP.">
+      <bit_field_value name="COMP_REPLACE_0b00" value="0b00" description="Remap to remap address."/>
+      <bit_field_value name="COMP_REPLACE_0b01" value="0b01" description="Breakpoint on lower halfword, upper is unaffected."/>
+      <bit_field_value name="COMP_REPLACE_0b10" value="0b10" description="Breakpoint on upper halfword, lower is unaffected."/>
+      <bit_field_value name="COMP_REPLACE_0b11" value="0b11" description="Breakpoint on both lower and upper halfwords."/>
+    </bit_field>
+  </register>
+  <register offset="0xC" width="32" name="FP_COMP1" description="FlashPatch Comparator Register 1">
+    <bit_field offset="0" width="1" name="ENABLE" access="RW" reset_value="0" description="Enable bit for this comparator. A Power-on reset clears this bit to 0.">
+      <bit_field_value name="COMP_ENABLE_0b0" value="0b0" description="Comparator disabled."/>
+      <bit_field_value name="COMP_ENABLE_0b1" value="0b1" description="Comparator enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="27" name="COMP" access="RW" reset_value="0" reset_mask="0x1" description="COMP bits. Bits [28:2] of the address to compare with addresses from the Code memory region. Bits [31:29] and [1:0] of the address for comparison are zero. If a match occurs: - for an instruction address comparator, the REPLACE field defines the required action - for a literal address comparator, the FPB remaps the access. The reset value of this field is UNKNOWN."/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <bit_field offset="30" width="2" name="REPLACE" access="RW" reset_value="0" description="REPLACE[1:0]. For an instruction address comparator: - Defines the behavior when the COMP address is matched. - The reset value of this field is UNKNOWN. For a literal address comparator: - Field is UNK/SBZP.">
+      <bit_field_value name="COMP_REPLACE_0b00" value="0b00" description="Remap to remap address."/>
+      <bit_field_value name="COMP_REPLACE_0b01" value="0b01" description="Breakpoint on lower halfword, upper is unaffected."/>
+      <bit_field_value name="COMP_REPLACE_0b10" value="0b10" description="Breakpoint on upper halfword, lower is unaffected."/>
+      <bit_field_value name="COMP_REPLACE_0b11" value="0b11" description="Breakpoint on both lower and upper halfwords."/>
+    </bit_field>
+  </register>
+  <register offset="0x10" width="32" name="FP_COMP2" description="FlashPatch Comparator Register 2">
+    <bit_field offset="0" width="1" name="ENABLE" access="RW" reset_value="0" description="Enable bit for this comparator. A Power-on reset clears this bit to 0.">
+      <bit_field_value name="COMP_ENABLE_0b0" value="0b0" description="Comparator disabled."/>
+      <bit_field_value name="COMP_ENABLE_0b1" value="0b1" description="Comparator enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="27" name="COMP" access="RW" reset_value="0" reset_mask="0x1" description="COMP bits. Bits [28:2] of the address to compare with addresses from the Code memory region. Bits [31:29] and [1:0] of the address for comparison are zero. If a match occurs: - for an instruction address comparator, the REPLACE field defines the required action - for a literal address comparator, the FPB remaps the access. The reset value of this field is UNKNOWN."/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <bit_field offset="30" width="2" name="REPLACE" access="RW" reset_value="0" description="REPLACE[1:0]. For an instruction address comparator: - Defines the behavior when the COMP address is matched. - The reset value of this field is UNKNOWN. For a literal address comparator: - Field is UNK/SBZP.">
+      <bit_field_value name="COMP_REPLACE_0b00" value="0b00" description="Remap to remap address."/>
+      <bit_field_value name="COMP_REPLACE_0b01" value="0b01" description="Breakpoint on lower halfword, upper is unaffected."/>
+      <bit_field_value name="COMP_REPLACE_0b10" value="0b10" description="Breakpoint on upper halfword, lower is unaffected."/>
+      <bit_field_value name="COMP_REPLACE_0b11" value="0b11" description="Breakpoint on both lower and upper halfwords."/>
+    </bit_field>
+  </register>
+  <register offset="0x14" width="32" name="FP_COMP3" description="FlashPatch Comparator Register 3">
+    <bit_field offset="0" width="1" name="ENABLE" access="RW" reset_value="0" description="Enable bit for this comparator. A Power-on reset clears this bit to 0.">
+      <bit_field_value name="COMP_ENABLE_0b0" value="0b0" description="Comparator disabled."/>
+      <bit_field_value name="COMP_ENABLE_0b1" value="0b1" description="Comparator enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="27" name="COMP" access="RW" reset_value="0" reset_mask="0x1" description="COMP bits. Bits [28:2] of the address to compare with addresses from the Code memory region. Bits [31:29] and [1:0] of the address for comparison are zero. If a match occurs: - for an instruction address comparator, the REPLACE field defines the required action - for a literal address comparator, the FPB remaps the access. The reset value of this field is UNKNOWN."/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <bit_field offset="30" width="2" name="REPLACE" access="RW" reset_value="0" description="REPLACE[1:0]. For an instruction address comparator: - Defines the behavior when the COMP address is matched. - The reset value of this field is UNKNOWN. For a literal address comparator: - Field is UNK/SBZP.">
+      <bit_field_value name="COMP_REPLACE_0b00" value="0b00" description="Remap to remap address."/>
+      <bit_field_value name="COMP_REPLACE_0b01" value="0b01" description="Breakpoint on lower halfword, upper is unaffected."/>
+      <bit_field_value name="COMP_REPLACE_0b10" value="0b10" description="Breakpoint on upper halfword, lower is unaffected."/>
+      <bit_field_value name="COMP_REPLACE_0b11" value="0b11" description="Breakpoint on both lower and upper halfwords."/>
+    </bit_field>
+  </register>
+  <register offset="0x18" width="32" name="FP_COMP4" description="FlashPatch Comparator Register 4">
+    <bit_field offset="0" width="1" name="ENABLE" access="RW" reset_value="0" description="Enable bit for this comparator. A Power-on reset clears this bit to 0.">
+      <bit_field_value name="COMP_ENABLE_0b0" value="0b0" description="Comparator disabled."/>
+      <bit_field_value name="COMP_ENABLE_0b1" value="0b1" description="Comparator enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="27" name="COMP" access="RW" reset_value="0" reset_mask="0x1" description="COMP bits. Bits [28:2] of the address to compare with addresses from the Code memory region. Bits [31:29] and [1:0] of the address for comparison are zero. If a match occurs: - for an instruction address comparator, the REPLACE field defines the required action - for a literal address comparator, the FPB remaps the access. The reset value of this field is UNKNOWN."/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <bit_field offset="30" width="2" name="REPLACE" access="RW" reset_value="0" description="REPLACE[1:0]. For an instruction address comparator: - Defines the behavior when the COMP address is matched. - The reset value of this field is UNKNOWN. For a literal address comparator: - Field is UNK/SBZP.">
+      <bit_field_value name="COMP_REPLACE_0b00" value="0b00" description="Remap to remap address."/>
+      <bit_field_value name="COMP_REPLACE_0b01" value="0b01" description="Breakpoint on lower halfword, upper is unaffected."/>
+      <bit_field_value name="COMP_REPLACE_0b10" value="0b10" description="Breakpoint on upper halfword, lower is unaffected."/>
+      <bit_field_value name="COMP_REPLACE_0b11" value="0b11" description="Breakpoint on both lower and upper halfwords."/>
+    </bit_field>
+  </register>
+  <register offset="0x1C" width="32" name="FP_COMP5" description="FlashPatch Comparator Register 5">
+    <bit_field offset="0" width="1" name="ENABLE" access="RW" reset_value="0" description="Enable bit for this comparator. A Power-on reset clears this bit to 0.">
+      <bit_field_value name="COMP_ENABLE_0b0" value="0b0" description="Comparator disabled."/>
+      <bit_field_value name="COMP_ENABLE_0b1" value="0b1" description="Comparator enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="27" name="COMP" access="RW" reset_value="0" reset_mask="0x1" description="COMP bits. Bits [28:2] of the address to compare with addresses from the Code memory region. Bits [31:29] and [1:0] of the address for comparison are zero. If a match occurs: - for an instruction address comparator, the REPLACE field defines the required action - for a literal address comparator, the FPB remaps the access. The reset value of this field is UNKNOWN."/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <bit_field offset="30" width="2" name="REPLACE" access="RW" reset_value="0" description="REPLACE[1:0]. For an instruction address comparator: - Defines the behavior when the COMP address is matched. - The reset value of this field is UNKNOWN. For a literal address comparator: - Field is UNK/SBZP.">
+      <bit_field_value name="COMP_REPLACE_0b00" value="0b00" description="Remap to remap address."/>
+      <bit_field_value name="COMP_REPLACE_0b01" value="0b01" description="Breakpoint on lower halfword, upper is unaffected."/>
+      <bit_field_value name="COMP_REPLACE_0b10" value="0b10" description="Breakpoint on upper halfword, lower is unaffected."/>
+      <bit_field_value name="COMP_REPLACE_0b11" value="0b11" description="Breakpoint on both lower and upper halfwords."/>
+    </bit_field>
+  </register>
+  <register offset="0x20" width="32" name="FP_COMP6" description="FlashPatch Comparator Register 6">
+    <bit_field offset="0" width="1" name="ENABLE" access="RW" reset_value="0" description="Enable bit for this comparator. A Power-on reset clears this bit to 0.">
+      <bit_field_value name="COMP_ENABLE_0b0" value="0b0" description="Comparator disabled."/>
+      <bit_field_value name="COMP_ENABLE_0b1" value="0b1" description="Comparator enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="27" name="COMP" access="RW" reset_value="0" reset_mask="0x1" description="COMP bits. Bits [28:2] of the address to compare with addresses from the Code memory region. Bits [31:29] and [1:0] of the address for comparison are zero. If a match occurs: - for an instruction address comparator, the REPLACE field defines the required action - for a literal address comparator, the FPB remaps the access. The reset value of this field is UNKNOWN."/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <bit_field offset="30" width="2" name="REPLACE" access="RW" reset_value="0" description="REPLACE[1:0]. For an instruction address comparator: - Defines the behavior when the COMP address is matched. - The reset value of this field is UNKNOWN. For a literal address comparator: - Field is UNK/SBZP.">
+      <bit_field_value name="COMP_REPLACE_0b00" value="0b00" description="Remap to remap address."/>
+      <bit_field_value name="COMP_REPLACE_0b01" value="0b01" description="Breakpoint on lower halfword, upper is unaffected."/>
+      <bit_field_value name="COMP_REPLACE_0b10" value="0b10" description="Breakpoint on upper halfword, lower is unaffected."/>
+      <bit_field_value name="COMP_REPLACE_0b11" value="0b11" description="Breakpoint on both lower and upper halfwords."/>
+    </bit_field>
+  </register>
+  <register offset="0x24" width="32" name="FP_COMP7" description="FlashPatch Comparator Register 7">
+    <bit_field offset="0" width="1" name="ENABLE" access="RW" reset_value="0" description="Enable bit for this comparator. A Power-on reset clears this bit to 0.">
+      <bit_field_value name="COMP_ENABLE_0b0" value="0b0" description="Comparator disabled."/>
+      <bit_field_value name="COMP_ENABLE_0b1" value="0b1" description="Comparator enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="27" name="COMP" access="RW" reset_value="0" reset_mask="0x1" description="COMP bits. Bits [28:2] of the address to compare with addresses from the Code memory region. Bits [31:29] and [1:0] of the address for comparison are zero. If a match occurs: - for an instruction address comparator, the REPLACE field defines the required action - for a literal address comparator, the FPB remaps the access. The reset value of this field is UNKNOWN."/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <bit_field offset="30" width="2" name="REPLACE" access="RW" reset_value="0" description="REPLACE[1:0]. For an instruction address comparator: - Defines the behavior when the COMP address is matched. - The reset value of this field is UNKNOWN. For a literal address comparator: - Field is UNK/SBZP.">
+      <bit_field_value name="COMP_REPLACE_0b00" value="0b00" description="Remap to remap address."/>
+      <bit_field_value name="COMP_REPLACE_0b01" value="0b01" description="Breakpoint on lower halfword, upper is unaffected."/>
+      <bit_field_value name="COMP_REPLACE_0b10" value="0b10" description="Breakpoint on upper halfword, lower is unaffected."/>
+      <bit_field_value name="COMP_REPLACE_0b11" value="0b11" description="Breakpoint on both lower and upper halfwords."/>
+    </bit_field>
+  </register>
+  <register offset="0xFD0" width="32" name="FP_PID4" description="Peripheral Identification Register 4.">
+    <bit_field offset="0" width="4" name="JEP106" access="RO" reset_value="0x4" description="JEP106 continuation code."/>
+    <bit_field offset="4" width="4" name="c4KB" access="RO" reset_value="0" description="4KB Count"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFD4" width="32" name="FP_PID5" description="Peripheral Identification Register 5.">
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFD8" width="32" name="FP_PID6" description="Peripheral Identification Register 6.">
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFDC" width="32" name="FP_PID7" description="Peripheral Identification Register 7.">
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFE0" width="32" name="FP_PID0" description="Peripheral Identification Register 0.">
+    <bit_field offset="0" width="8" name="PartNumber" access="RO" reset_value="0x3" description="Part Number [7:0]"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFE4" width="32" name="FP_PID1" description="Peripheral Identification Register 1.">
+    <bit_field offset="0" width="4" name="PartNumber" access="RO" reset_value="0" description="Part Number [11:8]"/>
+    <bit_field offset="4" width="4" name="JEP106_identity_code" access="RO" reset_value="0xB" description="JEP106 identity code [3:0]"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFE8" width="32" name="FP_PID2" description="Peripheral Identification Register 2.">
+    <bit_field offset="0" width="3" name="JEP106_identity_code" access="RO" reset_value="0x3" description="JEP106 identity code [6:4]"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0x1"/>
+    <bit_field offset="4" width="4" name="Revision" access="RO" reset_value="0x2" description="Revision"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFEC" width="32" name="FP_PID3" description="Peripheral Identification Register 3.">
+    <bit_field offset="0" width="4" name="CustomerModified" access="RO" reset_value="0" description="Customer Modified."/>
+    <bit_field offset="4" width="4" name="RevAnd" access="RO" reset_value="0" description="RevAnd"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFF0" width="32" name="FP_CID0" description="Component Identification Register 0.">
+    <bit_field offset="0" width="8" name="Preamble" access="RO" reset_value="0xD" description="Preamble"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFF4" width="32" name="FP_CID1" description="Component Identification Register 1.">
+    <bit_field offset="0" width="4" name="Preamble" access="RO" reset_value="0" description="Preamble"/>
+    <bit_field offset="4" width="4" name="ComponentClass" access="RO" reset_value="0xE" description="Component class">
+      <bit_field_value name="FP_CID1_ComponentClass_0b0001" value="0b0001" description="ROM table."/>
+      <bit_field_value name="FP_CID1_ComponentClass_0b1001" value="0b1001" description="CoreSight component."/>
+      <bit_field_value name="FP_CID1_ComponentClass_0b1111" value="0b1111" description="PrimeCell of system component with no standardized register layout, for backward compatibility."/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFF8" width="32" name="FP_CID2" description="Component Identification Register 2.">
+    <bit_field offset="0" width="8" name="Preamble" access="RO" reset_value="0x5" description="Preamble"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFFC" width="32" name="FP_CID3" description="Component Identification Register 3.">
+    <bit_field offset="0" width="8" name="Preamble" access="RO" reset_value="0xB1" description="Preamble"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+</regs:peripheral>

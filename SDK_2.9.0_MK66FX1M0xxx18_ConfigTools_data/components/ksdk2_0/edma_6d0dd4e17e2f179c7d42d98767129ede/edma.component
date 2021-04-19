@@ -1,0 +1,1627 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="edma" label="eDMA" category="Peripheral driver" options="UI_COMPONENT_MODE_HIDDEN" global_only="false" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-7.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <sw_comp_ref name="platform.drivers.edma" version="2.3.0" match_type="greaterOrEqual" until_version="2.4.9"/>
+   <description>Enhanced Direct Memory Access (eDMA)</description>
+   <mode id="basic" label="General" >
+      <description>Basic initialization of the eDMA and DMAMUX</description>
+      <config_set_refs>
+         <config_set_ref>fsl_edma</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>DMA</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <user_functions>
+      <function_def id="ifDefGet">(node, default) -> ((node.isAvailable() &amp;&amp; node.isEnabled()) ? ((node.getType() == `enum`) ? node.getEnumItemValue() : node.getValue()) : default)</function_def>
+   </user_functions>
+   <config_set id="fsl_edma" label="General configuration" from_source="fsl_edma.h" options="UI_BORDER_HIDDEN">
+      <description>eDMA configuration</description>
+      <generated_types>
+         <enum id="edma_transfer_size_t" label="eDMA transfer configuration" from="_edma_transfer_size">
+            <item id="kEDMA_TransferSize1Bytes" label="Source/Destination data transfer size is 1 byte every time"/>
+            <item id="kEDMA_TransferSize2Bytes" label="Source/Destination data transfer size is 2 bytes every time"/>
+            <item id="kEDMA_TransferSize4Bytes" label="Source/Destination data transfer size is 4 bytes every time"/>
+            <item id="kEDMA_TransferSize8Bytes" label="Source/Destination data transfer size is 8 bytes every time"/>
+            <item id="kEDMA_TransferSize16Bytes" label="Source/Destination data transfer size is 16 bytes every time"/>
+            <item id="kEDMA_TransferSize32Bytes" label="Source/Destination data transfer size is 32 bytes every time"/>
+         </enum>
+         <enum id="edma_modulo_t" label="eDMA modulo configuration" from="_edma_modulo">
+            <item id="kEDMA_ModuloDisable" label="Disable modulo"/>
+            <item id="kEDMA_Modulo2bytes" label="Circular buffer size is 2 bytes"/>
+            <item id="kEDMA_Modulo4bytes" label="Circular buffer size is 4 bytes"/>
+            <item id="kEDMA_Modulo8bytes" label="Circular buffer size is 8 bytes"/>
+            <item id="kEDMA_Modulo16bytes" label="Circular buffer size is 16 bytes"/>
+            <item id="kEDMA_Modulo32bytes" label="Circular buffer size is 32 bytes"/>
+            <item id="kEDMA_Modulo64bytes" label="Circular buffer size is 64 bytes"/>
+            <item id="kEDMA_Modulo128bytes" label="Circular buffer size is 128 bytes"/>
+            <item id="kEDMA_Modulo256bytes" label="Circular buffer size is 256 bytes"/>
+            <item id="kEDMA_Modulo512bytes" label="Circular buffer size is 512 bytes"/>
+            <item id="kEDMA_Modulo1Kbytes" label="Circular buffer size is 1 K bytes"/>
+            <item id="kEDMA_Modulo2Kbytes" label="Circular buffer size is 2 K bytes"/>
+            <item id="kEDMA_Modulo4Kbytes" label="Circular buffer size is 4 K bytes"/>
+            <item id="kEDMA_Modulo8Kbytes" label="Circular buffer size is 8 K bytes"/>
+            <item id="kEDMA_Modulo16Kbytes" label="Circular buffer size is 16 K bytes"/>
+            <item id="kEDMA_Modulo32Kbytes" label="Circular buffer size is 32 K bytes"/>
+            <item id="kEDMA_Modulo64Kbytes" label="Circular buffer size is 64 K bytes"/>
+            <item id="kEDMA_Modulo128Kbytes" label="Circular buffer size is 128 K bytes"/>
+            <item id="kEDMA_Modulo256Kbytes" label="Circular buffer size is 256 K bytes"/>
+            <item id="kEDMA_Modulo512Kbytes" label="Circular buffer size is 512 K bytes"/>
+            <item id="kEDMA_Modulo1Mbytes" label="Circular buffer size is 1 M bytes"/>
+            <item id="kEDMA_Modulo2Mbytes" label="Circular buffer size is 2 M bytes"/>
+            <item id="kEDMA_Modulo4Mbytes" label="Circular buffer size is 4 M bytes"/>
+            <item id="kEDMA_Modulo8Mbytes" label="Circular buffer size is 8 M bytes"/>
+            <item id="kEDMA_Modulo16Mbytes" label="Circular buffer size is 16 M bytes"/>
+            <item id="kEDMA_Modulo32Mbytes" label="Circular buffer size is 32 M bytes"/>
+            <item id="kEDMA_Modulo64Mbytes" label="Circular buffer size is 64 M bytes"/>
+            <item id="kEDMA_Modulo128Mbytes" label="Circular buffer size is 128 M bytes"/>
+            <item id="kEDMA_Modulo256Mbytes" label="Circular buffer size is 256 M bytes"/>
+            <item id="kEDMA_Modulo512Mbytes" label="Circular buffer size is 512 M bytes"/>
+            <item id="kEDMA_Modulo1Gbytes" label="Circular buffer size is 1 G bytes"/>
+            <item id="kEDMA_Modulo2Gbytes" label="Circular buffer size is 2 G bytes"/>
+         </enum>
+         <enum id="edma_bandwidth_t" label="Bandwidth control" from="_edma_bandwidth">
+            <item id="kEDMA_BandwidthStallNone" label="No eDMA engine stalls"/>
+            <item id="kEDMA_BandwidthStall4Cycle" label="eDMA engine stalls for 4 cycles after each read/write"/>
+            <item id="kEDMA_BandwidthStall8Cycle" label="eDMA engine stalls for 8 cycles after each read/write"/>
+         </enum>
+         <enum id="edma_channel_link_type_t" label="Channel link type" from="_edma_channel_link_type">
+            <item id="kEDMA_LinkNone" label="No channel link"/>
+            <item id="kEDMA_MinorLink" label="Channel link after each minor loop"/>
+            <item id="kEDMA_MajorLink" label="Channel link while major loop count exhausted"/>
+         </enum>
+         <enum id="edma_interrupt_enable_t" label="eDMA interrupt source" from="_edma_interrupt_enable">
+            <item id="kEDMA_ErrorInterruptEnable" label="Enable interrupt while channel error occurs"/>
+            <item id="kEDMA_MajorInterruptEnable" label="Enable interrupt while major count exhausted"/>
+            <item id="kEDMA_HalfInterruptEnable" label="Enable interrupt while major count to half value"/>
+         </enum>
+         <enum id="edma_transfer_type_t" label="eDMA transfer type" from="_edma_transfer_type">
+            <item id="kEDMA_MemoryToMemory" label="Transfer from memory to memory"><description>Source address offset is set regarding to the source address data size. Destination adress offset is set regarding to the destination address data size.</description></item>
+            <item id="kEDMA_PeripheralToMemory" label="Transfer from peripheral to memory"><description>Source address offset is set 0U. Destination adress offset is set regarding to the destination address data size.</description></item>
+            <item id="kEDMA_MemoryToPeripheral" label="Transfer from memory to peripheral"><description>Source address offset is set regarding to the source address data size. Destination adress offset is set 0U.</description></item>
+            <item id="kEDMA_PeipheralToPeripheral" label="Transfer from peipheral to peripheral"><description>Source address offset and destination adress offset are both set 0U.</description></item>
+         </enum>
+         <struct id="edma_config_t" label="eDMA global configuration structure" from="_edma_config">
+            <bool id="enableContinuousLinkMode" label="Enable (true) continuous link mode">
+               <description>Enable (true) continuous link mode. Upon minor loop completion, the channel activates again if that channel has a minor loop channel link enabled and the link channel is itself.</description>
+            </bool>
+            <bool id="enableHaltOnError" label="Enable (true) transfer halt on error">
+               <description>Enable (true) transfer halt on error. Any error causes the HALT bit to set. Subsequently, all service requests are ignored until the HALT bit is cleared.</description>
+            </bool>
+            <bool id="enableRoundRobinArbitration" label="Enable (true) round robin channel arbitration method or fixed priority arbitration is used for channel selection">
+               <description>Enable (true) round robin channel arbitration method or fixed priority arbitration is used for channel selection</description>
+            </bool>
+            <bool id="enableDebugMode" label="Enable(true) eDMA debug mode">
+               <description>Enable(true) eDMA debug mode. When in debug mode, the eDMA stalls the start of a new channel. Executing channels are allowed to complete.</description>
+            </bool>
+         </struct>
+         <struct id="edma_transfer_config_t" label="eDMA transfer configuration" from="_edma_transfer_config">
+            <description>This structure configures the source/destination transfer attribute.</description>
+            <integer id="srcAddr" label="Source data address" type="uint32_t">
+               <description>Source data address.</description>
+            </integer>
+            <integer id="destAddr" label="Destination data address" type="uint32_t">
+               <description>Destination data address.</description>
+            </integer>
+            <reference id="srcTransferSize" label="Source data transfer size" type="edma_transfer_size_t">
+               <description>Source data transfer size.</description>
+            </reference>
+            <reference id="destTransferSize" label="Destination data transfer size" type="edma_transfer_size_t">
+               <description>Destination data transfer size.</description>
+            </reference>
+            <integer id="srcOffset" label="Sign-extended offset applied to the current source address to form the next-state value as each source read is completed" type="int16_t">
+               <description>Sign-extended offset applied to the current source address to form the next-state value as each source read is completed.</description>
+            </integer>
+            <integer id="destOffset" label="Sign-extended offset applied to the current destination address to form the next-state value as each destination write is completed" type="int16_t">
+               <description>Sign-extended offset applied to the current destination address to form the next-state value as each destination write is completed.</description>
+            </integer>
+            <integer id="minorLoopBytes" label="Bytes to transfer in a minor loop" type="uint32_t">
+               <description>Bytes to transfer in a minor loop</description>
+            </integer>
+            <integer id="majorLoopCounts" label="Major loop iteration count" type="uint32_t">
+               <description>Major loop iteration count.</description>
+            </integer>
+         </struct>
+         <struct id="edma_channel_Preemption_config_t" label="eDMA channel priority configuration" from="_edma_channel_Preemption_config">
+            <bool id="enableChannelPreemption" label="If true: a channel can be suspended by other channel with higher priority">
+               <description>If true: a channel can be suspended by other channel with higher priority</description>
+            </bool>
+            <bool id="enablePreemptAbility" label="If true: a channel can suspend other channel with low priority">
+               <description>If true: a channel can suspend other channel with low priority</description>
+            </bool>
+            <integer id="channelPriority" label="Channel priority" type="uint8_t">
+               <description>Channel priority</description>
+            </integer>
+         </struct>
+         <struct id="edma_minor_offset_config_t" label="eDMA minor offset configuration" from="_edma_minor_offset_config">
+            <bool id="enableSrcMinorOffset" label="Enable(true) or Disable(false) source minor loop offset">
+               <description>Enable(true) or Disable(false) source minor loop offset.</description>
+            </bool>
+            <bool id="enableDestMinorOffset" label="Enable(true) or Disable(false) destination minor loop offset">
+               <description>Enable(true) or Disable(false) destination minor loop offset.</description>
+            </bool>
+            <integer id="minorOffset" label="Offset for a minor loop mapping" type="uint32_t">
+               <description>Offset for a minor loop mapping.</description>
+            </integer>
+         </struct>
+         <struct id="edma_tcd_t" label="eDMA TCD" from="_edma_tcd">
+            <description>This structure is same as TCD register which is described in reference manual, and is used to configure the scatter/gather feature as a next hardware TCD.</description>
+            <fixme id="SADDR" label="SADDR register, used to save source address" type="__IO uint32_t">
+               <description>SADDR register, used to save source address</description>
+            </fixme>
+            <fixme id="SOFF" label="SOFF register, save offset bytes every transfer" type="__IO uint16_t">
+               <description>SOFF register, save offset bytes every transfer</description>
+            </fixme>
+            <fixme id="ATTR" label="ATTR register, source/destination transfer size and modulo" type="__IO uint16_t">
+               <description>ATTR register, source/destination transfer size and modulo</description>
+            </fixme>
+            <fixme id="NBYTES" label="Nbytes register, minor loop length in bytes" type="__IO uint32_t">
+               <description>Nbytes register, minor loop length in bytes</description>
+            </fixme>
+            <fixme id="SLAST" label="SLAST register" type="__IO uint32_t">
+               <description>SLAST register</description>
+            </fixme>
+            <fixme id="DADDR" label="DADDR register, used for destination address" type="__IO uint32_t">
+               <description>DADDR register, used for destination address</description>
+            </fixme>
+            <fixme id="DOFF" label="DOFF register, used for destination offset" type="__IO uint16_t">
+               <description>DOFF register, used for destination offset</description>
+            </fixme>
+            <fixme id="CITER" label="CITER register, current minor loop numbers, for unfinished minor loop" type="__IO uint16_t">
+               <description>CITER register, current minor loop numbers, for unfinished minor loop.</description>
+            </fixme>
+            <fixme id="DLAST_SGA" label="DLASTSGA register, next stcd address used in scatter-gather mode" type="__IO uint32_t">
+               <description>DLASTSGA register, next stcd address used in scatter-gather mode</description>
+            </fixme>
+            <fixme id="CSR" label="CSR register, for TCD control status" type="__IO uint16_t">
+               <description>CSR register, for TCD control status</description>
+            </fixme>
+            <fixme id="BITER" label="BITER register, begin minor loop count" type="__IO uint16_t">
+               <description>BITER register, begin minor loop count.</description>
+            </fixme>
+         </struct>
+         <fixme id="edma_callback" label="Define callback function for eDMA" type="void(*"/>
+         <struct id="edma_handle_t" label="eDMA transfer handle structure" from="_edma_handle">
+            <reference id="callback" label="Callback function for major count exhausted" type="edma_callback">
+               <description>Callback function for major count exhausted.</description>
+            </reference>
+            <fixme id="userData" label="Callback function parameter" type="void *">
+               <description>Callback function parameter.</description>
+            </fixme>
+            <fixme id="base" label="eDMA peripheral base address" type="DMA_Type *">
+               <description>eDMA peripheral base address.</description>
+            </fixme>
+            <fixme id="tcdPool" label="Pointer to memory stored TCDs" type="edma_tcd_t *">
+               <description>Pointer to memory stored TCDs.</description>
+            </fixme>
+            <integer id="channel" label="eDMA channel number" type="uint8_t">
+               <description>eDMA channel number.</description>
+            </integer>
+            <integer id="header" label="The first TCD index" type="int8_t">
+               <description>The first TCD index. Should point to the next TCD to be loaded into the eDMA engine.</description>
+            </integer>
+            <integer id="tail" label="The last TCD index" type="int8_t">
+               <description>The last TCD index. Should point to the next TCD to be stored into the memory pool.</description>
+            </integer>
+            <integer id="tcdUsed" label="The number of used TCD slots" type="int8_t">
+               <description>The number of used TCD slots. Should reflect the number of TCDs can be used/loaded in the memory.</description>
+            </integer>
+            <integer id="tcdSize" label="The total number of TCD slots in the queue" type="int8_t">
+               <description>The total number of TCD slots in the queue.</description>
+            </integer>
+            <integer id="flags" label="The status of the current channel" type="uint8_t">
+               <description>The status of the current channel.</description>
+            </integer>
+         </struct>
+      </generated_types>
+      <user_types>
+         <enum id="edma_modulo_t" label="eDMA modulo configuration" from="_edma_modulo">
+            <description>Circular buffer size</description>
+            <item id="kEDMA_ModuloDisable" label="Disable modulo"/>
+            <item id="kEDMA_Modulo2bytes" label="2 B"/>
+            <item id="kEDMA_Modulo4bytes" label="4 B"/>
+            <item id="kEDMA_Modulo8bytes" label="8 B"/>
+            <item id="kEDMA_Modulo16bytes" label="16 B"/>
+            <item id="kEDMA_Modulo32bytes" label="32 B"/>
+            <item id="kEDMA_Modulo64bytes" label="64 B"/>
+            <item id="kEDMA_Modulo128bytes" label="128 B"/>
+            <item id="kEDMA_Modulo256bytes" label="256 B"/>
+            <item id="kEDMA_Modulo512bytes" label="512 B"/>
+            <item id="kEDMA_Modulo1Kbytes" label="1 KB"/>
+            <item id="kEDMA_Modulo2Kbytes" label="2 KB"/>
+            <item id="kEDMA_Modulo4Kbytes" label="4 KB"/>
+            <item id="kEDMA_Modulo8Kbytes" label="8 KB"/>
+            <item id="kEDMA_Modulo16Kbytes" label="16 KB"/>
+            <item id="kEDMA_Modulo32Kbytes" label="32 KB"/>
+            <item id="kEDMA_Modulo64Kbytes" label="64 KB"/>
+            <item id="kEDMA_Modulo128Kbytes" label="128 KB"/>
+            <item id="kEDMA_Modulo256Kbytes" label="256 KB"/>
+            <item id="kEDMA_Modulo512Kbytes" label="512 KB"/>
+            <item id="kEDMA_Modulo1Mbytes" label="1 MB"/>
+            <item id="kEDMA_Modulo2Mbytes" label="2 MB"/>
+            <item id="kEDMA_Modulo4Mbytes" label="4 MB"/>
+            <item id="kEDMA_Modulo8Mbytes" label="8 MB"/>
+            <item id="kEDMA_Modulo16Mbytes" label="16 MB"/>
+            <item id="kEDMA_Modulo32Mbytes" label="32 MB"/>
+            <item id="kEDMA_Modulo64Mbytes" label="64 MB"/>
+            <item id="kEDMA_Modulo128Mbytes" label="128 MB"/>
+            <item id="kEDMA_Modulo256Mbytes" label="256 MB"/>
+            <item id="kEDMA_Modulo512Mbytes" label="512 MB"/>
+            <item id="kEDMA_Modulo1Gbytes" label="1 GB"/>
+            <item id="kEDMA_Modulo2Gbytes" label="2 GB"/>
+         </enum>
+         <struct id="minorLoopConfig_t">
+            <variable id="enableSrcMinorOffset" value="($parent.offsetType.isAvailable() &amp;&amp; $parent.offsetType.isEnabled() &amp;&amp; $parent.offsetType.getValue() == `smloe` || $parent.offsetType.getValue() == `enabled`) ? true : false" options="add_to_struct"></variable>
+            <variable id="enableDestMinorOffset" value="($parent.offsetType.isAvailable() &amp;&amp; $parent.offsetType.isEnabled() &amp;&amp; $parent.offsetType.getValue() == `dmloe` || $parent.offsetType.getValue() == `enabled`) ? true : false" options="add_to_struct"></variable>
+            <variable id="minorOffset" value="$parent.mloff.ifDefGet(0)" options="add_to_struct"></variable>
+            <enum id="offsetType" label="Minor loop offset" options="remove_from_struct_init">
+               <description>Selects whether the minor loop offset is applied to the source or destination address upon minor loop completion.</description>
+               <item id="disabled" label="Disabled"><description>Minor loop offset is disabled.</description></item>
+               <item id="smloe" label="Source"><description>Source minor loop offset enable. If enabled, the minor loop offset is applied to the source address (SADDR).</description></item>
+               <item id="dmloe" label="Destination"><description>Destination minor loop offset enable. If enabled, the minor loop offset is applied to the destination address (DADDR).</description></item>
+               <item id="enabled" label="Source and destination"></item>
+            </enum>
+            <integer type="int32_t" id="mloff" label="Offset value" options="remove_from_struct_init" max_expr="0xFFFFF" enable="$parent.offsetType.isAvailable() &amp;&amp; $parent.offsetType.isEnabled() &amp;&amp; $parent.offsetType.getValue() != `disabled`">
+               <description>Sign-extended offset applied to the source or destination address to form the next-state value after the minor loop completes</description>
+            </integer>
+         </struct>
+         <struct id="tcd_configuration_t">
+            <!--Non-transactional transfer config structure-->
+            <variable id="srcAddr" value="`(uint32_t) ` + $parent.saddr_expr.ifDefGet(0)" options="add_to_struct" available="$parent.tcdMode.ifDefGet(``)==`nontrans`"></variable>
+            <variable id="destAddr" value="`(uint32_t) ` + $parent.daddr_expr.ifDefGet(0)" options="add_to_struct" available="$parent.tcdMode.ifDefGet(``)==`nontrans`"></variable>
+            <variable id="srcTransferSize" value="$parent.ssize.isAvailable() ? $parent.ssize.getEnumItemId() : ``" options="add_to_struct" available="$parent.tcdMode.ifDefGet(``)==`nontrans`"></variable>
+            <variable id="destTransferSize" value="$parent.dsize.isAvailable() ? $parent.dsize.getEnumItemId() : ``" options="add_to_struct" available="$parent.tcdMode.ifDefGet(``)==`nontrans`"></variable>
+            <variable id="srcOffset" value="`(int16_t) ` + $parent.soff.ifDefGet(0)" options="add_to_struct" available="$parent.tcdMode.ifDefGet(``)==`nontrans`"></variable>
+            <variable id="destOffset" value="`(int16_t) ` + $parent.doff.ifDefGet(0)" options="add_to_struct" available="$parent.tcdMode.ifDefGet(``)==`nontrans`"></variable>
+            <variable id="minorLoopBytes" value="$parent.nbytes.ifDefGet(0) + `U`" options="add_to_struct" available="$parent.tcdMode.ifDefGet(``)==`nontrans`"></variable>
+             <!-- The major loop counts value is the number of the major loop iteration, i.e. it is: major loop transfer bytes / minor loop transfer bytes -->
+            <variable id="majorLoopCounts" value="($parent.transferBytes.ifDefGet(0) / $parent.nbytes.ifDefGet(1)) + `U`" options="add_to_struct" available="$parent.tcdMode.ifDefGet(``)==`nontrans`"></variable>
+            <!-- TCD config structure -->
+            <variable id="SADDR" value="`(uint32_t) ` + $parent.saddr_expr.ifDefGet(0)" options="add_to_struct" available="$parent.tcdMode.ifDefGet(``)==`tcd`"></variable>
+            <variable id="SOFF" value="`(uint16_t) ` + $parent.soff.ifDefGet(0)" options="add_to_struct" available="$parent.tcdMode.ifDefGet(``)==`tcd`"></variable>
+            <variable id="ATTR" options="add_to_struct" available="$parent.tcdMode.ifDefGet(``)==`tcd`"
+               value="`DMA_ATTR_SMOD(` + $parent.smod.ifDefGet(0)
+               + `) | DMA_ATTR_SSIZE(` + $parent.ssize.getEnumItemId() 
+               + `) | DMA_ATTR_DMOD(` + $parent.dmod.ifDefGet(0)
+               + `) | DMA_ATTR_DSIZE(` + $parent.dsize.getEnumItemId()
+               + `)`" >
+            </variable>
+            <variable id="NBYTES" options="add_to_struct" available="$parent.tcdMode.ifDefGet(``)==`tcd`"
+               value="( 
+               ($parent.MLconfig.offsetType.isAvailable() &amp;&amp; $parent.MLconfig.offsetType.isEnabled() &amp;&amp; $parent.MLconfig.offsetType.getValue() == `disabled`) ? 
+               `DMA_NBYTES_MLOFFNO_NBYTES(` + $parent.nbytes.ifDefGet(0) + `U` +
+               + `) | DMA_NBYTES_MLOFFNO_SMLOE(` + ($parent.MLconfig.enableSrcMinorOffset.ifDefGet(0)==true ? `1U` : `0U`) 
+               + `) | DMA_NBYTES_MLOFFNO_DMLOE(` + ($parent.MLconfig.enableDestMinorOffset.ifDefGet(0)==true ? `1U` : `0U`)
+               + `)`
+               : `DMA_NBYTES_MLOFFYES_NBYTES(` + $parent.nbytes.ifDefGet(0) + `U` +
+               + `) | DMA_NBYTES_MLOFFYES_SMLOE(` + ($parent.MLconfig.enableSrcMinorOffset.ifDefGet(0)==true ? `1U` : `0U`) 
+               + `) | DMA_NBYTES_MLOFFYES_DMLOE(` + ($parent.MLconfig.enableDestMinorOffset.ifDefGet(0)==true ? `1U` : `0U`)
+               + `) | DMA_NBYTES_MLOFFYES_MLOFF(` + $parent.MLconfig.minorOffset.ifDefGet(0)
+               + `)`)"> 
+            </variable>
+            <variable id="SLAST" value="`DMA_SLAST_SLAST(` + $parent.slast.ifDefGet(0) + `)`" options="add_to_struct" available="$parent.tcdMode.ifDefGet(``)==`tcd`"></variable>
+            <variable id="DADDR" value="`(uint32_t) ` + $parent.daddr_expr.ifDefGet(0)" options="add_to_struct" available="$parent.tcdMode.ifDefGet(``)==`tcd`"></variable>
+            <variable id="DOFF" value="`(uint16_t) ` + $parent.doff.ifDefGet(0)" options="add_to_struct" available="$parent.tcdMode.ifDefGet(``)==`tcd`"></variable>
+            <variable id="CITER" options="add_to_struct" available="$parent.tcdMode.ifDefGet(``)==`tcd`"
+               value="$parent.enableChannelLinkMinor.ifDefGet(false) ?
+               `DMA_CITER_ELINKYES_ELINK(1U) | DMA_CITER_ELINKYES_CITER(` + $parent.citer.ifDefGet(0)
+               +`U) | DMA_CITER_ELINKYES_LINKCH(`+ $parent.linkedChannelMinor.getEnumItemValue() + `)` 
+               :`DMA_CITER_ELINKNO_ELINK(0U) | DMA_CITER_ELINKNO_CITER(`+ $parent.citer.ifDefGet(0) +`U)` ">
+            </variable>
+            <variable id="DLAST_SGA" options="add_to_struct" available="$parent.tcdMode.ifDefGet(``)==`tcd`"
+               value="`(uint32_t)(` + ($parent.enableScatterGather.ifDefGet(false) == true ? + `&amp;` + $parent.sga.ifDefGet(0) :  $parent.dlast.ifDefGet(0)) 
+               + `)`">
+            </variable>
+            <variable id="CSR" options="add_to_struct" available="$parent.tcdMode.ifDefGet(``)==`tcd`"
+               value="`DMA_CSR_START(0U) | DMA_CSR_INTMAJOR(`
+               + ($parent.interruptSources.irqMajorComplete.ifDefGet(false) ? `1U` : `0U`)
+               + `) | DMA_CSR_INTHALF(` + ($parent.interruptSources.irqMajorHalf.ifDefGet(false) ? `1U` : `0U`)
+               + `) | DMA_CSR_DREQ(` + ($parent.disableERQ.ifDefGet(false) ? `1U` : `0U`)
+               + `) | DMA_CSR_ESG(` + ($parent.enableScatterGather.ifDefGet(false) ? `1U` : `0U`)
+               + `) | DMA_CSR_MAJORELINK(` +  ($parent.enableChannelLinkMajor.ifDefGet(false) ? `1U` : `0U`)
+               + `) | DMA_CSR_MAJORLINKCH(` + $parent.linkedChannelMajor.ifDefGet(0)
+               + `) | DMA_CSR_BWC(` + $parent.bandwidthControl.ifDefGet(false) + `U)`">
+            </variable>
+            <variable id="BITER" options="add_to_struct" available="$parent.tcdMode.ifDefGet(``)==`tcd`"
+               value="$parent.enableChannelLinkMinor.ifDefGet(false) ?
+               `DMA_BITER_ELINKYES_ELINK(1U) | DMA_BITER_ELINKYES_BITER(` + $parent.citer.ifDefGet(0)
+               +`U) | DMA_BITER_ELINKYES_LINKCH(`+ $parent.linkedChannelMinor.getEnumItemValue() + `)` 
+               :`DMA_BITER_ELINKNO_ELINK(0U) | DMA_BITER_ELINKNO_BITER(`+ $parent.citer.ifDefGet(0) +`U)` "></variable>
+            <!-- TCD UI -->
+            <variable id="tcdMode" value="($parent.getParent().getID() == `tcd_configuration`) ? `tcd` : (($parent.getParent().getID() == `transfer_config`) ? `trans` : `nontrans`)" options="remove_from_struct_init"></variable>
+            <variable id="tcdID_def" value="$instance.getFnGroupPrefix() + $instance.getID() + `_` + $parent.tcdID.ifDefGet(``) + `_config`" options="remove_from_struct_init"></variable>
+            <string id="tcdID" label_expr="$parent.tcdMode.ifDefGet(``) != `tcd` ? `Transfer ID`: `TCD ID` " options="remove_from_struct_init">
+               <description expr="`The TCD configuration structure ID used in eDMA initialization for current channel: (edma_tcd_t) ` + $parent.tcdID_def.getValue()" ></description>
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error"  description="The ID is not a valid C identifier!"/>
+               </validation>
+            </string>
+            <bool id="enableScatterGather" label="Enable scatter-gather" available="$parent.tcdMode.ifDefGet(``)==`tcd`" options="remove_from_struct_init">
+               <description>
+**Enable Scatter-Gather processing**  
+
+Scatter/gather is the process of automatically loading a new TCD into a channel. It allows a DMA channel to use multiple TCDs; this enables a DMA channel to scatter the DMA data to multiple destinations or gather it from multiple sources.
+When scatter/gather is enabled and the channel has finished its major loop, a new TCD is fetched from system memory and loaded into that channel’s descriptor location in eDMA programmer’s model, thus replacing the current descriptor.
+
+*Note:* The last destination address adjustment is not available in this mode.
+               </description>
+            </bool>
+            <dynamic_enum id="sga" label="Scatter-gather TCD address" options="remove_from_struct_init"
+               available="$parent.tcdMode.ifDefGet(``)==`tcd`"
+               enable="$parent.enableScatterGather.isAvailable() &amp;&amp; $parent.enableScatterGather.isEnabled() &amp;&amp; $parent.enableScatterGather.getValue()"
+               items="$parent.tcdMode.ifDefGet(``)==`tcd` ? $parent.getParent().getValue().filter(x->x.getSetting(`tcdID`).getValue() != $parent.tcdID.getValue()).arrayToEnumItems(
+               x->true,
+               x->x.getID(),
+               x->x.getSetting(`tcdID`).getValue(),
+               x->x.getSetting(`tcdID_def`).getValue()) : `N/A`">
+               <description>Next TCD address used in scatter-gather mode
+                  This address points to the beginning of a 0-modulo-32-byte region containing the next transfer
+                  control descriptor to be loaded into this channel. This channel reload is performed as the major
+                  iteration count completes.</description>
+               <validation>
+                  <constraint cond_expr="$this.enumItemsOf().size() != 0" level="error" description="Scatter-gather mode needs one more TCD"/>
+               </validation>
+            </dynamic_enum>
+            <info value="`Source address configuration`" id="line0" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+            <string id="saddr_expr" label="Address expression" options="remove_from_struct_init">
+               <description>
+Source address expression used in TCD configuration structure initialization. The data address and the data width must be consistent. For example, if the source data size is 4 bytes, the source address must be 4 bytes aligned, or it results in source address error (SAE).
+Example use cases:  
+- Reference: `&amp;source_address`  
+- Variable: `source_address_ptr`  
+- Register name: `UART0_DATA`  
+- Address number: `0x00101000`  
+               </description>
+               <validation>
+                  <constraint cond_expr="$this.getValue() != ``" level="error"  description="The source address expression is not defined."/>
+               </validation>
+            </string>
+            <string id="saddr_def" label="External definition" options="remove_from_struct_init">
+               <description>
+External source address definition (with its type) which is part of the generated code.
+Example use cases:
+- `uint32_t source_address[100]`
+- `uint32_t * source_address_ptr`
+- `(uint32_t)(uint32_t *)srcAddr`
+               </description>
+            </string>
+            <info id="saddr_info" label="Code preview" options="remove_from_struct_init"
+               value="$parent.saddr_def.ifDefGet(``) != `` ? `extern `  + $parent.saddr_def.ifDefGet(`N/A`) + `;` : `No source address external definition`">
+               <description>Source address external definition</description>
+            </info>
+            <string id="soff" label="Offset expression" options="remove_from_struct_init">
+               <description>
+TCD signed source address offset. Sign-extended offset (int16_t) applied to the current source address to form the next-state value as each source read is completed.
+The offset should be aligned with source data size.
+Example use cases:  
+- `8`
+- `DMA_SOFF_SOFF(8U)`
+- `sourceOffsetValue`
+- `sizeof(uint16_t)`
+- `sizeof(srcAddr[0])`
+
+               </description>
+               <validation>
+                  <constraint cond_expr="$this.getValue() != ``" level="error"  description="The source offset expression is not defined."/>
+               </validation>
+            </string>
+            <string id="soff_def" label="External definition" options="remove_from_struct_init">
+               <description>
+External source offset definition (with its type) which is part of the generated code. This variable needs to be defined in user code.
+Example use cases:
+- `uint16_t * sourceOffsetValue`
+               </description>
+            </string>
+            <info id="soff_info" label="Code preview" options="remove_from_struct_init"
+               value="$parent.soff_def.ifDefGet(``) != `` ? `extern ` + $parent.soff_def.ifDefGet(`N/A`) + `;` : `No source offset external definition`">
+               <description>Source address offset external definition</description>
+            </info>
+            <enum id="ssize" label="Data size [Byte]" options="remove_from_struct_init">
+               <description>Source address data transfer size</description>
+               <item id="kEDMA_TransferSize1Bytes" label="1" value="1"></item>
+               <item id="kEDMA_TransferSize2Bytes" label="2" value="2"></item>
+               <item id="kEDMA_TransferSize4Bytes" label="4" value="4"></item>
+               <item id="kEDMA_TransferSize8Bytes" label="8" value="8" available="featureDefined(`FSL_FEATURE_EDMA_SUPPORT_8_BYTES_TRANSFER`) &amp;&amp; (getFeature(`FSL_FEATURE_EDMA_SUPPORT_8_BYTES_TRANSFER`) == 1)"></item>
+               <item id="kEDMA_TransferSize16Bytes" label="16" value="16" available="featureDefined(`FSL_FEATURE_EDMA_SUPPORT_16_BYTES_TRANSFER`) &amp;&amp; (getFeature(`FSL_FEATURE_EDMA_SUPPORT_16_BYTES_TRANSFER`) == 1)"></item>
+               <item id="kEDMA_TransferSize32Bytes" label="32" value="32"></item>
+            </enum>
+            <reference type="edma_modulo_t" id="smod" label="Modulo" available="$parent.tcdMode.ifDefGet(``)==`tcd`" options="remove_from_struct_init">
+               <description>
+                  This value defines a specific address range specified to be the value after SADDR + SOFF calculation is performed or the original register value. 
+                  The setting of this field provides the ability to implement a circular data queue easily. For data queues requiring power-of-2 size bytes, the queue should start at a 0-modulo-size address and the SMOD field should be set to the appropriate value for the queue, freezing the desired number of upper address bits. 
+                  The value programmed into this field specifies the number of lower address bits allowed to change. For a circular queue application, the SOFF is typically set to the transfer size to implement post-increment addressing with the SMOD function constraining the addresses to a 0-modulo-size range.
+               </description>
+            </reference>
+            <integer type="int32_t" id="slast" label="Last address adjustment" available="$parent.tcdMode.ifDefGet(``)==`tcd`" options="remove_from_struct_init">
+               <description>Last source address adjustment.
+                  Adjustment value added to the source address at the completion of the major iteration count. This value
+                  can be applied to restore the source address to the initial value, or adjust the address to reference the
+                  next data structure. This register uses two's complement notation; the overflow bit is discarded.
+               </description>
+            </integer>
+            <info value="`Destination address configuration`" id="line1" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+            <string id="daddr_expr" label="Address expression" options="remove_from_struct_init"> 
+               <description>
+Destination address expression used in TCD configuration structure initialization. The data address and the data width must be consistent. For example, if the data size is 4 bytes, the address must be 4 bytes aligned.
+Example use cases:  
+- Reference: `&amp;dest_address`  
+- Variable: `dest_address_ptr`  
+- Register name: `UART0_DATA`  
+- Register value: `0x00101000`  
+               </description>
+               <validation>
+                  <constraint cond_expr="$this.getValue() != ``" level="error"  description="The destination address expression is not defined."/>
+               </validation>
+            </string>
+            <string id="daddr_def" label="External definition" options="remove_from_struct_init">
+               <description>
+External destination address definition (with its type) which is part of the generated code. This variable needs to be defined in user code.
+Example use cases:
+- `uint8_t dest_address[100]`
+- `uint32_t * dest_address_ptr`
+               </description>
+            </string>
+            <info id="daddr_info" label="Code preview" options="remove_from_struct_init"
+               value="$parent.daddr_def.ifDefGet(``) != `` ? `extern `  + $parent.daddr_def.ifDefGet(`N/A`) + `;` : `No destination address external definition`">
+               <description>Destination address external definition</description>
+            </info>
+            <string id="doff" label="Offset expression" options="remove_from_struct_init">
+               <description>
+TCD signed destination address offset. Sign-extended offset (int16_t) applied to the current destination address to form the next-state value as each source read is completed.
+The offset should be aligned with destination data size.
+Example use cases:  
+- `8`
+- `DMA_DOFF_DOFF(8U)`
+- `destinationOffsetValue`
+- `sizeof(uint16_t)`
+- `sizeof(destAddr[0])`
+               </description>
+               <validation>
+                  <constraint cond_expr="$this.getValue() != ``" level="error"  description="The destination offset expression is not defined."/>
+               </validation>
+            </string>
+            <string id="doff_def" label="External definition" options="remove_from_struct_init">
+               <description>
+External destination offset definition (with its type) which is part of the generated code. This variable needs to be defined in user code.
+Example use cases:
+- `uint16_t * destinationOffsetValue`
+               </description>
+            </string>
+            <info id="doff_info" label="Code preview" options="remove_from_struct_init"
+               value="$parent.doff_def.ifDefGet(``) != `` ? `extern ` + $parent.doff_def.ifDefGet(`N/A`) + `;` : `No destination offset external definition`">
+               <description>Destination address offset external definition</description>
+            </info>
+            <enum id="dsize" label="Data size [Byte]" options="remove_from_struct_init">
+               <description>Destination address data transfer size</description>
+               <item id="kEDMA_TransferSize1Bytes" label="1" value="1"></item>
+               <item id="kEDMA_TransferSize2Bytes" label="2" value="2"></item>
+               <item id="kEDMA_TransferSize4Bytes" label="4" value="4"></item>
+               <item id="kEDMA_TransferSize8Bytes" label="8" value="8" available="featureDefined(`FSL_FEATURE_EDMA_SUPPORT_8_BYTES_TRANSFER`) &amp;&amp; (getFeature(`FSL_FEATURE_EDMA_SUPPORT_8_BYTES_TRANSFER`) == 1)"></item>
+               <item id="kEDMA_TransferSize16Bytes" label="16" value="16" available="featureDefined(`FSL_FEATURE_EDMA_SUPPORT_16_BYTES_TRANSFER`) &amp;&amp; (getFeature(`FSL_FEATURE_EDMA_SUPPORT_16_BYTES_TRANSFER`) == 1)"></item>
+               <item id="kEDMA_TransferSize32Bytes" label="32" value="32"></item>
+            </enum>
+            <reference type="edma_modulo_t" id="dmod" label="Modulo" available="$parent.tcdMode.ifDefGet(``)==`tcd`" options="remove_from_struct_init">
+               <description>
+                  This value defines a specific address range specified to be the value after DADDR + DOFF
+                  calculation is performed or the original register value. The setting of this field provides the ability to
+                  implement a circular data queue easily. For data queues requiring power-of-2 size bytes, the queue
+                  should start at a 0-modulo-size address and the DMOD field should be set to the appropriate value
+                  for the queue, freezing the desired number of upper address bits. The value programmed into this
+                  field specifies the number of lower address bits allowed to change. For a circular queue application,
+                  the SOFF is typically set to the transfer size to implement post-increment addressing with the DMOD
+                  function constraining the addresses to a 0-modulo-size range.
+               </description>
+            </reference>
+            <integer type="int32_t" id="dlast" label="Last address adjustment" available="$parent.tcdMode.ifDefGet(``)==`tcd` &amp;&amp; $parent.enableScatterGather.isAvailable() &amp;&amp; $parent.enableScatterGather.isEnabled() &amp;&amp; !$parent.enableScatterGather.getValue()" options="remove_from_struct_init"> 
+               <description>
+                  Last destination address adjustment.
+                  Adjustment value added to the destination address at the completion of the major iteration count. This value can be applied to restore the destination address to the initial value, or adjust the address to reference the next data structure. 
+                  This register uses two's complement notation; the overflow bit is discarded.
+               </description>
+            </integer>
+            <info id="dlastInfo" label="Last address adjustment" value="`Disabled due to scatter-gather mode`" available="$parent.tcdMode.ifDefGet(``)==`tcd` &amp;&amp; $parent.enableScatterGather.isAvailable() &amp;&amp; $parent.enableScatterGather.isEnabled() &amp;&amp; $parent.enableScatterGather.getValue()" options="remove_from_struct_init"></info>
+            <info value="``" id="line2" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+            <variable id="nbytesSizeTCD" value="($parent.MLconfig.getSetting(`offsetType`).isAvailable() &amp;&amp; $parent.MLconfig.getSetting(`offsetType`).isEnabled() &amp;&amp; $parent.MLconfig.getSetting(`offsetType`).getValue() != `disabled` ? `0x3FF` : `0x3FFFFFFF`)"></variable>
+            <variable id="nbytesSizeNontrans" value="$parent.tcdMode.ifDefGet(``)==`nontrans` ? ($parent.getParent().getSetting(`minorLoopConfig`).getSetting(`offsetType`).isAvailable() &amp;&amp; $parent.getParent().getSetting(`minorLoopConfig`).getSetting(`offsetType`).isEnabled() &amp;&amp; $parent.getParent().getSetting(`minorLoopConfig`).getSetting(`offsetType`).getValue() != `disabled` ? `0x3FF` : `0x3FFFFFFF`) : `0x3FFFFFFF`"></variable>
+            <integer type="uint32_t" id="nbytes" label="Minor loop transfer [Byte]" options="remove_from_struct_init" min_expr="1" max_expr="$parent.tcdMode.ifDefGet(``) == `tcd` ? $parent.nbytesSizeTCD.ifDefGet(`0x3FFFFFFF`).toInt() : $parent.nbytesSizeNontrans.ifDefGet(`0x3FFFFFFF`).toInt()">
+               <description>
+Number of bytes to be transferred in each service request of the channel. As a channel activates, the
+appropriate TCD contents load into the eDMA engine, and the appropriate reads and writes perform until
+the minor byte transfer count has transferred. This is an indivisible operation and cannot be halted.
+(Although, it may be stalled by using the bandwidth control field, or via preemption.) After the minor count
+is exhausted, the SADDR and DADDR values are written back into the TCD memory, the major iteration
+count is decremented and restored to the TCD memory. If the major iteration count is completed,
+additional processing is performed.
+               </description>
+               <validation>
+                  <constraint cond_expr="($this.getValue() % $parent.ssize.getEnumItemValue().toInt() == 0) &amp;&amp; ($this.getValue() % $parent.dsize.getEnumItemValue().toInt() == 0)" level="warning"  description_expr="`The minor loop bytes have to be multiple of source and destination data size (` + system::max($parent.ssize.getEnumItemValue().toInt(), $parent.dsize.getEnumItemValue().toInt()) + `B).`"/>
+               </validation>
+            </integer> 
+            <reference type="minorLoopConfig_t" id="MLconfig" available="$parent.tcdMode.ifDefGet(``)==`tcd`" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN;remove_from_struct_init"> 
+            </reference>
+            <bool id="enableChannelLinkMinor" label="Enable minor loop link" available="$parent.tcdMode.ifDefGet(``)==`tcd`" options="remove_from_struct_init">
+               <description>
+**Enable channel-to-channel linking on minor-loop complete. (ELINK)**
+As the channel completes the minor loop, this flag enables linking to another channel, defined by the
+LINKCH field. The link target channel initiates a channel service request via an internal mechanism that
+sets the TCDn_CSR[START] bit of the specified channel.
+If channel linking is disabled, the CITER value is extended to 15 bits in place of a link channel number. If
+the major loop is exhausted, this link mechanism is suppressed in favor of the MAJORELINK channel
+linking.
+NOTE: This bit must be equal to the BITER[ELINK] bit; otherwise, a configuration error is reported
+               </description>
+            </bool>
+            <dynamic_enum id="linkedChannelMinor" label="Linked minor loop channel" options="remove_from_struct_init"
+               enable="$parent.enableChannelLinkMinor.ifDefGet(false)" available="$parent.tcdMode.ifDefGet(``)==`tcd`"
+               items="$configSet.all_dma_cfg.getValue().arrayToEnumItems(
+               x->true,
+               x->x.getSetting(`eDMAn`).getValue(),
+               x->x.getSetting(`eDMAn`).getValue() + ` (` + x.getSetting(`eDMA_source`).getEnumItemLabel() + `)`,
+               x->x.getSetting(`dma_channel_define`).getValue())">
+               <description>If channel-to-channel linking is enabled (ELINK = 1), then after the minor loop is exhausted, the eDMA
+                  engine initiates a channel service request to the channel defined by these four bits by setting that
+                  channel’s TCDn_CSR[START] bit.
+               </description>
+            </dynamic_enum>
+            <bool id="enableChannelLinkMajor" label="Enable major loop link" available="$parent.tcdMode.ifDefGet(``)==`tcd`" options="remove_from_struct_init">
+               <description>
+**Enable channel-to-channel linking on minor-loop complete. (ELINK)**
+As the channel completes the minor loop, this flag enables linking to another channel, defined by the
+LINKCH field. The link target channel initiates a channel service request via an internal mechanism that
+sets the TCDn_CSR[START] bit of the specified channel.
+If channel linking is disabled, the CITER value is extended to 15 bits in place of a link channel number. If
+the major loop is exhausted, this link mechanism is suppressed in favor of the MAJORELINK channel
+linking.
+NOTE: This bit must be equal to the BITER[ELINK] bit; otherwise, a configuration error is reported
+               </description>
+            </bool>
+            <dynamic_enum id="linkedChannelMajor" label="Linked major loop channel" options="remove_from_struct_init"
+               enable="$parent.enableChannelLinkMajor.ifDefGet(false)" available="$parent.tcdMode.ifDefGet(``)==`tcd`"
+               items="$configSet.all_dma_cfg.getValue().arrayToEnumItems(
+               x->true,
+               x->x.getSetting(`eDMAn`).getValue(),
+               x->x.getSetting(`eDMAn`).getValue() + ` (` + x.getSetting(`eDMA_source`).getEnumItemLabel() + `)`,
+               x->x.getSetting(`dma_channel_define`).getValue())">
+               <description>If channel-to-channel linking is enabled (ELINK = 1), then after the minor loop is exhausted, the eDMA
+                  engine initiates a channel service request to the channel defined by these four bits by setting that
+                  channel’s TCDn_CSR[START] bit.
+               </description>
+            </dynamic_enum>
+            <integer type="uint32_t" id="transferBytes" label="Major loop transfer [Byte]" available="$parent.tcdMode.ifDefGet(`tcd`) != `tcd`" options="remove_from_struct_init" min_expr="1" max_expr="$parent.citerSize.ifDefGet(`1`).toInt() * $parent.nbytes.ifDefGet(1)">
+               <description expr="`eDMA transfer bytes to be transferred. This value is used for calculation the CITER (major loop count) value which has to be aligned with minor loop transferred bytes (NBYTES). The maximal CITER value with current configuration is ` + $parent.citerSize.getValue() + ` (depends on channel link configuration).`"></description>
+               <validation>
+                  <constraint cond_expr="$this.getValue() % $parent.nbytes.getValue() == 0" level="warning"  description_expr="`The major loop transfer value (number of bytes) have to be multiple of minor loop bytes (` + $parent.nbytes.getValue() + `B).`"/>
+               </validation>
+            </integer>
+            <integer type="uint16_t" id="citer" label="Major loop counts" max_expr="$parent.citerSize.ifDefGet(`0xFFFF`).toInt()" options="remove_from_struct_init" available="$parent.tcdMode.ifDefGet(``) == `tcd`">
+               <description>
+**Major Iteration Count**
+This 9-bit (enabled channel link) or 15-bit (disabled channel link) count represents the major loop count for the channel.
+It is decremented each time the minor loop is completed and updated in the transfer control descriptor
+memory. After the major iteration count is exhausted, the channel performs a number of operations (e.g.,
+final source and destination address calculations), optionally generating an interrupt to signal channel
+completion before reloading the CITER field from the beginning iteration count (BITER) field.
+NOTE: If the channel is configured to execute a single service request, the initial values of BITER and
+CITER should be 0x0001.
+               </description>
+            </integer>
+            <variable id="citerSize" value="(($parent.enableChannelLinkMinor.ifDefGet(``) == `true`) ? `0x1FF` : (($parent.tcdMode.ifDefGet(``) == `nontrans` &amp;&amp; ($parent.getParent().getSetting(`channel_link`).ifDefGet(``) == `kEDMA_MinorLink`)) ? `0x1FF` :`0x7FFF`))" options="remove_from_struct_init"></variable>
+            <enum id="bandwidthControl" label="Bandwidth control" available="$parent.tcdMode.ifDefGet(``)==`tcd`" options="remove_from_struct_init">
+               <description>Throttles the amount of bus bandwidth consumed by the eDMA. In general, as the eDMA processes the
+                  minor loop, it continuously generates read/write sequences until the minor count is exhausted. This field
+                  forces the eDMA to stall after the completion of each read/write access to control the bus request
+                  bandwidth seen by the crossbar switch.
+                  NOTE: If the source and destination sizes are equal, this field is ignored between the first and second
+                  transfers and after the last write of each minor loop. This behavior is a side effect of reducing
+                  start-up latency.
+               </description>
+               <item id="disabled" label="No eDMA engine stalls" value="0"></item>
+               <item id="4cycles" label="4-cycle stall" value="2"><description>eDMA engine stalls for 4 cycles after each r/w</description></item>
+               <item id="8cycles" label="8-cycle stall" value="3"><description>eDMA engine stalls for 8 cycles after each r/w</description></item>
+            </enum>
+            <bool id="disableERQ" label="Auto stop request" available="$parent.tcdMode.ifDefGet(``)==`tcd`" options="remove_from_struct_init">
+               <description>
+**Auto stop request (Disable request)**
+If enabling the auto stop request, the eDMA hardware automatically disables the hardware channel request (clears the corresponding ERQ bit) when the current
+major iteration count reaches zero.
+- false - The channel's ERQ bit is not affected.
+- true - The channel's ERQ bit is cleared when the major loop is complete.
+               </description>
+            </bool>
+            <set id="interruptSources" label="Interrupt sources" available="$parent.tcdMode.ifDefGet(``)==`tcd`" options="remove_from_struct_init">
+               <item id="irqMajorHalf" label="Major count half completion">
+                  <description>Enable an interrupt when major counter is half complete.
+                     The channel generates an interrupt request when the current major iteration count reaches the halfway point. Specifically, the comparison performed by the eDMA engine is (CITER == (BITER >> 1)). 
+                     This halfway point interrupt request is provided to support double-buffered, also known as ping-pong, schemes or other types of data movement
+                     where the processor needs an early indication of the transfer's progress.
+                     This request is associated with channel interrupt vector which is channel specific.
+                  </description>
+               </item>
+               <item id="irqMajorComplete" label="Major count completion">
+                  <description>Enable an interrupt when major iteration count completes. The channel generates an interrupt request when the current major iteration count reaches zero.
+                     This request is associated with channel interrupt vector which is channel specific.
+                  </description>
+               </item>
+            </set>
+            <bool id="submitTransfer" label="Submit transfer" available="$parent.tcdMode.ifDefGet(``)==`trans`" options="remove_from_struct_init">
+               <description>Enable the eDMA transfer request submit according to the transfer configuration structure.
+                  In scatter gather mode, it will add a configured TCD to the circular list of TCD pool which has to be setup before.
+               </description>
+            </bool>
+            <bool id="setTransfer" label="Initialize transfer" available="$parent.tcdMode.ifDefGet(``)==`nontrans`" options="remove_from_struct_init">
+               <description>Enable the eDMA transfer request submit according to the transfer configuration structure.</description>
+            </bool>
+         </struct>
+         <struct id="edma_config_t" label="eDMA global configuration structure" from="_edma_config">
+            <info id="dmamux_device_info"  label="Associated DMAMUX device" value="$parent.getParent().getSetting(`dmamux_device`).getValue()"></info>
+            <bool id="enableContinuousLinkMode" label="Enable continuous link mode">
+               <description>Enable (true) continuous link mode. Upon minor loop completion, the channel activates again if that channel has a minor loop channel link enabled and the link channel is itself.</description>
+            </bool>
+            <bool id="enableHaltOnError" label="Enable transfer halt on error">
+               <description>Enable (true) transfer halt on error. Any error causes the HALT bit to set. Subsequently, all service requests are ignored until the HALT bit is cleared.</description>
+            </bool>
+            <bool id="enableRoundRobinArbitration" label="Enable round robin arbitration">
+               <description>Enable round robin channel arbitration method.
+                  The eDMA cycles through the channels in order (from high to low channel number) without regard to priority (the channel priorities are ignored), checking for a pending request.
+                  When disabled the fixed priority arbitration is used for channel selection.
+               </description>
+            </bool>
+            <bool id="enableDebugMode" label="Enable eDMA debug mode">
+               <description>Enable eDMA debug mode. When in debug mode, the eDMA stalls the start of a new channel. Executing channels are allowed to complete.</description>
+            </bool>
+         </struct>
+         <set id="edma_interrupt_enable_t" label="eDMA interrupt source">
+            <item id="kEDMA_ErrorInterruptEnable" label="Channel error event" value="kEDMA_ErrorInterruptEnable" available="!($parent.getParent().getSetting(`apiMode`).getValue() == `nontransTCD`)">
+               <description>Enable channel error interrupt. This request is associated with error interrupt vector which is common for all channels.</description>
+            </item>
+            <item id="kEDMA_MajorInterruptEnable" label="Major count complete" value="kEDMA_MajorInterruptEnable" available="!($parent.getParent().getSetting(`apiMode`).getValue() == `trans`)">
+               <description>Enable an interrupt when major iteration count completes. The channel generates an interrupt request when the current major iteration count reaches zero.
+                  This request is associated with channel interrupt vector which is channel specific.
+               </description>
+            </item>
+            <item id="kEDMA_HalfInterruptEnable" label="Major count half complete"  value="kEDMA_HalfInterruptEnable" available="!($parent.getParent().getSetting(`apiMode`).getValue() == `trans`)">
+               <description>
+                  Enable an interrupt when major counter is half complete.
+                  The channel generates an interrupt request when the current major iteration count reaches the halfway point. Specifically, the comparison performed by the eDMA engine is (CITER == (BITER >> 1)). 
+                  This halfway point interrupt request is provided to support double-buffered, also known as ping-pong, schemes or other types of data movement
+                  where the processor needs an early indication of the transfer's progress.
+                  This request is associated with channel interrupt vector which is channel specific.
+               </description>
+            </item>
+         </set>
+         <struct id="edma_channel_Preemption_config_t" label="eDMA channel priority configuration" from="_edma_channel_Preemption_config">
+            <bool id="enableChannelPreemption" label="Enable channel preemption">
+               <description>If enabled the channel can be suspended by other channel with higher priority</description>
+            </bool>
+            <bool id="enablePreemptAbility" label="Enable preempt ability">
+               <description>If enabled the channel can suspend other channel with low priority</description>
+            </bool>
+            <integer id="channelPriority" label="Channel arbitration priority" type="uint8_t">
+               <description>Channel arbitration priority.</description>
+            </integer>
+         </struct>
+         
+         <struct id="edma_channel_cfg_t" label="eDMA channel configuration">
+            <variable id="channelDef" value="$parent.edma_channel.dma_channel_define.ifDefGet(`channel`)"></variable>
+            <variable id="channelPrefix" value="$parent.edma_channel.dma_prefix_define.ifDefGet(`channel`)"></variable> 
+            <variable id="channelTCDs" value="$parent.edma_channel.dma_prefix_define.ifDefGet(`channel`) + `_TCDs_config`"></variable>   
+            <enum id="apiMode" label="Channel API mode" >
+               <description>
+**Channel API mode**
+- **Transactional** - supports transfer configurations with transactional handle, callback functions and scatter-gather operation.
+- **Non-transactional (API functions)** - supports eDMA driver API functions used for transfer configuration. This mode does not support full TCD structure initialization and also scatter-gather processing.
+- **Non-transactional (TCD structures)** - supportes initialization of whole TCD structures (registers), also with scatter-gather operation mode.
+               </description>
+               <item id="trans" label="Transactional">
+                  <description>Transactional API initialization that is used for definition of transfer. This API mode supports handles, transfer configurations and callback functions that are used by peripheral drivers for processing of peripheral DMA requests.</description>
+               </item>
+               <item id="nontrans" label="Non-transactional (API functions)">
+                  <description>This non-transactional mode uses API functions of the eDMA driver that provide direct initialization of TCD registers of the eDMA channel. This mode does not support definition of TCD structures in MCU memory and also does not support scatter-gather processing initialization.</description>
+               </item>
+               <item id="nontransTCD" label="Non-transactional (TCD structures)">
+                  <description>This non-transactional mode provides definition of TCD structures in MCU memory and initialization of the TCD registers (direct write of TCD registers). This mode also allows definition of several TCDs (array of TCDs) for scatter/gather operation.</description>
+               </item>              
+            </enum>
+            <reference id="edma_channel" label="eDMA channel" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" options="UI_BORDER_HIDDEN;UI_LABEL_HIDDEN;all_devices;channel_prefix_id">
+               <options_expr>
+                  <option id="without_handle" expr="($parent.apiMode.getValue() != `trans`)"></option>
+               </options_expr>
+            </reference>
+             <!-- Disable the reset of the channel in transactional API mode - the CreateHandle() function do the same; ResetChannel() cannot be used togther with SubmitTransfer() function. -->
+            <bool id="resetChannel" label="Reset channel" available="$parent.apiMode.getValue() != `trans`">
+               <description>
+Sets all TCD registers to default values and enables the auto stop request bit (disable request - *DREQ*) of the control register (channel's *ERQ* - enable request bit is automatically cleared when the major loop is complete).  
+If this option is disabled only the *DONE*, *ACTIVE*, and *STATUS* fields of the TCD are initialized at reset. All other TCD fields are undefined at hardware reset and must be written by software before the channel is enabled.
+Failure to do this will result in unpredictable behavior of the channel.
+               </description>
+            </bool>
+            <bool id="enableChannelRequest" label="Peripheral request">
+               <description>Enable hardware channel request. DMA request input signals and this enable request flag must be asserted before a channel’s hardware service request is accepted.
+                  The state of the DMA enable request flag does not affect a channel service request made explicitly through software or a linked channel request.
+               </description>
+            </bool>
+            <bool id="enableAsyncRequest" label="Asynchronous peripheral request"  available="featureDefined(`FSL_FEATURE_EDMA_ASYNCHRO_REQUEST_CHANNEL_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_EDMA_ASYNCHRO_REQUEST_CHANNEL_COUNT`) != 0)">
+               <description>Enable an asynchronous request for the eDMA transfer in stop mode               
+               </description>
+            </bool>
+            <bool id="enableAutoStop" label="Auto stop request" available="$parent.apiMode.getValue()==`nontrans`">
+               <description>
+**Auto stop request (Disable request)**
+If enabling the auto stop request, the eDMA hardware automatically disables the hardware channel request (clears the corresponding ERQ bit) when the current
+major iteration count reaches zero.
+- false - The channel's ERQ bit is not affected.
+- true - The channel's ERQ bit is cleared when the major loop is complete.
+               </description>
+            </bool>
+            <!-- Minor loop config-->
+            <bool id="enableMinorLoop" label="Minor loop offset initialization" available="$parent.apiMode.getValue()==`nontrans`"><description>Enable minor loop offset initialization.</description></bool>
+            <reference type="minorLoopConfig_t" id="minorLoopConfig" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN" enable="$parent.enableMinorLoop.isAvailable() &amp;&amp; $parent.enableMinorLoop.isEnabled() &amp;&amp; $parent.enableMinorLoop.getValue()" available="$parent.apiMode.getValue()==`nontrans`"/>
+            <!-- Channel link settings -->
+            <bool id="init_channel_link" label="Channel link initialization" available="$parent.apiMode.getValue()==`nontrans`">
+               <description>Enable the initialization of channel link settings.</description>
+            </bool>
+            <reference id="channel_link" label="Channel link" type="edma_channel_link_type_t" enable="$parent.init_channel_link.ifDefGet(false)" available="$parent.apiMode.getValue()==`nontrans`">
+               <description>Selection of the channel link type, i.e. the channel-to-channel linking can be enabled on minor loop completion or major loop completion.</description>
+            </reference>
+            <dynamic_enum id="linkedChannel" label="Linked channel" enable="$parent.init_channel_link.ifDefGet(false)" available="$parent.apiMode.getValue()==`nontrans`"
+               items="$configSet.all_dma_cfg.getValue().arrayToEnumItems(
+               x->true,
+               x->x.getSetting(`eDMAn`).getValue(),
+               x->x.getSetting(`eDMAn`).getValue() + ` (` + x.getSetting(`eDMA_source`).getEnumItemLabel() + `)`,
+               x->x.getSetting(`dma_channel_define`).getValue())">
+               <description>Selection of the linked channel that is activated after minor or major loop (it depends on the selected channel link)</description>
+            </dynamic_enum>
+            
+            <!-- Bandwidth -->
+            <bool id="init_bandwidth" label="Bandwidth initialization" available="$parent.apiMode.getValue()==`nontrans`">
+               <description>Enable the initialization of bandwidth settings.</description>
+            </bool>
+            <reference id="bandwidth" label="Channel bandwidth" type="edma_bandwidth_t" enable="$parent.init_bandwidth.ifDefGet(false)" available="$parent.apiMode.getValue()==`nontrans`">
+               <description>This setting allows configuration of the amount of bus bandwidth consumed by the eDMA. Generally, as the eDMA processes the minor loop, it continuously generates read/write sequences until the minor count is exhausted. This setting 
+                            forces the eDMA to stall after the completion of each read/write access to control the bus request bandwidth seen by the crossbar switch.</description>
+            </reference>
+            <!-- Modulo config -->
+            <bool id="init_modulo" label="Address modulo initialization" available="$parent.apiMode.getValue()==`nontrans`">
+               <description>Enable/disable address modulo initialization which defines a specific address range specified to be the value after (SADDR + SOFF)/(DADDR + DOFF) calculation is performed or the original register value. It provides the ability to implement a circular data queue easily.</description>
+            </bool>
+            <reference type="edma_modulo_t" id="s_mod" label="Source address modulo" available="$parent.apiMode.getValue()==`nontrans`" enable="$parent.init_modulo.ifDefGet(false)">
+               <description>
+                  This value defines a specific address range specified to be the value after SADDR + SOFF
+                  calculation is performed or the original register value. The setting of this field provides the ability to
+                  implement a circular data queue easily. For data queues requiring power-of-2 size bytes, the queue
+                  should start at a 0-modulo-size address and the SMOD field should be set to the appropriate value
+                  for the queue, freezing the desired number of upper address bits. The value programmed into this
+                  field specifies the number of lower address bits allowed to change. For a circular queue application,
+                  the SOFF is typically set to the transfer size to implement post-increment addressing with the SMOD
+                  function constraining the addresses to a 0-modulo-size range.
+               </description>
+            </reference>
+            <reference type="edma_modulo_t" id="d_mod" label="Destination address modulo" available="$parent.apiMode.getValue()==`nontrans`" enable="$parent.init_modulo.ifDefGet(false)">
+               <description>
+                  This value defines a specific address range specified to be the value after DADDR + DOFF
+                  calculation is performed or the original register value. The setting of this field provides the ability to
+                  implement a circular data queue easily. For data queues requiring power-of-2 size bytes, the queue
+                  should start at a 0-modulo-size address and the DMOD field should be set to the appropriate value
+                  for the queue, freezing the desired number of upper address bits. The value programmed into this
+                  field specifies the number of lower address bits allowed to change. For a circular queue application,
+                  the SOFF is typically set to the transfer size to implement post-increment addressing with the DMOD
+                  function constraining the addresses to a 0-modulo-size range.
+               </description>
+            </reference>
+            
+            <!-- TCD - Transfer Control Descriptor -->
+            <bool id="tcd_pool_enable" label="TCD Pool initialization" options="UI_LABEL_BOLD" available="$parent.apiMode.getValue() == `trans` ">
+               <description>This feature allows using TCD (Transfer Control Descriptor) pool for the scatter/gather mode of the eDMA (loading of the TCD from the memory pool). When the initialization of the TCD (Transfer Control Descriptor) pool is enabled the memory allocation of the TCD is provided (size, memory allocation and assigmnet to the handle and installation as the TCD).</description>
+               <validation>
+                  <constraint when_expr="!$this.getValue()" cond_expr="$parent.transferCount.ifDefGet(0) &lt; 2" level="error" description="The TCD memory pool needs to be initialized for scatter-gather mode"/>
+               </validation>
+            </bool>
+            <struct id="tcd_settings" label="TCD memory configuration" options="UI_LABEL_HIDDEN" enable="$parent.tcd_pool_enable.ifDefGet(false)" available="$parent.apiMode.getValue() == `trans`">
+               <integer id="tcd_size" label="TCD Size" type="uint16_t" min_expr="$parent.getParent().getSetting(`transferCount`).getValue()" max_expr="127" >
+                  <description>Number of TCD items in the pool (array of items). Allowed range is 1 - 127. Note: The initialized array contains size+1 items for proper memory alignment.</description>
+               </integer>
+               <bool id="tcd_memory_custom_id" label="Enable custom ID"></bool>
+               <variable id="tcd_memory_ptr_id" value="$parent.tcd_memory_custom_id.ifDefGet(false) ? $parent.tcd_memory_str.ifDefGet(`tcd`) : $parent.tcd_memory_info.ifDefGet(`tcd`)"></variable>
+               <info id="tcd_memory_info" label="TCD buffer ID" value="$instance.getFnGroupPrefix() + $instance.getID() + `_` + $parent.getParent().getSetting(`edma_channel.channel_prefix_id`).getValue() + `_TCD_pool_ptr`" available="!$parent.tcd_memory_custom_id.ifDefGet(false)">
+                  <description>The identifier of the TCD buffer that is defined and used in the TCD pool initialization. The TCD pool (buffer) is assigned into the eDMA handle.</description>
+               </info>
+               <string id="tcd_memory_str" label="TCD buffer ID" available="$parent.tcd_memory_custom_id.ifDefGet(false)">
+                  <validation>
+                     <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description="The TCD buffer ID is not valid C identifier."/>
+                  </validation>
+               </string>
+               <variable id="tcd_size_define" value="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $parent.getParent().getSetting(`edma_channel.channel_prefix_id`).getValue() + `_TCD_SIZE`)" ></variable>
+            </struct>
+            <bool id="nontransEnable" label="Enable transfer configuration" available="$parent.apiMode.getValue()==`nontrans`" options="UI_LABEL_BOLD">
+               <description>Initialization of TCD (Transfer Control Descriptor) which is part of transfer configuration.</description>
+            </bool>
+            <reference type="tcd_configuration_t" id="nontrans_config" label="Transfer configuration" available="$parent.apiMode.getValue()==`nontrans`" enable="$parent.nontransEnable.ifDefGet(false)" options="UI_LABEL_HIDDEN">
+               <description>Initialization of TCD (Transfer Control Descriptor) which is part of transfer configuration.</description>
+            </reference>
+            <array id="transfer_config" label="Transfer configuration" available="$parent.apiMode.getValue()==`trans`" type="tcd_configuration_t" options="UI_SHOW_CONTENT_AS=TABS;UI_ARRAY_REORDER" key_selector_expr="x-> x.getSetting(`tcdID`).getValue()">
+               <description>Initialization of TCD (Transfer Control Descriptor) which is part of transfer configuration. The scatter-gather mode requires at least 2 prepared transfer configurations which are submitted.</description>
+               <item_defaults>
+                  <set_default id="tcdID" value_expr=" x -> x.getParent().getParent().getSetting(`edma_channel`).getSetting(`channel_prefix_id`).getValue() + `_TRANSFER`  + x.getID()"/>
+                  <set_default id="soff" value_expr="x -> `0`"/>
+                  <set_default id="doff" value_expr="x -> `0`"/>
+                  <set_default id="citer" value_expr="x -> `0x0001`"/>
+               </item_defaults>
+            </array>
+            <array type="tcd_configuration_t" id="tcd_configuration" label="TCD configurations" options="UI_SHOW_CONTENT_AS=TABS;UI_ARRAY_REORDER;UI_TABLE_COLUMN_WIDTHS=6" key_selector_expr="x-> x.getSetting(`tcdID`).getValue()" available="$parent.apiMode.getValue()==`nontransTCD`">
+               <description expr="`Initialization of TCD (Transfer Control Descriptor). TCDs are part of `+ $parent.getSetting(`channelTCDs`).getValue() + `[] array.`"></description>
+               <item_defaults>
+                  <set_default id="tcdID" value_expr=" x -> x.getParent().getParent().getSetting(`edma_channel`).getSetting(`channel_prefix_id`).getValue() + `_TCD`  + x.getID()"/>
+                  <set_default id="soff" value_expr="x -> `0`"/>
+                  <set_default id="doff" value_expr="x -> `0`"/>
+                  <set_default id="citer" value_expr="x -> `0x0001`"/>
+                  <set_default id="nbytes" value_expr="x -> `1`"/>
+                  <set_default id="MLconfig.mloff" value_expr="x -> `0`"/> 
+               </item_defaults>
+            </array>
+            <bool id="constantTCD" label="Constant TCDs" available="$parent.apiMode.getValue()==`nontransTCD`" enable="$parent.tcd_configuration.isAvailable() &amp;&amp; $parent.tcd_configuration.size() != 0">
+               <description>Array of TCD configuration structure is initialized as constant (const edma_tcd_t).</description>
+            </bool>
+            <dynamic_enum id="initializedTCD" label="Initialize TCD" available="$parent.apiMode.getValue()==`nontransTCD`" items="$parent.tcd_configuration.isAvailable() &amp;&amp; $parent.tcd_configuration.isAvailable() ? createArray().addItemToList(
+               `0`, `No TCD initialization`,`No TCD initialization`,true).merge(
+               $parent.tcd_configuration.getValue().arrayToEnumItems(
+               x->true,
+               x->x.getSetting(`tcdID`).getValue(),
+               x->x.getSetting(`tcdID`).getValue(),
+               x->x.getSetting(`tcdID_def`).getValue()))
+               : createArray().addItemToList(`0`, `No TCD initialization`,`No TCD initialization`,true)">
+               <description>Prepared content of TCD structure is pushed into hardware TCD register.</description>
+            </dynamic_enum>
+            <variable id="transferCount" value="$parent.transfer_config.countOccurrences(x->x.getSetting(`submitTransfer`).getValue()==true)"></variable>
+            <!-- CALLBACK FUNCTION -->
+            <info id="lineCB" value="$parent.apiMode.getValue()==`trans` ? `Callback and interrupt configuration`: `Interrupt configuration`" options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+            <bool id="init_callback" label="Callback function initialization" available="$parent.apiMode.getValue()==`trans`">
+               <description>Enable the initialization of the callback function and user data pointer.</description>
+            </bool>
+            <string id="callback_function" label="Transfer callback function name" enable="$parent.init_callback.ifDefGet(false)" available="$parent.apiMode.getValue()==`trans`">
+               <description>The callback function name that is used in the transfer initialization. User must provide the definition of this function. This item is optional for the transfer mode initialization.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.ifDefGet(false)" cond_expr="$this.getValue() != ``" level="error" description="The callback function shall be defined. If the callback function is not used uncheck the Initialization of transfer callback option."/> 
+                  <constraint when_expr="$parent.init_callback.ifDefGet(false) &amp;&amp; ($this.getValue() != ``)" cond_expr="isCIdentifier($this.getValue())" level="error" description="The callback function name must be a valid identifier."/> 
+               </validation>
+            </string>
+            <string id="callback_user_data" label="User data pointer" enable="$parent.init_callback.ifDefGet(false)" available="$parent.apiMode.getValue()==`trans`">
+               <!--               <string id="user_data" label="User data pointer" enable="$parent.callback_fcn.getValue()!=``">-->
+               <description>Definition of the user data pointer ID. When empty the NULL is provided in the initializaton function for the callback function.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.ifDefGet(false)" cond_expr="(($this.getValue() == ``) || isCIdentifier($this.getValue()))" level="error" description="The user data pointer is not valid C identifier."/>
+               </validation>
+            </string>
+            <!-- Interrupts -->
+            <variable id="channelIrqCount" value="(($parent.channel_enabled_interrupts.getSetting(`kEDMA_MajorInterruptEnable`).ifDefGet(false))
+               || ($parent.channel_enabled_interrupts.getSetting(`kEDMA_HalfInterruptEnable`).ifDefGet(false))
+               || ($parent.tcd_configuration.isAvailable() &amp;&amp; $parent.tcd_configuration.getValue().countOccurrences(x -> x.getSetting(`interruptSources`).getCValue() != ``) != 0))"></variable>
+            <reference id="channel_enabled_interrupts" label="Channel interrupt sources" type="edma_interrupt_enable_t" available="$parent.apiMode.getValue()!=`nontransTCD`">
+               <description>Selection of enabled DMA channel interrupt requests.</description>
+            </reference>
+            <info id="majorIntInfo" label=" " value="`Major count complete - enabled automatically in transactional mode`" available="($parent.getSetting(`apiMode`).getValue() == `trans`)">
+               <description>Interrupt when major iteration count completes is enabled in transactional mode by SDK driver. The channel generates an interrupt request when the current major iteration count reaches zero.
+                  This request is associated with channel interrupt vector which is channel specific.
+               </description>
+            </info>
+            <set id="irqSources" label="Error interrupt sources" available="$parent.apiMode.getValue()==`nontransTCD`" ><!--options="UI_BORDER_HIDDEN"-->
+               <item id="kEDMA_ErrorInterruptEnable" label="Channel error event">
+                  <description>Enable interrupt while channel error occurs.</description>
+               </item>
+            </set>
+            <info id="interruptEnabled" value="``" options="UI_LABEL_BOLD" label="Channel interrupt" available="$parent.apiMode.getValue() == `trans`">
+               <description>The channel interrupt vector in the NVIC (Nested Vectored Interrupt Controller peripheral) configuration for transactional mode is automatically enabled (by SDK driver) with interrupt request when major loop iteration count completes. This interrupt is handled by the SDK (prepared usage of callback function).</description>
+            </info>
+            <bool id="init_interruptsEnable" label="Enable channel interrupt" options="UI_LABEL_BOLD" available="$parent.apiMode.getValue() != `trans`">
+               <description>Enable initialization of the channel interrupt vector in the NVIC (Nested Vectored Interrupt Controller peripheral) and providing definition of the interrupt routine name.</description>
+               <validation>
+                  <constraint when_expr="$this.getValue()" cond_expr="$parent.channelIrqCount.getValue() != false" level="warning" description="No eDMA channel has interrupt request enabled, while interrupt in NVIC is enabled."/>
+                  <constraint when_expr="!$this.getValue()" cond_expr="$parent.channelIrqCount.getValue() == false" level="warning" description="The eDMA channel interrupt is not enabled in NVIC, while a channel interrupt request is enabled."/>
+               </validation>
+            </bool>
+            <variable id="init_interrupts" value="$parent.init_interruptsEnable.ifDefGet(true)"></variable>
+            <!-- irq_channel variable is used for the interrupt as a reference based on the dma channel selection  -->
+            <variable id="irqRequestValue" value="($parent.channel_enabled_interrupts.isAvailable() ? $parent.channel_enabled_interrupts.getCValue() : ($parent.irqSources.isAvailable() ? $parent.irqSources.getCValue() : ``)) "></variable>
+            <variable value="$parent.edma_channel.eDMAn.getValue()" id="irq_channel"></variable>
+            <variable id="statusName" value="$parent.edma_channel.channel_prefix_id.getValue() + `_status`"></variable>
+            <reference id="interrupt_channel" label="Channel Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=DMA_CH_INT_DONE;irq_channel_reference;UI_LABEL_HIDDEN;" enable="$parent.init_interrupts.getValue()">
+               <options_expr>
+                  <option id="without_handler_settings" available="$parent.apiMode.getValue() == `trans`"/>
+                  <option id="irq_without_enable_control" available="$parent.apiMode.getValue() == `trans`"/>
+                  <option id="irq_handler_insert" expr="`&#10;`+
+                     leftPadding(`/* Channel ` + $parent.edma_channel.channel_prefix_id.getValue() + ` status */`, 1) + `&#10;` +
+                     leftPadding(`uint32_t ` + $parent.statusName.getValue() + `;`, 1) + `&#10;&#10;` +
+                     leftPadding(`/* Reading all flags of status register */`, 1) + `&#10;` +
+                     leftPadding($parent.statusName.getValue() + ` = EDMA_GetChannelStatusFlags(` + $configSet.dma_base_id.getValue() + `, ` + $parent.edma_channel.dma_channel_define.getValue() + `);`, 1) + `&#10;` +
+                     leftPadding(`/* Clearing all flags of the channel status register */`, 1) + `&#10;` +
+					 leftPadding(`EDMA_ClearChannelStatusFlags(` + $configSet.dma_base_id.getValue() + `, ` + $parent.edma_channel.dma_channel_define.getValue()+ `, ` + $parent.statusName.getValue() + `);`, 1) + `&#10;&#10;` +
+                     leftPadding(`/* Place your code here */`, 1) + `&#10;`
+                     "/>
+               </options_expr>
+            </reference>                      
+         </struct>
+
+         <struct id="dma_table_t">
+            <info id="dma_source" label="DMA request" value="$configSet.all_dma_cfg.getValue().get($parent.getID().toInt()).getSetting(`eDMA_source`).getEnumItemLabel()" >
+                <description>The DMA source of request that is muxed through the DMAMUX device.</description>
+            </info>
+            <info id="dma_channel" label="Channel" value="$configSet.all_dma_cfg.getValue().get($parent.getID().toInt()).getSetting(`eDMAn`).getValue()" >
+                <description>The DMA channel number of the DMA device </description>
+            </info>
+            <info id="dma_handle" label="Handle ID" value="$configSet.all_dma_cfg.getValue().get($parent.getID().toInt()).getSetting(`eDMA_handle`).ifDefGet(`N/A`)" >
+                <description>The DMA handle identifier that is used for processing of DMA requests.</description>
+            </info>
+            <info id="instance" label="Component" value="$configSet.all_dma_cfg.getValue().get($parent.getID().toInt()).getSetting(`$instance`).getID()" >
+                <description>Instance of the component where the DMA channel is used.</description>
+            </info>
+            <info id="reference" label="Setting reference" value="$configSet.all_dma_cfg.getValue().get($parent.getID().toInt()).getSetting(`$instance`).getID() + ` setting`">
+               <options_expr>
+                  <option id="UI_SETTING_LINK" expr="$configSet.all_dma_cfg.getValue().get($parent.getID().toInt())"/>
+               </options_expr>
+               <description>
+A link to the component's settings where the DMA channel is used and configured. 
+
+Please note that switching to a component that is instantiated in different functional group will cause closing of this component window (the diferenct functional group's compopnents will be displayed). Switch to the current functional group for restoring of view of these components.
+               </description>
+            </info>
+            <info id="func_group" label="Functional group" value="$configSet.all_dma_cfg.getValue().get($parent.getID().toInt()).getSetting(`$group`).getID()" >
+                <description>Name of the functional group where the component is instantiated.</description>
+            </info>
+         </struct>
+      </user_types>
+      <settings>
+         <variable id="dmamux_device"  value="getResource(`dmamux`, `dmaMuxInfo`).findFirst(item -> (item.getSetting(`dmaDevice`).getValue() == $instance.getPeripheral())).getSetting(`muxDevice`).getValue()"></variable>
+<!--         <info id="dmamux_device"  label="DMAMUX device" value="getResource(`dmamux`, `dmaMuxInfo`).findFirst(item -> (true)).getSetting(`muxDevice`).getValue()"></info>-->
+<!--         <info id="test"  label="test" value="$instance.getPeripheral()"></info>-->
+         <variable id="dma_base_id" value="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_DMA_BASEADDR`)" ></variable>
+         <variable id="dmamux_base_id" value="toUpperCase($instance.getFnGroupPrefix() +  $instance.getID() + `_DMAMUX_BASEADDR`)"></variable>
+<!--         <variable id="dmamux_base_id" value="toUpperCase($instance.getFnGroupPrefix() + $parent.dmamux_device.getValue() + `_DMAMUX_BASEADDR`)"></variable>-->
+         <reference id="common_settings" label="Common settings" type="edma_config_t" options="UI_LABEL_HIDDEN">
+            <description>Common global configuration of the eDMA.</description>
+         </reference>
+         <!-- DMA table that contains overview of all DMA channels used in the current project --> 
+         <variable id="all_dma_cfg" value="$components.system.#global.all_edma_config.getValue()"></variable>
+         <array id="dma_table" label="DMA overview table" type="dma_table_t" size="$parent.all_dma_cfg.getValue().size()" options="ShowContentAs=Table;UI_ARRAY_INDICES_HIDDEN;UI_TABLE_COLUMN_WIDTHS=14,6,11,8,11,14;UI_BORDER_HIDDEN">
+             <description>DMA overview table shows all dma channels that are initialized and used in the all functional groups (see the Functional group column).</description>
+         </array>
+          <!-- configuration settings of DMA channels -->
+         <variable id="errorIrqCount" value="($parent.edma_channels.getValue().countOccurrences(
+            x -> x.getSetting(`channel_enabled_interrupts`).getSetting(`kEDMA_ErrorInterruptEnable`).ifDefGet(false)==true)) + (
+            $parent.edma_channels.getValue().countOccurrences(
+            x -> x.getSetting(`irqSources`).getSetting(`kEDMA_ErrorInterruptEnable`).ifDefGet(false)==true))"></variable>
+         <array id="edma_channels" label="eDMA channels" type="edma_channel_cfg_t" options="ShowContentAs=TABS" key_selector_expr="(x) -> (x.getSetting(`edma_channel.channel_prefix_id`).getValue() == ``) ? (`&lt;empty ID (` + x.getId() + `)&gt;`) : x.getSetting(`edma_channel.channel_prefix_id`).getValue()">
+            <item_defaults>
+               <set_default id="edma_channel.channel_prefix_id" value_expr="x -> `CH` + x.getID()" />
+               <set_default id="edma_channel.eDMAn" value_expr="x -> x.getID().toInt()" />
+               <set_default id="tcd_configuration.0.enableScatterGather" value_expr="x -> false"/>
+               <set_default id="minorLoopConfig.mloff" value_expr="x -> `0`"/>
+               <set_default id="resetChannel" value_expr="x -> true"/>
+               <set_default id="enableAutoStop" value_expr="x -> true"/>
+               <set_default id="tcd_settings.tcd_size" value_expr="x -> `1`"/>
+               <set_default id="nontrans_config.tcdID" value_expr="x-> `CH` + x.getID() + `_transfer`"/>
+               <set_default id="nontrans_config.soff" value_expr="x-> `0U`"/>
+               <set_default id="nontrans_config.doff" value_expr="x-> `0U`"/>
+               <set_default id="nontrans_config.MLconfig.mloff" value_expr="x-> `0`"/>
+               <set_default id="nontrans_config.citer" value_expr="x-> `0x0001`"/>
+               <set_default id="nontrans_config.nbytes" value_expr="x-> `1`"/>
+               <set_default id="nontrans_config.transferBytes" value_expr="x-> `1`"/>
+            </item_defaults>
+         </array>
+         <struct id="errInterruptConfig" label="Error interrupt configuration" available="featureDefined(`FSL_FEATURE_EDMA_HAS_ERROR_IRQ`) &amp;&amp; (getFeature(`FSL_FEATURE_EDMA_HAS_ERROR_IRQ`) != 0)" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+            <bool id="enableErrInterrupt" label="Enable error interrupt" options="UI_LABEL_BOLD">
+               <description>Enable initialization of the error interrupt vector in the NVIC (Nested Vectored Interrupt Controller peripheral) and providing definition of the interrupt routine name.
+               </description>
+               <validation>
+                  <constraint when_expr="$this.getValue()" cond_expr="$configSet.errorIrqCount.ifDefGet(0) != 0" level="warning" description="No channel has error interrupt request enabled, while interrupt in NVIC is enabled."/>
+                  <constraint when_expr="!$this.getValue()" cond_expr="$configSet.errorIrqCount.ifDefGet(-1) == 0" level="warning" description="Error interrupt is not enabled in NVIC, while a channel interrupt request is enabled."/>
+               </validation>
+            </bool>
+            <reference id="errorInterrupt" label="Channel Interrupt" type="interrupt_vector_t" enable="$parent.enableErrInterrupt.ifDefGet(false)" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=DMA_INT_ERROR;UI_LABEL_HIDDEN;">
+               <options_expr>
+                  <option id="irq_handler_insert" expr="`&#10;`+
+                     leftPadding(`/* Channel error status */`, 1) + `&#10;` +
+                     leftPadding(`uint32_t errorStatus;`, 1) + `&#10;&#10;` +
+                     leftPadding(`/* Reading error interrupt flags */`, 1) + `&#10;` +
+                     leftPadding(`errorStatus = EDMA_GetErrorStatusFlags(` + $configSet.dma_base_id.getValue() + `);`, 1) + `&#10;` +
+                     leftPadding(`/* Refer to _edma_error_status_flags type to decode the return variables */`, 1) + `&#10;&#10;` +
+                     leftPadding(`/* Place your code here */`, 1) + `&#10;`
+                     "/>
+               </options_expr>
+            </reference>
+         </struct>
+      </settings>
+      <validation>
+         <dependency resource_type="SWComponent" resource_id="platform.drivers.dmamux" level="Warning" description_expr="$components.system.#global.err_missing_driver.getValue().formatMessage(`fsl_dmamux`, ` (required for the eDMA)`)">
+            <feature name="enabled" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="SWComponent" resource_id="platform.drivers.dmamux" level="Warning" description_expr="$components.system.#global.err_driver_version.getValue().formatMessage(`fsl_dmamux`, ` (required for the eDMA)`)">
+            <feature name="version" evaluation="compatible">
+               <data type="Version" expr="`2.0.2`"/>
+               </feature>
+         </dependency>
+      </validation>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_edma_peripheral"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+         <def fragment="channels_definitions">
+            <fragment id="DMA_channel_definitions" apply_to="$this.edma_channel"/>
+         </def>
+         <def fragment="channels_handles_definition">
+            <fragment id="DMA_handle_definition" apply_to="$this.edma_channel"/>
+         </def>
+         <def fragment="channels_handles_declaration">
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.edma_channel"/>
+         </def>
+         <def fragment="channels_DMAMUX_source_init">
+            <fragment id="DMAMUX_source_init" apply_to="$this.edma_channel"/>
+         </def>
+         <def fragment="channels_DMA_handle_init">
+            <fragment id="DMA_handle_init" apply_to="$this.edma_channel"/>
+         </def>
+         <def fragment="DMA_bases_definitions">
+            <fragment id="define">
+               <param id="name" expr="$this.dma_base_id.getValue()"/>
+               <!-- Substitution of the CMSIS alias that is used in the Kinetis IO maps if the there is the DMA device the CMSIS alias is DMA0 (in the IO map)  -->
+               <param id="value" expr="getSdkBasePointer($instance)"/> 
+               <param id="description" expr="`Used DMA device.`"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="$this.dmamux_base_id.getValue()"/>
+               <param id="value" expr="$this.dmamux_device.getValue()"/>
+               <param id="description" expr="`Associated DMAMUX device that is used for muxing of requests.`"/>
+            </fragment>
+         </def>
+         <def fragment="DMAMUX_init">
+            <expr>leftPadding(`DMAMUX_Init(` + $this.dmamux_base_id.getValue() + `);`, 1)</expr><br/> 
+         </def>
+         <def fragment="DMA_init">
+            <expr>leftPadding(`EDMA_Init(` + $this.dma_base_id.getValue() + `, &amp;` + $instance.getFnGroupPrefix() + $instance.getID() + `_config` +`);`, 1)</expr><br/> 
+         </def>
+         <def fragment="postinitDef">
+            <br/><expr>leftPadding(`/* Global channel initialization */`, 1)</expr><br/> 
+         </def>
+         <def fragment="err_IRQ_NVIC_init">
+            <fragment id="IRQn_set_priority_default" apply_to="$this.errInterruptConfig.errorInterrupt" if_expr="$this.errInterruptConfig.enableErrInterrupt.getValue()"/>
+            <fragment id="IRQn_enable_default" apply_to="$this.errInterruptConfig.errorInterrupt" if_expr="$this.errInterruptConfig.enableErrInterrupt.getValue()"/>
+         </def>
+         <!-- eDMA channel specific funciton - must be applied on edma_channel_cfg_t structure -->
+         <def fragment="callback_ext_def">
+            <fragment id="extern_fcn_def" if_expr="$this.init_callback.ifDefGet(false)">
+               <param id="name" expr="$this.callback_function.getValue()"/>
+               <param id="type">void</param>
+               <param id="params">edma_handle_t*, void*, bool, uint32_t</param>
+               <param id="description" expr="`eDMA callback function for the ` + $this.edma_channel.eDMAn.getValue() +` channel.` "/>
+            </fragment>
+         </def>
+         <def fragment="DMA_SetCallback">
+            <if expr="$this.init_callback.ifDefGet(false)">
+               <expr>leftPadding(`/* DMA callback initialization */`,1)</expr><br/>
+               <expr>leftPadding(`EDMA_SetCallback(&amp;` + $this.edma_channel.eDMA_handle.getValue() + `, ` + $this.callback_function.getValue() + `, `+ (($this.callback_user_data.getValue()==``) ? `NULL` : $this.callback_user_data.getValue()) + `);`, 1)</expr><br/>
+            </if>
+         </def>
+         <def fragment="DMA_SetMinorOffset">
+            <if expr="$this.enableMinorLoop.ifDefGet(false)">
+               <expr>leftPadding(`/* DMA minor loop offset initialization */`,1)</expr><br/>
+               <expr>leftPadding(`EDMA_SetMinorOffsetConfig(` + $configSet.dma_base_id.getValue() + `, ` + $this.edma_channel.dma_channel_define.getValue() + `, &amp;` + $this.channelPrefix.getValue() + `_MinorOff_config` + `);`, 1)</expr><br/>
+            </if>
+         </def>
+         <def fragment="DMA_SetChannelLink">
+            <if expr="$this.init_channel_link.ifDefGet(false)">
+               <expr>leftPadding(`/* DMA channel linking initialization */`,1)</expr><br/>
+               <expr>leftPadding(`EDMA_SetChannelLink(` + $configSet.dma_base_id.getValue() + `, ` + $this.edma_channel.dma_channel_define.getValue() + `, ` + $this.channel_link.getCValue() + `, ` + $this.linkedChannel.getEnumItemValue() + `);`, 1)</expr><br/>
+            </if>
+         </def>
+         <def fragment="DMA_SetBandWidth">
+            <if expr="$this.init_bandwidth.ifDefGet(false)">
+               <expr>leftPadding(`/* DMA bandwidth initialization */`,1)</expr><br/>
+               <expr>leftPadding(`EDMA_SetBandWidth(` + $configSet.dma_base_id.getValue() + `, ` + $this.edma_channel.dma_channel_define.getValue() + `, ` + $this.bandwidth.getCValue() + `);`, 1)</expr><br/>
+            </if>
+         </def>
+         <def fragment="DMA_SetModulo">
+            <if expr="$this.init_modulo.ifDefGet(false)">
+               <expr>leftPadding(`/* DMA modulo initialization */`,1)</expr><br/>
+               <expr>leftPadding(`EDMA_SetModulo(` + $configSet.dma_base_id.getValue() + `, ` + $this.edma_channel.dma_channel_define.getValue() + `, ` + $this.s_mod.getCValue() + `, ` + $this.d_mod.getCValue() + `);`, 1)</expr><br/>
+            </if>
+         </def>
+         <def fragment="DMA_EnableChannelInterrupts">
+            <fragment id="init_line"  if_expr="$this.irqRequestValue.getValue() != ``">
+               <param id="code" expr="`EDMA_EnableChannelInterrupts(` +  $configSet.dma_base_id.getValue() + `, ` + $this.edma_channel.dma_channel_define.getValue() + `, ` + $this.channelPrefix.getValue() + `_IRQ_REQUEST);`"></param>
+               <param id="description" expr="$instance.getPeripheral() + ` interrupt request initialization for channel ` + $this.edma_channel.eDMAn.getValue()"></param>
+               <param id="paddingLevel" expr="1"></param>               
+            </fragment>
+         </def>
+         <def fragment="DMA_reset">
+            <fragment id="init_line" if_expr="$this.resetChannel.ifDefGet(false)">
+               <param id="code" expr="`EDMA_ResetChannel(` + $configSet.dma_base_id.getValue() +`, ` +  $this.edma_channel.dma_channel_define.getValue() + `);`"></param>
+               <param id="description" expr="$instance.getPeripheral() + ` channel ` + $this.edma_channel.eDMAn.getValue() + ` reset`"></param>
+               <param id="paddingLevel" expr="1"></param>               
+            </fragment>
+         </def>
+         <def fragment="DMA_request">
+            <fragment id="init_line" if_expr="$this.enableChannelRequest.ifDefGet(false)">
+               <param id="code" expr="`EDMA_EnableChannelRequest(` + $configSet.dma_base_id.getValue() +`, ` +  $this.edma_channel.dma_channel_define.getValue() + `);`"></param>
+               <param id="description" expr="$instance.getPeripheral() + ` channel ` + $this.edma_channel.eDMAn.getValue() + ` peripheral request`"></param>
+               <param id="paddingLevel" expr="1"></param>               
+            </fragment>
+         </def>
+         <def fragment="DMA_async_request">
+            <fragment id="init_line" if_expr="$this.enableAsyncRequest.ifDefGet(false)">
+               <param id="code" expr="`EDMA_EnableAsyncRequest(` + $configSet.dma_base_id.getValue() +`, ` +  $this.edma_channel.dma_channel_define.getValue() + `, true);`"></param>
+               <param id="description" expr="$instance.getPeripheral() + ` channel ` + $this.edma_channel.eDMAn.getValue() + ` peripheral request`"></param>
+               <param id="paddingLevel" expr="1"></param>               
+            </fragment>
+         </def>
+         <def fragment="DMA_auto_stop">
+            <fragment id="init_line" if_expr="$this.enableAutoStop.isAvailable()&amp;&amp;$this.enableAutoStop.isEnabled()">
+               <param id="code" expr="`EDMA_EnableAutoStopRequest(` + $configSet.dma_base_id.getValue() +`, ` +  $this.edma_channel.dma_channel_define.getValue() + `, ` + $this.enableAutoStop.getValue() + `);`"></param>
+               <param id="description" expr="$instance.getPeripheral() + ` hardware channel ` + $this.edma_channel.eDMAn.getValue() + ` request auto stop`"></param>
+               <param id="paddingLevel" expr="1"></param>               
+            </fragment>
+         </def>
+         <!-- NVIC initialization -->
+         <def fragment="channel_IRQ_definitions">
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_channel" if_expr="$this.init_interrupts.getValue()"/>
+         </def>
+         <def fragment="channel_IRQ_NVIC_init">
+            <fragment id="IRQn_set_priority_default" apply_to="$this.interrupt_channel" if_expr="$this.init_interrupts.getValue()"/>
+            <fragment id="IRQn_enable_default" apply_to="$this.interrupt_channel" if_expr="$this.init_interrupts.getValue() &amp;&amp; $this.init_interruptsEnable.isAvailable()"/>
+         </def>         
+         <def fragment="err_interrupt">
+            <fragment id="IRQ_definitions" apply_to="$this.errInterruptConfig.errorInterrupt" if_expr="$this.errInterruptConfig.enableErrInterrupt.getValue()"/>
+         </def>
+         <!-- TCD and memory -->
+         <def fragment="tcd_memory_init">
+            <if expr="$this.tcd_pool_enable.ifDefGet(false)">
+               <expr>leftPadding(`/* Allocate TCD memory pool for scatter-gather mode*/`,1)</expr><br/>
+               <expr>leftPadding($this.tcd_settings.tcd_memory_ptr_id.getValue() + ` = (edma_tcd_t *)malloc(sizeof(edma_tcd_t) * (` + $this.tcd_settings.tcd_size_define.getValue() + ` + 1));`, 1)</expr><br/>
+               <expr>leftPadding(`if (` + $this.tcd_settings.tcd_memory_ptr_id.getValue() + ` != NULL) {`, 1)</expr><br/>
+               <expr>leftPadding(`EDMA_InstallTCDMemory(&amp;` + $this.edma_channel.eDMA_handle.getValue() + `, ` + `(edma_tcd_t *)((uint32_t)(` + $this.tcd_settings.tcd_memory_ptr_id.getValue() + ` + 1) &amp; (~0x1FU))` + `, ` + $this.tcd_settings.tcd_size_define.getValue() + `);`, 2)</expr><br/>
+               <expr>leftPadding(`}`, 1)</expr><br/>
+            </if>
+         </def>
+         <def fragment="channel_tcd_size_definition">
+            <fragment id="define">
+               <param id="name" expr="$this.tcd_settings.tcd_size_define.getValue()"/>
+               <param id="value" expr="$this.tcd_settings.tcd_size.getValue()"/>
+               <param id="description" expr="`TCD pool size`"/>
+            </fragment>
+         </def>
+         <def fragment="tcds_def">
+            <fragment id="define" for_elements_of="$this.tcd_configuration">
+               <param id="name" expr="$this.tcdID_def.getValue()"/>
+               <param id="value" expr="$parent.getParent().getSetting(`channelTCDs`).getValue() + `[` + $this.getID() +`]`"/>
+               <param id="description" expr="`TCD structure index ` + $this.getID() + ` definition`"/>
+            </fragment>
+         </def>
+         <def fragment="channel_interrupt_def">
+            <fragment id="define" if_expr="$this.irqRequestValue.getValue() != ``">
+               <param id="name" expr="$this.channelPrefix.ifDefGet(`DMA`) + `_IRQ_REQUEST`"/>
+               <param id="value" expr="$this.irqRequestValue.getValue()"/>
+               <param id="description" expr="$instance.getPeripheral() + ` channel interrupt request.`"/>
+            </fragment>
+         </def>
+         <def fragment="err_interrupt_def">
+            <fragment id="err_interrupt"/>
+         </def>
+         <!-- Transfer init -->
+         <def fragment="trans_init">
+            <!-- Transactional -->
+            <fragment id="init_line"  if_expr="$this.apiMode.getValue() == `trans`" for_elements_of="$this.transfer_config">
+               <param id="code" expr="`EDMA_PrepareTransferConfig(&amp;` + $this.tcdID_def.ifDefGet(``) + `, (void *) ` + $this.saddr_expr.ifDefGet(``) + `, ` + $this.ssize.ifDefGet(0) + `U, ` + $this.soff.ifDefGet(0) + `, (void *) ` + $this.daddr_expr.ifDefGet(``) + `, ` + $this.dsize.ifDefGet(0) + `U, ` + $this.doff.ifDefGet(0) + `, ` + $this.nbytes.ifDefGet(0) + `U, ` + $this.transferBytes.ifDefGet(``) + `U); `"></param>
+               <param id="description" expr="$instance.getPeripheral() + ` transfer configuration`"></param>
+               <param id="paddingLevel" expr="1"></param>               
+            </fragment>
+            <fragment id="init_line"  if_expr="$this.apiMode.getValue() == `trans`" for_elements_of="$this.transfer_config.filter(x -> x.getSetting(`submitTransfer`).ifDefGet(false) == true)">
+               <param id="code" expr="`EDMA_SubmitTransfer(&amp;` + $parent.getParent().getSetting(`edma_channel`).getSetting(`eDMA_handle`).getValue() +`, &amp;` + $this.tcdID_def.ifDefGet(``) + `);`"></param>
+               <param id="description" expr="$instance.getPeripheral() + ` transfer submit`"></param>
+               <param id="paddingLevel" expr="1"></param>               
+            </fragment>
+            <!-- TCD -->
+            <fragment id="init_line"  if_expr="$this.apiMode.getValue() == `nontransTCD` &amp;&amp; $this.initializedTCD.ifDefGet(0) != 0 " for_elements_of="$this.tcd_configuration.filter(x->x.getSetting(`tcdID_def`).getValue() == $this.initializedTCD.getEnumItemValue())">
+               <param id="code" expr="`EDMA_InstallTCD(`+ $configSet.dma_base_id.getValue() + `, `+ $parent.getParent().getSetting(`channelDef`).getValue() + `, (edma_tcd_t *)&amp;` + $parent.getParent().getSetting(`initializedTCD`).getEnumItemValue() + `);`"></param>
+               <param id="description" expr="$instance.getPeripheral() + ` tcd initialization`"></param>
+               <param id="paddingLevel" expr="1"></param>               
+            </fragment>
+         </def>
+         <def fragment="init_channel">
+            <br/><expr>leftPadding(`/* Channel ` + $this.edma_channel.channel_prefix_id.getValue() + ` initialization */`, 1)</expr><br/>
+            <!-- eDMA channels -->
+            <fragment id="channels_DMAMUX_source_init" />
+            <fragment id="channels_DMA_handle_init"/>
+            <fragment id="DMA_reset" />
+            <fragment id="DMA_async_request" />
+            <!-- Non- transactional -->
+            <fragment id="init_line"  if_expr="$this.apiMode.getValue() == `nontrans` &amp;&amp; $this.nontransEnable.ifDefGet(false) &amp;&amp; $this.nontrans_config.setTransfer.ifDefGet(false)" apply_to="$this.nontrans_config">
+               <param id="code" expr="`EDMA_SetTransferConfig(`+ $configSet.dma_base_id.getValue() + `, `+ $parent.channelDef.getValue() + `, &amp;` + $this.tcdID_def.getValue() + `, NULL);`"></param>
+               <param id="description" expr="$instance.getPeripheral() + ` transfer initialization`"></param>
+               <param id="paddingLevel" expr="1"></param>               
+            </fragment>
+            <fragment id="DMA_auto_stop" />
+            <!-- Minor loop init -->
+            <fragment id="DMA_SetMinorOffset"/>
+            <!-- Channel link init -->
+            <fragment id="DMA_SetChannelLink"/>
+            <!-- Bandwidth init -->
+            <fragment id="DMA_SetBandWidth"/>
+            <!-- Address modulo init -->
+            <fragment id="DMA_SetModulo"/>
+            <!-- TCD memory pool init -->
+            <fragment id="tcd_memory_init"/>
+            <!-- Callback init -->
+            <fragment id="DMA_SetCallback"/>
+            <!-- Interrupts enable init -->
+            <fragment id="DMA_EnableChannelInterrupts"/>
+            <!-- Interrupts NVIC init -->
+            <fragment id="channel_IRQ_NVIC_init"/>
+            <!-- Transactional config init -->
+            <fragment id="trans_init"/>
+         </def>
+         <def fragment="post_init_channel">
+            <!-- Enable channel peripheral request -->
+            <fragment id="DMA_request" />
+         </def>
+         <def fragment="edma_channel_definition">
+            <br/><expr>leftPadding(`/* Channel ` + $this.edma_channel.channel_prefix_id.getValue() + ` definitions */`, 1)</expr><br/>
+            <!-- eDMA channels -->
+            <fragment id="channels_definitions"/>
+            <!-- TCD size -->
+            <fragment id="channel_tcd_size_definition" if_expr="$this.tcd_pool_enable.ifDefGet(false)"/>
+            <!-- channels interrupt -->
+            <fragment id="channel_IRQ_definitions"/>
+            <fragment id="channel_interrupt_def"/>
+            <fragment id="tcds_def"/>
+         </def> 
+         <def fragment="edma_channel_global_vars">
+            <!-- eDMA channels -->
+            <fragment id="channels_handles_definition"/>
+            <!-- TCD Memory Pool pointer -->
+            <fragment id="global_var" if_expr="$this.tcd_pool_enable.ifDefGet(false)">
+               <param id="description" expr="`TCD pool initialization`"></param>
+               <param id="name" expr="$this.tcd_settings.tcd_memory_ptr_id.getValue()"/> 
+               <param id="type" expr="`edma_tcd_t *`"/>
+            </fragment>
+         </def>
+         <!-- GLOBAL VARS -->
+         <def fragment="edma_channel_global_vars_extern">
+            <fragment id="channels_handles_declaration"/>
+            <!-- callback function - user data pointer -->
+            <fragment id="extern_var" if_expr="($this.init_callback.ifDefGet(false)) &amp;&amp; ($this.callback_user_data.getValue()!=``)">
+               <param id="name" expr="$this.callback_user_data.getValue()"/> 
+               <param id="type" expr="`void *`"/>
+            </fragment>
+            <fragment id="extern_var" for_elements_of="$this.transfer_config" if_expr="$this.transfer_config.isAvailable()">
+               <param id="description" expr="`Transactional transfer configuration`"></param>
+               <param id="name" expr="$this.tcdID_def.ifDefGet(`transfer`)"/> 
+               <param id="type" expr="`edma_transfer_config_t`"/>
+            </fragment>
+            <fragment id="extern_var" apply_to="$this.nontrans_config" if_expr="$this.nontrans_config.isAvailable() &amp;&amp; $this.nontrans_config.isEnabled()">
+               <param id="description" expr="`Non-transactional transfer configuration`"></param>
+               <param id="name" expr="$this.tcdID_def.ifDefGet(`transfer`)"/> 
+               <param id="type" expr="`edma_transfer_config_t`"/>
+            </fragment>
+            <fragment id="extern_const_var" apply_to="$this.minorLoopConfig" if_expr="$this.minorLoopConfig.isAvailable() &amp;&amp; $this.minorLoopConfig.isEnabled()">
+               <param id="description" expr="`Minor loop configuration extern definition`"></param>
+               <param id="name" expr="$parent.channelPrefix.getValue() + `_MinorOff_config`"/> 
+               <param id="type" expr="`edma_minor_offset_config_t`"/>
+            </fragment>
+            <fragment id="extern_tcd" apply_to="$this.tcd_configuration" if_expr="$this.tcd_configuration.isAvailable() &amp;&amp; $this.tcd_configuration.isEnabled() &amp;&amp; $this.tcd_configuration.size() != 0 "></fragment>
+         </def>
+         <def fragment="extern_tcd">
+            <expr>leftPadding(`/* ` + `TCD configuration */`, 0)</expr><br/>
+            <expr>leftPadding(`AT_NONCACHEABLE_SECTION_ALIGN_INIT(extern `+ ($parent.constantTCD.ifDefGet(false)? `const ` : ``) + 
+               `edma_tcd_t ` + $parent.channelTCDs.getValue() + `[` + $this.size() + `], 0x20U);`, 0)</expr><br/>
+         </def>
+         <!-- Transactional configuration -->
+         <def fragment="transactional_config">
+            <fragment id="extern_var" for_elements_of="$this.transfer_config.filter(x -> x.getSetting(`saddr_def`).ifDefGet(``) != ``)" if_expr="$this.transfer_config.isAvailable()">
+               <param id="description" expr="`Source address extern definition`"></param>
+               <param id="name" expr="$this.saddr_def.ifDefGet(``)"/> 
+            </fragment>
+            <fragment id="extern_var" for_elements_of="$this.transfer_config.filter(x -> x.getSetting(`soff_def`).ifDefGet(``) != ``)" if_expr="$this.transfer_config.isAvailable()">
+               <param id="description" expr="`Source address offset extern definition`"></param>
+               <param id="name" expr="$this.soff_def.ifDefGet(``)"/> 
+            </fragment>
+            <fragment id="extern_var" for_elements_of="$this.transfer_config.filter(x -> x.getSetting(`daddr_def`).ifDefGet(``) != ``)" if_expr="$this.transfer_config.isAvailable()">
+               <param id="description" expr="`Destination address extern definition`"></param>
+               <param id="name" expr="$this.daddr_def.ifDefGet(``)"/> 
+            </fragment>
+            <fragment id="extern_var" for_elements_of="$this.transfer_config.filter(x -> x.getSetting(`doff_def`).ifDefGet(``) != ``)" if_expr="$this.transfer_config.isAvailable()">
+               <param id="description" expr="`Destination address offset extern definition`"></param>
+               <param id="name" expr="$this.doff_def.ifDefGet(``)"/> 
+            </fragment>
+            <fragment id="global_var" for_elements_of="$this.transfer_config" if_expr="$this.transfer_config.isAvailable()">
+               <param id="description" expr="`Tansactional transfer configuration`"></param>
+               <param id="name" expr="$this.tcdID_def.ifDefGet(`transfer`)"/> 
+               <param id="type" expr="`edma_transfer_config_t`"/>
+            </fragment>
+         </def>
+         <!-- Non-Transactional configuration -->
+         <def fragment="nontrans_configuration">
+            <fragment id="extern_var" apply_to="$this.nontrans_config" if_expr="$this.nontrans_config.isAvailable() &amp;&amp; $this.nontrans_config.isEnabled() &amp;&amp; $this.nontrans_config.saddr_def.ifDefGet(``) != ``">
+               <param id="description" expr="`Source address extern definition`"></param>
+               <param id="name" expr="$this.saddr_def.ifDefGet(``)"/> 
+            </fragment>
+            <fragment id="extern_var" apply_to="$this.nontrans_config" if_expr="$this.nontrans_config.isAvailable() &amp;&amp; $this.nontrans_config.isEnabled() &amp;&amp; $this.nontrans_config.soff_def.ifDefGet(``) != ``">
+               <param id="description" expr="`Source address offset extern definition`"></param>
+               <param id="name" expr="$this.soff_def.ifDefGet(``)"/> 
+            </fragment>
+            <fragment id="extern_var" apply_to="$this.nontrans_config" if_expr="$this.nontrans_config.isAvailable() &amp;&amp; $this.nontrans_config.isEnabled() &amp;&amp; $this.nontrans_config.daddr_def.ifDefGet(``) != ``">
+               <param id="description" expr="`Destination address extern definition`"></param>
+               <param id="name" expr="$this.daddr_def.ifDefGet(``)"/> 
+            </fragment>
+            <fragment id="extern_var" apply_to="$this.nontrans_config" if_expr="$this.nontrans_config.isAvailable() &amp;&amp; $this.nontrans_config.isEnabled() &amp;&amp; $this.nontrans_config.doff_def.ifDefGet(``) != ``">
+               <param id="description" expr="`Destination address offset extern definition`"></param>
+               <param id="name" expr="$this.doff_def.ifDefGet(``)"/> 
+            </fragment>
+            <fragment id="global_struct" apply_to="$this.nontrans_config" if_expr="$this.nontrans_config.isAvailable() &amp;&amp; $this.nontrans_config.isEnabled()">
+               <param id="description" expr="`Non-transactional transfer configuration`"/>
+               <param id="name" expr="$this.tcdID_def.ifDefGet(`transfer`)"/> 
+               <param id="type" expr="`edma_transfer_config_t`"/>
+            </fragment>
+            <fragment id="const_struct" apply_to="$this.minorLoopConfig" if_expr="$this.minorLoopConfig.isAvailable() &amp;&amp; $this.minorLoopConfig.isEnabled()">
+               <param id="description" expr="`Minor loop offset configuration`"/>
+               <param id="name" expr="$parent.channelPrefix.getValue() + `_MinorOff_config`"/> 
+               <param id="type" expr="`edma_minor_offset_config_t`"/>
+            </fragment>
+         </def>
+         <def fragment="tcd_configuration">
+            <fragment id="extern_var" for_elements_of="$this.tcd_configuration.filter(x -> x.getSetting(`saddr_def`).ifDefGet(``) != ``)" if_expr="$this.tcd_configuration.isAvailable()">
+               <param id="description" expr="`Source address declaration`"></param>
+               <param id="name" expr="$this.saddr_def.ifDefGet(``)"/> 
+            </fragment>
+            <fragment id="extern_var" for_elements_of="$this.tcd_configuration.filter(x -> x.getSetting(`soff_def`).ifDefGet(``) != ``)" if_expr="$this.tcd_configuration.isAvailable()">
+               <param id="description" expr="`Source address offset declaration`"></param>
+               <param id="name" expr="$this.soff_def.ifDefGet(``)"/> 
+            </fragment>
+            <fragment id="extern_var" for_elements_of="$this.tcd_configuration.filter(x -> x.getSetting(`daddr_def`).ifDefGet(``) != ``)" if_expr="$this.tcd_configuration.isAvailable()">
+               <param id="description" expr="`Destination address declaration`"></param>
+               <param id="name" expr="$this.daddr_def.ifDefGet(``)"/> 
+            </fragment>
+            <fragment id="extern_var" for_elements_of="$this.tcd_configuration.filter(x -> x.getSetting(`doff_def`).ifDefGet(``) != ``)" if_expr="$this.tcd_configuration.isAvailable()">
+               <param id="description" expr="`Destination address offset declaration`"></param>
+               <param id="name" expr="$this.doff_def.ifDefGet(``)"/> 
+            </fragment>
+            <fragment id="global_array" apply_to="$this.tcd_configuration" if_expr="$this.tcd_configuration.isAvailable() &amp;&amp; ($this.tcd_configuration.size() &gt; 0)">
+               <param id="description" expr="`TCD configuration`"></param>
+               <param id="name" expr="$parent.channelTCDs.getValue()"/>
+               <param id="prefix" expr="`AT_NONCACHEABLE_SECTION_ALIGN_INIT(`"/>
+               <param id="type" expr="$parent.constantTCD.ifDefGet(false) ? `const edma_tcd_t` : `edma_tcd_t`"></param>
+               <param id="suffix" expr="`, 0x20U )`"></param>
+               <param id="size" expr="$this.size()"></param>
+            </fragment>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">edma</param>
+               <param id="filename">fsl_edma.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">dmamux</param>
+               <param id="filename">fsl_dmamux.h</param>
+            </fragment>
+            <fragment id="include" if_expr="$this.edma_channels.countOccurrences(i -> (i.getSetting(`tcd_pool_enable`).ifDefGet(false))) &gt; 0">
+               <param id="name">stdlib</param>
+               <param id="filename">stdlib.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <!-- DMA and DMAMUX base definitions -->
+            <fragment id="DMA_bases_definitions"/>
+            <fragment id="err_interrupt"/>
+            <!-- eDMA channels -->
+            <fragment id="edma_channel_definition" for_elements_of="$this.edma_channels"/>
+         </section> 
+         <section target="global_vars">
+            <!-- eDMA global config -->
+            <fragment id="const_struct" apply_to="$this.common_settings">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`"/> 
+               <param id="type" expr="`edma_config_t`"/>
+            </fragment>
+            <!-- eDMA channels -->
+            <fragment id="nontrans_configuration" for_elements_of="$this.edma_channels"/>
+            <fragment id="tcd_configuration" for_elements_of="$this.edma_channels"/>
+            <fragment id="transactional_config" for_elements_of="$this.edma_channels"/>
+            <fragment id="edma_channel_global_vars" for_elements_of="$this.edma_channels"/>
+         </section>   
+         <section target="global_vars_extern">
+            <!-- eDMA global config -->
+            <fragment id="extern_const_var">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`"/> 
+               <param id="type" expr="`edma_config_t`"/>
+            </fragment>
+            <!-- eDMA channels -->
+<!--            <fragment id="channels_handles_declaration" for_elements_of="$this.edma_channels"/>-->
+            <fragment id="edma_channel_global_vars_extern" for_elements_of="$this.edma_channels"/>
+         </section>
+         <section target="global_preinit0">
+            <!-- DMAMUX and DMA initialization -->
+            <fragment id="DMAMUX_init"/>
+            <fragment id="DMA_init"/>
+         </section>   
+         <section target="init_function_body">
+            <!-- DMAMUX and DMA initialization -->
+            <fragment id="init_channel" for_elements_of="$this.edma_channels"/>
+         </section>   
+         <section target="callback_function_extern">
+            <!-- eDMA callback function declaration -->
+            <fragment id="callback_ext_def" for_elements_of="$this.edma_channels"></fragment>
+         </section>
+         <section target="init_function_postinit0">
+            <!-- Global channel initialization -->
+            <fragment id="postinitDef" if_expr="$this.errInterruptConfig.errorInterrupt.isEnabled()"/>
+            <fragment id="err_IRQ_NVIC_init"/>
+            <fragment id="post_init_channel" for_elements_of="$this.edma_channels"/>
+         </section>
+      </code>
+      <quick_selections>
+         <quick_selection id="default" label="Default" >
+            <description>Default settings</description>
+            <set id="common_settings.enableRoundRobinArbitration">false</set>
+            <set id="common_settings.enableHaltOnError">true</set>
+            <set id="common_settings.enableContinuousLinkMode">false</set>
+            <set id="common_settings.enableDebugMode">false</set>
+         </quick_selection>
+         <quick_selection id="trans_single" label="Transactional - Single transfer">
+            <description>
+This preset prepares the transfer configuration without callback and interrupt configuration.           
+- Choose required eDMA request  
+- Change the addresses definition with data size alignment  
+- Set minor and major transfer sizes with data size alignment  
+- Set the callback and interrupt configuration (optional)  
+            </description>
+<!--            <set id="edma_channels.0.resetChannel">true</set>-->
+            <set id="common_settings.enableHaltOnError">true</set>
+            <set id="edma_channels.0.transfer_config.0.saddr_expr">&amp;srcAddr[0]</set>
+            <set id="edma_channels.0.transfer_config.0.saddr_def">uint32_t srcAddr[]</set>
+            <set id="edma_channels.0.transfer_config.0.soff">sizeof(srcAddr[0])</set>
+            <set id="edma_channels.0.transfer_config.0.daddr_expr">&amp;dstAddr[0]</set>
+            <set id="edma_channels.0.transfer_config.0.daddr_def">uint32_t dstAddr[]</set>
+            <set id="edma_channels.0.transfer_config.0.doff">sizeof(dstAddr[0])</set>
+            <set id="edma_channels.0.transfer_config.0.submitTransfer">true</set>
+         </quick_selection>
+         <quick_selection id="trans_SG" label="Transactional - Scatter-gather">
+            <description>
+This preset allocates TCD memory pool and prepares two transfer configurations for scatter-gather operation mode
+and callback and interrupt settings.  
+- Choose required eDMA request  
+- Change the addresses definition with data size alignment for both transfer configurations   
+- Set minor and major loop transfer sizes with data size alignment for both transfer configurations  
+- Update the callback and interrupt configuration     
+            </description> 
+<!--            <set id="edma_channels.0.resetChannel">true</set>-->
+            <set id="common_settings.enableHaltOnError">true</set>
+            <set id="edma_channels.0.tcd_pool_enable">true</set>
+            <set id="edma_channels.0.tcd_settings.tcd_size">2</set>
+            <set id="edma_channels.0.transfer_config.0.saddr_expr">&amp;srcAddr0[0]</set>
+            <set id="edma_channels.0.transfer_config.0.saddr_def">uint32_t srcAddr0[]</set>
+            <set id="edma_channels.0.transfer_config.0.soff">sizeof(srcAddr0[0])</set>
+            <set id="edma_channels.0.transfer_config.0.daddr_expr">&amp;dstAddr0[0]</set>
+            <set id="edma_channels.0.transfer_config.0.daddr_def">uint32_t dstAddr0[]</set>
+            <set id="edma_channels.0.transfer_config.0.doff">sizeof(dstAddr0[0])</set>
+            <set id="edma_channels.0.transfer_config.0.submitTransfer">true</set>
+            <set id="edma_channels.0.transfer_config.1.saddr_expr">&amp;srcAddr1[0]</set>
+            <set id="edma_channels.0.transfer_config.1.saddr_def">uint32_t srcAddr1[]</set>
+            <set id="edma_channels.0.transfer_config.1.soff">sizeof(srcAddr1[0])</set>
+            <set id="edma_channels.0.transfer_config.1.daddr_expr">&amp;dstAddr1[0]</set>
+            <set id="edma_channels.0.transfer_config.1.daddr_def">uint32_t dstAddr1[]</set>
+            <set id="edma_channels.0.transfer_config.1.doff">sizeof(dstAddr1[0])</set>
+            <set id="edma_channels.0.transfer_config.1.submitTransfer">true</set>
+            <set id="edma_channels.0.init_callback">true</set>
+            <set id="edma_channels.0.callback_function">DMA_callback</set>
+            <set id="edma_channels.0.channel_enabled_interrupts.kEDMA_ErrorInterruptEnable">true</set>
+            <set id="errInterruptConfig.enableErrInterrupt">true</set>
+         </quick_selection>
+         <quick_selection id="nontrans_single" label="Non-transactional (API) - Single transfer">
+            <description>
+This preset prepares the transfer configuration without callback and interrupt configuration.           
+- Choose required eDMA request  
+- Change the addresses definition with data size alignment  
+- Set minor and major transfer sizes with data size alignment  
+- Configure other required TCD settings (optional)
+- Set the callabck and interrupt configuration (optional)  
+            </description>
+            <set id="common_settings.enableHaltOnError">true</set>
+            <set id="edma_channels.0.resetChannel">true</set>
+            <set id="edma_channels.0.apiMode">nontrans</set>
+            <set id="edma_channels.0.nontransEnable">true</set>
+            <set id="edma_channels.0.nontrans_config.saddr_expr">&amp;srcAddr[0]</set>
+            <set id="edma_channels.0.nontrans_config.saddr_def">uint32_t srcAddr[]</set>
+            <set id="edma_channels.0.nontrans_config.soff">sizeof(srcAddr[0])</set>
+            <set id="edma_channels.0.nontrans_config.daddr_expr">&amp;dstAddr[0]</set>
+            <set id="edma_channels.0.nontrans_config.daddr_def">uint32_t dstAddr[]</set>
+            <set id="edma_channels.0.nontrans_config.doff">sizeof(dstAddr[0])</set>
+            <set id="edma_channels.0.nontrans_config.setTransfer">true</set>
+         </quick_selection>
+         <quick_selection id="tcd_single" label="Non-transactional (TCD) - Single transfer">
+            <description>
+This preset prepares the transfer configuration without callback and interrupt configuration.           
+- Choose required eDMA request  
+- Change the addresses definition with data size alignment  
+- Set minor and major transfer sizes with data size alignment  
+- Configure other required TCD settings (optional)
+- Set the callabck and interrupt configuration (optional)  
+            </description>
+            <set id="common_settings.enableHaltOnError">true</set>
+            <set id="edma_channels.0.resetChannel">true</set>
+            <set id="edma_channels.0.apiMode">nontransTCD</set>
+            <set id="edma_channels.0.tcd_configuration.0.saddr_expr">&amp;srcAddr[0]</set>
+            <set id="edma_channels.0.tcd_configuration.0.saddr_def">uint32_t srcAddr[]</set>
+            <set id="edma_channels.0.tcd_configuration.0.soff">sizeof(srcAddr[0])</set>
+            <set id="edma_channels.0.tcd_configuration.0.daddr_expr">&amp;dstAddr[0]</set>
+            <set id="edma_channels.0.tcd_configuration.0.daddr_def">uint32_t dstAddr[]</set>
+            <set id="edma_channels.0.tcd_configuration.0.doff">sizeof(dstAddr[0])</set>
+            <set id="edma_channels.0.initializedTCD">CH0_TCD0</set>
+         </quick_selection>
+         <quick_selection id="tcd_sg" label="Non-transactional (TCD) - Scatter-gather">
+            <description>
+This preset allocates TCD memory pool and prepares two transfer configurations for scatter-gather operation mode. 
+- Choose required eDMA request  
+- Change the addresses definition with data size alignment for both transfer configurations   
+- Set minor and major loop transfer sizes with data size alignment for both transfer configurations  
+- Update the callabck and interrupt configuration     
+            </description> 
+            <set id="common_settings.enableHaltOnError">true</set>
+            <set id="edma_channels.0.resetChannel">true</set>
+            <set id="edma_channels.0.apiMode">nontransTCD</set>  
+            <set id="edma_channels.0.tcd_configuration.0.saddr_expr">&amp;srcAddr0[0]</set>
+            <set id="edma_channels.0.tcd_configuration.0.saddr_def">uint32_t srcAddr0[]</set>
+            <set id="edma_channels.0.tcd_configuration.0.soff">sizeof(srcAddr0[0])</set>
+            <set id="edma_channels.0.tcd_configuration.0.daddr_expr">&amp;dstAddr0[0]</set>
+            <set id="edma_channels.0.tcd_configuration.0.daddr_def">uint32_t dstAddr0[]</set>
+            <set id="edma_channels.0.tcd_configuration.0.doff">sizeof(dstAddr0[0])</set>
+            <set id="edma_channels.0.tcd_configuration.1.saddr_expr">&amp;srcAddr1[0]</set>
+            <set id="edma_channels.0.tcd_configuration.1.saddr_def">uint32_t srcAddr1[]</set>
+            <set id="edma_channels.0.tcd_configuration.1.soff">sizeof(srcAddr1[0])</set>
+            <set id="edma_channels.0.tcd_configuration.1.daddr_expr">&amp;dstAddr1[0]</set>
+            <set id="edma_channels.0.tcd_configuration.1.daddr_def">uint32_t dstAddr1[]</set>
+            <set id="edma_channels.0.tcd_configuration.1.doff">sizeof(dstAddr1[0])</set> 
+            <set id="edma_channels.0.tcd_configuration.0.enableScatterGather">true</set>  
+            <set id="edma_channels.0.tcd_configuration.0.sga">1</set>  
+            <set id="edma_channels.0.initializedTCD">CH0_TCD0</set>
+         </quick_selection>
+         <quick_selection id="tcd_linked" label="Non-transactional (TCD) - Channel loops link">
+            <description>
+This preset configures two channels and prepares transfer configurations for linked channel transfer. After the channel's CH0 major loop is
+exhausted, the transfer on linked channel CH1 starts.
+- Choose required eDMA request  
+- Change the addresses definition with data size alignment for both transfer configurations   
+- Set major loop transfer size with data size alignment for both transfer configurations  
+- Update the callabck and interrupt configuration     
+            </description> 
+            <set id="common_settings.enableHaltOnError">true</set>
+            <set id="edma_channels.0.resetChannel">true</set>
+            <set id="edma_channels.0.apiMode">nontransTCD</set>
+            <set id="edma_channels.0.edma_channel.eDMA_source">dmaMuxDisable</set>
+            <set id="edma_channels.1.resetChannel">true</set>
+            <set id="edma_channels.1.apiMode">nontransTCD</set> 
+            <set id="edma_channels.1.edma_channel.eDMA_source">dmaMuxDisable</set>
+            <set id="edma_channels.0.tcd_configuration.0.saddr_expr">&amp;srcAddr0[0]</set>
+            <set id="edma_channels.0.tcd_configuration.0.saddr_def">uint32_t srcAddr0[]</set>
+            <set id="edma_channels.0.tcd_configuration.0.soff">sizeof(srcAddr0[0])</set>
+            <set id="edma_channels.0.tcd_configuration.0.daddr_expr">&amp;dstAddr0[0]</set>
+            <set id="edma_channels.0.tcd_configuration.0.daddr_def">uint32_t dstAddr0[]</set>
+            <set id="edma_channels.0.tcd_configuration.0.doff">sizeof(dstAddr0[0])</set>
+ <!--           <set id="edma_channels.0.tcd_configuration.0.enableChannelLinkMinoor">true</set>
+            <set id="edma_channels.0.tcd_configuration.0.linkedChannelMinoor">1</set> -->
+            <set id="edma_channels.0.tcd_configuration.0.enableChannelLinkMajor">true</set>
+            <set id="edma_channels.0.tcd_configuration.0.linkedChannelMajor">1</set>
+            <set id="edma_channels.0.initializedTCD">CH0_TCD0</set>          
+            <set id="edma_channels.1.tcd_configuration.0.saddr_expr">&amp;srcAddr1[0]</set>
+            <set id="edma_channels.1.tcd_configuration.0.saddr_def">uint32_t srcAddr1[]</set>
+            <set id="edma_channels.1.tcd_configuration.0.soff">sizeof(srcAddr1[0])</set>
+            <set id="edma_channels.1.tcd_configuration.0.daddr_expr">&amp;dstAddr1[0]</set>
+            <set id="edma_channels.1.tcd_configuration.0.daddr_def">uint32_t dstAddr1[]</set>
+            <set id="edma_channels.1.tcd_configuration.0.doff">sizeof(dstAddr1[0])</set>
+<!--            <set id="edma_channels.1.tcd_configuration.0.enableChannelLinkMajor">true</set>
+            <set id="edma_channels.1.tcd_configuration.0.linkedChannelMajor">1</set>-->
+            <set id="edma_channels.1.initializedTCD">CH1_TCD0</set>
+         </quick_selection>
+         <default>default</default>
+      </quick_selections>
+   </config_set>
+</component:config_component>

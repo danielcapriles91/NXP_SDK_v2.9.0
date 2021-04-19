@@ -1,0 +1,140 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="8" name="CGH1" description="CMT Carrier Generator High Data Register 1">
+    <alias type="CMSIS" value="CGH1"/>
+    <bit_field offset="0" width="8" name="PH" access="RW" reset_value="0" reset_mask="0" description="Primary Carrier High Time Data Value">
+      <alias type="CMSIS" value="CMT_CGH1_PH(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x1" width="8" name="CGL1" description="CMT Carrier Generator Low Data Register 1">
+    <alias type="CMSIS" value="CGL1"/>
+    <bit_field offset="0" width="8" name="PL" access="RW" reset_value="0" reset_mask="0" description="Primary Carrier Low Time Data Value">
+      <alias type="CMSIS" value="CMT_CGL1_PL(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x2" width="8" name="CGH2" description="CMT Carrier Generator High Data Register 2">
+    <alias type="CMSIS" value="CGH2"/>
+    <bit_field offset="0" width="8" name="SH" access="RW" reset_value="0" reset_mask="0" description="Secondary Carrier High Time Data Value">
+      <alias type="CMSIS" value="CMT_CGH2_SH(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x3" width="8" name="CGL2" description="CMT Carrier Generator Low Data Register 2">
+    <alias type="CMSIS" value="CGL2"/>
+    <bit_field offset="0" width="8" name="SL" access="RW" reset_value="0" reset_mask="0" description="Secondary Carrier Low Time Data Value">
+      <alias type="CMSIS" value="CMT_CGL2_SL(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x4" width="8" name="OC" description="CMT Output Control Register">
+    <alias type="CMSIS" value="OC"/>
+    <reserved_bit_field offset="0" width="5" reset_value="0"/>
+    <bit_field offset="5" width="1" name="IROPEN" access="RW" reset_value="0" description="IRO Pin Enable">
+      <alias type="CMSIS" value="CMT_OC_IROPEN(x)"/>
+      <bit_field_value name="OC_IROPEN_0b0" value="0b0" description="The IRO signal is disabled."/>
+      <bit_field_value name="OC_IROPEN_0b1" value="0b1" description="The IRO signal is enabled as output."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="CMTPOL" access="RW" reset_value="0" description="CMT Output Polarity">
+      <alias type="CMSIS" value="CMT_OC_CMTPOL(x)"/>
+      <bit_field_value name="OC_CMTPOL_0b0" value="0b0" description="The IRO signal is active-low."/>
+      <bit_field_value name="OC_CMTPOL_0b1" value="0b1" description="The IRO signal is active-high."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="IROL" access="RW" reset_value="0" description="IRO Latch Control">
+      <alias type="CMSIS" value="CMT_OC_IROL(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x5" width="8" name="MSC" description="CMT Modulator Status and Control Register">
+    <alias type="CMSIS" value="MSC"/>
+    <bit_field offset="0" width="1" name="MCGEN" access="RW" reset_value="0" description="Modulator and Carrier Generator Enable">
+      <alias type="CMSIS" value="CMT_MSC_MCGEN(x)"/>
+      <bit_field_value name="MSC_MCGEN_0b0" value="0b0" description="Modulator and carrier generator disabled"/>
+      <bit_field_value name="MSC_MCGEN_0b1" value="0b1" description="Modulator and carrier generator enabled"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="EOCIE" access="RW" reset_value="0" description="End of Cycle Interrupt Enable">
+      <alias type="CMSIS" value="CMT_MSC_EOCIE(x)"/>
+      <bit_field_value name="MSC_EOCIE_0b0" value="0b0" description="CPU interrupt is disabled."/>
+      <bit_field_value name="MSC_EOCIE_0b1" value="0b1" description="CPU interrupt is enabled."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="FSK" access="RW" reset_value="0" description="FSK Mode Select">
+      <alias type="CMSIS" value="CMT_MSC_FSK(x)"/>
+      <bit_field_value name="MSC_FSK_0b0" value="0b0" description="The CMT operates in Time or Baseband mode."/>
+      <bit_field_value name="MSC_FSK_0b1" value="0b1" description="The CMT operates in FSK mode."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="BASE" access="RW" reset_value="0" description="Baseband Enable">
+      <alias type="CMSIS" value="CMT_MSC_BASE(x)"/>
+      <bit_field_value name="MSC_BASE_0b0" value="0b0" description="Baseband mode is disabled."/>
+      <bit_field_value name="MSC_BASE_0b1" value="0b1" description="Baseband mode is enabled."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="EXSPC" access="RW" reset_value="0" description="Extended Space Enable">
+      <alias type="CMSIS" value="CMT_MSC_EXSPC(x)"/>
+      <bit_field_value name="MSC_EXSPC_0b0" value="0b0" description="Extended space is disabled."/>
+      <bit_field_value name="MSC_EXSPC_0b1" value="0b1" description="Extended space is enabled."/>
+    </bit_field>
+    <bit_field offset="5" width="2" name="CMTDIV" access="RW" reset_value="0" description="CMT Clock Divide Prescaler">
+      <alias type="CMSIS" value="CMT_MSC_CMTDIV(x)"/>
+      <bit_field_value name="MSC_CMTDIV_0b00" value="0b00" description="IF / 1"/>
+      <bit_field_value name="MSC_CMTDIV_0b01" value="0b01" description="IF / 2"/>
+      <bit_field_value name="MSC_CMTDIV_0b10" value="0b10" description="IF / 4"/>
+      <bit_field_value name="MSC_CMTDIV_0b11" value="0b11" description="IF / 8"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="EOCF" access="RO" reset_value="0" description="End Of Cycle Status Flag">
+      <alias type="CMSIS" value="CMT_MSC_EOCF(x)"/>
+      <bit_field_value name="MSC_EOCF_0b0" value="0b0" description="End of modulation cycle has not occured since the flag last cleared."/>
+      <bit_field_value name="MSC_EOCF_0b1" value="0b1" description="End of modulator cycle has occurred."/>
+    </bit_field>
+  </register>
+  <register offset="0x6" width="8" name="CMD1" description="CMT Modulator Data Register Mark High">
+    <alias type="CMSIS" value="CMD1"/>
+    <bit_field offset="0" width="8" name="MB" access="RW" reset_value="0" reset_mask="0" description="MB[15:8]">
+      <alias type="CMSIS" value="CMT_CMD1_MB(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x7" width="8" name="CMD2" description="CMT Modulator Data Register Mark Low">
+    <alias type="CMSIS" value="CMD2"/>
+    <bit_field offset="0" width="8" name="MB" access="RW" reset_value="0" reset_mask="0" description="MB[7:0]">
+      <alias type="CMSIS" value="CMT_CMD2_MB(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x8" width="8" name="CMD3" description="CMT Modulator Data Register Space High">
+    <alias type="CMSIS" value="CMD3"/>
+    <bit_field offset="0" width="8" name="SB" access="RW" reset_value="0" reset_mask="0" description="SB[15:8]">
+      <alias type="CMSIS" value="CMT_CMD3_SB(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x9" width="8" name="CMD4" description="CMT Modulator Data Register Space Low">
+    <alias type="CMSIS" value="CMD4"/>
+    <bit_field offset="0" width="8" name="SB" access="RW" reset_value="0" reset_mask="0" description="SB[7:0]">
+      <alias type="CMSIS" value="CMT_CMD4_SB(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xA" width="8" name="PPS" description="CMT Primary Prescaler Register">
+    <alias type="CMSIS" value="PPS"/>
+    <bit_field offset="0" width="4" name="PPSDIV" access="RW" reset_value="0" description="Primary Prescaler Divider">
+      <alias type="CMSIS" value="CMT_PPS_PPSDIV(x)"/>
+      <bit_field_value name="PPS_PPSDIV_0b0000" value="0b0000" description="Bus clock / 1"/>
+      <bit_field_value name="PPS_PPSDIV_0b0001" value="0b0001" description="Bus clock / 2"/>
+      <bit_field_value name="PPS_PPSDIV_0b0010" value="0b0010" description="Bus clock / 3"/>
+      <bit_field_value name="PPS_PPSDIV_0b0011" value="0b0011" description="Bus clock / 4"/>
+      <bit_field_value name="PPS_PPSDIV_0b0100" value="0b0100" description="Bus clock / 5"/>
+      <bit_field_value name="PPS_PPSDIV_0b0101" value="0b0101" description="Bus clock / 6"/>
+      <bit_field_value name="PPS_PPSDIV_0b0110" value="0b0110" description="Bus clock / 7"/>
+      <bit_field_value name="PPS_PPSDIV_0b0111" value="0b0111" description="Bus clock / 8"/>
+      <bit_field_value name="PPS_PPSDIV_0b1000" value="0b1000" description="Bus clock / 9"/>
+      <bit_field_value name="PPS_PPSDIV_0b1001" value="0b1001" description="Bus clock / 10"/>
+      <bit_field_value name="PPS_PPSDIV_0b1010" value="0b1010" description="Bus clock / 11"/>
+      <bit_field_value name="PPS_PPSDIV_0b1011" value="0b1011" description="Bus clock / 12"/>
+      <bit_field_value name="PPS_PPSDIV_0b1100" value="0b1100" description="Bus clock / 13"/>
+      <bit_field_value name="PPS_PPSDIV_0b1101" value="0b1101" description="Bus clock / 14"/>
+      <bit_field_value name="PPS_PPSDIV_0b1110" value="0b1110" description="Bus clock / 15"/>
+      <bit_field_value name="PPS_PPSDIV_0b1111" value="0b1111" description="Bus clock / 16"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="4" reset_value="0"/>
+  </register>
+  <register offset="0xB" width="8" name="DMA" description="CMT Direct Memory Access Register">
+    <alias type="CMSIS" value="DMA"/>
+    <bit_field offset="0" width="1" name="DMA" access="RW" reset_value="0" description="DMA Enable">
+      <alias type="CMSIS" value="CMT_DMA_DMA(x)"/>
+      <bit_field_value name="DMA_DMA_0b0" value="0b0" description="DMA transfer request and done are disabled."/>
+      <bit_field_value name="DMA_DMA_0b1" value="0b1" description="DMA transfer request and done are enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="7" reset_value="0"/>
+  </register>
+</regs:peripheral>

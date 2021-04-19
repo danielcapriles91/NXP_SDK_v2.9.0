@@ -1,0 +1,519 @@
+#include "usb_host_config.h"
+#include "usb_host.h"
+#include "usb_host_hid.h"
+#include "usb_host_common.h"
+#include "usb_host_app.h"
+#include "usb_host_${idLowerSnakeCase}$.h"
+
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+
+/*! @brief buffer size for receiving and sending report descriptor and data */
+#define USB_HID_GENERIC_BUFFER_SIZE (100U)
+
+/*! @brief USB host HID generic instance structure */
+typedef struct _usb_host_hid_generic_instance
+{
+    usb_host_configuration_handle configHandle; /*!< the HID generics configuration handle */
+    usb_device_handle deviceHandle;             /*!< the HID generics device handle */
+    usb_host_class_handle classHandle;          /*!< the HID generics class handle */
+    usb_host_interface_handle interfaceHandle;  /*!< the HID generics interface handle */
+    uint8_t deviceState;                        /*!< device attach/detach status */
+    uint8_t prevState;                          /*!< device attach/detach previous status */
+    uint8_t runState;                           /*!< HID generic application run status */
+    uint8_t
+        runWaitState; /*!< HID generic application wait status, go to next run status when the wait status success */
+    uint16_t inMaxPacketSize;  /*!< Interrupt in max packet size */
+    uint16_t outMaxPacketSize; /*!< Interrupt out max packet size */
+    uint8_t *genericInBuffer;
+    uint8_t *genericOutBuffer;
+    uint16_t sendIndex; /*!< data sending position */
+} usb_host_hid_generic_instance_t;
+ 
+/*******************************************************************************
+ * Prototypes
+ ******************************************************************************/
+
+/*!
+ * @brief process HID data and print generic data.
+ *
+ * @param genericInstance   HID generic instance pointer.
+ */
+static void USB_HostHidGenericProcessBuffer(usb_host_hid_generic_instance_t *genericInstance);
+
+/*!
+ * @brief host HID generic control transfer callback.
+ *
+ * This function is used as callback function for control transfer .
+ *
+ * @param param      the host HID generic instance pointer.
+ * @param data       data buffer pointer.
+ * @param dataLength data length.
+ * @status           transfer result status.
+ */
+static void USB_HostControlCallback(void *param, uint8_t *data, uint32_t dataLength, usb_status_t status);
+
+/*!
+ * @brief host HID generic interrupt in transfer callback.
+ *
+ * This function is used as callback function when call USB_HostHidRecv .
+ *
+ * @param param      the host HID generic instance pointer.
+ * @param data       data buffer pointer.
+ * @param dataLength data length.
+ * @status           transfer result status.
+ */
+static void USB_HostInCallback(void *param, uint8_t *data, uint32_t dataLength, usb_status_t status);
+
+/*!
+ * @brief host HID generic interrupt out transfer callback.
+ *
+ * This function is used as callback function when call USB_HostHidSend .
+ *
+ * @param param    the host HID generic instance pointer.
+ * @param data     data buffer pointer.
+ * @param dataLength data length.
+ * @status         transfer result status.
+ */
+static void USB_HostOutCallback(void *param, uint8_t *data, uint32_t dataLength, usb_status_t status);
+
+/*!
+ * @brief host HID generic prepare data for sending.
+ *
+ * @param genericInstance  the host HID generic instance pointer.
+ *
+ * @retval kStatus_USB_Sucess  there is data.
+ * @retval kStatus_USB_Error   data is sent done.
+ */
+static usb_status_t USB_HostHidGenericPrepareOutData(usb_host_hid_generic_instance_t *genericInstance);
+
+/*******************************************************************************
+ * Variables
+ ******************************************************************************/
+
+static usb_host_hid_generic_instance_t s_HostHidGeneric; /* HID generic instance */
+USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static const uint8_t s_testData[] =
+    "Test string: This is usb host HID generic demo, it only supports PID=0x00a2 and VID=0x1fc9 HID device. Host sends "
+    "this test string to the device, the device responds with the data to the host, then the host prints the data\\r\\n";
+
+USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static uint8_t s_GenericInBuffer[USB_HID_GENERIC_BUFFER_SIZE]; /*!< use to receive report descriptor and data */
+USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static uint8_t s_GenericOutBuffer[USB_HID_GENERIC_BUFFER_SIZE]; /*!< use to send data */
+
+/*******************************************************************************
+ * Code
+ ******************************************************************************/
+
+static void USB_HostHidGenericProcessBuffer(usb_host_hid_generic_instance_t *genericInstance)
+{
+    genericInstance->genericInBuffer[genericInstance->inMaxPacketSize] = 0;
+
+    usb_echo("%s", genericInstance->genericInBuffer);
+}
+
+static void USB_HostControlCallback(void *param, uint8_t *data, uint32_t dataLength, usb_status_t status)
+{
+    usb_host_hid_generic_instance_t *genericInstance = (usb_host_hid_generic_instance_t *)param;
+
+    if (kStatus_USB_TransferStall == status)
+    {
+        usb_echo("Device does not support this request \\r\\n");
+    }
+    else if (kStatus_USB_Success != status)
+    {
+        usb_echo("Control transfer failed\\r\\n");
+    }
+    else
+    {
+    }
+
+    if (genericInstance->runWaitState == kUSB_HostHidRunWaitSetInterface) /* set interface finish */
+    {
+        genericInstance->runState = kUSB_HostHidRunSetInterfaceDone;
+    }
+    else if (genericInstance->runWaitState == kUSB_HostHidRunWaitSetIdle) /* HID set idle finish */
+    {
+        genericInstance->runState = kUSB_HostHidRunSetIdleDone;
+    }
+    else if (genericInstance->runWaitState ==
+             kUSB_HostHidRunWaitGetReportDescriptor) /* HID get report descriptor finish */
+    {
+        genericInstance->runState = kUSB_HostHidRunGetReportDescriptorDone;
+    }
+    else if (genericInstance->runWaitState == kUSB_HostHidRunWaitSetProtocol) /* HID set protocol finish */
+    {
+        genericInstance->runState = kUSB_HostHidRunSetProtocolDone;
+    }
+    else
+    {
+    }
+}
+
+static void USB_HostInCallback(void *param, uint8_t *data, uint32_t dataLength, usb_status_t status)
+{
+    usb_host_hid_generic_instance_t *genericInstance = (usb_host_hid_generic_instance_t *)param;
+
+    if (genericInstance->runWaitState == kUSB_HostHidRunWaitDataReceived)
+    {
+        if (status == kStatus_USB_Success)
+        {
+            genericInstance->runState = kUSB_HostHidRunDataReceived; /* go to process data */
+        }
+        else
+        {
+            if (genericInstance->deviceState == kStatus_DEV_Attached)
+            {
+                genericInstance->runState = kUSB_HostHidRunPrimeDataReceive; /* go to prime next receiving */
+            }
+        }
+    }
+}
+
+static void USB_HostOutCallback(void *param, uint8_t *data, uint32_t dataLength, usb_status_t status)
+{ /* NULL */
+}
+
+static usb_status_t USB_HostHidGenericPrepareOutData(usb_host_hid_generic_instance_t *genericInstance)
+{
+    uint16_t index = 0;
+
+    if (genericInstance->sendIndex < (sizeof(s_testData) - 1)) /* sendIndex indicate the current position of s_testData */
+    {
+        /* get the max packet data, note: the data should be 0 when there is no actual data to send */
+        for (index = 0; ((index + genericInstance->sendIndex) < (sizeof(s_testData) - 1)) &&
+                        (index < genericInstance->outMaxPacketSize);
+             ++index)
+        {
+            genericInstance->genericOutBuffer[index] = s_testData[index + genericInstance->sendIndex];
+        }
+        for (; index < genericInstance->outMaxPacketSize; ++index)
+        {
+            genericInstance->genericOutBuffer[index] = 0x00;
+        }
+        genericInstance->sendIndex += genericInstance->outMaxPacketSize;
+
+        return kStatus_USB_Success;
+    }
+    else
+    {
+        return kStatus_USB_Error; /* there is no data to send */
+    }
+}
+
+void USB_Host${idCamelCase}$Task(void)
+{
+    usb_status_t status;
+    usb_host_hid_descriptor_t *hidDescriptor;
+    uint32_t hidReportLength = 0;
+    uint8_t *descriptor;
+    uint32_t endPosition;
+    usb_host_hid_generic_instance_t *genericInstance = &s_HostHidGeneric;
+
+    /* device state changes, process once for each state */
+    if (genericInstance->deviceState != genericInstance->prevState)
+    {
+        genericInstance->prevState = genericInstance->deviceState;
+        switch (genericInstance->deviceState)
+        {
+            case kStatus_DEV_Idle:
+                break;
+
+            case kStatus_DEV_Attached: /* deivce is attached and numeration is done */
+                genericInstance->runState = kUSB_HostHidRunSetInterface;
+                if (USB_HostHidInit(genericInstance->deviceHandle, &genericInstance->classHandle) !=
+                    kStatus_USB_Success)
+                {
+                    usb_echo("Host HID class initialization failed\\r\\n");
+                }
+                else
+                {
+                    usb_echo("HID generic attached\\r\\n");
+                }
+                genericInstance->sendIndex = 0;
+                break;
+
+            case kStatus_DEV_Detached: /* device is detached */
+                genericInstance->deviceState = kStatus_DEV_Idle;
+                genericInstance->runState = kUSB_HostHidRunIdle;
+                USB_HostHidDeinit(genericInstance->deviceHandle, genericInstance->classHandle);
+                genericInstance->classHandle = NULL;
+                usb_echo("HID generic detached\\r\\n");
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    /* run state */
+    switch (genericInstance->runState)
+    {
+        case kUSB_HostHidRunIdle:
+            break;
+
+        case kUSB_HostHidRunSetInterface: /* 1. set HID interface */
+            genericInstance->runWaitState = kUSB_HostHidRunWaitSetInterface;
+            genericInstance->runState = kUSB_HostHidRunIdle;
+            if (USB_HostHidSetInterface(genericInstance->classHandle, genericInstance->interfaceHandle, 0,
+                                        USB_HostControlCallback, genericInstance) != kStatus_USB_Success)
+            {
+                usb_echo("Set interface error\\r\\n");
+            }
+            break;
+
+        case kUSB_HostHidRunSetInterfaceDone: /* 2. HID set idle */
+            genericInstance->inMaxPacketSize =
+                USB_HostHidGetPacketsize(genericInstance->classHandle, USB_ENDPOINT_INTERRUPT, USB_IN);
+            genericInstance->outMaxPacketSize =
+                USB_HostHidGetPacketsize(genericInstance->classHandle, USB_ENDPOINT_INTERRUPT, USB_OUT);
+
+            /* first: set idle */
+            genericInstance->runWaitState = kUSB_HostHidRunWaitSetIdle;
+            genericInstance->runState = kUSB_HostHidRunIdle;
+            if (USB_HostHidSetIdle(genericInstance->classHandle, 0, 0, USB_HostControlCallback, genericInstance) !=
+                kStatus_USB_Success)
+            {
+                usb_echo("Error in USB_HostHidSetIdle\\r\\n");
+            }
+            break;
+
+        case kUSB_HostHidRunSetIdleDone: /* 3. HID get report descriptor */
+            /* get report descriptors length */
+            hidDescriptor = NULL;
+            descriptor = (uint8_t *)((usb_host_interface_t *)genericInstance->interfaceHandle)->interfaceExtension;
+            endPosition = (uint32_t)descriptor +
+                          ((usb_host_interface_t *)genericInstance->interfaceHandle)->interfaceExtensionLength;
+
+            while ((uint32_t)descriptor < endPosition)
+            {
+                if (*(descriptor + 1) == USB_DESCRIPTOR_TYPE_HID) /* descriptor type */
+                {
+                    hidDescriptor = (usb_host_hid_descriptor_t *)descriptor;
+                    break;
+                }
+                else
+                {
+                    descriptor = (uint8_t *)((uint32_t)descriptor + (*descriptor)); /* next descriptor */
+                }
+            }
+
+            if (hidDescriptor != NULL)
+            {
+                usb_host_hid_class_descriptor_t *hidClassDescriptor;
+                hidClassDescriptor = (usb_host_hid_class_descriptor_t *)&(hidDescriptor->bHidDescriptorType);
+                for (uint8_t index = 0; index < hidDescriptor->bNumDescriptors; ++index)
+                {
+                    hidClassDescriptor += index;
+                    if (hidClassDescriptor->bHidDescriptorType == USB_DESCRIPTOR_TYPE_HID_REPORT)
+                    {
+                        hidReportLength =
+                            (uint16_t)USB_SHORT_FROM_LITTLE_ENDIAN_ADDRESS(hidClassDescriptor->wDescriptorLength);
+                        break;
+                    }
+                }
+            }
+            if (hidReportLength > USB_HID_GENERIC_BUFFER_SIZE)
+            {
+                usb_echo("HID buffer is too small\\r\\n");
+                genericInstance->runState = kUSB_HostHidRunIdle;
+                return;
+            }
+
+            genericInstance->runWaitState = kUSB_HostHidRunWaitGetReportDescriptor;
+            genericInstance->runState = kUSB_HostHidRunIdle;
+            /* second: get report descriptor */
+            USB_HostHidGetReportDescriptor(genericInstance->classHandle, genericInstance->genericInBuffer,
+                                           hidReportLength, USB_HostControlCallback, genericInstance);
+            break;
+
+        case kUSB_HostHidRunGetReportDescriptorDone: /* 4. HID set protocol */
+            genericInstance->runWaitState = kUSB_HostHidRunWaitSetProtocol;
+            genericInstance->runState = kUSB_HostHidRunIdle;
+            /* third: set protocol */
+            if (USB_HostHidSetProtocol(genericInstance->classHandle, USB_HOST_HID_REQUEST_PROTOCOL_REPORT,
+                                       USB_HostControlCallback, genericInstance) != kStatus_USB_Success)
+            {
+                usb_echo("Error in USB_HostHidSetProtocol\\r\\n");
+            }
+            break;
+
+        case kUSB_HostHidRunSetProtocolDone: /* 5. start to receive data and send data */
+            genericInstance->runWaitState = kUSB_HostHidRunWaitDataReceived;
+            genericInstance->runState = kUSB_HostHidRunIdle;
+            if (USB_HostHidRecv(genericInstance->classHandle, genericInstance->genericInBuffer,
+                                genericInstance->inMaxPacketSize, USB_HostInCallback,
+                                genericInstance) != kStatus_USB_Success)
+            {
+                usb_echo("Error in USB_HostHidRecv\\r\\n");
+            }
+            status = USB_HostHidGenericPrepareOutData(genericInstance);
+            if (status == kStatus_USB_Success)
+            {
+                if (USB_HostHidSend(genericInstance->classHandle, genericInstance->genericOutBuffer,
+                                    genericInstance->outMaxPacketSize, USB_HostOutCallback,
+                                    genericInstance) != kStatus_USB_Success)
+                {
+                    usb_echo("Error in USB_HostHidSend\\r\\n");
+                }
+            }
+            break;
+
+        case kUSB_HostHidRunDataReceived: /* process received data, receive next data and send next data */
+            USB_HostHidGenericProcessBuffer(genericInstance);
+
+            genericInstance->runWaitState = kUSB_HostHidRunWaitDataReceived;
+            genericInstance->runState = kUSB_HostHidRunIdle;
+            if (USB_HostHidRecv(genericInstance->classHandle, genericInstance->genericInBuffer,
+                                genericInstance->inMaxPacketSize, USB_HostInCallback,
+                                genericInstance) != kStatus_USB_Success)
+            {
+                usb_echo("Error in USB_HostHidRecv\\r\\n");
+            }
+            status = USB_HostHidGenericPrepareOutData(genericInstance);
+            if (status == kStatus_USB_Success)
+            {
+                if (USB_HostHidSend(genericInstance->classHandle, genericInstance->genericOutBuffer,
+                                    genericInstance->outMaxPacketSize, USB_HostOutCallback,
+                                    genericInstance) != kStatus_USB_Success)
+                {
+                    usb_echo("Error in USB_HostHidSend\\r\\n");
+                }
+            }
+            break;
+
+        case kUSB_HostHidRunPrimeDataReceive: /* receive next data and send next data */
+            genericInstance->runWaitState = kUSB_HostHidRunWaitDataReceived;
+            genericInstance->runState = kUSB_HostHidRunIdle;
+            if (USB_HostHidRecv(genericInstance->classHandle, genericInstance->genericInBuffer,
+                                genericInstance->inMaxPacketSize, USB_HostInCallback,
+                                genericInstance) != kStatus_USB_Success)
+            {
+                usb_echo("Error in USB_HostHidRecv\\r\\n");
+            }
+            status = USB_HostHidGenericPrepareOutData(genericInstance);
+            if (status == kStatus_USB_Success)
+            {
+                if (USB_HostHidSend(genericInstance->classHandle, genericInstance->genericOutBuffer,
+                                    genericInstance->outMaxPacketSize, USB_HostOutCallback,
+                                    genericInstance) != kStatus_USB_Success)
+                {
+                    usb_echo("Error in USB_HostHidSend\\r\\n");
+                }
+            }
+            break;
+
+        default:
+            break;
+    }
+}
+
+usb_status_t USB_Host${idCamelCase}$Init()
+{
+    return kStatus_USB_Success;
+}
+
+usb_status_t USB_Host${idCamelCase}$Event(usb_device_handle deviceHandle,
+                                     usb_host_configuration_handle configurationHandle,
+                                     uint32_t eventCode, uint8_t *processedInterfaces)
+{
+    uint32_t pid;
+    uint32_t vid;
+    usb_host_configuration_t *configuration;
+    usb_host_interface_t *interface;
+    uint32_t infoValue;
+    usb_status_t status = kStatus_USB_Success;
+    uint8_t interfaceIndex;
+    uint8_t id;
+
+    switch (eventCode)
+    {
+        case kUSB_HostEventAttach:
+            /* judge whether is configurationHandle supported */
+            configuration = (usb_host_configuration_t *)configurationHandle;
+            for (interfaceIndex = 0; interfaceIndex < configuration->interfaceCount; ++interfaceIndex)
+            {
+                if(processedInterfaces[interfaceIndex])
+                {
+                    continue;
+                }
+                interface = &configuration->interfaceList[0];
+                id = interface->interfaceDesc->bInterfaceClass;
+                if (id != USB_HOST_HID_CLASS_CODE)
+                {
+                    continue;
+                }
+                id = interface->interfaceDesc->bInterfaceSubClass;
+                if ((id != USB_HOST_HID_SUBCLASS_CODE_NONE) && (id != USB_HOST_HID_SUBCLASS_CODE_BOOT))
+                {
+                    continue;
+                }
+                USB_HostHelperGetPeripheralInformation(deviceHandle, kUSB_HostGetDevicePID, &pid);
+                USB_HostHelperGetPeripheralInformation(deviceHandle, kUSB_HostGetDeviceVID, &vid);
+                if ((pid == 0x00a2) && (vid == 0x1fc9))
+                {
+                    if (s_HostHidGeneric.deviceState == kStatus_DEV_Idle)
+                    {
+                        /* the interface is supported by the application */
+                        s_HostHidGeneric.genericInBuffer = s_GenericInBuffer;
+                        s_HostHidGeneric.genericOutBuffer = s_GenericOutBuffer;
+                        s_HostHidGeneric.deviceHandle = deviceHandle;
+                        s_HostHidGeneric.interfaceHandle = interface;
+                        s_HostHidGeneric.configHandle = configurationHandle;
+                        processedInterfaces[interfaceIndex] = 1;
+                        return kStatus_USB_Success;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+            status = kStatus_USB_NotSupported;
+            break;
+
+        case kUSB_HostEventNotSupported:
+            break;
+
+        case kUSB_HostEventEnumerationDone:
+            if (s_HostHidGeneric.configHandle == configurationHandle)
+            {
+                if ((s_HostHidGeneric.deviceHandle != NULL) && (s_HostHidGeneric.interfaceHandle != NULL))
+                {
+                    /* the device enumeration is done */
+                    if (s_HostHidGeneric.deviceState == kStatus_DEV_Idle)
+                    {
+                        s_HostHidGeneric.deviceState = kStatus_DEV_Attached;
+
+                        USB_HostHelperGetPeripheralInformation(deviceHandle, kUSB_HostGetDevicePID, &infoValue);
+                        usb_echo("HID generic attached:PID=0x%x", infoValue);
+                        USB_HostHelperGetPeripheralInformation(deviceHandle, kUSB_HostGetDeviceVID, &infoValue);
+                        usb_echo("VID=0x%x ", infoValue);
+                        USB_HostHelperGetPeripheralInformation(deviceHandle, kUSB_HostGetDeviceAddress, &infoValue);
+                        usb_echo("Address=%d\\r\\n", infoValue);
+                    }
+                    else
+                    {
+                        usb_echo("Not idle generic instance\\r\\n");
+                        status = kStatus_USB_Error;
+                    }
+                }
+            }
+            break;
+
+        case kUSB_HostEventDetach:
+            if (s_HostHidGeneric.configHandle == configurationHandle)
+            {
+                /* the device is detached */
+                s_HostHidGeneric.configHandle = NULL;
+                if (s_HostHidGeneric.deviceState != kStatus_DEV_Idle)
+                {
+                    s_HostHidGeneric.deviceState = kStatus_DEV_Detached;
+                }
+            }
+            break;
+
+        default:
+            break;
+    }
+    return status;
+}

@@ -1,0 +1,253 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0x8" width="16" name="PLASC" description="Crossbar Switch (AXBS) Slave Configuration">
+    <alias type="CMSIS" value="PLASC"/>
+    <bit_field offset="0" width="8" name="ASC" access="RO" reset_value="0x1F" description="Each bit in the ASC field indicates whether there is a corresponding connection to the crossbar switch's slave input port.">
+      <alias type="CMSIS" value="MCM_PLASC_ASC(x)"/>
+      <bit_field_value name="PLASC_ASC_0b00000000" value="0b00000000" description="A bus slave connection to AXBS input port n is absent"/>
+      <bit_field_value name="PLASC_ASC_0b00000001" value="0b00000001" description="A bus slave connection to AXBS input port n is present"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="8" reset_value="0"/>
+  </register>
+  <register offset="0xA" width="16" name="PLAMC" description="Crossbar Switch (AXBS) Master Configuration">
+    <alias type="CMSIS" value="PLAMC"/>
+    <bit_field offset="0" width="8" name="AMC" access="RO" reset_value="0x7F" description="Each bit in the AMC field indicates whether there is a corresponding connection to the AXBS master input port.">
+      <alias type="CMSIS" value="MCM_PLAMC_AMC(x)"/>
+      <bit_field_value name="PLAMC_AMC_0b00000000" value="0b00000000" description="A bus master connection to AXBS input port n is absent"/>
+      <bit_field_value name="PLAMC_AMC_0b00000001" value="0b00000001" description="A bus master connection to AXBS input port n is present"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="8" reset_value="0"/>
+  </register>
+  <register offset="0xC" width="32" name="CR" description="Control Register">
+    <alias type="CMSIS" value="CR"/>
+    <reserved_bit_field offset="0" width="9" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="14" reset_value="0"/>
+    <bit_field offset="24" width="2" name="SRAMUAP" access="RW" reset_value="0" description="SRAM_U arbitration priority">
+      <alias type="CMSIS" value="MCM_CR_SRAMUAP(x)"/>
+      <bit_field_value name="CR_SRAMUAP_0b00" value="0b00" description="Round robin"/>
+      <bit_field_value name="CR_SRAMUAP_0b01" value="0b01" description="Special round robin (favors SRAM backoor accesses over the processor)"/>
+      <bit_field_value name="CR_SRAMUAP_0b10" value="0b10" description="Fixed priority. Processor has highest, backdoor has lowest"/>
+      <bit_field_value name="CR_SRAMUAP_0b11" value="0b11" description="Fixed priority. Backdoor has highest, processor has lowest"/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="SRAMUWP" access="RW" reset_value="0" description="SRAM_U write protect">
+      <alias type="CMSIS" value="MCM_CR_SRAMUWP(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <bit_field offset="28" width="2" name="SRAMLAP" access="RW" reset_value="0" description="SRAM_L arbitration priority">
+      <alias type="CMSIS" value="MCM_CR_SRAMLAP(x)"/>
+      <bit_field_value name="CR_SRAMLAP_0b00" value="0b00" description="Round robin"/>
+      <bit_field_value name="CR_SRAMLAP_0b01" value="0b01" description="Special round robin (favors SRAM backoor accesses over the processor)"/>
+      <bit_field_value name="CR_SRAMLAP_0b10" value="0b10" description="Fixed priority. Processor has highest, backdoor has lowest"/>
+      <bit_field_value name="CR_SRAMLAP_0b11" value="0b11" description="Fixed priority. Backdoor has highest, processor has lowest"/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="SRAMLWP" access="RW" reset_value="0" description="SRAM_L Write Protect">
+      <alias type="CMSIS" value="MCM_CR_SRAMLWP(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x10" width="32" name="ISCR" description="Interrupt Status Register">
+    <alias type="id" value="ISR"/>
+    <alias type="CMSIS" value="ISCR"/>
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <bit_field offset="1" width="1" name="IRQ" access="W1C" reset_value="0" description="Normal Interrupt Pending">
+      <alias type="CMSIS" value="MCM_ISCR_IRQ(x)"/>
+      <bit_field_value name="ISCR_IRQ_0b0" value="0b0" description="No pending interrupt"/>
+      <bit_field_value name="ISCR_IRQ_0b1" value="0b1" description="Due to the ETB counter expiring, a normal interrupt is pending"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="NMI" access="W1C" reset_value="0" description="Non-maskable Interrupt Pending">
+      <alias type="CMSIS" value="MCM_ISCR_NMI(x)"/>
+      <bit_field_value name="ISCR_NMI_0b0" value="0b0" description="No pending NMI"/>
+      <bit_field_value name="ISCR_NMI_0b1" value="0b1" description="Due to the ETB counter expiring, an NMI is pending"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="DHREQ" access="RO" reset_value="0" description="Debug Halt Request Indicator">
+      <alias type="CMSIS" value="MCM_ISCR_DHREQ(x)"/>
+      <bit_field_value name="ISCR_DHREQ_0b0" value="0b0" description="No debug halt request"/>
+      <bit_field_value name="ISCR_DHREQ_0b1" value="0b1" description="Debug halt request initiated"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="3" reset_value="0"/>
+    <bit_field offset="8" width="1" name="FIOC" access="RO" reset_value="0" description="FPU invalid operation interrupt status">
+      <alias type="CMSIS" value="MCM_ISCR_FIOC(x)"/>
+      <bit_field_value name="ISCR_FIOC_0b0" value="0b0" description="No interrupt"/>
+      <bit_field_value name="ISCR_FIOC_0b1" value="0b1" description="Interrupt occurred"/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="FDZC" access="RO" reset_value="0" description="FPU divide-by-zero interrupt status">
+      <alias type="CMSIS" value="MCM_ISCR_FDZC(x)"/>
+      <bit_field_value name="ISCR_FDZC_0b0" value="0b0" description="No interrupt"/>
+      <bit_field_value name="ISCR_FDZC_0b1" value="0b1" description="Interrupt occurred"/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="FOFC" access="RO" reset_value="0" description="FPU overflow interrupt status">
+      <alias type="CMSIS" value="MCM_ISCR_FOFC(x)"/>
+      <bit_field_value name="ISCR_FOFC_0b0" value="0b0" description="No interrupt"/>
+      <bit_field_value name="ISCR_FOFC_0b1" value="0b1" description="Interrupt occurred"/>
+    </bit_field>
+    <bit_field offset="11" width="1" name="FUFC" access="RO" reset_value="0" description="FPU underflow interrupt status">
+      <alias type="CMSIS" value="MCM_ISCR_FUFC(x)"/>
+      <bit_field_value name="ISCR_FUFC_0b0" value="0b0" description="No interrupt"/>
+      <bit_field_value name="ISCR_FUFC_0b1" value="0b1" description="Interrupt occurred"/>
+    </bit_field>
+    <bit_field offset="12" width="1" name="FIXC" access="RO" reset_value="0" description="FPU inexact interrupt status">
+      <alias type="CMSIS" value="MCM_ISCR_FIXC(x)"/>
+      <bit_field_value name="ISCR_FIXC_0b0" value="0b0" description="No interrupt"/>
+      <bit_field_value name="ISCR_FIXC_0b1" value="0b1" description="Interrupt occurred"/>
+    </bit_field>
+    <reserved_bit_field offset="13" width="2" reset_value="0"/>
+    <bit_field offset="15" width="1" name="FIDC" access="RO" reset_value="0" description="FPU input denormal interrupt status">
+      <alias type="CMSIS" value="MCM_ISCR_FIDC(x)"/>
+      <bit_field_value name="ISCR_FIDC_0b0" value="0b0" description="No interrupt"/>
+      <bit_field_value name="ISCR_FIDC_0b1" value="0b1" description="Interrupt occurred"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="8" reset_value="0"/>
+    <bit_field offset="24" width="1" name="FIOCE" access="RW" reset_value="0" description="FPU invalid operation interrupt enable">
+      <alias type="CMSIS" value="MCM_ISCR_FIOCE(x)"/>
+      <bit_field_value name="ISCR_FIOCE_0b0" value="0b0" description="Disable interrupt"/>
+      <bit_field_value name="ISCR_FIOCE_0b1" value="0b1" description="Enable interrupt"/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="FDZCE" access="RW" reset_value="0" description="FPU divide-by-zero interrupt enable">
+      <alias type="CMSIS" value="MCM_ISCR_FDZCE(x)"/>
+      <bit_field_value name="ISCR_FDZCE_0b0" value="0b0" description="Disable interrupt"/>
+      <bit_field_value name="ISCR_FDZCE_0b1" value="0b1" description="Enable interrupt"/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="FOFCE" access="RW" reset_value="0" description="FPU overflow interrupt enable">
+      <alias type="CMSIS" value="MCM_ISCR_FOFCE(x)"/>
+      <bit_field_value name="ISCR_FOFCE_0b0" value="0b0" description="Disable interrupt"/>
+      <bit_field_value name="ISCR_FOFCE_0b1" value="0b1" description="Enable interrupt"/>
+    </bit_field>
+    <bit_field offset="27" width="1" name="FUFCE" access="RW" reset_value="0" description="FPU underflow interrupt enable">
+      <alias type="CMSIS" value="MCM_ISCR_FUFCE(x)"/>
+      <bit_field_value name="ISCR_FUFCE_0b0" value="0b0" description="Disable interrupt"/>
+      <bit_field_value name="ISCR_FUFCE_0b1" value="0b1" description="Enable interrupt"/>
+    </bit_field>
+    <bit_field offset="28" width="1" name="FIXCE" access="RW" reset_value="0" description="FPU inexact interrupt enable">
+      <alias type="CMSIS" value="MCM_ISCR_FIXCE(x)"/>
+      <bit_field_value name="ISCR_FIXCE_0b0" value="0b0" description="Disable interrupt"/>
+      <bit_field_value name="ISCR_FIXCE_0b1" value="0b1" description="Enable interrupt"/>
+    </bit_field>
+    <reserved_bit_field offset="29" width="2" reset_value="0"/>
+    <bit_field offset="31" width="1" name="FIDCE" access="RW" reset_value="0" description="FPU input denormal interrupt enable">
+      <alias type="CMSIS" value="MCM_ISCR_FIDCE(x)"/>
+      <bit_field_value name="ISCR_FIDCE_0b0" value="0b0" description="Disable interrupt"/>
+      <bit_field_value name="ISCR_FIDCE_0b1" value="0b1" description="Enable interrupt"/>
+    </bit_field>
+  </register>
+  <register offset="0x14" width="32" name="ETBCC" description="ETB Counter Control register">
+    <alias type="CMSIS" value="ETBCC"/>
+    <bit_field offset="0" width="1" name="CNTEN" access="RW" reset_value="0" description="Counter Enable">
+      <alias type="CMSIS" value="MCM_ETBCC_CNTEN(x)"/>
+      <bit_field_value name="ETBCC_CNTEN_0b0" value="0b0" description="ETB counter disabled"/>
+      <bit_field_value name="ETBCC_CNTEN_0b1" value="0b1" description="ETB counter enabled"/>
+    </bit_field>
+    <bit_field offset="1" width="2" name="RSPT" access="RW" reset_value="0" description="Response Type">
+      <alias type="CMSIS" value="MCM_ETBCC_RSPT(x)"/>
+      <bit_field_value name="ETBCC_RSPT_0b00" value="0b00" description="No response when the ETB count expires"/>
+      <bit_field_value name="ETBCC_RSPT_0b01" value="0b01" description="Generate a normal interrupt when the ETB count expires"/>
+      <bit_field_value name="ETBCC_RSPT_0b10" value="0b10" description="Generate an NMI when the ETB count expires"/>
+      <bit_field_value name="ETBCC_RSPT_0b11" value="0b11" description="Generate a debug halt when the ETB count expires"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="RLRQ" access="RW" reset_value="0" description="Reload Request">
+      <alias type="CMSIS" value="MCM_ETBCC_RLRQ(x)"/>
+      <bit_field_value name="ETBCC_RLRQ_0b0" value="0b0" description="No effect"/>
+      <bit_field_value name="ETBCC_RLRQ_0b1" value="0b1" description="Clears pending debug halt, NMI, or IRQ interrupt requests"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="ETDIS" access="RW" reset_value="0" description="ETM-To-TPIU Disable">
+      <alias type="CMSIS" value="MCM_ETBCC_ETDIS(x)"/>
+      <bit_field_value name="ETBCC_ETDIS_0b0" value="0b0" description="ETM-to-TPIU trace path enabled"/>
+      <bit_field_value name="ETBCC_ETDIS_0b1" value="0b1" description="ETM-to-TPIU trace path disabled"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="ITDIS" access="RW" reset_value="0" description="ITM-To-TPIU Disable">
+      <alias type="CMSIS" value="MCM_ETBCC_ITDIS(x)"/>
+      <bit_field_value name="ETBCC_ITDIS_0b0" value="0b0" description="ITM-to-TPIU trace path enabled"/>
+      <bit_field_value name="ETBCC_ITDIS_0b1" value="0b1" description="ITM-to-TPIU trace path disabled"/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="26" reset_value="0"/>
+  </register>
+  <register offset="0x18" width="32" name="ETBRL" description="ETB Reload register">
+    <alias type="CMSIS" value="ETBRL"/>
+    <bit_field offset="0" width="11" name="RELOAD" access="RW" reset_value="0" description="Byte Count Reload Value">
+      <alias type="CMSIS" value="MCM_ETBRL_RELOAD(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="21" reset_value="0"/>
+  </register>
+  <register offset="0x1C" width="32" name="ETBCNT" description="ETB Counter Value register">
+    <alias type="CMSIS" value="ETBCNT"/>
+    <bit_field offset="0" width="11" name="COUNTER" access="RO" reset_value="0" description="Byte Count Counter Value">
+      <alias type="CMSIS" value="MCM_ETBCNT_COUNTER(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="21" reset_value="0"/>
+  </register>
+  <register offset="0x20" width="32" name="FADR" description="Fault address register">
+    <alias type="CMSIS" value="FADR"/>
+    <bit_field offset="0" width="32" name="ADDRESS" access="RO" reset_value="0" reset_mask="0" description="Fault address">
+      <alias type="CMSIS" value="MCM_FADR_ADDRESS(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x24" width="32" name="FATR" description="Fault attributes register">
+    <alias type="CMSIS" value="FATR"/>
+    <bit_field offset="0" width="1" name="BEDA" access="RO" reset_value="0" reset_mask="0" description="Bus error access type">
+      <alias type="CMSIS" value="MCM_FATR_BEDA(x)"/>
+      <bit_field_value name="FATR_BEDA_0b0" value="0b0" description="Instruction"/>
+      <bit_field_value name="FATR_BEDA_0b1" value="0b1" description="Data"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="BEMD" access="RO" reset_value="0" reset_mask="0" description="Bus error privilege level">
+      <alias type="CMSIS" value="MCM_FATR_BEMD(x)"/>
+      <bit_field_value name="FATR_BEMD_0b0" value="0b0" description="User mode"/>
+      <bit_field_value name="FATR_BEMD_0b1" value="0b1" description="Supervisor/privileged mode"/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="2" reset_value="0" reset_mask="0"/>
+    <bit_field offset="4" width="2" name="BESZ" access="RO" reset_value="0" reset_mask="0" description="Bus error size">
+      <alias type="CMSIS" value="MCM_FATR_BESZ(x)"/>
+      <bit_field_value name="FATR_BESZ_0b00" value="0b00" description="8-bit access"/>
+      <bit_field_value name="FATR_BESZ_0b01" value="0b01" description="16-bit access"/>
+      <bit_field_value name="FATR_BESZ_0b10" value="0b10" description="32-bit access"/>
+      <bit_field_value name="FATR_BESZ_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="1" reset_value="0" reset_mask="0"/>
+    <bit_field offset="7" width="1" name="BEWT" access="RO" reset_value="0" reset_mask="0" description="Bus error write">
+      <alias type="CMSIS" value="MCM_FATR_BEWT(x)"/>
+      <bit_field_value name="FATR_BEWT_0b0" value="0b0" description="Read access"/>
+      <bit_field_value name="FATR_BEWT_0b1" value="0b1" description="Write access"/>
+    </bit_field>
+    <bit_field offset="8" width="4" name="BEMN" access="RO" reset_value="0" reset_mask="0" description="Bus error master number">
+      <alias type="CMSIS" value="MCM_FATR_BEMN(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="12" width="19" reset_value="0" reset_mask="0"/>
+    <bit_field offset="31" width="1" name="BEOVR" access="RO" reset_value="0" reset_mask="0" description="Bus error overrun">
+      <alias type="CMSIS" value="MCM_FATR_BEOVR(x)"/>
+      <bit_field_value name="FATR_BEOVR_0b0" value="0b0" description="No bus error overrun"/>
+      <bit_field_value name="FATR_BEOVR_0b1" value="0b1" description="Bus error overrun occurred. The FADR and FDR registers and the other FATR bits are not updated to reflect this new bus error."/>
+    </bit_field>
+  </register>
+  <register offset="0x28" width="32" name="FDR" description="Fault data register">
+    <alias type="CMSIS" value="FDR"/>
+    <bit_field offset="0" width="32" name="DATA" access="RO" reset_value="0" reset_mask="0" description="Fault data">
+      <alias type="CMSIS" value="MCM_FDR_DATA(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x30" width="32" name="PID" description="Process ID register">
+    <alias type="CMSIS" value="PID"/>
+    <bit_field offset="0" width="8" name="PID" access="RW" reset_value="0" description="M0_PID And M1_PID For MPU">
+      <alias type="CMSIS" value="MCM_PID_PID(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="24" reset_value="0"/>
+  </register>
+  <register offset="0x40" width="32" name="CPO" description="Compute Operation Control Register">
+    <alias type="CMSIS" value="CPO"/>
+    <bit_field offset="0" width="1" name="CPOREQ" access="RW" reset_value="0" description="Compute Operation request">
+      <alias type="CMSIS" value="MCM_CPO_CPOREQ(x)"/>
+      <bit_field_value name="CPO_CPOREQ_0b0" value="0b0" description="Request is cleared."/>
+      <bit_field_value name="CPO_CPOREQ_0b1" value="0b1" description="Request Compute Operation."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="CPOACK" access="RO" reset_value="0" description="Compute Operation acknowledge">
+      <alias type="CMSIS" value="MCM_CPO_CPOACK(x)"/>
+      <bit_field_value name="CPO_CPOACK_0b0" value="0b0" description="Compute operation entry has not completed or compute operation exit has completed."/>
+      <bit_field_value name="CPO_CPOACK_0b1" value="0b1" description="Compute operation entry has completed or compute operation exit has not completed."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="CPOWOI" access="RW" reset_value="0" description="Compute Operation wakeup on interrupt">
+      <alias type="CMSIS" value="MCM_CPO_CPOWOI(x)"/>
+      <bit_field_value name="CPO_CPOWOI_0b0" value="0b0" description="No effect."/>
+      <bit_field_value name="CPO_CPOWOI_0b1" value="0b1" description="When set, the CPOREQ is cleared on any interrupt or exception vector fetch."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="29" reset_value="0"/>
+  </register>
+</regs:peripheral>

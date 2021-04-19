@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component:config_component
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd"
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0" options="UI_COMPONENT_MODE_HIDDEN"
+   id="queued_spi_reg" label="Queued_SPI" category="Register init" registers_init="true">
+    <description>Queued Serial Peripheral Interface (QSPI)</description>
+   <mode id="general" label="General">
+      <description>General Queued SPI initialization</description>
+      <config_set_refs>
+         <config_set_ref>generalConfig</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+          <peripheral_type>QSPI</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="generalConfig" label="General configuration">
+      <description>General configuration</description>
+      <generated_types/>
+       <user_types>
+           <struct id="clkConfig_t" label="Clock configuration">
+               <variable id="clockSourceUId" value="`BusInterfaceClock`"/>
+               <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="createArray().addItemToList($parent.clockSourceUId.getValue(), getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()), ($instance.getPeripheral() + `_CLK_SRC`),true)" >
+                   <description>QUEUEDSPI clock source</description>
+                   <validation>
+                       <dependency resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                           description_expr="getPeripheralClockSignal($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + ` is inactive.`"
+                           level="Error">
+                           <feature name="frequency" evaluation="greaterThan">
+                               <data expr="0" unit="Hz" type="Frequency"/>
+                           </feature>
+                       </dependency>
+                   </validation>
+               </dynamic_enum>
+               <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" 
+                   items="createArray().merge(
+                   getClockFunctionalGroups().arrayToEnumItems(
+                   enumItem -> true,
+                   enumItem -> enumItem,
+                   enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)) + ` (` + enumItem + `)`,
+                   enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)))" >
+                   <description>Selection of the clock source frequency</description>
+                   <validation>
+                       <constraint cond_expr="$this.getEnumItemValue().toHertz() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+                   </validation>
+                   <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+               </dynamic_enum>
+               <info id="calculateFreqPeriod" label="Clock frequency/period" 
+                   value="system::calculateFreqPeriod(1,$parent.clockSourceFreq.getEnumItemValue())">
+                   <description>Clock frequency and period of one tick (in time units).</description>
+               </info>
+               <!-- Calculated real timer counter input frequency - one tick of timer-->
+               <variable id="calculatedFreq" value="system::calculateRealFreq(1, $parent.clockSourceFreq.getEnumItemValue())"/>
+           </struct>
+           <struct id="control_t">
+               <enum id="SPMSTR" label="SPI mode" options="REGISTERS_REFRESH;UI_REFRESH">
+                   <description>Sets the mode of the QUEUEDSPI peripheral and configures the SPI module as master or slave.</description>
+                   <assign when="true">
+                       <register name="SPSCR" bitfield="SPMSTR" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="Slave mode" value="0"/>
+                   <item id="1" label="Master mode" value="1"/>
+               </enum>
+               <bool id="SPE" label="SPI enable" options="REGISTERS_REFRESH">
+                   <description>
+Enables the SPI module.  
+*Note:* In master mode the *SPI enable* (SPE) bit can be cleared by a mode fault (MODF) condition.  
+*Note:* Enable the master SPI before enabling the slave SPI. Disable the slave SPI before disabling the master SPI.  
+                   </description>
+                   <assign when="true">
+                       <register name="SPSCR" bitfield="SPE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <enum id="SPR" label="Baudrate divisor" options="REGISTERS_REFRESH" available="$configSet.spiMode.getValue()==`master`">
+                   <description>Sets the baudrate divider (BD)</description>
+                   <assign when="true">
+                       <register name="SPSCR" bitfield="SPR" value="$this.getEnumItemValue().toInt() &amp; 0x7" reverse_value="x -> ($this.getEnumItemValue().toInt() &amp; ~0x7) | toInt(x &amp; 0x7)"/>
+                   </assign>
+                   <assign when="true">
+                       <register name="SPDSR" bitfield="SPR3" value="($this.getEnumItemValue().toInt() &amp; 0x8) &gt;&gt; 3" reverse_value="x -> ($this.getEnumItemValue().toInt() &amp; ~0x8) | (x.toInt() &lt;&lt; 3)"/>
+                   </assign>
+                   <item id="0" label="2" value="0"></item>
+                   <item id="1" label="4" value="1"></item>
+                   <item id="2" label="8" value="2"></item>
+                   <item id="3" label="16" value="3"></item>
+                   <item id="4" label="32" value="4"></item>
+                   <item id="5" label="64" value="5"></item>
+                   <item id="6" label="128" value="6"></item>
+                   <item id="7" label="256" value="7"></item>
+                   <item id="8" label="512" value="8"></item>
+                   <item id="9" label="1024" value="9"></item>
+                   <item id="10" label="2048" value="10"></item>
+                   <item id="11" label="4096" value="11"></item>
+                   <item id="12" label="8192" value="12"></item>
+                   <item id="13" label="16384" value="13"></item>
+               </enum>
+               <bool id="BD2X" label="Double divisor" options="REGISTERS_REFRESH" available="$configSet.spiMode.getValue()==`master`">
+                   <description>Sets double Baud Rate Divisor (BD) value. Setting this bit causes BD to be multiplied by 2.</description>
+                   <validation>
+                       <constraint when_expr="$this.getValue()" cond_expr="$parent.SPR.getValue()!=`13`" level="info" description="Used baudrate divisor is 16384 (maximum)."/>
+                   </validation>
+                   <assign when="true">
+                       <register name="SPDSR" bitfield="BD2X" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <variable id="divisor" value="$parent.SPR.getValue()!=`13` ? ($parent.SPR.getEnumItemLabel().toInt() &lt;&lt; system::boolToInt($parent.BD2X.getValue())) : 16384"></variable>
+               <info id="baudRate" label="Calculated baud rate" value="system::calculateFreq($parent.divisor.getValue().toInt(), $configSet.clkConfig.calculatedFreq.getValue())" available="$configSet.spiMode.getValue()==`master`">
+                   <description>
+Resulting baudrate calculated from *Clock frequency* and *Baudrate divisor*.
+                   </description>
+                   <validation>
+                       <constraint when_expr="$this.getValue()!=`N/A`" cond_expr="system::calculateRealFreq($parent.divisor.getValue().toInt(), $configSet.clkConfig.calculatedFreq.getValue()) &lt; ($parent.WOM.getValue() ? 10000000 : 40000000)" level="warning" description_expr="`The baud rate limit in ` + ($parent.WOM.getValue() ? `wired-or mode is 10 MHz` : `normal mode is 40 MHz`)"/>
+                   </validation>
+               </info>
+               <integer type="uint16_t" id="DS" label="Data size [bit]" min_expr="2" max_expr="16">
+                   <description>Sets the data size of a transaction.</description>
+                   <assign when="true">
+                       <register name="SPDSR"  bitfield="DS" value="$this.getValue() - 1 " reverse_value="x -> x + 1"/>
+                   </assign>
+               </integer>
+               <enum id="CPOL" label="Clock polarity" options="REGISTERS_REFRESH">
+                   <description>Configures the clock polarity.</description>
+                   <assign when="true">
+                       <register name="SPSCR" bitfield="CPOL" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="CPOL=0" value="0"><description>CPOL=0. Active-high QUEUEDSPI clock (idles low), rising edge of SCLK starts transaction.</description></item>
+                   <item id="1" label="CPOL=1" value="1"><description>CPOL=1. Active-low QUEUEDSPI clock (idles high), falling edge of SCLK starts transaction.</description></item>
+               </enum>
+               <enum id="CPHA" label="Clock phase" options="REGISTERS_REFRESH;UI_REFRESH">
+                   <description>
+Configures the clock phase.  
+For a *slave*:  
+- **CPHA=0** - the falling edge of SS_B indicates the beginning of the transaction.  
+- **CPHA=1** - the first edge of SCLK indicates the beginning of the transaction.  
+For a *master*:  
+- **CPHA=0** - the first SCLK edge is the MSB capture strobe supposing MSB is transmitted first.  
+- **CPHA=1** - MOSI pin begins being driven with new data on the first SCLK edge.  
+                   </description>
+                   <assign when="true">
+                       <register name="SPSCR" bitfield="CPHA" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="CPHA=0" value="0"><description expr="$configSet.spiMode.getValue()==`master` ? `The first SCLK edge is the MSB capture strobe supposing MSB is transmitted first.` : `The falling edge of SS_B indicates the beginning of the transaction.`"></description></item>
+                   <item id="1" label="CPHA=1" value="1"><description expr="$configSet.spiMode.getValue()==`master` ? `The MOSI pin begins being driven with new data on the first SCLK edge.` : `The first edge of SCLK indicates the beginning of the transaction.`"></description></item>
+               </enum>
+               <enum id="DSO" label="Data shift direction" options="REGISTERS_REFRESH">
+                   <description>
+Configures the data shifter direction options for a given CTAR.  
+*Note:* Both master and slave SPI modules must transmit and receive packets of the same length.
+                   </description>
+                   <assign when="true">
+                       <register name="SPSCR" bitfield="DSO" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="Most significant bit first (MSB)" value="0"><description>Data transfers start with most significant bit. MSB transmitted first (MSB -> LSB)</description></item>
+                   <item id="1" label="Least significant bit first (LSB)" value="1"><description>Data transfers start with least significant bit. LSB transmitted first (LSB -> MSB)</description></item>
+               </enum>
+               <integer type="uint16_t" id="WAIT" label="Delay between frames [bus clk]" min_expr="1" max_expr="2**13">
+                   <description>
+Configures the wait delay between data transactions. It sets the delay between words to be a number of Peripheral Bus Clocks equal to (WAIT + 1).  
+This delay is used only when a word is waiting to be transmitted at the completion of the transmission of the current word. 
+If no word is waiting to be transmitted, the SPI goes idle at the completion of the current transmission and 
+subsequently starts transmission immediately when a new word is written to the Data Transmit register.
+                   </description>
+                   <assign when="true">
+                       <register name="SPWAIT"  bitfield="WAIT" value="$this.getValue() - 1 " reverse_value="x -> x + 1"/>
+                   </assign>
+               </integer>
+               <info id="delayValue" label="Calculated delay time" value="system::calculatePeriod($parent.WAIT.getValue(),$configSet.clkConfig.calculatedFreq.getValue())">
+                   <description>Resulting delay between data transactions in time units</description>
+               </info>
+               <enum id="SHEN" label="Stop hold enable" options="REGISTERS_REFRESH" available="$configSet.spiMode.getValue()==`master`">
+                   <description>
+Configures the SPI module to hold off entry to chip level stop mode if a word is being transmitted or received.  
+Stop mode will be entered after the SPI finishes transmitting/receiving.  
+*Note:* This bit (SHEN) does not allow the SPI to wake the chip from stop mode in any way. SHEN can only delay the entry into stop mode.  
+*Note:* This bit should not be set in slave mode because the state of SS_B (which would be controlled by an external master device) 
+may cause the logic to hold off stop mode entry forever.  
+**Values:**  
+- **0** - Stop holdoff is disabled. Suspends current transfer when chip enters stop mode.   
+- **1** - Stop holdoff is enabled while the SPI is transmitting/receiving. Finishes current transfer when chip enters stop mode.   
+                   </description>
+                   <assign when="true">
+                       <register name="SPCTL2" bitfield="SHEN" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="Suspend current transfer when MCU enters stop mode" value="0"><description>Stop holdoff is disabled.</description></item>
+                   <item id="1" label="Finish current transfer when MCU enters stop mode" value="1"><description>Stop holdoff is enabled.</description></item>
+               </enum>
+               <bool id="WOM" label="Wired-OR mode" options="REGISTERS_REFRESH">
+                   <description>
+Configures the Wired-OR functionality which is provided to permit the connection of multiple SPIs by sharing of a single master device between multiple slave SPIs.
+The Wired-OR mode (WOM) control bit is used to select the nature of the SPI pins.  
+- **0** - the SPI pins are configured as *push-pull* drivers.  
+- **1** - the SPI pins are configured as *open-drain* drivers.  
+                   </description>
+                   <assign when="true">
+                       <register name="SPDSR" bitfield="WOM" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <bool id="TDMAEN" label="Tx DMA enable" options="REGISTERS_REFRESH">
+                   <description>Enable DMA control for transmit data</description>
+                   <assign when="true">
+                       <register name="SPDSR" bitfield="TDMAEN" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <bool id="RDMAEN" label="Rx DMA enable" options="REGISTERS_REFRESH">
+                   <description>Enable DMA control for receive data</description>
+                   <assign when="true">
+                       <register name="SPDSR" bitfield="RDMAEN" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <bool id="MODFEN" label="Mode fault enable" options="REGISTERS_REFRESH">
+                   <description>
+Configures the mode fault functionality.  
+Mode fault allows the *MODF* flag to be set. If the *MODF* flag is set, clearing the *Mode fault enable* (MODFEN) bit does not clear the *MODF* flag.
+If the *MODFEN* bit is low (disabled), the level of the *SS_B* pin does not affect the operation of an enabled SPI configured as a master.  
+If the SPI is configured as a **master** and *Mode fault* is enabled (MODFEN=1), a transaction in progress will stop if *SS_B* goes low.  
+If the SPI is configured as a **slave** and *Mode fault* is disabled it only prevents the *MODF* flag from being set. It does not affect any other part of SPI operation.  
+                   </description>
+                   <assign when="true">
+                       <register name="SPSCR" bitfield="MODFEN" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+           </struct>
+           <struct id="ss_control_t" label="SS_B control">
+               <description>Slave select control functions</description>
+               <validation>
+                   <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.spi_ss`"
+                       level="Warning" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`periheral slave select`, $instance.getPeripheral())">
+                       <feature name="routed">
+                           <data expr="true"/>
+                       </feature>
+                   </dependency>
+               </validation>
+               <enum id="SSB_AUTO" label="Signal generation mode" available="$configSet.spiMode.getValue()==`master`" enable="!$configSet.control.MODFEN.getValue()" options="REGISTERS_REFRESH">
+                   <description>
+Configures the manual or hardware control of the *SS_B pin* in master mode (the legacy design requires software to control the SS_B output pin).  
+The initial falling edge of SS_B is generated and SS_B is held low until the TX buffer or FIFO is empty.
+This bit may be used alone or in combination with *Strobe mode* (SS_STRB) to generate the required SS_B signal.  
+**Values:**  
+- **Manual** - SS_B output signal is software generated by directly manipulating the various bits in this register or the GPIO registers (compatible with legacy SPI software).  
+- **Automatic** - SS_B output signal is hardware generated to create the initial falling edge and final rising edge. The idle state of the SS_B is high.    
+*Restriction:* Do not use with enabled *Mode fault* (MODFEN = 1).  
+                   </description>
+                   <assign when="true">
+                       <register name="SPDSR" bitfield="SSB_AUTO" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="Manual" value="0"><description>SS_B output signal is software generated by directly manipulating the various bits in this register or the GPIO registers (compatible with legacy SPI software).</description></item>
+                   <item id="1" label="Automatic" value="1"><description>SS_B output signal is hardware generated to create the initial falling edge and final rising edge. The idle state of the SS_B is high.</description></item>
+               </enum>
+               <enum id="SSB_STRB" label="Strobe mode" options="REGISTERS_REFRESH" available="$configSet.spiMode.getValue()==`master`" enable="!$configSet.control.MODFEN.getValue()">
+                   <description>
+Configures the hardware pulse of the *SS_B pin* in master mode between words. This bit may be used alone or in combination with the *Signal generation mode* (SS_AUTO) to generate the required SS_B signal.
+Pulses are generated between words irrespective of the setting of *Clock phase* (CPHA).  
+**Values:**  
+- **0** - No SS_B pulse between words.  
+- **1** - SS_B output signal is pulsed high between words. This adds 1.5 baud clocks to the total word period.
+The idle state of SS_B is low unless *Signal generation mode* is selected as **Automatic** (SSB_AUTO=1) and then the idle state is high.  
+                   </description>
+                   <assign when="true">
+                       <register name="SPDSR" bitfield="SSB_STRB" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="Disable" value="0">
+                       <description>No SS_B pulse between words.</description>
+                   </item>
+                   <item id="1" label="Enable" value="1">
+                       <description>SS_B output signal is pulsed high between words. This adds 1.5 baud clocks to the total word period.
+                       The idle state of SS_B is low unless SSB_AUTO is high and then the idle state is high.
+                       </description>
+                   </item>
+               </enum>
+               <enum id="SSB_DDR" label="Pin direction" options="REGISTERS_REFRESH" available="$configSet.spiMode.getValue()==`master`">
+                   <description>Configures the the SS_B pin direction (input/output) in master mode.</description>
+                   <assign when="true">
+                       <register name="SPDSR" bitfield="SSB_DDR" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="Input" value="0"><description>SS_B is configured as an input pin. Use this setting in Slave mode or in Master mode with enabled Mode fault (MODFEN=1).</description></item>
+                   <item id="1" label="Output" value="1" available="$configSet.spiMode.getValue()!=`slave` &amp;&amp; !$configSet.control.MODFEN.getValue()"><description>SS_B is configured as an output pin. Use this setting in Master mode with disabled Mode fault (MODFEN=0).</description></item>
+               </enum>
+               <info id="pinDirection" label="Pin direction" value="`Input`" available="$configSet.spiMode.getValue()==`slave`">
+                   <description>The SS_B pin direction in slave mode is input.</description>
+               </info>
+               <enum id="SSB_DATA" label="Output pin signal" options="REGISTERS_REFRESH" available="$configSet.spiMode.getValue()==`master`" enable="!($parent.SSB_AUTO.getValue(`1`)==`1` || $parent.SSB_STRB.getValue()==`1` || $parent.SSB_DDR.getValue()==`0`)">
+                   <description>
+Configures the output signal to drive on the *SS_B pin*.  
+This bit is disabled when *Automatic signal generation mode* (SSB_AUTO=1) or *Strobe mode* (SSB_STRB=1) are enabled.</description>
+                   <assign when="true">
+                       <register name="SPDSR" bitfield="SSB_DATA" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="Low" value="0"><description>SS_B pin is driven low if Pin direction is configured as output (SSB_DDR=1)</description></item>
+                   <item id="1" label="High" value="1"><description>SS_B pin is driven high if Pin direction is configured as output (SSB_DDR=1)</description></item>
+               </enum>
+               <enum id="SSB_ODM" label="Open drain" options="REGISTERS_REFRESH" available="$configSet.spiMode.getValue()==`master`">
+                   <description>
+Configures the open drain mode on the SS_B pin in master mode.  
+**Values:**  
+- **Disable** - SS_B is configured for *high and low drive*. This mode is generally used in *single master systems*.  
+- **Enable** - SS_B is configured as an *open drain* pin (only drives low output level). This mode is useful for *multiple master systems*.  
+                   </description>
+                   <assign when="true">
+                       <register name="SPDSR" bitfield="SSB_ODM" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="Disable" value="0"><description>SS_B is configured for high and low drive. This mode is generally used in single master systems.</description></item>
+                   <item id="1" label="Enable" value="1"><description>SS_B is configured as an open drain pin (only drives low output level). This mode is useful for multiple master systems.</description></item>
+               </enum>
+               <bool id="SSB_OVER" label="SS_B override" options="REGISTERS_REFRESH" enable="$configSet.control.CPHA.getValue()!=`0`">
+                   <description>
+If enabled it overrides the internal SS_B signal input from the I/O pad and replaces it with a level equal to the setting of the SPMSTR bit (SPI mode setting).
+This allows the SPI to function in slave mode, when CPHA=1 (Clock phase), without commiting a GPIO pin to be tied low.  
+*Restriction:* This bit should not be used in multi-slave systems or when CPHA=0.  
+*Restriction:* This bit should not be used in a multi-master system because in master mode a mode fault error cannot be generated.  
+**Values:**  
+- **0** - SS_B internal module input is selected to be connected to a GPIO pin.  
+- **1** - SS_B internal module input is selected to be equal to SPMSTR (SPI mode).  
+                   </description>
+                   <assign when="true">
+                       <register name="SPDSR" bitfield="SSB_OVER" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <info id="overrideValue" label="SS_B signal value" value="$configSet.control.SPMSTR.getValue()" available="$parent.SSB_OVER.getValue()">
+                   <description>SS_B signal override value</description>
+               </info>
+           </struct>
+           <struct id="fifo_t">
+               <description>SPI FIFO control</description>
+               <bool id="FIFO_ENA" label="FIFO enable" options="REGISTERS_REFRESH">
+                   <description>Enable SPI FIFO control</description>
+                   <assign when="true">
+                       <register name="SPFIFO" bitfield="FIFO_ENA" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <enum id="TFWM" label="Tx FIFO watermark">
+                   <description>  
+Sets how many words must remain in the Tx FIFO before an interrupt is generated.  
+Increasing the value of Tx FIFO watermark (TFWM) increases the allowable latency in servicing the Tx interrupt without underrunning the Tx buffer space. 
+Larger values of TFWM may also increase the number of Tx interrupt service requests because the maximum number of Tx words may not be available when the
+service routine is activated. If TFWM is set to the minimum value then only one SPI word time in interrupt service latency is allowed before an underrun
+condition results and continuous transmission is stopped in master mode or the last data word is re-transmitted in slave mode.  
+This field is ignored when FIFO is disabled (FIFO_ENA = 0).  
+To clear an interrupt generated by TFWM, new words must be written to the data transmit register or the value of TFWM must be reduced.  
+                   </description>
+                   <assign when="true">
+                       <register name="SPFIFO" bitfield="TFWM" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="FIFO empty" value="0"><description>Transmit interrupt active when Tx FIFO is empty</description></item>
+                   <item id="1" label="1 or less words" value="1"><description>Transmit interrupt active when Tx FIFO has one or fewer words available</description></item>
+                   <item id="2" label="2 or less words" value="2"><description>Transmit interrupt active when Tx FIFO has two or fewer words available</description></item>
+                   <item id="3" label="3 or less words" value="3"><description>Transmit interrupt active when Tx FIFO has three or fewer words available</description></item>
+               </enum>
+               <enum id="RFWM" label="Rx FIFO watermark">
+                   <description>
+Sets how many words must be used in the Rx FIFO before an interrupt is generated. 
+Decreasing the value of Rx FIFO watermark (RFWM) increases the allowable latency in servicing the Rx interrupt without overrunning the Rx buffer space.
+Smaller values of RFWM may also increase the number of Rx interrupt service requests because the maximum number of Rx words may not have been used when the
+service routine is activated. If RFWM is set to the maximum value then only one SPI word time in interrupt service latency is allowed before an overrun 
+condition results and receive data is lost.   
+This field is ignored when FIFO is disabled (FIFO_ENA = 0).  
+To clear an interrupt generated by RFWM, words must be read from the data receive register or the value of RFWM must be increased. 
+                   </description>
+                   <assign when="true">
+                       <register name="SPFIFO" bitfield="RFWM" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="At least 1 word" value="0"><description>Receive interrupt active when Rx FIFO has at least one word used</description></item>
+                   <item id="1" label="At least 2 words" value="1"><description>Receive interrupt active when Rx FIFO has at least two words used</description></item>
+                   <item id="2" label="At least 3 words" value="2"><description>Receive interrupt active when Rx FIFO has at least three words used</description></item>
+                   <item id="3" label="FIFO full" value="3"><description>Receive interrupt active when Rx FIFO is full</description></item>
+               </enum>
+           </struct>
+       </user_types>
+       <settings>
+           <variable id="spiMode" value="$parent.control.SPMSTR.getValue()==`0` ? `slave` : `master`"></variable>
+           <reference type="clkConfig_t" id="clkConfig"></reference>
+           <reference type="control_t" id="control" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN"></reference>
+           <reference type="ss_control_t" id="ssControl"></reference>
+           <reference type="fifo_t" id="fifoConfig" label="FIFO configuration"></reference>
+           <set id="irqSources"  label="Interrupt sources" options="REGISTERS_REFRESH">
+               <description>Selects the interrupt request sources.</description>
+               <item id="SPTIE" label="Tx interrupt">
+                   <description>Enable transmit interrupt request</description>
+                   <assign when="true">
+                       <register name="SPSCR" bitfield="SPTIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </item>
+               <item id="SPRIE" label="Rx interrupt">
+                   <description>Enable receive interrupt request</description>
+                   <assign when="true">
+                       <register name="SPSCR" bitfield="SPRIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </item>
+               <item id="ERRIE" label="Error interrupt">
+                   <description>Enable error interrupt request. Mode fault (MODF) and overflow (OVRF) bits (flags) can generate device interrupt requests.</description>
+                   <assign when="true">
+                       <register name="SPSCR" bitfield="ERRIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </item>
+           </set>
+           <bool id="enable_tx_irq" label="Enable Tx interrupt vector" options="UI_LABEL_BOLD;REGISTERS_REFRESH">
+               <description>Enable transmit empty interrupt initialization, like priority and enablement in the INTC and SIM.</description>
+           </bool>
+           <reference id="interruptTx" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_tx_irq.getValue()" options="UI_LABEL_HIDDEN;irq_function=tx"/>
+           <bool id="enable_rx_irq" label="Enable Rx interrupt vector" options="UI_LABEL_BOLD;REGISTERS_REFRESH">
+               <description>Enable receive full and error interrupt initialization, like priority and enablement in the INTC and SIM.</description>
+           </bool>
+           <reference id="interruptRx" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_rx_irq.getValue()" options="UI_LABEL_HIDDEN;irq_function=rx"/>
+           <!-- Enable clock gate -->
+           <variable id="clockGate" value="1">                
+               <assign when="true"> 
+                   <register peripheral_expr="system::getInstanceClockGatePeripheral()" 
+                       name_expr="system::getInstanceClockGateRegister()" 
+                       bitfield_expr="system::getInstanceClockGateBitfield()" 
+                       value="system::getInstanceClockGateEnableValue()"/>
+               </assign>     
+           </variable> 
+           <!-- Software reset -->
+           <variable id="softwareReset" value="0">           
+               <assign when="true">
+                   <register peripheral_expr="system::getInstanceSwResetPeripheral()" name_expr="system::getInstanceSwResetRegister()" bitfield_expr="system::getInstanceSwResetBitfield()" value="system::getInstanceSwResetDisableValue()"/>              
+               </assign>
+           </variable>
+           <!-- Fragment variables -->
+           <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+           <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+           <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+           <!-- SIM template params -->
+           <struct id="qspi_params" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+               <variable id="PERIPHERAL" value="$instance.getPeripheral()"></variable>
+               <variable id="VPREFIX" value="$configSet.inst_ID_def.getValue()"></variable>
+               <!-- Software reset -->
+               <variable id="SW_RESET_CONTROL_PERIPHERAL" value="system::getInstanceSwResetPeripheral()"></variable>
+               <variable id="SW_RESET_CONTROL_REGISTER" value="system::getInstanceSwResetRegister()"></variable>
+               <variable id="SW_RESET_CONTROL_BITFIELD" value="system::getInstanceSwResetBitfield()"></variable>
+           </struct>
+       </settings>
+       <validation>
+           <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.spi_sck`"
+               level="Warning" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`serial clock`, $instance.getPeripheral())">
+               <feature name="routed">
+                   <data expr="true"/>
+               </feature>
+           </dependency>
+           <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.spi_miso`"
+               level="Warning" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`MISO`, $instance.getPeripheral())">
+               <feature name="routed">
+                   <data expr="true"/>
+               </feature>
+           </dependency>
+           <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.spi_mosi`"
+               level="Warning" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`MOSI`, $instance.getPeripheral())">
+               <feature name="routed">
+                   <data expr="true"/>
+               </feature>
+           </dependency>
+       </validation>
+       <fragment_defs>
+           <import>
+               <from component_id="system" config_set_id="common_code_templates"/>
+               <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+           </import>
+       </fragment_defs>
+       <code>
+           <section target="includes">
+               <fragment id="include">
+                   <param id="name">device_registers</param>
+                   <param id="filename">fsl_device_registers.h</param>
+               </fragment>
+           </section>
+           <section target="common_pre_init_function"> 
+               <!-- Clock gate enable --> 
+               <fragment id="clock_gate_enable_init"></fragment> 
+           </section>
+           <section target="defines">
+               <fragment id="IRQ_definitions" apply_to="$configSet.interruptTx" if_expr="$configSet.enable_tx_irq.getValue()"/>
+               <fragment id="IRQ_definitions" apply_to="$configSet.interruptRx" if_expr="$configSet.enable_rx_irq.getValue()"/>
+               <fragment id="all_assigned_regs_init">
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               </fragment>
+           </section> 
+           <section target="init_function_body">
+               <fragment id="template">
+                   <param id="file">queued_spi.template</param>
+                   <param id="setting" expr="$configSet.qspi_params"></param>
+                   <param id="separators"></param>
+                   <param id="description" expr="$configSet.inst_ID.getValue() + ` initialization`"></param>
+               </fragment>
+           </section>
+       </code>
+       <quick_selections>
+           <quick_selection id="default" label="Default">
+               <set id="control.SPMSTR">1</set>
+               <set id="enable_irq">false</set>
+               <set id="control.SPR">11</set>
+               <set id="control.DS">16</set>
+               <set id="control.CPHA">1</set>
+               <set id="control.WAIT">1</set>
+               <set id="ssControl.SSB_DATA">1</set>
+               <set id="fifoConfig.RFWM">3</set>
+           </quick_selection>
+           <default>default</default>
+       </quick_selections>
+   </config_set>
+</component:config_component>

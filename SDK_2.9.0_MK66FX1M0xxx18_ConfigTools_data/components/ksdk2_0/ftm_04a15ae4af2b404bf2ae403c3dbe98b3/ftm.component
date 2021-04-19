@@ -1,0 +1,1428 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-9.0.xsd"
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0" id="ftm" label="FTM" category="Peripheral driver">
+   <sw_comp_ref name="platform.drivers.ftm" version="2.1.0" match_type="compatible" until_version="2.2.3"/>
+   <description>FlexTimer Module (FTM)</description>
+   <mode id="EdgeAligned" label="Edge-Aligned Modes">
+      <description>Edge aligned mode initialization. It supports Input Capture, Dual-edge Capture, Output Compare, PWM, Combined PWM and Timer Period Interrupt modes.</description>
+      <config_set_refs>
+         <config_set_ref>ftm_main_config</config_set_ref>
+         <config_set_ref>ftm_edge_aligned_mode</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>FTM</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="CenterAligned" label="Center-aligned PWM Mode">
+      <description>Center aligned mode initialization</description>
+      <config_set_refs>
+         <config_set_ref>ftm_main_config</config_set_ref>
+         <config_set_ref>ftm_center_aligned_mode</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>FTM</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="QuadratureDecoder" label="Quadrature Decoder Mode">
+      <description>Quadrature decoder mode initialization</description>
+      <config_set_refs>
+         <config_set_ref>ftm_main_config</config_set_ref>
+         <config_set_ref>ftm_quadrature_decoder_mode</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>FTM</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <!-- ******************** -->
+   <!-- GENERATED CONFIG SET -->
+   <!-- ******************** -->
+   <config_set id="fsl_ftm" label="FlexTimer configuration" from_source="fsl_ftm.h">
+      <description>For generated types only</description>
+      <generated_types>
+            <enum id="ftm_chnl_t" label="List of FTM channels" from="_ftm_chnl">
+                <description>Actual number of available channels is SoC dependent</description>
+                <item id="kFTM_Chnl_0" label="FTM channel number 0"/>
+                <item id="kFTM_Chnl_1" label="FTM channel number 1"/>
+                <item id="kFTM_Chnl_2" label="FTM channel number 2"/>
+                <item id="kFTM_Chnl_3" label="FTM channel number 3"/>
+                <item id="kFTM_Chnl_4" label="FTM channel number 4"/>
+                <item id="kFTM_Chnl_5" label="FTM channel number 5"/>
+                <item id="kFTM_Chnl_6" label="FTM channel number 6"/>
+                <item id="kFTM_Chnl_7" label="FTM channel number 7"/>
+            </enum>
+            <enum id="ftm_fault_input_t" label="List of FTM faults" from="_ftm_fault_input">
+                <description></description>
+                <item id="kFTM_Fault_0" label="FTM fault 0 input pin"/>
+                <item id="kFTM_Fault_1" label="FTM fault 1 input pin"/>
+                <item id="kFTM_Fault_2" label="FTM fault 2 input pin"/>
+                <item id="kFTM_Fault_3" label="FTM fault 3 input pin"/>
+            </enum>
+            <enum id="ftm_pwm_mode_t" label="FTM PWM operation modes" from="_ftm_pwm_mode">
+                <description></description>
+                <item id="kFTM_EdgeAlignedPwm" label="Edge-aligned PWM"/>
+                <item id="kFTM_CenterAlignedPwm" label="Center-aligned PWM"/>
+                <item id="kFTM_CombinedPwm" label="Combined PWM"/>
+            </enum>
+            <enum id="ftm_pwm_level_select_t" label="FTM PWM output pulse mode: high-true, low-true or no output" from="_ftm_pwm_level_select">
+                <description></description>
+                <item id="kFTM_NoPwmSignal" label="No PWM output on pin"/>
+                <item id="kFTM_LowTrue" label="Low true pulses"/>
+                <item id="kFTM_HighTrue" label="High true pulses"/>
+            </enum>
+            <struct id="ftm_chnl_pwm_signal_param_t" label="Options to configure a FTM channel&apos;s PWM signal" from="_ftm_chnl_pwm_signal_param">
+                <description></description>
+                <reference id="chnlNumber" label="The channel/channel pair number" type="ftm_chnl_t">
+                    <description>The channel/channel pair number. In combined mode, this represents the channel pair number.</description>
+                </reference>
+                <reference id="level" label="PWM output active level select" type="ftm_pwm_level_select_t">
+                    <description>PWM output active level select.</description>
+                </reference>
+                <integer id="dutyCyclePercent" label="PWM pulse width, value should be between 0 to 100 0 = inactive signal(0% duty cycle)... 100 = always active signal (100% duty cycle)" type="uint8_t">
+                    <description>PWM pulse width, value should be between 0 to 100 0 = inactive signal(0% duty cycle)... 100 = always active signal (100% duty cycle).</description>
+                </integer>
+                <integer id="firstEdgeDelayPercent" label="Used only in combined PWM mode to generate an asymmetrical PWM" type="uint8_t">
+                    <description>Used only in combined PWM mode to generate an asymmetrical PWM. Specifies the delay to the first edge in a PWM period. If unsure leave as 0; Should be specified as a percentage of the PWM period</description>
+                </integer>
+            </struct>
+            <struct id="ftm_chnl_pwm_config_param_t" label="Options to configure a FTM channel using precise setting" from="_ftm_chnl_pwm_config_param">
+                <description></description>
+                <reference id="chnlNumber" label="The channel/channel pair number" type="ftm_chnl_t">
+                    <description>The channel/channel pair number. In combined mode, this represents the channel pair number.</description>
+                </reference>
+                <reference id="level" label="PWM output active level select" type="ftm_pwm_level_select_t">
+                    <description>PWM output active level select.</description>
+                </reference>
+                <integer id="dutyValue" label="PWM pulse width, the uint of this value is timer ticks" type="uint16_t">
+                    <description>PWM pulse width, the uint of this value is timer ticks.</description>
+                </integer>
+                <integer id="firstEdgeValue" label="Used only in combined PWM mode to generate an asymmetrical PWM" type="uint16_t">
+                    <description>Used only in combined PWM mode to generate an asymmetrical PWM. Specifies the delay to the first edge in a PWM period. If unsure leave as 0, uint of this value is timer ticks.</description>
+                </integer>
+            </struct>
+            <enum id="ftm_output_compare_mode_t" label="FlexTimer output compare mode" from="_ftm_output_compare_mode">
+                <description></description>
+                <item id="kFTM_NoOutputSignal" label="No channel output when counter reaches CnV"/>
+                <item id="kFTM_ToggleOnMatch" label="Toggle output"/>
+                <item id="kFTM_ClearOnMatch" label="Clear output"/>
+                <item id="kFTM_SetOnMatch" label="Set output"/>
+            </enum>
+            <enum id="ftm_input_capture_edge_t" label="FlexTimer input capture edge" from="_ftm_input_capture_edge">
+                <description></description>
+                <item id="kFTM_RisingEdge" label="Capture on rising edge only"/>
+                <item id="kFTM_FallingEdge" label="Capture on falling edge only"/>
+                <item id="kFTM_RiseAndFallEdge" label="Capture on rising or falling edge"/>
+            </enum>
+            <enum id="ftm_dual_edge_capture_mode_t" label="FlexTimer dual edge capture modes" from="_ftm_dual_edge_capture_mode">
+                <description></description>
+                <item id="kFTM_OneShot" label="One-shot capture mode"/>
+                <item id="kFTM_Continuous" label="Continuous capture mode"/>
+            </enum>
+            <struct id="ftm_dual_edge_capture_param_t" label="FlexTimer dual edge capture parameters" from="_ftm_dual_edge_capture_param">
+                <description></description>
+                <reference id="mode" label="Dual Edge Capture mode" type="ftm_dual_edge_capture_mode_t">
+                    <description>Dual Edge Capture mode</description>
+                </reference>
+                <reference id="currChanEdgeMode" label="Input capture edge select for channel n" type="ftm_input_capture_edge_t">
+                    <description>Input capture edge select for channel n</description>
+                </reference>
+                <reference id="nextChanEdgeMode" label="Input capture edge select for channel n+1" type="ftm_input_capture_edge_t">
+                    <description>Input capture edge select for channel n+1</description>
+                </reference>
+            </struct>
+            <enum id="ftm_quad_decode_mode_t" label="FlexTimer quadrature decode modes" from="_ftm_quad_decode_mode">
+                <description></description>
+                <item id="kFTM_QuadPhaseEncode" label="Phase A and Phase B encoding mode"/>
+                <item id="kFTM_QuadCountAndDir" label="Count and direction encoding mode"/>
+            </enum>
+            <enum id="ftm_phase_polarity_t" label="FlexTimer quadrature phase polarities" from="_ftm_phase_polarity">
+                <description></description>
+                <item id="kFTM_QuadPhaseNormal" label="Phase input signal is not inverted"/>
+                <item id="kFTM_QuadPhaseInvert" label="Phase input signal is inverted"/>
+            </enum>
+            <struct id="ftm_phase_params_t" label="FlexTimer quadrature decode phase parameters" from="_ftm_phase_param">
+                <description></description>
+                <bool id="enablePhaseFilter" label="True: enable phase filter; false: disable filter">
+                    <description>True: enable phase filter; false: disable filter</description>
+                </bool>
+                <integer id="phaseFilterVal" label="Filter value, used only if phase filter is enabled" type="uint32_t">
+                    <description>Filter value, used only if phase filter is enabled</description>
+                </integer>
+                <reference id="phasePolarity" label="Phase polarity" type="ftm_phase_polarity_t">
+                    <description>Phase polarity</description>
+                </reference>
+            </struct>
+            <struct id="ftm_fault_param_t" label="Structure is used to hold the parameters to configure a FTM fault" from="_ftm_fault_param">
+                <description></description>
+                <bool id="enableFaultInput" label="True: Fault input is enabled; false: Fault input is disabled">
+                    <description>True: Fault input is enabled; false: Fault input is disabled</description>
+                </bool>
+                <bool id="faultLevel" label="True: Fault polarity is active low; in other words, &apos;0&apos; indicates a fault; False: Fault polarity is active high">
+                    <description>True: Fault polarity is active low; in other words, &apos;0&apos; indicates a fault; False: Fault polarity is active high</description>
+                </bool>
+                <bool id="useFaultFilter" label="True: Use the filtered fault signal; False: Use the direct path from fault input">
+                    <description>True: Use the filtered fault signal; False: Use the direct path from fault input</description>
+                </bool>
+            </struct>
+            <enum id="ftm_deadtime_prescale_t" label="FlexTimer pre-scaler factor for the dead time insertion" from="_ftm_deadtime_prescale">
+                <description></description>
+                <item id="kFTM_Deadtime_Prescale_1" label="Divide by 1"/>
+                <item id="kFTM_Deadtime_Prescale_4" label="Divide by 4"/>
+                <item id="kFTM_Deadtime_Prescale_16" label="Divide by 16"/>
+            </enum>
+            <enum id="ftm_clock_source_t" label="FlexTimer clock source selection" from="_ftm_clock_source">
+                <description></description>
+                <item id="kFTM_SystemClock" label="System clock selected"/>
+                <item id="kFTM_FixedClock" label="Fixed frequency clock"/>
+                <item id="kFTM_ExternalClock" label="External clock"/>
+            </enum>
+            <enum id="ftm_clock_prescale_t" label="FlexTimer pre-scaler factor selection for the clock source" from="_ftm_clock_prescale">
+                <description></description>
+                <item id="kFTM_Prescale_Divide_1" label="Divide by 1"/>
+                <item id="kFTM_Prescale_Divide_2" label="Divide by 2"/>
+                <item id="kFTM_Prescale_Divide_4" label="Divide by 4"/>
+                <item id="kFTM_Prescale_Divide_8" label="Divide by 8"/>
+                <item id="kFTM_Prescale_Divide_16" label="Divide by 16"/>
+                <item id="kFTM_Prescale_Divide_32" label="Divide by 32"/>
+                <item id="kFTM_Prescale_Divide_64" label="Divide by 64"/>
+                <item id="kFTM_Prescale_Divide_128" label="Divide by 128"/>
+            </enum>
+            <enum id="ftm_bdm_mode_t" label="Options for the FlexTimer behaviour in BDM Mode" from="_ftm_bdm_mode">
+                <description></description>
+                <item id="kFTM_BdmMode_0" label="FTM counter stopped, CH(n)F bit can be set, FTM channels in functional mode, writes to MOD,CNTIN and C(n)V registers bypass the register buffers"/>
+                <item id="kFTM_BdmMode_1" label="FTM counter stopped, CH(n)F bit is not set, FTM channels outputs are forced to their safe value , writes to MOD,CNTIN and C(n)V registers bypass the register buffers"/>
+                <item id="kFTM_BdmMode_2" label="FTM counter stopped, CH(n)F bit is not set, FTM channels outputs are frozen when chip enters in BDM mode, writes to MOD,CNTIN and C(n)V registers bypass the register buffers"/>
+                <item id="kFTM_BdmMode_3" label="FTM counter in functional mode, CH(n)F bit can be set, FTM channels in functional mode, writes to MOD,CNTIN and C(n)V registers is in fully functional mode"/>
+            </enum>
+            <enum id="ftm_fault_mode_t" label="Options for the FTM fault control mode" from="_ftm_fault_mode">
+                <description></description>
+                <item id="kFTM_Fault_Disable" label="Fault control is disabled for all channels"/>
+                <item id="kFTM_Fault_EvenChnls" label="Enabled for even channels only(0,2,4,6) with manual fault clearing"/>
+                <item id="kFTM_Fault_AllChnlsMan" label="Enabled for all channels with manual fault clearing"/>
+                <item id="kFTM_Fault_AllChnlsAuto" label="Enabled for all channels with automatic fault clearing"/>
+            </enum>
+            <enum id="ftm_external_trigger_t" label="FTM external trigger options" from="_ftm_external_trigger">
+                <description>Actual available external trigger sources are SoC-specific</description>
+                <item id="kFTM_Chnl0Trigger" label="Generate trigger when counter equals chnl 0 CnV reg"/>
+                <item id="kFTM_Chnl1Trigger" label="Generate trigger when counter equals chnl 1 CnV reg"/>
+                <item id="kFTM_Chnl2Trigger" label="Generate trigger when counter equals chnl 2 CnV reg"/>
+                <item id="kFTM_Chnl3Trigger" label="Generate trigger when counter equals chnl 3 CnV reg"/>
+                <item id="kFTM_Chnl4Trigger" label="Generate trigger when counter equals chnl 4 CnV reg"/>
+                <item id="kFTM_Chnl5Trigger" label="Generate trigger when counter equals chnl 5 CnV reg"/>
+                <item id="kFTM_Chnl6Trigger" label="Available on certain SoC&apos;s, generate trigger when counter equals chnl 6 CnV reg" available="(featureDefined(`FSL_FEATURE_FTM_HAS_CHANNEL6_TRIGGER`) &amp;&amp; getFeature(`FSL_FEATURE_FTM_HAS_CHANNEL6_TRIGGER`))"/>
+                <item id="kFTM_Chnl7Trigger" label="Available on certain SoC&apos;s, generate trigger when counter equals chnl 7 CnV reg" available="(featureDefined(`FSL_FEATURE_FTM_HAS_CHANNEL6_TRIGGER`) &amp;&amp; getFeature(`FSL_FEATURE_FTM_HAS_CHANNEL6_TRIGGER`))"/>
+                <item id="kFTM_InitTrigger" label="Generate Trigger when counter is updated with CNTIN"/>
+                <item id="kFTM_ReloadInitTrigger" label="Available on certain SoC&apos;s, trigger on reload point"/>
+            </enum>
+            <enum id="ftm_pwm_sync_method_t" label="FlexTimer PWM sync options to update registers with buffer" from="_ftm_pwm_sync_method">
+                <description></description>
+                <item id="kFTM_SoftwareTrigger" label="Software triggers PWM sync"/>
+                <item id="kFTM_HardwareTrigger_0" label="Hardware trigger 0 causes PWM sync"/>
+                <item id="kFTM_HardwareTrigger_1" label="Hardware trigger 1 causes PWM sync"/>
+                <item id="kFTM_HardwareTrigger_2" label="Hardware trigger 2 causes PWM sync"/>
+            </enum>
+            <enum id="ftm_reload_point_t" label="FTM options available as loading point for register reload" from="_ftm_reload_point">
+                <description>Actual available reload points are SoC-specific</description>
+                <item id="kFTM_Chnl0Match" label="Channel 0 match included as a reload point"/>
+                <item id="kFTM_Chnl1Match" label="Channel 1 match included as a reload point"/>
+                <item id="kFTM_Chnl2Match" label="Channel 2 match included as a reload point"/>
+                <item id="kFTM_Chnl3Match" label="Channel 3 match included as a reload point"/>
+                <item id="kFTM_Chnl4Match" label="Channel 4 match included as a reload point"/>
+                <item id="kFTM_Chnl5Match" label="Channel 5 match included as a reload point"/>
+                <item id="kFTM_Chnl6Match" label="Channel 6 match included as a reload point"/>
+                <item id="kFTM_Chnl7Match" label="Channel 7 match included as a reload point"/>
+                <item id="kFTM_CntMax" label="Use in up-down count mode only, reload when counter reaches the maximum value"/>
+                <item id="kFTM_CntMin" label="Use in up-down count mode only, reload when counter reaches the minimum value"/>
+                <item id="kFTM_HalfCycMatch" label="Available on certain SoC&apos;s, half cycle match reload point"/>
+            </enum>
+            <enum id="ftm_interrupt_enable_t" label="List of FTM interrupts" from="_ftm_interrupt_enable">
+                <description>Actual available interrupts are SoC-specific</description>
+                <item id="kFTM_Chnl0InterruptEnable" label="Channel 0 interrupt"/>
+                <item id="kFTM_Chnl1InterruptEnable" label="Channel 1 interrupt"/>
+                <item id="kFTM_Chnl2InterruptEnable" label="Channel 2 interrupt"/>
+                <item id="kFTM_Chnl3InterruptEnable" label="Channel 3 interrupt"/>
+                <item id="kFTM_Chnl4InterruptEnable" label="Channel 4 interrupt"/>
+                <item id="kFTM_Chnl5InterruptEnable" label="Channel 5 interrupt"/>
+                <item id="kFTM_Chnl6InterruptEnable" label="Channel 6 interrupt"/>
+                <item id="kFTM_Chnl7InterruptEnable" label="Channel 7 interrupt"/>
+                <item id="kFTM_FaultInterruptEnable" label="Fault interrupt"/>
+                <item id="kFTM_TimeOverflowInterruptEnable" label="Time overflow interrupt"/>
+                <item id="kFTM_ReloadInterruptEnable" label="Reload interrupt; Available only on certain SoC&apos;s"/>
+            </enum>
+            <enum id="ftm_status_flags_t" label="List of FTM flags" from="_ftm_status_flags">
+                <description>Actual available flags are SoC-specific</description>
+                <item id="kFTM_Chnl0Flag" label="Channel 0 Flag"/>
+                <item id="kFTM_Chnl1Flag" label="Channel 1 Flag"/>
+                <item id="kFTM_Chnl2Flag" label="Channel 2 Flag"/>
+                <item id="kFTM_Chnl3Flag" label="Channel 3 Flag"/>
+                <item id="kFTM_Chnl4Flag" label="Channel 4 Flag"/>
+                <item id="kFTM_Chnl5Flag" label="Channel 5 Flag"/>
+                <item id="kFTM_Chnl6Flag" label="Channel 6 Flag"/>
+                <item id="kFTM_Chnl7Flag" label="Channel 7 Flag"/>
+                <item id="kFTM_FaultFlag" label="Fault Flag"/>
+                <item id="kFTM_TimeOverflowFlag" label="Time overflow Flag"/>
+                <item id="kFTM_ChnlTriggerFlag" label="Channel trigger Flag"/>
+                <item id="kFTM_ReloadFlag" label="Reload Flag; Available only on certain SoC&apos;s"/>
+            </enum>
+            <struct id="ftm_config_t" label="FTM configuration structure" from="_ftm_config">
+                <description>This structure holds the configuration settings for the FTM peripheral. To initialize this structure to reasonable defaults, call the FTM_GetDefaultConfig() function and pass a pointer to the configuration structure instance.The configuration structure can be made constant so as to reside in flash.</description>
+                <reference id="prescale" label="FTM clock prescale value" type="ftm_clock_prescale_t">
+                    <description>FTM clock prescale value</description>
+                </reference>
+                <reference id="bdmMode" label="FTM behavior in BDM mode" type="ftm_bdm_mode_t">
+                    <description>FTM behavior in BDM mode</description>
+                </reference>
+                <integer id="pwmSyncMode" label="Synchronization methods to use to update buffered registers; Multiple update modes can be used by providing an OR&apos;ed list of options available in enumeration ftm_pwm_sync_method_t" type="uint32_t">
+                    <description>Synchronization methods to use to update buffered registers; Multiple update modes can be used by providing an OR&apos;ed list of options available in enumeration ftm_pwm_sync_method_t.</description>
+                </integer>
+                <integer id="reloadPoints" label="FTM reload points; When using this, the PWM synchronization is not required" type="uint32_t">
+                    <description>FTM reload points; When using this, the PWM synchronization is not required. Multiple reload points can be used by providing an OR&apos;ed list of options available in enumeration ftm_reload_point_t.</description>
+                </integer>
+                <reference id="faultMode" label="FTM fault control mode" type="ftm_fault_mode_t">
+                    <description>FTM fault control mode</description>
+                </reference>
+                <integer id="faultFilterValue" label="Fault input filter value" type="uint8_t">
+                    <description>Fault input filter value</description>
+                </integer>
+                <reference id="deadTimePrescale" label="The dead time prescalar value" type="ftm_deadtime_prescale_t">
+                    <description>The dead time prescalar value</description>
+                </reference>
+                <integer id="deadTimeValue" label="The dead time value deadTimeValue&apos;s available range is 0-1023 when register has DTVALEX, otherwise its available range is 0-63" type="uint32_t">
+                    <description>The dead time value deadTimeValue&apos;s available range is 0-1023 when register has DTVALEX, otherwise its available range is 0-63.</description>
+                </integer>
+                <integer id="extTriggers" label="External triggers to enable" type="uint32_t">
+                    <description>External triggers to enable. Multiple trigger sources can be enabled by providing an OR&apos;ed list of options available in enumeration ftm_external_trigger_t.</description>
+                </integer>
+                <integer id="chnlInitState" label="Defines the initialization value of the channels in OUTINT register" type="uint8_t">
+                    <description>Defines the initialization value of the channels in OUTINT register</description>
+                </integer>
+                <integer id="chnlPolarity" label="Defines the output polarity of the channels in POL register" type="uint8_t">
+                    <description>Defines the output polarity of the channels in POL register</description>
+                </integer>
+                <bool id="useGlobalTimeBase" label="True: Use of an external global time base is enabled; False: disabled">
+                    <description>True: Use of an external global time base is enabled; False: disabled</description>
+                </bool>
+            </struct>
+        </generated_types>
+      <user_types>
+      </user_types>
+      <settings>
+      </settings>
+      <quick_selections>
+      </quick_selections>
+   </config_set>
+   <!-- *************************** -->
+   <!-- END OF GENERATED CONFIG SET -->
+   <!-- *************************** -->
+   <config_set id="ftm_main_config" label="FTM general configuration" from_source="fsl_ftm.h">
+      <description>FlexTimer general configuration (without channels)</description>
+      <generated_types>
+      </generated_types>
+      <user_types>
+         <set id="ftm_pwm_sync_method_t" label="FlexTimer PWM sync options to update registers with buffer.">
+            <item id="kFTM_SoftwareTrigger" label="Software triggers PWM sync"/>
+            <item id="kFTM_HardwareTrigger_0" label="Hardware trigger 0 causes PWM sync"/>
+            <item id="kFTM_HardwareTrigger_1" label="Hardware trigger 1 causes PWM sync"/>
+            <item id="kFTM_HardwareTrigger_2" label="Hardware trigger 2 causes PWM sync"/>
+         </set>
+         <set id="ftm_external_trigger_t" label="FTM external trigger options.">
+            <description>Actual available external trigger sources are SoC-specific</description>
+            <item id="kFTM_Chnl0Trigger" label="Counter equals chnl 0 CnV reg"/>
+            <item id="kFTM_Chnl1Trigger" label="Counter equals chnl 1 CnV reg"/>
+            <item id="kFTM_Chnl2Trigger" label="Counter equals chnl 2 CnV reg"/>
+            <item id="kFTM_Chnl3Trigger" label="Counter equals chnl 3 CnV reg"/>
+            <item id="kFTM_Chnl4Trigger" label="Counter equals chnl 4 CnV reg"/>
+            <item id="kFTM_Chnl5Trigger" label="Counter equals chnl 5 CnV reg"/>
+            <item id="kFTM_Chnl6Trigger" label="Counter equals chnl 6 CnV reg" available="(featureDefined(`FSL_FEATURE_FTM_HAS_CHANNEL6_TRIGGER`) &amp;&amp; getFeature(`FSL_FEATURE_FTM_HAS_CHANNEL6_TRIGGER`))"/>
+            <item id="kFTM_Chnl7Trigger" label="Counter equals chnl 7 CnV reg" available="(featureDefined(`FSL_FEATURE_FTM_HAS_CHANNEL7_TRIGGER`) &amp;&amp; getFeature(`FSL_FEATURE_FTM_HAS_CHANNEL7_TRIGGER`))"/>
+            <item id="kFTM_InitTrigger" label="Trigger when counter is updated with CNTIN"/>
+            <item id="kFTM_ReloadInitTrigger" label="Trigger on reload point" available="featureDefined(`FSL_FEATURE_FTM_HAS_RELOAD_INITIALIZATION_TRIGGER`) &amp;&amp; getFeature(`FSL_FEATURE_FTM_HAS_RELOAD_INITIALIZATION_TRIGGER`)"/>
+         </set>
+         <set id="ftm_interrupt_enable_t" label="List of FTM interrupts.">
+            <description>Actual available interrupts are SoC-specific</description>
+<!--        The channel interrupts settings is a part of the channels' configuration    
+            <item id="kFTM_Chnl0InterruptEnable" label="Channel 0 interrupt"/>
+            <item id="kFTM_Chnl1InterruptEnable" label="Channel 1 interrupt"/>
+            <item id="kFTM_Chnl2InterruptEnable" label="Channel 2 interrupt"/>
+            <item id="kFTM_Chnl3InterruptEnable" label="Channel 3 interrupt"/>
+            <item id="kFTM_Chnl4InterruptEnable" label="Channel 4 interrupt"/>
+            <item id="kFTM_Chnl5InterruptEnable" label="Channel 5 interrupt"/>
+            <item id="kFTM_Chnl6InterruptEnable" label="Channel 6 interrupt"/>
+            <item id="kFTM_Chnl7InterruptEnable" label="Channel 7 interrupt"/>-->
+            <item id="kFTM_FaultInterruptEnable" label="Fault interrupt"/>
+            <item id="kFTM_TimeOverflowInterruptEnable" label="Time overflow interrupt"/>
+            <item id="kFTM_ReloadInterruptEnable" label="Reload interrupt" available="featureDefined(`FSL_FEATURE_FTM_HAS_RELOAD_INTERRUPT`) &amp;&amp; getFeature(`FSL_FEATURE_FTM_HAS_RELOAD_INTERRUPT`)"/>
+         </set>
+         <set id="ftm_reload_point_t" label="FTM options available as loading point for register reload.">
+            <description>Actual available reload points are SoC-specific</description>
+            <item id="kFTM_Chnl0Match" label="Channel 0 match"/>
+            <item id="kFTM_Chnl1Match" label="Channel 1 match" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 1"/>
+            <item id="kFTM_Chnl2Match" label="Channel 2 match" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 2"/>
+            <item id="kFTM_Chnl3Match" label="Channel 3 match" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 3"/>
+            <item id="kFTM_Chnl4Match" label="Channel 4 match" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 4"/>
+            <item id="kFTM_Chnl5Match" label="Channel 5 match" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 5"/>
+            <item id="kFTM_Chnl6Match" label="Channel 6 match" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 6"/>
+            <item id="kFTM_Chnl7Match" label="Channel 7 match" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 7"/>
+            <item id="kFTM_CntMax" label="Counter reaches the maximum value (in up-down count mode)"/>
+            <item id="kFTM_CntMin" label="Counter reaches the minimum value (in up-down count mode)"/>
+            <item id="kFTM_HalfCycMatch" label="Half cycle match" available="featureDefined(`FSL_FEATURE_FTM_HAS_HALFCYCLE_RELOAD`) &amp;&amp; getFeature(`FSL_FEATURE_FTM_HAS_HALFCYCLE_RELOAD`)"/>
+         </set>
+         <set id="ftm_init_output_value_t" label="FTM output initialization value set.">
+            <description>Output initiliazation values for FTM channels</description>
+            <item id="kFTM_Chnl0OutInitHighLevel" label="Channel 0 set to 1" value="1"/>
+            <item id="kFTM_Chnl1OutInitHighLevel" label="Channel 1 set to 1" value="2" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 1"/>
+            <item id="kFTM_Chnl2OutInitHighLevel" label="Channel 2 set to 1" value="4" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 2"/>
+            <item id="kFTM_Chnl3OutInitHighLevel" label="Channel 3 set to 1" value="8" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 3"/>
+            <item id="kFTM_Chnl4OutInitHighLevel" label="Channel 4 set to 1" value="16" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 4"/>
+            <item id="kFTM_Chnl5OutInitHighLevel" label="Channel 5 set to 1" value="32" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 5"/>
+            <item id="kFTM_Chnl6OutInitHighLevel" label="Channel 6 set to 1" value="64" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 6"/>
+            <item id="kFTM_Chnl7OutInitHighLevel" label="Channel 7 set to 1" value="128" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 7"/>
+         </set>
+         <set id="ftm_output_polarity_t" label="FTM output polarity set.">
+            <description>Output polarity of FTM channels. When selected the negative polarity (active low) is set.</description>
+            <item id="kFTM_Chnl0OutActiveLow" label="Channel 0 active low" value="1"/>
+            <item id="kFTM_Chnl1OutActiveLow" label="Channel 1 active low" value="2" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 1"/>
+            <item id="kFTM_Chnl2OutActiveLow" label="Channel 2 active low" value="4" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 2"/>
+            <item id="kFTM_Chnl3OutActiveLow" label="Channel 3 active low" value="8" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 3"/>
+            <item id="kFTM_Chnl4OutActiveLow" label="Channel 4 active low" value="16" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 4"/>
+            <item id="kFTM_Chnl5OutActiveLow" label="Channel 5 active low" value="32" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 5"/>
+            <item id="kFTM_Chnl6OutActiveLow" label="Channel 6 active low" value="64" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 6"/>
+            <item id="kFTM_Chnl7OutActiveLow" label="Channel 7 active low" value="128" available="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; getFeature(`FTM_CHANNEL_COUNT`).toInt() > 7"/>
+         </set>
+         <enum id="ftm_clock_source_t" label="FlexTimer clock source selection." from="_ftm_clock_source">
+            <item id="kFTM_SystemClock" label="System clock selected" value="BusInterfaceClock"/> <!-- value = clock_unify_ID -->
+            <item id="kFTM_FixedClock" label="Fixed frequency clock" value="FixedClock"/>
+            <item id="kFTM_ExternalClock" label="External clock" value="ExternalClock"/>
+         </enum>
+         <!-- The FTM timer main configuration structure -->
+         <struct id="ftm_config_t" label="FTM configuration structure." from="_ftm_config">
+            <description>This structure holds the configuration settings for the FTM peripheral. To initialize this structure to reasonable defaults, call the FTM_GetDefaultConfig() function and pass a pointer to the configuration structure instance. The configuration structure can be made constant so as to reside in flash.</description>
+            <reference id="_clockSource" label="Clock source" type="ftm_clock_source_t" options="remove_from_struct_init" available="false"/> <!-- item used for clockSource dynamic enum implementation only -->
+            <variable id="clockSourceUId" value="$parent.clockSource.getEnumItemValue()" available="$instance.getMode() != `QuadratureDecoder`"/>
+            <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="enumItemsOf($parent._clockSource).arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> enumItem.getID(),
+               enumItem -> getPeripheralClock($instance.getPeripheral(), enumItem.getValue()),
+               enumItem -> enumItem.getValue())" available="$instance.getMode() != `QuadratureDecoder`">
+               <description>FTM timer clock source selection.</description>
+               <validation>
+                  <dependency when_expr="$this.getEnumItemValue() == `ExternalClock`" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.` + getPeripheralClockSignal($instance.getPeripheral(), $this.getEnumItemValue())" description_expr="`External clock source signal ` +  getPeripheralClock($instance.getPeripheral(), $this.getEnumItemValue()) + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.clockSourceUId.getValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() == `GetFreq`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Warning">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.clockSourceUId.getValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" available="(!($parent.clockSource.getEnumItemValue() == `ExternalClock`))  &amp;&amp; ($instance.getMode() != `QuadratureDecoder`)" 
+               items="createArray().addItemToList(`GetFreq`,`Runtime calculation by CLOCK_GetFreq()`,`GetFreq`,($parent.clockSource.getValue() == `kFTM_SystemClock`) || (getPeripheralClockSignal($instance.getPeripheral(), `FixedClock`) == `MCGFFCLK`) || (getPeripheralClockSignal($instance.getPeripheral(), `FixedClock`) == `FTMFFCLK`) || (getPeripheralClockSignal($instance.getPeripheral(), `FixedClock`) == `SOSCER_CLK`) || (getPeripheralClockSignal($instance.getPeripheral(), `FixedClock`) == `ICSFF_clock`) || (getPeripheralClockSignal($instance.getPeripheral(), `FixedClock`).regexMatch(`PCC.PCC_FTM(\d?)_CLK`))).merge(getClockFunctionalGroups().arrayToEnumItems(
+                  enumItem -> true,
+                  enumItem -> enumItem,
+                  enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemValue(), enumItem)) + ` (` + enumItem + `)`,
+                  enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemValue(), enumItem)))" >
+               <description>Selection of the clock source frequency</description>
+               <validation>
+                  <constraint cond_expr="($this.getEnumItemValue() == `GetFreq`) || (($this.getEnumItemValue().isFreq()) &amp;&amp; ($this.getEnumItemValue().toHertz() != 0))" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+                  <constraint when_expr="$this.getEnumItemValue() == `GetFreq`" cond_expr="$parent.frequencyValue.getValue() != `N/A`" level="error" description="The runtime calculation by CLOCK_GetFreq() is not supported for the selected value of the Clock source on this MCU."/>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+            </dynamic_enum> 
+            <variable id="frequencyValue" value="($parent.clockSourceFreq.getEnumItemId() == `GetFreq`) ? 
+               (($parent.clockSource.getEnumItemId() == `kFTM_SystemClock`) ?
+                  ((getPeripheralClockSignal($instance.getPeripheral(), `BusInterfaceClock`) == `System_clock`) 
+                  ? `CLOCK_GetFreq(kCLOCK_CoreSysClk)` 
+                  : (getPeripheralClockSignal($instance.getPeripheral(), `BusInterfaceClock`) == `Timer_clock`)
+                  ? `CLOCK_GetFreq(kCLOCK_TimerClk)` 
+                  : (getPeripheralClockSignal($instance.getPeripheral(), `BusInterfaceClock`) == `Bus_clock`) 
+                  ? `CLOCK_GetFreq(kCLOCK_BusClk)`
+                  : `N/A`)
+               : ((getPeripheralClockSignal($instance.getPeripheral(), `FixedClock`) == `MCGFFCLK`) || (getPeripheralClockSignal($instance.getPeripheral(), `FixedClock`) == `FTMFFCLK`) 
+                  ? `CLOCK_GetFreq(kCLOCK_McgFixedFreqClk)`
+                  : (getPeripheralClockSignal($instance.getPeripheral(), `FixedClock`) == `SOSCER_CLK`) 
+                  ? `CLOCK_GetFreq(kCLOCK_ErClk)`
+                  : (getPeripheralClockSignal($instance.getPeripheral(), `FixedClock`) == `ICSFF_clock`)
+                  ? `CLOCK_GetFreq(kCLOCK_ICSFixedFreqClk)`
+                  : (getPeripheralClockSignal($instance.getPeripheral(), `FixedClock`).regexMatch(`PCC.PCC_FTM(\d?)_CLK`))
+                  ? `CLOCK_GetIpFreq(kCLOCK_Ftm` + getPeripheralClockSignal($instance.getPeripheral(), `FixedClock`).regexSubstr(`PCC.PCC_FTM(\d?)_CLK`,1) + `)`
+                  : `N/A`)
+               ) : ($parent.clockSourceFreq.getEnumItemValue().toHertz() + `UL`)"/>
+            <integer type="uint32_t" id="extClockFrequency" label="External clock frequency [Hz]" options="remove_from_struct_init" available="($parent.clockSource.getEnumItemValue() == `ExternalClock`) &amp;&amp; ($instance.getMode() != `QuadratureDecoder`)" min_expr="1">
+               <description>Frequency of the external clock source of the FTM device (when the external clock source is selected in the FTM clock source settings).</description>
+            </integer>
+            <reference id="prescale" label="Timer clock prescale value" type="ftm_clock_prescale_t"  config_set_id="fsl_ftm">
+               <description>FTM clock prescale value</description>
+            </reference>
+            <!-- Timer frequency  - it is not used in the quadrature decoder mode (external signals are used) -->
+            <integer type="uint32_t" id="timerFrequency" label="Timer output frequency [Hz]" options="remove_from_struct_init" available="$instance.getMode() != `QuadratureDecoder`" min_expr="1">
+               <description>Timer frequency in Hz. This settings impact the modulo value of the FTM timer. The possible value depends on the selected input clock frequency, i.e. the modulo register value depend on the ration of the input clock frequency and the timer frequency.</description>
+            </integer>
+            <reference id="bdmMode" label="Behavior in BDM mode" type="ftm_bdm_mode_t" config_set_id="fsl_ftm">
+               <description>FTM behavior in BDM mode</description>
+            </reference>
+            <reference id="pwmSyncMode" label="Synchronization methods to update buffered registers" type="ftm_pwm_sync_method_t">
+               <description>Synchronization methods to use to update buffered registers; Multiple update modes can be used by providing an OR&apos;ed list of options available in enumeration ftm_pwm_sync_method_t.</description>
+               <validation>
+                  <constraint cond_expr="$this.getCValue() != ``" description="At least one synchronization method to update buffered registers must be selected." level="error"/>
+                  <dependency when_expr="$parent.pwmSyncMode.kFTM_HardwareTrigger_0.getValue()" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_trigger.0`" description_expr="`FTM Hardware Trigger 0 signal is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="$parent.pwmSyncMode.kFTM_HardwareTrigger_1.getValue()" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_trigger.1`" description_expr="`FTM Hardware Trigger 1 signal is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="$parent.pwmSyncMode.kFTM_HardwareTrigger_2.getValue()" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_trigger.2`" description_expr="`FTM Hardware Trigger 2 signal is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </reference>
+            <reference id="reloadPoints" label="Reload points" type="ftm_reload_point_t">
+               <description>FTM reload points; When using this, the PWM synchronization is not required. Multiple reload points can be used.</description>
+               <validation>
+                  <constraint when_expr="$instance.getMode() == `EdgeAligned`" 
+                              cond_expr="$this.countOccurrences(rp -> (rp.isAvailable()) &amp;&amp; (rp.getValue()) &amp;&amp; (rp.getID().regexMatch(`.*_Chnl(\d+).*`)) &amp;&amp; ($instance.ftm_edge_aligned_mode.ChanOddMatchInit.getValue().countOccurrences(item -> (item ==  rp.getID().regexSubstr(`.*_Chnl(\d+)`,1))) == 0) &amp;&amp; ($instance.ftm_edge_aligned_mode.ChanEvenMatchInit.getValue().countOccurrences(item -> (item == rp.getID().regexSubstr(`.*_Chnl(\d+)`,1))) == 0)) == 0" 
+                              level="info" 
+                              description_expr="`Reload points for channel(s) ` + 
+                              $this.filter(rp -> (rp.isAvailable()) &amp;&amp; ((rp.getValue()) &amp;&amp; (rp.getID().regexMatch(`.*_Chnl(\d+).*`)) &amp;&amp; ($instance.ftm_edge_aligned_mode.ChanOddMatchInit.getValue().countOccurrences(item -> (item ==  rp.getID().regexSubstr(`.*_Chnl(\d+)`,1))) == 0) &amp;&amp; ($instance.ftm_edge_aligned_mode.ChanEvenMatchInit.getValue().countOccurrences(item -> (item == rp.getID().regexSubstr(`.*_Chnl(\d+)`,1))) == 0))).map(setItem -> setItem.getID().regexSubstr(`.*_Chnl(\d+)`,1)).join(`, `)
+                              + ` are enabled but these channels are not initialized (in output compare or a PWM mode).`"/>
+                  <constraint when_expr="$instance.getMode() == `CenterAligned`" 
+                     cond_expr="$this.countOccurrences(rp -> (rp.isAvailable()) &amp;&amp; (rp.getValue()) &amp;&amp; (rp.getID().regexMatch(`.*_Chnl(\d+).*`)) &amp;&amp; ($instance.ftm_center_aligned_mode.ChanMatchInit.getValue().countOccurrences(item -> (item ==  rp.getID().regexSubstr(`.*_Chnl(\d+)`,1))) == 0)) == 0" 
+                     level="info" 
+                     description_expr="`Reload points for channel(s) ` + 
+                     $this.filter(rp -> (rp.isAvailable()) &amp;&amp; ((rp.getValue()) &amp;&amp; (rp.getID().regexMatch(`.*_Chnl(\d+).*`)) &amp;&amp; ($instance.ftm_center_aligned_mode.ChanMatchInit.getValue().countOccurrences(item -> (item ==  rp.getID().regexSubstr(`.*_Chnl(\d+)`,1))) == 0))).map(setItem -> setItem.getID().regexSubstr(`.*_Chnl(\d+)`,1)).join(`, `)
+                     + ` are enabled but these channels are not initialized (in output compare or a PWM mode).`"/>
+               </validation>
+            </reference>
+            <reference id="faultMode" label="Fault control mode" type="ftm_fault_mode_t" config_set_id="fsl_ftm">
+               <description>FTM fault control mode</description>
+            </reference>
+            <integer id="faultFilterValue" label="Fault input filter value" type="uint8_t">
+               <description>Fault input filter value</description>
+            </integer>
+            <reference id="deadTimePrescale" label="Dead time prescalar value" type="ftm_deadtime_prescale_t" config_set_id="fsl_ftm">
+               <description>The dead time prescalar value</description>
+            </reference>
+            <integer id="deadTimeValue" label="Dead time value" type="uint32_t">
+               <description>The dead time value deadTimeValue&apos;s available range is 0-1023 when register has DTVALEX, otherwise its available range is 0-63.</description>
+            </integer>
+            <reference type="ftm_external_trigger_t" id="extTriggers" label="Generation of external triggers">
+               <description>Configuration of external triggers generation. Multiple trigger sources can be enabled by selection in this settings.</description>
+               <validation>
+                  <constraint when_expr="$instance.getMode() == `EdgeAligned`" 
+                     cond_expr="$this.countOccurrences(rp -> (rp.isAvailable()) &amp;&amp; (rp.getValue()) &amp;&amp; (rp.getID().regexMatch(`.*_Chnl(\d+).*`)) &amp;&amp; ($instance.ftm_edge_aligned_mode.ChanOddMatchInit.getValue().countOccurrences(item -> (item ==  rp.getID().regexSubstr(`.*_Chnl(\d+)`,1))) == 0) &amp;&amp; ($instance.ftm_edge_aligned_mode.ChanEvenMatchInit.getValue().countOccurrences(item -> (item == rp.getID().regexSubstr(`.*_Chnl(\d+)`,1))) == 0)) == 0" 
+                     level="info" 
+                     description_expr="`External triggers for channel(s) ` + 
+                     $this.filter(rp -> (rp.isAvailable()) &amp;&amp; (rp.getValue()) &amp;&amp; (rp.getID().regexMatch(`.*_Chnl(\d+).*`)) &amp;&amp; ($instance.ftm_edge_aligned_mode.ChanOddMatchInit.getValue().countOccurrences(item -> (item ==  rp.getID().regexSubstr(`.*_Chnl(\d+)`,1))) == 0) &amp;&amp; ($instance.ftm_edge_aligned_mode.ChanEvenMatchInit.getValue().countOccurrences(item -> (item == rp.getID().regexSubstr(`.*_Chnl(\d+)`,1))) == 0)).map(setItem -> setItem.getID().regexSubstr(`.*_Chnl(\d+)`,1)).join(`, `)
+                     + ` are enabled but these channels are not initialized (in output compare or a PWM mode).`"/>
+                  <constraint when_expr="$instance.getMode() == `CenterAligned`" 
+                     cond_expr="$this.countOccurrences(rp -> (rp.isAvailable()) &amp;&amp; (rp.getValue()) &amp;&amp; (rp.getID().regexMatch(`.*_Chnl(\d+).*`)) &amp;&amp; ($instance.ftm_center_aligned_mode.ChanMatchInit.getValue().countOccurrences(item -> (item ==  rp.getID().regexSubstr(`.*_Chnl(\d+)`,1))) == 0)) == 0" 
+                     level="info" 
+                     description_expr="`External triggers for channel(s) ` + 
+                     $this.filter(rp -> (rp.isAvailable()) &amp;&amp; (rp.getValue()) &amp;&amp; (rp.getID().regexMatch(`.*_Chnl(\d+).*`)) &amp;&amp; ($instance.ftm_center_aligned_mode.ChanMatchInit.getValue().countOccurrences(item -> (item ==  rp.getID().regexSubstr(`.*_Chnl(\d+)`,1))) == 0)).map(setItem -> setItem.getID().regexSubstr(`.*_Chnl(\d+)`,1)).join(`, `)
+                     + ` are enabled but these channels are not initialized (in output compare or a PWM mode).`"/>
+               </validation>
+            </reference>
+            <reference id="chnlInitState" label="Initialization output value of the channels" type="ftm_init_output_value_t" options="use_set_values">
+               <description>Defines the initialization value of the channels in OUTINT register</description>
+            </reference>
+            <reference id="chnlPolarity" label="Output polarity of the channels" type="ftm_output_polarity_t" options="use_set_values">
+               <description>Defines the output polarity of the channels in POL register. When the active low polarity is set the active level of output is low (negative polarity is selected). Otherwise the active high polarity is set (the default polarity).</description>
+            </reference>
+            <bool id="useGlobalTimeBase" label="External global time base">
+               <description>True: Use of an external global time base is enabled; False: disabled</description>
+            </bool>
+         </struct>
+         <enum  id="clkSrc_t" label="clkSrc" from="internal">
+            <item id="BusInterfaceClock" label="Bus Interface Clock" value="BUS_CLOCK"/>
+            <item id="FixedClock" label="Fixed Clock" value="MCGFFCLK"/>
+         </enum>
+      </user_types>
+      <settings>
+         <reference id="ftm_config" label="Timer Configuration" type="ftm_config_t">
+            <description>FlexTimer configuration</description>
+         </reference>
+         <reference type="ftm_interrupt_enable_t" id="timer_interrupts" label="Timer interrupts">
+            <validation>
+               <constraint when_expr="featureDefined(`FSL_FEATURE_FTM_HAS_RELOAD_INTERRUPT`) &amp;&amp; getFeature(`FSL_FEATURE_FTM_HAS_RELOAD_INTERRUPT`) &amp;&amp; ($this.kFTM_ReloadInterruptEnable.getValue())" cond_expr="$configSet.ftm_config.reloadPoints.getCValue() != ``" level="warning" description="The reload point interrupt is enabled but there is not enabled any reload point. See the Reload points setting of the Timer Configuration."/>
+            </validation>
+         </reference>
+         <!-- Interrupt request from the system component -->
+         <bool id="enable_irq" label="Enable interrupt request">
+            <description>Enable interrupt request in the NVIC (Nested Interrupt Vector Controller) of the CPU.</description>
+         </bool>
+         <reference id="ftm_interrupt" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_irq.getValue()">
+            <options_expr>
+               <option id="irq_handler_insert" expr="
+leftPadding(`uint32_t intStatus;`, 1) + `&#10;` +
+leftPadding(`/* Reading all interrupt flags of status register */`, 1) + `&#10;` +
+leftPadding(`intStatus = FTM_GetStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `);`, 1) + `&#10;` +
+leftPadding(`FTM_ClearStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `, intStatus);`, 1) + `&#10;&#10;` +
+leftPadding(`/* Place your code here */`, 1) + `&#10;`
+               "/>
+            </options_expr>
+         </reference>
+         <bool id="EnableTimerInInit" label="Start timer in initialization code">
+            <description>When the start of the timer is enabled in the initialization code the FTM_StartTimer() function is called and the FTM device timer start counting.</description>
+         </bool> 
+         <info value="getFeature(`FTM_CHANNEL_COUNT`)" id="FTM_channel_count" label="Number of channels" available="featureDefined(`FTM_CHANNEL_COUNT`)">
+            <description>Number of channels of this FTM device (MCU specific information).</description>
+         </info>
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+         <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+      </settings>
+      <validation>
+         <constraint cond_expr="!(featureDefined(`FTM_IS_TPM_ONLY_INSTANCE`) &amp;&amp; getFeature(`FTM_IS_TPM_ONLY_INSTANCE`))" level="error" description="This instance of the FTM peripheral is not supported by FTM component. Use the TPM component."/>
+      </validation>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+         <def fragment="ftm_start_init"> <!-- it is an array of structures -->
+            <expr>
+               leftPadding(`FTM_StartTimer(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               + $param.clock_source + `);`, 1) 
+            </expr><br/>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">uart</param>
+               <param id="filename">fsl_clock.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">uart</param>
+               <param id="filename">fsl_ftm.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <!-- Peripheral name definition --> 
+            <fragment id="define">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)"/>
+               <param id="value" expr="$instance.getPeripheral()"/> <!-- The getValue() function must be used to provide the symbol name (getCValue() return a string) -->
+               <param id="description">Definition of peripheral ID</param>
+            </fragment>
+            <!-- Clock source frequency size -->
+            <fragment id="define" if_expr="($this.ftm_config.clockSource.getEnumItemId() == `kFTM_SystemClock`) || ($this.ftm_config.clockSource.getEnumItemId() == `kFTM_FixedClock`)">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`)"/>
+               <param id="value" expr="$this.ftm_config.frequencyValue.getValue()"/> 
+               <param id="description">Definition of the clock source frequency</param>
+            </fragment>
+            <fragment id="define" if_expr="($this.ftm_config.clockSource.getEnumItemId() == `kFTM_ExternalClock`)">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`)"/>
+               <param id="value" expr="$this.ftm_config.extClockFrequency.getCValue() + `UL`"/> 
+               <param id="description">Definition of the clock source frequency</param>
+            </fragment>
+            <fragment id="IRQ_definitions" apply_to="$this.ftm_interrupt"/>
+         </section> 
+         <section target="global_vars">
+            <fragment id="const_struct" apply_to="$this.ftm_config">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`"></param>
+               <param id="type" >ftm_config_t</param>
+            </fragment>
+         </section>
+         <section target="global_vars_extern">
+            <fragment id="extern_const_var">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`"></param>
+               <param id="type" >ftm_config_t</param>
+            </fragment>
+         </section>
+         <section target="init_function_body">
+            <expr>leftPadding(`FTM_Init(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, &amp;` +  $instance.getFnGroupPrefix() + $instance.getID() + `_config);`, 1)</expr><br/>
+         </section>
+         <!-- POST INIT section (after initialization of channels -->
+         <section target="init_function_postinit0">
+            <!-- FTM device interrupt initialization -->
+            <fragment id="IRQn_set_priority_default" if_expr="$this.enable_irq.getValue()" apply_to="$this.ftm_interrupt"/>
+            <fragment id="IRQn_enable_default" if_expr="$this.enable_irq.getValue()" apply_to="$this.ftm_interrupt"/>
+            <fragment id="ftm_start_init" if_expr="$this.EnableTimerInInit.getValue()">
+               <param id="clock_source" expr="$instance.ftm_main_config.ftm_config.clockSource.getEnumItemId()"></param>
+            </fragment>
+         </section>
+      </code>
+      <quick_selections>
+         <quick_selection id="QuickSelectionDefault" label="Default">
+            <set id="ftm_config.prescale">kFTM_Prescale_Divide_1</set>
+            <set id="ftm_config.timerFrequency">10000</set>
+            <set id="ftm_config.bdmMode">kFTM_BdmMode_0</set>
+            <set id="ftm_config.pwmSyncMode.kFTM_SoftwareTrigger">true</set>
+            <set id="ftm_config.faultFilterValue">0</set>
+            <set id="ftm_config.deadTimePrescale">kFTM_Deadtime_Prescale_1</set>
+            <set id="ftm_config.deadTimeValue">0</set>
+            <set id="ftm_config.useGlobalTimeBase">false</set>
+            <set id="EnableTimerInInit">true</set>
+         </quick_selection>
+         <default>QuickSelectionDefault</default>
+      </quick_selections>
+   </config_set>
+   
+   <config_set id="ftm_edge_aligned_mode" label="FlexTimer Edge-aligned mode" from_source="fsl_ftm.h">
+      <description>Configuration of timer channels.</description>
+      <generated_types>
+      </generated_types>
+      <user_types>
+         <enum id="ftm_chnl_pair_t" label="List of FTM channel pairs." from="_ftm_chnl">
+            <description>Actual number of available channels is SoC dependent</description>
+            <item id="kFTM_Chnl_0" label="FTM channel number 0/1"/>
+            <item id="kFTM_Chnl_1" label="FTM channel number 2/3"/>
+            <item id="kFTM_Chnl_2" label="FTM channel number 4/5"/>
+            <item id="kFTM_Chnl_3" label="FTM channel number 6/7"/>
+         </enum>
+         
+         <struct from="ftm_input_capture" id="ftm_input_capture_mode_t" label="FTM Input Capture mode">
+            <reference type="ftm_chnl_t" id="chnNumber" label="Channel number" config_set_id="fsl_ftm">
+               <validation>
+                  <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_ch.` +  $this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1)" description_expr="`Signal CH` + $this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1) + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <constraint cond_expr="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt() &lt; getFeature(`FTM_CHANNEL_COUNT`))" level="error" description="You must select an existing channel of the selected FTM device (see the Number of channel property of this component)"/>
+               </validation>
+            </reference>
+            <reference id="input_capture_edge" label="Input Capture Edge" type="ftm_input_capture_edge_t" config_set_id="fsl_ftm">
+            </reference>
+            <integer type="uint32_t" id="filterValue" label="Filter Value">
+               <description>Filter value for validation of the input signal (filtering of glitches). When set to 0 the filter is disabled.</description>
+            </integer>
+            <bool id="enable_chan_irq" label="Enable channel interrupt" options="remove_from_struct_init"/>
+            <variable  id="chan_interrupt" available="$parent.enable_chan_irq.getValue()" value="`kFTM_Chnl` + $parent.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1)  + `InterruptEnable`"></variable>
+         </struct>
+         <struct from="ftm_dual_edge" id="ftm_dual_edge_t" label="Dual Edge Capture Mode">
+            <reference type="ftm_chnl_pair_t" id="chnNumber" label="Channel pair number">
+                  <validation>
+                  <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_ch.` +  ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2)" description_expr="`Signal CH` + ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2) + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_ch.` +  ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1)" description_expr="`Signal CH` + ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1) + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <constraint cond_expr="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; 
+                                         (($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2) &lt; getFeature(`FTM_CHANNEL_COUNT`)) &amp;&amp;
+                                         (($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1) &lt; getFeature(`FTM_CHANNEL_COUNT`))" level="error" description="You must select an existing channel pair of the selected FTM device (see the Number of channel property of this component)"/>
+                  </validation>
+            </reference>
+            <reference type="ftm_dual_edge_capture_param_t" id="dual_edge_capture_param" label="Dual Edge Mode" config_set_id="fsl_ftm">
+            </reference>
+            <integer type="uint32_t" id="filterValue" label="Filter Value">
+               <description>Filter value for validation of the input signal (filtering of glitches). When set to 0 the filter is disabled.</description>
+            </integer>
+            <bool id="enable_chan_irq" label="Enable channel N interrupt" options="remove_from_struct_init"/>
+            <variable  id="chan_interrupt" available="$parent.enable_chan_irq.getValue()" value="`kFTM_Chnl` + (($parent.chnNumber.getValue() == `kFTM_Chnl_0`) ? `0` : ($parent.chnNumber.getValue() == `kFTM_Chnl_1`) ? `2` : ($parent.chnNumber.getValue() == `kFTM_Chnl_2`) ? `4` : `6`)  + `InterruptEnable`"></variable>
+            <bool id="enable_chan1_irq" label="Enable channel N+1 interrupt"  options="remove_from_struct_init"/>
+            <variable  id="chan1_interrupt" available="$parent.enable_chan1_irq.getValue()" value="`kFTM_Chnl` + (($parent.chnNumber.getValue() == `kFTM_Chnl_0`) ? `1` : ($parent.chnNumber.getValue() == `kFTM_Chnl_1`) ? `3` : ($parent.chnNumber.getValue() == `kFTM_Chnl_2`) ? `5` : `7`)  + `InterruptEnable`"></variable>
+         </struct>
+         <struct from="ftm_output_compare" id="ftm_output_compare_mode_t" label="FTM Output Compare mode">
+            <reference type="ftm_chnl_t" id="chnNumber" label="Channel number" config_set_id="fsl_ftm">
+               <validation>
+                  <dependency when_expr="$parent.output_compare_mode.getValue() != `kFTM_NoOutputSignal`" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_ch.` +  $this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1)" description_expr="`Signal CH` + $this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1) + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <constraint cond_expr="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt() &lt; getFeature(`FTM_CHANNEL_COUNT`))" level="error" description="You must select an existing channel of the selected FTM device (see the Number of channel property of this component)"/>
+               </validation>
+            </reference>
+            <reference id="output_compare_mode" label="Output Compare Mode" type="ftm_output_compare_mode_t" config_set_id="fsl_ftm">
+            </reference>
+            <integer type="uint32_t" id="compareValue" label="Compare Value">
+               <description>Compare value that will be used as the match value of the FTM channel. This value define the value of the counter when the output action is executed. The value must not exceed the modulo value of the FTM counter</description>
+            </integer>
+            <bool id="enable_chan_irq" label="Enable channel interrupt" options="remove_from_struct_init"/>
+            <variable  id="chan_interrupt" available="$parent.enable_chan_irq.getValue()" value="`kFTM_Chnl` + $parent.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1)  + `InterruptEnable`"></variable>
+         </struct>
+         <struct id="ftm_chnl_pwm_signal_param_t" label="Options to configure a FTM channel&apos;s PWM signal." from="_ftm_chnl_pwm_signal_param">
+            <reference id="chnlNumber" label="The channel number" type="ftm_chnl_t" config_set_id="fsl_ftm">
+               <description>The FTM channel number.</description>
+               <validation>
+                  <dependency when_expr="$parent.level.getValue() != `kFTM_NoPwmSignal`"  resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_ch.` +  $this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1)" description_expr="`Signal CH` + $this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1) + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <constraint cond_expr="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt() &lt; getFeature(`FTM_CHANNEL_COUNT`))" level="error" description="You must select an existing channel of the selected FTM device (see the Number of channel property of this component)"/>
+               </validation>
+            </reference>
+            <reference id="level" label="PWM output active level select" type="ftm_pwm_level_select_t" config_set_id="fsl_ftm">
+               <description>PWM output active level select.</description>
+            </reference>
+            <integer id="dutyCyclePercent" label="PWM pulse width [%]" type="uint8_t" min_expr="0" max_expr="100">
+               <description>PWM pulse width, value shall be between 0 to 100 0 = inactive signal(0% duty cycle)... 100 = always active signal (100% duty cycle).</description>
+            </integer>
+            <bool id="enable_chan_irq" label="Enable channel interrupt" options="remove_from_struct_init"/>
+            <variable  id="chan_interrupt" available="$parent.enable_chan_irq.getValue()" value="`kFTM_Chnl` + $parent.chnlNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1)  + `InterruptEnable`"></variable>
+<!--           PWM frequency is defined in the ftm main configuration 
+               <integer type="uint32_t" id="pwmFreq" label="PWM frequency [Hz]">
+               <description>PWM output frequency in Hz. Note: The same PWM frequency must be used for all FTM channels. The frequency value is hared accross all channels of a FTM timer (modulo values of the main counter).</description>
+            </integer>-->
+         </struct>
+         <struct id="ftm_chnl_combined_pwm_signal_param_t" label="Options to configure a FTM channel&apos;s PWM signal." from="_ftm_chnl_pwm_signal_param">
+            <reference id="chnlNumber" label="Channel pair number" type="ftm_chnl_pair_t">
+               <description>The channel/channel pair number. In combined mode, this represents the channel pair number.</description>
+               <validation>
+                  <dependency when_expr="$parent.level.getValue() != `kFTM_NoPwmSignal`" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_ch.` +  ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2)" description_expr="`Signal CH` + ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2) + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="$parent.level.getValue() != `kFTM_NoPwmSignal`" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_ch.` +  ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1)" description_expr="`Signal CH` + ($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1) + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <constraint cond_expr="featureDefined(`FTM_CHANNEL_COUNT`) &amp;&amp; 
+                     (($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2) &lt; getFeature(`FTM_CHANNEL_COUNT`)) &amp;&amp;
+                     (($this.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1) &lt; getFeature(`FTM_CHANNEL_COUNT`))" level="error" description="You must select an existing channel pair of the selected FTM device (see the Number of channel property of this component)"/>
+               </validation>
+            </reference>
+            <reference id="level" label="PWM output active level select." type="ftm_pwm_level_select_t" config_set_id="fsl_ftm">
+               <description>PWM output active level select.</description>
+            </reference>
+            <integer id="dutyCyclePercent" label="PWM pulse width [%]" type="uint8_t" min_expr="0" max_expr="100">
+               <description>PWM pulse width, value shall be between 0 to 100 0 = inactive signal(0% duty cycle)... 100 = always active signal (100% duty cycle).</description>
+            </integer>
+            <integer id="firstEdgeDelayPercent" label="First edge delay [%]" type="uint8_t" min_expr="0" max_expr="100">
+               <description>First edge dealy is used in combined PWM mode only to generate an asymmetrical PWM. It specifies the delay to the first edge in a PWM period. If unsure leave as 0; Should be specified as a percentage of the PWM period (range 0 - 100)</description>
+            </integer>
+            <!--  PWM frequency is defined in the ftm main configuration 
+            <integer type="uint32_t" id="pwmFreq" label="PWM frequency [Hz]">
+               <description>PWM output frequency in Hz. Note: The same PWM frequency must be used for all FTM channels. The frequency value is hared accross all channels of a FTM timer (modulo values of the main counter).</description>
+            </integer>-->
+            <bool id="enable_chan_irq" label="Enable channel N interrupt" options="remove_from_struct_init"/>
+            <variable  id="chan_interrupt" available="$parent.enable_chan_irq.getValue()" value="`kFTM_Chnl` + (($parent.chnlNumber.getValue() == `kFTM_Chnl_0`) ? `0` : ($parent.chnlNumber.getValue() == `kFTM_Chnl_1`) ? `2` : ($parent.chnlNumber.getValue() == `kFTM_Chnl_2`) ? `4` : `6`)  + `InterruptEnable`"></variable>
+            <bool id="enable_chan1_irq" label="Enable channel N+1 interrupt"  options="remove_from_struct_init"/>
+            <variable  id="chan1_interrupt" available="$parent.enable_chan1_irq.getValue()" value="`kFTM_Chnl` + (($parent.chnlNumber.getValue() == `kFTM_Chnl_0`) ? `1` : ($parent.chnlNumber.getValue() == `kFTM_Chnl_1`) ? `3` : ($parent.chnlNumber.getValue() == `kFTM_Chnl_2`) ? `5` : `7`)  + `InterruptEnable`"></variable>
+         </struct>
+         <enum id="ftm_edge_aligned_mode_t" label="FTM edge-aligned channel modes." from="_ftm_edge_aligned_mode">
+            <item id="kFTM_InputCapture" label="Input Capture"/>
+            <item id="kFTM_DualEdgeCapture" label="Dual Edge Capture"/>
+            <item id="kFTM_OutputCompare" label="Output compare"/>
+            <item id="kFTM_EdgeAlignedPwm" label="Edge-aligned PWM"/>
+            <item id="kFTM_CombinedPwm" label="Combined PWM"/>
+         </enum>
+         <struct id="ftm_edge_aligned_channel_mode" label="FTM Edge Aligned Channel Mode" from="_ftm_edge_aligned_channel_mode">         
+            <validation>
+               <!-- constraint for checking of duplicated channel - it is also used for combined mode - even number of channels -->
+               <constraint cond_expr="$parent.searchInArray(
+                  item -> (($this.getID() != item.getID()) &amp;&amp; 
+                  (((item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_InputCapture`) 
+                    ?  item.getSetting(`input_capture.chnNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : (item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_DualEdgeCapture`) 
+                    ? (item.getSetting(`dual_edge_capture.chnNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2) 
+                    : (item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_OutputCompare`) 
+                    ?  item.getSetting(`output_compare.chnNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : (item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_EdgeAlignedPwm`) 
+                    ?  item.getSetting(`edge_aligned_pwm.chnlNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : (item.getSetting(`combined_pwm.chnlNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2) 
+                   ) == 
+                   (
+                    ($this.edge_aligned_mode.getValue() == `kFTM_InputCapture`) 
+                    ? $this.input_capture.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : ($this.edge_aligned_mode.getValue() == `kFTM_DualEdgeCapture`) 
+                    ? ($this.dual_edge_capture.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2) 
+                    : ($this.edge_aligned_mode.getValue() == `kFTM_OutputCompare`) 
+                    ? $this.output_compare.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : ($this.edge_aligned_mode.getValue() == `kFTM_EdgeAlignedPwm`) 
+                    ? $this.edge_aligned_pwm.chnlNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : ($this.combined_pwm.chnlNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2)
+                   )    
+                 ))) &lt; 0 " level="warning" 
+                    description_expr="`Duplicated channel (` + 
+                    (($this.edge_aligned_mode.getValue() == `kFTM_InputCapture`) 
+                    ? $this.input_capture.chnNumber.getEnumItemLabel() 
+                    : ($this.edge_aligned_mode.getValue() == `kFTM_DualEdgeCapture`) 
+                    ? ($this.dual_edge_capture.chnNumber.getEnumItemLabel()) 
+                    : ($this.edge_aligned_mode.getValue() == `kFTM_OutputCompare`) 
+                    ? $this.output_compare.chnNumber.getEnumItemLabel() 
+                    : ($this.edge_aligned_mode.getValue() == `kFTM_EdgeAlignedPwm`) 
+                    ? $this.edge_aligned_pwm.chnlNumber.getEnumItemLabel() 
+                    : ($this.combined_pwm.chnlNumber.getEnumItemLabel()))
+                 + `) is selected. Please, select each channel once only.`" />
+               <!-- constraint for checking of duplicated channel - it is also used for combined mode - odd number of channels -->
+               <constraint cond_expr="$parent.searchInArray(
+                  item -> (($this.getID() != item.getID()) &amp;&amp; 
+                  ((
+                    (item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_DualEdgeCapture`) 
+                    ? (item.getSetting(`dual_edge_capture.chnNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1) 
+                    : (item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_CombinedPwm`) 
+                    ? (item.getSetting(`combined_pwm.chnlNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1) 
+                    : (-1)
+                   ) == 
+                   (
+                    ($this.edge_aligned_mode.getValue() == `kFTM_InputCapture`) 
+                    ? $this.input_capture.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : ($this.edge_aligned_mode.getValue() == `kFTM_DualEdgeCapture`) 
+                    ? ($this.dual_edge_capture.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1) 
+                    : ($this.edge_aligned_mode.getValue() == `kFTM_OutputCompare`) 
+                    ? $this.output_compare.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : ($this.edge_aligned_mode.getValue() == `kFTM_EdgeAlignedPwm`) 
+                    ? $this.edge_aligned_pwm.chnlNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : ($this.combined_pwm.chnlNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1)
+                   )    
+                 ))) &lt; 0 " level="warning" 
+                    description_expr="`Duplicated channel (` + 
+                    (($this.edge_aligned_mode.getValue() == `kFTM_InputCapture`) 
+                    ? $this.input_capture.chnNumber.getEnumItemLabel() 
+                    : ($this.edge_aligned_mode.getValue() == `kFTM_DualEdgeCapture`) 
+                    ? ($this.dual_edge_capture.chnNumber.getEnumItemLabel()) 
+                    : ($this.edge_aligned_mode.getValue() == `kFTM_OutputCompare`) 
+                    ? $this.output_compare.chnNumber.getEnumItemLabel() 
+                    : ($this.edge_aligned_mode.getValue() == `kFTM_EdgeAlignedPwm`) 
+                    ? $this.edge_aligned_pwm.chnlNumber.getEnumItemLabel() 
+                    : ($this.combined_pwm.chnlNumber.getEnumItemLabel()))
+                 + `) is selected. Please, select each channel once only.`" />
+               <constraint cond_expr="$parent.searchInArray(
+                  item -> (($this.getID() != item.getID()) &amp;&amp; 
+                  (((item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_InputCapture`) 
+                    ?  item.getSetting(`input_capture.chnNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : (item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_DualEdgeCapture`) 
+                    ? (item.getSetting(`dual_edge_capture.chnNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2) 
+                    : (item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_OutputCompare`) 
+                    ?  item.getSetting(`output_compare.chnNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : (item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_EdgeAlignedPwm`) 
+                    ?  item.getSetting(`edge_aligned_pwm.chnlNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1) 
+                    : (item.getSetting(`combined_pwm.chnlNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2) 
+                   ) == 
+                   (
+                    ($this.edge_aligned_mode.getValue() == `kFTM_DualEdgeCapture`) 
+                    ? ($this.dual_edge_capture.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1) 
+                    : ($this.edge_aligned_mode.getValue() == `kFTM_CombinedPwm`) 
+                    ? ($this.combined_pwm.chnlNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1) 
+                    : (-1)
+                   )    
+                 ))) &lt; 0 " level="warning" 
+                    description_expr="`Duplicated channel (` + 
+                    (($this.edge_aligned_mode.getValue() == `kFTM_InputCapture`) 
+                    ? $this.input_capture.chnNumber.getEnumItemLabel() 
+                    : ($this.edge_aligned_mode.getValue() == `kFTM_DualEdgeCapture`) 
+                    ? ($this.dual_edge_capture.chnNumber.getEnumItemLabel()) 
+                    : ($this.edge_aligned_mode.getValue() == `kFTM_OutputCompare`) 
+                    ? $this.output_compare.chnNumber.getEnumItemLabel() 
+                    : ($this.edge_aligned_mode.getValue() == `kFTM_EdgeAlignedPwm`) 
+                    ? $this.edge_aligned_pwm.chnlNumber.getEnumItemLabel() 
+                    : ($this.combined_pwm.chnlNumber.getEnumItemLabel()))
+                 + `) is selected. Please, select each channel once only.`" />
+            </validation>
+            <reference type="ftm_edge_aligned_mode_t" id="edge_aligned_mode" label="Edge-aligned mode">
+               <description>Selection of the edge-aligned mode of the channel.</description>
+            </reference>
+            <reference type="ftm_input_capture_mode_t" id="input_capture" label="Input Capture settings" available="$parent.edge_aligned_mode.getValue() == `kFTM_InputCapture`"/>
+            <reference type="ftm_dual_edge_t" id="dual_edge_capture" label="Dual-edge Capture settings" available="$parent.edge_aligned_mode.getValue() == `kFTM_DualEdgeCapture`"/>
+            <reference type="ftm_output_compare_mode_t" id="output_compare" label="Output Compare settings" available="$parent.edge_aligned_mode.getValue() == `kFTM_OutputCompare`"/>
+            <reference type="ftm_chnl_pwm_signal_param_t" id="edge_aligned_pwm" label="Edge-aligned PWM settings" available="$parent.edge_aligned_mode.getValue() == `kFTM_EdgeAlignedPwm`"/>
+            <reference type="ftm_chnl_combined_pwm_signal_param_t" id="combined_pwm" label="Combined PWM settings" available="$parent.edge_aligned_mode.getValue() == `kFTM_CombinedPwm`"/>
+         </struct>
+      </user_types>
+      <settings>
+         <array id="ftm_edge_aligned_channels_config" label="Channels" type="ftm_edge_aligned_channel_mode">
+            <description>Configuration of the FTM channels in the edge-eligned mode.</description>
+         </array>
+         <!-- Variables used for reloadPoints verification; it return list of channels that provide the match event occurrence (output compare or a PWM mode). -->
+         <variable value="$parent.ftm_edge_aligned_channels_config.map(item -> 
+            (item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_OutputCompare`)
+            ? (item.getSetting(`output_compare.chnNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1)) 
+            : (item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_EdgeAlignedPwm`) 
+            ? (item.getSetting(`edge_aligned_pwm.chnlNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1)) 
+            : (item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_CombinedPwm`) 
+            ? ((item.getSetting(`combined_pwm.chnlNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2))
+            : ``)" id="ChanOddMatchInit"></variable>
+         <variable value="$parent.ftm_edge_aligned_channels_config.map(item -> 
+            (item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_CombinedPwm`) 
+            ? ((item.getSetting(`combined_pwm.chnlNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1).toInt()*2+1))
+            : ``)" id="ChanEvenMatchInit"></variable>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+         </import>
+         <def fragment="dual_edge_capture_struct">
+            <fragment id="const_struct" apply_to="$this.dual_edge_capture_param">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_channel` + $parent.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1)"></param>
+               <param id="type">ftm_dual_edge_capture_param_t</param>
+            </fragment>
+         </def>
+         <def fragment="channel_struct">
+            <fragment id="dual_edge_capture_struct" if_expr="($this.edge_aligned_mode.getValue() == `kFTM_DualEdgeCapture`)" apply_to="$this.dual_edge_capture">
+            </fragment>
+         </def>
+         <def fragment="ftm_edge_aligned_channels_struct"> <!-- it is an array of structures -->
+            <fragment id="channel_struct" for_elements_of="$this" >     <!-- apply in context of each iten in the set/structure/array -->      
+            </fragment>
+            <br/>
+         </def>
+
+         <!-- Init functions -->
+         <def fragment="input_capture_init">
+            <expr>
+               leftPadding(`FTM_SetupInputCapture(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               $this.chnNumber.getCValue() + `, ` +
+               $this.input_capture_edge.getCValue() + `, ` +
+               $this.filterValue.getCValue() + `);`, 1)
+            </expr><br/>
+         </def>
+         <def fragment="dual_edge_capture_init">
+            <expr>
+               leftPadding(`FTM_SetupDualEdgeCapture(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               $this.chnNumber.getCValue() + `, ` +
+               `&amp;` + $instance.getFnGroupPrefix() + $instance.getID() + `_channel` + $this.chnNumber.getValue().regexSubstr(`.*Chnl_(\d+)`, 1) + `, ` + 
+               $this.filterValue.getCValue() + `);`, 1)
+            </expr><br/>
+         </def>
+         <def fragment="output_compare_init">
+            <expr>
+               leftPadding(`FTM_SetupOutputCompare(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               $this.chnNumber.getCValue() + `, ` +
+               $this.output_compare_mode.getCValue() + `, ` +
+               $this.compareValue.getCValue() + `);`, 1)
+            </expr><br/>
+         </def>
+         
+         <def fragment="channel_init">
+            <fragment id="input_capture_init" if_expr="($this.edge_aligned_mode.getValue() == `kFTM_InputCapture`)" apply_to="$this.input_capture"></fragment>
+            <fragment id="dual_edge_capture_init" if_expr="($this.edge_aligned_mode.getValue() == `kFTM_DualEdgeCapture`)" apply_to="$this.dual_edge_capture"></fragment>
+            <fragment id="output_compare_init" if_expr="($this.edge_aligned_mode.getValue() == `kFTM_OutputCompare`)" apply_to="$this.output_compare"></fragment>
+         </def>
+         <def fragment="ftm_edge_aligned_channels_init"> <!-- it is an array of structures -->
+            <fragment id="channel_init" for_elements_of="$this" >     <!-- apply in context of each iten in the set/structure/array -->      
+            </fragment>
+         </def>
+         <!-- PWM channels signal params configuration as an array of the ftm_chnl_pwm_signal_param_t structures -->         
+         <def fragment="pwm_channel_struct">
+            <expr>leftPadding(`{`,1)</expr><br/>
+            <fragment id="field" for_elements_of="$this.edge_aligned_pwm.filter(item -> ((!item.hasOption(`remove_from_struct_init`)) &amp;&amp; 
+                                                                                        ((getType(item) != `info`) || (item.hasOption(`transform_by_regex`)) || (item.hasOption(`add_to_struct`))) &amp;&amp;
+                                                                                        (getType(item) != `variable`)))">
+                  <param id="paddingLevel" expr="2"></param>
+             </fragment>
+            <expr>leftPadding(`}`,1)</expr>
+            <expr> ($param._last ? ``: `,`) </expr><br/>
+         </def>
+
+         <def fragment="pwm_channels_struct"> <!-- it is an array of structures -->
+            <expr>`const ` + $param.type + ` ` + $param.name + `[] = { `</expr><br/>
+             <fragment id="pwm_channel_struct" for_elements_of="$this.filter(item -> (item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_EdgeAlignedPwm`))">      
+               </fragment>
+            <text>};</text>
+            <br/>
+         </def>
+         <def fragment="pwm_channels_init"> <!-- it is an array of structures -->
+            <expr>
+               leftPadding(`FTM_SetupPwm(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               $param.struct_name + `, ` + 
+               + $param.number_of_channels + `, ` +
+               + `kFTM_EdgeAlignedPwm, ` +
+               + $instance.ftm_main_config.ftm_config.timerFrequency.getCValue() + `U, ` +
+               toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`) + `);`, 1) 
+            </expr><br/>
+         </def>
+
+         <!-- PWM channels signal params configuration as an array of the ftm_chnl_pwm_signal_param_t structures -->         
+         <def fragment="combined_pwm_channel_struct">
+            <expr>leftPadding(`{`,1)</expr><br/>
+            <fragment id="field" for_elements_of="$this.combined_pwm.filter(item -> ((!item.hasOption(`remove_from_struct_init`)) &amp;&amp; 
+                                                                                    ((getType(item) != `info`) || (item.hasOption(`transform_by_regex`)) || (item.hasOption(`add_to_struct`))) &amp;&amp;
+                                                                                    (getType(item) != `variable`)))">
+                  <param id="paddingLevel" expr="2"></param>
+               </fragment>
+            <expr>leftPadding(`}`,1)</expr>
+            <expr> ($param._last ? ``: `,`) </expr><br/>
+         </def>
+         <def fragment="combined_pwm_channels_struct"> <!-- it is an array of structures -->
+            <expr>`const ` + $param.type + ` ` + $param.name + `[] = { `</expr><br/>
+            <fragment id="combined_pwm_channel_struct" for_elements_of="$this.filter(item -> (item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_CombinedPwm`))">      
+            </fragment>
+            <text>};</text>
+            <br/>
+         </def>
+         <def fragment="combined_pwm_channels_init"> <!-- it is an array of structures -->
+            <expr>
+               leftPadding(`FTM_SetupPwm(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               $param.struct_name + `, ` + 
+               + $param.number_of_channels + `, ` +
+               + `kFTM_CombinedPwm, ` +
+               + $instance.ftm_main_config.ftm_config.timerFrequency.getCValue() + `U, ` +
+               toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`) + `);`, 1) 
+            </expr><br/>
+         </def>
+         <def fragment="ftm_set_timer_period_init"> <!-- it is an array of structures -->
+            <expr>
+               leftPadding(`FTM_SetTimerPeriod(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               + `((` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`) + `/ (1U &lt;&lt; (` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)+`-&gt;SC &amp; FTM_SC_PS_MASK)))`  
+               + ` / ` + $instance.ftm_main_config.ftm_config.timerFrequency.getCValue() + `) + 1` + 
+               `);`, 1) 
+            </expr><br/>
+         </def>
+         <!-- Enable interrupts of channels and timer -->
+         <def fragment="channel_interrupts">
+            <expr if_expr="$this.edge_aligned_mode.getValue() == `kFTM_InputCapture`">$this.input_capture.enable_chan_irq.getValue() ? $this.input_capture.chan_interrupt.getValue() : ``</expr>
+            <expr if_expr="$this.edge_aligned_mode.getValue() == `kFTM_DualEdgeCapture`">($this.dual_edge_capture.enable_chan_irq.getValue() &amp;&amp; $this.dual_edge_capture.enable_chan1_irq.getValue()) ? ($this.dual_edge_capture.chan_interrupt.getValue() + `|` + $this.dual_edge_capture.chan1_interrupt.getValue()) : $this.dual_edge_capture.enable_chan_irq.getValue() ? $this.dual_edge_capture.chan_interrupt.getValue() : $this.dual_edge_capture.enable_chan1_irq.getValue() ? $this.dual_edge_capture.chan1_interrupt.getValue() : ``</expr>
+            <expr if_expr="$this.edge_aligned_mode.getValue() == `kFTM_OutputCompare`">$this.output_compare.enable_chan_irq.getValue() ? $this.output_compare.chan_interrupt.getValue() : ``</expr>
+            <expr if_expr="$this.edge_aligned_mode.getValue() == `kFTM_EdgeAlignedPwm`">$this.edge_aligned_pwm.enable_chan_irq.getValue() ? $this.edge_aligned_pwm.chan_interrupt.getValue() : ``</expr>
+            <expr if_expr="$this.edge_aligned_mode.getValue() == `kFTM_CombinedPwm`">($this.combined_pwm.enable_chan_irq.getValue() &amp;&amp; $this.combined_pwm.enable_chan1_irq.getValue()) ? ($this.combined_pwm.chan_interrupt.getValue() + `|` + $this.combined_pwm.chan1_interrupt.getValue()) : $this.combined_pwm.enable_chan_irq.getValue() ? $this.combined_pwm.chan_interrupt.getValue() : $this.combined_pwm.enable_chan1_irq.getValue() ? $this.combined_pwm.chan1_interrupt.getValue() : `` </expr>
+            <expr> ($param._last ? `` : ` | `) </expr>
+         </def>
+         <def fragment="ftm_enable_interrupts"> <!-- it is an array of structures -->
+            <expr>
+               leftPadding(`FTM_EnableInterrupts(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, `, 1) 
+            </expr>
+            <fragment id="channel_interrupts" for_elements_of="$this.filter(item -> ((item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_InputCapture`) &amp;&amp; (item.getSetting(`input_capture.enable_chan_irq`).getValue())) || 
+                                                                                    ((item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_DualEdgeCapture`) &amp;&amp; (item.getSetting(`dual_edge_capture.enable_chan_irq`).getValue() || item.getSetting(`dual_edge_capture.enable_chan1_irq`).getValue())) || 
+                                                                                    ((item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_OutputCompare`) &amp;&amp; (item.getSetting(`output_compare.enable_chan_irq`).getValue())) || 
+                                                                                    ((item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_EdgeAlignedPwm`) &amp;&amp; (item.getSetting(`edge_aligned_pwm.enable_chan_irq`).getValue())) || 
+                                                                                    ((item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_CombinedPwm`) &amp;&amp; (item.getSetting(`combined_pwm.enable_chan_irq`).getValue() || item.getSetting(`combined_pwm.enable_chan1_irq`).getValue())))"/>
+            <expr if_expr="($this.searchInArray(item -> ((item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_InputCapture`) &amp;&amp; (item.getSetting(`input_capture.enable_chan_irq`).getValue())) || 
+               ((item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_DualEdgeCapture`) &amp;&amp; (item.getSetting(`dual_edge_capture.enable_chan_irq`).getValue() || item.getSetting(`dual_edge_capture.enable_chan1_irq`).getValue())) || 
+                                                 ((item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_OutputCompare`) &amp;&amp; (item.getSetting(`output_compare.enable_chan_irq`).getValue())) || 
+                                                 ((item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_EdgeAlignedPwm`) &amp;&amp; (item.getSetting(`edge_aligned_pwm.enable_chan_irq`).getValue())) || 
+                                                 ((item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_CombinedPwm`) &amp;&amp; (item.getSetting(`combined_pwm.enable_chan_irq`).getValue() || item.getSetting(`combined_pwm.enable_chan1_irq`).getValue()))  ) >= 0) &amp;&amp;
+                            ($instance.ftm_main_config.timer_interrupts.getCValue() != ``)">` | `</expr>
+            <expr>$instance.ftm_main_config.timer_interrupts.getCValue()</expr>
+            <expr>   
+               `);` 
+            </expr><br/>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="defines">
+         </section> 
+         <section target="global_vars">
+            <fragment id="ftm_edge_aligned_channels_struct" apply_to="$this.ftm_edge_aligned_channels_config">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_edgeAlignedConfig`"></param>
+               <param id="type" >ftm_edge_aligned_channels_config_t</param>
+            </fragment>
+            <fragment id="pwm_channels_struct" apply_to="$this.ftm_edge_aligned_channels_config" if_expr="$this.ftm_edge_aligned_channels_config.searchInArray(item -> (item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_EdgeAlignedPwm`)) >= 0">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_pwmSignalParams`"></param>
+               <param id="type" >ftm_chnl_pwm_signal_param_t</param>
+            </fragment>
+            <fragment id="combined_pwm_channels_struct" apply_to="$this.ftm_edge_aligned_channels_config" if_expr="$this.ftm_edge_aligned_channels_config.searchInArray(item -> (item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_CombinedPwm`)) >= 0">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_combinedPwmSignalParams`"></param>
+               <param id="type" >ftm_chnl_pwm_signal_param_t</param>
+            </fragment>
+         </section>
+         <section target="global_vars_extern">
+         </section>
+         <section target="init_function_body">
+            <!-- Initialization functions for Input Capture, Output Compare and Dual Edge modes -->
+            <fragment id="ftm_edge_aligned_channels_init" apply_to="$this.ftm_edge_aligned_channels_config"></fragment>
+            <!-- PWM channels initialization function -->
+            <fragment id="pwm_channels_init" apply_to="$this.ftm_edge_aligned_channels_config" if_expr="$this.ftm_edge_aligned_channels_config.searchInArray(item -> (item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_EdgeAlignedPwm`)) >= 0">
+               <param id="struct_name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_pwmSignalParams`"></param>
+               <param id="number_of_channels" expr="`sizeof(` + $instance.getFnGroupPrefix() + $instance.getID() + `_pwmSignalParams` + `) / sizeof(ftm_chnl_pwm_signal_param_t)`"></param> <!-- Note: $this expression here corespond to the expression apply_to="$this.ftm_edge_aligned_channels_config" above  -->
+            </fragment>
+            <!-- Combined PWM channels initialization function -->
+            <fragment id="combined_pwm_channels_init" apply_to="$this.ftm_edge_aligned_channels_config" if_expr="$this.ftm_edge_aligned_channels_config.searchInArray(item -> (item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_CombinedPwm`)) >= 0">
+               <param id="struct_name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_combinedPwmSignalParams`"></param>
+               <param id="number_of_channels" expr="`sizeof(` + $instance.getFnGroupPrefix() + $instance.getID() + `_combinedPwmSignalParams` + `) / sizeof(ftm_chnl_pwm_signal_param_t)`"></param> <!-- Note: $this expression here corespond to the expression apply_to="$this.ftm_edge_aligned_channels_config" above  -->
+            </fragment>
+            <!-- The FTM_SetTimerPeriod function is called only if the SetuPWM is not invoked before (the SetupPWM function sets the MOD register of FTM by the same way as the call of the FTM_SetTimerPeriod)-->
+            <fragment id="ftm_set_timer_period_init" if_expr="$this.ftm_edge_aligned_channels_config.searchInArray(item -> ((item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_CombinedPwm`) || (item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_EdgeAlignedPwm`))) &lt; 0">
+            </fragment>
+            <!-- Enable interrupts of timer and channels -->
+            <fragment id="ftm_enable_interrupts" apply_to="$this.ftm_edge_aligned_channels_config" if_expr="($this.ftm_edge_aligned_channels_config.searchInArray(item -> (((item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_InputCapture`) &amp;&amp; (item.getSetting(`input_capture.enable_chan_irq`).getValue())) || 
+               ((item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_DualEdgeCapture`) &amp;&amp; (item.getSetting(`dual_edge_capture.enable_chan_irq`).getValue() || item.getSetting(`dual_edge_capture.enable_chan1_irq`).getValue())) || 
+               ((item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_OutputCompare`) &amp;&amp; (item.getSetting(`output_compare.enable_chan_irq`).getValue())) || 
+               ((item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_EdgeAlignedPwm`) &amp;&amp; (item.getSetting(`edge_aligned_pwm.enable_chan_irq`).getValue())) || 
+               ((item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_CombinedPwm`) &amp;&amp; (item.getSetting(`combined_pwm.enable_chan_irq`).getValue() || item.getSetting(`combined_pwm.enable_chan1_irq`).getValue()))  )) >= 0) ||
+               ($instance.ftm_main_config.timer_interrupts.getCValue() != ``)">
+            </fragment>
+         </section>
+      </code>
+      <quick_selections>
+      </quick_selections>
+   </config_set>
+   
+   <config_set id="ftm_center_aligned_mode" label="FlexTimer Center-aligned mode" from_source="fsl_ftm.h">
+      <description>FlexTimer center aligned mode configuration.</description>
+      <generated_types>
+      </generated_types>
+      <user_types>
+         <reference id="center_aligned_pwm" label="Center-aligned PWM settings" type="ftm_chnl_pwm_signal_param_t" config_set_id="ftm_edge_aligned_mode">
+            <validation>
+               <!-- constraint for checking of duplicated channels -->
+               <constraint cond_expr="($parent.searchInArray(item -> (($this.getID() != item.getID()) &amp;&amp; 
+                                      ((item.getSetting(`chnlNumber`).getValue())  ==  ($this.chnlNumber.getValue())))) &lt; 0)" level="warning" 
+                                      description_expr="`Duplicated channel (` + $this.chnlNumber.getEnumItemLabel() + `) is selected. Please, select each channel once only.`"/>
+            </validation>
+         </reference>
+      </user_types>
+      <settings>
+         <array id="ftm_center_aligned_channels_config" label="Channels" type="center_aligned_pwm">
+            <description>Configuration of the FTM channels in the edge-eligned mode.</description>
+         </array>
+         <!-- Variables used for reloadPoints verification; it return list of channels that provide the match event occurrence (output compare or a PWM mode). -->
+         <variable value="$parent.ftm_center_aligned_channels_config.map(item -> item.getSetting(`chnlNumber`).getValue().regexSubstr(`.*Chnl_(\d+)`, 1))" id="ChanMatchInit"></variable>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+         </import>
+         <def fragment="ftm_edge_aligned_channels_struct"> <!-- it is an array of structures -->
+            <fragment id="channel_struct" for_elements_of="$this" >     <!-- apply in context of each iten in the set/structure/array -->      
+            </fragment>
+            <br/>
+         </def>
+         <!-- Init functions -->
+         <!-- PWM channels signal params configuration as an array of the ftm_chnl_pwm_signal_param_t structures -->         
+         <def fragment="center_pwm_channel_struct">
+            <expr>leftPadding(`{`,1)</expr><br/>
+            <fragment id="field" for_elements_of="$this.filter(item -> ((!item.hasOption(`remove_from_struct_init`)) &amp;&amp; 
+                                                                       ((getType(item) != `info`) || (item.hasOption(`transform_by_regex`)) || (item.hasOption(`add_to_struct`))) &amp;&amp;
+                                                                       (getType(item) != `variable`)))">
+               <param id="paddingLevel" expr="2"></param>
+            </fragment>
+            <expr>leftPadding(`}`,1)</expr>
+            <expr> ($param._last ? ``: `,`) </expr><br/>
+         </def>
+         <def fragment="center_pwm_channels_struct"> <!-- it is an array of structures -->
+            <expr>`const ` + $param.type + ` ` + $param.name + `[] = { `</expr><br/>
+            <fragment id="center_pwm_channel_struct" for_elements_of="$this">      
+            </fragment>
+            <text>};</text>
+            <br/>
+         </def>
+         <def fragment="center_pwm_channels_init"> <!-- it is an array of structures -->
+            <expr>
+               leftPadding(`FTM_SetupPwm(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               $param.struct_name + `, ` + 
+               + $param.number_of_channels + `, ` +
+               + `kFTM_CenterAlignedPwm, ` +
+               + $instance.ftm_main_config.ftm_config.timerFrequency.getCValue() + `U, ` +
+               toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`) + `);`, 1) 
+            </expr><br/>
+         </def>
+         <!-- Enable interrupts of channels and timer -->
+         <def fragment="channel_interrupts">
+            <expr>$this.enable_chan_irq.getValue() ? $this.chan_interrupt.getValue() : ``</expr>
+            <expr> ($param._last ? `` : ` | `) </expr>
+         </def>
+         <def fragment="ftm_enable_interrupts"> <!-- it is an array of structures -->
+            <expr>
+               leftPadding(`FTM_EnableInterrupts(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, `, 1) 
+            </expr>
+            <fragment id="channel_interrupts" for_elements_of="$this.filter(item -> (item.getSetting(`enable_chan_irq`).getValue()))"/>
+            <expr if_expr="( ($this.searchInArray(item -> (item.getSetting(`enable_chan_irq`).getValue())) >= 0) &amp;&amp;
+                                                  ($instance.ftm_main_config.timer_interrupts.getCValue() != ``))">` | `</expr>
+            <expr>$instance.ftm_main_config.timer_interrupts.getCValue()</expr>
+            <expr>   
+               `);` 
+            </expr><br/>
+         </def>
+         <def fragment="ftm_set_timer_period_init">
+            <expr>
+               leftPadding(`FTM_SetTimerPeriod(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               + `((` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`) + `/ (1U &lt;&lt; (` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)+`-&gt;SC &amp; FTM_SC_PS_MASK)))`  
+               + ` / (` + $instance.ftm_main_config.ftm_config.timerFrequency.getCValue() + ` * 2))` + 
+               `);`, 1) 
+            </expr><br/>
+         </def>
+      </fragment_defs>
+      <code>
+         <!--         <code_template id="main_init">-->
+         <section target="defines">
+         </section> 
+         <section target="global_vars">
+            <fragment id="center_pwm_channels_struct" apply_to="$this.ftm_center_aligned_channels_config" if_expr="$this.ftm_center_aligned_channels_config.length() &gt; 0">
+               <!--               <fragment id="pwm_channels_struct" apply_to="$this.ftm_edge_aligned_channels_config" if_expr="$this.ftm_edge_aligned_channels_config.searchInArray($item.getSetting(`edge_aligned_mode`).getValue() == `kFTM_EdgeAlignedPwm`)">-->
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_centerPwmSignalParams`"></param>
+               <param id="type" >ftm_chnl_pwm_signal_param_t</param>
+            </fragment>
+         </section>
+         <section target="global_vars_extern">
+         </section>
+         <section target="init_function_body">
+            <!-- Center PWM channels initialization function -->
+            <fragment id="center_pwm_channels_init" apply_to="$this.ftm_center_aligned_channels_config" if_expr="$this.ftm_center_aligned_channels_config.length() &gt; 0">
+               <param id="struct_name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_centerPwmSignalParams`"></param>
+               <param id="number_of_channels" expr="`sizeof(` + $instance.getFnGroupPrefix() + $instance.getID() + `_centerPwmSignalParams` + `) / sizeof(ftm_chnl_pwm_signal_param_t)`"></param> <!-- Note: $this expression here corespond to the expression apply_to="$this.ftm_edge_aligned_channels_config" above  -->
+            </fragment>
+            <!-- The FTM_SetTimerPeriod function is called only if the SetuPWM is not invoked before (the SetupPWM function sets the MOD register of FTM by the same way as the call of the FTM_SetTimerPeriod)-->
+            <fragment id="ftm_set_timer_period_init" if_expr="$this.ftm_center_aligned_channels_config.length() == 0">
+            </fragment>
+            <!-- Enable interrupts of timer and channels -->
+            <fragment id="ftm_enable_interrupts" apply_to="$this.ftm_center_aligned_channels_config" if_expr="($this.ftm_center_aligned_channels_config.searchInArray(item -> (item.getSetting(`enable_chan_irq`).getValue())) >= 0) || ($instance.ftm_main_config.timer_interrupts.getCValue() != ``)">
+            </fragment>
+         </section>
+      </code>
+<!--      <validation>
+         <constraint cond_expr="$this.ftm_center_aligned_channels_config.forEachChildTrue(child -> ($this.ftm_center_aligned_channels_config.searchInArray(item -> ((child.getID() != item.getID()) &amp;&amp; 
+                               ((item.getSetting(`chnlNumber`).getValue())  ==  (child.getSetting(`chnlNumber`).getValue())))) &lt; 0))" level="warning" description="There are selected duplicated channels. Please, select each channel once only."/> 
+      </validation>-->
+      <quick_selections>
+      </quick_selections>
+   </config_set>
+   <config_set id="ftm_quadrature_decoder_mode" label="FlexTimer Quadrature Decoder Mode" from_source="fsl_ftm.h">
+      <description>FlexTimer quadrature decoder mode configuration.</description>
+      <generated_types>
+      </generated_types>
+      <user_types>
+         <struct id="ftm_phase_params_t" label="FlexTimer quadrature decoder phase parameters." from="_ftm_phase_param">
+            <bool id="enablePhaseFilter" label="Enable phase filter">
+               <description>True: enable phase filter; false: disable filter</description>
+            </bool>
+            <integer id="phaseFilterVal" label="Filter value" type="uint32_t" available="$parent.enablePhaseFilter.getValue()">
+               <description>Filter value, used only if phase filter is enabled</description>
+            </integer>
+            <reference id="phasePolarity" label="Phase polarity" type="ftm_phase_polarity_t" config_set_id="fsl_ftm">
+               <description>Phase polarity</description>
+            </reference>
+         </struct>
+      </user_types>
+      <settings>
+         <!-- Quadrature decoder mode - modulo value -->
+         <integer type="uint32_t" id="timerModuloVal" label="Timer modulo value" min_expr="1">
+            <description>Timer modulo value that is used in the quadrature decoder mode of the FTM device.</description>
+         </integer>
+         <!-- Quadrature decoder mode - initial value of the timer-->
+         <integer type="uint32_t" id="timerInitVal" label="Timer initial value">
+            <description>Initial value of the timer that is used in the quadrature decoder mode of the FTM device.</description>
+         </integer>
+         <reference id="ftm_quad_decoder_mode" label="FTM Quadrature Decoder Mode" type="ftm_quad_decode_mode_t" config_set_id="fsl_ftm">
+            <description>Quadrature decoder mode</description>
+         </reference>
+         <reference id="ftm_phase_a_params" label="FTM Phase A Parameters" type="ftm_phase_params_t">
+            <description>Phase A parameters configuration.</description>
+            <validation>
+<!--               <dependency when_expr="queryFeature()" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_qd_ph.A`" description_expr="`Quadrature decoder phase A signal needs to be routed`" level="Warning">-->
+                <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_qd_ph.A`" description_expr="`Quadrature decoder phase A signal is not supported for the device ` + $instance.getPeripheral()" level="Warning">
+                     <feature name="exists" evaluation="equal">
+                     <data expr="true"/>
+                  </feature>
+               </dependency>
+               <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_qd_ph.A`" description_expr="`Quadrature decoder phase A signal is not routed (` + $instance.getPeripheral() + ` device).`" level="Warning">
+                  <feature name="routed" evaluation="equal">
+                     <data expr="true"/>
+                  </feature>
+               </dependency>
+            </validation>
+         </reference>
+         <reference id="ftm_phase_b_params" label="FTM Phase B Parameters" type="ftm_phase_params_t">
+            <description>Phase B parameters configuration.</description>
+            <validation>   
+               <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_qd_ph.B`" description_expr="`Quadrature decoder phase B signal is not supported for the device ` + $instance.getPeripheral()" level="Warning">
+                  <feature name="exists" evaluation="equal">
+                     <data expr="true"/>
+                  </feature>
+               </dependency>
+               <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.tmr_qd_ph.B`" description_expr="`Quadrature decoder phase B signal is not routed (` + $instance.getPeripheral() + ` device).`" level="Warning">
+                  <feature name="routed" evaluation="equal">
+                     <data expr="true"/>
+                  </feature>
+               </dependency>
+           </validation>
+         </reference>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+         </import>
+         <def fragment="ftm_quad_decoder_struct"> <!-- it is an array of structures -->
+            <fragment id="channel_struct" for_elements_of="$this" >     <!-- apply in context of each iten in the set/structure/array -->      
+            </fragment>
+            <br/>
+         </def>
+         <!-- Init functions -->
+         <!-- PWM channels signal params configuration as an array of the ftm_chnl_pwm_signal_param_t structures -->         
+         <def fragment="quad_decoder_struct_items">
+<!--            <text>{</text>-->
+            <fragment id="field" apply_to="$this.enablePhaseFilter">
+               <param id="paddingLevel" expr="1"></param>
+               <param id="_last" expr="false"></param> <!-- define the _last parameter because one item of the structer is applied only -->
+            </fragment>
+            <fragment id="field" apply_to="$this.phaseFilterVal" if_expr="$this.enablePhaseFilter.getValue()">
+               <param id="paddingLevel" expr="1"></param>
+               <param id="_last" expr="false"></param> <!-- define the _last parameter because one item of the structer is applied only -->
+            </fragment>
+            <fragment id="field" apply_to="$this.phasePolarity">
+               <param id="paddingLevel" expr="1"></param>
+               <param id="_last" expr="true"></param> <!-- define the _last parameter because one item of the structer is applied only -->
+            </fragment>
+<!--            <text>}</text>-->
+            <br/>
+         </def>
+         <def fragment="quad_decoder_struct"> 
+            <expr>`const ` + $param.type + ` ` + $param.name + ` = { `</expr><br/>
+            <fragment id="quad_decoder_struct_items" apply_to="$this"/>       
+            <text>};</text>
+            <br/>
+         </def>
+         <def fragment="quad_decoder_init"> <!-- it is an array of structures -->
+            <expr>
+               leftPadding(`FTM_SetupQuadDecode(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               `&amp;` + $param.struct_phase_A_name + `, ` + 
+               `&amp;` + $param.struct_phase_B_name + `, ` + 
+               + $param.quad_mode + `);`, 1) 
+            </expr><br/>
+         </def>
+         <def fragment="quad_decoder_modulo_value"> <!-- it is an array of structures -->
+            <text>/* Initialization of the timer initial value and modulo value */</text><br/>
+            <expr>
+               leftPadding(`FTM_SetQuadDecoderModuloValue(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, ` + 
+               + $this.timerInitVal.getValue() + `,` + 
+               + $this.timerModuloVal.getValue() + `);`, 1) 
+            </expr><br/>
+         </def>
+         <def fragment="ftm_enable_interrupts">
+            <expr>
+               leftPadding(`FTM_EnableInterrupts(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`) + `, `, 1) + 
+               (($instance.ftm_main_config.timer_interrupts.getCValue() != ``) ? $instance.ftm_main_config.timer_interrupts.getCValue() : `0`) + `);` 
+            </expr><br/>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="defines">
+         </section> 
+         <section target="global_vars">
+            <fragment id="quad_decoder_struct" apply_to="$this.ftm_phase_a_params">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_phaseAParams`"></param>
+               <param id="type" >ftm_phase_params_t</param>
+            </fragment>
+            <fragment id="quad_decoder_struct" apply_to="$this.ftm_phase_b_params">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_phaseBParams`"></param>
+               <param id="type" >ftm_phase_params_t</param>
+            </fragment>
+         </section>
+         <section target="global_vars_extern">
+         </section>
+         <section target="init_function_body">
+            <!-- Quadrature decoder initialization functions -->
+            <fragment id="quad_decoder_modulo_value"/>
+            <fragment id="quad_decoder_init">
+               <param id="struct_phase_A_name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_phaseAParams`"></param>
+               <param id="struct_phase_B_name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_phaseBParams`"></param>
+               <param id="quad_mode" expr="$this.ftm_quad_decoder_mode.getCValue()"></param> <!-- Note: $this expression here corespond to the expression apply_to="$this.ftm_edge_aligned_channels_config" above  -->
+            </fragment>
+            <!-- FTM interrupts initialization -->
+            <fragment id="ftm_enable_interrupts" if_expr="$instance.ftm_main_config.timer_interrupts.getCValue() != ``"/>
+         </section>
+      </code>
+      <quick_selections>
+      </quick_selections>
+   </config_set>
+</component:config_component>

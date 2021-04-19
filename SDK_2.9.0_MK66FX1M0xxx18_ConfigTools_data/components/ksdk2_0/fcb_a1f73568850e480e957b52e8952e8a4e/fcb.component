@@ -1,0 +1,1355 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="fcb" label="FCB" category="Peripheral driver" global_only="false" hidden="false" options="UI_COMPONENT_MODE_HIDDEN" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-7.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <!-- <sw_comp_ref name="platform.drivers.flexspi" version="2.2.1"/> -->
+    <description>FlexSPI Configuration Block (FCB)</description>
+    
+    <mode id="general" label="General" available="featureDefined(`FSL_FEATURE_SOC_FLEXSPI_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SOC_FLEXSPI_COUNT`) &gt; 0)">
+        <description>General configuration</description>
+        <config_set_refs>
+            <config_set_ref>fcb_general</config_set_ref>
+        </config_set_refs>
+    <!--
+        <master_peripheral exclusive="false">
+            <peripheral_type>FLEXSPI</peripheral_type>
+        </master_peripheral>
+        -->
+    </mode>
+    <script file="fcb_generator.js"/>
+    <config_set id="fcb_general" label="General configuration" >
+        <description>FlexSPI general configuration.</description>
+        <generated_types>
+        </generated_types>
+        <user_types>
+            
+            <enum id="readClkSrc" label="Reading sampling clock source">
+                <item id="internalLoopBack" label="Internal loopback" value="0"></item>
+                <item id="loopbackDQS" label="Loopback from DQS pad" value="1"></item>
+                <item id="loopbackSCK" label="Loopback from SCK pad" value="2"></item>
+                <item id="externalDQS" label="External DQS signal" value="3"></item>
+            </enum>
+            
+            <enum id="num_pad_enum">
+                <item id="one_pad" label="Single mode" value="0x0">
+                    <description>One pad</description>
+                </item>
+                <item id="two_pad" label="Dual mode" value="0x1">
+                    <description>Two pad</description>
+                </item>
+                <item id="four_pad" label="Quad mode" value="0x2">
+                    <description>Four pad</description>
+                </item>
+                <item id="eight_pad" label="Octal mode" value="0x3">
+                    <description>Eight pads</description>
+                </item>
+            </enum>
+            
+            <enum id="opcode_SDR">
+                <item id="CMD_SDR" label="Transmit command code to flash" value="0x01">
+                    <description>Transmit Command code to Flash.</description>
+                </item>
+                <item id="RADDR_SDR" label="Transmit row address to flash" value="0x02">
+                    <description>Transmit Row Address to Flash</description>
+                </item>
+                <item id="CADDR_SDR" label="Transmit column address to flash" value="0x03">
+                    <description>Transmit Column Address to Flash</description>
+                </item>
+                <item id="MODE1_SDR" label="Transmit mode 1 bit to flash" value="0x04">
+                    <description>Transmit Mode bits to Flash</description>
+                </item>
+                <item id="MODE2_SDR" label="Transmit mode 2 bit to flash" value="0x05">
+                    <description>Transmit Mode bits to Flash</description>
+                </item>
+                <item id="MODE4_SDR" label="Transmit mode 4 bit to flash" value="0x06">
+                    <description>Transmit Mode bits to Flash</description>
+                </item>
+                <item id="MODE8_SDR" label="Transmit mode 8 bit to flash" value="0x06">
+                    <description>Transmit Mode bits to Flash</description>
+                </item>
+                <item id="WRITE_SDR" label="Transmit programming data to flash" value="0x08">
+                    <description>Transmit Programming Data to Flash</description>
+                </item>
+                <item id="READ_SDR" label="Receive read data from flash" value="0x09">
+                    <description>Receive Read Data from Flash</description>
+                </item>
+                <item id="LEARN_SDR" label="Receive read data or preamble bit" value="0x0A">
+                    <description>Receive Read Data or Preamble bit from Flash device.FlexSPI Controller will compare the data line bits with DLPR register to determine a correct sampling clock phase.</description>
+                </item>
+                <item id="DATSZ_SDR" label="Transmit read/program data size to flash" value="0x0B">
+                    <description>Transmit Read/ Program Data size(byte number) to Flash </description>
+                </item>
+                <item id="DUMMY_SDR" label="Leave data lines undriven" value="0x0C">
+                    <description> Leave data lines undriven by FlexSPI controller. Provide turnaround cycles from host driving to device driving. num_pads will determine the number of pads in input mode.</description>
+                </item>
+                <item id="DUMMY_RWDS_SDR" label="Leave data lines undriven, different dummy cycle number" value="0x0D">
+                    <description>This instruction is similar as DUMMY_SDR/ DUMMY_DDR instruction. But the dummy cycle number is different.  DQS pins is called "RWDS" in HyperBus specification</description>
+                </item>
+                <item id="JMP_ON_CS_SDR" label="Stop execution, deassert CS and save operand" value="0x1F">
+                    <description>Stop execution, deassert CS and save operand[7:0] as the instruction start pointer for next sequence.</description>
+                </item>
+                <item id="STOP_SDR" label="Stop execution and deassert CS" value="0x00">
+                    <description> Stop execution, deassert CS. Next command sequence (to the same flash device) will started from instruction pointer 0.</description>
+                </item> 
+            </enum>
+            
+            <enum id="opcode_DDR">
+                <item id="CMD_DDR" label="Transmit command code to flash" value="0x21">
+                    <description>Transmit Command code to Flash.</description>
+                </item>
+                <item id="RADDR_DDR" label="Transmit row address to flash" value="0x22">
+                    <description>Transmit Row Address to Flash</description>
+                </item>
+                <item id="CADDR_DDR" label="Transmit column address to flash" value="0x23">
+                    <description>Transmit Column Address to Flash</description>
+                </item>
+                <item id="MODE1_DDR" label="Transmit mode 1 bit to flash" value="0x24">
+                    <description>Transmit Mode bits to Flash</description>
+                </item>
+                <item id="MODE2_DDR" label="Transmit mode 2 bit to flash" value="0x25">
+                    <description>Transmit Mode bits to Flash</description>
+                </item>
+                <item id="MODE4_DDR" label="Transmit mode 4 bit to flash" value="0x26">
+                    <description>Transmit Mode bits to Flash</description>
+                </item>
+                <item id="MODE8_DDR" label="Transmit mode 8 bit to flash" value="0x26">
+                    <description>Transmit Mode bits to Flash</description>
+                </item>
+                <item id="WRITE_DDR" label="Transmit programming data to flash" value="0x28">
+                    <description>Transmit Programming Data to Flash</description>
+                </item>
+                <item id="READ_DDR" label="Receive read data from flash" value="0x29">
+                    <description>Receive Read Data from Flash</description>
+                </item>
+                <item id="LEARN_DDR" label="Receive read data or preamble bit" value="0x2A">
+                    <description>Receive Read Data or Preamble bit from Flash device.FlexSPI Controller will compare the data line bits with DLPR register to determine a correct sampling clock phase.</description>
+                </item>
+                <item id="DATSZ_DDR" label="Transmit read/program data size to flash" value="0x2B">
+                    <description>Transmit Read/ Program Data size(byte number) to Flash </description>
+                </item>
+                <item id="DUMMY_DDR" label="Leave data lines undriven" value="0x2C">
+                    <description> Leave data lines undriven by FlexSPI controller. Provide turnaround cycles from host driving to device driving. num_pads will determine the number of pads in input mode.</description>
+                </item>
+                <item id="DUMMY_RWDS_DDR" label="Leave data lines undriven, different dummy cycle number" value="0x2D">
+                    <description>This instruction is similar as DUMMY_SDR/ DUMMY_DDR instruction. But the dummy cycle number is different.  DQS pins is called "RWDS" in HyperBus specification</description>
+                </item>
+                <item id="JMP_ON_CS_DDR" label="Stop execution, deassert CS and save operand" value="0x1F">
+                    <description>Stop execution, deassert CS and save operand[7:0] as the instruction start pointer for next sequence.</description>
+                </item>
+                <item id="STOP_DDR" label="Stop executionand deassert CS" value="0x00">
+                    <description> Stop execution, deassert CS. Next command sequence (to the same flash device) will started from instruction pointer 0.</description>
+                </item> 
+            </enum>
+            
+            
+            <struct id="instruction" label=" ">
+                <reference id="opcodeSDR" type="opcode_SDR" label="Operation" available="$configSet.fcb_config.ddrModeEnableBool.getValue() == `false`"></reference>
+                <reference id="opcodeDDR" type="opcode_DDR" label="Operation" available="$configSet.fcb_config.ddrModeEnableBool.getValue() == `true`"></reference>
+                <variable id="opcode" value="$parent.opcodeSDR.isAvailable() ? $parent.opcodeSDR.getEnumItemValue() : $parent.opcodeDDR.getEnumItemValue()"/>
+                <reference id="num_pad" type="num_pad_enum" label="Number of pads">
+                    <validation>
+                        <constraint when_expr="$this.getEnumItemValue() != `0x0`" cond_expr="$parent.opcode.getValue() != `0x1F` &amp;&amp; $parent.opcode.getValue() != `0x00` " level="warning" description="The number of pads for this operation should be 0."/>
+                    </validation>
+                </reference>
+                <integer type="uint8_t" id="operand" label="Operand"></integer>
+                <variable id="instruct_value" value="$parent.opcodeSDR.isAvailable() ? ($parent.opcodeSDR.getEnumItemValue().toInt() &lt;&lt; 10) + ($parent.num_pad.getEnumItemValue().toInt() &lt;&lt; 8) + $parent.operand.getValue() : ($parent.opcodeDDR.getEnumItemValue().toInt() &lt;&lt; 10) + ($parent.num_pad.getEnumItemValue().toInt() &lt;&lt; 8) + $parent.operand.getValue() "/>
+            </struct>
+            
+            <struct id="lutSeq">
+                <array id="instruct_array" label="Instructions" type="instruction" min_expr="0" max_expr="8" options="ShowContentAs=MasterDetail"></array>
+                <variable id="numberInstructAvailable" value="$parent.instruct_array.size()"></variable>
+            </struct>
+            
+            
+            <struct id="flexspi_nor_config" label="FlexSPI NOR configuration">
+                <!-- tag -->
+                <variable id="tag" value="`0x42464346`">
+                    <description>Tag, fixed value 0x42464346UL</description>
+                </variable>
+
+                <!-- version -->
+                <variable id="version" value="`0x56020000`">
+                    <description>Version, [31:24] -'V', [23:16] - Major, [15:8] - Minor, [7:0] - Bugfix. Used by BootROM internally, fixed to 0x56020000.</description>
+                </variable>
+                
+                <!-- reserved0 4 bytes-->
+               
+                <!-- readSampleClkSrc -->
+                <reference id="readSampleClock" type="readClkSrc" label="Read sample clock source" options="remove_from_struct_init"></reference>
+                <variable id="readSampleClkSrc" value="$parent.readSampleClock.getEnumItemValue()" options="add_to_struct">
+                    <description>Read Sample Clock Source, valid value: 0/1/2/3</description>
+                </variable>
+                <!-- csHoldTime -->
+                <integer id="csHoldTime" label="CS hold time" type="uint8_t">
+                    <description>CS Hold time in terms of Flash clock cycles. Recommended value is 3</description>
+                </integer>
+                <!-- csSetupTime -->
+                <integer id="csSetupTime" label="CS setup time" type="uint8_t">
+                    <description>CS setup time in terms of Flash clock cycles. Recommended value is 3</description>
+                </integer>
+                <!-- columnAddressWidth -->
+                <integer id="columnAddressWidth" label="Column address width" type="uint8_t">
+                    <description>Column address width.</description>
+                </integer>
+                <!-- deviceModeCfgEnable -->
+                <bool id="deviceModeCfgEnableBool" label="Enable device mode configuration" options="remove_from_struct_init">
+                    <description>Enable the Device Mode Configuration sequence.</description>
+                </bool>
+                <variable id="deviceModeCfgEnable" value="$parent.deviceModeCfgEnableBool.getValue() == `true` ? 1 : 0" options="add_to_struct">
+                    <description>Device Mode Configure enable flag, 1 - Enable, 0 - Disable.</description>
+                </variable>
+                <!-- waitTimeCfgCommands -->
+                <integer id="waitTimeCfgCommands" type="uint16_t" label="Wait time configure commands">
+                    <description>Wait time for all configuration commands</description>
+                </integer>
+                <info id="waitTimeInfo" label="Resulting wait time [us]" value="$parent.waitTimeCfgCommands.getValue() * 100">
+                    <description>Resulting wait time. ROM will wait (Wait time configure commands * 100us) for all device memory configuration commands instead of using read status to wait until these commands complete.</description>
+                </info>
+                
+                <!-- deviceModeSeq -->
+                <integer id="deviceModeSeq" type="uint32_t" label="Device mode configuration sequence">
+                    <description>
+Device Mode Configuration Sequence.
+byte 0: Number of required sequences
+byte 1: Sequence Index
+                    </description>
+                </integer>
+                
+                <!-- deviceModeArg -->
+                <integer id="deviceModeArg" type="uint32_t" label="Device mode argument">
+                    <description>Argument for the Device Mode Configuration. For example, Quad Enable setting in Status Register2 for some QSPI FLASH devices</description>
+                </integer>
+                
+                <!-- configCmdEnable -->
+                <bool id="configCmdEnableBool" label="Enable configuration command" options="remove_from_struct_init">
+                    <description>Enable configuration command</description>
+                </bool> 
+                <variable id="configCmdEnable" value="$parent.configCmdEnableBool.getValue() ==`true` ? 1 : 0" options="add_to_struct"/>
+                
+                <!-- configModeType 3 bytes -->
+                <integer id="configModeType1" type="uint8_t" label="Configuration command type 1">
+                    <description>Config command types. Support up to 3 sequences</description>
+                </integer>
+                <integer id="configModeType2" type="uint8_t" label="Configuration command type 2"/>
+                <integer id="configModeType3" type="uint8_t" label="Configuration command type 3"/>
+                    
+                
+                <!-- configCmdSeqs 12 bytes-->
+                <integer id="configCmdSeqs1" type="uint32_t" label="Config command sequence type 1"/>
+                <integer id="configCmdSeqs2" type="uint32_t" label="Config command sequence type 2"/>
+                <integer id="configCmdSeqs3" type="uint32_t" label="Config command sequence type 3"/>
+                    
+                <!-- reserved 1 -->
+                
+                <!-- configCmdArgs 12 bytes -->
+                <integer id="configCmdArgs1" type="uint32_t" label="Config command argument 1"/>
+                <integer id="configCmdArgs2" type="uint32_t" label="Config command argument 2"/>
+                <integer id="configCmdArgs3" type="uint32_t" label="Config command argument 3"/>
+                
+                <!-- reserved 2 -->
+
+                <!-- controllerMiscOption -->
+
+                <!-- bit 0 -->
+                <bool id="differentialClockEnableBool" label="Enable differential clock" options="remove_from_struct_init">
+                    <description> Differential clock enable, enable for HyperFLASH 1V8 device, disable for other devices.</description>
+                </bool>
+                <variable id="differentialClockEnable" value="$parent.differentialClockEnableBool.getValue() == `true` ? 1 : 0" options="add_to_struct"/>
+                <!-- bit 3 -->
+                <bool id="wordAddressableEnableBool" label="Enable addressable word" options="remove_from_struct_init">
+                    <description>WordAddressableEnable, enable for HyperFLASH, disable for other devices</description>
+                </bool>
+                <variable id="wordAddressableEnable" value="$parent.wordAddressableEnableBool.getValue() ==`true` ? 1 : 0" options="add_to_struct"/>     
+                <!-- bit 4 -->
+                <bool id="safeConfigFreqEnableBool" label="Enable safe config frequency" options="remove_from_struct_init">
+                    <description>SafeConfigFreqEnable, enable if expecting to configure device with safe frequency</description>
+                </bool>
+                <variable id="safeConfigFreqEnable" value="$parent.safeConfigFreqEnableBool.getValue() == `true` ? 1 : 0" options="add_to_struct"/>
+                <!-- bit 6  -->
+                <bool id="ddrModeEnableBool" label="Enable DDR mode" options="remove_from_struct_init">
+                    <description>DDR mode enable, enable if DDR read is expected</description>
+                </bool>
+                <variable id="ddrModeEnable" value="$parent.ddrModeEnableBool.getValue() == `true` ? 1 : 0" options="add_to_struct" />
+      
+                <variable id="controllerMiscOption" value="$parent.differentialClockEnable.getValue().toInt() + 8*$parent.wordAddressableEnable.getValue().toInt() + 16*$parent.safeConfigFreqEnable.getValue().toInt() + 64*$parent.ddrModeEnable.getValue().toInt()"/>
+                  <!-- deviceType -->
+                <enum id="deviceTypes" label="Device type" options="remove_from_struct_init">
+                    <item id="serialNOR" label="Serial NOR"></item>
+                </enum>
+                <variable id="deviceType" value="$parent.deviceTypes.getEnumItemValue() == `serialNOR` ? 1 : 0" options="add_to_struct"/>
+                
+                <!-- sflashPadType -->
+                <enum id="padTypes" label="Data pad used in read command" options="remove_from_struct_init">
+                    <item id="singlePad" label="Single pad" value="1"></item>
+                    <item id="dualPads" label="Dual pads" value="2"></item>
+                    <item id="quadPads" label="Quad pads" value="4"></item>
+                    <item id="octalPads" label="Octal pads" value="8"></item>
+                </enum>
+                <variable id="sflashPadType" value="$parent.padTypes.getEnumItemValue()" options="add_to_struct"/>
+                
+                <!-- serialClkFreq -->
+                <enum id="bootModeEnum" label="Boot mode" options="remove_from_struct_init">
+                    <item id="normal" label="Normal"></item>
+                    <item id="highSpeed" label="High speed"></item>   
+                </enum>
+                <variable id="bootMode" value="$parent.bootModeEnum.getEnumItemId()" options="remove_from_struct_init"/>
+                
+                <enum id="normalSDR" label="Flash frequency [MHz]" available="$parent.bootMode.getValue() == `normal` &amp;&amp; $parent.ddrModeEnableBool.getValue() == `false`" options="remove_from_struct_init">
+                    <item id="24MHz" label="24" value="1"></item>
+                    <item id="48MHz" label="48" value="2"></item>
+                </enum>
+                <enum id="normalDDR" label="Flash frequency [MHz]" available="$parent.bootMode.getValue() == `normal` &amp;&amp; $parent.ddrModeEnableBool.getValue() == `true`" options="remove_from_struct_init">
+                    <item id="48MHz" label="48" value="1"></item>
+                </enum>
+                <enum id="highSDRDDR" label="Flash frequency [MHz]" available="$parent.bootMode.getValue() == `highSpeed`" options="remove_from_struct_init">
+                    <item id="30MHz" label="30" value="1"></item>
+                    <item id="50MHz" label="50" value="2"></item>
+                    <item id="60MHz" label="60" value="3"></item>
+                    <item id="80MHz" label="80" value="4"></item>
+                    <item id="100MHz" label="100" value="5"></item>
+                    <item id="120MHz" label="120" value="6"></item>
+                    <item id="133MHz" label="133" value="7"></item>
+                    <item id="166MHz" label="166" value="8"></item>
+                    <item id="200MHz" label="200" value="9"></item>
+                </enum>
+                
+                <variable id="serialClkFreq" value="$parent.normalSDR.isAvailable() ? $parent.normalSDR.getEnumItemValue() : ($parent.normalDDR.isAvailable() ? $parent.normalDDR.getEnumItemValue() : $parent.highSDRDDR.getEnumItemValue())" options="add_to_struct"/>
+
+                <!-- reserved 3 
+                    <integer id="reserved3" type="uint32_t" label="Reserved" />
+                -->
+                <!-- sflashA1Size-->
+                <integer id="sflashA1Size" type="uint32_t" label="Size of Flash connected to A1 [bytes]"/>
+                <!-- sflashA2Size -->
+                <integer id="sflashA2Size" type="uint32_t" label="Size of Flash connected to A2 [bytes]"/>
+                <!-- sflashB1Size -->
+                <integer id="sflashB1Size" type="uint32_t" label="Size of Flash connected to B1 [bytes]"/>
+                <!-- sflashB2Size -->
+                <integer id="sflashB2Size" type="uint32_t" label="Size of Flash connected to B2 [bytes]"/>
+                
+                <!-- csPadSettingOverride -->
+                <integer id="csPadSettingOverride" type="uint32_t" label="CS pin override">
+                    <description>Pad override value for CS pin. Using this value to configure CS pin if it is non-zero, otherwise use default ROM setting</description>
+                </integer>
+                
+                <!-- sclkPadSettingOverride -->
+                <integer id="sclkPadSettingOverride" type="uint32_t" label="Serial clock pad setting override">
+                    <description>Serial clock pad setting override value</description>
+                </integer>
+                
+                <!-- dataPadSetttingOverride -->
+                <integer id="dataPadSettingOverride" type="uint32_t" label="Data pad setting override">
+                    <description>Data pad setting override value.</description>
+                </integer>
+                
+                <!-- dqsPadSettingOverride -->
+                <integer id="dqsPadSettingOverride" type="uint32_t" label="DQS pad setting override">
+                    <description>DQS pad setting override value. DQS is a strobe signal used by DDR. Data strobe is the clock signal for the data lines.</description>
+                </integer>
+                
+                <!-- timeoutIntMs -->
+                <integer id="timeoutInMs" type="uint32_t" label="Timeout [ms]">
+                    <description>Timeout value in terms of ms to terminate the busy check</description>
+                </integer>
+                
+                <!--commandInterval -->
+                <integer id="commandInterval" type="uint32_t" label="CS deselect interval [ns]">
+                    <description>CS deselect interval between two commands</description>
+                </integer>
+                
+                <!-- dataValidTime -->
+                <integer id="dataValidTime" type="uint32_t" label="Clock edge [ns]">
+                    <description>CLK edge to data valid time for Port A and Port B. This field is used when the FlexSPI Root clock is less than 100 MHz and the read sample clock source is device provided DQS signal without CK2 support.</description>
+                </integer>
+                
+                <!-- busyOffset -->
+                <integer id="busyOffset" type="uint16_t" label="Busy offset" min_expr="0" max_expr="31">
+                    <description>Busy offset, valid value: 0-31</description>
+                </integer>
+                
+                <!-- busyBitPolarity -->
+                <bool id="busyBitPolarityBool" label="Busy flag polarity">
+                    <description>Busy flag polarity, disable - busy flag is 1 when flash device is busy, enable - busy flag is 0 when flash device is busy. </description>
+                </bool>
+                
+                <variable id="busyBitPolarity" value="$parent.busyBitPolarityBool.getValue() == `true` ? 1 : 0" > </variable>
+                
+                <!-- lookupTable -->
+                <array id="lookupTable" label="Look up table" type="lutSeq" max_expr="16" options="ShowContentAs=MasterDetail;remove_from_struct_init" key_selector_expr="x -> (`Sequence ` + x.getId().toHertz())">
+                </array>
+                
+                <variable id="seq0instr0" value="($parent.lookupTable.size() &gt;= 1) ? ($parent.lookupTable.get(0).getSetting(`numberInstructAvailable`).getValue() &gt;= 1 ? $parent.lookupTable.get(0).get(0).get(0).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq0instr1" value="($parent.lookupTable.size() &gt;= 1) ? ($parent.lookupTable.get(0).getSetting(`numberInstructAvailable`).getValue() &gt;= 2 ? $parent.lookupTable.get(0).get(0).get(1).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq0instr2" value="($parent.lookupTable.size() &gt;= 1) ? ($parent.lookupTable.get(0).getSetting(`numberInstructAvailable`).getValue() &gt;= 3 ? $parent.lookupTable.get(0).get(0).get(2).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq0instr3" value="($parent.lookupTable.size() &gt;= 1) ? ($parent.lookupTable.get(0).getSetting(`numberInstructAvailable`).getValue() &gt;= 4 ? $parent.lookupTable.get(0).get(0).get(3).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq0instr4" value="($parent.lookupTable.size() &gt;= 1) ? ($parent.lookupTable.get(0).getSetting(`numberInstructAvailable`).getValue() &gt;= 5 ? $parent.lookupTable.get(0).get(0).get(4).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq0instr5" value="($parent.lookupTable.size() &gt;= 1) ? ($parent.lookupTable.get(0).getSetting(`numberInstructAvailable`).getValue() &gt;= 6 ? $parent.lookupTable.get(0).get(0).get(5).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq0instr6" value="($parent.lookupTable.size() &gt;= 1) ? ($parent.lookupTable.get(0).getSetting(`numberInstructAvailable`).getValue() &gt;= 7 ? $parent.lookupTable.get(0).get(0).get(6).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq0instr7" value="($parent.lookupTable.size() &gt;= 1) ? ($parent.lookupTable.get(0).getSetting(`numberInstructAvailable`).getValue() &gt;= 8 ? $parent.lookupTable.get(0).get(0).get(7).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                
+                <variable id="seq1instr0" value="($parent.lookupTable.size() &gt;= 2) ? ($parent.lookupTable.get(1).getSetting(`numberInstructAvailable`).getValue() &gt;= 1 ? $parent.lookupTable.get(1).get(0).get(0).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq1instr1" value="($parent.lookupTable.size() &gt;= 2) ? ($parent.lookupTable.get(1).getSetting(`numberInstructAvailable`).getValue() &gt;= 2 ? $parent.lookupTable.get(1).get(0).get(1).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq1instr2" value="($parent.lookupTable.size() &gt;= 2) ? ($parent.lookupTable.get(1).getSetting(`numberInstructAvailable`).getValue() &gt;= 3 ? $parent.lookupTable.get(1).get(0).get(2).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq1instr3" value="($parent.lookupTable.size() &gt;= 2) ? ($parent.lookupTable.get(1).getSetting(`numberInstructAvailable`).getValue() &gt;= 4 ? $parent.lookupTable.get(1).get(0).get(3).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq1instr4" value="($parent.lookupTable.size() &gt;= 2) ? ($parent.lookupTable.get(1).getSetting(`numberInstructAvailable`).getValue() &gt;= 5 ? $parent.lookupTable.get(1).get(0).get(4).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq1instr5" value="($parent.lookupTable.size() &gt;= 2) ? ($parent.lookupTable.get(1).getSetting(`numberInstructAvailable`).getValue() &gt;= 6 ? $parent.lookupTable.get(1).get(0).get(5).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq1instr6" value="($parent.lookupTable.size() &gt;= 2) ? ($parent.lookupTable.get(1).getSetting(`numberInstructAvailable`).getValue() &gt;= 7 ? $parent.lookupTable.get(1).get(0).get(6).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq1instr7" value="($parent.lookupTable.size() &gt;= 2) ? ($parent.lookupTable.get(1).getSetting(`numberInstructAvailable`).getValue() &gt;= 8 ? $parent.lookupTable.get(1).get(0).get(7).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                
+                <variable id="seq2instr0" value="($parent.lookupTable.size() &gt;= 3) ? ($parent.lookupTable.get(2).getSetting(`numberInstructAvailable`).getValue() &gt;= 1 ? $parent.lookupTable.get(2).get(0).get(0).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq2instr1" value="($parent.lookupTable.size() &gt;= 3) ? ($parent.lookupTable.get(2).getSetting(`numberInstructAvailable`).getValue() &gt;= 2 ? $parent.lookupTable.get(2).get(0).get(1).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq2instr2" value="($parent.lookupTable.size() &gt;= 3) ? ($parent.lookupTable.get(2).getSetting(`numberInstructAvailable`).getValue() &gt;= 3 ? $parent.lookupTable.get(2).get(0).get(2).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq2instr3" value="($parent.lookupTable.size() &gt;= 3) ? ($parent.lookupTable.get(2).getSetting(`numberInstructAvailable`).getValue() &gt;= 4 ? $parent.lookupTable.get(2).get(0).get(3).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq2instr4" value="($parent.lookupTable.size() &gt;= 3) ? ($parent.lookupTable.get(2).getSetting(`numberInstructAvailable`).getValue() &gt;= 5 ? $parent.lookupTable.get(2).get(0).get(4).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq2instr5" value="($parent.lookupTable.size() &gt;= 3) ? ($parent.lookupTable.get(2).getSetting(`numberInstructAvailable`).getValue() &gt;= 6 ? $parent.lookupTable.get(2).get(0).get(5).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq2instr6" value="($parent.lookupTable.size() &gt;= 3) ? ($parent.lookupTable.get(2).getSetting(`numberInstructAvailable`).getValue() &gt;= 7 ? $parent.lookupTable.get(2).get(0).get(6).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq2instr7" value="($parent.lookupTable.size() &gt;= 3) ? ($parent.lookupTable.get(2).getSetting(`numberInstructAvailable`).getValue() &gt;= 8 ? $parent.lookupTable.get(2).get(0).get(7).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                
+                <variable id="seq3instr0" value="($parent.lookupTable.size() &gt;= 4) ? ($parent.lookupTable.get(3).getSetting(`numberInstructAvailable`).getValue() &gt;= 1 ? $parent.lookupTable.get(3).get(0).get(0).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq3instr1" value="($parent.lookupTable.size() &gt;= 4) ? ($parent.lookupTable.get(3).getSetting(`numberInstructAvailable`).getValue() &gt;= 2 ? $parent.lookupTable.get(3).get(0).get(1).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq3instr2" value="($parent.lookupTable.size() &gt;= 4) ? ($parent.lookupTable.get(3).getSetting(`numberInstructAvailable`).getValue() &gt;= 3 ? $parent.lookupTable.get(3).get(0).get(2).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq3instr3" value="($parent.lookupTable.size() &gt;= 4) ? ($parent.lookupTable.get(3).getSetting(`numberInstructAvailable`).getValue() &gt;= 4 ? $parent.lookupTable.get(3).get(0).get(3).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq3instr4" value="($parent.lookupTable.size() &gt;= 4) ? ($parent.lookupTable.get(3).getSetting(`numberInstructAvailable`).getValue() &gt;= 5 ? $parent.lookupTable.get(3).get(0).get(4).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq3instr5" value="($parent.lookupTable.size() &gt;= 4) ? ($parent.lookupTable.get(3).getSetting(`numberInstructAvailable`).getValue() &gt;= 6 ? $parent.lookupTable.get(3).get(0).get(5).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq3instr6" value="($parent.lookupTable.size() &gt;= 4) ? ($parent.lookupTable.get(3).getSetting(`numberInstructAvailable`).getValue() &gt;= 7 ? $parent.lookupTable.get(3).get(0).get(6).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq3instr7" value="($parent.lookupTable.size() &gt;= 4) ? ($parent.lookupTable.get(3).getSetting(`numberInstructAvailable`).getValue() &gt;= 8 ? $parent.lookupTable.get(3).get(0).get(7).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                
+                <variable id="seq4instr0" value="($parent.lookupTable.size() &gt;= 5) ? ($parent.lookupTable.get(4).getSetting(`numberInstructAvailable`).getValue() &gt;= 1 ? $parent.lookupTable.get(4).get(0).get(0).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq4instr1" value="($parent.lookupTable.size() &gt;= 5) ? ($parent.lookupTable.get(4).getSetting(`numberInstructAvailable`).getValue() &gt;= 2 ? $parent.lookupTable.get(4).get(0).get(1).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq4instr2" value="($parent.lookupTable.size() &gt;= 5) ? ($parent.lookupTable.get(4).getSetting(`numberInstructAvailable`).getValue() &gt;= 3 ? $parent.lookupTable.get(4).get(0).get(2).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq4instr3" value="($parent.lookupTable.size() &gt;= 5) ? ($parent.lookupTable.get(4).getSetting(`numberInstructAvailable`).getValue() &gt;= 4 ? $parent.lookupTable.get(4).get(0).get(3).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq4instr4" value="($parent.lookupTable.size() &gt;= 5) ? ($parent.lookupTable.get(4).getSetting(`numberInstructAvailable`).getValue() &gt;= 5 ? $parent.lookupTable.get(4).get(0).get(4).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq4instr5" value="($parent.lookupTable.size() &gt;= 5) ? ($parent.lookupTable.get(4).getSetting(`numberInstructAvailable`).getValue() &gt;= 6 ? $parent.lookupTable.get(4).get(0).get(5).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq4instr6" value="($parent.lookupTable.size() &gt;= 5) ? ($parent.lookupTable.get(4).getSetting(`numberInstructAvailable`).getValue() &gt;= 7 ? $parent.lookupTable.get(4).get(0).get(6).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq4instr7" value="($parent.lookupTable.size() &gt;= 5) ? ($parent.lookupTable.get(4).getSetting(`numberInstructAvailable`).getValue() &gt;= 8 ? $parent.lookupTable.get(4).get(0).get(7).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                
+                <variable id="seq5instr0" value="($parent.lookupTable.size() &gt;= 6) ? ($parent.lookupTable.get(5).getSetting(`numberInstructAvailable`).getValue() &gt;= 1 ? $parent.lookupTable.get(5).get(0).get(0).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq5instr1" value="($parent.lookupTable.size() &gt;= 6) ? ($parent.lookupTable.get(5).getSetting(`numberInstructAvailable`).getValue() &gt;= 2 ? $parent.lookupTable.get(5).get(0).get(1).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq5instr2" value="($parent.lookupTable.size() &gt;= 6) ? ($parent.lookupTable.get(5).getSetting(`numberInstructAvailable`).getValue() &gt;= 3 ? $parent.lookupTable.get(5).get(0).get(2).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq5instr3" value="($parent.lookupTable.size() &gt;= 6) ? ($parent.lookupTable.get(5).getSetting(`numberInstructAvailable`).getValue() &gt;= 4 ? $parent.lookupTable.get(5).get(0).get(3).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq5instr4" value="($parent.lookupTable.size() &gt;= 6) ? ($parent.lookupTable.get(5).getSetting(`numberInstructAvailable`).getValue() &gt;= 5 ? $parent.lookupTable.get(5).get(0).get(4).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq5instr5" value="($parent.lookupTable.size() &gt;= 6) ? ($parent.lookupTable.get(5).getSetting(`numberInstructAvailable`).getValue() &gt;= 6 ? $parent.lookupTable.get(5).get(0).get(5).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq5instr6" value="($parent.lookupTable.size() &gt;= 6) ? ($parent.lookupTable.get(5).getSetting(`numberInstructAvailable`).getValue() &gt;= 7 ? $parent.lookupTable.get(5).get(0).get(6).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq5instr7" value="($parent.lookupTable.size() &gt;= 6) ? ($parent.lookupTable.get(5).getSetting(`numberInstructAvailable`).getValue() &gt;= 8 ? $parent.lookupTable.get(5).get(0).get(7).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                
+                <variable id="seq6instr0" value="($parent.lookupTable.size() &gt;= 7) ? ($parent.lookupTable.get(6).getSetting(`numberInstructAvailable`).getValue() &gt;= 1 ? $parent.lookupTable.get(6).get(0).get(0).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq6instr1" value="($parent.lookupTable.size() &gt;= 7) ? ($parent.lookupTable.get(6).getSetting(`numberInstructAvailable`).getValue() &gt;= 2 ? $parent.lookupTable.get(6).get(0).get(1).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq6instr2" value="($parent.lookupTable.size() &gt;= 7) ? ($parent.lookupTable.get(6).getSetting(`numberInstructAvailable`).getValue() &gt;= 3 ? $parent.lookupTable.get(6).get(0).get(2).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq6instr3" value="($parent.lookupTable.size() &gt;= 7) ? ($parent.lookupTable.get(6).getSetting(`numberInstructAvailable`).getValue() &gt;= 4 ? $parent.lookupTable.get(6).get(0).get(3).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq6instr4" value="($parent.lookupTable.size() &gt;= 7) ? ($parent.lookupTable.get(6).getSetting(`numberInstructAvailable`).getValue() &gt;= 5 ? $parent.lookupTable.get(6).get(0).get(4).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq6instr5" value="($parent.lookupTable.size() &gt;= 7) ? ($parent.lookupTable.get(6).getSetting(`numberInstructAvailable`).getValue() &gt;= 6 ? $parent.lookupTable.get(6).get(0).get(5).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq6instr6" value="($parent.lookupTable.size() &gt;= 7) ? ($parent.lookupTable.get(6).getSetting(`numberInstructAvailable`).getValue() &gt;= 7 ? $parent.lookupTable.get(6).get(0).get(6).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq6instr7" value="($parent.lookupTable.size() &gt;= 7) ? ($parent.lookupTable.get(6).getSetting(`numberInstructAvailable`).getValue() &gt;= 8 ? $parent.lookupTable.get(6).get(0).get(7).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                
+                <variable id="seq7instr0" value="($parent.lookupTable.size() &gt;= 8) ? ($parent.lookupTable.get(7).getSetting(`numberInstructAvailable`).getValue() &gt;= 1 ? $parent.lookupTable.get(7).get(0).get(0).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq7instr1" value="($parent.lookupTable.size() &gt;= 8) ? ($parent.lookupTable.get(7).getSetting(`numberInstructAvailable`).getValue() &gt;= 2 ? $parent.lookupTable.get(7).get(0).get(1).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq7instr2" value="($parent.lookupTable.size() &gt;= 8) ? ($parent.lookupTable.get(7).getSetting(`numberInstructAvailable`).getValue() &gt;= 3 ? $parent.lookupTable.get(7).get(0).get(2).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq7instr3" value="($parent.lookupTable.size() &gt;= 8) ? ($parent.lookupTable.get(7).getSetting(`numberInstructAvailable`).getValue() &gt;= 4 ? $parent.lookupTable.get(7).get(0).get(3).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq7instr4" value="($parent.lookupTable.size() &gt;= 8) ? ($parent.lookupTable.get(7).getSetting(`numberInstructAvailable`).getValue() &gt;= 5 ? $parent.lookupTable.get(7).get(0).get(4).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq7instr5" value="($parent.lookupTable.size() &gt;= 8) ? ($parent.lookupTable.get(7).getSetting(`numberInstructAvailable`).getValue() &gt;= 6 ? $parent.lookupTable.get(7).get(0).get(5).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq7instr6" value="($parent.lookupTable.size() &gt;= 8) ? ($parent.lookupTable.get(7).getSetting(`numberInstructAvailable`).getValue() &gt;= 7 ? $parent.lookupTable.get(7).get(0).get(6).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq7instr7" value="($parent.lookupTable.size() &gt;= 8) ? ($parent.lookupTable.get(7).getSetting(`numberInstructAvailable`).getValue() &gt;= 8 ? $parent.lookupTable.get(7).get(0).get(7).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                
+                <variable id="seq8instr0" value="($parent.lookupTable.size() &gt;= 9) ? ($parent.lookupTable.get(8).getSetting(`numberInstructAvailable`).getValue() &gt;= 1 ? $parent.lookupTable.get(8).get(0).get(0).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq8instr1" value="($parent.lookupTable.size() &gt;= 9) ? ($parent.lookupTable.get(8).getSetting(`numberInstructAvailable`).getValue() &gt;= 2 ? $parent.lookupTable.get(8).get(0).get(1).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq8instr2" value="($parent.lookupTable.size() &gt;= 9) ? ($parent.lookupTable.get(8).getSetting(`numberInstructAvailable`).getValue() &gt;= 3 ? $parent.lookupTable.get(8).get(0).get(2).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq8instr3" value="($parent.lookupTable.size() &gt;= 9) ? ($parent.lookupTable.get(8).getSetting(`numberInstructAvailable`).getValue() &gt;= 4 ? $parent.lookupTable.get(8).get(0).get(3).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq8instr4" value="($parent.lookupTable.size() &gt;= 9) ? ($parent.lookupTable.get(8).getSetting(`numberInstructAvailable`).getValue() &gt;= 5 ? $parent.lookupTable.get(8).get(0).get(4).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq8instr5" value="($parent.lookupTable.size() &gt;= 9) ? ($parent.lookupTable.get(8).getSetting(`numberInstructAvailable`).getValue() &gt;= 6 ? $parent.lookupTable.get(8).get(0).get(5).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq8instr6" value="($parent.lookupTable.size() &gt;= 9) ? ($parent.lookupTable.get(8).getSetting(`numberInstructAvailable`).getValue() &gt;= 7 ? $parent.lookupTable.get(8).get(0).get(6).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq8instr7" value="($parent.lookupTable.size() &gt;= 9) ? ($parent.lookupTable.get(8).getSetting(`numberInstructAvailable`).getValue() &gt;= 8 ? $parent.lookupTable.get(8).get(0).get(7).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                
+                <variable id="seq9instr0" value="($parent.lookupTable.size() &gt;= 10) ? ($parent.lookupTable.get(9).getSetting(`numberInstructAvailable`).getValue() &gt;= 1 ? $parent.lookupTable.get(9).get(0).get(0).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq9instr1" value="($parent.lookupTable.size() &gt;= 10) ? ($parent.lookupTable.get(9).getSetting(`numberInstructAvailable`).getValue() &gt;= 2 ? $parent.lookupTable.get(9).get(0).get(1).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq9instr2" value="($parent.lookupTable.size() &gt;= 10) ? ($parent.lookupTable.get(9).getSetting(`numberInstructAvailable`).getValue() &gt;= 3 ? $parent.lookupTable.get(9).get(0).get(2).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq9instr3" value="($parent.lookupTable.size() &gt;= 10) ? ($parent.lookupTable.get(9).getSetting(`numberInstructAvailable`).getValue() &gt;= 4 ? $parent.lookupTable.get(9).get(0).get(3).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq9instr4" value="($parent.lookupTable.size() &gt;= 10) ? ($parent.lookupTable.get(9).getSetting(`numberInstructAvailable`).getValue() &gt;= 5 ? $parent.lookupTable.get(9).get(0).get(4).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq9instr5" value="($parent.lookupTable.size() &gt;= 10) ? ($parent.lookupTable.get(9).getSetting(`numberInstructAvailable`).getValue() &gt;= 6 ? $parent.lookupTable.get(9).get(0).get(5).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq9instr6" value="($parent.lookupTable.size() &gt;= 10) ? ($parent.lookupTable.get(9).getSetting(`numberInstructAvailable`).getValue() &gt;= 7 ? $parent.lookupTable.get(9).get(0).get(6).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq9instr7" value="($parent.lookupTable.size() &gt;= 10) ? ($parent.lookupTable.get(9).getSetting(`numberInstructAvailable`).getValue() &gt;= 8 ? $parent.lookupTable.get(9).get(0).get(7).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                
+                <variable id="seq10instr0" value="($parent.lookupTable.size() &gt;= 11) ? ($parent.lookupTable.get(10).getSetting(`numberInstructAvailable`).getValue() &gt;= 1 ? $parent.lookupTable.get(10).get(0).get(0).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq10instr1" value="($parent.lookupTable.size() &gt;= 11) ? ($parent.lookupTable.get(10).getSetting(`numberInstructAvailable`).getValue() &gt;= 2 ? $parent.lookupTable.get(10).get(0).get(1).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq10instr2" value="($parent.lookupTable.size() &gt;= 11) ? ($parent.lookupTable.get(10).getSetting(`numberInstructAvailable`).getValue() &gt;= 3 ? $parent.lookupTable.get(10).get(0).get(2).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq10instr3" value="($parent.lookupTable.size() &gt;= 11) ? ($parent.lookupTable.get(10).getSetting(`numberInstructAvailable`).getValue() &gt;= 4 ? $parent.lookupTable.get(10).get(0).get(3).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq10instr4" value="($parent.lookupTable.size() &gt;= 11) ? ($parent.lookupTable.get(10).getSetting(`numberInstructAvailable`).getValue() &gt;= 5 ? $parent.lookupTable.get(10).get(0).get(4).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq10instr5" value="($parent.lookupTable.size() &gt;= 11) ? ($parent.lookupTable.get(10).getSetting(`numberInstructAvailable`).getValue() &gt;= 6 ? $parent.lookupTable.get(10).get(0).get(5).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq10instr6" value="($parent.lookupTable.size() &gt;= 11) ? ($parent.lookupTable.get(10).getSetting(`numberInstructAvailable`).getValue() &gt;= 7 ? $parent.lookupTable.get(10).get(0).get(6).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq10instr7" value="($parent.lookupTable.size() &gt;= 11) ? ($parent.lookupTable.get(10).getSetting(`numberInstructAvailable`).getValue() &gt;= 8 ? $parent.lookupTable.get(10).get(0).get(7).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                
+                <variable id="seq11instr0" value="($parent.lookupTable.size() &gt;= 12) ? ($parent.lookupTable.get(11).getSetting(`numberInstructAvailable`).getValue() &gt;= 1 ? $parent.lookupTable.get(11).get(0).get(0).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq11instr1" value="($parent.lookupTable.size() &gt;= 12) ? ($parent.lookupTable.get(11).getSetting(`numberInstructAvailable`).getValue() &gt;= 2 ? $parent.lookupTable.get(11).get(0).get(1).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq11instr2" value="($parent.lookupTable.size() &gt;= 12) ? ($parent.lookupTable.get(11).getSetting(`numberInstructAvailable`).getValue() &gt;= 3 ? $parent.lookupTable.get(11).get(0).get(2).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq11instr3" value="($parent.lookupTable.size() &gt;= 12) ? ($parent.lookupTable.get(11).getSetting(`numberInstructAvailable`).getValue() &gt;= 4 ? $parent.lookupTable.get(11).get(0).get(3).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq11instr4" value="($parent.lookupTable.size() &gt;= 12) ? ($parent.lookupTable.get(11).getSetting(`numberInstructAvailable`).getValue() &gt;= 5 ? $parent.lookupTable.get(11).get(0).get(4).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq11instr5" value="($parent.lookupTable.size() &gt;= 12) ? ($parent.lookupTable.get(11).getSetting(`numberInstructAvailable`).getValue() &gt;= 6 ? $parent.lookupTable.get(11).get(0).get(5).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq11instr6" value="($parent.lookupTable.size() &gt;= 12) ? ($parent.lookupTable.get(11).getSetting(`numberInstructAvailable`).getValue() &gt;= 7 ? $parent.lookupTable.get(11).get(0).get(6).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq11instr7" value="($parent.lookupTable.size() &gt;= 12) ? ($parent.lookupTable.get(11).getSetting(`numberInstructAvailable`).getValue() &gt;= 8 ? $parent.lookupTable.get(11).get(0).get(7).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                
+                <variable id="seq12instr0" value="($parent.lookupTable.size() &gt;= 13) ? ($parent.lookupTable.get(12).getSetting(`numberInstructAvailable`).getValue() &gt;= 1 ? $parent.lookupTable.get(12).get(0).get(0).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq12instr1" value="($parent.lookupTable.size() &gt;= 13) ? ($parent.lookupTable.get(12).getSetting(`numberInstructAvailable`).getValue() &gt;= 2 ? $parent.lookupTable.get(12).get(0).get(1).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq12instr2" value="($parent.lookupTable.size() &gt;= 13) ? ($parent.lookupTable.get(12).getSetting(`numberInstructAvailable`).getValue() &gt;= 3 ? $parent.lookupTable.get(12).get(0).get(2).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq12instr3" value="($parent.lookupTable.size() &gt;= 13) ? ($parent.lookupTable.get(12).getSetting(`numberInstructAvailable`).getValue() &gt;= 4 ? $parent.lookupTable.get(12).get(0).get(3).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq12instr4" value="($parent.lookupTable.size() &gt;= 13) ? ($parent.lookupTable.get(12).getSetting(`numberInstructAvailable`).getValue() &gt;= 5 ? $parent.lookupTable.get(12).get(0).get(4).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq12instr5" value="($parent.lookupTable.size() &gt;= 13) ? ($parent.lookupTable.get(12).getSetting(`numberInstructAvailable`).getValue() &gt;= 6 ? $parent.lookupTable.get(12).get(0).get(5).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq12instr6" value="($parent.lookupTable.size() &gt;= 13) ? ($parent.lookupTable.get(12).getSetting(`numberInstructAvailable`).getValue() &gt;= 7 ? $parent.lookupTable.get(12).get(0).get(6).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq12instr7" value="($parent.lookupTable.size() &gt;= 13) ? ($parent.lookupTable.get(12).getSetting(`numberInstructAvailable`).getValue() &gt;= 8 ? $parent.lookupTable.get(12).get(0).get(7).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                
+                <variable id="seq13instr0" value="($parent.lookupTable.size() &gt;= 14) ? ($parent.lookupTable.get(13).getSetting(`numberInstructAvailable`).getValue() &gt;= 1 ? $parent.lookupTable.get(13).get(0).get(0).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq13instr1" value="($parent.lookupTable.size() &gt;= 14) ? ($parent.lookupTable.get(13).getSetting(`numberInstructAvailable`).getValue() &gt;= 2 ? $parent.lookupTable.get(13).get(0).get(1).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq13instr2" value="($parent.lookupTable.size() &gt;= 14) ? ($parent.lookupTable.get(13).getSetting(`numberInstructAvailable`).getValue() &gt;= 3 ? $parent.lookupTable.get(13).get(0).get(2).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq13instr3" value="($parent.lookupTable.size() &gt;= 14) ? ($parent.lookupTable.get(13).getSetting(`numberInstructAvailable`).getValue() &gt;= 4 ? $parent.lookupTable.get(13).get(0).get(3).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq13instr4" value="($parent.lookupTable.size() &gt;= 14) ? ($parent.lookupTable.get(13).getSetting(`numberInstructAvailable`).getValue() &gt;= 5 ? $parent.lookupTable.get(13).get(0).get(4).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq13instr5" value="($parent.lookupTable.size() &gt;= 14) ? ($parent.lookupTable.get(13).getSetting(`numberInstructAvailable`).getValue() &gt;= 6 ? $parent.lookupTable.get(13).get(0).get(5).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq13instr6" value="($parent.lookupTable.size() &gt;= 14) ? ($parent.lookupTable.get(13).getSetting(`numberInstructAvailable`).getValue() &gt;= 7 ? $parent.lookupTable.get(13).get(0).get(6).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq13instr7" value="($parent.lookupTable.size() &gt;= 14) ? ($parent.lookupTable.get(13).getSetting(`numberInstructAvailable`).getValue() &gt;= 8 ? $parent.lookupTable.get(13).get(0).get(7).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                
+                <variable id="seq14instr0" value="($parent.lookupTable.size() &gt;= 15) ? ($parent.lookupTable.get(14).getSetting(`numberInstructAvailable`).getValue() &gt;= 1 ? $parent.lookupTable.get(14).get(0).get(0).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq14instr1" value="($parent.lookupTable.size() &gt;= 15) ? ($parent.lookupTable.get(14).getSetting(`numberInstructAvailable`).getValue() &gt;= 2 ? $parent.lookupTable.get(14).get(0).get(1).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq14instr2" value="($parent.lookupTable.size() &gt;= 15) ? ($parent.lookupTable.get(14).getSetting(`numberInstructAvailable`).getValue() &gt;= 3 ? $parent.lookupTable.get(14).get(0).get(2).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq14instr3" value="($parent.lookupTable.size() &gt;= 15) ? ($parent.lookupTable.get(14).getSetting(`numberInstructAvailable`).getValue() &gt;= 4 ? $parent.lookupTable.get(14).get(0).get(3).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq14instr4" value="($parent.lookupTable.size() &gt;= 15) ? ($parent.lookupTable.get(14).getSetting(`numberInstructAvailable`).getValue() &gt;= 5 ? $parent.lookupTable.get(14).get(0).get(4).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq14instr5" value="($parent.lookupTable.size() &gt;= 15) ? ($parent.lookupTable.get(14).getSetting(`numberInstructAvailable`).getValue() &gt;= 6 ? $parent.lookupTable.get(14).get(0).get(5).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq14instr6" value="($parent.lookupTable.size() &gt;= 15) ? ($parent.lookupTable.get(14).getSetting(`numberInstructAvailable`).getValue() &gt;= 7 ? $parent.lookupTable.get(14).get(0).get(6).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq14instr7" value="($parent.lookupTable.size() &gt;= 15) ? ($parent.lookupTable.get(14).getSetting(`numberInstructAvailable`).getValue() &gt;= 8 ? $parent.lookupTable.get(14).get(0).get(7).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                
+                <variable id="seq15instr0" value="($parent.lookupTable.size() &gt;= 16) ? ($parent.lookupTable.get(15).getSetting(`numberInstructAvailable`).getValue() &gt;= 1 ? $parent.lookupTable.get(15).get(0).get(0).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq15instr1" value="($parent.lookupTable.size() &gt;= 16) ? ($parent.lookupTable.get(15).getSetting(`numberInstructAvailable`).getValue() &gt;= 2 ? $parent.lookupTable.get(15).get(0).get(1).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq15instr2" value="($parent.lookupTable.size() &gt;= 16) ? ($parent.lookupTable.get(15).getSetting(`numberInstructAvailable`).getValue() &gt;= 3 ? $parent.lookupTable.get(15).get(0).get(2).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq15instr3" value="($parent.lookupTable.size() &gt;= 16) ? ($parent.lookupTable.get(15).getSetting(`numberInstructAvailable`).getValue() &gt;= 4 ? $parent.lookupTable.get(15).get(0).get(3).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq15instr4" value="($parent.lookupTable.size() &gt;= 16) ? ($parent.lookupTable.get(15).getSetting(`numberInstructAvailable`).getValue() &gt;= 5 ? $parent.lookupTable.get(15).get(0).get(4).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq15instr5" value="($parent.lookupTable.size() &gt;= 16) ? ($parent.lookupTable.get(15).getSetting(`numberInstructAvailable`).getValue() &gt;= 6 ? $parent.lookupTable.get(15).get(0).get(5).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq15instr6" value="($parent.lookupTable.size() &gt;= 16) ? ($parent.lookupTable.get(15).getSetting(`numberInstructAvailable`).getValue() &gt;= 7 ? $parent.lookupTable.get(15).get(0).get(6).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                <variable id="seq15instr7" value="($parent.lookupTable.size() &gt;= 16) ? ($parent.lookupTable.get(15).getSetting(`numberInstructAvailable`).getValue() &gt;= 8 ? $parent.lookupTable.get(15).get(0).get(7).getSetting(`instruct_value`).getValue() : 0) : 0 "/>
+                
+                <!-- lutCustomSeq -->
+                
+                <bool id="lutCustomSeqEnableBool" label="Enable custom LUT" options="remove_from_struct_init"/>
+                <variable id="lutCustomSeqEnable" value="$parent.lutCustomSeqEnableBool.getValue() == `true` ? 1 : 0" options="add_to_struct"/>
+
+                <array id="customLUTseq" label="Customizable LUT Sequences" type="lutSeq" max_expr="3" available="$parent.lutCustomSeqEnableBool.getValue() == `true`" options="ShowContentAs=MasterDetail;remove_from_struct_init" key_selector_expr="x -> (`Sequence ` + x.getId().toHertz())">
+                </array>
+                
+                <variable id="custom_seq0instr0" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 1) ? ($parent.customLUTseq.get(0).getSetting(`numberInstructAvailable`).getValue() &gt;= 1 ? $parent.customLUTseq.get(0).get(0).get(0).getSetting(`instruct_value`).getValue() : 0) : 0) : 0"/>
+                <variable id="custom_seq0instr1" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 1) ? ($parent.customLUTseq.get(0).getSetting(`numberInstructAvailable`).getValue() &gt;= 2 ? $parent.customLUTseq.get(0).get(0).get(1).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                <variable id="custom_seq0instr2" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 1) ? ($parent.customLUTseq.get(0).getSetting(`numberInstructAvailable`).getValue() &gt;= 3 ? $parent.customLUTseq.get(0).get(0).get(2).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                <variable id="custom_seq0instr3" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 1) ? ($parent.customLUTseq.get(0).getSetting(`numberInstructAvailable`).getValue() &gt;= 4 ? $parent.customLUTseq.get(0).get(0).get(3).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                <variable id="custom_seq0instr4" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 1) ? ($parent.customLUTseq.get(0).getSetting(`numberInstructAvailable`).getValue() &gt;= 5 ? $parent.customLUTseq.get(0).get(0).get(4).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                <variable id="custom_seq0instr5" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 1) ? ($parent.customLUTseq.get(0).getSetting(`numberInstructAvailable`).getValue() &gt;= 6 ? $parent.customLUTseq.get(0).get(0).get(5).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                <variable id="custom_seq0instr6" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 1) ? ($parent.customLUTseq.get(0).getSetting(`numberInstructAvailable`).getValue() &gt;= 7 ? $parent.customLUTseq.get(0).get(0).get(6).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                <variable id="custom_seq0instr7" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 1) ? ($parent.customLUTseq.get(0).getSetting(`numberInstructAvailable`).getValue() &gt;= 8 ? $parent.customLUTseq.get(0).get(0).get(7).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                
+                <variable id="custom_seq1instr0" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 2) ? ($parent.customLUTseq.get(1).getSetting(`numberInstructAvailable`).getValue() &gt;= 1 ? $parent.customLUTseq.get(1).get(0).get(0).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                <variable id="custom_seq1instr1" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 2) ? ($parent.customLUTseq.get(1).getSetting(`numberInstructAvailable`).getValue() &gt;= 2 ? $parent.customLUTseq.get(1).get(0).get(1).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                <variable id="custom_seq1instr2" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 2) ? ($parent.customLUTseq.get(1).getSetting(`numberInstructAvailable`).getValue() &gt;= 3 ? $parent.customLUTseq.get(1).get(0).get(2).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                <variable id="custom_seq1instr3" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 2) ? ($parent.customLUTseq.get(1).getSetting(`numberInstructAvailable`).getValue() &gt;= 4 ? $parent.customLUTseq.get(1).get(0).get(3).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                <variable id="custom_seq1instr4" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 2) ? ($parent.customLUTseq.get(1).getSetting(`numberInstructAvailable`).getValue() &gt;= 5 ? $parent.customLUTseq.get(1).get(0).get(4).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                <variable id="custom_seq1instr5" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 2) ? ($parent.customLUTseq.get(1).getSetting(`numberInstructAvailable`).getValue() &gt;= 6 ? $parent.customLUTseq.get(1).get(0).get(5).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                <variable id="custom_seq1instr6" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 2) ? ($parent.customLUTseq.get(1).getSetting(`numberInstructAvailable`).getValue() &gt;= 7 ? $parent.customLUTseq.get(1).get(0).get(6).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                <variable id="custom_seq1instr7" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 2) ? ($parent.customLUTseq.get(1).getSetting(`numberInstructAvailable`).getValue() &gt;= 8 ? $parent.customLUTseq.get(1).get(0).get(7).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                
+                <variable id="custom_seq2instr0" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 3) ? ($parent.customLUTseq.get(2).getSetting(`numberInstructAvailable`).getValue() &gt;= 1 ? $parent.customLUTseq.get(2).get(0).get(0).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                <variable id="custom_seq2instr1" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 3) ? ($parent.customLUTseq.get(2).getSetting(`numberInstructAvailable`).getValue() &gt;= 2 ? $parent.customLUTseq.get(2).get(0).get(1).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                <variable id="custom_seq2instr2" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 3) ? ($parent.customLUTseq.get(2).getSetting(`numberInstructAvailable`).getValue() &gt;= 3 ? $parent.customLUTseq.get(2).get(0).get(2).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                <variable id="custom_seq2instr3" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 3) ? ($parent.customLUTseq.get(2).getSetting(`numberInstructAvailable`).getValue() &gt;= 4 ? $parent.customLUTseq.get(2).get(0).get(3).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                <variable id="custom_seq2instr4" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 3) ? ($parent.customLUTseq.get(2).getSetting(`numberInstructAvailable`).getValue() &gt;= 5 ? $parent.customLUTseq.get(2).get(0).get(4).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                <variable id="custom_seq2instr5" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 3) ? ($parent.customLUTseq.get(2).getSetting(`numberInstructAvailable`).getValue() &gt;= 6 ? $parent.customLUTseq.get(2).get(0).get(5).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                <variable id="custom_seq2instr6" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 3) ? ($parent.customLUTseq.get(2).getSetting(`numberInstructAvailable`).getValue() &gt;= 7 ? $parent.customLUTseq.get(2).get(0).get(6).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+                <variable id="custom_seq2instr7" value="$parent.customLUTseq.isAvailable() ? (($parent.customLUTseq.size() &gt;= 3) ? ($parent.customLUTseq.get(2).getSetting(`numberInstructAvailable`).getValue() &gt;= 8 ? $parent.customLUTseq.get(2).get(0).get(7).getSetting(`instruct_value`).getValue() : 0) : 0) : 0 "/>
+
+                <!-- reserved -->
+                
+                <!-- pageSize -->
+                <integer id="pageSize" type="uint32_t" label="Page size [bytes]">
+                    <description>Page size of Flash</description>
+                </integer>
+                
+                <!-- sectorSize -->
+                <integer id="sectorSize" type="uint32_t" label="Sector size [bytes]">
+                    <description>Sector size of Flash</description>
+                </integer>
+                
+                <!-- ipcmdSerialClkFreq -->
+                
+                <enum id="normalSDRip" label="Flash frequency for IP command [MHz]" available="$parent.bootMode.getValue() == `normal` &amp;&amp; $parent.ddrModeEnableBool.getValue() == `false` &amp;&amp; $parent.theSameFreq.getValue() == `false`" options="remove_from_struct_init">
+                    <item id="24MHz" label="24" value="1"></item>
+                    <item id="48MHz" label="48" value="2"></item>
+                </enum>
+                <enum id="normalDDRip" label="Flash frequency for IP command [MHz]" available="$parent.bootMode.getValue() == `normal` &amp;&amp; $parent.ddrModeEnableBool.getValue() == `true` &amp;&amp; $parent.theSameFreq.getValue() == `false`" options="remove_from_struct_init">
+                    <item id="48MHz" label="48" value="1"></item>
+                </enum>
+                <enum id="highSDRDDRip" label="Flash frequency for IP command [MHz]" available="$parent.bootMode.getValue() == `highSpeed` &amp;&amp; $parent.theSameFreq.getValue() == `false`" options="remove_from_struct_init">
+                    <item id="30MHz" label="30" value="1"></item>
+                    <item id="50MHz" label="50" value="2"></item>
+                    <item id="60MHz" label="60" value="3"></item>
+                    <item id="80MHz" label="80" value="4"></item>
+                    <item id="100MHz" label="100" value="5"></item>
+                    <item id="120MHz" label="120" value="6"></item>
+                    <item id="133MHz" label="133" value="7"></item>
+                    <item id="166MHz" label="166" value="8"></item>
+                    <item id="200MHz" label="200" value="9"></item>
+                </enum>
+                
+                <bool id="theSameFreq" label="Serial clock frequency for IP command" options="remove_from_struct_init"/>
+                
+                <variable id="ipcmdSerialClkFreq" value="$parent.theSameFreq.getValue() == `true` ? 0 :
+                    ($parent.normalSDRip.isAvailable() ? $parent.normalSDRip.getEnumItemValue() : 
+                    ($parent.normalDDRip.isAvailable() ? $parent.normalDDRip.getEnumItemValue() : $parent.highSDRDDRip.getEnumItemValue()))" options="add_to_struct"/>
+                
+                <!-- isUniformBlockSize -->
+                <bool id="isUniformBlockSizeBool" label="Sector size = block size" options="remove_from_struct_init">
+                    <description>Sector size is the same size with block size.</description>
+                </bool>
+                <variable id="isUniformBlockSize" value="$parent.isUniformBlockSizeBool.getValue() == `true` ? 1 : 0"  />
+                
+                <!-- isDataOrderSwapped -->
+                <bool id="isDataOrderSwappedBool" label="Data order is swapped" options="remove_from_struct_init">
+                    <description>Data order (D0, D1, D2, D3) is swapped (D1,D0, D3, D2)</description>
+                </bool>
+                <variable id="isDataOrderSwapped" value="$parent.isDataOrderSwappedBool.getValue()== `true` ? 1 : 0" options="add_to_struct"/>
+                
+                <!-- reserved -->
+                
+                <!-- serialNorType -->
+                <enum id="serialNorTypeEnum" label="Serial NOR Flash type" options="remove_from_struct_init">
+                    <item id="standardSPI" label="Serial NOR Type StandardSPI" value="0"></item>
+                    <item id="hyperBus" label="Serial NOR Type HyperBus" value="1"></item>
+                    <item id="xpi" label="Serial NOR Type XPI" value="2"></item>
+                    <item id="NoCmd" label="Serial NOR Type NoCmd" value="3"></item>
+                </enum>
+                <variable id="serialNorType" value="$parent.serialNorTypeEnum.getEnumItemValue()" options="add_to_struct"></variable>
+                
+                <!-- needExitNoCmdMode -->
+                <bool id="needExitNoCmdModeBool" label="Exit no cmd mode" options="remove_from_struct_init">
+                    <description>Need to exit No Cmd mode before other IP command</description>
+                </bool>
+                <variable id="needExitNoCmdMode" value="$parent.needExitNoCmdModeBool.getValue() == `true` ? 1 : 0"></variable>
+                
+                <!-- halfClkForNonReadCmd -->
+                <bool id="halfClkForNonReadCmdBool" label="Half Serial Clock for non-read command" options="remove_from_struct_init">
+                    <description>Half the Serial Clock for non-read command: true/false</description>
+                </bool>
+                <variable id="halfClkForNonReadCmd" value="$parent.halfClkForNonReadCmdBool.getValue() == `true` ? 1 : 0"/>
+                
+                <!-- needRestoreNoCmdMode -->
+                <bool id="needRestoreNoCmdModeBool" label="Restore no cmd mode" options="remove_from_struct_init">
+                    <description>Need to restore No Cmd mode after IP command execution</description>
+                </bool>
+                <variable id="needRestoreNoCmdMode" value="$parent.needRestoreNoCmdModeBool.getValue() == `true` ? 1 : 0"/>
+                
+                <!-- blockSize -->
+                <integer id="blockSize" label="Block size [bytes]" type="uint32_t">
+                    <description>Flash Block size</description>
+                </integer>
+                
+                <!-- flashStateCtx -->
+                <integer id="flashStateCtx" label="State context" type="uint32_t">
+                    <description>Flash State Context, which is used to restore the flash to default state</description>
+                </integer>
+                
+                <!-- reserved  40 bytes-->
+            
+            </struct>
+            
+            <struct id="fcb_config_struct" label="FlexSPI NOR configuration">
+                <!-- tag -->
+                <variable id="tag1" value="toString($configSet.fcb_config.tag.getValue().toInt() >> 24, 16)"/>
+                <variable id="tag2" value="toString($configSet.fcb_config.tag.getValue().toInt() >> 16, 16)"/>
+                <variable id="tag3" value="toString($configSet.fcb_config.tag.getValue().toInt() >> 8, 16)" />
+                <variable id="tag4" value="toString($configSet.fcb_config.tag.getValue().toInt(), 16)"/>
+                
+                <!-- version -->
+                <variable id="version1" value="toString($configSet.fcb_config.version.getValue().toInt() >> 24, 16)"/>
+                <variable id="version2" value="toString($configSet.fcb_config.version.getValue().toInt() >> 16, 16)"/>
+                <variable id="version3" value="toString($configSet.fcb_config.version.getValue().toInt() >> 8, 16)" />
+                <variable id="version4" value="toString($configSet.fcb_config.version.getValue().toInt(), 16)"/>
+                
+                <!-- reserved0 -->
+                <variable id="reserved01" value="toString(0, 16)"/>
+                <variable id="reserved02" value="toString(0, 16)"/>
+                <variable id="reserved03" value="toString(0, 16)" />
+                <variable id="reserved04" value="toString(0, 16)"/>
+                
+                <!-- readSampleClkSrc -->
+                <variable id="readSampleClkSrc1" value="toString($configSet.fcb_config.readSampleClkSrc.getValue().toInt(), 16)"/>
+                
+                <!-- csHoldTime -->
+                <variable id="csHoldTime1" value="toString($configSet.fcb_config.csHoldTime.getValue().toInt(), 16)"/>    
+                
+                <!-- csSetupTime -->
+                <variable id="csSetupTime1" value="toString($configSet.fcb_config.csSetupTime.getValue().toInt(), 16)"/>
+                
+                <!-- columnAddressWidth -->
+                <variable id="columnAddressWidth1" value="toString($configSet.fcb_config.columnAddressWidth.getValue().toInt(), 16)"/>
+                
+                <!-- deviceModeCfgEnable -->
+                <variable id="deviceModeCfgEnable1" value="toString($configSet.fcb_config.deviceModeCfgEnable.getValue().toInt(), 16)"/>
+                
+                <!-- deviceModeType -->
+                <variable id="deviceModeType1" value="toString(0, 16)"/>
+                
+                <!-- waitTimeCfgCommands -->
+                <variable id="waitTimeCfgCommands1" value="toString($configSet.fcb_config.waitTimeCfgCommands.getValue().toInt() >> 8, 16)"/>
+                <variable id="waitTimeCfgCommands2" value="toString($configSet.fcb_config.waitTimeCfgCommands.getValue().toInt(), 16)"/>
+                
+                <!-- deviceModeSeq -->
+                <variable id="deviceModeSeq1" value="toString($configSet.fcb_config.deviceModeSeq.getValue().toInt() >> 24, 16)"/>
+                <variable id="deviceModeSeq2" value="toString($configSet.fcb_config.deviceModeSeq.getValue().toInt() >> 16, 16)"/>
+                <variable id="deviceModeSeq3" value="toString($configSet.fcb_config.deviceModeSeq.getValue().toInt() >> 8, 16)"/>
+                <variable id="deviceModeSeq4" value="toString($configSet.fcb_config.deviceModeSeq.getValue().toInt(), 16)"/>
+                
+                <!-- deviceModeArg -->
+                <variable id="deviceModeArg1" value="toString($configSet.fcb_config.deviceModeArg.getValue().toInt() >> 24, 16)"/>
+                <variable id="deviceModeArg2" value="toString($configSet.fcb_config.deviceModeArg.getValue().toInt() >> 16, 16)"/>
+                <variable id="deviceModeArg3" value="toString($configSet.fcb_config.deviceModeArg.getValue().toInt() >> 8, 16)"/>
+                <variable id="deviceModeArg4" value="toString($configSet.fcb_config.deviceModeArg.getValue().toInt(), 16)"/>
+                
+                <!-- configCmdEnable -->
+                <variable id="configCmdEnable1" value="toString($configSet.fcb_config.configCmdEnable.getValue().toInt(), 16)"/>
+                
+                <!-- configModeType -->
+                <variable id="configModeType11" value="toString($configSet.fcb_config.configModeType1.getValue().toInt(), 16)"/>
+                <variable id="configModeType21" value="toString($configSet.fcb_config.configModeType2.getValue().toInt(), 16)"/>
+                <variable id="configModeType31" value="toString($configSet.fcb_config.configModeType3.getValue().toInt(), 16)"/>
+                
+                <!-- configCmdSeqs -->
+                <variable id="configCmdSeqs11" value="toString($configSet.fcb_config.configCmdSeqs1.getValue().toInt() >> 24, 16)"/>
+                <variable id="configCmdSeqs12" value="toString($configSet.fcb_config.configCmdSeqs1.getValue().toInt() >> 16, 16)"/>
+                <variable id="configCmdSeqs13" value="toString($configSet.fcb_config.configCmdSeqs1.getValue().toInt() >> 8, 16)"/>
+                <variable id="configCmdSeqs14" value="toString($configSet.fcb_config.configCmdSeqs1.getValue().toInt(), 16)"/>
+                
+                <variable id="configCmdSeqs21" value="toString($configSet.fcb_config.configCmdSeqs2.getValue().toInt() >> 24, 16)"/>
+                <variable id="configCmdSeqs22" value="toString($configSet.fcb_config.configCmdSeqs2.getValue().toInt() >> 16, 16)"/>
+                <variable id="configCmdSeqs23" value="toString($configSet.fcb_config.configCmdSeqs2.getValue().toInt() >> 8, 16)"/>
+                <variable id="configCmdSeqs24" value="toString($configSet.fcb_config.configCmdSeqs2.getValue().toInt(), 16)"/>
+                
+                <variable id="configCmdSeqs31" value="toString($configSet.fcb_config.configCmdSeqs3.getValue().toInt() >> 24, 16)"/>
+                <variable id="configCmdSeqs32" value="toString($configSet.fcb_config.configCmdSeqs3.getValue().toInt() >> 16, 16)"/>
+                <variable id="configCmdSeqs33" value="toString($configSet.fcb_config.configCmdSeqs3.getValue().toInt() >> 8, 16)"/>
+                <variable id="configCmdSeqs34" value="toString($configSet.fcb_config.configCmdSeqs3.getValue().toInt(), 16)"/>
+                
+                <!-- reserved1 -->
+                <variable id="reserved11" value="toString(0, 16)"/>
+                <variable id="reserved12" value="toString(0, 16)"/>
+                <variable id="reserved13" value="toString(0, 16)"/>
+                <variable id="reserved14" value="toString(0, 16)"/>
+                
+                <!-- configCmdArgs -->
+                <variable id="configCmdArgs11" value="toString($configSet.fcb_config.configCmdArgs1.getValue().toInt() >> 24, 16)"/>
+                <variable id="configCmdArgs12" value="toString($configSet.fcb_config.configCmdArgs1.getValue().toInt() >> 16, 16)"/>
+                <variable id="configCmdArgs13" value="toString($configSet.fcb_config.configCmdArgs1.getValue().toInt() >> 8, 16)"/>
+                <variable id="configCmdArgs14" value="toString($configSet.fcb_config.configCmdArgs1.getValue().toInt(), 16)"/>
+                
+                <variable id="configCmdArgs21" value="toString($configSet.fcb_config.configCmdArgs2.getValue().toInt() >> 24, 16)"/>
+                <variable id="configCmdArgs22" value="toString($configSet.fcb_config.configCmdArgs2.getValue().toInt() >> 16, 16)"/>
+                <variable id="configCmdArgs23" value="toString($configSet.fcb_config.configCmdArgs2.getValue().toInt() >> 8, 16)"/>
+                <variable id="configCmdArgs24" value="toString($configSet.fcb_config.configCmdArgs2.getValue().toInt(), 16)"/>
+                
+                <variable id="configCmdArgs31" value="toString($configSet.fcb_config.configCmdArgs3.getValue().toInt() >> 24, 16)"/>
+                <variable id="configCmdArgs32" value="toString($configSet.fcb_config.configCmdArgs3.getValue().toInt() >> 16, 16)"/>
+                <variable id="configCmdArgs33" value="toString($configSet.fcb_config.configCmdArgs3.getValue().toInt() >> 8, 16)"/>
+                <variable id="configCmdArgs34" value="toString($configSet.fcb_config.configCmdArgs3.getValue().toInt(), 16)"/>
+                
+                <!-- reserved2 -->
+                <variable id="reserved21" value="toString(0, 16)"/>
+                <variable id="reserved22" value="toString(0, 16)"/>
+                <variable id="reserved23" value="toString(0, 16)"/>
+                <variable id="reserved24" value="toString(0, 16)"/>
+                
+                <!-- controllerMiscOption -->
+                <variable id="reservedMisc1" value="toString(0, 16)"/>
+                <variable id="reservedMisc2" value="toString(0, 16)"/>
+                <variable id="reservedMisc3" value="toString(0, 16)"/>
+                <variable id="controllerMiscOption1" value="toString($configSet.fcb_config.controllerMiscOption.getValue().toInt(), 16)"/>
+                
+                <!-- deviceType -->
+                <variable id="deviceType1" value="toString($configSet.fcb_config.deviceType.getValue().toInt(), 16)"/>
+                
+                <!-- sflashPadType -->
+                <variable id="sflashPadType1" value="toString($configSet.fcb_config.sflashPadType.getValue().toInt(), 16)"/>
+                
+                <!-- serialClkFreq -->
+                <variable id="serialClkFreq1" value="toString($configSet.fcb_config.serialClkFreq.getValue().toInt(), 16)"/>
+                
+                <!-- lutCustomSeqEnable -->
+                <variable id="lutCustomSeqEnable1" value="toString($configSet.fcb_config.lutCustomSeqEnable.getValue().toInt(), 16)"/>
+                
+                <!-- reserved3 -->
+                <variable id="reserved31" value="toString(0, 16)"/>
+                <variable id="reserved32" value="toString(0, 16)"/>
+                <variable id="reserved33" value="toString(0, 16)"/>
+                <variable id="reserved34" value="toString(0, 16)"/>
+                <variable id="reserved35" value="toString(0, 16)"/>
+                <variable id="reserved36" value="toString(0, 16)"/>
+                <variable id="reserved37" value="toString(0, 16)"/>
+                <variable id="reserved38" value="toString(0, 16)"/>
+                
+                <!-- sflashA1Size -->
+                <variable id="sflashA1Size1" value="toString($configSet.fcb_config.sflashA1Size.getValue().toInt() >> 24, 16)"/>
+                <variable id="sflashA1Size2" value="toString($configSet.fcb_config.sflashA1Size.getValue().toInt() >> 16, 16)"/>
+                <variable id="sflashA1Size3" value="toString($configSet.fcb_config.sflashA1Size.getValue().toInt() >> 8, 16)"/>
+                <variable id="sflashA1Size4" value="toString($configSet.fcb_config.sflashA1Size.getValue().toInt(), 16)"/>
+                
+                <!-- sflashA2Size -->
+                <variable id="sflashA2Size1" value="toString($configSet.fcb_config.sflashA2Size.getValue().toInt() >> 24, 16)"/>
+                <variable id="sflashA2Size2" value="toString($configSet.fcb_config.sflashA2Size.getValue().toInt() >> 16, 16)"/>
+                <variable id="sflashA2Size3" value="toString($configSet.fcb_config.sflashA2Size.getValue().toInt() >> 8, 16)"/>
+                <variable id="sflashA2Size4" value="toString($configSet.fcb_config.sflashA2Size.getValue().toInt(), 16)"/>
+                
+                <!-- sflashB1Size -->
+                <variable id="sflashB1Size1" value="toString($configSet.fcb_config.sflashB1Size.getValue().toInt() >> 24, 16)"/>
+                <variable id="sflashB1Size2" value="toString($configSet.fcb_config.sflashB1Size.getValue().toInt() >> 16, 16)"/>
+                <variable id="sflashB1Size3" value="toString($configSet.fcb_config.sflashB1Size.getValue().toInt() >> 8, 16)"/>
+                <variable id="sflashB1Size4" value="toString($configSet.fcb_config.sflashB1Size.getValue().toInt(), 16)"/>
+                
+                <!-- sflashB2Size -->
+                <variable id="sflashB2Size1" value="toString($configSet.fcb_config.sflashB2Size.getValue().toInt() >> 24, 16)"/>
+                <variable id="sflashB2Size2" value="toString($configSet.fcb_config.sflashB2Size.getValue().toInt() >> 16, 16)"/>
+                <variable id="sflashB2Size3" value="toString($configSet.fcb_config.sflashB2Size.getValue().toInt() >> 8, 16)"/>
+                <variable id="sflashB2Size4" value="toString($configSet.fcb_config.sflashB2Size.getValue().toInt(), 16)"/>
+                
+                <!-- csPadSettingOverride -->
+                <variable id="csPadSettingOverride1" value="toString($configSet.fcb_config.csPadSettingOverride.getValue().toInt() >> 24, 16)"/>
+                <variable id="csPadSettingOverride2" value="toString($configSet.fcb_config.csPadSettingOverride.getValue().toInt() >> 16, 16)"/>
+                <variable id="csPadSettingOverride3" value="toString($configSet.fcb_config.csPadSettingOverride.getValue().toInt() >> 8, 16)"/>
+                <variable id="csPadSettingOverride4" value="toString($configSet.fcb_config.csPadSettingOverride.getValue().toInt(), 16)"/>
+
+                <!-- sclkPadSettingOverride -->
+                <variable id="sclkPadSettingOverride1" value="toString($configSet.fcb_config.sclkPadSettingOverride.getValue().toInt() >> 24, 16)"/>
+                <variable id="sclkPadSettingOverride2" value="toString($configSet.fcb_config.sclkPadSettingOverride.getValue().toInt() >> 16, 16)"/>
+                <variable id="sclkPadSettingOverride3" value="toString($configSet.fcb_config.sclkPadSettingOverride.getValue().toInt() >> 8, 16)"/>
+                <variable id="sclkPadSettingOverride4" value="toString($configSet.fcb_config.sclkPadSettingOverride.getValue().toInt(), 16)"/>
+                
+                <!-- dataPadSettingOverride -->
+                <variable id="dataPadSettingOverride1" value="toString($configSet.fcb_config.dataPadSettingOverride.getValue().toInt() >> 24, 16)"/>
+                <variable id="dataPadSettingOverride2" value="toString($configSet.fcb_config.dataPadSettingOverride.getValue().toInt() >> 16, 16)"/>
+                <variable id="dataPadSettingOverride3" value="toString($configSet.fcb_config.dataPadSettingOverride.getValue().toInt() >> 8, 16)"/>
+                <variable id="dataPadSettingOverride4" value="toString($configSet.fcb_config.dataPadSettingOverride.getValue().toInt(), 16)"/>
+                
+                <!-- dqsPadSettingOverride -->
+                <variable id="dqsPadSettingOverride1" value="toString($configSet.fcb_config.dqsPadSettingOverride.getValue().toInt() >> 24, 16)"/>
+                <variable id="dqsPadSettingOverride2" value="toString($configSet.fcb_config.dqsPadSettingOverride.getValue().toInt() >> 16, 16)"/>
+                <variable id="dqsPadSettingOverride3" value="toString($configSet.fcb_config.dqsPadSettingOverride.getValue().toInt() >> 8, 16)"/>
+                <variable id="dqsPadSettingOverride4" value="toString($configSet.fcb_config.dqsPadSettingOverride.getValue().toInt(), 16)"/>
+                
+                <!-- timeoutInMs -->
+                <variable id="timeoutInMs1" value="toString($configSet.fcb_config.timeoutInMs.getValue().toInt() >> 24, 16)"/>
+                <variable id="timeoutInMs2" value="toString($configSet.fcb_config.timeoutInMs.getValue().toInt() >> 16, 16)"/>
+                <variable id="timeoutInMs3" value="toString($configSet.fcb_config.timeoutInMs.getValue().toInt() >> 8, 16)"/>
+                <variable id="timeoutInMs4" value="toString($configSet.fcb_config.timeoutInMs.getValue().toInt(), 16)"/>
+                
+                <!-- commandInterval -->
+                <variable id="commandInterval1" value="toString($configSet.fcb_config.commandInterval.getValue().toInt() >> 24, 16)"/>
+                <variable id="commandInterval2" value="toString($configSet.fcb_config.commandInterval.getValue().toInt() >> 16, 16)"/>
+                <variable id="commandInterval3" value="toString($configSet.fcb_config.commandInterval.getValue().toInt() >> 8, 16)"/>
+                <variable id="commandInterval4" value="toString($configSet.fcb_config.commandInterval.getValue().toInt(), 16)"/>
+                
+                <!-- dataValidTime -->
+                <variable id="dataValidTime1" value="toString($configSet.fcb_config.dataValidTime.getValue().toInt() >> 24, 16)"/>
+                <variable id="dataValidTime2" value="toString($configSet.fcb_config.dataValidTime.getValue().toInt() >> 16, 16)"/>
+                <variable id="dataValidTime3" value="toString($configSet.fcb_config.dataValidTime.getValue().toInt() >> 8, 16)"/>
+                <variable id="dataValidTime4" value="toString($configSet.fcb_config.dataValidTime.getValue().toInt(), 16)"/>
+                
+                <!-- busyOffset -->
+                <variable id="busyOffset1" value="toString($configSet.fcb_config.busyOffset.getValue().toInt() >> 8, 16)"/>
+                <variable id="busyOffset2" value="toString($configSet.fcb_config.busyOffset.getValue().toInt(), 16)"/>
+                
+                <!-- busyBitPolarity -->
+                <variable id="busyBitPolarity1" value="toString($configSet.fcb_config.busyBitPolarity.getValue().toInt() >> 8, 16)"/>
+                <variable id="busyBitPolarity2" value="toString($configSet.fcb_config.busyBitPolarity.getValue().toInt(), 16)"/>
+                
+                <!-- lookupTable -->
+      
+                <variable id="seq0instr0_bin1" value="toString($configSet.fcb_config.seq0instr0.getValue().toInt() >> 8,16)"/>
+                <variable id="seq0instr0_bin2" value="toString($configSet.fcb_config.seq0instr0.getValue().toInt(),16)"/>
+                <variable id="seq0instr1_bin1" value="toString($configSet.fcb_config.seq0instr1.getValue().toInt() >> 8,16)"/>
+                <variable id="seq0instr1_bin2" value="toString($configSet.fcb_config.seq0instr1.getValue().toInt(),16)"/>
+                <variable id="seq0instr2_bin1" value="toString($configSet.fcb_config.seq0instr2.getValue().toInt() >> 8,16)"/>
+                <variable id="seq0instr2_bin2" value="toString($configSet.fcb_config.seq0instr2.getValue().toInt(),16)"/>
+                <variable id="seq0instr3_bin1" value="toString($configSet.fcb_config.seq0instr3.getValue().toInt() >> 8,16)"/>
+                <variable id="seq0instr3_bin2" value="toString($configSet.fcb_config.seq0instr3.getValue().toInt(),16)"/>
+                <variable id="seq0instr4_bin1" value="toString($configSet.fcb_config.seq0instr4.getValue().toInt() >> 8,16)"/>
+                <variable id="seq0instr4_bin2" value="toString($configSet.fcb_config.seq0instr4.getValue().toInt(),16)"/>
+                <variable id="seq0instr5_bin1" value="toString($configSet.fcb_config.seq0instr5.getValue().toInt() >> 8,16)"/>
+                <variable id="seq0instr5_bin2" value="toString($configSet.fcb_config.seq0instr5.getValue().toInt(),16)"/>
+                <variable id="seq0instr6_bin1" value="toString($configSet.fcb_config.seq0instr6.getValue().toInt() >> 8,16)"/>
+                <variable id="seq0instr6_bin2" value="toString($configSet.fcb_config.seq0instr6.getValue().toInt(),16)"/>
+                <variable id="seq0instr7_bin1" value="toString($configSet.fcb_config.seq0instr7.getValue().toInt() >> 8,16)"/>
+                <variable id="seq0instr7_bin2" value="toString($configSet.fcb_config.seq0instr7.getValue().toInt(),16)"/>
+                
+                <variable id="seq1instr0_bin1" value="toString($configSet.fcb_config.seq1instr0.getValue().toInt() >> 8,16)"/>
+                <variable id="seq1instr0_bin2" value="toString($configSet.fcb_config.seq1instr0.getValue().toInt(),16)"/>
+                <variable id="seq1instr1_bin1" value="toString($configSet.fcb_config.seq1instr1.getValue().toInt() >> 8,16)"/>
+                <variable id="seq1instr1_bin2" value="toString($configSet.fcb_config.seq1instr1.getValue().toInt(),16)"/>
+                <variable id="seq1instr2_bin1" value="toString($configSet.fcb_config.seq1instr2.getValue().toInt() >> 8,16)"/>
+                <variable id="seq1instr2_bin2" value="toString($configSet.fcb_config.seq1instr2.getValue().toInt(),16)"/>
+                <variable id="seq1instr3_bin1" value="toString($configSet.fcb_config.seq1instr3.getValue().toInt() >> 8,16)"/>
+                <variable id="seq1instr3_bin2" value="toString($configSet.fcb_config.seq1instr3.getValue().toInt(),16)"/>
+                <variable id="seq1instr4_bin1" value="toString($configSet.fcb_config.seq1instr4.getValue().toInt() >> 8,16)"/>
+                <variable id="seq1instr4_bin2" value="toString($configSet.fcb_config.seq1instr4.getValue().toInt(),16)"/>
+                <variable id="seq1instr5_bin1" value="toString($configSet.fcb_config.seq1instr5.getValue().toInt() >> 8,16)"/>
+                <variable id="seq1instr5_bin2" value="toString($configSet.fcb_config.seq1instr5.getValue().toInt(),16)"/>
+                <variable id="seq1instr6_bin1" value="toString($configSet.fcb_config.seq1instr6.getValue().toInt() >> 8,16)"/>
+                <variable id="seq1instr6_bin2" value="toString($configSet.fcb_config.seq1instr6.getValue().toInt(),16)"/>
+                <variable id="seq1instr7_bin1" value="toString($configSet.fcb_config.seq1instr7.getValue().toInt() >> 8,16)"/>
+                <variable id="seq1instr7_bin2" value="toString($configSet.fcb_config.seq1instr7.getValue().toInt(),16)"/>
+                
+                <variable id="seq2instr0_bin1" value="toString($configSet.fcb_config.seq2instr0.getValue().toInt() >> 8,16)"/>
+                <variable id="seq2instr0_bin2" value="toString($configSet.fcb_config.seq2instr0.getValue().toInt(),16)"/>
+                <variable id="seq2instr1_bin1" value="toString($configSet.fcb_config.seq2instr1.getValue().toInt() >> 8,16)"/>
+                <variable id="seq2instr1_bin2" value="toString($configSet.fcb_config.seq2instr1.getValue().toInt(),16)"/>
+                <variable id="seq2instr2_bin1" value="toString($configSet.fcb_config.seq2instr2.getValue().toInt() >> 8,16)"/>
+                <variable id="seq2instr2_bin2" value="toString($configSet.fcb_config.seq2instr2.getValue().toInt(),16)"/>
+                <variable id="seq2instr3_bin1" value="toString($configSet.fcb_config.seq2instr3.getValue().toInt() >> 8,16)"/>
+                <variable id="seq2instr3_bin2" value="toString($configSet.fcb_config.seq2instr3.getValue().toInt(),16)"/>
+                <variable id="seq2instr4_bin1" value="toString($configSet.fcb_config.seq2instr4.getValue().toInt() >> 8,16)"/>
+                <variable id="seq2instr4_bin2" value="toString($configSet.fcb_config.seq2instr4.getValue().toInt(),16)"/>
+                <variable id="seq2instr5_bin1" value="toString($configSet.fcb_config.seq2instr5.getValue().toInt() >> 8,16)"/>
+                <variable id="seq2instr5_bin2" value="toString($configSet.fcb_config.seq2instr5.getValue().toInt(),16)"/>
+                <variable id="seq2instr6_bin1" value="toString($configSet.fcb_config.seq2instr6.getValue().toInt() >> 8,16)"/>
+                <variable id="seq2instr6_bin2" value="toString($configSet.fcb_config.seq2instr6.getValue().toInt(),16)"/>
+                <variable id="seq2instr7_bin1" value="toString($configSet.fcb_config.seq2instr7.getValue().toInt() >> 8,16)"/>
+                <variable id="seq2instr7_bin2" value="toString($configSet.fcb_config.seq2instr7.getValue().toInt(),16)"/>
+                
+                <variable id="seq3instr0_bin1" value="toString($configSet.fcb_config.seq3instr0.getValue().toInt() >> 8,16)"/>
+                <variable id="seq3instr0_bin2" value="toString($configSet.fcb_config.seq3instr0.getValue().toInt(),16)"/>
+                <variable id="seq3instr1_bin1" value="toString($configSet.fcb_config.seq3instr1.getValue().toInt() >> 8,16)"/>
+                <variable id="seq3instr1_bin2" value="toString($configSet.fcb_config.seq3instr1.getValue().toInt(),16)"/>
+                <variable id="seq3instr2_bin1" value="toString($configSet.fcb_config.seq3instr2.getValue().toInt() >> 8,16)"/>
+                <variable id="seq3instr2_bin2" value="toString($configSet.fcb_config.seq3instr2.getValue().toInt(),16)"/>
+                <variable id="seq3instr3_bin1" value="toString($configSet.fcb_config.seq3instr3.getValue().toInt() >> 8,16)"/>
+                <variable id="seq3instr3_bin2" value="toString($configSet.fcb_config.seq3instr3.getValue().toInt(),16)"/>
+                <variable id="seq3instr4_bin1" value="toString($configSet.fcb_config.seq3instr4.getValue().toInt() >> 8,16)"/>
+                <variable id="seq3instr4_bin2" value="toString($configSet.fcb_config.seq3instr4.getValue().toInt(),16)"/>
+                <variable id="seq3instr5_bin1" value="toString($configSet.fcb_config.seq3instr5.getValue().toInt() >> 8,16)"/>
+                <variable id="seq3instr5_bin2" value="toString($configSet.fcb_config.seq3instr5.getValue().toInt(),16)"/>
+                <variable id="seq3instr6_bin1" value="toString($configSet.fcb_config.seq3instr6.getValue().toInt() >> 8,16)"/>
+                <variable id="seq3instr6_bin2" value="toString($configSet.fcb_config.seq3instr6.getValue().toInt(),16)"/>
+                <variable id="seq3instr7_bin1" value="toString($configSet.fcb_config.seq3instr7.getValue().toInt() >> 8,16)"/>
+                <variable id="seq3instr7_bin2" value="toString($configSet.fcb_config.seq3instr7.getValue().toInt(),16)"/>
+                
+                <variable id="seq4instr0_bin1" value="toString($configSet.fcb_config.seq4instr0.getValue().toInt() >> 8,16)"/>
+                <variable id="seq4instr0_bin2" value="toString($configSet.fcb_config.seq4instr0.getValue().toInt(),16)"/>
+                <variable id="seq4instr1_bin1" value="toString($configSet.fcb_config.seq4instr1.getValue().toInt() >> 8,16)"/>
+                <variable id="seq4instr1_bin2" value="toString($configSet.fcb_config.seq4instr1.getValue().toInt(),16)"/>
+                <variable id="seq4instr2_bin1" value="toString($configSet.fcb_config.seq4instr2.getValue().toInt() >> 8,16)"/>
+                <variable id="seq4instr2_bin2" value="toString($configSet.fcb_config.seq4instr2.getValue().toInt(),16)"/>
+                <variable id="seq4instr3_bin1" value="toString($configSet.fcb_config.seq4instr3.getValue().toInt() >> 8,16)"/>
+                <variable id="seq4instr3_bin2" value="toString($configSet.fcb_config.seq4instr3.getValue().toInt(),16)"/>
+                <variable id="seq4instr4_bin1" value="toString($configSet.fcb_config.seq4instr4.getValue().toInt() >> 8,16)"/>
+                <variable id="seq4instr4_bin2" value="toString($configSet.fcb_config.seq4instr4.getValue().toInt(),16)"/>
+                <variable id="seq4instr5_bin1" value="toString($configSet.fcb_config.seq4instr5.getValue().toInt() >> 8,16)"/>
+                <variable id="seq4instr5_bin2" value="toString($configSet.fcb_config.seq4instr5.getValue().toInt(),16)"/>
+                <variable id="seq4instr6_bin1" value="toString($configSet.fcb_config.seq4instr6.getValue().toInt() >> 8,16)"/>
+                <variable id="seq4instr6_bin2" value="toString($configSet.fcb_config.seq4instr6.getValue().toInt(),16)"/>
+                <variable id="seq4instr7_bin1" value="toString($configSet.fcb_config.seq4instr7.getValue().toInt() >> 8,16)"/>
+                <variable id="seq4instr7_bin2" value="toString($configSet.fcb_config.seq4instr7.getValue().toInt(),16)"/>
+                
+                <variable id="seq5instr0_bin1" value="toString($configSet.fcb_config.seq5instr0.getValue().toInt() >> 8,16)"/>
+                <variable id="seq5instr0_bin2" value="toString($configSet.fcb_config.seq5instr0.getValue().toInt(),16)"/>
+                <variable id="seq5instr1_bin1" value="toString($configSet.fcb_config.seq5instr1.getValue().toInt() >> 8,16)"/>
+                <variable id="seq5instr1_bin2" value="toString($configSet.fcb_config.seq5instr1.getValue().toInt(),16)"/>
+                <variable id="seq5instr2_bin1" value="toString($configSet.fcb_config.seq5instr2.getValue().toInt() >> 8,16)"/>
+                <variable id="seq5instr2_bin2" value="toString($configSet.fcb_config.seq5instr2.getValue().toInt(),16)"/>
+                <variable id="seq5instr3_bin1" value="toString($configSet.fcb_config.seq5instr3.getValue().toInt() >> 8,16)"/>
+                <variable id="seq5instr3_bin2" value="toString($configSet.fcb_config.seq5instr3.getValue().toInt(),16)"/>
+                <variable id="seq5instr4_bin1" value="toString($configSet.fcb_config.seq5instr4.getValue().toInt() >> 8,16)"/>
+                <variable id="seq5instr4_bin2" value="toString($configSet.fcb_config.seq5instr4.getValue().toInt(),16)"/>
+                <variable id="seq5instr5_bin1" value="toString($configSet.fcb_config.seq5instr5.getValue().toInt() >> 8,16)"/>
+                <variable id="seq5instr5_bin2" value="toString($configSet.fcb_config.seq5instr5.getValue().toInt(),16)"/>
+                <variable id="seq5instr6_bin1" value="toString($configSet.fcb_config.seq5instr6.getValue().toInt() >> 8,16)"/>
+                <variable id="seq5instr6_bin2" value="toString($configSet.fcb_config.seq5instr6.getValue().toInt(),16)"/>
+                <variable id="seq5instr7_bin1" value="toString($configSet.fcb_config.seq5instr7.getValue().toInt() >> 8,16)"/>
+                <variable id="seq5instr7_bin2" value="toString($configSet.fcb_config.seq5instr7.getValue().toInt(),16)"/>
+                
+                <variable id="seq6instr0_bin1" value="toString($configSet.fcb_config.seq6instr0.getValue().toInt() >> 8,16)"/>
+                <variable id="seq6instr0_bin2" value="toString($configSet.fcb_config.seq6instr0.getValue().toInt(),16)"/>
+                <variable id="seq6instr1_bin1" value="toString($configSet.fcb_config.seq6instr1.getValue().toInt() >> 8,16)"/>
+                <variable id="seq6instr1_bin2" value="toString($configSet.fcb_config.seq6instr1.getValue().toInt(),16)"/>
+                <variable id="seq6instr2_bin1" value="toString($configSet.fcb_config.seq6instr2.getValue().toInt() >> 8,16)"/>
+                <variable id="seq6instr2_bin2" value="toString($configSet.fcb_config.seq6instr2.getValue().toInt(),16)"/>
+                <variable id="seq6instr3_bin1" value="toString($configSet.fcb_config.seq6instr3.getValue().toInt() >> 8,16)"/>
+                <variable id="seq6instr3_bin2" value="toString($configSet.fcb_config.seq6instr3.getValue().toInt(),16)"/>
+                <variable id="seq6instr4_bin1" value="toString($configSet.fcb_config.seq6instr4.getValue().toInt() >> 8,16)"/>
+                <variable id="seq6instr4_bin2" value="toString($configSet.fcb_config.seq6instr4.getValue().toInt(),16)"/>
+                <variable id="seq6instr5_bin1" value="toString($configSet.fcb_config.seq6instr5.getValue().toInt() >> 8,16)"/>
+                <variable id="seq6instr5_bin2" value="toString($configSet.fcb_config.seq6instr5.getValue().toInt(),16)"/>
+                <variable id="seq6instr6_bin1" value="toString($configSet.fcb_config.seq6instr6.getValue().toInt() >> 8,16)"/>
+                <variable id="seq6instr6_bin2" value="toString($configSet.fcb_config.seq6instr6.getValue().toInt(),16)"/>
+                <variable id="seq6instr7_bin1" value="toString($configSet.fcb_config.seq6instr7.getValue().toInt() >> 8,16)"/>
+                <variable id="seq6instr7_bin2" value="toString($configSet.fcb_config.seq6instr7.getValue().toInt(),16)"/>
+                
+                <variable id="seq7instr0_bin1" value="toString($configSet.fcb_config.seq7instr0.getValue().toInt() >> 8,16)"/>
+                <variable id="seq7instr0_bin2" value="toString($configSet.fcb_config.seq7instr0.getValue().toInt(),16)"/>
+                <variable id="seq7instr1_bin1" value="toString($configSet.fcb_config.seq7instr1.getValue().toInt() >> 8,16)"/>
+                <variable id="seq7instr1_bin2" value="toString($configSet.fcb_config.seq7instr1.getValue().toInt(),16)"/>
+                <variable id="seq7instr2_bin1" value="toString($configSet.fcb_config.seq7instr2.getValue().toInt() >> 8,16)"/>
+                <variable id="seq7instr2_bin2" value="toString($configSet.fcb_config.seq7instr2.getValue().toInt(),16)"/>
+                <variable id="seq7instr3_bin1" value="toString($configSet.fcb_config.seq7instr3.getValue().toInt() >> 8,16)"/>
+                <variable id="seq7instr3_bin2" value="toString($configSet.fcb_config.seq7instr3.getValue().toInt(),16)"/>
+                <variable id="seq7instr4_bin1" value="toString($configSet.fcb_config.seq7instr4.getValue().toInt() >> 8,16)"/>
+                <variable id="seq7instr4_bin2" value="toString($configSet.fcb_config.seq7instr4.getValue().toInt(),16)"/>
+                <variable id="seq7instr5_bin1" value="toString($configSet.fcb_config.seq7instr5.getValue().toInt() >> 8,16)"/>
+                <variable id="seq7instr5_bin2" value="toString($configSet.fcb_config.seq7instr5.getValue().toInt(),16)"/>
+                <variable id="seq7instr6_bin1" value="toString($configSet.fcb_config.seq7instr6.getValue().toInt() >> 8,16)"/>
+                <variable id="seq7instr6_bin2" value="toString($configSet.fcb_config.seq7instr6.getValue().toInt(),16)"/>
+                <variable id="seq7instr7_bin1" value="toString($configSet.fcb_config.seq7instr7.getValue().toInt() >> 8,16)"/>
+                <variable id="seq7instr7_bin2" value="toString($configSet.fcb_config.seq7instr7.getValue().toInt(),16)"/>
+                
+                <variable id="seq8instr0_bin1" value="toString($configSet.fcb_config.seq8instr0.getValue().toInt() >> 8,16)"/>
+                <variable id="seq8instr0_bin2" value="toString($configSet.fcb_config.seq8instr0.getValue().toInt(),16)"/>
+                <variable id="seq8instr1_bin1" value="toString($configSet.fcb_config.seq8instr1.getValue().toInt() >> 8,16)"/>
+                <variable id="seq8instr1_bin2" value="toString($configSet.fcb_config.seq8instr1.getValue().toInt(),16)"/>
+                <variable id="seq8instr2_bin1" value="toString($configSet.fcb_config.seq8instr2.getValue().toInt() >> 8,16)"/>
+                <variable id="seq8instr2_bin2" value="toString($configSet.fcb_config.seq8instr2.getValue().toInt(),16)"/>
+                <variable id="seq8instr3_bin1" value="toString($configSet.fcb_config.seq8instr3.getValue().toInt() >> 8,16)"/>
+                <variable id="seq8instr3_bin2" value="toString($configSet.fcb_config.seq8instr3.getValue().toInt(),16)"/>
+                <variable id="seq8instr4_bin1" value="toString($configSet.fcb_config.seq8instr4.getValue().toInt() >> 8,16)"/>
+                <variable id="seq8instr4_bin2" value="toString($configSet.fcb_config.seq8instr4.getValue().toInt(),16)"/>
+                <variable id="seq8instr5_bin1" value="toString($configSet.fcb_config.seq8instr5.getValue().toInt() >> 8,16)"/>
+                <variable id="seq8instr5_bin2" value="toString($configSet.fcb_config.seq8instr5.getValue().toInt(),16)"/>
+                <variable id="seq8instr6_bin1" value="toString($configSet.fcb_config.seq8instr6.getValue().toInt() >> 8,16)"/>
+                <variable id="seq8instr6_bin2" value="toString($configSet.fcb_config.seq8instr6.getValue().toInt(),16)"/>
+                <variable id="seq8instr7_bin1" value="toString($configSet.fcb_config.seq8instr7.getValue().toInt() >> 8,16)"/>
+                <variable id="seq8instr7_bin2" value="toString($configSet.fcb_config.seq8instr7.getValue().toInt(),16)"/>
+                
+                <variable id="seq9instr0_bin1" value="toString($configSet.fcb_config.seq9instr0.getValue().toInt() >> 8,16)"/>
+                <variable id="seq9instr0_bin2" value="toString($configSet.fcb_config.seq9instr0.getValue().toInt(),16)"/>
+                <variable id="seq9instr1_bin1" value="toString($configSet.fcb_config.seq9instr1.getValue().toInt() >> 8,16)"/>
+                <variable id="seq9instr1_bin2" value="toString($configSet.fcb_config.seq9instr1.getValue().toInt(),16)"/>
+                <variable id="seq9instr2_bin1" value="toString($configSet.fcb_config.seq9instr2.getValue().toInt() >> 8,16)"/>
+                <variable id="seq9instr2_bin2" value="toString($configSet.fcb_config.seq9instr2.getValue().toInt(),16)"/>
+                <variable id="seq9instr3_bin1" value="toString($configSet.fcb_config.seq9instr3.getValue().toInt() >> 8,16)"/>
+                <variable id="seq9instr3_bin2" value="toString($configSet.fcb_config.seq9instr3.getValue().toInt(),16)"/>
+                <variable id="seq9instr4_bin1" value="toString($configSet.fcb_config.seq9instr4.getValue().toInt() >> 8,16)"/>
+                <variable id="seq9instr4_bin2" value="toString($configSet.fcb_config.seq9instr4.getValue().toInt(),16)"/>
+                <variable id="seq9instr5_bin1" value="toString($configSet.fcb_config.seq9instr5.getValue().toInt() >> 8,16)"/>
+                <variable id="seq9instr5_bin2" value="toString($configSet.fcb_config.seq9instr5.getValue().toInt(),16)"/>
+                <variable id="seq9instr6_bin1" value="toString($configSet.fcb_config.seq9instr6.getValue().toInt() >> 8,16)"/>
+                <variable id="seq9instr6_bin2" value="toString($configSet.fcb_config.seq9instr6.getValue().toInt(),16)"/>
+                <variable id="seq9instr7_bin1" value="toString($configSet.fcb_config.seq9instr7.getValue().toInt() >> 8,16)"/>
+                <variable id="seq9instr7_bin2" value="toString($configSet.fcb_config.seq9instr7.getValue().toInt(),16)"/>
+                
+                <variable id="seq10instr0_bin1" value="toString($configSet.fcb_config.seq10instr0.getValue().toInt() >> 8,16)"/>
+                <variable id="seq10instr0_bin2" value="toString($configSet.fcb_config.seq10instr0.getValue().toInt(),16)"/>
+                <variable id="seq10instr1_bin1" value="toString($configSet.fcb_config.seq10instr1.getValue().toInt() >> 8,16)"/>
+                <variable id="seq10instr1_bin2" value="toString($configSet.fcb_config.seq10instr1.getValue().toInt(),16)"/>
+                <variable id="seq10instr2_bin1" value="toString($configSet.fcb_config.seq10instr2.getValue().toInt() >> 8,16)"/>
+                <variable id="seq10instr2_bin2" value="toString($configSet.fcb_config.seq10instr2.getValue().toInt(),16)"/>
+                <variable id="seq10instr3_bin1" value="toString($configSet.fcb_config.seq10instr3.getValue().toInt() >> 8,16)"/>
+                <variable id="seq10instr3_bin2" value="toString($configSet.fcb_config.seq10instr3.getValue().toInt(),16)"/>
+                <variable id="seq10instr4_bin1" value="toString($configSet.fcb_config.seq10instr4.getValue().toInt() >> 8,16)"/>
+                <variable id="seq10instr4_bin2" value="toString($configSet.fcb_config.seq10instr4.getValue().toInt(),16)"/>
+                <variable id="seq10instr5_bin1" value="toString($configSet.fcb_config.seq10instr5.getValue().toInt() >> 8,16)"/>
+                <variable id="seq10instr5_bin2" value="toString($configSet.fcb_config.seq10instr5.getValue().toInt(),16)"/>
+                <variable id="seq10instr6_bin1" value="toString($configSet.fcb_config.seq10instr6.getValue().toInt() >> 8,16)"/>
+                <variable id="seq10instr6_bin2" value="toString($configSet.fcb_config.seq10instr6.getValue().toInt(),16)"/>
+                <variable id="seq10instr7_bin1" value="toString($configSet.fcb_config.seq10instr7.getValue().toInt() >> 8,16)"/>
+                <variable id="seq10instr7_bin2" value="toString($configSet.fcb_config.seq10instr7.getValue().toInt(),16)"/>
+                
+                <variable id="seq11instr0_bin1" value="toString($configSet.fcb_config.seq11instr0.getValue().toInt() >> 8,16)"/>
+                <variable id="seq11instr0_bin2" value="toString($configSet.fcb_config.seq11instr0.getValue().toInt(),16)"/>
+                <variable id="seq11instr1_bin1" value="toString($configSet.fcb_config.seq11instr1.getValue().toInt() >> 8,16)"/>
+                <variable id="seq11instr1_bin2" value="toString($configSet.fcb_config.seq11instr1.getValue().toInt(),16)"/>
+                <variable id="seq11instr2_bin1" value="toString($configSet.fcb_config.seq11instr2.getValue().toInt() >> 8,16)"/>
+                <variable id="seq11instr2_bin2" value="toString($configSet.fcb_config.seq11instr2.getValue().toInt(),16)"/>
+                <variable id="seq11instr3_bin1" value="toString($configSet.fcb_config.seq11instr3.getValue().toInt() >> 8,16)"/>
+                <variable id="seq11instr3_bin2" value="toString($configSet.fcb_config.seq11instr3.getValue().toInt(),16)"/>
+                <variable id="seq11instr4_bin1" value="toString($configSet.fcb_config.seq11instr4.getValue().toInt() >> 8,16)"/>
+                <variable id="seq11instr4_bin2" value="toString($configSet.fcb_config.seq11instr4.getValue().toInt(),16)"/>
+                <variable id="seq11instr5_bin1" value="toString($configSet.fcb_config.seq11instr5.getValue().toInt() >> 8,16)"/>
+                <variable id="seq11instr5_bin2" value="toString($configSet.fcb_config.seq11instr5.getValue().toInt(),16)"/>
+                <variable id="seq11instr6_bin1" value="toString($configSet.fcb_config.seq11instr6.getValue().toInt() >> 8,16)"/>
+                <variable id="seq11instr6_bin2" value="toString($configSet.fcb_config.seq11instr6.getValue().toInt(),16)"/>
+                <variable id="seq11instr7_bin1" value="toString($configSet.fcb_config.seq11instr7.getValue().toInt() >> 8,16)"/>
+                <variable id="seq11instr7_bin2" value="toString($configSet.fcb_config.seq11instr7.getValue().toInt(),16)"/>
+                
+                <variable id="seq12instr0_bin1" value="toString($configSet.fcb_config.seq12instr0.getValue().toInt() >> 8,16)"/>
+                <variable id="seq12instr0_bin2" value="toString($configSet.fcb_config.seq12instr0.getValue().toInt(),16)"/>
+                <variable id="seq12instr1_bin1" value="toString($configSet.fcb_config.seq12instr1.getValue().toInt() >> 8,16)"/>
+                <variable id="seq12instr1_bin2" value="toString($configSet.fcb_config.seq12instr1.getValue().toInt(),16)"/>
+                <variable id="seq12instr2_bin1" value="toString($configSet.fcb_config.seq12instr2.getValue().toInt() >> 8,16)"/>
+                <variable id="seq12instr2_bin2" value="toString($configSet.fcb_config.seq12instr2.getValue().toInt(),16)"/>
+                <variable id="seq12instr3_bin1" value="toString($configSet.fcb_config.seq12instr3.getValue().toInt() >> 8,16)"/>
+                <variable id="seq12instr3_bin2" value="toString($configSet.fcb_config.seq12instr3.getValue().toInt(),16)"/>
+                <variable id="seq12instr4_bin1" value="toString($configSet.fcb_config.seq12instr4.getValue().toInt() >> 8,16)"/>
+                <variable id="seq12instr4_bin2" value="toString($configSet.fcb_config.seq12instr4.getValue().toInt(),16)"/>
+                <variable id="seq12instr5_bin1" value="toString($configSet.fcb_config.seq12instr5.getValue().toInt() >> 8,16)"/>
+                <variable id="seq12instr5_bin2" value="toString($configSet.fcb_config.seq12instr5.getValue().toInt(),16)"/>
+                <variable id="seq12instr6_bin1" value="toString($configSet.fcb_config.seq12instr6.getValue().toInt() >> 8,16)"/>
+                <variable id="seq12instr6_bin2" value="toString($configSet.fcb_config.seq12instr6.getValue().toInt(),16)"/>
+                <variable id="seq12instr7_bin1" value="toString($configSet.fcb_config.seq12instr7.getValue().toInt() >> 8,16)"/>
+                <variable id="seq12instr7_bin2" value="toString($configSet.fcb_config.seq12instr7.getValue().toInt(),16)"/>
+                
+                <variable id="seq13instr0_bin1" value="toString($configSet.fcb_config.seq13instr0.getValue().toInt() >> 8,16)"/>
+                <variable id="seq13instr0_bin2" value="toString($configSet.fcb_config.seq13instr0.getValue().toInt(),16)"/>
+                <variable id="seq13instr1_bin1" value="toString($configSet.fcb_config.seq13instr1.getValue().toInt() >> 8,16)"/>
+                <variable id="seq13instr1_bin2" value="toString($configSet.fcb_config.seq13instr1.getValue().toInt(),16)"/>
+                <variable id="seq13instr2_bin1" value="toString($configSet.fcb_config.seq13instr2.getValue().toInt() >> 8,16)"/>
+                <variable id="seq13instr2_bin2" value="toString($configSet.fcb_config.seq13instr2.getValue().toInt(),16)"/>
+                <variable id="seq13instr3_bin1" value="toString($configSet.fcb_config.seq13instr3.getValue().toInt() >> 8,16)"/>
+                <variable id="seq13instr3_bin2" value="toString($configSet.fcb_config.seq13instr3.getValue().toInt(),16)"/>
+                <variable id="seq13instr4_bin1" value="toString($configSet.fcb_config.seq13instr4.getValue().toInt() >> 8,16)"/>
+                <variable id="seq13instr4_bin2" value="toString($configSet.fcb_config.seq13instr4.getValue().toInt(),16)"/>
+                <variable id="seq13instr5_bin1" value="toString($configSet.fcb_config.seq13instr5.getValue().toInt() >> 8,16)"/>
+                <variable id="seq13instr5_bin2" value="toString($configSet.fcb_config.seq13instr5.getValue().toInt(),16)"/>
+                <variable id="seq13instr6_bin1" value="toString($configSet.fcb_config.seq13instr6.getValue().toInt() >> 8,16)"/>
+                <variable id="seq13instr6_bin2" value="toString($configSet.fcb_config.seq13instr6.getValue().toInt(),16)"/>
+                <variable id="seq13instr7_bin1" value="toString($configSet.fcb_config.seq13instr7.getValue().toInt() >> 8,16)"/>
+                <variable id="seq13instr7_bin2" value="toString($configSet.fcb_config.seq13instr7.getValue().toInt(),16)"/>
+                
+                <variable id="seq14instr0_bin1" value="toString($configSet.fcb_config.seq14instr0.getValue().toInt() >> 8,16)"/>
+                <variable id="seq14instr0_bin2" value="toString($configSet.fcb_config.seq14instr0.getValue().toInt(),16)"/>
+                <variable id="seq14instr1_bin1" value="toString($configSet.fcb_config.seq14instr1.getValue().toInt() >> 8,16)"/>
+                <variable id="seq14instr1_bin2" value="toString($configSet.fcb_config.seq14instr1.getValue().toInt(),16)"/>
+                <variable id="seq14instr2_bin1" value="toString($configSet.fcb_config.seq14instr2.getValue().toInt() >> 8,16)"/>
+                <variable id="seq14instr2_bin2" value="toString($configSet.fcb_config.seq14instr2.getValue().toInt(),16)"/>
+                <variable id="seq14instr3_bin1" value="toString($configSet.fcb_config.seq14instr3.getValue().toInt() >> 8,16)"/>
+                <variable id="seq14instr3_bin2" value="toString($configSet.fcb_config.seq14instr3.getValue().toInt(),16)"/>
+                <variable id="seq14instr4_bin1" value="toString($configSet.fcb_config.seq14instr4.getValue().toInt() >> 8,16)"/>
+                <variable id="seq14instr4_bin2" value="toString($configSet.fcb_config.seq14instr4.getValue().toInt(),16)"/>
+                <variable id="seq14instr5_bin1" value="toString($configSet.fcb_config.seq14instr5.getValue().toInt() >> 8,16)"/>
+                <variable id="seq14instr5_bin2" value="toString($configSet.fcb_config.seq14instr5.getValue().toInt(),16)"/>
+                <variable id="seq14instr6_bin1" value="toString($configSet.fcb_config.seq14instr6.getValue().toInt() >> 8,16)"/>
+                <variable id="seq14instr6_bin2" value="toString($configSet.fcb_config.seq14instr6.getValue().toInt(),16)"/>
+                <variable id="seq14instr7_bin1" value="toString($configSet.fcb_config.seq14instr7.getValue().toInt() >> 8,16)"/>
+                <variable id="seq14instr7_bin2" value="toString($configSet.fcb_config.seq14instr7.getValue().toInt(),16)"/>
+                
+                <variable id="seq15instr0_bin1" value="toString($configSet.fcb_config.seq15instr0.getValue().toInt() >> 8,16)"/>
+                <variable id="seq15instr0_bin2" value="toString($configSet.fcb_config.seq15instr0.getValue().toInt(),16)"/>
+                <variable id="seq15instr1_bin1" value="toString($configSet.fcb_config.seq15instr1.getValue().toInt() >> 8,16)"/>
+                <variable id="seq15instr1_bin2" value="toString($configSet.fcb_config.seq15instr1.getValue().toInt(),16)"/>
+                <variable id="seq15instr2_bin1" value="toString($configSet.fcb_config.seq15instr2.getValue().toInt() >> 8,16)"/>
+                <variable id="seq15instr2_bin2" value="toString($configSet.fcb_config.seq15instr2.getValue().toInt(),16)"/>
+                <variable id="seq15instr3_bin1" value="toString($configSet.fcb_config.seq15instr3.getValue().toInt() >> 8,16)"/>
+                <variable id="seq15instr3_bin2" value="toString($configSet.fcb_config.seq15instr3.getValue().toInt(),16)"/>
+                <variable id="seq15instr4_bin1" value="toString($configSet.fcb_config.seq15instr4.getValue().toInt() >> 8,16)"/>
+                <variable id="seq15instr4_bin2" value="toString($configSet.fcb_config.seq15instr4.getValue().toInt(),16)"/>
+                <variable id="seq15instr5_bin1" value="toString($configSet.fcb_config.seq15instr5.getValue().toInt() >> 8,16)"/>
+                <variable id="seq15instr5_bin2" value="toString($configSet.fcb_config.seq15instr5.getValue().toInt(),16)"/>
+                <variable id="seq15instr6_bin1" value="toString($configSet.fcb_config.seq15instr6.getValue().toInt() >> 8,16)"/>
+                <variable id="seq15instr6_bin2" value="toString($configSet.fcb_config.seq15instr6.getValue().toInt(),16)"/>
+                <variable id="seq15instr7_bin1" value="toString($configSet.fcb_config.seq15instr7.getValue().toInt() >> 8,16)"/>
+                <variable id="seq15instr7_bin2" value="toString($configSet.fcb_config.seq15instr7.getValue().toInt(),16)"/>
+                
+                <!-- lutCustomSeq -->
+                
+                <variable id="custom_seq0instr0_bin1" value="toString($configSet.fcb_config.custom_seq0instr0.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq0instr0_bin2" value="toString($configSet.fcb_config.custom_seq0instr0.getValue().toInt(),16)"/>
+                <variable id="custom_seq0instr1_bin1" value="toString($configSet.fcb_config.custom_seq0instr1.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq0instr1_bin2" value="toString($configSet.fcb_config.custom_seq0instr1.getValue().toInt(),16)"/>
+                <variable id="custom_seq0instr2_bin1" value="toString($configSet.fcb_config.custom_seq0instr2.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq0instr2_bin2" value="toString($configSet.fcb_config.custom_seq0instr2.getValue().toInt(),16)"/>
+                <variable id="custom_seq0instr3_bin1" value="toString($configSet.fcb_config.custom_seq0instr3.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq0instr3_bin2" value="toString($configSet.fcb_config.custom_seq0instr3.getValue().toInt(),16)"/>
+                <variable id="custom_seq0instr4_bin1" value="toString($configSet.fcb_config.custom_seq0instr4.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq0instr4_bin2" value="toString($configSet.fcb_config.custom_seq0instr4.getValue().toInt(),16)"/>
+                <variable id="custom_seq0instr5_bin1" value="toString($configSet.fcb_config.custom_seq0instr5.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq0instr5_bin2" value="toString($configSet.fcb_config.custom_seq0instr5.getValue().toInt(),16)"/>
+                <variable id="custom_seq0instr6_bin1" value="toString($configSet.fcb_config.custom_seq0instr6.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq0instr6_bin2" value="toString($configSet.fcb_config.custom_seq0instr6.getValue().toInt(),16)"/>
+                <variable id="custom_seq0instr7_bin1" value="toString($configSet.fcb_config.custom_seq0instr7.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq0instr7_bin2" value="toString($configSet.fcb_config.custom_seq0instr7.getValue().toInt(),16)"/>
+                
+                <variable id="custom_seq1instr0_bin1" value="toString($configSet.fcb_config.custom_seq1instr0.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq1instr0_bin2" value="toString($configSet.fcb_config.custom_seq1instr0.getValue().toInt(),16)"/>
+                <variable id="custom_seq1instr1_bin1" value="toString($configSet.fcb_config.custom_seq1instr1.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq1instr1_bin2" value="toString($configSet.fcb_config.custom_seq1instr1.getValue().toInt(),16)"/>
+                <variable id="custom_seq1instr2_bin1" value="toString($configSet.fcb_config.custom_seq1instr2.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq1instr2_bin2" value="toString($configSet.fcb_config.custom_seq1instr2.getValue().toInt(),16)"/>
+                <variable id="custom_seq1instr3_bin1" value="toString($configSet.fcb_config.custom_seq1instr3.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq1instr3_bin2" value="toString($configSet.fcb_config.custom_seq1instr3.getValue().toInt(),16)"/>
+                <variable id="custom_seq1instr4_bin1" value="toString($configSet.fcb_config.custom_seq1instr4.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq1instr4_bin2" value="toString($configSet.fcb_config.custom_seq1instr4.getValue().toInt(),16)"/>
+                <variable id="custom_seq1instr5_bin1" value="toString($configSet.fcb_config.custom_seq1instr5.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq1instr5_bin2" value="toString($configSet.fcb_config.custom_seq1instr5.getValue().toInt(),16)"/>
+                <variable id="custom_seq1instr6_bin1" value="toString($configSet.fcb_config.custom_seq1instr6.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq1instr6_bin2" value="toString($configSet.fcb_config.custom_seq1instr6.getValue().toInt(),16)"/>
+                <variable id="custom_seq1instr7_bin1" value="toString($configSet.fcb_config.custom_seq1instr7.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq1instr7_bin2" value="toString($configSet.fcb_config.custom_seq1instr7.getValue().toInt(),16)"/>
+                
+                <variable id="custom_seq2instr0_bin1" value="toString($configSet.fcb_config.custom_seq2instr0.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq2instr0_bin2" value="toString($configSet.fcb_config.custom_seq2instr0.getValue().toInt(),16)"/>
+                <variable id="custom_seq2instr1_bin1" value="toString($configSet.fcb_config.custom_seq2instr1.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq2instr1_bin2" value="toString($configSet.fcb_config.custom_seq2instr1.getValue().toInt(),16)"/>
+                <variable id="custom_seq2instr2_bin1" value="toString($configSet.fcb_config.custom_seq2instr2.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq2instr2_bin2" value="toString($configSet.fcb_config.custom_seq2instr2.getValue().toInt(),16)"/>
+                <variable id="custom_seq2instr3_bin1" value="toString($configSet.fcb_config.custom_seq2instr3.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq2instr3_bin2" value="toString($configSet.fcb_config.custom_seq2instr3.getValue().toInt(),16)"/>
+                <variable id="custom_seq2instr4_bin1" value="toString($configSet.fcb_config.custom_seq2instr4.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq2instr4_bin2" value="toString($configSet.fcb_config.custom_seq2instr4.getValue().toInt(),16)"/>
+                <variable id="custom_seq2instr5_bin1" value="toString($configSet.fcb_config.custom_seq2instr5.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq2instr5_bin2" value="toString($configSet.fcb_config.custom_seq2instr5.getValue().toInt(),16)"/>
+                <variable id="custom_seq2instr6_bin1" value="toString($configSet.fcb_config.custom_seq2instr6.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq2instr6_bin2" value="toString($configSet.fcb_config.custom_seq2instr6.getValue().toInt(),16)"/>
+                <variable id="custom_seq2instr7_bin1" value="toString($configSet.fcb_config.custom_seq2instr7.getValue().toInt() >> 8,16)"/>
+                <variable id="custom_seq2instr7_bin2" value="toString($configSet.fcb_config.custom_seq2instr7.getValue().toInt(),16)"/>
+
+                <!-- reserved4 -->
+                <variable id="reserved41" value="toString(0, 16)"/>
+                <variable id="reserved42" value="toString(0, 16)"/>
+                <variable id="reserved43" value="toString(0, 16)"/>
+                <variable id="reserved44" value="toString(0, 16)"/>
+                <variable id="reserved45" value="toString(0, 16)"/>
+                <variable id="reserved46" value="toString(0, 16)"/>
+                <variable id="reserved47" value="toString(0, 16)"/>
+                <variable id="reserved48" value="toString(0, 16)"/>
+                <variable id="reserved49" value="toString(0, 16)"/>
+                <variable id="reserved410" value="toString(0, 16)"/>
+                <variable id="reserved411" value="toString(0, 16)"/>
+                <variable id="reserved412" value="toString(0, 16)"/>
+                <variable id="reserved413" value="toString(0, 16)"/>
+                <variable id="reserved414" value="toString(0, 16)"/>
+                <variable id="reserved415" value="toString(0, 16)"/>
+                <variable id="reserved416" value="toString(0, 16)"/>
+                
+                <!-- pageSize -->
+                <variable id="pageSize1" value="toString($configSet.fcb_config.pageSize.getValue().toInt() >> 24, 16)"/>
+                <variable id="pageSize2" value="toString($configSet.fcb_config.pageSize.getValue().toInt() >> 16, 16)"/>
+                <variable id="pageSize3" value="toString($configSet.fcb_config.pageSize.getValue().toInt() >> 8, 16)"/>
+                <variable id="pageSize4" value="toString($configSet.fcb_config.pageSize.getValue().toInt(), 16)"/>
+                
+                <!-- sectorSize -->
+                <variable id="sectorSize1" value="toString($configSet.fcb_config.sectorSize.getValue().toInt() >> 24, 16)"/>
+                <variable id="sectorSize2" value="toString($configSet.fcb_config.sectorSize.getValue().toInt() >> 16, 16)"/>
+                <variable id="sectorSize3" value="toString($configSet.fcb_config.sectorSize.getValue().toInt() >> 8, 16)"/>
+                <variable id="sectorSize4" value="toString($configSet.fcb_config.sectorSize.getValue().toInt(), 16)"/>
+                
+                <!-- ipcmdSerialClkFreq -->
+                <variable id="ipcmdSerialClkFreq1" value="toString($configSet.fcb_config.ipcmdSerialClkFreq.getValue().toInt(), 16)"/>
+                
+                <!-- isUniformBlockSize -->
+                <variable id="isUniformBlockSize1" value="toString($configSet.fcb_config.isUniformBlockSize.getValue().toInt(), 16)"/>
+                
+                <!-- isDataOrderSwapped -->
+                <variable id="isDataOrderSwapped1" value="toString($configSet.fcb_config.isDataOrderSwapped.getValue().toInt(), 16)"/>
+                
+                <!-- reserved5 -->
+                <variable id="reserved51" value="toString(0, 16)"/>
+                
+                <!-- serialNorType -->
+                <variable id="serialNorType1" value="toString($configSet.fcb_config.serialNorType.getValue().toInt(), 16)"/>
+                
+                <!-- needExitNoCmdMode -->
+                <variable id="needExitNoCmdMode1" value="toString($configSet.fcb_config.needExitNoCmdMode.getValue().toInt(), 16)"/>
+                
+                <!-- halfClkForNonReadCmd -->
+                <variable id="halfClkForNonReadCmd1" value="toString($configSet.fcb_config.halfClkForNonReadCmd.getValue().toInt(), 16)"/>
+                
+                <!-- needRestoreNoCmdMode -->
+                <variable id="needRestoreNoCmdMode1" value="toString($configSet.fcb_config.needRestoreNoCmdMode.getValue().toInt(), 16)"/>
+                
+                <!-- blockSize -->
+                <variable id="blockSize1" value="toString($configSet.fcb_config.blockSize.getValue().toInt() >> 24, 16)"/>
+                <variable id="blockSize2" value="toString($configSet.fcb_config.blockSize.getValue().toInt() >> 16, 16)"/>
+                <variable id="blockSize3" value="toString($configSet.fcb_config.blockSize.getValue().toInt() >> 8, 16)"/>
+                <variable id="blockSize4" value="toString($configSet.fcb_config.blockSize.getValue().toInt(), 16)"/>
+                
+                <!-- flashStateCtx -->
+                <variable id="flashStateCtx1" value="toString($configSet.fcb_config.flashStateCtx.getValue().toInt() >> 24, 16)"/>
+                <variable id="flashStateCtx2" value="toString($configSet.fcb_config.flashStateCtx.getValue().toInt() >> 16, 16)"/>
+                <variable id="flashStateCtx3" value="toString($configSet.fcb_config.flashStateCtx.getValue().toInt() >> 8, 16)"/>
+                <variable id="flashStateCtx4" value="toString($configSet.fcb_config.flashStateCtx.getValue().toInt(), 16)"/>
+                
+                <!-- reserved6 -->
+                <variable id="reserved61" value="toString(0, 16)"/>
+                <variable id="reserved62" value="toString(0, 16)"/>
+                <variable id="reserved63" value="toString(0, 16)"/>
+                <variable id="reserved64" value="toString(0, 16)"/>
+                <variable id="reserved65" value="toString(0, 16)"/>
+                <variable id="reserved66" value="toString(0, 16)"/>
+                <variable id="reserved67" value="toString(0, 16)"/>
+                <variable id="reserved68" value="toString(0, 16)"/>
+                <variable id="reserved69" value="toString(0, 16)"/>
+                <variable id="reserved610" value="toString(0, 16)"/>
+                <variable id="reserved611" value="toString(0, 16)"/>
+                <variable id="reserved612" value="toString(0, 16)"/>
+                <variable id="reserved613" value="toString(0, 16)"/>
+                <variable id="reserved614" value="toString(0, 16)"/>
+                <variable id="reserved615" value="toString(0, 16)"/>
+                <variable id="reserved616" value="toString(0, 16)"/>
+                <variable id="reserved617" value="toString(0, 16)"/>
+                <variable id="reserved618" value="toString(0, 16)"/>
+                <variable id="reserved619" value="toString(0, 16)"/>
+                <variable id="reserved620" value="toString(0, 16)"/>
+                <variable id="reserved621" value="toString(0, 16)"/>
+                <variable id="reserved622" value="toString(0, 16)"/>
+                <variable id="reserved623" value="toString(0, 16)"/>
+                <variable id="reserved624" value="toString(0, 16)"/>
+                <variable id="reserved625" value="toString(0, 16)"/>
+                <variable id="reserved626" value="toString(0, 16)"/>
+                <variable id="reserved627" value="toString(0, 16)"/>
+                <variable id="reserved628" value="toString(0, 16)"/>
+                <variable id="reserved629" value="toString(0, 16)"/>
+                <variable id="reserved630" value="toString(0, 16)"/>
+                <variable id="reserved631" value="toString(0, 16)"/>
+                <variable id="reserved632" value="toString(0, 16)"/>
+                <variable id="reserved633" value="toString(0, 16)"/>
+                <variable id="reserved634" value="toString(0, 16)"/>
+                <variable id="reserved635" value="toString(0, 16)"/>
+                <variable id="reserved636" value="toString(0, 16)"/>
+                <variable id="reserved637" value="toString(0, 16)"/>
+                <variable id="reserved638" value="toString(0, 16)"/>
+                <variable id="reserved639" value="toString(0, 16)"/>
+                <variable id="reserved640" value="toString(0, 16)"/>
+
+            </struct>
+           
+        </user_types>
+        
+        <settings>
+            
+            <reference id="fcb_config" type="flexspi_nor_config" label="" options="UI_LABEL_HIDDEN; UI_BORDER_HIDDEN"></reference>
+            <reference id="fcb_config_bin" type="fcb_config_struct" available="false"/>
+            
+            <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+            <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+            <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+            <variable id="inst_config_ID" value="$parent.inst_ID.getValue() + `_config`"></variable>
+ 
+        </settings>
+
+        <fragment_defs>
+
+       </fragment_defs>
+
+        <code>
+ 
+        </code>
+        <validation>
+            <constraint level="error" description_expr="msg::message(`err_component_instance`, `FCB`)"
+                cond_expr="$components.system.#global.all_enabled_instances.getValue().countOccurrences(i -> (i.getType() == $instance.getType()), false) == 1"/>
+        </validation>
+            
+        <quick_selections>
+            <quick_selection id="default" label="Default" >
+                <description></description>
+                <set id="fcb_config.csHoldTime">3</set>
+                <set id="fcb_config.csSetupTime">3</set>
+                <set id="fcb_config.columnAddressWidth">1</set>
+                <set id="fcb_config.sflashA1Size">0x800000</set>
+                <set id="fcb_config.pageSize">0x100</set>
+                <set id="fcb_config.sectorSize">0x1000</set>
+                <set id="fcb_config.theSameFreq">true</set>
+                <set id="fcb_config.blockSize">0x40000</set>
+                
+                <set id="fcb_config.lookupTable.0.instruct_array.0.opcodeSDR">RADDR_SDR</set>
+                <set id="fcb_config.lookupTable.0.instruct_array.0.num_pad">four_pad</set>
+                <set id="fcb_config.lookupTable.0.instruct_array.0.operand">0x18</set>
+                
+                <set id="fcb_config.lookupTable.0.instruct_array.1.opcodeSDR">CMD_SDR</set>
+                <set id="fcb_config.lookupTable.0.instruct_array.1.num_pad">one_pad</set>
+                <set id="fcb_config.lookupTable.0.instruct_array.1.operand">0xEB</set>
+                
+                <set id="fcb_config.lookupTable.0.instruct_array.2.opcodeSDR">READ_SDR</set>
+                <set id="fcb_config.lookupTable.0.instruct_array.2.num_pad">four_pad</set>
+                <set id="fcb_config.lookupTable.0.instruct_array.2.operand">0x04</set>
+                
+                <set id="fcb_config.lookupTable.0.instruct_array.3.opcodeSDR">DUMMY_SDR</set>
+                <set id="fcb_config.lookupTable.0.instruct_array.3.num_pad">four_pad</set>
+                <set id="fcb_config.lookupTable.0.instruct_array.3.operand">0x06</set>
+                
+            </quick_selection>
+            <default>default</default> 
+        </quick_selections>
+       
+    </config_set>
+</component:config_component>

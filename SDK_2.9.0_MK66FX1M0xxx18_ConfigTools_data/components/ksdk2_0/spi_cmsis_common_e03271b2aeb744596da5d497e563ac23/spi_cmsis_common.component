@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="spi_cmsis_common" label="SPI_CMSIS" global_only="true"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-9.0.xsd" 
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="System">
+   <!-- GENERAL COMPONENT   -->
+   <description>Serial Peripheral Interface (SPI) - CMSIS</description>
+   
+   <config_set id="fsl_cmsis_spi" label="General configuration">
+      <description>Configuration of CMSIS SPI</description>
+    <generated_types></generated_types>
+      <user_types>
+         <struct id="cmsis_spi_config" label=" ">
+            <enum id="spi_mode_user" label="Bus mode" from="_spi_mode">
+               <item id="ARM_SPI_MODE_INACTIVE" label="Inactive"></item>
+               <item id="ARM_SPI_MODE_MASTER" label="Master mode"/>
+               <item id="ARM_SPI_MODE_SLAVE" label="Slave mode"/>
+            </enum>
+            
+            <!-- clockSourceUId will be the option -->
+            <variable id="clockSourceUId" value="$parent.getParent().optionValue(`clockSourceUId`)" />
+            
+            <variable id="peripheralName" value="($configSet.hasOption(`peripheralPrefix`) ? $configSet.optionValue(`peripheralPrefix`) + $configSet.peripheralIndex.getValue() : $instance.getPeripheral())"/>
+
+            <variable id="partName" value="queryFeatureAdvanced(`Configuration`, `processor`, `name`,false)"/>
+            <variable id="isGetFreqSupported" value="!$parent.partName.getValue().regexMatch(`\[MKE0[2,4,6].*`)"/>
+            <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init"  items="createArray()
+               .addItemToList($parent.clockSourceUId.getValue(), getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()), ($instance.getPeripheral() + `_CLK_SRC`),true)">
+               <description>SPI clock source</description>
+               <validation>
+                  <dependency when_expr="$parent.clockSourceFreq.getEnumItemId() == `GetFreq`" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Warning">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="($parent.clockSourceFreq.getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" items="createArray()
+               .merge(getClockFunctionalGroups().arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> enumItem,
+               enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSourceUId.getValue(), enumItem)) + ` (`+ enumItem + `)`,
+               enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSourceUId.getValue() , enumItem)))">
+               <validation>
+                  <constraint cond_expr="(($this.getEnumItemValue() == `GetFreq`) || $this.getEnumItemValue().toHertz() != 0)" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> toHertz(x) >= 0" />
+            </dynamic_enum>
+            
+            <enum id="clock_polarity" label="Clock polarity and phase">
+               <description>Frame format</description>
+               <item id="ARM_SPI_CPOL0_CPHA0" label="CPOL=0, CPHA=0">
+                  <description>Clock polarity 0, clock phase 0</description>
+               </item>
+               <item id="ARM_SPI_CPOL0_CPHA1" label="CPOL=0, CPHA=1">
+                  <description>Clock polarity 0, clock phase 1</description>
+               </item>
+               <item id="ARM_SPI_CPOL1_CPHA0" label="CPOL=1, CPHA=0">
+                  <description>Clock polarity 1, clock phase 0</description>
+               </item>
+               <item id="ARM_SPI_CPOL1_CPHA1" label="CPOL=1, CPHA=1">
+                  <description>Clock polarity 1, clock phase 1</description>
+               </item>
+               <item id="ARM_SPI_TI_SSI" label="Texas Instruments Frame Format" available="$parent.getParent().optionValue(`synchronous_serial_interface`)">
+                  <description>Specifies that the frame format corresponds to the Texas Instruments Frame Format</description>
+               </item>
+               <item id="ARM_SPI_MICROWIRE" label="Microwire" available="$parent.getParent().optionValue(`microwire_interface`)">
+                  <description>Specifies that the frame format corresponds to the National Semiconductor Microwire Frame Format</description>
+               </item>
+            </enum>
+
+            <enum id="power_state" label="Power state">
+               <item id="ARM_POWER_OFF" label="Power off">
+                  <description>No operation possible</description>
+               </item>
+               <item id="ARM_POWER_FULL" label="Power full">
+                  <description>Full operation at maximum performance</description>
+               </item>
+            </enum>
+            
+            <integer id="baudRate_Bps" label="Baud rate [bps]" type="uint32_t"  min_expr="1" available="$parent.spi_mode_user.getEnumItemValue() != `ARM_SPI_MODE_INACTIVE`">
+               <description>Baud Rate in bps</description>
+            </integer>
+ 
+            <integer id="data_bits" label="Data bits" min_expr="$parent.getParent().hasOption(`min_data_bits`) ? $parent.getParent().optionValue(`min_data_bits`).toInt() : 1" max_expr="$parent.getParent().hasOption(`max_data_bits`) ? $parent.getParent().optionValue(`max_data_bits`).toInt() : 32" type="uint16_t" available="$parent.getParent().hasOption(`min_data_bits`) &amp;&amp; $parent.spi_mode_user.getEnumItemValue() != `ARM_SPI_MODE_INACTIVE`">
+               <description>Set the number of bits per SPI frame; This is the minimum required parameter.</description>
+            </integer>
+            
+            <enum id="data_bits_spi" label="Data bits" available="$parent.getParent().hasOption(`data_bit1`) &amp;&amp; $parent.spi_mode_user.getEnumItemValue() != `ARM_SPI_MODE_INACTIVE`">
+               <item id="data_bit8" label="8" value="8"></item>
+               <item id="data_bit16" label="16" value="16"></item>
+            </enum>
+            
+            <variable id="dataBitsValue" value="$parent.data_bits.isAvailable() ? $parent.data_bits.getValue() : $parent.data_bits_spi.getEnumItemValue()"></variable>
+
+            <enum id="bit_format" label="Bit order" available="$parent.spi_mode_user.getEnumItemValue() != `ARM_SPI_MODE_INACTIVE`">
+               <description></description>
+               <item id="ARM_SPI_MSB_LSB" label="MSB to LSB">
+                  <description>Set the bit order from MSB to LSB</description>
+               </item>
+               <item id="ARM_SPI_LSB_MSB" label="LSB to MSB">
+                  <description>Set the bit order from LSB to MSB</description>
+               </item>
+            </enum>
+            
+            <enum id="typeControlMaster" label="Control type" available="$parent.spi_mode_user.getValue() == `ARM_SPI_MODE_MASTER`">
+               <validation>
+                  <constraint when_expr="$instance.getPeripheral().contains(`FLEXCOMM`) &amp;&amp; queryFeature(`PeripheralUnifiedSignal`,$instance.getPeripheral() + `.spi_ss` + $parent.slave_select.value().regexSubstr(`.*kSPI_Ssel(\d+).*`, 1) , `routed`)"
+                     cond_expr="$this.getEnumItemId() != `ARM_SPI_SS_MASTER_UNUSED` &amp;&amp; $this.getEnumItemId() != `ARM_SPI_SS_MASTER_SW`"
+                     level="warning"
+                     description="To use this type of control, slave select pin should not be routed."/>
+               </validation>
+               <item id="ARM_SPI_SS_MASTER_UNUSED" label="Not used" available="$parent.getParent().optionValue(`master_unused`)"></item>
+               <item id="ARM_SPI_SS_MASTER_SW" label="Software controlled" available="$parent.getParent().optionValue(`master_sw`)"></item>
+               <item id="ARM_SPI_SS_MASTER_HW_OUTPUT" label="Hardware controlled output" available="$parent.getParent().optionValue(`hardware_output`)"></item>
+               <item  id="ARM_SPI_SS_MASTER_HW_INPUT" label="Hardware monitored input" available="$parent.getParent().optionValue(`hardware_input`)"></item>
+               
+            </enum>
+
+            <enum id="typeControlSlave" label="Control type" available="$parent.spi_mode_user.getValue() == `ARM_SPI_MODE_SLAVE`">
+               <item id="ARM_SPI_SS_SLAVE_HW" label="Hardware monitored"> </item>
+               <item id="ARM_SPI_SS_SLAVE_SW" label="Software controlled" available="$parent.getParent().optionValue(`slave_sw`)"></item>
+            </enum>
+            
+            <variable id="typeControl" value="$parent.typeControlMaster.isAvailable() ? $parent.typeControlMaster.getValue() : $parent.typeControlSlave.getValue()"/>
+
+            <integer id="defaultValueInt" label="Default transmission value" type="uint32_t" available="$parent.spi_mode_user.getEnumItemValue() != `ARM_SPI_MODE_INACTIVE`"></integer>
+            
+            <enum id="slave_select" label="Slave select number" available="$instance.getPeripheral().contains(`FLEXCOMM`)">
+                  <item id="kSPI_Ssel0" label="Slave 0"/>
+                  <item id="kSPI_Ssel1" label="Slave 1"/>
+                  <item id="kSPI_Ssel2" label="Slave 2"/>
+                  <item id="kSPI_Ssel3" label="Slave 3"/>
+            </enum>
+            
+            <bool id="enableActivePolarity" label="Enable active high polarity" available="$instance.getPeripheral().contains(`FLEXCOMM`)"/>
+            
+            <dynamic_enum id="spi_chip_select" label="Peripheral Chip Select" items="getPeripheralSignals($instance.getPeripheral()).filter(item -> item.regexMatch(`.*[cC][sS]\d+.*`))"  options="transform_by_regex=.*[cC][sS](\d+).*;prefix=kDSPI_Pcs" available="$parent.getParent().hasOption(`isDspi`) || $parent.getParent().hasOption(`isLpspi`)"/>
+            
+            <integer id="pcsToSckDelayInNanoSec" label="PCS to SCK delay time [ns]" type="uint32_t" available="$parent.getParent().hasOption(`isDspi`) || $parent.getParent().hasOption(`isLpspi`)">
+               <description>PCS to SCK delay time in nanoseconds; setting to 0 sets the minimum delay. It also sets the boundary value if out of range.</description>
+            </integer>
+            <integer id="lastSckToPcsDelayInNanoSec" label="The last SCK to PCS delay time [ns]" type="uint32_t" available="$parent.getParent().hasOption(`isDspi`) || $parent.getParent().hasOption(`isLpspi`)">
+               <description>The last SCK to PCS delay time in nanoseconds; setting to 0 sets the minimum delay. It also sets the boundary value if out of range.</description>
+            </integer>
+            <integer id="betweenTransferDelayInNanoSec" label="After the SCK delay time [ns]" type="uint32_t" available="$parent.getParent().hasOption(`isDspi`) || $parent.getParent().hasOption(`isLpspi`)">
+               <description>After the SCK delay time in nanoseconds; setting to 0 sets the minimum delay. It also sets the boundary value if out of range.</description>
+            </integer>
+            
+            <!-- periheral name + peripheral index will be in options: SPI0, LPSPI0, DSPI0-->
+            
+            <string id="signalEventFunctionId" label="Signal event callback function id" validation_expr="x -> (isCIdentifier(x) || (x == `NULL`))">
+               <description>Signal event callback function is called if the event is occured. If ID is NULL, the callback function is not called.</description>
+            </string>
+            
+            <variable id="signalEventFunctionIdDefault" value="$parent.peripheralName.getValue() + `_SignalEvent`"/>
+            
+            <variable id="copyToClipBoardTextSEFI" enable="$parent.signalEventFunctionId.getValue() != `NULL`" 
+               value="`/* ` + $instance.getID() + ` signal event callback function */&#10;` + 
+               `void ` + $parent.signalEventFunctionId.getValue() + `(uint32_t event) {&#10;` + 
+               (leftPadding(`/* Master/Slave Transmit/Receive finished */&#10;`,1)) +
+               (leftPadding(`if (event &amp; ARM_SPI_EVENT_TRANSFER_DONE) {&#10;`,1)) +
+               (leftPadding(`/* Place your code here */&#10;`,2)) +
+               (leftPadding(`}&#10;`,1)) +
+               (leftPadding(`/* Master/Slave Transmit/Receive incomplete transfer */&#10;`,1)) +
+               (leftPadding(`if (event &amp; ARM_SPI_EVENT_TRANSFER_INCOMPLETE) {&#10;`,1)) +
+               (leftPadding(`/* Place your code here */&#10;`,2)) +
+               (leftPadding(`}&#10;`,1)) +
+               (($parent.spi_mode_user.getValue() == `ARM_SPI_MODE_MASTER`)? 
+               (leftPadding(`/* Address not acknowledged from Slave */&#10;`,1)) +
+               (leftPadding(`if (event &amp; ARM_SPI_EVENT_ADDRESS_NACK) {&#10;`,1)) +
+               (leftPadding(`/* Place your code here */&#10;`,2)) +
+               (leftPadding(`}&#10;`,1)) +
+               (leftPadding(`/* Master lost arbitration */&#10;`,1)) +
+               (leftPadding(`if (event &amp; ARM_SPI_EVENT_ARBITRATION_LOST) {&#10;`,1)) +
+               (leftPadding(`/* Place your code here */&#10;`,2)) +
+               (leftPadding(`}&#10;`,1)) :
+               (leftPadding(`/* Slave addressed with general call address */&#10;`,1)) +
+               (leftPadding(`if (event &amp; ARM_SPI_EVENT_GENERAL_CALL) {&#10;`,1)) +
+               (leftPadding(`/* Place your code here */&#10;`,2)) +
+               (leftPadding(`}&#10;`,1))) +
+               `}&#10;` 
+               ">   
+            </variable>
+            
+            <info id="copyToClipBoardSEFI" label="Callback function template" value="$parent.copyToClipBoardTextSEFI.getValue()" options="UI_INFO_COPY_BUTTON">
+               <description>Copy template of the signal event callback function.</description>
+            </info>
+            
+            <bool id="enableGetFreqFnCustomName" label="Enable custom get frequency function">
+               <description>When this option is enabled, the custom get frequency (getFreq) function is called during setting of the communication baudrate. The ID of the function is set in the "Custom get frequency function id" setting. This function is created by user in the Pins tool or in the user code. Example of the function uint32_t userId(void).</description>
+            </bool>
+            <string id="getFreqFunctionCustomID" label="Custom get frequency function id" validation_expr="x -> isCIdentifier(x)" enable="$parent.enableGetFreqFnCustomName.getValue()">
+               <description expr="`Get frequency function id. The uint32_t ` + $this.getValue() + `(void) function is created by user in the user code. If custom ID is equal to ` + $parent.getFreqFunctionID.getValue() + `, the function is not called in peripherals.c file and the function is directly used in the SPI CMSIS driver.`"/>
+            </string>
+            
+            <variable id="getFreqFunctionID" value="$parent.peripheralName.getValue() + `_GetFreq`"/>
+            <variable id="initPinFunctionID" value="$parent.peripheralName.getValue() + `_InitPins`"/>
+            <variable id="deinitPinFunctionID" value="$parent.peripheralName.getValue() + `_DeinitPins`"/>
+           
+            <bool id="enableInitPinsFnCustomName" label="Enable pins initialization function" >
+               <description>When this option is enabled, the initialization function is called during initialization of the driver. The ID of the function is set in the "Pins initialization function id" setting. This function is created by user in the Pins tool or in the user code. Example of the function void userId(void).</description>
+            </bool>
+            <string id="initPinFunctionCustomID" label="Pins initialization function id" validation_expr="x -> isCIdentifier(x)" enable="$parent.enableInitPinsFnCustomName.getValue()">
+               <description expr="`The pins initialization function ID. The void ` + $this.getValue() +`(void) function is created by user in the Pins tool or in the user code. If custom ID is equal to ` + $parent.initPinFunctionID.getValue() +`, the function is not called in peripherals.c file and the function is directly used from SPI CMSIS driver.`"/>
+            </string>
+            <bool id="enableDeinitPinsFnCustomName" label="Enable pins deinitialization function">
+               <description>When this option is enabled, the deinitialization function is called during deinitialization of the driver. The ID of the function is set in the "Pins deinitialization function id" setting. This function is created by user in the Pins tool or in the user code. Example of the function void userId(void).</description>
+            </bool>
+            <string id="deinitPinFunctionCustomID" label="Pins deinitialization function id" validation_expr="x -> isCIdentifier(x)" enable="$parent.enableDeinitPinsFnCustomName.getValue()" >
+               <description expr="`The pins initialization function ID. The void ` + $this.getValue() +`(void) function is created by user in the Pins tool or in the user code. If custom ID is equal to ` + $parent.deinitPinFunctionID.getValue() +`, the function is not called in peripherals.c file and the function is directly used from SPI CMSIS driver.`"/>
+            </string>
+           
+         </struct>
+       
+        
+      </user_types>
+      <settings>
+         <variable id="peripheralIndex" value="($configSet.hasOption(`peripheralIndex`) ? toInt($configSet.optionValue(`peripheralIndex`)) :($instance.getPeripheral().regexMatch(`.*(\d+)`) ? toInt($instance.getPeripheral().regexSubstr(`.*(\d+)`,1)) : 0 ))"/>
+         <variable id="isPeripheralAvailable" value="$parent.peripheralIndex.getValue() &gt;= 0"/>
+         <info id="peripheraIsNotAvailable" label="Note:"  value="`The SPI functionality is not available on ` + $instance.getPeripheral() + ` peripheral.`" available="!$parent.isPeripheralAvailable.getValue()">
+            <validation>
+               <constraint cond_expr="$parent.isPeripheralAvailable.getValue()" level="error" description_expr="`The SPI functionality is not available on ` + $instance.getPeripheral() + ` peripheral.`"/>
+            </validation>
+         </info>
+         <reference id="main_config" label=" " type="cmsis_spi_config" options="UI_LABEL_HIDDEN; UI_BORDER_HIDDEN" available="$parent.isPeripheralAvailable.getValue()"/>
+         
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+         <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+         <variable id="inst_config_ID" value="$parent.inst_ID.getValue() + `_config`"></variable>
+         
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+         <def fragment="function">
+            <expr>leftPadding(`/* ` + $param.fnComment + ` */`,0)</expr><br/>
+            <expr>leftPadding($param.fnRetType + ` ` + $param.fnID + `(` + $param.fnParams + `){`,0)</expr><br/>
+            <expr>leftPadding($param.fnBody,1)</expr><br/>
+            <expr>leftPadding(`};`,0)</expr><br/>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include" if_expr="$configSet.isPeripheralAvailable.getValue()">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+         </section>
+         
+         <section target="defines">
+            <fragment id="define" if_expr="$configSet.isPeripheralAvailable.getValue()">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)"/>
+               <param id="value" expr="`Driver_SPI` + $configSet.peripheralIndex.getValue()"/>
+               <param id="description">Definition of peripheral ID</param>
+            </fragment>
+            <fragment id="define" if_expr="$configSet.isPeripheralAvailable.getValue()">
+               <param id="name" expr="toUpperCase($configSet.inst_ID_def.getValue() + `_CLOCK_SOURCE_FREQ`)"/>
+               <param id="value" expr="$configSet.main_config.clockSourceFreq.getEnumItemValue().toHertz() + `UL`"/>
+               <param id="description">Definition of the clock source frequency</param>
+            </fragment>
+         </section>  
+         
+         <section target="global_vars">
+            <fragment id="function" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; !($configSet.main_config.enableGetFreqFnCustomName.getValue(false) &amp;&amp; ($configSet.main_config.getFreqFunctionID.getValue(``) == $configSet.main_config.getFreqFunctionCustomID.getValue(``)))">
+               <param id="fnRetType">uint32_t</param>
+               <param id="fnID" expr="$configSet.main_config.getFreqFunctionID.getValue()"/>
+               <param id="fnParams">void</param>
+               <param id="fnBody" expr="`return ` + ($configSet.main_config.enableGetFreqFnCustomName.getValue(false) ? $configSet.main_config.getFreqFunctionCustomID.getValue(``) + `()` : toUpperCase($configSet.inst_ID_def.getValue() + `_CLOCK_SOURCE_FREQ`)) + `;`"/>
+               <param id="fnComment" expr="`Get clock source frequency`"/>
+            </fragment>
+         </section>
+         
+         <section target="global_functions_extern">
+            <fragment id="extern_fcn_def" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; ($configSet.main_config.signalEventFunctionId.getValue() != `NULL`)">
+               <param id="name" expr="$configSet.main_config.signalEventFunctionId.getValue()"/>
+               <param id="type">void</param>
+               <param id="params" expr="`uint32_t event`"/>
+               <param id="description" expr="`Signal event function for component ` + $instance.getID()"/>
+            </fragment>
+            <fragment id="global_fcn_def" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; !$configSet.main_config.enableGetFreqFnCustomName.getValue(false)">
+               <param id="name" expr="$configSet.main_config.getFreqFunctionID.getValue()"/>
+               <param id="type">uint32_t</param>
+               <param id="params" expr="`void`"/>
+               <param id="description" expr="`Get clock source frequency function for component ` + $instance.getID()"/>
+            </fragment>
+            <fragment id="extern_fcn_def" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; $configSet.main_config.enableGetFreqFnCustomName.getValue(false)">
+               <param id="name" expr="$configSet.main_config.getFreqFunctionCustomID.getValue()"/>
+               <param id="type">uint32_t</param>
+               <param id="params" expr="`void`"/>
+               <param id="description" expr="`User get clock source frequency function for component ` + $instance.getID()"/>
+            </fragment>
+         </section>
+         
+         <section target="driver_functions_extern">
+            <fragment id="extern_fcn_def" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; $configSet.main_config.enableInitPinsFnCustomName.getValue(false)">
+               <param id="name" expr="$configSet.main_config.initPinFunctionCustomID.getValue()"/>
+               <param id="type">void</param>
+               <param id="params" expr="`void`"/>
+               <param id="description" expr="`Pins initialization function for component ` + $instance.getID()"/>
+            </fragment>
+            <fragment id="extern_fcn_def" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; $configSet.main_config.enableDeinitPinsFnCustomName.getValue(false)">
+               <param id="name" expr="$configSet.main_config.deinitPinFunctionCustomID.getValue()"/>
+               <param id="type">void</param>
+               <param id="params" expr="`void`"/>
+               <param id="description" expr="`Pins deinitialization function for component ` + $instance.getID()"/>
+            </fragment>
+         </section>
+
+         <section target="init_function_body">
+            <fragment id="init_line" if_expr="$configSet.isPeripheralAvailable.getValue()">
+               <param id="code" expr="`assert(` + toUpperCase($instance.getFnGroupPrefix() +  $instance.getId()) + `_PERIPHERAL.Initialize(` + $configSet.main_config.signalEventFunctionId.getValue()  +`) == ARM_DRIVER_OK);`"></param>
+               <param id="description" expr="`Initialize CMSIS SPI`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            
+            <fragment id="init_line" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; !($configSet.main_config.power_state.getEnumItemId() == `ARM_POWER_OFF` &amp;&amp; $configSet.main_config.spi_mode_user.getEnumItemValue() == `ARM_SPI_MODE_INACTIVE`)">
+               <param id="code" expr="`assert(` + toUpperCase($instance.getFnGroupPrefix() +  $instance.getId()) + `_PERIPHERAL.PowerControl(` + `ARM_POWER_FULL` +`) == ARM_DRIVER_OK);`"></param>
+               <param id="description" expr="`Power control of CMSIS SPI`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+
+            <fragment id="init_line" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; ($configSet.main_config.spi_mode_user.getEnumItemValue() == `ARM_SPI_MODE_MASTER` || $configSet.main_config.spi_mode_user.getEnumItemValue() == `ARM_SPI_MODE_SLAVE`) ">
+               <param id="code" expr="`assert(` + toUpperCase($instance.getFnGroupPrefix() +  $instance.getId()) + `_PERIPHERAL.Control(` + $configSet.main_config.spi_mode_user.getValue() + ` | ` + $configSet.main_config.clock_polarity.getValue() + ` | ARM_SPI_DATA_BITS(` + $configSet.main_config.dataBitsValue.getValue() + `)` + ` | ` + $configSet.main_config.bit_format.getValue() + ` | ` + $configSet.main_config.typeControl.getValue() +`, `+ $configSet.main_config.baudRate_Bps.getValue() +`) == ARM_DRIVER_OK);`"></param>
+               <param id="description" expr="`Control of CMSIS SPI`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            
+            <fragment id="init_line" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; ($configSet.main_config.spi_mode_user.getEnumItemValue() == `ARM_SPI_MODE_MASTER` || $configSet.main_config.spi_mode_user.getEnumItemValue() == `ARM_SPI_MODE_SLAVE`)">
+               <param id="code" expr="`assert(` + toUpperCase($instance.getFnGroupPrefix() +  $instance.getId()) + `_PERIPHERAL.Control(` + `ARM_SPI_SET_DEFAULT_TX_VALUE, `+ $configSet.main_config.defaultValueInt.getValue() +`) == ARM_DRIVER_OK);`"></param>
+               <param id="description" expr="`Control of CMSIS SPI`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+         </section>
+         <section target="init_function_postinit0">
+            <fragment id="init_line" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; ($configSet.main_config.power_state.getEnumItemId() == `ARM_POWER_OFF`)">
+               <param id="code" expr="`assert(` + toUpperCase($instance.getFnGroupPrefix() +  $instance.getId()) + `_PERIPHERAL.PowerControl(` + $configSet.main_config.power_state.getEnumItemId() +`) == ARM_DRIVER_OK);`"></param>
+               <param id="description" expr="`Power control of CMSIS SPI`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+         </section>
+      </code>
+      <validation>
+     </validation>
+      <quick_selections>
+         <quick_selection id="default" label="Default">
+            <set id="main_config.power_state">ARM_POWER_FULL</set>
+            <set id="main_config.baudRate_Bps">500000</set>
+            <set id="main_config.signalEventFunctionId" from_resource="$configSet.main_config.signalEventFunctionIdDefault.getValue(`SPI_SignalEvent`)"/>
+            <set id="main_config.initPinFunctionCustomID" from_resource="$configSet.main_config.initPinFunctionID.getValue(`SPI_InitPins`)"/>
+            <set id="main_config.deinitPinFunctionCustomID" from_resource="$configSet.main_config.deinitPinFunctionID.getValue(`SPI_DeinitPins`)"/>  
+            <set id="main_config.getFreqFunctionCustomID" from_resource="$configSet.main_config.getFreqFunctionID.getValue(`SPI_GetFreq`)"/>
+         </quick_selection>
+      </quick_selections>      
+   </config_set>
+</component:config_component>

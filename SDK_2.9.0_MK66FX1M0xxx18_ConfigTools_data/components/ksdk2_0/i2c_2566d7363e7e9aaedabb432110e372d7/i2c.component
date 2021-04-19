@@ -1,0 +1,997 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="i2c" label="I2C" category="Peripheral driver" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-5.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <sw_comp_ref name="platform.drivers.i2c" version="2.0.5"/>
+   <description>Inter-Integrated Circuit (I2C)</description>
+   <mode id="I2C_Polling" label="Polling">
+      <description>Polling mode - Basic operation initialization (without support of interrupts and transactional API).</description>
+      <config_set_refs>
+         <config_set_ref>fsl_i2c</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>I2C</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="I2C_Interrupt" label="Interrupts">
+      <description>Interrupts mode - Operation using interrupts (interrupt routines are defined by users).</description>
+      <config_set_refs>
+         <config_set_ref>fsl_i2c</config_set_ref>
+         <config_set_ref>interrupt</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>I2C</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="I2C_Transfer" label="Transfer">
+      <description>Transfer mode - Operation using transfer mode (ring buffer). This mode supports transactional APIs.</description>
+      <config_set_refs>
+         <config_set_ref>fsl_i2c</config_set_ref>
+         <config_set_ref>transferCfg</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>I2C</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="dma" label="DMA" available="featureDefined(`FSL_FEATURE_SOC_DMA_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SOC_DMA_COUNT`) &gt; 0)">
+      <description>DMA mode - Operation using DMA mode (DMA device). This mode supports transactional API by using DMA device.</description>
+      <config_set_refs>
+         <config_set_ref>fsl_i2c</config_set_ref>
+         <config_set_ref>dmaCfg</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>I2C</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="edma" label="eDMA" available="featureDefined(`FSL_FEATURE_SOC_EDMA_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SOC_EDMA_COUNT`) &gt; 0)">
+      <description>eDMA mode - operation using eDMA mode (DMA device). This mode supports transactional API by using eDMA device.</description>
+      <config_set_refs>
+         <config_set_ref>fsl_i2c</config_set_ref>
+         <config_set_ref>edmaCfg</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>I2C</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="freertos" label="FreeRTOS" available="isSdkComponentDefined(`platform.drivers.i2c_freertos`)">
+      <description>FreeRTOS mode - I2C operation in RTOS mode (FreeRTOS mode with transactional API).</description>
+      <config_set_refs>
+         <config_set_ref>fsl_i2c</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>I2C</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="fsl_i2c" label="General configuration" from_source="fsl_i2c.h">
+      <description>General configuration</description>
+      <generated_types>
+         <enum id="i2c_direction_t" label="The direction of master and slave transfers" from="_i2c_direction">
+            <description></description>
+            <item id="kI2C_Write" label="Master transmits to the slave"/>
+            <item id="kI2C_Read" label="Master receives from the slave"/>
+         </enum>
+         <enum id="i2c_slave_address_mode_t" label="Addressing mode" from="_i2c_slave_address_mode">
+            <description></description>
+            <item id="kI2C_Address7bit" label="7-bit addressing mode"/>
+            <item id="kI2C_RangeMatch" label="Range address match addressing mode"/>
+         </enum>
+         <enum id="i2c_slave_transfer_event_t" label="Set of events sent to the callback for nonblocking slave transfers" from="_i2c_slave_transfer_event">
+            <description>These event enumerations are used for two related purposes. First, a bit mask created by OR&apos;ing together events is passed to I2C_SlaveTransferNonBlocking() to specify which events to enable. Then, when the slave callback is invoked, it is passed the current event through its transfer parameter.These enumerations are meant to be OR&apos;d together to form a bit mask of events.</description>
+            <item id="kI2C_SlaveAddressMatchEvent" label="Received the slave address after a start or repeated start"/>
+            <item id="kI2C_SlaveTransmitEvent" label="A callback is requested to provide data to transmit (slave-transmitter role)"/>
+            <item id="kI2C_SlaveReceiveEvent" label="A callback is requested to provide a buffer in which to place received data (slave-receiver role)"/>
+            <item id="kI2C_SlaveTransmitAckEvent" label="A callback needs to either transmit an ACK or NACK"/>
+            <item id="kI2C_SlaveStartEvent" label="A start/repeated start was detected" available="(featureDefined(`FSL_FEATURE_I2C_HAS_START_STOP_DETECT`) &amp;&amp; getFeature(`FSL_FEATURE_I2C_HAS_START_STOP_DETECT`))"/>
+            <item id="kI2C_SlaveCompletionEvent" label="A stop was detected or finished transfer, completing the transfer"/>
+            <item id="kI2C_SlaveGenaralcallEvent" label="Received the general call address after a start or repeated start"/>
+            <item id="kI2C_SlaveAllEvents" label="A bit mask of all available events"/>
+         </enum>
+         <struct id="i2c_master_config_t" label="I2C master user configuration" from="_i2c_master_config">
+            <description></description>
+            <bool id="enableMaster" label="Enables the I2C peripheral at initialization time">
+               <description>Enables the I2C peripheral at initialization time.</description>
+            </bool>
+            <bool id="enableStopHold" label="Controls the stop hold enable" available="(featureDefined(`FSL_FEATURE_I2C_HAS_STOP_HOLD_OFF`) &amp;&amp; getFeature(`FSL_FEATURE_I2C_HAS_STOP_HOLD_OFF`))">
+               <description>Controls the stop hold enable.</description>
+            </bool>
+            <bool id="enableDoubleBuffering" label="Controls double buffer enable; notice that enabling the double buffer disables the clock stretch" available="(featureDefined(`FSL_FEATURE_I2C_HAS_DOUBLE_BUFFER_ENABLE`) &amp;&amp; getFeature(`FSL_FEATURE_I2C_HAS_DOUBLE_BUFFER_ENABLE`))">
+               <description>Controls double buffer enable; notice that enabling the double buffer disables the clock stretch.</description>
+            </bool>
+            <integer id="baudRate_Bps" label="Baud rate configuration of I2C peripheral" type="uint32_t">
+               <description>Baud rate configuration of I2C peripheral.</description>
+            </integer>
+            <integer id="glitchFilterWidth" label="Controls the width of the glitch" type="uint8_t">
+               <description>Controls the width of the glitch.</description>
+            </integer>
+         </struct>
+         <struct id="i2c_slave_config_t" label="I2C slave user configuration" from="_i2c_slave_config">
+            <description></description>
+            <bool id="enableSlave" label="Enables the I2C peripheral at initialization time">
+               <description>Enables the I2C peripheral at initialization time.</description>
+            </bool>
+            <bool id="enableGeneralCall" label="Enables the general call addressing mode">
+               <description>Enables the general call addressing mode.</description>
+            </bool>
+            <bool id="enableWakeUp" label="Enables/disables waking up MCU from low-power mode">
+               <description>Enables/disables waking up MCU from low-power mode.</description>
+            </bool>
+            <bool id="enableDoubleBuffering" label="Controls a double buffer enable; notice that enabling the double buffer disables the clock stretch" available="(featureDefined(`FSL_FEATURE_I2C_HAS_DOUBLE_BUFFER_ENABLE`) &amp;&amp; getFeature(`FSL_FEATURE_I2C_HAS_DOUBLE_BUFFER_ENABLE`))">
+               <description>Controls a double buffer enable; notice that enabling the double buffer disables the clock stretch.</description>
+            </bool>
+            <bool id="enableBaudRateCtl" label="Enables/disables independent slave baud rate on SCL in very fast I2C modes">
+               <description>Enables/disables independent slave baud rate on SCL in very fast I2C modes.</description>
+            </bool>
+            <integer id="slaveAddress" label="A slave address configuration" type="uint16_t">
+               <description>A slave address configuration.</description>
+            </integer>
+            <integer id="upperAddress" label="A maximum boundary slave address used in a range matching mode" type="uint16_t">
+               <description>A maximum boundary slave address used in a range matching mode.</description>
+            </integer>
+            <reference id="addressingMode" label="An addressing mode configuration of i2c_slave_address_mode_config_t" type="i2c_slave_address_mode_t">
+               <description>An addressing mode configuration of i2c_slave_address_mode_config_t.</description>
+            </reference>
+            <integer id="sclStopHoldTime_ns" label="the delay from the rising edge of SCL (I2C clock) to the rising edge of SDA (I2C data) while SCL is high (stop condition), SDA hold time and SCL start hold time are also configured according to the SCL stop hold time" type="uint32_t">
+               <description>the delay from the rising edge of SCL (I2C clock) to the rising edge of SDA (I2C data) while SCL is high (stop condition), SDA hold time and SCL start hold time are also configured according to the SCL stop hold time.</description>
+            </integer>
+         </struct>
+         <struct id="i2c_master_handle_t" label="I2C master handle typedef" from="_i2c_master_handle">
+            <description></description>
+            <reference id="transfer" label="I2C master transfer copy" type="i2c_master_transfer_t">
+               <description>I2C master transfer copy.</description>
+            </reference>
+            <fixme id="transferSize" label="Total bytes to be transferred" type="size_t">
+               <description>Total bytes to be transferred.</description>
+            </fixme>
+            <integer id="state" label="A transfer state maintained during transfer" type="uint8_t">
+               <description>A transfer state maintained during transfer.</description>
+            </integer>
+            <reference id="completionCallback" label="A callback function called when the transfer is finished" type="i2c_master_transfer_callback_t">
+               <description>A callback function called when the transfer is finished.</description>
+            </reference>
+            <fixme id="userData" label="A callback parameter passed to the callback function" type="void *">
+               <description>A callback parameter passed to the callback function.</description>
+            </fixme>
+         </struct>
+         <fixme id="i2c_master_transfer_callback_t" label="I2C master transfer callback typedef" type="void(*">
+            <description></description>
+         </fixme>
+         <struct id="i2c_slave_handle_t" label="I2C slave handle typedef" from="_i2c_slave_handle">
+            <description></description>
+            <bool id="isBusy" label="Indicates whether a transfer is busy">
+               <description>Indicates whether a transfer is busy.</description>
+            </bool>
+            <reference id="transfer" label="I2C slave transfer copy" type="i2c_slave_transfer_t">
+               <description>I2C slave transfer copy.</description>
+            </reference>
+            <integer id="eventMask" label="A mask of enabled events" type="uint32_t">
+               <description>A mask of enabled events.</description>
+            </integer>
+            <reference id="callback" label="A callback function called at the transfer event" type="i2c_slave_transfer_callback_t">
+               <description>A callback function called at the transfer event.</description>
+            </reference>
+            <fixme id="userData" label="A callback parameter passed to the callback" type="void *">
+               <description>A callback parameter passed to the callback.</description>
+            </fixme>
+         </struct>
+         <struct id="i2c_master_transfer_t" label="I2C master transfer structure" from="_i2c_master_transfer">
+            <description></description>
+            <integer id="flags" label="A transfer flag which controls the transfer" type="uint32_t">
+               <description>A transfer flag which controls the transfer.</description>
+            </integer>
+            <integer id="slaveAddress" label="7-bit slave address" type="uint8_t">
+               <description>7-bit slave address.</description>
+            </integer>
+            <reference id="direction" label="A transfer direction, read or write" type="i2c_direction_t">
+               <description>A transfer direction, read or write.</description>
+            </reference>
+            <integer id="subaddress" label="A sub address" type="uint32_t">
+               <description>A sub address. Transferred MSB first.</description>
+            </integer>
+            <integer id="subaddressSize" label="A size of the command buffer" type="uint8_t">
+               <description>A size of the command buffer.</description>
+            </integer>
+            <fixme id="data" label="A transfer buffer" type="uint8_t *volatile">
+               <description>A transfer buffer.</description>
+            </fixme>
+            <fixme id="dataSize" label="A transfer size" type="size_t">
+               <description>A transfer size.</description>
+            </fixme>
+         </struct>
+         <struct id="i2c_slave_transfer_t" label="I2C slave transfer structure" from="_i2c_slave_transfer">
+            <description></description>
+            <reference id="event" label="A reason that the callback is invoked" type="i2c_slave_transfer_event_t">
+               <description>A reason that the callback is invoked.</description>
+            </reference>
+            <fixme id="data" label="A transfer buffer" type="uint8_t *volatile">
+               <description>A transfer buffer.</description>
+            </fixme>
+            <fixme id="dataSize" label="A transfer size" type="size_t">
+               <description>A transfer size.</description>
+            </fixme>
+            <fixme id="completionStatus" label="Success or error code describing how the transfer completed" type="status_t">
+               <description>Success or error code describing how the transfer completed. Only applies for kI2C_SlaveCompletionEvent.</description>
+            </fixme>
+            <fixme id="transferredCount" label="A number of bytes actually transferred since the start or since the last repeated start" type="size_t">
+               <description>A number of bytes actually transferred since the start or since the last repeated start.</description>
+            </fixme>
+         </struct>
+         <fixme id="i2c_slave_transfer_callback_t" label="I2C slave transfer callback typedef" type="void(*">
+            <description></description>
+         </fixme>
+      </generated_types>
+      <user_types>
+         <enum id="i2c_mode_user" label="I2C mode (master or slave)" from="_i2c_mode">
+            <item id="kI2C_Master" label="Master mode"/>
+            <item id="kI2C_Slave" label="Slave mode"/>
+         </enum>
+         <struct id="i2c_master_config_user_t" label="Master user configuration" from="_i2c_master_config">
+            <bool id="enableMaster" label="Enable the peripheral at initialization time">
+               <description>Enables the peripheral at initialization time.</description>
+            </bool>
+            <bool id="enableStopHold" label="Controls the stop hold" available="(featureDefined(`FSL_FEATURE_I2C_HAS_STOP_HOLD_OFF`) &amp;&amp; getFeature(`FSL_FEATURE_I2C_HAS_STOP_HOLD_OFF`))">
+               <description>Controls the stop hold enable.</description>
+            </bool>
+            <bool id="enableDoubleBuffering" label="Controls double buffer" available="(featureDefined(`FSL_FEATURE_I2C_HAS_DOUBLE_BUFFER_ENABLE`) &amp;&amp; getFeature(`FSL_FEATURE_I2C_HAS_DOUBLE_BUFFER_ENABLE`))">
+               <description>Controls double buffer enable; notice that enabling the double buffer disables the clock stretch.</description>
+            </bool>
+            <integer id="baudRate_Bps" label="Baud rate" type="uint32_t"  min_expr="1">
+               <description>Baud rate configuration of I2C peripheral.</description>
+            </integer>
+            <integer id="glitchFilterWidth" label="Controls the width of the glitch" type="uint8_t">
+               <description>Controls the width of the glitch.</description>
+            </integer>
+         </struct>
+         <struct id="i2c_slave_config_user_t" label="Slave user configuration" from="_i2c_slave_config">
+            <bool id="enableSlave" label="Enable the peripheral at initialization time">
+               <description>Enables the peripheral at initialization time.</description>
+            </bool>
+            <bool id="enableGeneralCall" label="Enable the general call addressing mode">
+               <description>Enable the general call addressing mode.</description>
+            </bool>
+            <bool id="enableWakeUp" label="Enable waking up MCU from low-power mode">
+               <description>Enable waking up MCU from low-power mode.</description>
+            </bool>
+            <bool id="enableDoubleBuffering" label="Controls a double buffer" available="(featureDefined(`FSL_FEATURE_I2C_HAS_DOUBLE_BUFFER_ENABLE`) &amp;&amp; getFeature(`FSL_FEATURE_I2C_HAS_DOUBLE_BUFFER_ENABLE`))">
+               <description>Controls a double buffer enable; notice that enabling the double buffer disables the clock stretch.</description>
+            </bool>
+            <bool id="enableBaudRateCtl" label="Independent slave baud rate on SCL in very fast I2C modes">
+               <description>Enables independent slave baud rate on SCL in very fast I2C modes.</description>
+            </bool>
+            <integer id="slaveAddress" label="Slave address" type="uint16_t" min_expr="0" max_expr="($parent.addressingMode.getValue() == `kI2C_RangeMatch` ? 65535 : 127)">
+               <description>A slave address configuration.</description>
+            </integer>
+            <integer id="upperAddress" label="Maximum boundary slave address (range matching mode)" type="uint16_t">
+               <description>A maximum boundary slave address used in a range matching mode.</description>
+            </integer>
+            <reference id="addressingMode" label="Addressing mode" type="i2c_slave_address_mode_user_t">
+               <description>An addressing mode configuration of i2c_slave_address_mode_config_t.</description>
+            </reference>
+            <integer id="sclStopHoldTime_ns" label="The delay from the rising edge of SCL to the r. e. of SDA [ns]" type="uint32_t">
+               <description>The delay from the rising edge of SCL (I2C clock) to the rising edge of SDA (I2C data) while SCL is high (stop condition), SDA hold time and SCL start hold time are also configured according to the SCL stop hold time.</description>
+            </integer>
+         </struct>
+         <enum id="i2c_slave_address_mode_user_t" label="Addressing mode" from="_i2c_slave_address_mode">
+            <item id="kI2C_Address7bit" label="7-bit mode"/>
+            <item id="kI2C_RangeMatch" label="Range address match mode"/>
+         </enum>
+         <struct id="rtos_handle_user" label="RTOS handle name" from_source="_rtosHandle">
+            <bool id="enable_custom_name" label="Enable custom name">
+               <description>When this option is enabled a user custom name of the handle is allowed to set in the settings below.
+               </description>
+            </bool>
+            <string id="handle_custom_name" label="Name" available="$parent.enable_custom_name.getValue()">
+               <description>The handle is used for processing of RTOS requests. </description>
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="`The handle name: `+ $this.getCValue() +` is not valid C identifier!`"/>
+               </validation>
+            </string>
+            <info id="handle_default_name" label="Name" value="$parent.enable_custom_name.getValue() ? $parent.handle_custom_name.getValue() : 
+               $instance.getFnGroupPrefix() + $instance.getID() + 
+               `_rtosHandle`" available="!$parent.enable_custom_name.getValue()">
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description="The handle name is not valid C identifier!"/>
+               </validation>
+            </info>
+            <variable id="handle_name" value="($parent.enable_custom_name.getValue()) ? $parent.handle_custom_name.getValue() : $parent.handle_default_name.getValue()"/>
+         </struct>
+      </user_types>
+      <settings>
+         <reference id="i2c_mode" label="I2C mode" type="i2c_mode_user">
+            <description>I2C mode</description>
+         </reference>
+         <variable id="clockSourceUId" value="`BusInterfaceClock`"/>
+         <variable id="partName" value="queryFeatureAdvanced(`Configuration`, `processor`, `name`,false)"/>
+         <variable id="isGetFreqSupported" value="!$parent.partName.getValue().regexMatch(`\[MKE0[2,4,6].*`)"/>
+         <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="createArray().addItemToList(`BusInterfaceClock`, getPeripheralClock($instance.getPeripheral(), `BusInterfaceClock`), ($instance.getPeripheral() + `_CLK_SRC`),true)">
+            <description>I2C clock source</description>
+            <validation>
+               <dependency when_expr="$parent.clockSourceFreq.getEnumItemId() == `GetFreq`" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                  description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                  level="Warning">
+                  <feature name="frequency" evaluation="greaterThan">
+                     <data expr="0" unit="Hz" type="Frequency"/>
+                  </feature>
+               </dependency>
+               <dependency when_expr="($parent.clockSourceFreq.getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                  description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                  level="Error">
+                  <feature name="frequency" evaluation="greaterThan">
+                     <data expr="0" unit="Hz" type="Frequency"/>
+                  </feature>
+               </dependency>
+            </validation>
+         </dynamic_enum>
+         <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" items="createArray()
+          .addItemToList(`GetFreq`,`Runtime calculation by CLOCK_GetFreq()`,`GetFreq`,$parent.isGetFreqSupported.getValue())
+          .merge(getClockFunctionalGroups().arrayToEnumItems(
+             enumItem -> true,
+             enumItem -> enumItem,
+             enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), `BusInterfaceClock`, enumItem)) + ` (`+ enumItem + `)`,
+             enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), `BusInterfaceClock` , enumItem)))">
+           <validation>
+             <constraint cond_expr="(($this.getEnumItemValue() == `GetFreq`) || ($this.getEnumItemValue().toHertz() != 0))" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+           </validation>
+           <custom_value_support default="0" validation_expr="x -> toHertz(x) >= 0" />
+         </dynamic_enum>
+         <reference id="rtos_handle" label="RTOS handle name" type="rtos_handle_user" available="($instance.getMode() == `freertos`)">
+            <description>RTOS handle name</description>
+         </reference>
+         <reference id="i2c_master_config" label="Master configuration" available="$parent.i2c_mode.value() == `kI2C_Master`" type="i2c_master_config_user_t">
+            <description>Master configuration</description>
+         </reference>
+         <reference id="i2c_slave_config" label="Slave configuration" available="$parent.i2c_mode.value() == `kI2C_Slave`" type="i2c_slave_config_user_t">
+            <description>Slave configuration</description>
+         </reference>
+         <reference id="interrupt_priority" label="Interrupt priority setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" available="$instance.getMode() == `freertos` || $instance.getMode() == `I2C_Transfer`" options="irq_without_enable_control;without_handler_settings">
+            <description>Configuration of interrupt priority (by default FreeRTOS and Transfer sets interrupt to lower priority than the default level).</description>
+         </reference>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral" if_expr="$instance.getMode() == `freertos` || $instance.getMode() == `I2C_Transfer`"/>
+         </import>
+      </fragment_defs>
+      <code>
+        <section target="includes">
+         <fragment id="include">
+            <param id="name">common</param>
+            <param id="filename">fsl_common.h</param>
+          </fragment>
+          <fragment id="include">
+            <param id="name">i2c</param>
+            <param id="filename">fsl_i2c.h</param>
+          </fragment>
+           <fragment id="include" if_expr="($instance.getMode() == `freertos`)">
+              <param id="name">i2c_freertos</param>
+              <param id="filename">fsl_i2c_freertos.h</param>
+           </fragment>
+        </section>
+        <section target="defines">
+          <expr>`/* `+ $instance.getFnGroupName() +` defines for `+ $instance.getPeripheral() +` */`</expr><br/>
+          <fragment id="define">
+             <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)"/>
+             <param id="value" expr="$instance.getPeripheral()"/><!-- get current peripheral -->
+             <param id="description">Definition of peripheral ID</param>
+          </fragment>
+          <fragment id="define">
+            <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`)"/>
+            <param id="value" expr="$instance.getPeripheral() + `_CLK_SRC`"/>
+           <param id="description">Definition of the clock source</param>
+          </fragment>
+          <fragment id="define">
+            <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLK_FREQ`)"/>
+            <param id="value" expr="($this.clockSourceFreq.value() == `GetFreq`)?`CLOCK_GetFreq(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE)`):$this.clockSourceFreq.getEnumItemValue().toHertz() + `UL`"/>
+            <param id="description">Definition of the clock source frequency</param>
+          </fragment>
+           <fragment id="IRQ_definitions" apply_to="$this.interrupt_priority" if_expr="$this.interrupt_priority.isAvailable()"/>
+        </section>
+        <section target="global_vars">
+           <fragment id="global_var" if_expr="($this.i2c_mode.value() == `kI2C_Master`) &amp;&amp; ($instance.getMode() == `freertos`)">
+              <param id="name" expr="$this.rtos_handle.handle_name.getValue()"/> 
+              <param id="type" expr="`i2c_rtos_handle_t`"/>
+           </fragment>
+           <fragment id="const_struct" apply_to="$this.i2c_master_config" if_expr="$this.i2c_mode.value() == `kI2C_Master`">
+              <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`" />
+              <param id="type">i2c_master_config_t</param>
+           </fragment>
+           <fragment id="const_struct" apply_to="$this.i2c_slave_config" if_expr="$this.i2c_mode.value() == `kI2C_Slave`">
+              <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`"/>
+              <param id="type">i2c_slave_config_t</param>
+           </fragment> 
+        </section>
+        <section target="global_vars_extern">
+           <fragment id="extern_var" if_expr="($this.i2c_mode.value() == `kI2C_Master`) &amp;&amp; ($instance.getMode() == `freertos`)">
+              <param id="name" expr="$this.rtos_handle.handle_name.getValue()"/> 
+              <param id="type" expr="`i2c_rtos_handle_t`"/>
+           </fragment>
+          <fragment id="extern_const" if_expr="$this.i2c_mode.value() == `kI2C_Master`">
+              <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`" />
+              <param id="type">i2c_master_config_t</param>
+           </fragment>
+           <fragment id="extern_const" if_expr="$this.i2c_mode.value() == `kI2C_Slave`">
+              <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`" />
+              <param id="type">i2c_slave_config_t</param>
+           </fragment> 
+        </section>
+        <section target="init_function_body">
+           <text>  /* Initialization function */</text><br/>
+           <expr if_expr="($this.i2c_mode.value() == `kI2C_Master`) &amp;&amp; ($instance.getMode() != `freertos`)">`  I2C_MasterInit(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, &amp;`) + $instance.getFnGroupPrefix() + $instance.getID() + `_config, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLK_FREQ);`)</expr>
+           <expr if_expr="($this.i2c_mode.value() == `kI2C_Master`) &amp;&amp; ($instance.getMode() == `freertos`)">`  I2C_RTOS_Init(&amp;` + $this.rtos_handle.handle_name.getValue() + `, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, &amp;`) + $instance.getFnGroupPrefix() + $instance.getID() + `_config, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLK_FREQ);`)</expr>
+           <expr if_expr="$this.i2c_mode.value() == `kI2C_Slave`">`  I2C_SlaveInit(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, &amp;`) + $instance.getFnGroupPrefix() + $instance.getID() + `_config, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLK_FREQ);`)</expr><br/>
+           <fragment id="IRQn_set_priority_default" apply_to="$this.interrupt_priority" if_expr="$this.interrupt_priority.isAvailable()"/>
+        </section>
+      </code>
+      <validation>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral()+`.i2c_scl`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`serial clock`, $instance.getPeripheral())" level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral()+`.i2c_sda`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`serial data`, $instance.getPeripheral())" level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <!-- FreeRTOS -->
+         <constraint cond_expr="!(($instance.fsl_i2c.i2c_mode.value() == `kI2C_Slave`) &amp;&amp; ($instance.getMode() == `freertos`))" level="error" description="FreeRTOS mode is not available for the I2C slave mode."/>
+         <dependency when_expr="($instance.getMode() == `freertos`)" resource_type="SWComponent" resource_id="platform.drivers.i2c_freertos" level="Warning" description_expr="$components.system.#global.err_missing_driver.getValue().formatMessage(`fsl_i2c_freertos`, ` (required for the FreeRTOS mode)`)">
+            <feature name="enabled" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="($instance.getMode() == `freertos`)" resource_type="SWComponent" resource_id="platform.drivers.i2c_freertos" level="Warning" description_expr="$components.system.#global.err_driver_version.getValue().formatMessage(`fsl_i2c_freertos`, ` (required for the FreeRTOS mode)`)">
+            <feature name="version" evaluation="compatible">
+               <data type="Version" expr="`2.0.5`"/>
+            </feature>
+         </dependency>
+      </validation>
+      <quick_selections>
+         <quick_selection id="QS_I2C_1" label="Default setting- Master">
+            <description>Default setting.</description>
+            <set id="i2c_mode">kI2C_Master</set>
+            <set id="i2c_master_config.enableMaster">true</set>
+            <set id="i2c_master_config.enableStopHold">false</set>
+            <set id="i2c_master_config.enableDoubleBuffering">true</set>
+            <set id="i2c_master_config.baudRate_Bps">100000</set>
+            <set id="i2c_master_config.glitchFilterWidth">0</set>
+            <set id="i2c_slave_config.enableSlave">true</set>
+            <set id="i2c_slave_config.enableGeneralCall">false</set>
+            <set id="i2c_slave_config.enableWakeUp">false</set>
+            <set id="i2c_slave_config.enableDoubleBuffering">true</set>
+            <set id="i2c_slave_config.enableBaudRateCtl">false</set>
+            <set id="i2c_slave_config.slaveAddress">126</set>
+            <set id="i2c_slave_config.upperAddress">0</set>
+            <set id="i2c_slave_config.addressingMode">kI2C_Address7bit</set>
+            <set id="i2c_slave_config.sclStopHoldTime_ns">4000</set>
+         </quick_selection>
+         <quick_selection id="QS_I2C_2" label="Default setting - Slave">
+            <description>Default setting .</description>
+            <set id="i2c_mode">kI2C_Slave</set>
+            <set id="i2c_master_config.enableMaster">true</set>
+            <set id="i2c_master_config.enableStopHold">false</set>
+            <set id="i2c_master_config.enableDoubleBuffering">true</set>
+            <set id="i2c_master_config.baudRate_Bps">100000</set>
+            <set id="i2c_master_config.glitchFilterWidth">0</set>
+            <set id="i2c_slave_config.enableSlave">true</set>
+            <set id="i2c_slave_config.enableGeneralCall">false</set>
+            <set id="i2c_slave_config.enableWakeUp">false</set>
+            <set id="i2c_slave_config.enableDoubleBuffering">true</set>
+            <set id="i2c_slave_config.enableBaudRateCtl">false</set>
+            <set id="i2c_slave_config.slaveAddress">126</set>
+            <set id="i2c_slave_config.upperAddress">0</set>
+            <set id="i2c_slave_config.addressingMode">kI2C_Address7bit</set>
+            <set id="i2c_slave_config.sclStopHoldTime_ns">4000</set>
+         </quick_selection>
+         <default>QS_I2C_1</default>
+      </quick_selections>
+   </config_set>
+   <config_set id="interrupt" label="Interrupt configuration" from_source="fsl_common.h">
+      <description>Interrupt configuration</description> 
+      <generated_types/>
+      <user_types>
+         <set id="interrupt_types" label="Interrupt types">
+            <item id="kI2C_GlobalInterruptEnable" label="Global interrupt" value="kI2C_GlobalInterruptEnable"/>
+            <item id="kI2C_StopDetectInterruptEnable" label="Stop detect interrupt" value="kI2C_StopDetectInterruptEnable"  available="(featureDefined(`FSL_FEATURE_I2C_HAS_STOP_DETECT`) &amp;&amp; getFeature(`FSL_FEATURE_I2C_HAS_STOP_DETECT`))"/>
+            <item id="kI2C_StartStopDetectInterruptEnable" label="Start and stop detect interrupt" value="kI2C_StartStopDetectInterruptEnable"  available="(featureDefined(`FSL_FEATURE_I2C_HAS_START_STOP_DETECT`) &amp;&amp; getFeature(`FSL_FEATURE_I2C_HAS_START_STOP_DETECT`))"/>
+         </set>
+      </user_types>
+      <settings>
+         <reference id="interrupt_sel" label="Interrupt selection" type="interrupt_types"/>
+         <reference id="interrupt" label="Interrupt setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system">
+            <options_expr>
+               <option id="irq_handler_insert" expr="
+leftPadding(`uint32_t intStatus;`, 1) + `&#10;` +
+leftPadding(`/* Reading all interrupt flags of status registers */`, 1) + `&#10;` +
+            ($instance.fsl_i2c.i2c_mode.value() == `kI2C_Master` ? 
+            (
+leftPadding(`intStatus = I2C_MasterGetStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `);`, 1) + `&#10;` +
+leftPadding(`I2C_MasterClearStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `, intStatus);`, 1) + `&#10;&#10;`
+            ) : 
+            (
+leftPadding(`intStatus = I2C_SlaveGetStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `);`, 1) + `&#10;` +
+leftPadding(`I2C_SlaveClearStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `, intStatus);`, 1) + `&#10;&#10;`
+            )
+            ) +
+leftPadding(`/* Place your code here */`, 1) + `&#10;`
+               "/>
+            </options_expr>
+         </reference>
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+         <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+      </fragment_defs>
+      <code>
+        <section target="defines">
+           <fragment id="IRQ_definitions" apply_to="$this.interrupt"/>
+        </section>            
+        <section target="init_function_postinit0">
+           <if expr="$this.interrupt_sel.getCValue() != ``">
+             <text>  /* Enable interrupts */</text><br/>
+             <expr>`  I2C_EnableInterrupts(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() +`_PERIPHERAL, (`) + $this.interrupt_sel.getCValue() + `));`</expr><br/>
+          </if>
+          <fragment id="IRQn_set_priority_default" apply_to="$this.interrupt"/>
+          <fragment id="IRQn_enable_default" apply_to="$this.interrupt"/>
+        </section>
+      </code>
+      <quick_selections>
+         <quick_selection id="QS_IRQ_priority1" label="Default IRQ setting">
+            <description>Default IRQ setting.</description>
+            <set id="interrupt_sel.kI2C_GlobalInterruptEnable">true</set>
+            <set id="interrupt.priority">0</set>
+         </quick_selection>
+         <default>QS_IRQ_priority1</default>
+      </quick_selections>
+   </config_set>
+   <config_set id="transferCfg" label="Transfer configuration" from_source="src/fsl_i2c.h">
+      <description>Transfer configuration</description>
+      <generated_types>
+      </generated_types>
+      <user_types>
+         <enum id="i2c_direction_user_t" label="Direction" from="_i2c_direction">
+            <item id="kI2C_Write" label="Master transmits to the slave"/>
+            <item id="kI2C_Read" label="Master receives from the slave"/>
+         </enum>
+         <struct id="i2c_slave_transfer_cfg" label="I2C slave transfer structure" from="_i2c_slave_transfer">
+            <!--reference id="event" label="A reason that the callback is invoked" type="i2c_slave_transfer_event_t" config_set_id="fsl_i2c">
+               <description>A reason that the callback is invoked.</description>
+            </reference-->
+            <info id="data" label="ID of the buffer" value="$instance.getFnGroupPrefix() + $instance.getID() + `_buffer`">
+               <description>The ID of data buffer to be transfered.</description>
+            </info>
+            <integer id="dataSize" label="Buffer size in bytes" type="uint16_t" min_expr="1">
+               <description>The size of the buffer (number of bytes that are transfered).</description>
+            </integer>
+         </struct>
+         <enum id="i2c_master_transfer_flags_t" label="Transfer control flag" from="_i2c_master_transfer_flags">
+            <description>I2C transfer control flag.</description>
+            <item id="kI2C_TransferDefaultFlag" label="A transfer starts with a start signal, stops with a stop signal"/>
+            <item id="kI2C_TransferNoStartFlag" label="A transfer starts without a start signal"/>
+            <item id="kI2C_TransferRepeatedStartFlag" label="A transfer starts with a repeated start signal"/>
+            <item id="kI2C_TransferNoStopFlag" label="A transfer ends without a stop signal"/>
+         </enum>
+         <struct id="i2c_master_transfer_cfg" label="Master transfer structure" from="_i2c_master_transfer">
+            <reference id="flags" label="Transfer control flag" type="i2c_master_transfer_flags_t">
+               <description>A transfer flag which controls the transfer.</description>
+            </reference>
+            <integer id="slaveAddress" label="Slave address" type="uint8_t" min_expr="0" max_expr="127">
+               <description>7-bit slave address.</description>
+            </integer>
+            <reference id="direction" label="Transfer direction" type="i2c_direction_user_t">
+               <description>A transfer direction.</description>
+            </reference>
+            <integer id="subaddress" label="Sub address" type="uint32_t">
+               <description>A sub address. Transferred MSB first.</description>
+            </integer>
+            <integer id="subaddressSize" label="A size of the command buffer" type="uint8_t">
+               <description>A size of the command buffer.</description>
+            </integer>
+            <info id="data" label="ID of the buffer" value="$instance.getFnGroupPrefix() + $instance.getID() + `_buffer`">
+               <description>The ID of data buffer to be transfered.</description>
+            </info>
+            <integer id="dataSize" label="Buffer size in bytes" type="uint16_t" min_expr="1">
+               <description>The size of the buffer (number of bytes that are transfered).</description>
+            </integer>
+         </struct>
+         <struct id="transfer_config" label="Transfer functions setting">
+            <info id="transfer_handle" label="Transfer handle ID" value="$instance.getFnGroupPrefix() + $instance.getID() + `_handle`"/>
+            <bool id="init_transfer" label="Initialization of the variables for the transfer functions"/>
+            <reference id="master_transfer_cfg" label="Master setting" type="i2c_master_transfer_cfg" enable="$parent.init_transfer.getValue()" available="$instance.fsl_i2c.i2c_mode.value() == `kI2C_Master`"/>
+            <reference id="slave_transfer_cfg" label="Slave setting" type="i2c_slave_transfer_cfg" enable="$parent.init_transfer.getValue()" available="$instance.fsl_i2c.i2c_mode.value() == `kI2C_Slave`"/>
+            <bool id="init_callback" label="Initialization of transfer callback" >
+            </bool>
+            <string id="callback_fcn" label="Transfer callback function name" enable="$parent.init_callback.getValue()">
+               <description>The callback function name that is used in the transfer initialization. User must provide the definition of this function. This item is optional for the transfer mode initialization.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="$this.getValue() != ``" level="error" description="The callback function shall be defined. If the callback function is not used uncheck the Initialization of transfer callback option."/> 
+                  <constraint when_expr="$parent.init_callback.getValue() &amp;&amp; ($this.getValue() != ``)" cond_expr="isCIdentifier($this.getValue())" level="error" description="The callback function name must be a valid identifier."/> 
+               </validation>
+            </string>
+            <string id="user_data" label="User data pointer" enable="$parent.init_callback.getValue()">
+               <description>Definition of the user data pointer ID. When empty the NULL is provided in the initializaton function for the callback function.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="(($this.getValue() == ``) || isCIdentifier($this.getValue()))" level="error" description="The user data pointer is not valid C identifier."/>
+               </validation>
+            </string>
+         </struct>
+      </user_types>
+      <settings>
+         <reference id="transfer" label="Transfer functions setting" type="transfer_config"/>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+         </import>
+      </fragment_defs>
+      <code>
+        <section target="defines">
+            <!-- Transfer buffer size -->
+            <fragment id="define" if_expr="$this.transfer.init_transfer.getValue() &amp;&amp; $instance.fsl_i2c.i2c_mode.value() == `kI2C_Master`">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_BUFFER_SIZE`)"/>
+               <param id="value" expr="$this.transfer.master_transfer_cfg.dataSize.getCValue()"/> <!-- The getValue() function must be used to provide the symbol name (getCValue() return a string) -->
+               <param id="description">Transfer buffer size.</param>
+            </fragment>
+            <fragment id="define" if_expr="$this.transfer.init_transfer.getValue() &amp;&amp; $instance.fsl_i2c.i2c_mode.value() == `kI2C_Slave`">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_BUFFER_SIZE`)"/>
+               <param id="value" expr="$this.transfer.slave_transfer_cfg.dataSize.getCValue()"/> <!-- The getValue() function must be used to provide the symbol name (getCValue() return a string) -->
+               <param id="description">Transfer buffer size.</param>
+            </fragment>
+         </section>
+         <section target="global_vars">
+            <!-- Transfer handle definition -->
+            <fragment id="global_var" apply_to="$this.transfer.transfer_handle" if_expr="$instance.fsl_i2c.i2c_mode.value() == `kI2C_Master`">
+               <param id="name" expr="$this.getValue()" />
+               <param id="type">i2c_master_handle_t</param>
+            </fragment>
+            <fragment id="global_var" apply_to="$this.transfer.transfer_handle" if_expr="$instance.fsl_i2c.i2c_mode.value() == `kI2C_Slave`">
+               <param id="name" expr="$this.getValue()" />
+               <param id="type">i2c_slave_handle_t</param>
+            </fragment>
+            <!-- Transfer buffer definition -->
+            <fragment id="global_var_array" apply_to="$this.transfer.master_transfer_cfg" if_expr="$this.transfer.init_transfer.getValue()  &amp;&amp; $instance.fsl_i2c.i2c_mode.value() == `kI2C_Master`">
+               <param id="name" expr="$this.data.getValue()" />
+               <param id="size" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_BUFFER_SIZE`)"/>
+               <param id="type">uint8_t</param>
+            </fragment>
+            <fragment id="global_var_array" apply_to="$this.transfer.slave_transfer_cfg" if_expr="$this.transfer.init_transfer.getValue()  &amp;&amp; $instance.fsl_i2c.i2c_mode.value() == `kI2C_Slave`">
+               <param id="name" expr="$this.data.getValue()" />
+               <param id="size" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_BUFFER_SIZE`)"/>
+               <param id="type">uint8_t</param>
+            </fragment>
+            <fragment id="global_var" if_expr="$this.transfer.init_transfer.getValue() &amp;&amp; $instance.fsl_i2c.i2c_mode.value() == `kI2C_Master`">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_transfer`" />
+               <param id="type">i2c_master_transfer_t</param>
+            </fragment>
+         </section>
+         <section target="global_vars_extern">
+            <!-- Transfer handle definition -->
+            <fragment id="extern_var" apply_to="$this.transfer.transfer_handle" if_expr="$instance.fsl_i2c.i2c_mode.value() == `kI2C_Master`">
+               <param id="name" expr="$this.getValue()" />
+               <param id="type">i2c_master_handle_t</param>
+            </fragment>
+            <fragment id="extern_var" apply_to="$this.transfer.transfer_handle" if_expr="$instance.fsl_i2c.i2c_mode.value() == `kI2C_Slave`">
+               <param id="name" expr="$this.getValue()" />
+               <param id="type">i2c_slave_handle_t</param>
+            </fragment>
+            <!-- Transfer buffer definition -->
+            <fragment id="extern_var_array" apply_to="$this.transfer.master_transfer_cfg" if_expr="$this.transfer.init_transfer.getValue()  &amp;&amp; $instance.fsl_i2c.i2c_mode.value() == `kI2C_Master`">
+               <param id="name" expr="$this.data.getValue()" />
+               <param id="size" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_BUFFER_SIZE`)"/>
+               <param id="type">uint8_t</param>
+            </fragment>
+            <fragment id="extern_var_array" apply_to="$this.transfer.slave_transfer_cfg" if_expr="$this.transfer.init_transfer.getValue()  &amp;&amp; $instance.fsl_i2c.i2c_mode.value() == `kI2C_Slave`">
+               <param id="name" expr="$this.data.getValue()" />
+               <param id="size" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_BUFFER_SIZE`)"/>
+               <param id="type">uint8_t</param>
+            </fragment>
+            <fragment id="extern_var" if_expr="$this.transfer.init_transfer.getValue() &amp;&amp; $instance.fsl_i2c.i2c_mode.value() == `kI2C_Master`">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_transfer`" />
+               <param id="type">i2c_master_transfer_t</param>
+            </fragment>
+            <!-- user data pointer of the callback function -->
+            <fragment id="extern_var" if_expr="$this.transfer.init_callback.getValue() &amp;&amp; ($this.transfer.user_data.getValue() != ``)">
+               <param id="name" expr="$this.transfer.user_data.getValue()"/>
+               <param id="type" expr="`void *`"/>
+            </fragment>
+         </section>
+         <section target="callback_function_extern">
+            <!-- Transfer callback function declaration -->
+            <fragment id="extern_fcn_def" if_expr="$this.transfer.init_callback.getValue()">
+               <param id="name" expr="$this.transfer.callback_fcn.getValue()"/>
+               <param id="type">void</param>
+               <param id="params" expr="`I2C_Type *base,` + (($instance.fsl_i2c.i2c_mode.value() == `kI2C_Master`) ? ` i2c_master_handle_t *handle, status_t status,` : ` i2c_slave_transfer_t *xfer,`) +` void *userData`"></param>
+               <param id="description" expr="`I2C transfer callback function for the ` + $instance.getID() +` component (init. function `+ $instance.getFnGroupName() + `)` "/>
+            </fragment>
+         </section>
+         <section target="init_function_body">
+            <if expr="$this.transfer.init_transfer.getValue() &amp;&amp; $instance.fsl_i2c.i2c_mode.value() == `kI2C_Master`">              
+              <expr>`  ` + $instance.getFnGroupPrefix() + $instance.getID() + `_transfer.` + $this.transfer.master_transfer_cfg.slaveAddress.getId() + ` = ` + $this.transfer.master_transfer_cfg.slaveAddress.getCValue() + `;`</expr><br/>
+              <expr>`  ` + $instance.getFnGroupPrefix() + $instance.getID() + `_transfer.` + $this.transfer.master_transfer_cfg.direction.getId() + ` = ` + $this.transfer.master_transfer_cfg.direction.getCValue() + `;`</expr><br/>
+              <expr>`  ` + $instance.getFnGroupPrefix() + $instance.getID() + `_transfer.` + $this.transfer.master_transfer_cfg.subaddress.getId() + ` = ` + (($this.transfer.master_transfer_cfg.subaddress.getCValue() == `0`) ? `(uint32_t)NULL` : $this.transfer.master_transfer_cfg.subaddress.getCValue()) + `;`</expr><br/>
+              <expr>`  ` + $instance.getFnGroupPrefix() + $instance.getID() + `_transfer.` + $this.transfer.master_transfer_cfg.subaddressSize.getId() + ` = ` + $this.transfer.master_transfer_cfg.subaddressSize.getCValue() + `;`</expr><br/>
+              <expr>`  ` + $instance.getFnGroupPrefix() + $instance.getID() + `_transfer.` + $this.transfer.master_transfer_cfg.data.getId() + ` = ` + $this.transfer.master_transfer_cfg.data.getValue() + `;`</expr><br/>
+              <expr>`  ` + $instance.getFnGroupPrefix() + $instance.getID() + `_transfer.` + $this.transfer.master_transfer_cfg.dataSize.getId() + ` = ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_BUFFER_SIZE`) + `;`</expr><br/>
+              <expr>`  ` + $instance.getFnGroupPrefix() + $instance.getID() + `_transfer.` + $this.transfer.master_transfer_cfg.flags.getId() + ` = ` + $this.transfer.master_transfer_cfg.flags.getCValue() + `;`</expr><br/>
+            </if>
+            <expr> (($instance.fsl_i2c.i2c_mode.value() == `kI2C_Master`) ? `  I2C_MasterTransferCreateHandle(` : `  I2C_SlaveTransferCreateHandle(`) + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, &amp;`) +  $this.transfer.transfer_handle.getValue() + `, ` + ($this.transfer.init_callback.getValue() ? $this.transfer.callback_fcn.getValue() : `NULL`   ) + `, ` + (($this.transfer.init_callback.getValue() &amp;&amp; ($this.transfer.user_data.getValue()!=``)) ? $this.transfer.user_data.getValue() : `NULL`)  + `);`</expr><br/>
+         </section>         
+      </code>
+      <quick_selections>
+         <quick_selection id="QuickSelection1" label="Transfer enabled">
+            <set id="transfer.init_transfer">true</set>
+            <set id="transfer.master_transfer_cfg.dataSize">10</set>
+            <set id="transfer.slave_transfer_cfg.dataSize">10</set>
+         </quick_selection>
+         <default>QuickSelection1</default>
+      </quick_selections>
+   </config_set>
+   <config_set id="edmaCfg" label="eDMA configuration" from_source="src/fsl_i2c_edma.h">
+    <description>I2C eDMA transfer mode configuration.</description>
+    <generated_types/>
+    <user_types>
+       <struct id="i2c_edma_t" label="I2C eDMA handle type" public="true">
+          <bool id="enable_custom_name" label="Enable I2C custom handle name">
+            <description>When this option is enabled a user custom name of the DMA handle is allowed to set in the settings below.
+            </description>
+         </bool>
+         <string id="handle_custom_name" label="Handle name" available="$parent.enable_custom_name.getValue()">
+            <description>The eDMA handle is used for processing of DMA requests. </description>
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="`The handle name: `+ $this.getCValue() +` is not valid C identifier!`"/>
+                  <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> x.getValue() == $this.getValue())" level="warning" description_expr="`The handle name ` + $this.getValue() + ` is a duplicate.`"/>  
+               </validation>
+         </string>
+         <info id="handle_default_name" label="Handle name" value="$parent.enable_custom_name.getValue() ? $parent.handle_custom_name.getValue() : 
+            $instance.getFnGroupPrefix() + $instance.getID() + 
+            `_eDMA_Handle`" available="!$parent.enable_custom_name.getValue()">
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="`The handle name: `+ $this.getCValue() +` is not valid C identifier!`"/>
+                  <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> x.getValue() == $this.getValue())" level="warning" description_expr="`The handle name ` + $this.getValue() + ` is a duplicate.`"/>  
+               </validation>
+         </info>
+         <variable id="i2c_eDMA_handle_id" value="$parent.enable_custom_name.getValue() ? $parent.handle_custom_name.getValue() : $parent.handle_default_name.getValue()" options="id_check"></variable>
+         <bool id="init_callback" label="Initialization of eDMA callback"></bool>
+         <string id="callback_fcn" label="Transfer callback function name" enable="$parent.init_callback.getValue()">
+            <description>The callback function name that is used in the eDMA initialization. User must provide the definition of this function. This item is optional for the eDMA mode initialization.</description>
+            <validation>
+               <constraint when_expr="$parent.init_callback.getValue()" cond_expr="$this.getValue() != ``" level="error" description="The callback function shall be defined. If the callback function is not used uncheck the Initialization of eDMA callback option."/> 
+               <constraint when_expr="$parent.init_callback.getValue() &amp;&amp; ($this.getValue() != ``)" cond_expr="isCIdentifier($this.getValue())" level="error" description="The callback function name must be a valid identifier."/> 
+            </validation>
+         </string>
+         <string id="user_data" label="User data pointer" enable="$parent.init_callback.getValue()">
+            <description>Definition of the user data pointer ID. When empty the NULL is provided in the initializaton function for the callback function.</description>
+            <validation>
+               <constraint when_expr="$parent.init_callback.getValue()" cond_expr="(($this.getValue() == ``) || isCIdentifier($this.getValue()))" level="error" description="The user data pointer is not valid C identifier."/>
+            </validation>
+         </string>
+      </struct>
+   </user_types>
+   <settings>
+      <struct id="edma_channel" label="eDMA channel" available="$instance.fsl_i2c.i2c_mode.value() == `kI2C_Master`">
+         <bool id="enable_edma_channel" label="Enable eDMA channel"></bool>
+         <reference id="edma_channel" label="eDMA channel" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" enable="$parent.enable_edma_channel.getValue()"/>
+      </struct>
+      <reference id="i2c_edma_handle" label="I2C eDMA handle" type="i2c_edma_t" available="$instance.fsl_i2c.i2c_mode.value() == `kI2C_Master`"/>
+      <info label="Info" value="`eDMA transfer mode is not available for the I2C slave mode.`" id="slaveMode" available="$instance.fsl_i2c.i2c_mode.value() == `kI2C_Slave`"/>
+   </settings>
+   <fragment_defs>
+      <import>
+         <from component_id="system" config_set_id="common_code_templates"/>
+         <from component_id="system" config_set_id="fsl_edma_peripheral"/>
+      </import>
+      <def fragment="I2C_eDMA_transfer_handle_init" public="true">
+         <expr>leftPadding(`/* Create the I2C eDMA handle */`,1)</expr><br/>
+         <expr>leftPadding(`I2C_MasterCreateEDMAHandle(`, 1) + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, `) 
+            + `&amp;` + $this.i2c_edma_handle.i2c_eDMA_handle_id.getValue() + `, ` +
+            + ($this.i2c_edma_handle.init_callback.getValue() ? $this.i2c_edma_handle.callback_fcn.getValue() : `NULL`) + `, `  
+            + (($this.i2c_edma_handle.init_callback.getValue() &amp;&amp; ($this.i2c_edma_handle.user_data.getValue() != ``)) ? $this.i2c_edma_handle.user_data.getValue() : `NULL`) + `, `  
+            + ($this.edma_channel.enable_edma_channel.getValue() ? (`&amp;` + $this.edma_channel.edma_channel.eDMA_handle.getValue()) : `NULL`) +
+            + `);`</expr><br/>
+      </def>
+   </fragment_defs>
+   <code>
+      <section target="includes">
+         <fragment id="include">
+            <param id="name">i2c_edma</param>
+            <param id="filename">fsl_i2c_edma.h</param>
+         </fragment>
+      </section>
+      <section target="defines">            
+         <fragment id="DMA_definitions" apply_to="$this.edma_channel.edma_channel" if_expr="$this.edma_channel.enable_edma_channel.getValue()"/>
+      </section> 
+      <section target="global_vars">
+         <fragment id="DMA_handle_definition" apply_to="$this.edma_channel.edma_channel" if_expr="$this.edma_channel.enable_edma_channel.getValue()"/>
+         <!-- I2C eDMA handle -->
+         <fragment id="global_var">
+            <param id="name" expr="$this.i2c_edma_handle.i2c_eDMA_handle_id.getValue()"/>
+            <param id="type" expr="`i2c_master_edma_handle_t`"/>
+         </fragment>
+      </section>   
+      <section target="global_vars_extern">
+         <fragment id="DMAMUX_handle_declaration" apply_to="$this.edma_channel.edma_channel" if_expr="$this.edma_channel.enable_edma_channel.getValue()"/>
+
+         <!-- user data pointer of the callback function -->
+         <fragment id="extern_var" if_expr="$this.i2c_edma_handle.init_callback.getValue() &amp;&amp; ($this.i2c_edma_handle.user_data.getValue() != ``)">
+            <param id="name" expr="$this.i2c_edma_handle.user_data.getValue()"/>
+            <param id="type" expr="`void *`"/>
+         </fragment>
+         <!-- I2C eDMA handle -->
+         <fragment id="extern_var">
+            <param id="name" expr="$this.i2c_edma_handle.i2c_eDMA_handle_id.getValue()"/>
+            <param id="type" expr="`i2c_master_edma_handle_t`"/>
+         </fragment>
+      </section>   
+      <section target="init_function_body">
+         <fragment id="DMAMUX_source_init" apply_to="$this.edma_channel.edma_channel" if_expr="$this.edma_channel.enable_edma_channel.getValue()"/>
+         <fragment id="DMA_handle_init" apply_to="$this.edma_channel.edma_channel" if_expr="$this.edma_channel.enable_edma_channel.getValue()"/>
+         <fragment id="I2C_eDMA_transfer_handle_init"/>
+      </section> 
+      <section target="callback_function_extern">
+         <!-- Transfer callback function declaration -->
+         <fragment id="extern_fcn_def" if_expr="$this.i2c_edma_handle.init_callback.getValue() ">
+            <param id="name" expr="$this.i2c_edma_handle.callback_fcn.getValue()"/>
+            <param id="type">void</param>
+            <param id="params">I2C_Type *,i2c_master_edma_handle_t *,status_t ,void *</param>
+            <param id="description" expr="`I2C eDMA callback function for the ` + $instance.getID() +` component (init. function `+ $instance.getFnGroupName() + `)` "/>
+         </fragment>
+      </section>
+   </code>
+   <validation>
+      <constraint cond_expr="$instance.fsl_i2c.i2c_mode.value() == `kI2C_Master`" level="error" description="eDMA transfer mode is not available for the I2C slave mode."/>
+      <constraint cond_expr="$this.edma_channel.enable_edma_channel.getValue()" level="warning" description="eDMA request is disabled. The eDMA transfer handle will not be initialized."/>
+      <dependency resource_type="SWComponent" resource_id="platform.drivers.i2c_edma" level="Warning" description_expr="$components.system.#global.err_missing_driver.getValue().formatMessage(`fsl_i2c_edma`, ` (required for the eDMA mode)`)">
+         <feature name="enabled" evaluation="equal">
+            <data expr="true"/>
+         </feature>
+      </dependency>
+      <dependency resource_type="SWComponent" resource_id="platform.drivers.i2c_edma" level="Warning" description_expr="$components.system.#global.err_driver_version.getValue().formatMessage(`fsl_i2c_edma`, ` (required for the eDMA mode)`)">
+         <feature name="version" evaluation="compatible">
+            <data type="Version" expr="`2.0.5`"/>
+         </feature>
+      </dependency>
+   </validation>
+   <quick_selections>
+      <quick_selection id="QuickSelection1" label="eDMA channel enabled">
+         <set id="edma_channel.enable_edma_channel">true</set>
+         <set id="edma_channel.edma_channel.eDMAn">0</set>
+      </quick_selection>
+      <default>QuickSelection1</default>
+   </quick_selections>
+   </config_set>
+   <!-- DMA mode -->
+   <config_set id="dmaCfg" label="DMA configuration" from_source="src/fsl_i2c_dma.h">
+      <description>I2C transfer mode configuration.</description>
+      <generated_types/>
+      <user_types>
+         <struct id="i2c_dma_t" label="I2C DMA handle type" public="true">
+            <bool id="enable_custom_name" label="Enable I2C custom handle name">
+               <description>When this option is enabled a user custom name of the DMA handle is allowed to set in the settings below.
+               </description>
+            </bool>
+            <string id="handle_custom_name" label="Handle name" available="$parent.enable_custom_name.getValue()">
+               <description>The DMA handle is used for processing of DMA requests. </description>
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="`The handle name: `+ $this.getCValue() +` is not valid C identifier!`"/>
+                  <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> x.getValue() == $this.getValue())" level="warning" description_expr="`The handle name ` + $this.getValue() + ` is a duplicate.`"/>  
+               </validation>
+            </string>
+            <info id="handle_default_name" label="Handle name" value="$parent.enable_custom_name.getValue() ? $parent.handle_custom_name.getValue() : 
+               $instance.getFnGroupPrefix() + $instance.getID() + 
+               `_DMA_Handle`" available="!$parent.enable_custom_name.getValue()">
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="`The handle name: `+ $this.getCValue() +` is not valid C identifier!`"/>
+                  <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> x.getValue() == $this.getValue())" level="warning" description_expr="`The handle name ` + $this.getValue() + ` is a duplicate.`"/>  
+               </validation>
+            </info>
+            <variable id="i2c_DMA_handle_id" value="$parent.enable_custom_name.getValue() ? $parent.handle_custom_name.getValue() : $parent.handle_default_name.getValue()" options="id_check"></variable>
+            <bool id="init_callback" label="Initialization of DMA callback"></bool>
+            <string id="callback_fcn" label="Transfer callback function name" enable="$parent.init_callback.getValue()">
+               <description>The callback function name that is used in the DMA initialization. User must provide the definition of this function. This item is optional for the DMA mode initialization.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="$this.getValue() != ``" level="error" description="The callback function shall be defined. If the callback function is not used uncheck the Initialization of DMA callback option."/> 
+                  <constraint when_expr="$parent.init_callback.getValue() &amp;&amp; ($this.getValue() != ``)" cond_expr="isCIdentifier($this.getValue())" level="error" description="The callback function name must be a valid identifier."/> 
+               </validation>
+            </string>
+            <string id="user_data" label="User data pointer" enable="$parent.init_callback.getValue()">
+               <!--               <string id="user_data" label="User data pointer" enable="$parent.callback_fcn.getValue()!=``">-->
+               <description>Definition of the user data pointer ID. When empty the NULL is provided in the initializaton function for the callback function.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="(($this.getValue() == ``) || isCIdentifier($this.getValue()))" level="error" description="The user data pointer is not valid C identifier."/>
+               </validation>
+            </string>
+         </struct>
+      </user_types>
+      <settings>
+         <struct id="dma_channel" label="DMA channel" available="$instance.fsl_i2c.i2c_mode.value() == `kI2C_Master`">
+            <bool id="enable_dma_channel" label="Enable DMA channel"></bool>
+            <reference id="dma_channel" label="DMA channel" type="dma_channel_t" config_set_id="fsl_dma_peripheral" component_id="system" enable="$parent.enable_dma_channel.getValue()"/>
+         </struct>
+         <reference id="i2c_dma_handle" label="I2C DMA handle" type="i2c_dma_t" available="$instance.fsl_i2c.i2c_mode.value() == `kI2C_Master`"/>
+         <info label="Info" value="`DMA transfer mode is not available for the I2C slave mode.`" id="slaveMode" available="$instance.fsl_i2c.i2c_mode.value() == `kI2C_Slave`"/>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_dma_peripheral"/>
+         </import>
+         <def fragment="I2C_DMA_transfer_handle_init" public="true">
+            <expr>leftPadding(`/* Create the I2C DMA handle */`,1)</expr><br/>
+            <expr>leftPadding(`I2C_MasterTransferCreateHandleDMA(`, 1) + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, `) 
+               + `&amp;` + $this.i2c_dma_handle.i2c_DMA_handle_id.getValue() + `, ` +
+               + ($this.i2c_dma_handle.init_callback.getValue() ? $this.i2c_dma_handle.callback_fcn.getValue() : `NULL`) + `, `  
+               + (($this.i2c_dma_handle.init_callback.getValue() &amp;&amp; ($this.i2c_dma_handle.user_data.getValue() != ``)) ? $this.i2c_dma_handle.user_data.getValue() : `NULL`) + `, `  
+               + ($this.dma_channel.enable_dma_channel.getValue() ? (`&amp;` + $this.dma_channel.dma_channel.DMA_handle.getValue()) : `NULL`) +
+               + `);`</expr><br/>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">i2c</param>
+               <param id="filename">fsl_i2c_dma.h</param>
+            </fragment>
+         </section>
+         <section target="defines">            
+            <fragment id="DMA_definitions" apply_to="$this.dma_channel.dma_channel" if_expr="$this.dma_channel.enable_dma_channel.getValue()"/>
+         </section> 
+         <section target="global_vars">
+            <fragment id="DMA_handle_definition" apply_to="$this.dma_channel.dma_channel" if_expr="$this.dma_channel.enable_dma_channel.getValue()"/>
+            <!-- I2C DMA handle -->
+            <fragment id="global_var">
+               <param id="name" expr="$this.i2c_dma_handle.i2c_DMA_handle_id.getValue()"/>
+               <param id="type" expr="`i2c_master_dma_handle_t`"/>
+            </fragment>
+         </section>   
+         <section target="global_vars_extern">
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.dma_channel.dma_channel" if_expr="$this.dma_channel.enable_dma_channel.getValue()"/>
+            <!-- user data pointer of the callback function -->
+            <fragment id="extern_var" if_expr="$this.i2c_dma_handle.init_callback.getValue() &amp;&amp; ($this.i2c_dma_handle.user_data.getValue() != ``)">
+               <param id="name" expr="$this.i2c_dma_handle.user_data.getValue()"/>
+               <param id="type" expr="`void *`"/>
+            </fragment>
+            <!-- I2C DMA handle -->
+            <fragment id="extern_var">
+               <param id="name" expr="$this.i2c_dma_handle.i2c_DMA_handle_id.getValue()"/>
+               <param id="type" expr="`i2c_master_dma_handle_t`"/>
+            </fragment>
+         </section>   
+         <section target="init_function_body">
+            <fragment id="DMAMUX_source_init" apply_to="$this.dma_channel.dma_channel" if_expr="$this.dma_channel.enable_dma_channel.getValue()"/>
+            <fragment id="DMA_handle_init" apply_to="$this.dma_channel.dma_channel" if_expr="$this.dma_channel.enable_dma_channel.getValue()"/>
+            <fragment id="I2C_DMA_transfer_handle_init"/>
+         </section> 
+         <section target="callback_function_extern">
+            <!-- Transfer callback function declaration -->
+            <fragment id="extern_fcn_def" if_expr="$this.i2c_dma_handle.init_callback.getValue() ">
+               <param id="name" expr="$this.i2c_dma_handle.callback_fcn.getValue()"/>
+               <param id="type">void</param>
+               <param id="params">I2C_Type *,i2c_master_dma_handle_t *,status_t ,void *</param>
+               <param id="description" expr="`I2C DMA callback function for the ` + $instance.getID() +` component (init. function `+ $instance.getFnGroupName() + `)` "/>
+            </fragment>
+         </section>
+      </code>
+      <validation>
+         <constraint cond_expr="$instance.fsl_i2c.i2c_mode.value() == `kI2C_Master`" level="error" description="DMA transfer mode is not available for the I2C slave mode."/>
+         <constraint cond_expr="$this.dma_channel.enable_dma_channel.getValue()" level="warning" description="DMA request is disabled. The DMA transfer handle will not be initialized."/>
+         <dependency resource_type="SWComponent" resource_id="platform.drivers.i2c_dma" level="Warning" description_expr="$components.system.#global.err_missing_driver.getValue().formatMessage(`fsl_i2c_dma`, ` (required for the DMA mode)`)">
+            <feature name="enabled" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="SWComponent" resource_id="platform.drivers.i2c_dma" level="Warning" description_expr="$components.system.#global.err_driver_version.getValue().formatMessage(`fsl_i2c_dma`, ` (required for the DMA mode)`)">
+            <feature name="version" evaluation="compatible">
+               <data type="Version" expr="`2.0.5`"/>
+            </feature>
+         </dependency>
+      </validation>
+      <quick_selections>
+         <quick_selection id="QuickSelection1" label="DMA channel enabled">
+            <set id="dma_channel.enable_dma_channel">true</set>
+         </quick_selection>
+         <default>QuickSelection1</default>
+      </quick_selections>
+   </config_set>
+</component:config_component>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="msg" label="Messages" auto_add="true" category="System" global_only="true" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-6.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <user_functions>
+       <function_def id="message">(messageID) -> (($components.msg.#global.messages.getValue().countOccurrences(x -> x.getSetting(`id`).getValue() == messageID) &gt; 0) ? 
+                                                    $components.msg.#global.messages.getValue().findFirst(x -> x.getSetting(`id`).getValue() == messageID).getSetting(`msg`).getValue()
+                                                    : `Undefined message`)
+       </function_def>
+       <function_def id="message">(messageID, Param1) -> (formatMessage(msg::message(messageID), Param1))</function_def>
+       <function_def id="message">(messageID, Param1, Param2) -> (formatMessage(msg::message(messageID), Param1, Param2))</function_def>
+       <function_def id="message">(messageID, Param1, Param2, Param3) -> (formatMessage(msg::message(messageID), Param1, Param2, Param3))</function_def>
+       <function_def id="message">(messageID, Param1, Param2, Param3, Param4) -> (formatMessage(msg::message(messageID), Param1, Param2, Param3, Param4))</function_def>
+   </user_functions>
+   <config_set id="global_messages" label="Global message definitions" from_source="fsl_common.h">
+      <description>Global system definitions</description>
+      <generated_types></generated_types>
+      <user_types/>
+      <settings>
+         <variable id="messages" value="getResource(`messages`,`messageList`,`msg`)" ></variable>
+      </settings>
+      <quick_selections></quick_selections>
+   </config_set>
+   <global_config_set_ref>global_messages</global_config_set_ref>
+</component:config_component>

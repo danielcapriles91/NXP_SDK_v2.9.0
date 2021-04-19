@@ -1,0 +1,758 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="32" name="PRS0" description="Priority Registers Slave">
+    <alias type="CMSIS" value="SLAVE[0].PRS"/>
+    <bit_field offset="0" width="3" name="M0" access="RW" reset_value="0" description="Master 0 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M0(x)"/>
+      <bit_field_value name="SLAVE_M0_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="3" name="M1" access="RW" reset_value="0x1" description="Master 1 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M1(x)"/>
+      <bit_field_value name="SLAVE_M1_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="3" name="M2" access="RW" reset_value="0x2" description="Master 2 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M2(x)"/>
+      <bit_field_value name="SLAVE_M2_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="3" name="M3" access="RW" reset_value="0x3" description="Master 3 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M3(x)"/>
+      <bit_field_value name="SLAVE_M3_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="3" name="M4" access="RW" reset_value="0x4" description="Master 4 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M4(x)"/>
+      <bit_field_value name="SLAVE_M4_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="3" name="M5" access="RW" reset_value="0x5" description="Master 5 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M5(x)"/>
+      <bit_field_value name="SLAVE_M5_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="3" name="M6" access="RW" reset_value="0x6" description="Master 6 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M6(x)"/>
+      <bit_field_value name="SLAVE_M6_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="3" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x10" width="32" name="CRS0" description="Control Register">
+    <alias type="CMSIS" value="SLAVE[0].CRS"/>
+    <bit_field offset="0" width="3" name="PARK" access="RW" reset_value="0" description="Park">
+      <alias type="CMSIS" value="AXBS_CRS_PARK(x)"/>
+      <bit_field_value name="SLAVE_PARK_0b000" value="0b000" description="Park on master port M0"/>
+      <bit_field_value name="SLAVE_PARK_0b001" value="0b001" description="Park on master port M1"/>
+      <bit_field_value name="SLAVE_PARK_0b010" value="0b010" description="Park on master port M2"/>
+      <bit_field_value name="SLAVE_PARK_0b011" value="0b011" description="Park on master port M3"/>
+      <bit_field_value name="SLAVE_PARK_0b100" value="0b100" description="Park on master port M4"/>
+      <bit_field_value name="SLAVE_PARK_0b101" value="0b101" description="Park on master port M5"/>
+      <bit_field_value name="SLAVE_PARK_0b110" value="0b110" description="Park on master port M6"/>
+      <bit_field_value name="SLAVE_PARK_0b111" value="0b111" description="Park on master port M7"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="2" name="PCTL" access="RW" reset_value="0" description="Parking Control">
+      <alias type="CMSIS" value="AXBS_CRS_PCTL(x)"/>
+      <bit_field_value name="SLAVE_PCTL_0b00" value="0b00" description="When no master makes a request, the arbiter parks the slave port on the master port defined by the PARK field"/>
+      <bit_field_value name="SLAVE_PCTL_0b01" value="0b01" description="When no master makes a request, the arbiter parks the slave port on the last master to be in control of the slave port"/>
+      <bit_field_value name="SLAVE_PCTL_0b10" value="0b10" description="When no master makes a request, the slave port is not parked on a master and the arbiter drives all outputs to a constant safe state"/>
+      <bit_field_value name="SLAVE_PCTL_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="2" reset_value="0"/>
+    <bit_field offset="8" width="2" name="ARB" access="RW" reset_value="0" description="Arbitration Mode">
+      <alias type="CMSIS" value="AXBS_CRS_ARB(x)"/>
+      <bit_field_value name="SLAVE_ARB_0b00" value="0b00" description="Fixed priority"/>
+      <bit_field_value name="SLAVE_ARB_0b01" value="0b01" description="Round-robin, or rotating, priority"/>
+      <bit_field_value name="SLAVE_ARB_0b10" value="0b10" description="Reserved"/>
+      <bit_field_value name="SLAVE_ARB_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="10" width="20" reset_value="0"/>
+    <bit_field offset="30" width="1" name="HLP" access="RW" reset_value="0" description="Halt Low Priority">
+      <alias type="CMSIS" value="AXBS_CRS_HLP(x)"/>
+      <bit_field_value name="SLAVE_HLP_0b0" value="0b0" description="The low power mode request has the highest priority for arbitration on this slave port"/>
+      <bit_field_value name="SLAVE_HLP_0b1" value="0b1" description="The low power mode request has the lowest initial priority for arbitration on this slave port"/>
+    </bit_field>
+    <bit_field offset="31" width="1" name="RO" access="RW" reset_value="0" description="Read Only">
+      <alias type="CMSIS" value="AXBS_CRS_RO(x)"/>
+      <bit_field_value name="SLAVE_RO_0b0" value="0b0" description="The slave port's registers are writeable"/>
+      <bit_field_value name="SLAVE_RO_0b1" value="0b1" description="The slave port's registers are read-only and cannot be written. Attempted writes have no effect on the registers and result in a bus error response."/>
+    </bit_field>
+  </register>
+  <register offset="0x100" width="32" name="PRS1" description="Priority Registers Slave">
+    <alias type="CMSIS" value="SLAVE[1].PRS"/>
+    <bit_field offset="0" width="3" name="M0" access="RW" reset_value="0" description="Master 0 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M0(x)"/>
+      <bit_field_value name="SLAVE_M0_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="3" name="M1" access="RW" reset_value="0x1" description="Master 1 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M1(x)"/>
+      <bit_field_value name="SLAVE_M1_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="3" name="M2" access="RW" reset_value="0x2" description="Master 2 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M2(x)"/>
+      <bit_field_value name="SLAVE_M2_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="3" name="M3" access="RW" reset_value="0x3" description="Master 3 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M3(x)"/>
+      <bit_field_value name="SLAVE_M3_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="3" name="M4" access="RW" reset_value="0x4" description="Master 4 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M4(x)"/>
+      <bit_field_value name="SLAVE_M4_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="3" name="M5" access="RW" reset_value="0x5" description="Master 5 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M5(x)"/>
+      <bit_field_value name="SLAVE_M5_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="3" name="M6" access="RW" reset_value="0x6" description="Master 6 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M6(x)"/>
+      <bit_field_value name="SLAVE_M6_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="3" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x110" width="32" name="CRS1" description="Control Register">
+    <alias type="CMSIS" value="SLAVE[1].CRS"/>
+    <bit_field offset="0" width="3" name="PARK" access="RW" reset_value="0" description="Park">
+      <alias type="CMSIS" value="AXBS_CRS_PARK(x)"/>
+      <bit_field_value name="SLAVE_PARK_0b000" value="0b000" description="Park on master port M0"/>
+      <bit_field_value name="SLAVE_PARK_0b001" value="0b001" description="Park on master port M1"/>
+      <bit_field_value name="SLAVE_PARK_0b010" value="0b010" description="Park on master port M2"/>
+      <bit_field_value name="SLAVE_PARK_0b011" value="0b011" description="Park on master port M3"/>
+      <bit_field_value name="SLAVE_PARK_0b100" value="0b100" description="Park on master port M4"/>
+      <bit_field_value name="SLAVE_PARK_0b101" value="0b101" description="Park on master port M5"/>
+      <bit_field_value name="SLAVE_PARK_0b110" value="0b110" description="Park on master port M6"/>
+      <bit_field_value name="SLAVE_PARK_0b111" value="0b111" description="Park on master port M7"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="2" name="PCTL" access="RW" reset_value="0" description="Parking Control">
+      <alias type="CMSIS" value="AXBS_CRS_PCTL(x)"/>
+      <bit_field_value name="SLAVE_PCTL_0b00" value="0b00" description="When no master makes a request, the arbiter parks the slave port on the master port defined by the PARK field"/>
+      <bit_field_value name="SLAVE_PCTL_0b01" value="0b01" description="When no master makes a request, the arbiter parks the slave port on the last master to be in control of the slave port"/>
+      <bit_field_value name="SLAVE_PCTL_0b10" value="0b10" description="When no master makes a request, the slave port is not parked on a master and the arbiter drives all outputs to a constant safe state"/>
+      <bit_field_value name="SLAVE_PCTL_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="2" reset_value="0"/>
+    <bit_field offset="8" width="2" name="ARB" access="RW" reset_value="0" description="Arbitration Mode">
+      <alias type="CMSIS" value="AXBS_CRS_ARB(x)"/>
+      <bit_field_value name="SLAVE_ARB_0b00" value="0b00" description="Fixed priority"/>
+      <bit_field_value name="SLAVE_ARB_0b01" value="0b01" description="Round-robin, or rotating, priority"/>
+      <bit_field_value name="SLAVE_ARB_0b10" value="0b10" description="Reserved"/>
+      <bit_field_value name="SLAVE_ARB_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="10" width="20" reset_value="0"/>
+    <bit_field offset="30" width="1" name="HLP" access="RW" reset_value="0" description="Halt Low Priority">
+      <alias type="CMSIS" value="AXBS_CRS_HLP(x)"/>
+      <bit_field_value name="SLAVE_HLP_0b0" value="0b0" description="The low power mode request has the highest priority for arbitration on this slave port"/>
+      <bit_field_value name="SLAVE_HLP_0b1" value="0b1" description="The low power mode request has the lowest initial priority for arbitration on this slave port"/>
+    </bit_field>
+    <bit_field offset="31" width="1" name="RO" access="RW" reset_value="0" description="Read Only">
+      <alias type="CMSIS" value="AXBS_CRS_RO(x)"/>
+      <bit_field_value name="SLAVE_RO_0b0" value="0b0" description="The slave port's registers are writeable"/>
+      <bit_field_value name="SLAVE_RO_0b1" value="0b1" description="The slave port's registers are read-only and cannot be written. Attempted writes have no effect on the registers and result in a bus error response."/>
+    </bit_field>
+  </register>
+  <register offset="0x200" width="32" name="PRS2" description="Priority Registers Slave">
+    <alias type="CMSIS" value="SLAVE[2].PRS"/>
+    <bit_field offset="0" width="3" name="M0" access="RW" reset_value="0" description="Master 0 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M0(x)"/>
+      <bit_field_value name="SLAVE_M0_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="3" name="M1" access="RW" reset_value="0x1" description="Master 1 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M1(x)"/>
+      <bit_field_value name="SLAVE_M1_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="3" name="M2" access="RW" reset_value="0x2" description="Master 2 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M2(x)"/>
+      <bit_field_value name="SLAVE_M2_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="3" name="M3" access="RW" reset_value="0x3" description="Master 3 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M3(x)"/>
+      <bit_field_value name="SLAVE_M3_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="3" name="M4" access="RW" reset_value="0x4" description="Master 4 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M4(x)"/>
+      <bit_field_value name="SLAVE_M4_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="3" name="M5" access="RW" reset_value="0x5" description="Master 5 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M5(x)"/>
+      <bit_field_value name="SLAVE_M5_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="3" name="M6" access="RW" reset_value="0x6" description="Master 6 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M6(x)"/>
+      <bit_field_value name="SLAVE_M6_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="3" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x210" width="32" name="CRS2" description="Control Register">
+    <alias type="CMSIS" value="SLAVE[2].CRS"/>
+    <bit_field offset="0" width="3" name="PARK" access="RW" reset_value="0" description="Park">
+      <alias type="CMSIS" value="AXBS_CRS_PARK(x)"/>
+      <bit_field_value name="SLAVE_PARK_0b000" value="0b000" description="Park on master port M0"/>
+      <bit_field_value name="SLAVE_PARK_0b001" value="0b001" description="Park on master port M1"/>
+      <bit_field_value name="SLAVE_PARK_0b010" value="0b010" description="Park on master port M2"/>
+      <bit_field_value name="SLAVE_PARK_0b011" value="0b011" description="Park on master port M3"/>
+      <bit_field_value name="SLAVE_PARK_0b100" value="0b100" description="Park on master port M4"/>
+      <bit_field_value name="SLAVE_PARK_0b101" value="0b101" description="Park on master port M5"/>
+      <bit_field_value name="SLAVE_PARK_0b110" value="0b110" description="Park on master port M6"/>
+      <bit_field_value name="SLAVE_PARK_0b111" value="0b111" description="Park on master port M7"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="2" name="PCTL" access="RW" reset_value="0" description="Parking Control">
+      <alias type="CMSIS" value="AXBS_CRS_PCTL(x)"/>
+      <bit_field_value name="SLAVE_PCTL_0b00" value="0b00" description="When no master makes a request, the arbiter parks the slave port on the master port defined by the PARK field"/>
+      <bit_field_value name="SLAVE_PCTL_0b01" value="0b01" description="When no master makes a request, the arbiter parks the slave port on the last master to be in control of the slave port"/>
+      <bit_field_value name="SLAVE_PCTL_0b10" value="0b10" description="When no master makes a request, the slave port is not parked on a master and the arbiter drives all outputs to a constant safe state"/>
+      <bit_field_value name="SLAVE_PCTL_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="2" reset_value="0"/>
+    <bit_field offset="8" width="2" name="ARB" access="RW" reset_value="0" description="Arbitration Mode">
+      <alias type="CMSIS" value="AXBS_CRS_ARB(x)"/>
+      <bit_field_value name="SLAVE_ARB_0b00" value="0b00" description="Fixed priority"/>
+      <bit_field_value name="SLAVE_ARB_0b01" value="0b01" description="Round-robin, or rotating, priority"/>
+      <bit_field_value name="SLAVE_ARB_0b10" value="0b10" description="Reserved"/>
+      <bit_field_value name="SLAVE_ARB_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="10" width="20" reset_value="0"/>
+    <bit_field offset="30" width="1" name="HLP" access="RW" reset_value="0" description="Halt Low Priority">
+      <alias type="CMSIS" value="AXBS_CRS_HLP(x)"/>
+      <bit_field_value name="SLAVE_HLP_0b0" value="0b0" description="The low power mode request has the highest priority for arbitration on this slave port"/>
+      <bit_field_value name="SLAVE_HLP_0b1" value="0b1" description="The low power mode request has the lowest initial priority for arbitration on this slave port"/>
+    </bit_field>
+    <bit_field offset="31" width="1" name="RO" access="RW" reset_value="0" description="Read Only">
+      <alias type="CMSIS" value="AXBS_CRS_RO(x)"/>
+      <bit_field_value name="SLAVE_RO_0b0" value="0b0" description="The slave port's registers are writeable"/>
+      <bit_field_value name="SLAVE_RO_0b1" value="0b1" description="The slave port's registers are read-only and cannot be written. Attempted writes have no effect on the registers and result in a bus error response."/>
+    </bit_field>
+  </register>
+  <register offset="0x300" width="32" name="PRS3" description="Priority Registers Slave">
+    <alias type="CMSIS" value="SLAVE[3].PRS"/>
+    <bit_field offset="0" width="3" name="M0" access="RW" reset_value="0" description="Master 0 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M0(x)"/>
+      <bit_field_value name="SLAVE_M0_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="3" name="M1" access="RW" reset_value="0x1" description="Master 1 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M1(x)"/>
+      <bit_field_value name="SLAVE_M1_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="3" name="M2" access="RW" reset_value="0x2" description="Master 2 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M2(x)"/>
+      <bit_field_value name="SLAVE_M2_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="3" name="M3" access="RW" reset_value="0x3" description="Master 3 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M3(x)"/>
+      <bit_field_value name="SLAVE_M3_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="3" name="M4" access="RW" reset_value="0x4" description="Master 4 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M4(x)"/>
+      <bit_field_value name="SLAVE_M4_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="3" name="M5" access="RW" reset_value="0x5" description="Master 5 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M5(x)"/>
+      <bit_field_value name="SLAVE_M5_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="3" name="M6" access="RW" reset_value="0x6" description="Master 6 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M6(x)"/>
+      <bit_field_value name="SLAVE_M6_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="3" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x310" width="32" name="CRS3" description="Control Register">
+    <alias type="CMSIS" value="SLAVE[3].CRS"/>
+    <bit_field offset="0" width="3" name="PARK" access="RW" reset_value="0" description="Park">
+      <alias type="CMSIS" value="AXBS_CRS_PARK(x)"/>
+      <bit_field_value name="SLAVE_PARK_0b000" value="0b000" description="Park on master port M0"/>
+      <bit_field_value name="SLAVE_PARK_0b001" value="0b001" description="Park on master port M1"/>
+      <bit_field_value name="SLAVE_PARK_0b010" value="0b010" description="Park on master port M2"/>
+      <bit_field_value name="SLAVE_PARK_0b011" value="0b011" description="Park on master port M3"/>
+      <bit_field_value name="SLAVE_PARK_0b100" value="0b100" description="Park on master port M4"/>
+      <bit_field_value name="SLAVE_PARK_0b101" value="0b101" description="Park on master port M5"/>
+      <bit_field_value name="SLAVE_PARK_0b110" value="0b110" description="Park on master port M6"/>
+      <bit_field_value name="SLAVE_PARK_0b111" value="0b111" description="Park on master port M7"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="2" name="PCTL" access="RW" reset_value="0" description="Parking Control">
+      <alias type="CMSIS" value="AXBS_CRS_PCTL(x)"/>
+      <bit_field_value name="SLAVE_PCTL_0b00" value="0b00" description="When no master makes a request, the arbiter parks the slave port on the master port defined by the PARK field"/>
+      <bit_field_value name="SLAVE_PCTL_0b01" value="0b01" description="When no master makes a request, the arbiter parks the slave port on the last master to be in control of the slave port"/>
+      <bit_field_value name="SLAVE_PCTL_0b10" value="0b10" description="When no master makes a request, the slave port is not parked on a master and the arbiter drives all outputs to a constant safe state"/>
+      <bit_field_value name="SLAVE_PCTL_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="2" reset_value="0"/>
+    <bit_field offset="8" width="2" name="ARB" access="RW" reset_value="0" description="Arbitration Mode">
+      <alias type="CMSIS" value="AXBS_CRS_ARB(x)"/>
+      <bit_field_value name="SLAVE_ARB_0b00" value="0b00" description="Fixed priority"/>
+      <bit_field_value name="SLAVE_ARB_0b01" value="0b01" description="Round-robin, or rotating, priority"/>
+      <bit_field_value name="SLAVE_ARB_0b10" value="0b10" description="Reserved"/>
+      <bit_field_value name="SLAVE_ARB_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="10" width="20" reset_value="0"/>
+    <bit_field offset="30" width="1" name="HLP" access="RW" reset_value="0" description="Halt Low Priority">
+      <alias type="CMSIS" value="AXBS_CRS_HLP(x)"/>
+      <bit_field_value name="SLAVE_HLP_0b0" value="0b0" description="The low power mode request has the highest priority for arbitration on this slave port"/>
+      <bit_field_value name="SLAVE_HLP_0b1" value="0b1" description="The low power mode request has the lowest initial priority for arbitration on this slave port"/>
+    </bit_field>
+    <bit_field offset="31" width="1" name="RO" access="RW" reset_value="0" description="Read Only">
+      <alias type="CMSIS" value="AXBS_CRS_RO(x)"/>
+      <bit_field_value name="SLAVE_RO_0b0" value="0b0" description="The slave port's registers are writeable"/>
+      <bit_field_value name="SLAVE_RO_0b1" value="0b1" description="The slave port's registers are read-only and cannot be written. Attempted writes have no effect on the registers and result in a bus error response."/>
+    </bit_field>
+  </register>
+  <register offset="0x400" width="32" name="PRS4" description="Priority Registers Slave">
+    <alias type="CMSIS" value="SLAVE[4].PRS"/>
+    <bit_field offset="0" width="3" name="M0" access="RW" reset_value="0" description="Master 0 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M0(x)"/>
+      <bit_field_value name="SLAVE_M0_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M0_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="3" name="M1" access="RW" reset_value="0x1" description="Master 1 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M1(x)"/>
+      <bit_field_value name="SLAVE_M1_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M1_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="3" name="M2" access="RW" reset_value="0x2" description="Master 2 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M2(x)"/>
+      <bit_field_value name="SLAVE_M2_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M2_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="3" name="M3" access="RW" reset_value="0x3" description="Master 3 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M3(x)"/>
+      <bit_field_value name="SLAVE_M3_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M3_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="3" name="M4" access="RW" reset_value="0x4" description="Master 4 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M4(x)"/>
+      <bit_field_value name="SLAVE_M4_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M4_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="3" name="M5" access="RW" reset_value="0x5" description="Master 5 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M5(x)"/>
+      <bit_field_value name="SLAVE_M5_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M5_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="3" name="M6" access="RW" reset_value="0x6" description="Master 6 Priority. Sets the arbitration priority for this port on the associated slave port.">
+      <alias type="CMSIS" value="AXBS_PRS_M6(x)"/>
+      <bit_field_value name="SLAVE_M6_0b000" value="0b000" description="This master has level 1, or highest, priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b001" value="0b001" description="This master has level 2 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b010" value="0b010" description="This master has level 3 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b011" value="0b011" description="This master has level 4 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b100" value="0b100" description="This master has level 5 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b101" value="0b101" description="This master has level 6 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b110" value="0b110" description="This master has level 7 priority when accessing the slave port."/>
+      <bit_field_value name="SLAVE_M6_0b111" value="0b111" description="This master has level 8, or lowest, priority when accessing the slave port."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="3" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x410" width="32" name="CRS4" description="Control Register">
+    <alias type="CMSIS" value="SLAVE[4].CRS"/>
+    <bit_field offset="0" width="3" name="PARK" access="RW" reset_value="0" description="Park">
+      <alias type="CMSIS" value="AXBS_CRS_PARK(x)"/>
+      <bit_field_value name="SLAVE_PARK_0b000" value="0b000" description="Park on master port M0"/>
+      <bit_field_value name="SLAVE_PARK_0b001" value="0b001" description="Park on master port M1"/>
+      <bit_field_value name="SLAVE_PARK_0b010" value="0b010" description="Park on master port M2"/>
+      <bit_field_value name="SLAVE_PARK_0b011" value="0b011" description="Park on master port M3"/>
+      <bit_field_value name="SLAVE_PARK_0b100" value="0b100" description="Park on master port M4"/>
+      <bit_field_value name="SLAVE_PARK_0b101" value="0b101" description="Park on master port M5"/>
+      <bit_field_value name="SLAVE_PARK_0b110" value="0b110" description="Park on master port M6"/>
+      <bit_field_value name="SLAVE_PARK_0b111" value="0b111" description="Park on master port M7"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="2" name="PCTL" access="RW" reset_value="0" description="Parking Control">
+      <alias type="CMSIS" value="AXBS_CRS_PCTL(x)"/>
+      <bit_field_value name="SLAVE_PCTL_0b00" value="0b00" description="When no master makes a request, the arbiter parks the slave port on the master port defined by the PARK field"/>
+      <bit_field_value name="SLAVE_PCTL_0b01" value="0b01" description="When no master makes a request, the arbiter parks the slave port on the last master to be in control of the slave port"/>
+      <bit_field_value name="SLAVE_PCTL_0b10" value="0b10" description="When no master makes a request, the slave port is not parked on a master and the arbiter drives all outputs to a constant safe state"/>
+      <bit_field_value name="SLAVE_PCTL_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="2" reset_value="0"/>
+    <bit_field offset="8" width="2" name="ARB" access="RW" reset_value="0" description="Arbitration Mode">
+      <alias type="CMSIS" value="AXBS_CRS_ARB(x)"/>
+      <bit_field_value name="SLAVE_ARB_0b00" value="0b00" description="Fixed priority"/>
+      <bit_field_value name="SLAVE_ARB_0b01" value="0b01" description="Round-robin, or rotating, priority"/>
+      <bit_field_value name="SLAVE_ARB_0b10" value="0b10" description="Reserved"/>
+      <bit_field_value name="SLAVE_ARB_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="10" width="20" reset_value="0"/>
+    <bit_field offset="30" width="1" name="HLP" access="RW" reset_value="0" description="Halt Low Priority">
+      <alias type="CMSIS" value="AXBS_CRS_HLP(x)"/>
+      <bit_field_value name="SLAVE_HLP_0b0" value="0b0" description="The low power mode request has the highest priority for arbitration on this slave port"/>
+      <bit_field_value name="SLAVE_HLP_0b1" value="0b1" description="The low power mode request has the lowest initial priority for arbitration on this slave port"/>
+    </bit_field>
+    <bit_field offset="31" width="1" name="RO" access="RW" reset_value="0" description="Read Only">
+      <alias type="CMSIS" value="AXBS_CRS_RO(x)"/>
+      <bit_field_value name="SLAVE_RO_0b0" value="0b0" description="The slave port's registers are writeable"/>
+      <bit_field_value name="SLAVE_RO_0b1" value="0b1" description="The slave port's registers are read-only and cannot be written. Attempted writes have no effect on the registers and result in a bus error response."/>
+    </bit_field>
+  </register>
+  <register offset="0x800" width="32" name="MGPCR0" description="Master General Purpose Control Register">
+    <alias type="CMSIS" value="MGPCR0"/>
+    <bit_field offset="0" width="3" name="AULB" access="RW" reset_value="0" description="Arbitrates On Undefined Length Bursts">
+      <alias type="CMSIS" value="AXBS_MGPCR0_AULB(x)"/>
+      <bit_field_value name="MGPCR0_AULB_0b000" value="0b000" description="No arbitration is allowed during an undefined length burst"/>
+      <bit_field_value name="MGPCR0_AULB_0b001" value="0b001" description="Arbitration is allowed at any time during an undefined length burst"/>
+      <bit_field_value name="MGPCR0_AULB_0b010" value="0b010" description="Arbitration is allowed after four beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR0_AULB_0b011" value="0b011" description="Arbitration is allowed after eight beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR0_AULB_0b100" value="0b100" description="Arbitration is allowed after 16 beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR0_AULB_0b101" value="0b101" description="Reserved"/>
+      <bit_field_value name="MGPCR0_AULB_0b110" value="0b110" description="Reserved"/>
+      <bit_field_value name="MGPCR0_AULB_0b111" value="0b111" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="29" reset_value="0"/>
+  </register>
+  <register offset="0x900" width="32" name="MGPCR1" description="Master General Purpose Control Register">
+    <alias type="CMSIS" value="MGPCR1"/>
+    <bit_field offset="0" width="3" name="AULB" access="RW" reset_value="0" description="Arbitrates On Undefined Length Bursts">
+      <alias type="CMSIS" value="AXBS_MGPCR1_AULB(x)"/>
+      <bit_field_value name="MGPCR1_AULB_0b000" value="0b000" description="No arbitration is allowed during an undefined length burst"/>
+      <bit_field_value name="MGPCR1_AULB_0b001" value="0b001" description="Arbitration is allowed at any time during an undefined length burst"/>
+      <bit_field_value name="MGPCR1_AULB_0b010" value="0b010" description="Arbitration is allowed after four beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR1_AULB_0b011" value="0b011" description="Arbitration is allowed after eight beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR1_AULB_0b100" value="0b100" description="Arbitration is allowed after 16 beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR1_AULB_0b101" value="0b101" description="Reserved"/>
+      <bit_field_value name="MGPCR1_AULB_0b110" value="0b110" description="Reserved"/>
+      <bit_field_value name="MGPCR1_AULB_0b111" value="0b111" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="29" reset_value="0"/>
+  </register>
+  <register offset="0xA00" width="32" name="MGPCR2" description="Master General Purpose Control Register">
+    <alias type="CMSIS" value="MGPCR2"/>
+    <bit_field offset="0" width="3" name="AULB" access="RW" reset_value="0" description="Arbitrates On Undefined Length Bursts">
+      <alias type="CMSIS" value="AXBS_MGPCR2_AULB(x)"/>
+      <bit_field_value name="MGPCR2_AULB_0b000" value="0b000" description="No arbitration is allowed during an undefined length burst"/>
+      <bit_field_value name="MGPCR2_AULB_0b001" value="0b001" description="Arbitration is allowed at any time during an undefined length burst"/>
+      <bit_field_value name="MGPCR2_AULB_0b010" value="0b010" description="Arbitration is allowed after four beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR2_AULB_0b011" value="0b011" description="Arbitration is allowed after eight beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR2_AULB_0b100" value="0b100" description="Arbitration is allowed after 16 beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR2_AULB_0b101" value="0b101" description="Reserved"/>
+      <bit_field_value name="MGPCR2_AULB_0b110" value="0b110" description="Reserved"/>
+      <bit_field_value name="MGPCR2_AULB_0b111" value="0b111" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="29" reset_value="0"/>
+  </register>
+  <register offset="0xB00" width="32" name="MGPCR3" description="Master General Purpose Control Register">
+    <alias type="CMSIS" value="MGPCR3"/>
+    <bit_field offset="0" width="3" name="AULB" access="RW" reset_value="0" description="Arbitrates On Undefined Length Bursts">
+      <alias type="CMSIS" value="AXBS_MGPCR3_AULB(x)"/>
+      <bit_field_value name="MGPCR3_AULB_0b000" value="0b000" description="No arbitration is allowed during an undefined length burst"/>
+      <bit_field_value name="MGPCR3_AULB_0b001" value="0b001" description="Arbitration is allowed at any time during an undefined length burst"/>
+      <bit_field_value name="MGPCR3_AULB_0b010" value="0b010" description="Arbitration is allowed after four beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR3_AULB_0b011" value="0b011" description="Arbitration is allowed after eight beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR3_AULB_0b100" value="0b100" description="Arbitration is allowed after 16 beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR3_AULB_0b101" value="0b101" description="Reserved"/>
+      <bit_field_value name="MGPCR3_AULB_0b110" value="0b110" description="Reserved"/>
+      <bit_field_value name="MGPCR3_AULB_0b111" value="0b111" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="29" reset_value="0"/>
+  </register>
+  <register offset="0xC00" width="32" name="MGPCR4" description="Master General Purpose Control Register">
+    <alias type="CMSIS" value="MGPCR4"/>
+    <bit_field offset="0" width="3" name="AULB" access="RW" reset_value="0" description="Arbitrates On Undefined Length Bursts">
+      <alias type="CMSIS" value="AXBS_MGPCR4_AULB(x)"/>
+      <bit_field_value name="MGPCR4_AULB_0b000" value="0b000" description="No arbitration is allowed during an undefined length burst"/>
+      <bit_field_value name="MGPCR4_AULB_0b001" value="0b001" description="Arbitration is allowed at any time during an undefined length burst"/>
+      <bit_field_value name="MGPCR4_AULB_0b010" value="0b010" description="Arbitration is allowed after four beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR4_AULB_0b011" value="0b011" description="Arbitration is allowed after eight beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR4_AULB_0b100" value="0b100" description="Arbitration is allowed after 16 beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR4_AULB_0b101" value="0b101" description="Reserved"/>
+      <bit_field_value name="MGPCR4_AULB_0b110" value="0b110" description="Reserved"/>
+      <bit_field_value name="MGPCR4_AULB_0b111" value="0b111" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="29" reset_value="0"/>
+  </register>
+  <register offset="0xD00" width="32" name="MGPCR5" description="Master General Purpose Control Register">
+    <alias type="CMSIS" value="MGPCR5"/>
+    <bit_field offset="0" width="3" name="AULB" access="RW" reset_value="0" description="Arbitrates On Undefined Length Bursts">
+      <alias type="CMSIS" value="AXBS_MGPCR5_AULB(x)"/>
+      <bit_field_value name="MGPCR5_AULB_0b000" value="0b000" description="No arbitration is allowed during an undefined length burst"/>
+      <bit_field_value name="MGPCR5_AULB_0b001" value="0b001" description="Arbitration is allowed at any time during an undefined length burst"/>
+      <bit_field_value name="MGPCR5_AULB_0b010" value="0b010" description="Arbitration is allowed after four beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR5_AULB_0b011" value="0b011" description="Arbitration is allowed after eight beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR5_AULB_0b100" value="0b100" description="Arbitration is allowed after 16 beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR5_AULB_0b101" value="0b101" description="Reserved"/>
+      <bit_field_value name="MGPCR5_AULB_0b110" value="0b110" description="Reserved"/>
+      <bit_field_value name="MGPCR5_AULB_0b111" value="0b111" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="29" reset_value="0"/>
+  </register>
+  <register offset="0xE00" width="32" name="MGPCR6" description="Master General Purpose Control Register">
+    <alias type="CMSIS" value="MGPCR6"/>
+    <bit_field offset="0" width="3" name="AULB" access="RW" reset_value="0" description="Arbitrates On Undefined Length Bursts">
+      <alias type="CMSIS" value="AXBS_MGPCR6_AULB(x)"/>
+      <bit_field_value name="MGPCR6_AULB_0b000" value="0b000" description="No arbitration is allowed during an undefined length burst"/>
+      <bit_field_value name="MGPCR6_AULB_0b001" value="0b001" description="Arbitration is allowed at any time during an undefined length burst"/>
+      <bit_field_value name="MGPCR6_AULB_0b010" value="0b010" description="Arbitration is allowed after four beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR6_AULB_0b011" value="0b011" description="Arbitration is allowed after eight beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR6_AULB_0b100" value="0b100" description="Arbitration is allowed after 16 beats of an undefined length burst"/>
+      <bit_field_value name="MGPCR6_AULB_0b101" value="0b101" description="Reserved"/>
+      <bit_field_value name="MGPCR6_AULB_0b110" value="0b110" description="Reserved"/>
+      <bit_field_value name="MGPCR6_AULB_0b111" value="0b111" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="29" reset_value="0"/>
+  </register>
+</regs:peripheral>

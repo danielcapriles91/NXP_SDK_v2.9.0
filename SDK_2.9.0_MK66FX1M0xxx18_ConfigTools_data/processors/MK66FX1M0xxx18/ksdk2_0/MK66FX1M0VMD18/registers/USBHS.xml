@@ -1,0 +1,1396 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="32" name="ID" description="Identification Register">
+    <alias type="CMSIS" value="ID"/>
+    <bit_field offset="0" width="6" name="ID" access="RO" reset_value="0x5" description="Configuration number">
+      <alias type="CMSIS" value="USBHS_ID_ID(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="2" reset_value="0"/>
+    <bit_field offset="8" width="6" name="NID" access="RO" reset_value="0x3A" description="Ones complement version of ID.">
+      <alias type="CMSIS" value="USBHS_ID_NID(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="14" width="2" reset_value="0x3"/>
+    <bit_field offset="16" width="5" name="TAG" access="RO" reset_value="0x1" description="Tag">
+      <alias type="CMSIS" value="USBHS_ID_TAG(x)"/>
+    </bit_field>
+    <bit_field offset="21" width="4" name="REVISION" access="RO" reset_value="0x3" description="Revision">
+      <alias type="CMSIS" value="USBHS_ID_REVISION(x)"/>
+    </bit_field>
+    <bit_field offset="25" width="4" name="VERSION" access="RO" reset_value="0x2" description="Version">
+      <alias type="CMSIS" value="USBHS_ID_VERSION(x)"/>
+    </bit_field>
+    <bit_field offset="29" width="3" name="VERSIONID" access="RO" reset_value="0x7" description="Version ID">
+      <alias type="CMSIS" value="USBHS_ID_VERSIONID(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x4" width="32" name="HWGENERAL" description="General Hardware Parameters Register">
+    <alias type="CMSIS" value="HWGENERAL"/>
+    <reserved_bit_field offset="0" width="4" reset_value="0x5"/>
+    <bit_field offset="4" width="2" name="PHYW" access="RO" reset_value="0x1" description="PHY Width">
+      <alias type="CMSIS" value="USBHS_HWGENERAL_PHYW(x)"/>
+      <bit_field_value name="HWGENERAL_PHYW_0b01" value="0b01" description="16 bit wide data bus"/>
+    </bit_field>
+    <bit_field offset="6" width="3" name="PHYM" access="RO" reset_value="0" description="PHY Mode">
+      <alias type="CMSIS" value="USBHS_HWGENERAL_PHYM(x)"/>
+      <bit_field_value name="HWGENERAL_PHYM_0b000" value="0b000" description="Controller configured for UTMI/UTMI+ interface."/>
+    </bit_field>
+    <bit_field offset="9" width="2" name="SM" access="RO" reset_value="0" description="Serial mode">
+      <alias type="CMSIS" value="USBHS_HWGENERAL_SM(x)"/>
+      <bit_field_value name="HWGENERAL_SM_0b00" value="0b00" description="No Serial Engine, always use parallel signaling."/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="21" reset_value="0"/>
+  </register>
+  <register offset="0x8" width="32" name="HWHOST" description="Host Hardware Parameters Register">
+    <alias type="CMSIS" value="HWHOST"/>
+    <bit_field offset="0" width="1" name="HC" access="RO" reset_value="0x1" description="Host Capable">
+      <alias type="CMSIS" value="USBHS_HWHOST_HC(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="3" name="NPORT" access="RO" reset_value="0" description="Number of Ports">
+      <alias type="CMSIS" value="USBHS_HWHOST_NPORT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="12" reset_value="0"/>
+    <bit_field offset="16" width="8" name="TTASY" access="RO" reset_value="0x2" description="Transaction translator contexts.">
+      <alias type="CMSIS" value="USBHS_HWHOST_TTASY(x)"/>
+    </bit_field>
+    <bit_field offset="24" width="8" name="TTPER" access="RO" reset_value="0x10" description="Transaction translator periodic contexts.">
+      <alias type="CMSIS" value="USBHS_HWHOST_TTPER(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xC" width="32" name="HWDEVICE" description="Device Hardware Parameters Register">
+    <alias type="CMSIS" value="HWDEVICE"/>
+    <bit_field offset="0" width="1" name="DC" access="RO" reset_value="0x1" description="Device Capable">
+      <alias type="CMSIS" value="USBHS_HWDEVICE_DC(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="5" name="DEVEP" access="RO" reset_value="0x4" description="Device endpoints.">
+      <alias type="CMSIS" value="USBHS_HWDEVICE_DEVEP(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="26" reset_value="0"/>
+  </register>
+  <register offset="0x10" width="32" name="HWTXBUF" description="Transmit Buffer Hardware Parameters Register">
+    <alias type="CMSIS" value="HWTXBUF"/>
+    <bit_field offset="0" width="8" name="TXBURST" access="RO" reset_value="0x8" description="Transmit Burst.">
+      <alias type="CMSIS" value="USBHS_HWTXBUF_TXBURST(x)"/>
+    </bit_field>
+    <bit_field offset="8" width="8" name="TXADD" access="RO" reset_value="0x9" description="Transmit Address.">
+      <alias type="CMSIS" value="USBHS_HWTXBUF_TXADD(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="8" name="TXCHANADD" access="RO" reset_value="0x7" description="Transmit Channel Address">
+      <alias type="CMSIS" value="USBHS_HWTXBUF_TXCHANADD(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="7" reset_value="0"/>
+    <bit_field offset="31" width="1" name="TXLC" access="RO" reset_value="0x1" description="Transmit local Context Registers">
+      <alias type="CMSIS" value="USBHS_HWTXBUF_TXLC(x)"/>
+      <bit_field_value name="HWTXBUF_TXLC_0b0" value="0b0" description="Store device transmit contexts in the TX FIFO"/>
+      <bit_field_value name="HWTXBUF_TXLC_0b1" value="0b1" description="Store device transmit contexts in a register file"/>
+    </bit_field>
+  </register>
+  <register offset="0x14" width="32" name="HWRXBUF" description="Receive Buffer Hardware Parameters Register">
+    <alias type="CMSIS" value="HWRXBUF"/>
+    <bit_field offset="0" width="8" name="RXBURST" access="RO" reset_value="0x8" description="Receive Burst.">
+      <alias type="CMSIS" value="USBHS_HWRXBUF_RXBURST(x)"/>
+    </bit_field>
+    <bit_field offset="8" width="8" name="RXADD" access="RO" reset_value="0x8" description="Receive Address.">
+      <alias type="CMSIS" value="USBHS_HWRXBUF_RXADD(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x80" width="32" name="GPTIMER0LD" description="General Purpose Timer n Load Register">
+    <alias type="CMSIS" value="GPTIMER0LD"/>
+    <bit_field offset="0" width="24" name="GPTLD" access="RW" reset_value="0" description="Specifies the value to be loaded into the countdown timer on a reset. The value in this register represents the time in microseconds minus 1 for the timer duration. For example, for a one millisecond timer, load 1000 - 1 = 999 (0x00_03E7). Maximum value is 0xFF_FFFF or 16.777215 seconds.">
+      <alias type="CMSIS" value="USBHS_GPTIMER0LD_GPTLD(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="8" reset_value="0"/>
+  </register>
+  <register offset="0x84" width="32" name="GPTIMER0CTL" description="General Purpose Timer n Control Register">
+    <alias type="CMSIS" value="GPTIMER0CTL"/>
+    <bit_field offset="0" width="24" name="GPTCNT" access="RO" reset_value="0" description="Timer Count">
+      <alias type="CMSIS" value="USBHS_GPTIMER0CTL_GPTCNT(x)"/>
+    </bit_field>
+    <bit_field offset="24" width="1" name="MODE" access="RW" reset_value="0" description="Timer Mode">
+      <alias type="CMSIS" value="USBHS_GPTIMER0CTL_MODE(x)"/>
+      <bit_field_value name="GPTIMER0CTL_MODE_0b0" value="0b0" description="One shot"/>
+      <bit_field_value name="GPTIMER0CTL_MODE_0b1" value="0b1" description="Repeat"/>
+    </bit_field>
+    <reserved_bit_field offset="25" width="5" reset_value="0"/>
+    <bit_field offset="30" width="1" name="RST" access="WO" reset_value="0" description="Timer Reset">
+      <alias type="CMSIS" value="USBHS_GPTIMER0CTL_RST(x)"/>
+      <bit_field_value name="GPTIMER0CTL_RST_0b0" value="0b0" description="No action"/>
+      <bit_field_value name="GPTIMER0CTL_RST_0b1" value="0b1" description="Load counter value"/>
+    </bit_field>
+    <bit_field offset="31" width="1" name="RUN" access="RW" reset_value="0" description="Timer Run">
+      <alias type="CMSIS" value="USBHS_GPTIMER0CTL_RUN(x)"/>
+      <bit_field_value name="GPTIMER0CTL_RUN_0b0" value="0b0" description="Timer stop"/>
+      <bit_field_value name="GPTIMER0CTL_RUN_0b1" value="0b1" description="Timer run"/>
+    </bit_field>
+  </register>
+  <register offset="0x88" width="32" name="GPTIMER1LD" description="General Purpose Timer n Load Register">
+    <alias type="CMSIS" value="GPTIMER1LD"/>
+    <bit_field offset="0" width="24" name="GPTLD" access="RW" reset_value="0" description="Specifies the value to be loaded into the countdown timer on a reset. The value in this register represents the time in microseconds minus 1 for the timer duration. For example, for a one millisecond timer, load 1000 - 1 = 999 (0x00_03E7). Maximum value is 0xFF_FFFF or 16.777215 seconds.">
+      <alias type="CMSIS" value="USBHS_GPTIMER1LD_GPTLD(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="8" reset_value="0"/>
+  </register>
+  <register offset="0x8C" width="32" name="GPTIMER1CTL" description="General Purpose Timer n Control Register">
+    <alias type="CMSIS" value="GPTIMER1CTL"/>
+    <bit_field offset="0" width="24" name="GPTCNT" access="RO" reset_value="0" description="Timer Count">
+      <alias type="CMSIS" value="USBHS_GPTIMER1CTL_GPTCNT(x)"/>
+    </bit_field>
+    <bit_field offset="24" width="1" name="MODE" access="RW" reset_value="0" description="Timer Mode">
+      <alias type="CMSIS" value="USBHS_GPTIMER1CTL_MODE(x)"/>
+      <bit_field_value name="GPTIMER1CTL_MODE_0b0" value="0b0" description="One shot"/>
+      <bit_field_value name="GPTIMER1CTL_MODE_0b1" value="0b1" description="Repeat"/>
+    </bit_field>
+    <reserved_bit_field offset="25" width="5" reset_value="0"/>
+    <bit_field offset="30" width="1" name="RST" access="WO" reset_value="0" description="Timer Reset">
+      <alias type="CMSIS" value="USBHS_GPTIMER1CTL_RST(x)"/>
+      <bit_field_value name="GPTIMER1CTL_RST_0b0" value="0b0" description="No action"/>
+      <bit_field_value name="GPTIMER1CTL_RST_0b1" value="0b1" description="Load counter value"/>
+    </bit_field>
+    <bit_field offset="31" width="1" name="RUN" access="RW" reset_value="0" description="Timer Run">
+      <alias type="CMSIS" value="USBHS_GPTIMER1CTL_RUN(x)"/>
+      <bit_field_value name="GPTIMER1CTL_RUN_0b0" value="0b0" description="Timer stop"/>
+      <bit_field_value name="GPTIMER1CTL_RUN_0b1" value="0b1" description="Timer run"/>
+    </bit_field>
+  </register>
+  <register offset="0x90" width="32" name="USB_SBUSCFG" description="System Bus Interface Configuration Register">
+    <alias type="CMSIS" value="USB_SBUSCFG"/>
+    <bit_field offset="0" width="3" name="BURSTMODE" access="RW" reset_value="0" description="Burst mode">
+      <alias type="CMSIS" value="USBHS_USB_SBUSCFG_BURSTMODE(x)"/>
+      <bit_field_value name="USB_SBUSCFG_BURSTMODE_0b000" value="0b000" description="INCR burst of unspecified length"/>
+      <bit_field_value name="USB_SBUSCFG_BURSTMODE_0b001" value="0b001" description="INCR4, non-multiple transfers of INCR4 is decomposed into singles."/>
+      <bit_field_value name="USB_SBUSCFG_BURSTMODE_0b010" value="0b010" description="INCR8, non-multiple transfers of INCR8, is decomposed into INCR4 or singles."/>
+      <bit_field_value name="USB_SBUSCFG_BURSTMODE_0b011" value="0b011" description="INCR16, non-multiple transfers of INCR16, is decomposed into INCR8, INCR4 or singles."/>
+      <bit_field_value name="USB_SBUSCFG_BURSTMODE_0b100" value="0b100" description="Reserved, do not use."/>
+      <bit_field_value name="USB_SBUSCFG_BURSTMODE_0b101" value="0b101" description="INCR4, non-multiple transfers of INCR4 is decomposed into smaller unspecified length bursts."/>
+      <bit_field_value name="USB_SBUSCFG_BURSTMODE_0b110" value="0b110" description="INCR8, non-multiple transfers of INCR8 is decomposed into smaller unspecified length bursts."/>
+      <bit_field_value name="USB_SBUSCFG_BURSTMODE_0b111" value="0b111" description="INCR16, non-multiple transfers of INCR16 is decomposed into smaller unspecified length bursts."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="29" reset_value="0"/>
+  </register>
+  <register offset="0x100" width="32" name="HCIVERSION" description="Host Controller Interface Version and Capability Registers Length Register">
+    <alias type="CMSIS" value="HCIVERSION"/>
+    <bit_field offset="0" width="8" name="CAPLENGTH" access="RO" reset_value="0x40" description="Capability registers length">
+      <alias type="CMSIS" value="USBHS_HCIVERSION_CAPLENGTH(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="8" reset_value="0"/>
+    <bit_field offset="16" width="16" name="HCIVERSION" access="RO" reset_value="0x100" description="EHCI revision number">
+      <alias type="CMSIS" value="USBHS_HCIVERSION_HCIVERSION(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x104" width="32" name="HCSPARAMS" description="Host Controller Structural Parameters Register">
+    <alias type="CMSIS" value="HCSPARAMS"/>
+    <bit_field offset="0" width="4" name="N_PORTS" access="RO" reset_value="0x1" description="Number of Ports">
+      <alias type="CMSIS" value="USBHS_HCSPARAMS_N_PORTS(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="PPC" access="RO" reset_value="0x1" description="Power Port Control">
+      <alias type="CMSIS" value="USBHS_HCSPARAMS_PPC(x)"/>
+      <bit_field_value name="HCSPARAMS_PPC_0b1" value="0b1" description="Ports have power port switches"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="3" reset_value="0"/>
+    <bit_field offset="8" width="4" name="N_PCC" access="RO" reset_value="0" description="Number Ports per CC">
+      <alias type="CMSIS" value="USBHS_HCSPARAMS_N_PCC(x)"/>
+    </bit_field>
+    <bit_field offset="12" width="4" name="N_CC" access="RO" reset_value="0" description="Number of Companion Controllers">
+      <alias type="CMSIS" value="USBHS_HCSPARAMS_N_CC(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="1" name="PI" access="RO" reset_value="0x1" description="Port Indicators">
+      <alias type="CMSIS" value="USBHS_HCSPARAMS_PI(x)"/>
+      <bit_field_value name="HCSPARAMS_PI_0b0" value="0b0" description="No port indicator fields"/>
+      <bit_field_value name="HCSPARAMS_PI_0b1" value="0b1" description="The port status and control registers include a R/W field for controlling the state of the port indicator"/>
+    </bit_field>
+    <reserved_bit_field offset="17" width="3" reset_value="0"/>
+    <bit_field offset="20" width="4" name="N_PTT" access="RO" reset_value="0" description="Ports per Transaction Translator">
+      <alias type="CMSIS" value="USBHS_HCSPARAMS_N_PTT(x)"/>
+    </bit_field>
+    <bit_field offset="24" width="4" name="N_TT" access="RO" reset_value="0" description="Number of Transaction Translators.">
+      <alias type="CMSIS" value="USBHS_HCSPARAMS_N_TT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="28" width="4" reset_value="0"/>
+  </register>
+  <register offset="0x108" width="32" name="HCCPARAMS" description="Host Controller Capability Parameters Register">
+    <alias type="CMSIS" value="HCCPARAMS"/>
+    <bit_field offset="0" width="1" name="ADC" access="RO" reset_value="0" description="64-bit addressing capability.">
+      <alias type="CMSIS" value="USBHS_HCCPARAMS_ADC(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="PFL" access="RO" reset_value="0x1" description="Programmable Frame List flag">
+      <alias type="CMSIS" value="USBHS_HCCPARAMS_PFL(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="ASP" access="RO" reset_value="0x1" description="Asynchronous Schedule Park capability">
+      <alias type="CMSIS" value="USBHS_HCCPARAMS_ASP(x)"/>
+      <bit_field_value name="HCCPARAMS_ASP_0b0" value="0b0" description="Park not supported."/>
+      <bit_field_value name="HCCPARAMS_ASP_0b1" value="0b1" description="Park supported."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="4" name="IST" access="RO" reset_value="0" description="Isochronous Scheduling Threshold">
+      <alias type="CMSIS" value="USBHS_HCCPARAMS_IST(x)"/>
+      <bit_field_value name="HCCPARAMS_IST_0b0000" value="0b0000" description="The value of the least significant 3 bits indicates the number of microframes a host controller can hold a set of isochronous data structures (one or more) before flushing the state"/>
+    </bit_field>
+    <bit_field offset="8" width="8" name="EECP" access="RO" reset_value="0" description="EHCI Extended Capabilities Pointer">
+      <alias type="CMSIS" value="USBHS_HCCPARAMS_EECP(x)"/>
+      <bit_field_value name="HCCPARAMS_EECP_0b00000000" value="0b00000000" description="No extended capabilities are implemented"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x122" width="16" name="DCIVERSION" description="Device Controller Interface Version">
+    <alias type="CMSIS" value="DCIVERSION"/>
+    <bit_field offset="0" width="16" name="DCIVERSION" access="RO" reset_value="0x1" description="Device interface revision number.">
+      <alias type="CMSIS" value="USBHS_DCIVERSION_DCIVERSION(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x124" width="32" name="DCCPARAMS" description="Device Controller Capability Parameters">
+    <alias type="CMSIS" value="DCCPARAMS"/>
+    <bit_field offset="0" width="5" name="DEN" access="RO" reset_value="0x4" description="Device Endpoint Number">
+      <alias type="CMSIS" value="USBHS_DCCPARAMS_DEN(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="2" reset_value="0"/>
+    <bit_field offset="7" width="1" name="DC" access="RO" reset_value="0x1" description="Device Capable">
+      <alias type="CMSIS" value="USBHS_DCCPARAMS_DC(x)"/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="HC" access="RO" reset_value="0x1" description="Host Capable">
+      <alias type="CMSIS" value="USBHS_DCCPARAMS_HC(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="23" reset_value="0"/>
+  </register>
+  <register offset="0x140" width="32" name="USBCMD" description="USB Command Register">
+    <alias type="CMSIS" value="USBCMD"/>
+    <bit_field offset="0" width="1" name="RS" access="RW" reset_value="0" description="Run/Stop">
+      <alias type="CMSIS" value="USBHS_USBCMD_RS(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="RST" access="RW" reset_value="0" description="Controller Reset">
+      <alias type="CMSIS" value="USBHS_USBCMD_RST(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="2" name="FS" access="RW" reset_value="0" description="Frame list Size">
+      <alias type="CMSIS" value="USBHS_USBCMD_FS(x)"/>
+      <bit_field_value name="USBCMD_FS_0b00" value="0b00" description="When FS2 = 0, the size is 1024 elements (4096 bytes). When FS2 = 1, the size is 64 elements (256 bytes)."/>
+      <bit_field_value name="USBCMD_FS_0b01" value="0b01" description="When FS2 = 0, the size is 512 elements (2048 bytes). When FS2 = 1, the size is 32 elements (128 bytes)."/>
+      <bit_field_value name="USBCMD_FS_0b10" value="0b10" description="When FS2 = 0, the size is 256 elements (1024 bytes). When FS2 = 1, the size is 16 elements (64 bytes)."/>
+      <bit_field_value name="USBCMD_FS_0b11" value="0b11" description="When FS2 = 0, the size is 128 elements (512 bytes). When FS2 = 1, the size is 8 elements (32 bytes)."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="PSE" access="RW" reset_value="0" description="Periodic Schedule Enable">
+      <alias type="CMSIS" value="USBHS_USBCMD_PSE(x)"/>
+      <bit_field_value name="USBCMD_PSE_0b0" value="0b0" description="Do not process periodic schedule."/>
+      <bit_field_value name="USBCMD_PSE_0b1" value="0b1" description="Use the PERIODICLISTBASE register to access the periodic schedule."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="ASE" access="RW" reset_value="0" description="Asynchronous Schedule Enable">
+      <alias type="CMSIS" value="USBHS_USBCMD_ASE(x)"/>
+      <bit_field_value name="USBCMD_ASE_0b0" value="0b0" description="Do not process asynchronous schedule."/>
+      <bit_field_value name="USBCMD_ASE_0b1" value="0b1" description="Use the ASYNCLISTADDR register to access asynchronous schedule."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="IAA" access="RW" reset_value="0" description="Interrupt on Async Advance doorbell">
+      <alias type="CMSIS" value="USBHS_USBCMD_IAA(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="2" name="ASP" access="RW" reset_value="0" description="Asynchronous Schedule Park mode count">
+      <alias type="CMSIS" value="USBHS_USBCMD_ASP(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <bit_field offset="11" width="1" name="ASPE" access="RW" reset_value="0" description="Asynchronous Schedule Park mode Enable">
+      <alias type="CMSIS" value="USBHS_USBCMD_ASPE(x)"/>
+      <bit_field_value name="USBCMD_ASPE_0b0" value="0b0" description="Park mode disabled"/>
+      <bit_field_value name="USBCMD_ASPE_0b1" value="0b1" description="Park mode enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <bit_field offset="13" width="1" name="SUTW" access="RW" reset_value="0" description="Setup TripWire">
+      <alias type="CMSIS" value="USBHS_USBCMD_SUTW(x)"/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="ATDTW" access="RW" reset_value="0" description="Add dTD TripWire">
+      <alias type="CMSIS" value="USBHS_USBCMD_ATDTW(x)"/>
+    </bit_field>
+    <bit_field offset="15" width="1" name="FS2" access="RW" reset_value="0" description="Frame list Size 2">
+      <alias type="CMSIS" value="USBHS_USBCMD_FS2(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="8" name="ITC" access="RW" reset_value="0x8" description="Interrupt Threshold Control">
+      <alias type="CMSIS" value="USBHS_USBCMD_ITC(x)"/>
+      <bit_field_value name="USBCMD_ITC_0b00000000" value="0b00000000" description="Immediate (no threshold)"/>
+      <bit_field_value name="USBCMD_ITC_0b00000001" value="0b00000001" description="1 microframe"/>
+      <bit_field_value name="USBCMD_ITC_0b00000010" value="0b00000010" description="2 microframes"/>
+      <bit_field_value name="USBCMD_ITC_0b00000100" value="0b00000100" description="4 microframes"/>
+      <bit_field_value name="USBCMD_ITC_0b00001000" value="0b00001000" description="8 microframes"/>
+      <bit_field_value name="USBCMD_ITC_0b00010000" value="0b00010000" description="16 microframes"/>
+      <bit_field_value name="USBCMD_ITC_0b00100000" value="0b00100000" description="32 microframes"/>
+      <bit_field_value name="USBCMD_ITC_0b01000000" value="0b01000000" description="64 microframes"/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="8" reset_value="0"/>
+  </register>
+  <register offset="0x144" width="32" name="USBSTS" description="USB Status Register">
+    <alias type="CMSIS" value="USBSTS"/>
+    <bit_field offset="0" width="1" name="UI" access="W1C" reset_value="0" description="USB Interrupt (USBINT)">
+      <alias type="CMSIS" value="USBHS_USBSTS_UI(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="UEI" access="W1C" reset_value="0" description="USB Error Interrupt">
+      <alias type="CMSIS" value="USBHS_USBSTS_UEI(x)"/>
+      <bit_field_value name="USBSTS_UEI_0b0" value="0b0" description="No error"/>
+      <bit_field_value name="USBSTS_UEI_0b1" value="0b1" description="Error detected"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="PCI" access="W1C" reset_value="0" description="Port Change detect">
+      <alias type="CMSIS" value="USBHS_USBSTS_PCI(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="FRI" access="W1C" reset_value="0" description="Frame-list Rollover">
+      <alias type="CMSIS" value="USBHS_USBSTS_FRI(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="SEI" access="W1C" reset_value="0" description="System Error">
+      <alias type="CMSIS" value="USBHS_USBSTS_SEI(x)"/>
+      <bit_field_value name="USBSTS_SEI_0b0" value="0b0" description="Normal operation"/>
+      <bit_field_value name="USBSTS_SEI_0b1" value="0b1" description="Error"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="AAI" access="W1C" reset_value="0" description="Interrupt on Async Advance">
+      <alias type="CMSIS" value="USBHS_USBSTS_AAI(x)"/>
+      <bit_field_value name="USBSTS_AAI_0b0" value="0b0" description="No async advance interrupt"/>
+      <bit_field_value name="USBSTS_AAI_0b1" value="0b1" description="Async advance interrupt"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="URI" access="W1C" reset_value="0" description="USB Reset received">
+      <alias type="CMSIS" value="USBHS_USBSTS_URI(x)"/>
+      <bit_field_value name="USBSTS_URI_0b0" value="0b0" description="No reset received"/>
+      <bit_field_value name="USBSTS_URI_0b1" value="0b1" description="Reset received"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="SRI" access="W1C" reset_value="0" description="SOF Received">
+      <alias type="CMSIS" value="USBHS_USBSTS_SRI(x)"/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="SLI" access="W1C" reset_value="0" description="Device-controller suspend">
+      <alias type="CMSIS" value="USBHS_USBSTS_SLI(x)"/>
+      <bit_field_value name="USBSTS_SLI_0b0" value="0b0" description="Active"/>
+      <bit_field_value name="USBSTS_SLI_0b1" value="0b1" description="Suspended"/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <bit_field offset="12" width="1" name="HCH" access="RO" reset_value="0" description="Host Controller Halted">
+      <alias type="CMSIS" value="USBHS_USBSTS_HCH(x)"/>
+      <bit_field_value name="USBSTS_HCH_0b0" value="0b0" description="Running"/>
+      <bit_field_value name="USBSTS_HCH_0b1" value="0b1" description="Halted"/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="RCL" access="RO" reset_value="0" description="Reclamation">
+      <alias type="CMSIS" value="USBHS_USBSTS_RCL(x)"/>
+      <bit_field_value name="USBSTS_RCL_0b0" value="0b0" description="Non-empty asynchronous schedule"/>
+      <bit_field_value name="USBSTS_RCL_0b1" value="0b1" description="Empty asynchronous schedule"/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="PS" access="RO" reset_value="0" description="Periodic schedule Status">
+      <alias type="CMSIS" value="USBHS_USBSTS_PS(x)"/>
+      <bit_field_value name="USBSTS_PS_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="USBSTS_PS_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="15" width="1" name="AS" access="RO" reset_value="0" description="Asynchronous schedule Status">
+      <alias type="CMSIS" value="USBHS_USBSTS_AS(x)"/>
+      <bit_field_value name="USBSTS_AS_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="USBSTS_AS_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="16" width="1" name="NAKI" access="RO" reset_value="0" description="NAK Interrupt">
+      <alias type="CMSIS" value="USBHS_USBSTS_NAKI(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <bit_field offset="18" width="1" name="UAI" access="RW" reset_value="0" description="USB host Asynchronous Interrupt">
+      <alias type="CMSIS" value="USBHS_USBSTS_UAI(x)"/>
+    </bit_field>
+    <bit_field offset="19" width="1" name="UPI" access="RW" reset_value="0" description="USB host Periodic Interrupt">
+      <alias type="CMSIS" value="USBHS_USBSTS_UPI(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="4" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TI0" access="W1C" reset_value="0" description="General purpose Timer 0 Interrupt">
+      <alias type="CMSIS" value="USBHS_USBSTS_TI0(x)"/>
+      <bit_field_value name="USBSTS_TI0_0b0" value="0b0" description="No interrupt"/>
+      <bit_field_value name="USBSTS_TI0_0b1" value="0b1" description="Interrupt occurred"/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="TI1" access="W1C" reset_value="0" description="General purpose Timer 1 Interrupt">
+      <alias type="CMSIS" value="USBHS_USBSTS_TI1(x)"/>
+      <bit_field_value name="USBSTS_TI1_0b0" value="0b0" description="No interrupt"/>
+      <bit_field_value name="USBSTS_TI1_0b1" value="0b1" description="Interrupt occurred"/>
+    </bit_field>
+    <reserved_bit_field offset="26" width="6" reset_value="0"/>
+  </register>
+  <register offset="0x148" width="32" name="USBINTR" description="USB Interrupt Enable Register">
+    <alias type="CMSIS" value="USBINTR"/>
+    <bit_field offset="0" width="1" name="UE" access="RW" reset_value="0" description="USB interrupt Enable">
+      <alias type="CMSIS" value="USBHS_USBINTR_UE(x)"/>
+      <bit_field_value name="USBINTR_UE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="USBINTR_UE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="UEE" access="RW" reset_value="0" description="USB Error interrupt Enable">
+      <alias type="CMSIS" value="USBHS_USBINTR_UEE(x)"/>
+      <bit_field_value name="USBINTR_UEE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="USBINTR_UEE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="PCE" access="RW" reset_value="0" description="Port Change detect Enable">
+      <alias type="CMSIS" value="USBHS_USBINTR_PCE(x)"/>
+      <bit_field_value name="USBINTR_PCE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="USBINTR_PCE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="FRE" access="RW" reset_value="0" description="Frame list Rollover Enable">
+      <alias type="CMSIS" value="USBHS_USBINTR_FRE(x)"/>
+      <bit_field_value name="USBINTR_FRE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="USBINTR_FRE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="SEE" access="RW" reset_value="0" description="System Error Enable">
+      <alias type="CMSIS" value="USBHS_USBINTR_SEE(x)"/>
+      <bit_field_value name="USBINTR_SEE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="USBINTR_SEE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="AAE" access="RW" reset_value="0" description="Interrupt on Async advance Enable">
+      <alias type="CMSIS" value="USBHS_USBINTR_AAE(x)"/>
+      <bit_field_value name="USBINTR_AAE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="USBINTR_AAE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="URE" access="RW" reset_value="0" description="USB-Reset Enable">
+      <alias type="CMSIS" value="USBHS_USBINTR_URE(x)"/>
+      <bit_field_value name="USBINTR_URE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="USBINTR_URE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="SRE" access="RW" reset_value="0" description="SOF-Received Enable">
+      <alias type="CMSIS" value="USBHS_USBINTR_SRE(x)"/>
+      <bit_field_value name="USBINTR_SRE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="USBINTR_SRE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="SLE" access="RW" reset_value="0" description="Sleep (DC suspend) Enable">
+      <alias type="CMSIS" value="USBHS_USBINTR_SLE(x)"/>
+      <bit_field_value name="USBINTR_SLE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="USBINTR_SLE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="5" reset_value="0"/>
+    <bit_field offset="16" width="1" name="NAKE" access="RW" reset_value="0" description="NAK Interrupt Enable">
+      <alias type="CMSIS" value="USBHS_USBINTR_NAKE(x)"/>
+      <bit_field_value name="USBINTR_NAKE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="USBINTR_NAKE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <bit_field offset="18" width="1" name="UAIE" access="RW" reset_value="0" description="USB host Asynchronous Interrupt Enable">
+      <alias type="CMSIS" value="USBHS_USBINTR_UAIE(x)"/>
+    </bit_field>
+    <bit_field offset="19" width="1" name="UPIE" access="RW" reset_value="0" description="USB host Periodic Interrupt Enable">
+      <alias type="CMSIS" value="USBHS_USBINTR_UPIE(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="4" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TIE0" access="RW" reset_value="0" description="General purpose Timer 0 Interrupt Enable">
+      <alias type="CMSIS" value="USBHS_USBINTR_TIE0(x)"/>
+      <bit_field_value name="USBINTR_TIE0_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="USBINTR_TIE0_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="TIE1" access="RW" reset_value="0" description="General purpose Timer 1 Interrupt Enable">
+      <alias type="CMSIS" value="USBHS_USBINTR_TIE1(x)"/>
+      <bit_field_value name="USBINTR_TIE1_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="USBINTR_TIE1_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="26" width="6" reset_value="0"/>
+  </register>
+  <register offset="0x14C" width="32" name="FRINDEX" description="Frame Index Register">
+    <alias type="CMSIS" value="FRINDEX"/>
+    <bit_field offset="0" width="14" name="FRINDEX" access="RW" reset_value="0" description="Frame Index">
+      <alias type="CMSIS" value="USBHS_FRINDEX_FRINDEX(x)"/>
+    </bit_field>
+    <bit_field offset="14" width="18" name="Reerved" access="ROZ" reset_value="0" description="Reserved">
+      <alias type="CMSIS" value="USBHS_FRINDEX_Reerved(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x154" width="32" name="PERIODICLISTBASE" description="Periodic Frame List Base Address Register">
+    <alias type="CMSIS" value="PERIODICLISTBASE"/>
+    <reserved_bit_field offset="0" width="12" reset_value="0"/>
+    <bit_field offset="12" width="20" name="PERBASE" access="RW" reset_value="0" description="Base address">
+      <alias type="CMSIS" value="USBHS_PERIODICLISTBASE_PERBASE(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x154" width="32" name="DEVICEADDR" description="Device Address Register">
+    <alias type="CMSIS" value="DEVICEADDR"/>
+    <reserved_bit_field offset="0" width="24" reset_value="0"/>
+    <bit_field offset="24" width="1" name="USBADRA" access="RW" reset_value="0" description="Device Address Advance">
+      <alias type="CMSIS" value="USBHS_DEVICEADDR_USBADRA(x)"/>
+      <bit_field_value name="DEVICEADDR_USBADRA_0b0" value="0b0" description="Writes to USBADR are instantaneous."/>
+      <bit_field_value name="DEVICEADDR_USBADRA_0b1" value="0b1" description="When this bit is written to a 1 at the same time or before USBADR is written, the write to the USBADR field is staged and held in a hidden register. After an IN occurs on endpoint 0 and is ACKed, USBADR is loaded from the holding register."/>
+    </bit_field>
+    <bit_field offset="25" width="7" name="USBADR" access="RW" reset_value="0" description="Device Address">
+      <alias type="CMSIS" value="USBHS_DEVICEADDR_USBADR(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x158" width="32" name="EPLISTADDR" description="Endpoint List Address Register">
+    <alias type="CMSIS" value="EPLISTADDR"/>
+    <reserved_bit_field offset="0" width="11" reset_value="0"/>
+    <bit_field offset="11" width="21" name="EPBASE" access="RW" reset_value="0" description="Endpoint list address">
+      <alias type="CMSIS" value="USBHS_EPLISTADDR_EPBASE(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x158" width="32" name="ASYNCLISTADDR" description="Current Asynchronous List Address Register">
+    <alias type="CMSIS" value="ASYNCLISTADDR"/>
+    <reserved_bit_field offset="0" width="5" reset_value="0"/>
+    <bit_field offset="5" width="27" name="ASYBASE" access="RW" reset_value="0" description="Link pointer low (LPL)">
+      <alias type="CMSIS" value="USBHS_ASYNCLISTADDR_ASYBASE(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x15C" width="32" name="TTCTRL" description="Host TT Asynchronous Buffer Control">
+    <alias type="CMSIS" value="TTCTRL"/>
+    <reserved_bit_field offset="0" width="24" reset_value="0"/>
+    <bit_field offset="24" width="7" name="TTHA" access="RO" reset_value="0" description="TT Hub Address">
+      <alias type="CMSIS" value="USBHS_TTCTRL_TTHA(x)"/>
+    </bit_field>
+    <bit_field offset="31" width="1" name="Reerved" access="ROZ" reset_value="0" description="Reserved">
+      <alias type="CMSIS" value="USBHS_TTCTRL_Reerved(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x160" width="32" name="BURSTSIZE" description="Master Interface Data Burst Size Register">
+    <alias type="CMSIS" value="BURSTSIZE"/>
+    <bit_field offset="0" width="8" name="RXPBURST" access="RW" reset_value="0x8" description="Programable RX Burst length">
+      <alias type="CMSIS" value="USBHS_BURSTSIZE_RXPBURST(x)"/>
+    </bit_field>
+    <bit_field offset="8" width="8" name="TXPBURST" access="RW" reset_value="0x8" description="Programable TX Burst length">
+      <alias type="CMSIS" value="USBHS_BURSTSIZE_TXPBURST(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x164" width="32" name="TXFILLTUNING" description="Transmit FIFO Tuning Control Register">
+    <alias type="CMSIS" value="TXFILLTUNING"/>
+    <bit_field offset="0" width="7" name="TXSCHOH" access="RW" reset_value="0" description="Scheduler Overhead">
+      <alias type="CMSIS" value="USBHS_TXFILLTUNING_TXSCHOH(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="5" name="TXSCHHEALTH" access="RW" reset_value="0" description="Scheduler Health counter">
+      <alias type="CMSIS" value="USBHS_TXFILLTUNING_TXSCHHEALTH(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="13" width="3" reset_value="0"/>
+    <bit_field offset="16" width="6" name="TXFIFOTHRES" access="RW" reset_value="0" description="FIFO burst Threshold">
+      <alias type="CMSIS" value="USBHS_TXFILLTUNING_TXFIFOTHRES(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="22" width="10" reset_value="0"/>
+  </register>
+  <register offset="0x178" width="32" name="ENDPTNAK" description="Endpoint NAK Register">
+    <alias type="CMSIS" value="ENDPTNAK"/>
+    <bit_field offset="0" width="4" name="EPRN" access="W1C" reset_value="0" description="RX Endpoint NAK">
+      <alias type="CMSIS" value="USBHS_ENDPTNAK_EPRN(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="12" reset_value="0"/>
+    <bit_field offset="16" width="4" name="EPTN" access="W1C" reset_value="0" description="TX Endpoint NAK">
+      <alias type="CMSIS" value="USBHS_ENDPTNAK_EPTN(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="12" reset_value="0"/>
+  </register>
+  <register offset="0x17C" width="32" name="ENDPTNAKEN" description="Endpoint NAK Enable Register">
+    <alias type="CMSIS" value="ENDPTNAKEN"/>
+    <bit_field offset="0" width="4" name="EPRNE" access="W1C" reset_value="0" description="RX Endpoint NAK">
+      <alias type="CMSIS" value="USBHS_ENDPTNAKEN_EPRNE(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="12" reset_value="0"/>
+    <bit_field offset="16" width="4" name="EPTNE" access="W1C" reset_value="0" description="TX Endpoint NAK">
+      <alias type="CMSIS" value="USBHS_ENDPTNAKEN_EPTNE(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="12" reset_value="0"/>
+  </register>
+  <register offset="0x180" width="32" name="CONFIGFLAG" description="Configure Flag Register">
+    <alias type="CMSIS" value="CONFIGFLAG"/>
+    <reserved_bit_field offset="0" width="1" reset_value="0x1"/>
+    <reserved_bit_field offset="1" width="31" reset_value="0"/>
+  </register>
+  <register offset="0x184" width="32" name="PORTSC1" description="Port Status and Control Registers">
+    <alias type="CMSIS" value="PORTSC1"/>
+    <bit_field offset="0" width="1" name="CCS" access="RO" reset_value="0" description="Current Connect Status">
+      <alias type="CMSIS" value="USBHS_PORTSC1_CCS(x)"/>
+      <bit_field_value name="PORTSC1_CCS_0b0" value="0b0" description="No device present (host mode) or attached (device mode)"/>
+      <bit_field_value name="PORTSC1_CCS_0b1" value="0b1" description="Device is present (host mode) or attached (device mode)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="CSC" access="W1C" reset_value="0" description="Connect Change Status">
+      <alias type="CMSIS" value="USBHS_PORTSC1_CSC(x)"/>
+      <bit_field_value name="PORTSC1_CSC_0b0" value="0b0" description="No change"/>
+      <bit_field_value name="PORTSC1_CSC_0b1" value="0b1" description="Connect status has changed"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="PE" access="RW" reset_value="0" description="Port Enabled/disabled">
+      <alias type="CMSIS" value="USBHS_PORTSC1_PE(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="PEC" access="W1C" reset_value="0" description="Port Enable/disable Change">
+      <alias type="CMSIS" value="USBHS_PORTSC1_PEC(x)"/>
+      <bit_field_value name="PORTSC1_PEC_0b0" value="0b0" description="No change"/>
+      <bit_field_value name="PORTSC1_PEC_0b1" value="0b1" description="Port disabled"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="OCA" access="RO" reset_value="0" description="Over-current active">
+      <alias type="CMSIS" value="USBHS_PORTSC1_OCA(x)"/>
+      <bit_field_value name="PORTSC1_OCA_0b0" value="0b0" description="Port not in over-current condition"/>
+      <bit_field_value name="PORTSC1_OCA_0b1" value="0b1" description="Port currently in over-current condition"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="OCC" access="W1C" reset_value="0" description="Over-Current Change">
+      <alias type="CMSIS" value="USBHS_PORTSC1_OCC(x)"/>
+      <bit_field_value name="PORTSC1_OCC_0b0" value="0b0" description="No over-current"/>
+      <bit_field_value name="PORTSC1_OCC_0b1" value="0b1" description="Over-current detect"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="FPR" access="RW" reset_value="0" description="Force Port Resume">
+      <alias type="CMSIS" value="USBHS_PORTSC1_FPR(x)"/>
+      <bit_field_value name="PORTSC1_FPR_0b0" value="0b0" description="No resume (K-state) detected/driven on port"/>
+      <bit_field_value name="PORTSC1_FPR_0b1" value="0b1" description="Resume detected/driven on port"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="SUSP" access="RW" reset_value="0" description="Suspend">
+      <alias type="CMSIS" value="USBHS_PORTSC1_SUSP(x)"/>
+      <bit_field_value name="PORTSC1_SUSP_0b0" value="0b0" description="Port not in suspend state"/>
+      <bit_field_value name="PORTSC1_SUSP_0b1" value="0b1" description="Port in suspend state"/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="PR" access="RW" reset_value="0" description="Port Reset">
+      <alias type="CMSIS" value="USBHS_PORTSC1_PR(x)"/>
+      <bit_field_value name="PORTSC1_PR_0b0" value="0b0" description="Port is not in reset"/>
+      <bit_field_value name="PORTSC1_PR_0b1" value="0b1" description="Port is in reset"/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="HSP" access="RO" reset_value="0" description="High Speed Port.">
+      <alias type="CMSIS" value="USBHS_PORTSC1_HSP(x)"/>
+      <bit_field_value name="PORTSC1_HSP_0b0" value="0b0" description="FS or LS"/>
+      <bit_field_value name="PORTSC1_HSP_0b1" value="0b1" description="HS"/>
+    </bit_field>
+    <bit_field offset="10" width="2" name="LS" access="RO" reset_value="0" description="Line Status">
+      <alias type="CMSIS" value="USBHS_PORTSC1_LS(x)"/>
+      <bit_field_value name="PORTSC1_LS_0b00" value="0b00" description="SE0"/>
+      <bit_field_value name="PORTSC1_LS_0b01" value="0b01" description="J-state"/>
+      <bit_field_value name="PORTSC1_LS_0b10" value="0b10" description="K-state"/>
+      <bit_field_value name="PORTSC1_LS_0b11" value="0b11" description="Undefined"/>
+    </bit_field>
+    <bit_field offset="12" width="1" name="PP" access="RW" reset_value="0" description="Port Power">
+      <alias type="CMSIS" value="USBHS_PORTSC1_PP(x)"/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="PO" access="RW" reset_value="0" description="Port Owner">
+      <alias type="CMSIS" value="USBHS_PORTSC1_PO(x)"/>
+    </bit_field>
+    <bit_field offset="14" width="2" name="PIC" access="RW" reset_value="0" description="Port Indicator Control">
+      <alias type="CMSIS" value="USBHS_PORTSC1_PIC(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="4" name="PTC" access="RW" reset_value="0" description="Port Test Control">
+      <alias type="CMSIS" value="USBHS_PORTSC1_PTC(x)"/>
+      <bit_field_value name="PORTSC1_PTC_0b0000" value="0b0000" description="Not enabled"/>
+      <bit_field_value name="PORTSC1_PTC_0b0001" value="0b0001" description="J_STATE"/>
+      <bit_field_value name="PORTSC1_PTC_0b0010" value="0b0010" description="K_STATE"/>
+      <bit_field_value name="PORTSC1_PTC_0b0011" value="0b0011" description="SE0_NAK"/>
+      <bit_field_value name="PORTSC1_PTC_0b0100" value="0b0100" description="Packet"/>
+      <bit_field_value name="PORTSC1_PTC_0b0101" value="0b0101" description="FORCE_ENABLE_HS"/>
+      <bit_field_value name="PORTSC1_PTC_0b0110" value="0b0110" description="FORCE_ENABLE_FS"/>
+      <bit_field_value name="PORTSC1_PTC_0b0111" value="0b0111" description="FORCE_ENABLE_LS"/>
+    </bit_field>
+    <bit_field offset="20" width="1" name="WKCN" access="RW" reset_value="0" description="Wake on Connect enable">
+      <alias type="CMSIS" value="USBHS_PORTSC1_WKCN(x)"/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="WKDS" access="RW" reset_value="0" description="Wake on Disconnect enable">
+      <alias type="CMSIS" value="USBHS_PORTSC1_WKDS(x)"/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="WKOC" access="RW" reset_value="0" description="Wake on Over-Current enable">
+      <alias type="CMSIS" value="USBHS_PORTSC1_WKOC(x)"/>
+    </bit_field>
+    <bit_field offset="23" width="1" name="PHCD" access="RW" reset_value="0" description="PHY low power suspend">
+      <alias type="CMSIS" value="USBHS_PORTSC1_PHCD(x)"/>
+    </bit_field>
+    <bit_field offset="24" width="1" name="PFSC" access="RW" reset_value="0" description="Port force Full-Speed Connect">
+      <alias type="CMSIS" value="USBHS_PORTSC1_PFSC(x)"/>
+      <bit_field_value name="PORTSC1_PFSC_0b0" value="0b0" description="Allow the port to identify itself as high speed"/>
+      <bit_field_value name="PORTSC1_PFSC_0b1" value="0b1" description="Force the port to only connect at full speed"/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="PTS2" access="RO" reset_value="0" description="Port Transceiver Select [2]">
+      <alias type="CMSIS" value="USBHS_PORTSC1_PTS2(x)"/>
+    </bit_field>
+    <bit_field offset="26" width="2" name="PSPD" access="RO" reset_value="0" description="Port Speed">
+      <alias type="CMSIS" value="USBHS_PORTSC1_PSPD(x)"/>
+      <bit_field_value name="PORTSC1_PSPD_0b00" value="0b00" description="Full speed"/>
+      <bit_field_value name="PORTSC1_PSPD_0b01" value="0b01" description="Low speed"/>
+      <bit_field_value name="PORTSC1_PSPD_0b10" value="0b10" description="High speed"/>
+      <bit_field_value name="PORTSC1_PSPD_0b11" value="0b11" description="Undefined"/>
+    </bit_field>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <bit_field offset="30" width="2" name="PTS" access="RO" reset_value="0" description="Port Transceiver Select [1:0]">
+      <alias type="CMSIS" value="USBHS_PORTSC1_PTS(x)"/>
+      <bit_field_value name="PORTSC1_PTS_0b00" value="0b00" description="Use UTMI transceiver interface."/>
+    </bit_field>
+  </register>
+  <register offset="0x1A4" width="32" name="OTGSC" description="On-the-Go Status and Control Register">
+    <alias type="CMSIS" value="OTGSC"/>
+    <bit_field offset="0" width="1" name="VD" access="RW" reset_value="0" description="VBUS Discharge">
+      <alias type="CMSIS" value="USBHS_OTGSC_VD(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="VC" access="RW" reset_value="0" description="VBUS Charge">
+      <alias type="CMSIS" value="USBHS_OTGSC_VC(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="HAAR" access="RW" reset_value="0" description="Hardware Assist Auto-Reset">
+      <alias type="CMSIS" value="USBHS_OTGSC_HAAR(x)"/>
+      <bit_field_value name="OTGSC_HAAR_0b0" value="0b0" description="Disabled."/>
+      <bit_field_value name="OTGSC_HAAR_0b1" value="0b1" description="Enable automatic reset after connect on host port."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="OT" access="RW" reset_value="0" description="OTG Termination">
+      <alias type="CMSIS" value="USBHS_OTGSC_OT(x)"/>
+      <bit_field_value name="OTGSC_OT_0b0" value="0b0" description="Disable pull-down on DM"/>
+      <bit_field_value name="OTGSC_OT_0b1" value="0b1" description="Enable pull-down on DM"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="DP" access="RW" reset_value="0" description="Data Pulsing">
+      <alias type="CMSIS" value="USBHS_OTGSC_DP(x)"/>
+      <bit_field_value name="OTGSC_DP_0b0" value="0b0" description="The pull-up on DP is not asserted"/>
+      <bit_field_value name="OTGSC_DP_0b1" value="0b1" description="The pull-up on DP is asserted for data pulsing during SRP"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="IDPU" access="RW" reset_value="0x1" description="ID Pull-Up">
+      <alias type="CMSIS" value="USBHS_OTGSC_IDPU(x)"/>
+      <bit_field_value name="OTGSC_IDPU_0b0" value="0b0" description="Disable pull-up. ID input not sampled."/>
+      <bit_field_value name="OTGSC_IDPU_0b1" value="0b1" description="Enable pull-up"/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <bit_field offset="7" width="1" name="HABA" access="RW" reset_value="0" description="Hardware Assist B-Disconnect to A-connect">
+      <alias type="CMSIS" value="USBHS_OTGSC_HABA(x)"/>
+      <bit_field_value name="OTGSC_HABA_0b0" value="0b0" description="Disabled."/>
+      <bit_field_value name="OTGSC_HABA_0b1" value="0b1" description="Enable automatic B-disconnect to A-connect sequence."/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="ID" access="RO" reset_value="0" description="USB ID">
+      <alias type="CMSIS" value="USBHS_OTGSC_ID(x)"/>
+      <bit_field_value name="OTGSC_ID_0b0" value="0b0" description="A device"/>
+      <bit_field_value name="OTGSC_ID_0b1" value="0b1" description="B device"/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="AVV" access="RO" reset_value="0" description="A VBus Valid">
+      <alias type="CMSIS" value="USBHS_OTGSC_AVV(x)"/>
+      <bit_field_value name="OTGSC_AVV_0b0" value="0b0" description="VBus is below A VBus valid threshold"/>
+      <bit_field_value name="OTGSC_AVV_0b1" value="0b1" description="VBus is above A VBus valid threshold"/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="ASV" access="RO" reset_value="0" description="A Session Valid">
+      <alias type="CMSIS" value="USBHS_OTGSC_ASV(x)"/>
+      <bit_field_value name="OTGSC_ASV_0b0" value="0b0" description="VBus is below A session valid threshold"/>
+      <bit_field_value name="OTGSC_ASV_0b1" value="0b1" description="VBus is above A session valid threshold"/>
+    </bit_field>
+    <bit_field offset="11" width="1" name="BSV" access="RO" reset_value="0" description="B Session Valid">
+      <alias type="CMSIS" value="USBHS_OTGSC_BSV(x)"/>
+      <bit_field_value name="OTGSC_BSV_0b0" value="0b0" description="VBus is below B session valid threshold"/>
+      <bit_field_value name="OTGSC_BSV_0b1" value="0b1" description="VBus is above B session valid threshold"/>
+    </bit_field>
+    <bit_field offset="12" width="1" name="BSE" access="RO" reset_value="0x1" description="B Session End">
+      <alias type="CMSIS" value="USBHS_OTGSC_BSE(x)"/>
+      <bit_field_value name="OTGSC_BSE_0b0" value="0b0" description="VBus is above B session end threshold"/>
+      <bit_field_value name="OTGSC_BSE_0b1" value="0b1" description="VBus is below B session end threshold"/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="MST" access="RO" reset_value="0" description="1 Milli-Second timer Toggle">
+      <alias type="CMSIS" value="USBHS_OTGSC_MST(x)"/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="DPS" access="RO" reset_value="0" description="Data bus Pulsing Status">
+      <alias type="CMSIS" value="USBHS_OTGSC_DPS(x)"/>
+      <bit_field_value name="OTGSC_DPS_0b0" value="0b0" description="No pulsing on port"/>
+      <bit_field_value name="OTGSC_DPS_0b1" value="0b1" description="Pulsing detected on port"/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="IDIS" access="W1C" reset_value="0" description="USB ID Interrupt Status">
+      <alias type="CMSIS" value="USBHS_OTGSC_IDIS(x)"/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="AVVIS" access="W1C" reset_value="0" description="A VBUS Valid Interrupt Status">
+      <alias type="CMSIS" value="USBHS_OTGSC_AVVIS(x)"/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="ASVIS" access="W1C" reset_value="0" description="A Session Valid Interrupt Status">
+      <alias type="CMSIS" value="USBHS_OTGSC_ASVIS(x)"/>
+    </bit_field>
+    <bit_field offset="19" width="1" name="BSVIS" access="W1C" reset_value="0" description="B Session Valid Interrupt Status">
+      <alias type="CMSIS" value="USBHS_OTGSC_BSVIS(x)"/>
+    </bit_field>
+    <bit_field offset="20" width="1" name="BSEIS" access="W1C" reset_value="0" description="B Session End Interrupt Status">
+      <alias type="CMSIS" value="USBHS_OTGSC_BSEIS(x)"/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="MSS" access="W1C" reset_value="0" description="1 Milli-Second timer interrupt Status">
+      <alias type="CMSIS" value="USBHS_OTGSC_MSS(x)"/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="DPIS" access="W1C" reset_value="0" description="Data Pulse interrupt Status">
+      <alias type="CMSIS" value="USBHS_OTGSC_DPIS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="IDIE" access="RW" reset_value="0" description="USB ID Interrupt Enable">
+      <alias type="CMSIS" value="USBHS_OTGSC_IDIE(x)"/>
+      <bit_field_value name="OTGSC_IDIE_0b0" value="0b0" description="Disable"/>
+      <bit_field_value name="OTGSC_IDIE_0b1" value="0b1" description="Enable"/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="AVVIE" access="RW" reset_value="0" description="A VBUS Valid Interrupt Enable">
+      <alias type="CMSIS" value="USBHS_OTGSC_AVVIE(x)"/>
+      <bit_field_value name="OTGSC_AVVIE_0b0" value="0b0" description="Disable"/>
+      <bit_field_value name="OTGSC_AVVIE_0b1" value="0b1" description="Enable"/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="ASVIE" access="RW" reset_value="0" description="A Session Valid Interrupt Enable">
+      <alias type="CMSIS" value="USBHS_OTGSC_ASVIE(x)"/>
+      <bit_field_value name="OTGSC_ASVIE_0b0" value="0b0" description="Disable"/>
+      <bit_field_value name="OTGSC_ASVIE_0b1" value="0b1" description="Enable"/>
+    </bit_field>
+    <bit_field offset="27" width="1" name="BSVIE" access="RW" reset_value="0" description="B Session Valid Interrupt Enable">
+      <alias type="CMSIS" value="USBHS_OTGSC_BSVIE(x)"/>
+      <bit_field_value name="OTGSC_BSVIE_0b0" value="0b0" description="Disable"/>
+      <bit_field_value name="OTGSC_BSVIE_0b1" value="0b1" description="Enable"/>
+    </bit_field>
+    <bit_field offset="28" width="1" name="BSEIE" access="RW" reset_value="0" description="B Session End Interrupt Enable">
+      <alias type="CMSIS" value="USBHS_OTGSC_BSEIE(x)"/>
+      <bit_field_value name="OTGSC_BSEIE_0b0" value="0b0" description="Disable"/>
+      <bit_field_value name="OTGSC_BSEIE_0b1" value="0b1" description="Enable"/>
+    </bit_field>
+    <bit_field offset="29" width="1" name="MSE" access="RW" reset_value="0" description="1 Milli-Second timer interrupt Enable">
+      <alias type="CMSIS" value="USBHS_OTGSC_MSE(x)"/>
+      <bit_field_value name="OTGSC_MSE_0b0" value="0b0" description="Disable"/>
+      <bit_field_value name="OTGSC_MSE_0b1" value="0b1" description="Enable"/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="DPIE" access="RW" reset_value="0" description="Data Pulse Interrupt Enable">
+      <alias type="CMSIS" value="USBHS_OTGSC_DPIE(x)"/>
+      <bit_field_value name="OTGSC_DPIE_0b0" value="0b0" description="Disable"/>
+      <bit_field_value name="OTGSC_DPIE_0b1" value="0b1" description="Enable"/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x1A8" width="32" name="USBMODE" description="USB Mode Register">
+    <alias type="CMSIS" value="USBMODE"/>
+    <bit_field offset="0" width="2" name="CM" access="RW" reset_value="0" description="Controller Mode">
+      <alias type="CMSIS" value="USBHS_USBMODE_CM(x)"/>
+      <bit_field_value name="USBMODE_CM_0b00" value="0b00" description="Idle (default for the USBHS module)"/>
+      <bit_field_value name="USBMODE_CM_0b01" value="0b01" description="Reserved"/>
+      <bit_field_value name="USBMODE_CM_0b10" value="0b10" description="Device controller"/>
+      <bit_field_value name="USBMODE_CM_0b11" value="0b11" description="Host controller"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="ES" access="RW" reset_value="0" description="Endian Select">
+      <alias type="CMSIS" value="USBHS_USBMODE_ES(x)"/>
+      <bit_field_value name="USBMODE_ES_0b0" value="0b0" description="Little endian. First byte referenced in least significant byte of 32-bit word."/>
+      <bit_field_value name="USBMODE_ES_0b1" value="0b1" description="Big endian. First byte referenced in most significant byte of 32-bit word."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="SLOM" access="RW" reset_value="0" description="Setup Lock-Out Mode">
+      <alias type="CMSIS" value="USBHS_USBMODE_SLOM(x)"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="SDIS" access="RW" reset_value="0" description="Stream DISable">
+      <alias type="CMSIS" value="USBHS_USBMODE_SDIS(x)"/>
+      <bit_field_value name="USBMODE_SDIS_0b0" value="0b0" description="Inactive"/>
+      <bit_field_value name="USBMODE_SDIS_0b1" value="0b1" description="Active"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="7" reset_value="0"/>
+    <bit_field offset="12" width="3" name="TXHSD" access="RW" reset_value="0x5" description="Tx to Tx HS Delay">
+      <alias type="CMSIS" value="USBHS_USBMODE_TXHSD(x)"/>
+      <bit_field_value name="USBMODE_TXHSD_0b000" value="0b000" description="10"/>
+      <bit_field_value name="USBMODE_TXHSD_0b001" value="0b001" description="11"/>
+      <bit_field_value name="USBMODE_TXHSD_0b010" value="0b010" description="12"/>
+      <bit_field_value name="USBMODE_TXHSD_0b011" value="0b011" description="13"/>
+      <bit_field_value name="USBMODE_TXHSD_0b100" value="0b100" description="14"/>
+      <bit_field_value name="USBMODE_TXHSD_0b101" value="0b101" description="15"/>
+      <bit_field_value name="USBMODE_TXHSD_0b110" value="0b110" description="16"/>
+      <bit_field_value name="USBMODE_TXHSD_0b111" value="0b111" description="17"/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="17" reset_value="0"/>
+  </register>
+  <register offset="0x1AC" width="32" name="EPSETUPSR" description="Endpoint Setup Status Register">
+    <alias type="CMSIS" value="EPSETUPSR"/>
+    <bit_field offset="0" width="4" name="EPSETUPSTAT" access="W1C" reset_value="0" description="Setup Endpoint Status">
+      <alias type="CMSIS" value="USBHS_EPSETUPSR_EPSETUPSTAT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="28" reset_value="0"/>
+  </register>
+  <register offset="0x1B0" width="32" name="EPPRIME" description="Endpoint Initialization Register">
+    <alias type="CMSIS" value="EPPRIME"/>
+    <bit_field offset="0" width="4" name="PERB" access="RW" reset_value="0" description="Prime Endpoint Receive Buffer">
+      <alias type="CMSIS" value="USBHS_EPPRIME_PERB(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="12" reset_value="0"/>
+    <bit_field offset="16" width="4" name="PETB" access="RW" reset_value="0" description="Prime Endpoint tTansmit Buffer">
+      <alias type="CMSIS" value="USBHS_EPPRIME_PETB(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="12" reset_value="0"/>
+  </register>
+  <register offset="0x1B4" width="32" name="EPFLUSH" description="Endpoint Flush Register">
+    <alias type="CMSIS" value="EPFLUSH"/>
+    <bit_field offset="0" width="4" name="FERB" access="RW" reset_value="0" description="Flush Endpoint Receive Buffer">
+      <alias type="CMSIS" value="USBHS_EPFLUSH_FERB(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="12" reset_value="0"/>
+    <bit_field offset="16" width="4" name="FETB" access="RW" reset_value="0" description="Flush Endpoint Transmit Buffer">
+      <alias type="CMSIS" value="USBHS_EPFLUSH_FETB(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="12" reset_value="0"/>
+  </register>
+  <register offset="0x1B8" width="32" name="EPSR" description="Endpoint Status Register">
+    <alias type="CMSIS" value="EPSR"/>
+    <bit_field offset="0" width="4" name="ERBR" access="RO" reset_value="0" description="Endpoint Receive Buffer Ready">
+      <alias type="CMSIS" value="USBHS_EPSR_ERBR(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="12" reset_value="0"/>
+    <bit_field offset="16" width="4" name="ETBR" access="RO" reset_value="0" description="Endpoint Transmit Buffer Ready">
+      <alias type="CMSIS" value="USBHS_EPSR_ETBR(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="12" reset_value="0"/>
+  </register>
+  <register offset="0x1BC" width="32" name="EPCOMPLETE" description="Endpoint Complete Register">
+    <alias type="CMSIS" value="EPCOMPLETE"/>
+    <bit_field offset="0" width="4" name="ERCE" access="W1C" reset_value="0" description="Endpoint Receive Complete Event">
+      <alias type="CMSIS" value="USBHS_EPCOMPLETE_ERCE(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="12" reset_value="0"/>
+    <bit_field offset="16" width="4" name="ETCE" access="W1C" reset_value="0" description="Endpoint Transmit Complete Event">
+      <alias type="CMSIS" value="USBHS_EPCOMPLETE_ETCE(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="12" reset_value="0"/>
+  </register>
+  <register offset="0x1C0" width="32" name="EPCR0" description="Endpoint Control Register 0">
+    <alias type="CMSIS" value="EPCR0"/>
+    <bit_field offset="0" width="1" name="RXS" access="RW" reset_value="0" description="RX endpoint Stall">
+      <alias type="CMSIS" value="USBHS_EPCR0_RXS(x)"/>
+      <bit_field_value name="EPCR0_RXS_0b0" value="0b0" description="Endpoint OK"/>
+      <bit_field_value name="EPCR0_RXS_0b1" value="0b1" description="Endpoint stalled"/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="2" name="RXT" access="RO" reset_value="0" description="RX endpoint Type">
+      <alias type="CMSIS" value="USBHS_EPCR0_RXT(x)"/>
+      <bit_field_value name="EPCR0_RXT_0b00" value="0b00" description="Control"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="3" reset_value="0"/>
+    <bit_field offset="7" width="1" name="RXE" access="RO" reset_value="0x1" description="RX endpoint Enable">
+      <alias type="CMSIS" value="USBHS_EPCR0_RXE(x)"/>
+      <bit_field_value name="EPCR0_RXE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="8" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TXS" access="RW" reset_value="0" description="TX Endpoint Stall">
+      <alias type="CMSIS" value="USBHS_EPCR0_TXS(x)"/>
+      <bit_field_value name="EPCR0_TXS_0b0" value="0b0" description="Endpoint OK"/>
+      <bit_field_value name="EPCR0_TXS_0b1" value="0b1" description="Endpoint stalled"/>
+    </bit_field>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <bit_field offset="18" width="2" name="TXT" access="RO" reset_value="0" description="TX Endpoint Type">
+      <alias type="CMSIS" value="USBHS_EPCR0_TXT(x)"/>
+      <bit_field_value name="EPCR0_TXT_0b00" value="0b00" description="Control"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="3" reset_value="0"/>
+    <bit_field offset="23" width="1" name="TXE" access="RO" reset_value="0x1" description="TX Endpoint Enable">
+      <alias type="CMSIS" value="USBHS_EPCR0_TXE(x)"/>
+      <bit_field_value name="EPCR0_TXE_0b1" value="0b1" description="Enable"/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="8" reset_value="0"/>
+  </register>
+  <register offset="0x1C4" width="32" name="EPCR1" description="Endpoint Control Register n">
+    <alias type="CMSIS" value="EPCR[0]"/>
+    <bit_field offset="0" width="1" name="RXS" access="RW" reset_value="0" description="RX endpoint Stall">
+      <alias type="CMSIS" value="USBHS_EPCR_RXS(x)"/>
+      <bit_field_value name="EPCR_RXS_0b0" value="0b0" description="Endpoint OK"/>
+      <bit_field_value name="EPCR_RXS_0b1" value="0b1" description="Endpoint stalled"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="RXD" access="RW" reset_value="0" description="RX endpoint Data sink">
+      <alias type="CMSIS" value="USBHS_EPCR_RXD(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="2" name="RXT" access="RW" reset_value="0" description="RX endpoint Type">
+      <alias type="CMSIS" value="USBHS_EPCR_RXT(x)"/>
+      <bit_field_value name="EPCR_RXT_0b00" value="0b00" description="Control"/>
+      <bit_field_value name="EPCR_RXT_0b01" value="0b01" description="Isochronous"/>
+      <bit_field_value name="EPCR_RXT_0b10" value="0b10" description="Bulk"/>
+      <bit_field_value name="EPCR_RXT_0b11" value="0b11" description="Interrupt"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <bit_field offset="5" width="1" name="RXI" access="RW" reset_value="0" description="RX data toggle Inhibit">
+      <alias type="CMSIS" value="USBHS_EPCR_RXI(x)"/>
+      <bit_field_value name="EPCR_RXI_0b0" value="0b0" description="PID sequencing enabled"/>
+      <bit_field_value name="EPCR_RXI_0b1" value="0b1" description="PID sequencing disabled"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="RXR" access="WO" reset_value="0" description="RX data toggle Reset">
+      <alias type="CMSIS" value="USBHS_EPCR_RXR(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="RXE" access="RW" reset_value="0" description="RX endpoint Enable">
+      <alias type="CMSIS" value="USBHS_EPCR_RXE(x)"/>
+      <bit_field_value name="EPCR_RXE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="EPCR_RXE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="8" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TXS" access="RW" reset_value="0" description="TX endpoint Stall">
+      <alias type="CMSIS" value="USBHS_EPCR_TXS(x)"/>
+      <bit_field_value name="EPCR_TXS_0b0" value="0b0" description="Endpoint OK"/>
+      <bit_field_value name="EPCR_TXS_0b1" value="0b1" description="Endpoint stalled"/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="TXD" access="RW" reset_value="0" description="TX endpoint Data source">
+      <alias type="CMSIS" value="USBHS_EPCR_TXD(x)"/>
+    </bit_field>
+    <bit_field offset="18" width="2" name="TXT" access="RW" reset_value="0" description="TX endpoint Type">
+      <alias type="CMSIS" value="USBHS_EPCR_TXT(x)"/>
+      <bit_field_value name="EPCR_TXT_0b00" value="0b00" description="Control"/>
+      <bit_field_value name="EPCR_TXT_0b01" value="0b01" description="Isochronous"/>
+      <bit_field_value name="EPCR_TXT_0b10" value="0b10" description="Bulk"/>
+      <bit_field_value name="EPCR_TXT_0b11" value="0b11" description="Interrupt"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <bit_field offset="21" width="1" name="TXI" access="RW" reset_value="0" description="TX data toggle Inhibit">
+      <alias type="CMSIS" value="USBHS_EPCR_TXI(x)"/>
+      <bit_field_value name="EPCR_TXI_0b0" value="0b0" description="PID sequencing enabled"/>
+      <bit_field_value name="EPCR_TXI_0b1" value="0b1" description="PID sequencing disabled"/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="TXR" access="WO" reset_value="0" description="TX data toggle Reset">
+      <alias type="CMSIS" value="USBHS_EPCR_TXR(x)"/>
+    </bit_field>
+    <bit_field offset="23" width="1" name="TXE" access="RW" reset_value="0" description="TX endpoint Enable">
+      <alias type="CMSIS" value="USBHS_EPCR_TXE(x)"/>
+      <bit_field_value name="EPCR_TXE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="EPCR_TXE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="8" reset_value="0"/>
+  </register>
+  <register offset="0x1C8" width="32" name="EPCR2" description="Endpoint Control Register n">
+    <alias type="CMSIS" value="EPCR[1]"/>
+    <bit_field offset="0" width="1" name="RXS" access="RW" reset_value="0" description="RX endpoint Stall">
+      <alias type="CMSIS" value="USBHS_EPCR_RXS(x)"/>
+      <bit_field_value name="EPCR_RXS_0b0" value="0b0" description="Endpoint OK"/>
+      <bit_field_value name="EPCR_RXS_0b1" value="0b1" description="Endpoint stalled"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="RXD" access="RW" reset_value="0" description="RX endpoint Data sink">
+      <alias type="CMSIS" value="USBHS_EPCR_RXD(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="2" name="RXT" access="RW" reset_value="0" description="RX endpoint Type">
+      <alias type="CMSIS" value="USBHS_EPCR_RXT(x)"/>
+      <bit_field_value name="EPCR_RXT_0b00" value="0b00" description="Control"/>
+      <bit_field_value name="EPCR_RXT_0b01" value="0b01" description="Isochronous"/>
+      <bit_field_value name="EPCR_RXT_0b10" value="0b10" description="Bulk"/>
+      <bit_field_value name="EPCR_RXT_0b11" value="0b11" description="Interrupt"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <bit_field offset="5" width="1" name="RXI" access="RW" reset_value="0" description="RX data toggle Inhibit">
+      <alias type="CMSIS" value="USBHS_EPCR_RXI(x)"/>
+      <bit_field_value name="EPCR_RXI_0b0" value="0b0" description="PID sequencing enabled"/>
+      <bit_field_value name="EPCR_RXI_0b1" value="0b1" description="PID sequencing disabled"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="RXR" access="WO" reset_value="0" description="RX data toggle Reset">
+      <alias type="CMSIS" value="USBHS_EPCR_RXR(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="RXE" access="RW" reset_value="0" description="RX endpoint Enable">
+      <alias type="CMSIS" value="USBHS_EPCR_RXE(x)"/>
+      <bit_field_value name="EPCR_RXE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="EPCR_RXE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="8" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TXS" access="RW" reset_value="0" description="TX endpoint Stall">
+      <alias type="CMSIS" value="USBHS_EPCR_TXS(x)"/>
+      <bit_field_value name="EPCR_TXS_0b0" value="0b0" description="Endpoint OK"/>
+      <bit_field_value name="EPCR_TXS_0b1" value="0b1" description="Endpoint stalled"/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="TXD" access="RW" reset_value="0" description="TX endpoint Data source">
+      <alias type="CMSIS" value="USBHS_EPCR_TXD(x)"/>
+    </bit_field>
+    <bit_field offset="18" width="2" name="TXT" access="RW" reset_value="0" description="TX endpoint Type">
+      <alias type="CMSIS" value="USBHS_EPCR_TXT(x)"/>
+      <bit_field_value name="EPCR_TXT_0b00" value="0b00" description="Control"/>
+      <bit_field_value name="EPCR_TXT_0b01" value="0b01" description="Isochronous"/>
+      <bit_field_value name="EPCR_TXT_0b10" value="0b10" description="Bulk"/>
+      <bit_field_value name="EPCR_TXT_0b11" value="0b11" description="Interrupt"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <bit_field offset="21" width="1" name="TXI" access="RW" reset_value="0" description="TX data toggle Inhibit">
+      <alias type="CMSIS" value="USBHS_EPCR_TXI(x)"/>
+      <bit_field_value name="EPCR_TXI_0b0" value="0b0" description="PID sequencing enabled"/>
+      <bit_field_value name="EPCR_TXI_0b1" value="0b1" description="PID sequencing disabled"/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="TXR" access="WO" reset_value="0" description="TX data toggle Reset">
+      <alias type="CMSIS" value="USBHS_EPCR_TXR(x)"/>
+    </bit_field>
+    <bit_field offset="23" width="1" name="TXE" access="RW" reset_value="0" description="TX endpoint Enable">
+      <alias type="CMSIS" value="USBHS_EPCR_TXE(x)"/>
+      <bit_field_value name="EPCR_TXE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="EPCR_TXE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="8" reset_value="0"/>
+  </register>
+  <register offset="0x1CC" width="32" name="EPCR3" description="Endpoint Control Register n">
+    <alias type="CMSIS" value="EPCR[2]"/>
+    <bit_field offset="0" width="1" name="RXS" access="RW" reset_value="0" description="RX endpoint Stall">
+      <alias type="CMSIS" value="USBHS_EPCR_RXS(x)"/>
+      <bit_field_value name="EPCR_RXS_0b0" value="0b0" description="Endpoint OK"/>
+      <bit_field_value name="EPCR_RXS_0b1" value="0b1" description="Endpoint stalled"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="RXD" access="RW" reset_value="0" description="RX endpoint Data sink">
+      <alias type="CMSIS" value="USBHS_EPCR_RXD(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="2" name="RXT" access="RW" reset_value="0" description="RX endpoint Type">
+      <alias type="CMSIS" value="USBHS_EPCR_RXT(x)"/>
+      <bit_field_value name="EPCR_RXT_0b00" value="0b00" description="Control"/>
+      <bit_field_value name="EPCR_RXT_0b01" value="0b01" description="Isochronous"/>
+      <bit_field_value name="EPCR_RXT_0b10" value="0b10" description="Bulk"/>
+      <bit_field_value name="EPCR_RXT_0b11" value="0b11" description="Interrupt"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <bit_field offset="5" width="1" name="RXI" access="RW" reset_value="0" description="RX data toggle Inhibit">
+      <alias type="CMSIS" value="USBHS_EPCR_RXI(x)"/>
+      <bit_field_value name="EPCR_RXI_0b0" value="0b0" description="PID sequencing enabled"/>
+      <bit_field_value name="EPCR_RXI_0b1" value="0b1" description="PID sequencing disabled"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="RXR" access="WO" reset_value="0" description="RX data toggle Reset">
+      <alias type="CMSIS" value="USBHS_EPCR_RXR(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="RXE" access="RW" reset_value="0" description="RX endpoint Enable">
+      <alias type="CMSIS" value="USBHS_EPCR_RXE(x)"/>
+      <bit_field_value name="EPCR_RXE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="EPCR_RXE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="8" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TXS" access="RW" reset_value="0" description="TX endpoint Stall">
+      <alias type="CMSIS" value="USBHS_EPCR_TXS(x)"/>
+      <bit_field_value name="EPCR_TXS_0b0" value="0b0" description="Endpoint OK"/>
+      <bit_field_value name="EPCR_TXS_0b1" value="0b1" description="Endpoint stalled"/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="TXD" access="RW" reset_value="0" description="TX endpoint Data source">
+      <alias type="CMSIS" value="USBHS_EPCR_TXD(x)"/>
+    </bit_field>
+    <bit_field offset="18" width="2" name="TXT" access="RW" reset_value="0" description="TX endpoint Type">
+      <alias type="CMSIS" value="USBHS_EPCR_TXT(x)"/>
+      <bit_field_value name="EPCR_TXT_0b00" value="0b00" description="Control"/>
+      <bit_field_value name="EPCR_TXT_0b01" value="0b01" description="Isochronous"/>
+      <bit_field_value name="EPCR_TXT_0b10" value="0b10" description="Bulk"/>
+      <bit_field_value name="EPCR_TXT_0b11" value="0b11" description="Interrupt"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <bit_field offset="21" width="1" name="TXI" access="RW" reset_value="0" description="TX data toggle Inhibit">
+      <alias type="CMSIS" value="USBHS_EPCR_TXI(x)"/>
+      <bit_field_value name="EPCR_TXI_0b0" value="0b0" description="PID sequencing enabled"/>
+      <bit_field_value name="EPCR_TXI_0b1" value="0b1" description="PID sequencing disabled"/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="TXR" access="WO" reset_value="0" description="TX data toggle Reset">
+      <alias type="CMSIS" value="USBHS_EPCR_TXR(x)"/>
+    </bit_field>
+    <bit_field offset="23" width="1" name="TXE" access="RW" reset_value="0" description="TX endpoint Enable">
+      <alias type="CMSIS" value="USBHS_EPCR_TXE(x)"/>
+      <bit_field_value name="EPCR_TXE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="EPCR_TXE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="8" reset_value="0"/>
+  </register>
+  <register offset="0x1D0" width="32" name="EPCR4" description="Endpoint Control Register n">
+    <alias type="CMSIS" value="EPCR[3]"/>
+    <bit_field offset="0" width="1" name="RXS" access="RW" reset_value="0" description="RX endpoint Stall">
+      <alias type="CMSIS" value="USBHS_EPCR_RXS(x)"/>
+      <bit_field_value name="EPCR_RXS_0b0" value="0b0" description="Endpoint OK"/>
+      <bit_field_value name="EPCR_RXS_0b1" value="0b1" description="Endpoint stalled"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="RXD" access="RW" reset_value="0" description="RX endpoint Data sink">
+      <alias type="CMSIS" value="USBHS_EPCR_RXD(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="2" name="RXT" access="RW" reset_value="0" description="RX endpoint Type">
+      <alias type="CMSIS" value="USBHS_EPCR_RXT(x)"/>
+      <bit_field_value name="EPCR_RXT_0b00" value="0b00" description="Control"/>
+      <bit_field_value name="EPCR_RXT_0b01" value="0b01" description="Isochronous"/>
+      <bit_field_value name="EPCR_RXT_0b10" value="0b10" description="Bulk"/>
+      <bit_field_value name="EPCR_RXT_0b11" value="0b11" description="Interrupt"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <bit_field offset="5" width="1" name="RXI" access="RW" reset_value="0" description="RX data toggle Inhibit">
+      <alias type="CMSIS" value="USBHS_EPCR_RXI(x)"/>
+      <bit_field_value name="EPCR_RXI_0b0" value="0b0" description="PID sequencing enabled"/>
+      <bit_field_value name="EPCR_RXI_0b1" value="0b1" description="PID sequencing disabled"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="RXR" access="WO" reset_value="0" description="RX data toggle Reset">
+      <alias type="CMSIS" value="USBHS_EPCR_RXR(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="RXE" access="RW" reset_value="0" description="RX endpoint Enable">
+      <alias type="CMSIS" value="USBHS_EPCR_RXE(x)"/>
+      <bit_field_value name="EPCR_RXE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="EPCR_RXE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="8" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TXS" access="RW" reset_value="0" description="TX endpoint Stall">
+      <alias type="CMSIS" value="USBHS_EPCR_TXS(x)"/>
+      <bit_field_value name="EPCR_TXS_0b0" value="0b0" description="Endpoint OK"/>
+      <bit_field_value name="EPCR_TXS_0b1" value="0b1" description="Endpoint stalled"/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="TXD" access="RW" reset_value="0" description="TX endpoint Data source">
+      <alias type="CMSIS" value="USBHS_EPCR_TXD(x)"/>
+    </bit_field>
+    <bit_field offset="18" width="2" name="TXT" access="RW" reset_value="0" description="TX endpoint Type">
+      <alias type="CMSIS" value="USBHS_EPCR_TXT(x)"/>
+      <bit_field_value name="EPCR_TXT_0b00" value="0b00" description="Control"/>
+      <bit_field_value name="EPCR_TXT_0b01" value="0b01" description="Isochronous"/>
+      <bit_field_value name="EPCR_TXT_0b10" value="0b10" description="Bulk"/>
+      <bit_field_value name="EPCR_TXT_0b11" value="0b11" description="Interrupt"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <bit_field offset="21" width="1" name="TXI" access="RW" reset_value="0" description="TX data toggle Inhibit">
+      <alias type="CMSIS" value="USBHS_EPCR_TXI(x)"/>
+      <bit_field_value name="EPCR_TXI_0b0" value="0b0" description="PID sequencing enabled"/>
+      <bit_field_value name="EPCR_TXI_0b1" value="0b1" description="PID sequencing disabled"/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="TXR" access="WO" reset_value="0" description="TX data toggle Reset">
+      <alias type="CMSIS" value="USBHS_EPCR_TXR(x)"/>
+    </bit_field>
+    <bit_field offset="23" width="1" name="TXE" access="RW" reset_value="0" description="TX endpoint Enable">
+      <alias type="CMSIS" value="USBHS_EPCR_TXE(x)"/>
+      <bit_field_value name="EPCR_TXE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="EPCR_TXE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="8" reset_value="0"/>
+  </register>
+  <register offset="0x1D4" width="32" name="EPCR5" description="Endpoint Control Register n">
+    <alias type="CMSIS" value="EPCR[4]"/>
+    <bit_field offset="0" width="1" name="RXS" access="RW" reset_value="0" description="RX endpoint Stall">
+      <alias type="CMSIS" value="USBHS_EPCR_RXS(x)"/>
+      <bit_field_value name="EPCR_RXS_0b0" value="0b0" description="Endpoint OK"/>
+      <bit_field_value name="EPCR_RXS_0b1" value="0b1" description="Endpoint stalled"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="RXD" access="RW" reset_value="0" description="RX endpoint Data sink">
+      <alias type="CMSIS" value="USBHS_EPCR_RXD(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="2" name="RXT" access="RW" reset_value="0" description="RX endpoint Type">
+      <alias type="CMSIS" value="USBHS_EPCR_RXT(x)"/>
+      <bit_field_value name="EPCR_RXT_0b00" value="0b00" description="Control"/>
+      <bit_field_value name="EPCR_RXT_0b01" value="0b01" description="Isochronous"/>
+      <bit_field_value name="EPCR_RXT_0b10" value="0b10" description="Bulk"/>
+      <bit_field_value name="EPCR_RXT_0b11" value="0b11" description="Interrupt"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <bit_field offset="5" width="1" name="RXI" access="RW" reset_value="0" description="RX data toggle Inhibit">
+      <alias type="CMSIS" value="USBHS_EPCR_RXI(x)"/>
+      <bit_field_value name="EPCR_RXI_0b0" value="0b0" description="PID sequencing enabled"/>
+      <bit_field_value name="EPCR_RXI_0b1" value="0b1" description="PID sequencing disabled"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="RXR" access="WO" reset_value="0" description="RX data toggle Reset">
+      <alias type="CMSIS" value="USBHS_EPCR_RXR(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="RXE" access="RW" reset_value="0" description="RX endpoint Enable">
+      <alias type="CMSIS" value="USBHS_EPCR_RXE(x)"/>
+      <bit_field_value name="EPCR_RXE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="EPCR_RXE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="8" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TXS" access="RW" reset_value="0" description="TX endpoint Stall">
+      <alias type="CMSIS" value="USBHS_EPCR_TXS(x)"/>
+      <bit_field_value name="EPCR_TXS_0b0" value="0b0" description="Endpoint OK"/>
+      <bit_field_value name="EPCR_TXS_0b1" value="0b1" description="Endpoint stalled"/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="TXD" access="RW" reset_value="0" description="TX endpoint Data source">
+      <alias type="CMSIS" value="USBHS_EPCR_TXD(x)"/>
+    </bit_field>
+    <bit_field offset="18" width="2" name="TXT" access="RW" reset_value="0" description="TX endpoint Type">
+      <alias type="CMSIS" value="USBHS_EPCR_TXT(x)"/>
+      <bit_field_value name="EPCR_TXT_0b00" value="0b00" description="Control"/>
+      <bit_field_value name="EPCR_TXT_0b01" value="0b01" description="Isochronous"/>
+      <bit_field_value name="EPCR_TXT_0b10" value="0b10" description="Bulk"/>
+      <bit_field_value name="EPCR_TXT_0b11" value="0b11" description="Interrupt"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <bit_field offset="21" width="1" name="TXI" access="RW" reset_value="0" description="TX data toggle Inhibit">
+      <alias type="CMSIS" value="USBHS_EPCR_TXI(x)"/>
+      <bit_field_value name="EPCR_TXI_0b0" value="0b0" description="PID sequencing enabled"/>
+      <bit_field_value name="EPCR_TXI_0b1" value="0b1" description="PID sequencing disabled"/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="TXR" access="WO" reset_value="0" description="TX data toggle Reset">
+      <alias type="CMSIS" value="USBHS_EPCR_TXR(x)"/>
+    </bit_field>
+    <bit_field offset="23" width="1" name="TXE" access="RW" reset_value="0" description="TX endpoint Enable">
+      <alias type="CMSIS" value="USBHS_EPCR_TXE(x)"/>
+      <bit_field_value name="EPCR_TXE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="EPCR_TXE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="8" reset_value="0"/>
+  </register>
+  <register offset="0x1D8" width="32" name="EPCR6" description="Endpoint Control Register n">
+    <alias type="CMSIS" value="EPCR[5]"/>
+    <bit_field offset="0" width="1" name="RXS" access="RW" reset_value="0" description="RX endpoint Stall">
+      <alias type="CMSIS" value="USBHS_EPCR_RXS(x)"/>
+      <bit_field_value name="EPCR_RXS_0b0" value="0b0" description="Endpoint OK"/>
+      <bit_field_value name="EPCR_RXS_0b1" value="0b1" description="Endpoint stalled"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="RXD" access="RW" reset_value="0" description="RX endpoint Data sink">
+      <alias type="CMSIS" value="USBHS_EPCR_RXD(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="2" name="RXT" access="RW" reset_value="0" description="RX endpoint Type">
+      <alias type="CMSIS" value="USBHS_EPCR_RXT(x)"/>
+      <bit_field_value name="EPCR_RXT_0b00" value="0b00" description="Control"/>
+      <bit_field_value name="EPCR_RXT_0b01" value="0b01" description="Isochronous"/>
+      <bit_field_value name="EPCR_RXT_0b10" value="0b10" description="Bulk"/>
+      <bit_field_value name="EPCR_RXT_0b11" value="0b11" description="Interrupt"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <bit_field offset="5" width="1" name="RXI" access="RW" reset_value="0" description="RX data toggle Inhibit">
+      <alias type="CMSIS" value="USBHS_EPCR_RXI(x)"/>
+      <bit_field_value name="EPCR_RXI_0b0" value="0b0" description="PID sequencing enabled"/>
+      <bit_field_value name="EPCR_RXI_0b1" value="0b1" description="PID sequencing disabled"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="RXR" access="WO" reset_value="0" description="RX data toggle Reset">
+      <alias type="CMSIS" value="USBHS_EPCR_RXR(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="RXE" access="RW" reset_value="0" description="RX endpoint Enable">
+      <alias type="CMSIS" value="USBHS_EPCR_RXE(x)"/>
+      <bit_field_value name="EPCR_RXE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="EPCR_RXE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="8" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TXS" access="RW" reset_value="0" description="TX endpoint Stall">
+      <alias type="CMSIS" value="USBHS_EPCR_TXS(x)"/>
+      <bit_field_value name="EPCR_TXS_0b0" value="0b0" description="Endpoint OK"/>
+      <bit_field_value name="EPCR_TXS_0b1" value="0b1" description="Endpoint stalled"/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="TXD" access="RW" reset_value="0" description="TX endpoint Data source">
+      <alias type="CMSIS" value="USBHS_EPCR_TXD(x)"/>
+    </bit_field>
+    <bit_field offset="18" width="2" name="TXT" access="RW" reset_value="0" description="TX endpoint Type">
+      <alias type="CMSIS" value="USBHS_EPCR_TXT(x)"/>
+      <bit_field_value name="EPCR_TXT_0b00" value="0b00" description="Control"/>
+      <bit_field_value name="EPCR_TXT_0b01" value="0b01" description="Isochronous"/>
+      <bit_field_value name="EPCR_TXT_0b10" value="0b10" description="Bulk"/>
+      <bit_field_value name="EPCR_TXT_0b11" value="0b11" description="Interrupt"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <bit_field offset="21" width="1" name="TXI" access="RW" reset_value="0" description="TX data toggle Inhibit">
+      <alias type="CMSIS" value="USBHS_EPCR_TXI(x)"/>
+      <bit_field_value name="EPCR_TXI_0b0" value="0b0" description="PID sequencing enabled"/>
+      <bit_field_value name="EPCR_TXI_0b1" value="0b1" description="PID sequencing disabled"/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="TXR" access="WO" reset_value="0" description="TX data toggle Reset">
+      <alias type="CMSIS" value="USBHS_EPCR_TXR(x)"/>
+    </bit_field>
+    <bit_field offset="23" width="1" name="TXE" access="RW" reset_value="0" description="TX endpoint Enable">
+      <alias type="CMSIS" value="USBHS_EPCR_TXE(x)"/>
+      <bit_field_value name="EPCR_TXE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="EPCR_TXE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="8" reset_value="0"/>
+  </register>
+  <register offset="0x1DC" width="32" name="EPCR7" description="Endpoint Control Register n">
+    <alias type="CMSIS" value="EPCR[6]"/>
+    <bit_field offset="0" width="1" name="RXS" access="RW" reset_value="0" description="RX endpoint Stall">
+      <alias type="CMSIS" value="USBHS_EPCR_RXS(x)"/>
+      <bit_field_value name="EPCR_RXS_0b0" value="0b0" description="Endpoint OK"/>
+      <bit_field_value name="EPCR_RXS_0b1" value="0b1" description="Endpoint stalled"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="RXD" access="RW" reset_value="0" description="RX endpoint Data sink">
+      <alias type="CMSIS" value="USBHS_EPCR_RXD(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="2" name="RXT" access="RW" reset_value="0" description="RX endpoint Type">
+      <alias type="CMSIS" value="USBHS_EPCR_RXT(x)"/>
+      <bit_field_value name="EPCR_RXT_0b00" value="0b00" description="Control"/>
+      <bit_field_value name="EPCR_RXT_0b01" value="0b01" description="Isochronous"/>
+      <bit_field_value name="EPCR_RXT_0b10" value="0b10" description="Bulk"/>
+      <bit_field_value name="EPCR_RXT_0b11" value="0b11" description="Interrupt"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <bit_field offset="5" width="1" name="RXI" access="RW" reset_value="0" description="RX data toggle Inhibit">
+      <alias type="CMSIS" value="USBHS_EPCR_RXI(x)"/>
+      <bit_field_value name="EPCR_RXI_0b0" value="0b0" description="PID sequencing enabled"/>
+      <bit_field_value name="EPCR_RXI_0b1" value="0b1" description="PID sequencing disabled"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="RXR" access="WO" reset_value="0" description="RX data toggle Reset">
+      <alias type="CMSIS" value="USBHS_EPCR_RXR(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="RXE" access="RW" reset_value="0" description="RX endpoint Enable">
+      <alias type="CMSIS" value="USBHS_EPCR_RXE(x)"/>
+      <bit_field_value name="EPCR_RXE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="EPCR_RXE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="8" reset_value="0"/>
+    <bit_field offset="16" width="1" name="TXS" access="RW" reset_value="0" description="TX endpoint Stall">
+      <alias type="CMSIS" value="USBHS_EPCR_TXS(x)"/>
+      <bit_field_value name="EPCR_TXS_0b0" value="0b0" description="Endpoint OK"/>
+      <bit_field_value name="EPCR_TXS_0b1" value="0b1" description="Endpoint stalled"/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="TXD" access="RW" reset_value="0" description="TX endpoint Data source">
+      <alias type="CMSIS" value="USBHS_EPCR_TXD(x)"/>
+    </bit_field>
+    <bit_field offset="18" width="2" name="TXT" access="RW" reset_value="0" description="TX endpoint Type">
+      <alias type="CMSIS" value="USBHS_EPCR_TXT(x)"/>
+      <bit_field_value name="EPCR_TXT_0b00" value="0b00" description="Control"/>
+      <bit_field_value name="EPCR_TXT_0b01" value="0b01" description="Isochronous"/>
+      <bit_field_value name="EPCR_TXT_0b10" value="0b10" description="Bulk"/>
+      <bit_field_value name="EPCR_TXT_0b11" value="0b11" description="Interrupt"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <bit_field offset="21" width="1" name="TXI" access="RW" reset_value="0" description="TX data toggle Inhibit">
+      <alias type="CMSIS" value="USBHS_EPCR_TXI(x)"/>
+      <bit_field_value name="EPCR_TXI_0b0" value="0b0" description="PID sequencing enabled"/>
+      <bit_field_value name="EPCR_TXI_0b1" value="0b1" description="PID sequencing disabled"/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="TXR" access="WO" reset_value="0" description="TX data toggle Reset">
+      <alias type="CMSIS" value="USBHS_EPCR_TXR(x)"/>
+    </bit_field>
+    <bit_field offset="23" width="1" name="TXE" access="RW" reset_value="0" description="TX endpoint Enable">
+      <alias type="CMSIS" value="USBHS_EPCR_TXE(x)"/>
+      <bit_field_value name="EPCR_TXE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="EPCR_TXE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="8" reset_value="0"/>
+  </register>
+  <register offset="0x200" width="32" name="USBGENCTRL" description="USB General Control Register">
+    <alias type="CMSIS" value="USBGENCTRL"/>
+    <bit_field offset="0" width="1" name="WU_IE" access="RW" reset_value="0" description="Wakeup Interrupt Enable">
+      <alias type="CMSIS" value="USBHS_USBGENCTRL_WU_IE(x)"/>
+      <bit_field_value name="USBGENCTRL_WU_IE_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="USBGENCTRL_WU_IE_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="3" reset_value="0"/>
+    <bit_field offset="5" width="1" name="WU_INT_CLR" access="RW" reset_value="0" description="Wakeup Interrupt Clear">
+      <alias type="CMSIS" value="USBHS_USBGENCTRL_WU_INT_CLR(x)"/>
+      <bit_field_value name="USBGENCTRL_WU_INT_CLR_0b0" value="0b0" description="Default, no action."/>
+      <bit_field_value name="USBGENCTRL_WU_INT_CLR_0b1" value="0b1" description="Clear the wake-up interrupt."/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="26" reset_value="0"/>
+  </register>
+</regs:peripheral>

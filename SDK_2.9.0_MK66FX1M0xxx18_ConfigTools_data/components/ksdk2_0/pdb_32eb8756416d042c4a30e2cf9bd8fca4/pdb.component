@@ -1,0 +1,1003 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="pdb" label="PDB" options="UI_COMPONENT_MODE_HIDDEN" global_only="false" hidden="false" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-6.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="Peripheral driver">
+   <sw_comp_ref name="platform.drivers.pdb" version="2.0.1"/>
+   <description>Programmable Delay Block (PDB)</description>
+   <mode id="general" label="General">
+      <description>General mode</description>
+      <config_set_refs>
+         <config_set_ref>fsl_pdb</config_set_ref>
+      </config_set_refs>
+      <master_peripheral exclusive="true">
+         <peripheral_type>PDB</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="fsl_pdb" label="General configuration" from_source="fsl_pdb.h">
+      <description>General configuration of the Programmable Delay Block.</description>
+      <generated_types>         
+      </generated_types>
+      <user_types>
+         <enum id="pdb_load_value_mode_t" label="PDB load value mode" from="_pdb_load_value_mode">
+            <description>Selects the mode to load the internal values after doing the load operation (write 1 to PDBx_SC[LDOK]). These values are for the following operations.
+PDB counter (PDBx_MOD, PDBx_IDLY)ADC trigger (PDBx_CHnDLYm)DAC trigger (PDBx_DACINTx)CMP trigger (PDBx_POyDLY)</description>
+            <item id="kPDB_LoadValueImmediately" label="Load immediately after 1 is written to LDOK"/>
+            <item id="kPDB_LoadValueOnCounterOverflow" label="Load when the PDB counter overflows (reaches the MOD register value)"/>
+            <item id="kPDB_LoadValueOnTriggerInput" label="Load when a trigger input event is detected"/>
+            <item id="kPDB_LoadValueOnCounterOverflowOrTriggerInput" label="Load either when the PDB counter overflows or a trigger input is detected"/>
+         </enum>
+         <enum id="pdb_prescaler_divider_t" label="Prescaler 1" from="_pdb_prescaler_divider">
+            <description>First stage of divider for clock passed to counter.</description>
+            <item id="kPDB_PrescalerDivider1" label="1"/>
+            <item id="kPDB_PrescalerDivider2" label="2"/>
+            <item id="kPDB_PrescalerDivider4" label="4"/>
+            <item id="kPDB_PrescalerDivider8" label="8"/>
+            <item id="kPDB_PrescalerDivider16" label="16"/>
+            <item id="kPDB_PrescalerDivider32" label="32"/>
+            <item id="kPDB_PrescalerDivider64" label="64"/>
+            <item id="kPDB_PrescalerDivider128" label="128"/>
+         </enum>
+         <enum id="pdb_divider_multiplication_factor_t" label="Prescaler 2" from="_pdb_divider_multiplication_factor">
+            <description>Second stage of divider for clock passed to counter.</description>
+            <item id="kPDB_DividerMultiplicationFactor1" label="1"/>
+            <item id="kPDB_DividerMultiplicationFactor10" label="10"/>
+            <item id="kPDB_DividerMultiplicationFactor20" label="20"/>
+            <item id="kPDB_DividerMultiplicationFactor40" label="40"/>
+         </enum>
+         <enum id="pdb_trigger_input_source_t" label="Trigger source" from="_pdb_trigger_input_source">
+            <description>Selects the trigger input source for the PDB. The trigger input source can be internal or external (EXTRG pin), or the software trigger. See chip configuration details for the actual PDB input trigger connections.</description>
+            <item id="kPDB_TriggerSoftware" label="SW trigger"/>
+            <item id="kPDB_TriggerInput0" label="Trigger 0"/>
+            <item id="kPDB_TriggerInput1" label="Trigger 1"/>
+            <item id="kPDB_TriggerInput2" label="Trigger 2"/>
+            <item id="kPDB_TriggerInput3" label="Trigger 3"/>
+            <item id="kPDB_TriggerInput4" label="Trigger 4"/>
+            <item id="kPDB_TriggerInput5" label="Trigger 5"/>
+            <item id="kPDB_TriggerInput6" label="Trigger 6"/>
+            <item id="kPDB_TriggerInput7" label="Trigger 7"/>
+            <item id="kPDB_TriggerInput8" label="Trigger 8"/>
+            <item id="kPDB_TriggerInput9" label="Trigger 9"/>
+            <item id="kPDB_TriggerInput10" label="Trigger 10"/>
+            <item id="kPDB_TriggerInput11" label="Trigger 11"/>
+            <item id="kPDB_TriggerInput12" label="Trigger 12"/>
+            <item id="kPDB_TriggerInput13" label="Trigger 13"/>
+            <item id="kPDB_TriggerInput14" label="Trigger 14"/>            
+         </enum>
+         <enum id="pdb_adc_trigger_channel_t" label="List of PDB ADC trigger channels" from="_pdb_adc_trigger_channel">
+            <description>Actual number of available channels is SoC dependent</description>
+            <item id="kPDB_ADCTriggerChannel0" label="PDB ADC trigger channel number 0"/>
+            <item id="kPDB_ADCTriggerChannel1" label="PDB ADC trigger channel number 1"/>
+            <item id="kPDB_ADCTriggerChannel2" label="PDB ADC trigger channel number 2"/>
+            <item id="kPDB_ADCTriggerChannel3" label="PDB ADC trigger channel number 3"/>
+         </enum>
+         <enum id="pdb_adc_pretrigger_t" label="List of PDB ADC pretrigger" from="_pdb_adc_pretrigger">
+            <description>Actual number of available pretrigger channels is SoC dependent</description>
+            <item id="kPDB_ADCPreTrigger0" label="PDB ADC pretrigger number 0"/>
+            <item id="kPDB_ADCPreTrigger1" label="PDB ADC pretrigger number 1"/>
+            <item id="kPDB_ADCPreTrigger2" label="PDB ADC pretrigger number 2"/>
+            <item id="kPDB_ADCPreTrigger3" label="PDB ADC pretrigger number 3"/>
+            <item id="kPDB_ADCPreTrigger4" label="PDB ADC pretrigger number 4"/>
+            <item id="kPDB_ADCPreTrigger5" label="PDB ADC pretrigger number 5"/>
+            <item id="kPDB_ADCPreTrigger6" label="PDB ADC pretrigger number 6"/>
+            <item id="kPDB_ADCPreTrigger7" label="PDB ADC pretrigger number 7"/>
+         </enum>
+         <enum id="pdb_dac_trigger_channel_t" label="List of PDB DAC trigger channels" from="_pdb_dac_trigger_channel">
+            <description>Actual number of available channels is SoC dependent</description>
+            <item id="kPDB_DACTriggerChannel0" label="PDB DAC trigger channel number 0"/>
+            <item id="kPDB_DACTriggerChannel1" label="PDB DAC trigger channel number 1"/>
+         </enum>
+         <enum id="pdb_pulse_out_trigger_channel_t" label="List of PDB pulse out trigger channels" from="_pdb_pulse_out_trigger_channel">
+            <description>Actual number of available channels is SoC dependent</description>
+            <item id="kPDB_PulseOutTriggerChannel0" label="PDB pulse out trigger channel number 0"/>
+            <item id="kPDB_PulseOutTriggerChannel1" label="PDB pulse out trigger channel number 1"/>
+            <item id="kPDB_PulseOutTriggerChannel2" label="PDB pulse out trigger channel number 2"/>
+            <item id="kPDB_PulseOutTriggerChannel3" label="PDB pulse out trigger channel number 3"/>
+         </enum>
+         <enum id="pdb_pulse_out_channel_mask_t" label="List of PDB pulse out trigger channels mask" from="_pdb_pulse_out_channel_mask">
+            <description>Actual number of available channels mask is SoC dependent</description>
+            <item id="kPDB_PulseOutChannel0Mask" label="PDB pulse out trigger channel number 0 mask"/>
+            <item id="kPDB_PulseOutChannel1Mask" label="PDB pulse out trigger channel number 1 mask"/>
+            <item id="kPDB_PulseOutChannel2Mask" label="PDB pulse out trigger channel number 2 mask"/>
+            <item id="kPDB_PulseOutChannel3Mask" label="PDB pulse out trigger channel number 3 mask"/>
+         </enum>
+         <set id="interrupt_types" label="Interrupt types">
+            <item id="kPDB_DelayInterruptEnable" label="Delay interrupt" value="kPDB_DelayInterruptEnable">
+               <description>Enable the delay interrupt. After delay passed interrupt will be invoked. Please see the PDB delay interrupt/DMA configuration.</description>
+            </item>
+            <item id="kPDB_SequenceErrorInterruptEnable" label="Sequence error interrupt" value="kPDB_SequenceErrorInterruptEnable">
+               <description>Enable the interrupt which is invoked by wrong pre-trigger fire during ADC conversion.</description>
+            </item> 
+         </set>
+         <struct id="pdb_config_t" label="PDB module configuration" from="_pdb_config">
+            <reference id="loadValueMode" label="Load value mode" type="pdb_load_value_mode_t">
+               <description>Select the load value mode.</description>
+            </reference>
+            <variable id="prescalerDivider" value="$parent.firstDivider.getValue()" options="add_to_struct"/>
+            <variable id="dividerMultiplicationFactor" value="$parent.secondDivider.getValue()" options="add_to_struct"/>
+            <reference id="firstDivider" label="First divider" type="pdb_prescaler_divider_t" options="remove_from_struct_init">
+               <description>Select the prescaler divider of the PDB counter.</description>
+            </reference>
+            <reference id="secondDivider" label="Second divider" type="pdb_divider_multiplication_factor_t" options="remove_from_struct_init">
+               <description>Multiplication factor select for prescaler of the PDB counter.</description>
+            </reference>
+            <variable id="counterPeriod_rational" value="(($parent.getParent().getSetting(`clockConfig.clockSourceFreq`).getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.getParent().getSetting(`clockConfig.clockSourceFreq`).getEnumItemValue().toHertz() &gt; 0)) ? (1.0 / (1.0 * $parent.getParent().getSetting(`clockConfig.clockSourceFreq`).getEnumItemValue().toHertz()/(($parent.firstDivider.getEnumItemLabel().toInt())*($parent.secondDivider.getEnumItemLabel().toInt())))) : `N/A`"></variable>
+            
+            <info id="counterPeriod" label="Period of counter tick" 
+             value="($parent.counterPeriod_rational.getValue() != `N/A`) ? timeToString(1000000.0 * ($parent.counterPeriod_rational.getValue())) : `N/A`">
+               <description>Period of one tick of the counter (counter resolution) clock source that is computed by using the selected clock source frequency divided by (First counter divider * Second counter divider) value.</description>
+            </info>
+            <string id="moduloValue_str" label="Desired counter interval/period" options="remove_from_struct_init" 
+               validation_expr="(x -> (x.regexMatch(`\d+`)) ? ((x.toHertz() &gt;= 1) &amp;&amp; (x.toHertz() &lt; 0x10000)) : (x.isTime()))">
+               <description>Counter interval/period (counter modulo) in ticks or time units that is used by the delay counter. An integer number in range 1 - 65535 is processed as a value in ticks, a period value must be in format &quot;float_number [ns, us, ms, s, m, h or d]&quot;.&lt;br/&gt;
+                  Time units can only be used when clock source frequency is selected (clock must not be disabled).&lt;br/&gt;
+                  </description>
+                  <validation>
+                     <constraint when_expr="($parent.moduloValue.getValue() != `N/A`)" cond_expr="($parent.moduloValue.getValue() &lt; 0x10000) &amp;&amp; ($parent.moduloValue.getValue() &gt; 0)" level="error" description="Counter interval/period value (in counter ticks) must be in the range 1 - 65535."/>
+                  </validation>
+            </string>
+            <info id="calculatedModuloValue" label="Real counter interval/period" value="(($parent.counterPeriod_rational.getValue() != `N/A`) &amp;&amp; ($parent.moduloValue.getValue() != `N/A`)) ? timeToString(1000000.0 * $parent.counterPeriod_rational.getValue() * $parent.moduloValue.getValue().toInt()) : `N/A`">
+                  <description>                     
+                     Real interval/period of the counter - maximal value of the delay.
+                  </description>
+            </info>
+            <info id="moduloValue" label="Counter interval/period [ticks]" options="remove_from_struct_init" value="
+               (($parent.moduloValue_str.getValue() == ``) ?
+               (`N/A`)
+               : (($parent.moduloValue_str.getValue().regexMatch(`\d+`)) ?
+                    ($parent.moduloValue_str.getValue().toHertz())
+                  : (($parent.moduloValue_str.getValue().isTime()) ? 
+                    ((($parent.counterPeriod_rational.getValue() != `N/A`)) ? 
+                    (toHertz(($parent.moduloValue_str.getValue().getTime(`ns`,`Hz`) / 1000000000.0) /
+                    $parent.counterPeriod_rational.getValue())) : `N/A`)
+                  : (`N/A`))))">
+               <description>Counter modulo value in counter ticks that represents the value written in the MOD register.</description>
+            </info>            
+            <reference id="triggerInputSource" label="Trigger input source" type="pdb_trigger_input_source_t">
+               <description>Select the trigger input source.</description>
+            </reference>
+            <bool id="initSWtrigger" label="Fire SW trigger after init" options="remove_from_struct_init" enable="$parent.triggerInputSource.getEnumItemId() == `kPDB_TriggerSoftware`">
+               <description>Choose whether SW trigger should be fired after initialization when it is selected as Trigger input source.</description>
+            </bool>
+            <bool id="enableContinuousMode" label="Continuous mode">
+               <description>Enable the PDB operation in Continuous mode - counter runs repeatedly after reaches the modulo value.</description>
+            </bool>
+         </struct>
+         <struct id="pdb_delay_interrupt_config_t" label="PDB delay interrupt/DMA configuration" from="mine">
+            <description>Interrupt and DMA configuration - delay time of the interrupt/DMA, interval count from the start of the PDB counter. DMA can be unavailable on some MCUs.</description>
+            <enum id="actionAfterDelay" label="Action after delay" from="mine">
+               <description>Selects whether (periodical - depend on Continuous mode) interrupt or DMA transfer will be triggered after the interval (count from start of the timer) is passed.</description>
+               <item id="noAction" label="No action">
+                   <description>After delay passed no action will be taken.</description>
+               </item> 
+               <item id="interrupt" label="Interrupt">
+                  <description>After delay passed interrupt will be triggered.</description>
+               </item> 
+               <item id="dma" label="DMA transfer" available="(($configSet.eDMA_available.getValue()) || ($configSet.DMA_available.getValue()))">
+                  <description>After delay passed DMA transfer will be triggered.</description>
+               </item>                   
+            </enum>
+            <string id="delayValue_str" label="Desired delay" options="remove_from_struct_init" 
+               validation_expr="(x -> (x.regexMatch(`\d+`)) ? ((x.toHertz() &gt;= 1) &amp;&amp; (x.toHertz() &lt; 0x10000)) : (x.isTime()))" enable="($parent.actionAfterDelay.getEnumItemId() != `noAction`)">
+               <description>Delay of the interrupt/DMA in ticks or time units that is used by the PDB (delay) counter. An integer number in range 1 - 65535 is processed as a value in ticks, a period value must be in format &quot;float_number [ns, us, ms, s, m, h or d]&quot;.&lt;br/&gt;
+                  Time units can only be used when clock source frequency is selected (clock must not be disabled).&lt;br/&gt;
+               </description>
+               <validation>
+                  <constraint when_expr="($parent.delayValue.getValue() != `N/A`)" cond_expr="($parent.delayValue.getValue() &lt; 0x10000) &amp;&amp; ($parent.delayValue.getValue() &gt; 0)" level="error" description="The delay value (in counter ticks) must be in the range 1 - 65535."/>
+                  <constraint when_expr="(($parent.delayValue.getValue() != `N/A`) &amp;&amp; ($configSet.pdb_config.getSetting(`moduloValue`).getValue() != `N/A`))" cond_expr="($parent.delayValue.getValue() &lt;= ($configSet.pdb_config.getSetting(`moduloValue`).getValue().toInt()))" level="error" description="The delay value (in counter ticks) cannot be higher than Counter interval/period in counter ticks, i.e., the appropriate delay items cannot be higher than the appropriate Counter interval/period items."/>
+               </validation>
+            </string>
+            <info id="calculatedDelayValue" label="Real delay" value="((($configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue()) != `N/A`) &amp;&amp; ($parent.delayValue.getValue() != `N/A`)) ? timeToString(1000000.0 * ($configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue()) * ($parent.delayValue.getValue().toInt())) : `N/A`" enable="($parent.actionAfterDelay.getEnumItemId() != `noAction`)">
+               <description>                     
+                  Real delay value before interrupt/DMA triggers.
+               </description>
+            </info>
+            <info id="delayValue" label="Delay [ticks]" options="remove_from_struct_init" value="
+               (($parent.delayValue_str.getValue() == ``) ?
+               (`N/A`)
+               : (($parent.delayValue_str.getValue().regexMatch(`\d+`)) ?
+                    ($parent.delayValue_str.getValue().toHertz())
+                  : (($parent.delayValue_str.getValue().isTime()) ? 
+                    ((($configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue() != `N/A`)) ? 
+                    (toHertz(($parent.delayValue_str.getValue().getTime(`ns`,`Hz`) / 1000000000.0) /
+                    $configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue())) : `N/A`)
+                  : (`N/A`))))" enable="($parent.actionAfterDelay.getEnumItemId() != `noAction`)">
+               <description>Delay value before interrupt/DMA triggers.</description>
+            </info>            
+         </struct>
+         <struct id="pdb_interrupts_config_t" label="PDB interrupts configuration" from="mine">
+            <description>Delay and sequence error interrupts configuration.</description>
+            <reference id="interrupt_sel" label="Interrupt sources" type="interrupt_types">
+               <description>Delay interrupt time is selected in PDB delay interrupt/DMA configuration -&gt; Select action after delay has to be set to Interrupt, when DMA is selected this Interrupt delay setting has not influence it and DMA transfer is invoked only. Sequence error interrupt is used to detect the ADC conversion interrupted by other pre-trigger.</description>
+               <validation>
+                  <constraint when_expr="($this.kPDB_DelayInterruptEnable.getValue())" cond_expr="($configSet.getSetting(`pdb_delay_interrupt_config.actionAfterDelay`).getEnumItemValue() !=`dma`)" level="warning" description="The delay interrupt is overridden by DMA request. And it cannot be invoked until DMA request in the PDB periphery is not disabled."/>
+               </validation>
+            </reference>
+            <!-- Interrupt request from the system component -->
+            <bool id="enable_irq" label="Enable interrupt" options="UI_LABEL_BOLD">
+               <description>Enable interupt request in the NVIC (Nested Interrupt Vector Controller) of the CPU.</description>
+            </bool>
+            <reference id="interrupt" label="Interrupt setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="($parent.enable_irq.getValue())" options="UI_LABEL_HIDDEN">
+               <description>To enable settings please select Delay interrupt driven from PDB delay interrupt/DMA configuration -&gt; Select action after delay or select Sequence error interrupt in Interrupt selection.</description>
+            </reference>
+         </struct>
+         <struct id="pdb_adc_pretrigger_config_t" label="PDB ADC Pre-trigger configuration" from="_pdb_adc_pretrigger_config">            
+            <bool id="enable" label="Enable">
+               <description>PDB Channel Pre-trigger Enable.</description>
+            </bool>
+            <enum id="outputSource" label="Output source" from="mine">
+               <description>Selector of the source that creates the pre-trigger output.</description>
+               <item id="B2B" label="Back-to-Back">
+                  <description>Back-to-Back (B2B), means that the output pre-trigger source is ADC conversion complete, caused by previous PDB pre-trigger. It takes just 2 clock delay only. In many cases, for the PDB channel 0 pre-trigger 0 it is channel 1 pre-trigger 1, for the PDB channel 1 pre-trigger 0 it is channel 0 pre-trigger 1. It can works in cycle, when change the Output source from (delayed) trigger into the B2B after the first pre-trigger in chain fire. Or just run one chain of possibly all channels and pre-triggers, by input (delayed) trigger.</description>
+               </item>
+               <item id="directTrigger" label="Trigger">
+                  <description>Trigger selected in the item Trigger input source is taken directly to be source of ADC pre-trigger with just 2 clock delay only.</description>
+               </item>
+               <item id="delayedTrigger" label="Delayed trigger">
+                  <description>Trigger selected in the item Trigger input source trigger counter and after selected delay plus 2 clock it fires ADC pre-trigger.</description>
+               </item>
+            </enum>
+            <string id="delayValue_str" label="Desired delay" options="remove_from_struct_init" 
+               validation_expr="(x -> (x.regexMatch(`\d+`)) ? ((x.toHertz() &gt;= 1) &amp;&amp; (x.toHertz() &lt; 0x10000)) : (x.isTime()))" available="($parent.outputSource.getEnumItemId() == `delayedTrigger`)">
+               <description>Delay of the counter in ticks or time units that is used by the PDB (delay) counter. Setting is available for editing when Output source is set to Delayed trigger. An integer number in range 1 - 65535 is processed as a value in ticks, a period value must be in format &quot;float_number [ns, us, ms, s, m, h or d]&quot;.&lt;br/&gt;
+                  Time units can only be used when clock source frequency is selected (clock must not be disabled).&lt;br/&gt;
+                  Without additional 2 peripheral ticks delay. For complete delay time please see ADC pre-triggers total delays and ADC trigger total delays above.
+               </description>
+               <validation>
+                  <constraint when_expr="($parent.delayValue.getValue() != `N/A`)" cond_expr="($parent.delayValue.getValue() &lt; 0x10000) &amp;&amp; ($parent.delayValue.getValue() &gt; 0)" level="error" description="The delay value (in counter ticks) must be in the range 1 - 65535."/>
+                  <constraint when_expr="(($parent.outputSource.getEnumItemId() == `delayedTrigger`) &amp;&amp; (($parent.delayValue.getValue() != `N/A`) &amp;&amp; ($configSet.pdb_config.getSetting(`moduloValue`).getValue() != `N/A`)))" cond_expr="($parent.delayValue.getValue() &lt;= ($configSet.pdb_config.getSetting(`moduloValue`).getValue().toInt()))" level="error" description="The delay value (in counter ticks) cannot be higher than Counter interval/period in counter ticks, i.e., the appropriate delay items cannot be higher than the appropriate Counter interval/period items."/>
+               </validation>
+            </string>
+            <info id="calculatedDelayValue" label="Real delay" value="((($configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue()) != `N/A`) &amp;&amp; ($parent.delayValue.getValue() != `N/A`)) ? timeToString(1000000.0 * ($configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue()) * ($parent.delayValue.getValue().toInt())) : `N/A`" available="($parent.outputSource.getEnumItemId() == `delayedTrigger`)">
+               <description>                     
+                  Real delay value before pre-trigger fires. Without additional 2 peripheral ticks delay. For complete delay time please see ADC pre-triggers total delays and ADC trigger total delays above.
+               </description>
+            </info>
+            <info id="delayValue" label="Real delay [ticks]" options="remove_from_struct_init" value="
+               (($parent.delayValue_str.getValue() == ``) ?
+               (`N/A`)
+               : (($parent.delayValue_str.getValue().regexMatch(`\d+`)) ?
+                    ($parent.delayValue_str.getValue().toHertz())
+                  : (($parent.delayValue_str.getValue().isTime()) ? 
+                    ((($configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue() != `N/A`)) ? 
+                    (toHertz(($parent.delayValue_str.getValue().getTime(`ns`,`Hz`) / 1000000000.0) /
+                    $configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue())) : `N/A`)
+                  : (`N/A`))))" available="($parent.outputSource.getEnumItemId() == `delayedTrigger`)">
+               <description>Delay value before pre-trigger fires in counter ticks. Without additional 2 peripheral ticks delay. For complete delay time please see ADC pre-triggers total delays and ADC trigger total delays above.</description>
+            </info>
+            <info id="totalDelayPT" label="Pre-trigger total delay" value="((($configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue()) != `N/A`) ? (timeToString(1000000.0 * ((($configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue()) * ((((($parent.getSetting(`outputSource`).getEnumItemId()) == `delayedTrigger`) &amp;&amp; ($parent.delayValue.getValue() != `N/A`)) ? 
+            (($parent.delayValue.getValue().toInt())) : 0))) + (2.0 * ((1.0 / (1.0 * $configSet.getSetting(`clockConfig.clockSourceFreq`).getEnumItemValue().toHertz()))))))) : (`N/A`))" options="remove_from_struct_init"/>
+            <info id="totalDelayT" label="Trigger total delay" value="((($configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue()) != `N/A`) ? (timeToString(1000000.0 * ((($configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue()) * ((((($parent.getSetting(`outputSource`).getEnumItemId()) == `delayedTrigger`) &amp;&amp; ($parent.delayValue.getValue() != `N/A`)) ? 
+            (($parent.delayValue.getValue().toInt())) : 0))) + (3.0 * ((1.0 / (1.0 * $configSet.getSetting(`clockConfig.clockSourceFreq`).getEnumItemValue().toHertz()))))))) : (`N/A`))" options="remove_from_struct_init"/>
+         </struct>
+         <enum id="intervalSource_t" label="Output source" from="mine">
+            <description>Selector of the source that creates the pre-trigger output. Interval trigger or external (other than input (delayed) trigger) direct trigger (usually from ADC conversion complete) for DAC.</description>               
+            <item id="interval" label="Interval trigger">
+               <description>Trigger selected in the item Trigger input source trigger counter and after selected delay plus 1 clock periodically (interval delay) fires DAC trigger.</description>
+            </item>               
+         </enum>
+         <struct id="pdb_dac_trigger_config_t" label="PDB DAC trigger configuration" from="_pdb_dac_trigger_config">
+            <description>`DAC ` + $this.getId() + ` trigger`</description>
+            <enum id="pdb_dac_triggered_device" label="Device" from="mine">
+               <description>Device to be triggered by this configurations. Actual number of available DAC device is SoC dependent</description>
+               <item id="DAC0" label="DAC0" value="0" available="($configSet.DAC_count.getValue() &gt; 0)"/>
+               <item id="DAC1" label="DAC1" value="1" available="($configSet.DAC_count.getValue() &gt; 1)"/>
+               <item id="DAC2" label="DAC2" value="2" available="($configSet.DAC_count.getValue() &gt; 2)"/>
+               <item id="DAC3" label="DAC3" value="3" available="($configSet.DAC_count.getValue() &gt; 3)"/>
+               <item id="DAC4" label="DAC4" value="4" available="($configSet.DAC_count.getValue() &gt; 4)"/>
+               <item id="DAC5" label="DAC5" value="5" available="($configSet.DAC_count.getValue() &gt; 5)"/>
+               <item id="DAC6" label="DAC6" value="6" available="($configSet.DAC_count.getValue() &gt; 6)"/>
+               <item id="DAC7" label="DAC7" value="7" available="($configSet.DAC_count.getValue() &gt; 7)"/>
+            </enum>
+            <bool id="enable" label="Enable">
+               <description>Enables the DAC interval trigger.</description>
+            </bool>                        
+            <dynamic_enum id="outputSource" label="Output source" options="remove_from_struct_init" items="enumItemsOf($configSet._intervalSource).arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> enumItem.getID(),
+               enumItem -> enumItem.getLabel(),
+               enumItem -> enumItem.getValue()).merge(getPeripheralSignals($instance.getPeripheral()).filter(item -> item.getID().regexMatch(`DAC_BY_TRG.` + ($parent.getID()))))">
+               <description>Selector of the source that creates the trigger output. Interval trigger or external (other than input (delayed) trigger) direct trigger (usually from ADC conversion complete) for DAC. 
+               Interval trigger is created by interval counter which share the First and Second main counter divider, to be in the same ranges.</description>
+            </dynamic_enum>
+            <string id="intervalValue_str" label="Desired interval" options="remove_from_struct_init"
+               validation_expr="(x -> (x.regexMatch(`\d+`)) ? ((x.toHertz() &gt;= 1) &amp;&amp; (x.toHertz() &lt; 0x10000)) : (x.isTime()))" available="($parent.outputSource.getEnumItemId() == `interval`)">
+               <description>Interval of the interval counter in ticks or time units that is used by the interval counter. Setting is available for editing when Output source is set to Interval trigger. An integer number in range 1 - 65535 is processed as a value in ticks, a period value must be in format &quot;float_number [ns, us, ms, s, m, h or d]&quot;.&lt;br/&gt;
+                  Time units can only be used when clock source frequency is selected (clock must not be disabled).&lt;br/&gt;
+               </description>
+               <validation>
+                  <constraint when_expr="($parent.intervalValue.getValue() != `N/A`)" cond_expr="($parent.intervalValue.getValue() &lt; 0x10000) &amp;&amp; ($parent.intervalValue.getValue() &gt; 0)" level="error" description="The interval value (in counter ticks) must be in the range 1 - 65535."/>
+                  <constraint when_expr="(($parent.outputSource.getEnumItemId() == `interval`) &amp;&amp; (($parent.intervalValue.getValue() != `N/A`) &amp;&amp; ($configSet.pdb_config.getSetting(`moduloValue`).getValue() != `N/A`)))" cond_expr="($parent.intervalValue.getValue() &lt;= ($configSet.pdb_config.getSetting(`moduloValue`).getValue().toInt()))" level="error" description="The interval value (in counter ticks) cannot be higher than Counter interval/period in counter ticks, i.e., the appropriate interval items cannot be higher than the appropriate Counter interval/period items."/>
+               </validation>
+            </string>
+            <info id="calculatedIntervalValue" label="Real interval" value="((($configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue()) != `N/A`) &amp;&amp; ($parent.intervalValue.getValue() != `N/A`)) ? timeToString(1000000.0 * ($configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue()) * ($parent.intervalValue.getValue().toInt())) : `N/A`" available="($parent.outputSource.getEnumItemId() == `interval`)">
+               <description>                     
+                  Real interval value of the interval counter.
+               </description>
+            </info>
+            <info id="intervalValue" label="Interval in ticks" options="remove_from_struct_init" value="
+               (($parent.intervalValue_str.getValue() == ``) ?
+               (`N/A`)
+               : (($parent.intervalValue_str.getValue().regexMatch(`\d+`)) ?
+                    ($parent.intervalValue_str.getValue().toHertz())
+                  : (($parent.intervalValue_str.getValue().isTime()) ? 
+                    ((($configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue() != `N/A`)) ? 
+                    (toHertz(($parent.intervalValue_str.getValue().getTime(`ns`,`Hz`) / 1000000000.0) /
+                    $configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue())) : `N/A`)
+                  : (`N/A`))))" available="($parent.outputSource.getEnumItemId() == `interval`)">
+               <description>Value of the interval counter in interval counter ticks.</description>
+            </info>            
+         </struct>
+         <struct id="clockConfig_t" label="Clock configuration" from="clock">
+            <variable id="clockSourceUId" value="`BusInterfaceClock`"/>
+            <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="createArray().addItemToList($parent.clockSourceUId.getValue(), getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()), ($instance.getPeripheral() + `_CLK_SRC`),true)">
+               <description>PDB clock source</description>
+               <validation>
+                  <dependency when_expr="$parent.clockSourceFreq.getEnumItemId() == `GetFreq`" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Warning">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="($parent.clockSourceFreq.getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" items="createArray()
+               .merge(getClockFunctionalGroups().arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> enumItem,
+               enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSourceUId.getValue(), enumItem)) + ` (`+ enumItem + `)`,
+               enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSourceUId.getValue() , enumItem)))">
+               <validation>
+                  <constraint cond_expr="$this.getEnumItemValue().toHertz() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> toHertz(x) >= 0" />
+            </dynamic_enum>            
+         </struct>
+         <struct id="pdb_pulse_out_config_t" label="PDB DAC trigger configuration" from="mine">
+            <description>                     
+                  Pulse out settings: high time (rising edge time) and low time (falling edge time), it doesn't matter which is the first.
+            </description>
+            <enum id="pdb_cmp_triggered_device" label="Device" from="mine">
+               <description>Device to be triggered by this configurations. Actual number of available CMP device is SoC dependent</description>
+               <item id="CMP0" label="CMP0" value="0" available="($configSet.CMP_count.getValue() &gt; 0)"/>
+               <item id="CMP1" label="CMP1" value="1" available="($configSet.CMP_count.getValue() &gt; 1)"/>
+               <item id="CMP2" label="CMP2" value="2" available="($configSet.CMP_count.getValue() &gt; 2)"/>
+               <item id="CMP3" label="CMP3" value="3" available="($configSet.CMP_count.getValue() &gt; 3)"/>
+               <item id="CMP4" label="CMP4" value="4" available="($configSet.CMP_count.getValue() &gt; 4)"/>
+               <item id="CMP5" label="CMP5" value="5" available="($configSet.CMP_count.getValue() &gt; 5)"/>
+               <item id="CMP6" label="CMP6" value="6" available="($configSet.CMP_count.getValue() &gt; 6)"/>
+               <item id="CMP7" label="CMP7" value="7" available="($configSet.CMP_count.getValue() &gt; 7)"/>
+            </enum>
+            <bool id="enable" label="Enable">
+               <description>Enables pulse output for the appropriate CMP WINDOW/SAMPLE signal.</description>
+            </bool>
+            <string id="highValue_str" label="Desired high" options="remove_from_struct_init"
+               validation_expr="(x -> (x.regexMatch(`\d+`)) ? ((x.toHertz() &gt;= 1) &amp;&amp; (x.toHertz() &lt; 0x10000)) : (x.isTime()))">
+               <description>Time value when the signal goes high, time interval is counted from counter start. The value in ticks or time units that is used by the high counter. An integer number in range 1 - 65535 is processed as a value in ticks, a period value must be in format &quot;float_number [ns, us, ms, s, m, h or d]&quot;.&lt;br/&gt;
+                  Time units can only be used when clock source frequency is selected (clock must not be disabled).&lt;br/&gt;
+               </description>
+               <validation>
+                  <constraint when_expr="($parent.highValue.getValue() != `N/A`)" cond_expr="($parent.highValue.getValue() &lt; 0x10000) &amp;&amp; ($parent.highValue.getValue() &gt; 0)" level="error" description="The high value (in counter ticks) must be in the range 1 - 65535."/>
+                  <constraint when_expr="(($parent.highValue.getValue() != `N/A`) &amp;&amp; ($configSet.pdb_config.getSetting(`moduloValue`).getValue() != `N/A`))" cond_expr="($parent.highValue.getValue() &lt;= ($configSet.pdb_config.getSetting(`moduloValue`).getValue().toInt()))" level="error" description="The high value (in counter ticks) cannot be higher than Counter interval/period in counter ticks, i.e., the appropriate high items cannot be higher than the appropriate Counter interval/period items."/>
+               </validation>
+            </string>
+            <info id="calculatedHighValue" label="Real high" value="((($configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue()) != `N/A`) &amp;&amp; ($parent.highValue.getValue() != `N/A`)) ? timeToString(1000000.0 * ($configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue()) * ($parent.highValue.getValue().toInt())) : `N/A`">
+               <description>                     
+                  Real time value when the signal goes high, time interval is counted from counter start.
+               </description>
+            </info>
+            <info id="highValue" label="High in ticks" options="remove_from_struct_init" value="
+               (($parent.highValue_str.getValue() == ``) ?
+               (`N/A`)
+               : (($parent.highValue_str.getValue().regexMatch(`\d+`)) ?
+                    ($parent.highValue_str.getValue().toHertz())
+                  : (($parent.highValue_str.getValue().isTime()) ? 
+                    ((($configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue() != `N/A`)) ? 
+                    (toHertz(($parent.highValue_str.getValue().getTime(`ns`,`Hz`) / 1000000000.0) /
+                    $configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue())) : `N/A`)
+                  : (`N/A`))))">
+               <description>Compare value of the PDB counter when the pulse out signal goes high.</description>
+            </info>
+            <string id="lowValue_str" label="Desired low" options="remove_from_struct_init"
+               validation_expr="(x -> (x.regexMatch(`\d+`)) ? ((x.toHertz() &gt;= 1) &amp;&amp; (x.toHertz() &lt; 0x10000)) : (x.isTime()))">
+               <description>Time value when the signal goes low, time interval is counted from counter start. The value in ticks or time units that is used by the PDB counter. An integer number in range 1 - 65535 is processed as a value in ticks, a period value must be in format &quot;float_number [ns, us, ms, s, m, h or d]&quot;.&lt;br/&gt;
+                  Time units can only be used when clock source frequency is selected (clock must not be disabled).&lt;br/&gt;
+               </description>
+               <validation>
+                  <constraint when_expr="($parent.lowValue.getValue() != `N/A`)" cond_expr="($parent.lowValue.getValue() &lt; 0x10000) &amp;&amp; ($parent.lowValue.getValue() &gt; 0)" level="error" description="The low value (in counter ticks) must be in the range 1 - 65535."/>
+                  <constraint when_expr="(($parent.lowValue.getValue() != `N/A`) &amp;&amp; ($configSet.pdb_config.getSetting(`moduloValue`).getValue() != `N/A`))" cond_expr="($parent.lowValue.getValue() &lt;= ($configSet.pdb_config.getSetting(`moduloValue`).getValue().toInt()))" level="error" description="The low value (in counter ticks) cannot be higher than Counter interval/period in counter ticks, i.e., the appropriate low items cannot be higher than the appropriate Counter interval/period items."/>
+               </validation>
+            </string>
+            <info id="calculatedLowValue" label="Real low" value="((($configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue()) != `N/A`) &amp;&amp; ($parent.lowValue.getValue() != `N/A`)) ? timeToString(1000000.0 * ($configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue()) * ($parent.lowValue.getValue().toInt())) : `N/A`">
+               <description>                     
+                  Real time value when the signal goes low, time interval is counted from counter start.
+               </description>
+            </info>
+            <info id="lowValue" label="Low in ticks" options="remove_from_struct_init" value="
+               (($parent.lowValue_str.getValue() == ``) ?
+               (`N/A`)
+               : (($parent.lowValue_str.getValue().regexMatch(`\d+`)) ?
+                    ($parent.lowValue_str.getValue().toHertz())
+                  : (($parent.lowValue_str.getValue().isTime()) ? 
+                    ((($configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue() != `N/A`)) ? 
+                    (toHertz(($parent.lowValue_str.getValue().getTime(`ns`,`Hz`) / 1000000000.0) /
+                    $configSet.pdb_config.getSetting(`counterPeriod_rational`).getValue())) : `N/A`)
+                  : (`N/A`))))">
+               <description>Compare value of the PDB counter when the pulse out signal goes low.</description>
+            </info>             
+         </struct> 
+         <!--struct id="infoStruc">
+            <info id="PTT" label="Pre-triggers" value="$parent.getParent().getParent().getSetting(`pdb_adc_pretriggers_config`).get($parent.getID().toInt()).getSetting(`totalDelayPT`).getValue()">
+               <description>The DMA source of request that is muxed through the DMAMUX device.</description>
+            </info>
+            <info id="TT" label="Triggers" value="$parent.getParent().getParent().getSetting(`pdb_adc_pretriggers_config`).get($parent.getID().toInt()).getSetting(`totalDelayT`).getValue()">
+               <description>The DMA source of request that is muxed through the DMAMUX device.</description>
+            </info>
+         </struct-->
+         <struct id="pdb_adc_pretriggers_wrap" label="ADC pre-triggering wrap" from="mine">
+            <!-- <string id="triggerNameValue" label="Configuration name" options="remove_from_struct_init">
+                <description>Custom name for the trigger configuration. Default name is TC_x and means Trigger configuration x.</description>
+               <validation>
+                  <constraint cond_expr="($this.getValue() != ``) ? isCIdentifier($this.getValue()) : false" level="error" description_expr="`The configuration name: `+ $this.getCValue() +` is not valid C identifier!`"/>
+               </validation>
+            </string> -->
+            <enum id="pdb_adc_triggered_device" label="Triggered device" from="mine">
+               <description>Device to be triggered by this configurations. Actual number of available ADC device is SoC dependent</description>
+               <item id="ADC0" label="ADC0" value="0" available="($configSet.ADC_count.getValue() &gt; 0)"/>
+               <item id="ADC1" label="ADC1" value="1" available="($configSet.ADC_count.getValue() &gt; 1)"/>
+               <item id="ADC2" label="ADC2" value="2" available="($configSet.ADC_count.getValue() &gt; 2)"/>
+               <item id="ADC3" label="ADC3" value="3" available="($configSet.ADC_count.getValue() &gt; 3)"/>
+               <item id="ADC4" label="ADC4" value="4" available="($configSet.ADC_count.getValue() &gt; 4)"/>
+               <item id="ADC5" label="ADC5" value="5" available="($configSet.ADC_count.getValue() &gt; 5)"/>
+               <item id="ADC6" label="ADC6" value="6" available="($configSet.ADC_count.getValue() &gt; 6)"/>
+               <item id="ADC7" label="ADC7" value="7" available="($configSet.ADC_count.getValue() &gt; 7)"/>
+            </enum>
+            <variable id="pdb_adc_pretriggers_total_time" value=
+            "($parent.pdb_adc_pretriggers_config.reduce(``, (lastResult, x) -> (lastResult + ` PT` + x.getID() + `: ` + 
+            (x.getSetting(`totalDelayPT`).getValue()) + ` | `
+            )))">
+               <description>
+                  Real time when ADC pre-triggers (PT) (prepare set of the conversion control and result registers) are fired out to the ADC, including 2 peripherals clock ticks of constant delay.
+               </description>
+            </variable>
+            <variable id="pdb_adc_trigger_total_time" value="($parent.pdb_adc_pretriggers_config.reduce(``, (lastResult, x) -> (lastResult + ` T` + x.getID() + `: ` + 
+               (x.getSetting(`totalDelayT`).getValue()) + ` | `
+            )))">
+               <description>
+                  Real time when ADC trigger (T) signals are fired out to the ADC, including additional 1 peripherals clock ticks of constant delay after pre-trigger fires. At this time after input trigger is detected the ADC starts measurement. 
+               </description>
+            </variable>
+            <array id="pdb_adc_pretriggers_config" label="Pre-triggers" type="pdb_adc_pretrigger_config_t" options="ShowContentAs=TABLE;UI_ARRAY_LAYOUT_HORIZONTAL;UI_ARRAY_REORDER;UI_TABLE_COLUMN_WIDTHS=2,10,10,10,10,10,10,10,10 ;remove_from_struct_init" key_selector_expr="x -> (x.getID())" max_expr="$configSet.ADC_pretrigger_count.getValue()">
+               <description>ADC pre-trigger configuration.</description>
+               <validation>
+                  <constraint cond_expr="($this.size() &lt;= ($configSet.ADC_pretrigger_count.getValue()))" level="error" description_expr="`Maximum pre-trigger count per ADC specified by HW is ` + ($configSet.ADC_pretrigger_count.getValue()) + `.`"/>
+               </validation>
+            </array>
+            <!--array id="overviewTable" label="Total delay overview" type="infoStruc" options="ShowContentAs=Table;UI_ARRAY_FIXED;UI_TABLE_COLUMN_WIDTHS=-1,2,8,8;UI_BORDER_HIDDEN" size="$parent.pdb_adc_pretriggers_config.getValue().size()"></array-->
+         </struct>
+         <struct id="edma_channels" label="DMA channels">
+            <!-- Select DMA CHANNEL -->
+            <bool id="enable_dma_channel" label="Enable DMA channel" options="UI_LABEL_BOLD">
+                <description>Enables/disables the DMA request for transfer after delay.</description>
+            </bool>
+            <reference id="dma_pdb_channel_MultiplePDB" label="DMA channel" type="edma_channel_t" options="UI_LABEL_HIDDEN" config_set_id="fsl_edma_peripheral" component_id="system" enable="$parent.enable_dma_channel.getValue()" available="(featureDefined(`FSL_FEATURE_SOC_PDB_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SOC_PDB_COUNT`) &gt; 1))">               
+               <options_expr>                  
+                  <option id="dma_function" expr="`PDB`"/>
+               </options_expr>
+            </reference>
+            <reference id="dma_pdb_channel_SinglePDB" label="DMA channel" type="edma_channel_t" options="UI_LABEL_HIDDEN" config_set_id="fsl_edma_peripheral" component_id="system" enable="$parent.enable_dma_channel.getValue()" available="(featureDefined(`FSL_FEATURE_SOC_PDB_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SOC_PDB_COUNT`) == 1))">               
+               <options_expr>                  
+                  <option id="all_devices"/>
+                  <option id="dma_function" expr="`PDB`"/>
+               </options_expr>
+            </reference>
+         </struct>
+         <struct id="dma_channels" label="DMA channels">
+            <!-- Select DMA CHANNEL -->
+            <bool id="enable_dma_channel" label="Enable DMA channel">
+                <description>Enables/disables the DMA request for transfer after delay.</description>
+            </bool>
+            <reference id="dma_pdb_channel_MultiplePDB" label="DMA channel" type="dma_channel_t" options="UI_LABEL_HIDDEN" config_set_id="fsl_dma_peripheral" component_id="system" enable="$parent.enable_dma_channel.getValue()" available="(featureDefined(`FSL_FEATURE_SOC_PDB_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SOC_PDB_COUNT`) &gt; 1))">               
+               <options_expr>                  
+                  <option id="dma_function" expr="`PDB`"/>
+               </options_expr>
+            </reference>
+            <reference id="dma_pdb_channel_SinglePDB" label="DMA channel" type="dma_channel_t" options="UI_LABEL_HIDDEN" config_set_id="fsl_dma_peripheral" component_id="system" enable="$parent.enable_dma_channel.getValue()" available="(featureDefined(`FSL_FEATURE_SOC_PDB_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SOC_PDB_COUNT`) == 1))">               
+               <options_expr>                  
+                  <option id="all_devices"/>
+                  <option id="dma_function" expr="`PDB`"/>
+               </options_expr>
+            </reference>
+         </struct>
+      </user_types>
+      <settings>
+         <variable id="eDMA_available" value="featureDefined(`SOC_EDMA_COUNT`) &amp;&amp; getFeature(`SOC_EDMA_COUNT`)"></variable>
+         <variable id="DMA_available" value="featureDefined(`SOC_DMA_COUNT`) &amp;&amp; getFeature(`SOC_DMA_COUNT`)"></variable>
+         <variable id="init_DMA_MultiplePDB" value="((($parent.dma.enable_dma_channel.isAvailable()) &amp;&amp; ($parent.dma.enable_dma_channel.getValue())) &amp;&amp; ($parent.dma.dma_pdb_channel_MultiplePDB.isAvailable()))"></variable>
+         <variable id="init_DMA_SinglePDB" value="((($parent.dma.enable_dma_channel.isAvailable()) &amp;&amp; ($parent.dma.enable_dma_channel.getValue())) &amp;&amp; ($parent.dma.dma_pdb_channel_SinglePDB.isAvailable()))"></variable>
+         <variable id="init_eDMA_MultiplePDB" value="((($parent.edma.enable_dma_channel.isAvailable()) &amp;&amp; ($parent.edma.enable_dma_channel.getValue())) &amp;&amp; ($parent.edma.dma_pdb_channel_MultiplePDB.isAvailable()))"></variable>
+         <variable id="init_eDMA_SinglePDB" value="((($parent.edma.enable_dma_channel.isAvailable()) &amp;&amp; ($parent.edma.enable_dma_channel.getValue())) &amp;&amp; ($parent.edma.dma_pdb_channel_SinglePDB.isAvailable()))"></variable>         
+         
+         <variable id="ADC_count" value="(featureDefined(`FSL_FEATURE_PDB_CHANNEL_COUNT`) ? getFeature(`FSL_FEATURE_PDB_CHANNEL_COUNT`) : (featureDefined(`FSL_FEATURE_SOC_ADC16_COUNT`) ? getFeature(`FSL_FEATURE_SOC_ADC16_COUNT`) : (featureDefined(`FSL_FEATURE_SOC_ADC12_COUNT`) ? getFeature(`FSL_FEATURE_SOC_ADC12_COUNT`) : (featureDefined(`FSL_FEATURE_SOC_CADC_COUNT`) ? getFeature(`FSL_FEATURE_SOC_CADC_COUNT`) : 4))))"></variable>
+         <variable id="ADC_pretrigger_count" value="(featureDefined(`FSL_FEATURE_PDB_CHANNEL_PRE_TRIGGER_COUNT`) ? getFeature(`FSL_FEATURE_PDB_CHANNEL_PRE_TRIGGER_COUNT`) : 8)"></variable>
+         <variable id="DAC_count" value="(featureDefined(`FSL_FEATURE_PDB_DAC_INTERVAL_TRIGGER_COUNT`) ? getFeature(`FSL_FEATURE_PDB_DAC_INTERVAL_TRIGGER_COUNT`) : (featureDefined(`FSL_FEATURE_SOC_DAC_COUNT`) ? getFeature(`FSL_FEATURE_SOC_DAC_COUNT`) : 2))"></variable>
+         <variable id="CMP_count" value="(featureDefined(`FSL_FEATURE_PDB_PULSE_OUT_COUNT`) ? getFeature(`FSL_FEATURE_PDB_PULSE_OUT_COUNT`) : (featureDefined(`FSL_FEATURE_SOC_CMP_COUNT`) ? getFeature(`FSL_FEATURE_SOC_CMP_COUNT`) : (featureDefined(`FSL_FEATURE_SOC_ACMP_COUNT`) ? getFeature(`FSL_FEATURE_SOC_ACMP_COUNT`) : 4)))"></variable>
+         <reference id="clockConfig" label="Clock configuration" type="clockConfig_t" config_set_id="fsl_pdb" options="remove_from_struct_init"  available="true">
+            <description>PDB clock configuration</description>
+         </reference>
+         <reference id="pdb_config" label="PDB counter configuration" type="pdb_config_t" config_set_id="fsl_pdb" available="true">
+            <description>PDB common counter, mode and input trigger configuration.</description>
+         </reference>
+         <!-- All into arrays -->
+         <array id="pdb_adc_triggering_config" label="ADC triggering configurations" type="pdb_adc_pretriggers_wrap" options="ShowContentAs=TABS;remove_from_struct_init" key_selector_expr="x -> (x.getSetting(`pdb_adc_triggered_device`).getEnumItemId())" max_expr="$configSet.ADC_count.getValue()">
+            <description>ADC triggering configurations - ADC pre-triggers and triggers. There can be possible to trigger other peripherals than ADC on some MCUs.</description>
+            <validation>
+               <!-- checkIt KV5x with HSADC and ADC16 add somehow resource table or add other block into the GUI -->
+               <constraint cond_expr="($this.size() &lt;= ($configSet.ADC_count.getValue()))" level="error" description_expr="`Maximum ADC trigger count specified by HW is ` + ($configSet.ADC_count.getValue()) + `.`"/>
+               <constraint cond_expr="$this.findDuplicates(x -> x.getSetting(`pdb_adc_triggered_device`).getEnumItemValue()).size() == 0" level="error" description="There are duplicated devices configured."/>
+            </validation>
+         </array>
+         <reference id="_intervalSource" label="Interval source" type="intervalSource_t" options="remove_from_struct_init" available="false"/> <!-- item used for outputSource dynamic enum implementation only -->
+         <array id="pdb_dac_triggering_config" label="DAC triggering configurations" type="pdb_dac_trigger_config_t" options="ShowContentAs=TABLE;UI_ARRAY_LAYOUT_HORIZONTAL;UI_ARRAY_INDICES_HIDDEN;UI_TABLE_COLUMN_WIDTHS=-1,12,12,12,12,12,12,12,12;remove_from_struct_init" key_selector_expr="x -> (x.getSetting(`pdb_dac_triggered_device`).getEnumItemId())" max_expr="$configSet.DAC_count.getValue()" available="featureDefined(`FSL_FEATURE_PDB_HAS_DAC`) &amp;&amp; getFeature(`FSL_FEATURE_PDB_HAS_DAC`)">         
+            <description>DAC triggering configurations - DAC triggers output selections, source and interval (period of repeated DAC trigger) if interval trigger is selected.</description>
+            <validation>
+               <constraint cond_expr="($this.size() &lt;= ($configSet.DAC_count.getValue()))" level="error" description_expr="`Maximum DAC triggers output count specified by HW is ` + ($configSet.DAC_count.getValue()) + `.`"/>
+               <constraint cond_expr="$this.findDuplicates(x -> x.getSetting(`pdb_dac_triggered_device`).getEnumItemValue()).size() == 0" level="error" description="There are duplicated devices configured."/>
+            </validation>
+         </array>
+         <array id="pdb_pulse_out_config" label="CMP WINDOW/SAMPLE pulse configurations" type="pdb_pulse_out_config_t" options="ShowContentAs=TABLE;UI_ARRAY_LAYOUT_HORIZONTAL;UI_ARRAY_INDICES_HIDDEN;UI_TABLE_COLUMN_WIDTHS=-1,8,8,8,8,8,8,8;remove_from_struct_init" key_selector_expr="x -> (x.getSetting(`pdb_cmp_triggered_device`).getEnumItemId())" max_expr="$configSet.CMP_count.getValue()" available="(($configSet.CMP_count.getValue()) &gt; 0)">         
+            <description>CMP WINDOW/SAMPLE pulse configurations - PDB pulse out configuration, time points when pulse goes high and low.</description>
+            <validation>
+               <constraint cond_expr="($this.size() &lt;= ($configSet.CMP_count.getValue()))" level="error" description_expr="`Maximum CMP WINDOW/SAMPLE pulse configurations specified by HW is ` + ($configSet.CMP_count.getValue()) + `.`"/>
+               <constraint cond_expr="$this.findDuplicates(x -> x.getSetting(`pdb_cmp_triggered_device`).getEnumItemValue()).size() == 0" level="error" description="There are duplicated devices configured."/>
+            </validation>
+         </array>
+         <reference id="pdb_delay_interrupt_config" label="PDB delay interrupt/DMA configuration" type="pdb_delay_interrupt_config_t" config_set_id="fsl_pdb" available="true">
+            <description>Interrupt and DMA configuration - delay time of the interrupt/DMA, interval count from the start of the PDB counter. DMA can be unavailable on some MCUs.</description>
+         </reference>
+         <reference id="edma" label="DMA configuration" type="edma_channels" available="($configSet.eDMA_available.getValue()) &amp;&amp; ($parent.pdb_delay_interrupt_config.actionAfterDelay.isAvailable()) &amp;&amp; ($parent.pdb_delay_interrupt_config.actionAfterDelay.getEnumItemId() == `dma`)">
+            <description>Configuration of the DMA timer requests and channels configuration in eDMA and DMAMUX.</description>
+         </reference>
+         <reference id="dma" label="DMA configuration" type="dma_channels" available="($configSet.DMA_available.getValue()) &amp;&amp; ($parent.pdb_delay_interrupt_config.actionAfterDelay.isAvailable()) &amp;&amp; ($parent.pdb_delay_interrupt_config.actionAfterDelay.getEnumItemId() == `dma`)">
+            <description>Configuration of the DMA timer requests and channels configuration in eDMA and DMAMUX.</description>
+         </reference>
+         <reference id="pdb_interrupts_config" label="PDB interrupts configuration" type="pdb_interrupts_config_t" config_set_id="fsl_pdb" available="true">
+            <description>Delay and sequence error interrupts configuration.</description>
+         </reference>
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+         <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>         
+      </settings>      
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+            <from component_id="system" config_set_id="fsl_edma_peripheral" if_expr="($configSet.eDMA_available.getValue())"/>
+            <from component_id="system" config_set_id="fsl_dma_peripheral" if_expr="($configSet.DMA_available.getValue())"/>
+         </import>
+         <def fragment="pretriggers_config_items">
+            <expr>leftPadding(`.`, $param.paddingLevel) + `enablePreTriggerMask` + ` = ` + ($this.filter(item_filter -> (item_filter.getSetting(`enable`).getValue() == `true`)).reduce(`0U`, (lastResult, x) -> (lastResult + ` | (1U &lt;&lt; kPDB_ADCPreTrigger` + x.getID() + `)`))) + `,`            
+            </expr><br/>
+            <expr>leftPadding(`.`, $param.paddingLevel) + `enableOutputMask` + ` = ` + ($this.filter(item_filter -> (item_filter.getSetting(`outputSource`).getEnumItemId() == `delayedTrigger`)).reduce(`0U`, (lastResult, x) -> (lastResult + ` | (1U &lt;&lt; kPDB_ADCPreTrigger` + x.getID() + `)`))) + `,`            
+            </expr><br/>
+            <expr>leftPadding(`.`, $param.paddingLevel) + `enableBackToBackOperationMask` + ` = ` + ($this.filter(item_filter -> (item_filter.getSetting(`outputSource`).getEnumItemId() == `B2B`)).reduce(`0U`, (lastResult, x) -> (lastResult + ` | (1U &lt;&lt; kPDB_ADCPreTrigger` + x.getID() + `)`)))
+            </expr><br/>
+         </def>
+         <def fragment="pretriggers_value_array_items_value">            
+            <expr>leftPadding(($this.getSetting(`outputSource`).isAvailable()) &amp;&amp; ($this.getSetting(`outputSource`).getEnumItemId() == `delayedTrigger`) ? ($this.delayValue.getValue().toInt() + `U` + ($param._last ? ``: `,`)) : (`0U` + ($param._last ? ``: `,`) + ` //Unused`), 1)</expr><br/>
+         </def> 
+         <def fragment="pretriggers_value_array_items">            
+            <fragment id="pretriggers_value_array_items_value" for_elements_of="$this">
+               <param id="paddingLevel" expr="1"/>
+            </fragment>
+         </def>  
+         <def fragment="all_pretriggers_config_array">
+            <if expr="($this.pdb_adc_pretriggers_config.size() &gt; 0)">
+               <expr>leftPadding(`/* PDB ` + $this.getSettingKey() + ` pre-triggers configuration */`,0)</expr><br/>
+               <text>pdb_adc_pretrigger_config_t </text>
+               <expr>$configSet.inst_ID.getValue() + `_` + $this.getSettingKey() + `_pretriggers_config`</expr>
+               <text> = {</text><br/>            
+               <fragment id="pretriggers_config_items" apply_to="$this.pdb_adc_pretriggers_config">
+                  <param id="paddingLevel" expr="1"/>
+               </fragment>
+               <text>};</text><br/>
+            </if>
+            <if expr="($this.pdb_adc_pretriggers_config.size() &gt; 0) &amp;&amp; ($this.pdb_adc_pretriggers_config.filter(item_filter -> (item_filter.getSetting(`outputSource`).getEnumItemId() == `delayedTrigger`)).size() != 0)">
+            <text>const uint32_t </text>
+            <expr>$configSet.inst_ID.getValue() + `_` + $this.getSettingKey() + `_pretriggers_value[` + $configSet.inst_ID.getValue() + `_` + $this.getSettingKey() + `_PRETRIGGERS_COUNT` + `]`</expr>
+            <text> = {</text><br/>
+            <fragment id="pretriggers_value_array_items" apply_to="$this.pdb_adc_pretriggers_config">
+               <param id="paddingLevel" expr="1"/>
+            </fragment>
+            <text>};</text><br/>
+            </if>
+         </def>
+         <def fragment="set_pretriggers_DelayValuesInner">
+            <if expr="(($this.getSetting(`outputSource`).isAvailable()) &amp;&amp; ($this.getSetting(`outputSource`).getEnumItemId() == `delayedTrigger`))">
+               <expr>leftPadding(`PDB_SetADCPreTriggerDelayValue(` + $configSet.inst_peripheral_ID.getValue() + `, kPDB_ADCTriggerChannel` + ($param.outerIndex) + `, kPDB_ADCPreTrigger` + ($param._index) + `, ` + $configSet.inst_ID.getValue() + `_` + ($param.outerKey) + `_pretriggers_value[` + (($configSet.inst_ID.getValue()) + `_` + ($parent.getParent().getSettingKey()) + `_PT` + ($this.getSettingKey())) + `]);`, 1)</expr><br/>
+            </if>
+         </def>
+         <def fragment="set_pretriggers_DelayValues">
+            <fragment id="set_pretriggers_DelayValuesInner" for_elements_of="$this">
+               <param id="paddingLevel" expr="1"/>
+               <param id="outerIndex" expr="($param.outerIndex)"/>
+               <param id="outerKey" expr="($param.outerKey)"/>
+            </fragment>
+         </def>
+         <def fragment="set_pretriggers_configs">
+            <if expr="($this.getSetting(`pdb_adc_pretriggers_config`).size() &gt; 0)">
+               <expr>leftPadding(`/* PDB ` + $this.getSettingKey() + ` pre-triggers initialization */`,1)</expr><br/>
+               <expr>leftPadding(`PDB_SetADCPreTriggerConfig(` + $configSet.inst_peripheral_ID.getValue() + `, kPDB_ADCTriggerChannel` + ($this.pdb_adc_triggered_device.getEnumItemValue()) + `, &amp;` + $configSet.inst_ID.getValue() + `_` + $this.getSettingKey() + `_pretriggers_config);`, 1)</expr><br/>
+               <fragment id="set_pretriggers_DelayValues" apply_to="$this.pdb_adc_pretriggers_config">
+                  <param id="paddingLevel" expr="1"/>
+                  <param id="outerIndex" expr="($parent.pdb_adc_triggered_device.getEnumItemValue())"/>
+                  <param id="outerKey" expr="$parent.getSettingKey()"/>
+               </fragment>
+            </if>
+         </def>         
+         <def fragment="dac_triggers_array_items">
+            <expr>leftPadding(`.`, $param.paddingLevel) + `enableExternalTriggerInput` + ` = ` + (($this.getSetting(`outputSource`).getEnumItemId() == `interval`) ? `false` : `true`) + `,`
+            </expr><br/>
+            <expr>leftPadding(`.`, $param.paddingLevel) + `enableIntervalTrigger` + ` = ` + ($this.getSetting(`enable`).getValue())
+            </expr><br/>
+         </def>
+         <def fragment="dac_triggers_array_block">
+            <text>  {</text><br/>
+            <fragment id="dac_triggers_array_items" apply_to="$this">
+               <param id="paddingLevel" expr="2"/>
+            </fragment>
+            <text>  }</text>
+            <expr> ($param._last ? ``: `,`) </expr><br/>
+         </def>    
+         <def fragment="dac_triggers_value_array_items">            
+            <expr>leftPadding(($this.getSetting(`outputSource`).isAvailable()) &amp;&amp; ($this.getSetting(`outputSource`).getEnumItemId() == `interval`) ? ($this.intervalValue.getValue() + `U` + ($param._last ? ``: `,`)) : (`0U` + ($param._last ? ``: `,`) + ` //Unused`), 1)</expr><br/>
+         </def>         
+         <def fragment="all_dac_triggers_config_array">
+            <expr>`/* PDB DAC triggering configurations */`</expr><br/>
+            <text>pdb_dac_trigger_config_t </text>
+            <expr>$configSet.inst_ID.getValue() + `_DAC` + `_triggers_config[` + $configSet.inst_ID.getValue() + `_DAC_TRIGGERS_COUNT` + `]`</expr>
+            <text> = {</text><br/>
+            <fragment id="dac_triggers_array_block" for_elements_of="$this">
+               <param id="paddingLevel" expr="1"/>
+            </fragment>
+            <text>};</text><br/>
+            <text>const uint32_t </text>
+            <expr>$configSet.inst_ID.getValue() + `_DAC` + `_triggers_value[` + $configSet.inst_ID.getValue() + `_DAC_TRIGGERS_COUNT` + `]`</expr>
+            <text> = {</text><br/>
+            <fragment id="dac_triggers_value_array_items" for_elements_of="$this">
+               <param id="paddingLevel" expr="1"/>
+            </fragment>
+            <text>};</text><br/>
+         </def>
+         <def fragment="cmp_high_values_array_items">            
+            <expr>leftPadding(($this.highValue.getValue() + `U` + ($param._last ? ``: `,`)), 1)</expr><br/>
+         </def>
+         <def fragment="cmp_low_values_array_items">            
+            <expr>leftPadding(($this.lowValue.getValue() + `U` + ($param._last ? ``: `,`)), 1)</expr><br/>
+         </def>
+         <def fragment="all_cmp_values_array">
+            <text>const uint32_t </text>
+            <expr>$configSet.inst_ID.getValue() + `_CMP` + `_pulse_out_high_values[` + $configSet.inst_ID.getValue() + `_CMP_PULSE_OUT_COUNT` + `]`</expr>
+            <text> = {</text><br/>
+            <fragment id="cmp_high_values_array_items" for_elements_of="$this">
+               <param id="paddingLevel" expr="1"/>
+            </fragment>
+            <text>};</text><br/>            
+            <text>const uint32_t </text>
+            <expr>$configSet.inst_ID.getValue() + `_CMP` + `_pulse_out_low_values[` + $configSet.inst_ID.getValue() + `_CMP_PULSE_OUT_COUNT` + `]`</expr>
+            <text> = {</text><br/>
+            <fragment id="cmp_low_values_array_items" for_elements_of="$this">
+               <param id="paddingLevel" expr="1"/>
+            </fragment>
+            <text>};</text><br/>
+         </def>
+         <def fragment="set_dacs_trigger_configs">
+            <expr>leftPadding(`PDB_SetDACTriggerConfig(` + $configSet.inst_peripheral_ID.getValue() + `, kPDB_DACTriggerChannel` + ($this.pdb_dac_triggered_device.getEnumItemValue()) + `, &amp;` + $configSet.inst_ID.getValue() + `_DAC` + `_triggers_config[` + $configSet.inst_ID.getValue() + `_` + $this.getSettingKey() + `]);`, 1)</expr><br/>
+            <if expr="(($this.getSetting(`outputSource`).isAvailable()) &amp;&amp; ($this.getSetting(`outputSource`).getEnumItemId() == `interval`))">
+            <expr>leftPadding(`PDB_SetDACTriggerIntervalValue(` + $configSet.inst_peripheral_ID.getValue() + `, kPDB_DACTriggerChannel` + (($this.pdb_dac_triggered_device.getEnumItemValue())) + `, ` + $configSet.inst_ID.getValue() + `_DAC` + `_triggers_value[` + $configSet.inst_ID.getValue() + `_` + $this.getSettingKey() + `]);`, 1)</expr><br/>
+            </if>
+         </def>
+         <def fragment="set_cmps_pulseOut_configs">            
+            <expr>leftPadding(`PDB_SetPulseOutTriggerDelayValue(` + $configSet.inst_peripheral_ID.getValue() + `, kPDB_PulseOutTriggerChannel` + ($this.pdb_cmp_triggered_device.getEnumItemValue()) + `, ` + $configSet.inst_ID.getValue() + `_CMP` + `_pulse_out_high_values[` + $configSet.inst_ID.getValue() + `_` +  $this.getSettingKey() +`], ` + $configSet.inst_ID.getValue() + `_CMP` + `_pulse_out_low_values[` + $configSet.inst_ID.getValue() + `_` + $this.getSettingKey() + `]);`, 1)</expr><br/>            
+         </def>
+         <def fragment="set_cmps_pulseOut_enable">            
+            <if expr="$this.enable.getValue()">
+               <expr>leftPadding(`PDB_EnablePulseOutTrigger(` + $configSet.inst_peripheral_ID.getValue() + `, kPDB_PulseOutChannel` + $this.pdb_cmp_triggered_device.getEnumItemValue() + `Mask, true);`, 1)</expr><br/>
+            </if>
+         </def>
+         <def fragment="set_interrupt_configs">            
+            <if expr="($this.actionAfterDelay.getEnumItemId() != `noAction`)">
+               <expr>leftPadding(`PDB_SetCounterDelayValue(` + $configSet.inst_peripheral_ID.getValue() + `, ` + $this.delayValue.getValue() + `U);`, 1)</expr><br/>
+            </if>
+            <if expr="($this.actionAfterDelay.getEnumItemId() == `dma`)">
+               <expr>leftPadding(`PDB_EnableDMA(` + $configSet.inst_peripheral_ID.getValue() + `, true);`, 1)</expr><br/>
+               <!-- DMA channel -->                
+               <fragment id="DMAMUX_source_init" if_expr="($configSet.init_DMA_MultiplePDB.getValue())" apply_to="$parent.dma.dma_pdb_channel_MultiplePDB" />
+               <fragment id="DMAMUX_source_init" if_expr="($configSet.init_DMA_SinglePDB.getValue())" apply_to="$parent.dma.dma_pdb_channel_SinglePDB" />
+               <fragment id="DMA_handle_init" if_expr="($configSet.init_DMA_MultiplePDB.getValue())" apply_to="$parent.dma.dma_pdb_channel_MultiplePDB" />
+               <fragment id="DMA_handle_init" if_expr="($configSet.init_DMA_SinglePDB.getValue())" apply_to="$parent.dma.dma_pdb_channel_SinglePDB" />
+               <!-- eDMA channel -->                
+               <fragment id="DMAMUX_source_init" if_expr="($configSet.init_eDMA_MultiplePDB.getValue())" apply_to="$parent.edma.dma_pdb_channel_MultiplePDB" />
+               <fragment id="DMAMUX_source_init" if_expr="($configSet.init_eDMA_SinglePDB.getValue())" apply_to="$parent.edma.dma_pdb_channel_SinglePDB" />
+               <fragment id="DMA_handle_init" if_expr="($configSet.init_eDMA_MultiplePDB.getValue())" apply_to="$parent.edma.dma_pdb_channel_MultiplePDB" />
+               <fragment id="DMA_handle_init" if_expr="($configSet.init_eDMA_SinglePDB.getValue())" apply_to="$parent.edma.dma_pdb_channel_SinglePDB" />
+            </if>
+            <if expr="($parent.getSetting(`pdb_interrupts_config.interrupt_sel`).getCValue() != ``)">
+               <expr>leftPadding(`PDB_EnableInterrupts(` + $configSet.inst_peripheral_ID.getValue() + `, ` +  $parent.getSetting(`pdb_interrupts_config.interrupt_sel`).getCValue() + `);`, 1)</expr><br/>
+            </if>
+         </def>
+         <def fragment="dac_trigger_config_enum_field">
+            <expr>leftPadding((($configSet.inst_ID.getValue()) + `_` + ($this.getSettingKey()) + ` = ` + ($param._index) + `U` + ($param._last ? `` : `,`)), $param.paddingLevel)</expr>
+            <br/>
+         </def>
+         <def fragment="dac_trigger_config_enum">
+            <expr>`enum ` + ($configSet.inst_ID.getValue()) + `_dac_trigger_config_indexes`</expr><br/>
+            <text>{</text><br/>
+            <fragment id="dac_trigger_config_enum_field" for_elements_of="$this">
+               <param id="paddingLevel" expr="1"/>
+            </fragment>
+            <text>};</text><br/>
+         </def>
+         <def fragment="cmp_trigger_config_enum_field">
+            <expr>leftPadding((($configSet.inst_ID.getValue()) + `_` + ($this.getSettingKey()) + ` = ` + ($param._index) + `U` + ($param._last ? `` : `,`)), $param.paddingLevel)</expr>
+            <br/>
+         </def>
+         <def fragment="cmp_trigger_config_enum">
+            <expr>`enum ` + ($configSet.inst_ID.getValue()) + `_cmp_trigger_config_indexes`</expr><br/>
+            <text>{</text><br/>
+            <fragment id="cmp_trigger_config_enum_field" for_elements_of="$this">
+               <param id="paddingLevel" expr="1"/>
+            </fragment>
+            <text>};</text><br/>
+         </def>
+         <def fragment="adc_pretrigger_config_enum_field">
+            <expr>leftPadding((($configSet.inst_ID.getValue()) + `_` + ($parent.getParent().getSettingKey()) + `_PT` + ($this.getSettingKey()) + ` = ` + ($param._index.toInt()) + `U` + ($param._last ? `` : `,`)), $param.paddingLevel)</expr>
+            <br/>
+         </def>
+         <def fragment="adc_pretrigger_config_enum">
+            <if expr="(($this.pdb_adc_pretriggers_config.size()) &gt; 0)">
+               <expr>`/* Definition of the ADC pre-trigger (PT) configurations. Used as index to ` + ($configSet.inst_ID.getValue()) + `_` +  ($this.getSettingKey()) + `_pretriggers_value arrays. */`</expr><br/>
+               <expr>`enum ` + ($configSet.inst_ID.getValue()) + `_adc` + $this.getID() + `_trigger_config_indexes`</expr><br/>
+               <text>{</text><br/>
+               <fragment id="adc_pretrigger_config_enum_field" for_elements_of="$this.pdb_adc_pretriggers_config">
+                  <param id="paddingLevel" expr="1"/>
+               </fragment>
+               <text>};</text><br/>
+            </if>
+         </def>
+         <def fragment="all_pretriggers_config_array_extern">
+            <if expr="($this.pdb_adc_pretriggers_config.size() &gt; 0)">               
+               <text>extern pdb_adc_pretrigger_config_t </text>
+               <expr>$configSet.inst_ID.getValue() + `_` + $this.getSettingKey() + `_pretriggers_config;`</expr>
+               <br/>
+            </if>
+            <if expr="($this.pdb_adc_pretriggers_config.size() &gt; 0) &amp;&amp; ($this.pdb_adc_pretriggers_config.filter(item_filter -> (item_filter.getSetting(`outputSource`).getEnumItemId() == `delayedTrigger`)).size() != 0)">
+               <text>extern const uint32_t </text>
+               <expr>$configSet.inst_ID.getValue() + `_` + $this.getSettingKey() + `_pretriggers_value[` + $configSet.inst_ID.getValue() + `_` + $this.getSettingKey() + `_PRETRIGGERS_COUNT` + `];`</expr>
+               <br/>
+            </if>
+         </def>
+         <def fragment="all_dac_triggers_config_array_extern">            
+            <text>extern pdb_dac_trigger_config_t </text>
+            <expr>$configSet.inst_ID.getValue() + `_DAC` + `_triggers_config[` + $configSet.inst_ID.getValue() + `_DAC_TRIGGERS_COUNT` + `];`</expr>
+            <br/>
+            <text>extern const uint32_t </text>
+            <expr>$configSet.inst_ID.getValue() + `_DAC` + `_triggers_value[` + $configSet.inst_ID.getValue() + `_DAC_TRIGGERS_COUNT` + `];`</expr>
+            <br/>
+         </def>
+         <def fragment="all_cmp_values_array_extern">
+            <text>extern const uint32_t </text>
+            <expr>$configSet.inst_ID.getValue() + `_CMP` + `_pulse_out_high_values[` + $configSet.inst_ID.getValue() + `_CMP_PULSE_OUT_COUNT` + `];`</expr>
+            <br/>            
+            <text>extern const uint32_t </text>
+            <expr>$configSet.inst_ID.getValue() + `_CMP` + `_pulse_out_low_values[` + $configSet.inst_ID.getValue() + `_CMP_PULSE_OUT_COUNT` + `];`</expr>
+            <br/>
+         </def>         
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">pdb</param>
+               <param id="filename">fsl_pdb.h</param>
+            </fragment>
+            <fragment id="include" if_expr="(($configSet.init_DMA_MultiplePDB.getValue()) || ($configSet.init_DMA_SinglePDB.getValue())) || (($configSet.init_eDMA_MultiplePDB.getValue()) || ($configSet.init_eDMA_SinglePDB.getValue()))">
+               <param id="name">dmamux</param>
+               <param id="filename">fsl_dmamux.h</param>
+            </fragment>
+            <fragment id="include" if_expr="($configSet.eDMA_available.getValue()) &amp;&amp; (($configSet.init_eDMA_MultiplePDB.getValue()) || ($configSet.init_eDMA_SinglePDB.getValue()))">
+               <param id="name">edma</param>
+               <param id="filename">fsl_edma.h</param>
+            </fragment>
+            <fragment id="include" if_expr="($configSet.DMA_available.getValue()) &amp;&amp; (($configSet.init_DMA_MultiplePDB.getValue()) || ($configSet.init_DMA_SinglePDB.getValue()))">
+               <param id="name">dma</param>
+               <param id="filename">fsl_dma.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <fragment id="comment">
+               <param id="content" expr="$instance.getFnGroupName() + ` defines for ` + $instance.getPeripheral()"></param>
+               <param id="paddingLevel" expr="0"></param>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="$this.inst_peripheral_ID.getValue()"/>
+               <param id="value" expr="$instance.getPeripheral()"/>
+               <param id="description">Definition of peripheral ID</param>
+            </fragment>
+            <fragment id="adc_pretrigger_config_enum" for_elements_of="$this.pdb_adc_triggering_config" if_expr="$this.pdb_adc_triggering_config.size() &gt; 0"/>
+            <fragment id="define" for_elements_of="$this.pdb_adc_triggering_config" if_expr="$this.pdb_adc_triggering_config.size() &gt; 0">
+               <param id="name" expr="$configSet.inst_ID.getValue() + `_` + $this.getSettingKey() + `_PRETRIGGERS_COUNT`"/>
+               <param id="value" expr="($this.pdb_adc_pretriggers_config.size())"/>
+               <param id="description">Number of the pre-triggers used in appropriate configuration`</param>
+            </fragment>
+            <fragment id="comment" if_expr="$this.pdb_dac_triggering_config.size() &gt; 0" apply_to="$this.pdb_dac_triggering_config">
+               <param id="content" expr="`Definition of the DAC trigger configurations. Used as index to ` + $configSet.inst_ID.getValue() + `DAC_triggers_config and ` + $configSet.inst_ID.getValue() + `DAC_triggers_value arrays.`"></param>
+               <param id="paddingLevel" expr="0"></param>
+            </fragment>
+            <fragment id="dac_trigger_config_enum" if_expr="$this.pdb_dac_triggering_config.size() &gt; 0" apply_to="$this.pdb_dac_triggering_config"/>
+            <fragment id="define">
+               <param id="name" expr="$configSet.inst_ID.getValue() + `_DAC_TRIGGERS_COUNT`"/>
+               <param id="value" expr="($this.pdb_dac_triggering_config.size())"/>
+               <param id="description">Number of the CMP widow sample pulse out configuration</param>
+            </fragment>
+            <fragment id="comment" if_expr="$this.pdb_pulse_out_config.size() &gt; 0" apply_to="$this.pdb_pulse_out_config">
+               <param id="content" expr="`Definition of the PDB pulse out (CMP window/sample) configurations. Used as index to ` + $configSet.inst_ID.getValue() + `_pulse_out_xxx_values array.`"></param>
+               <param id="paddingLevel" expr="0"></param>
+            </fragment>
+            <fragment id="cmp_trigger_config_enum" if_expr="$this.pdb_pulse_out_config.size() &gt; 0" apply_to="$this.pdb_pulse_out_config">
+               <param id="paddingLevel" expr="0"></param>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="$configSet.inst_ID.getValue() + `_CMP_PULSE_OUT_COUNT`"/>
+               <param id="value" expr="($this.pdb_pulse_out_config.size())"/>
+               <param id="description">Number of the CMP widow sample pulse out configuration</param>
+            </fragment>            
+            <fragment id="IRQ_definitions" apply_to="$this.pdb_interrupts_config.interrupt" if_expr="$this.pdb_interrupts_config.interrupt.isAvailable() &amp;&amp; $this.pdb_interrupts_config.interrupt.isEnabled()"/>
+            <!-- DMA channel -->                
+            <fragment id="DMA_definitions" if_expr="($configSet.init_DMA_MultiplePDB.getValue())" apply_to="$this.dma.dma_pdb_channel_MultiplePDB" />
+            <fragment id="DMA_definitions" if_expr="($configSet.init_DMA_SinglePDB.getValue())" apply_to="$this.dma.dma_pdb_channel_SinglePDB" />
+            <!-- eDMA channel -->                
+            <fragment id="DMA_definitions" if_expr="($configSet.init_eDMA_MultiplePDB.getValue())" apply_to="$this.edma.dma_pdb_channel_MultiplePDB" />
+            <fragment id="DMA_definitions" if_expr="($configSet.init_eDMA_SinglePDB.getValue())" apply_to="$this.edma.dma_pdb_channel_SinglePDB" />
+         </section>
+         <section target="global_vars">
+            <fragment id="comment">
+               <param id="content">PDB counter configuration</param>
+               <param id="paddingLevel" expr="0"/>
+            </fragment>
+            <fragment id="const_struct" apply_to="$this.pdb_config">
+               <param id="name" expr="$configSet.inst_ID.getValue() + `_config`"/>
+               <param id="type">pdb_config_t</param>
+            </fragment>
+            <fragment id="all_pretriggers_config_array" for_elements_of="$this.pdb_adc_triggering_config" if_expr="$this.pdb_adc_triggering_config.size() &gt; 0">
+            </fragment>
+            <fragment id="all_dac_triggers_config_array" apply_to="$this.pdb_dac_triggering_config" if_expr="$this.pdb_dac_triggering_config.size() &gt; 0">
+            </fragment>
+            <fragment id="all_cmp_values_array" apply_to="$this.pdb_pulse_out_config" if_expr="$this.pdb_pulse_out_config.size() &gt; 0">
+            </fragment>
+            <fragment id="DMA_handle_definition" if_expr="($configSet.init_DMA_MultiplePDB.getValue())" apply_to="$this.dma.dma_pdb_channel_MultiplePDB" />
+            <fragment id="DMA_handle_definition" if_expr="($configSet.init_DMA_SinglePDB.getValue())" apply_to="$this.dma.dma_pdb_channel_SinglePDB" />
+            <!-- eDMA channel -->                
+            <fragment id="DMA_handle_definition" if_expr="($configSet.init_eDMA_MultiplePDB.getValue())" apply_to="$this.edma.dma_pdb_channel_MultiplePDB" />
+            <fragment id="DMA_handle_definition" if_expr="($configSet.init_eDMA_SinglePDB.getValue())" apply_to="$this.edma.dma_pdb_channel_SinglePDB" />
+         </section>
+         <section target="global_vars_extern">
+            <fragment id="extern_const_var" apply_to="$this.pdb_config">
+               <param id="name" expr="$configSet.inst_ID.getValue() + `_config`"/>
+               <param id="type">pdb_config_t</param>
+            </fragment>
+            <fragment id="all_pretriggers_config_array_extern" for_elements_of="$this.pdb_adc_triggering_config" if_expr="$this.pdb_adc_triggering_config.size() &gt; 0">
+            </fragment>
+            <fragment id="all_dac_triggers_config_array_extern" apply_to="$this.pdb_dac_triggering_config" if_expr="$this.pdb_dac_triggering_config.size() &gt; 0">
+            </fragment>
+            <fragment id="all_cmp_values_array_extern" apply_to="$this.pdb_pulse_out_config" if_expr="$this.pdb_pulse_out_config.size() &gt; 0">
+            </fragment>
+            <fragment id="DMAMUX_handle_declaration" if_expr="($configSet.init_DMA_MultiplePDB.getValue())" apply_to="$this.dma.dma_pdb_channel_MultiplePDB" />
+            <fragment id="DMAMUX_handle_declaration" if_expr="($configSet.init_DMA_SinglePDB.getValue())" apply_to="$this.dma.dma_pdb_channel_SinglePDB" />            
+            <!-- eDMA channel -->                
+            <fragment id="DMAMUX_handle_declaration" if_expr="($configSet.init_eDMA_MultiplePDB.getValue())" apply_to="$this.edma.dma_pdb_channel_MultiplePDB" />
+            <fragment id="DMAMUX_handle_declaration" if_expr="($configSet.init_eDMA_SinglePDB.getValue())" apply_to="$this.edma.dma_pdb_channel_SinglePDB" />
+         </section>
+         <section target="init_function_body">
+         <!-- Init -->
+            <expr>leftPadding(`/* PDB counter initialization */`,1)</expr><br/>
+            <expr>leftPadding(`PDB_Init(` + $configSet.inst_peripheral_ID.getValue() + `, &amp;` + $configSet.inst_ID.getValue() + `_config);`, 1)</expr><br/>
+            <expr>leftPadding(`/* PDB counter modulo initialization */`,1)</expr><br/>
+            <expr>leftPadding(`PDB_SetModulusValue(` + $configSet.inst_peripheral_ID.getValue() + `, ` + $configSet.pdb_config.moduloValue.getValue() + `U);`, 1)</expr><br/>
+            <if expr="$this.pdb_adc_triggering_config.size() &gt; 0">               
+               <fragment id="set_pretriggers_configs" for_elements_of="$this.pdb_adc_triggering_config">
+               </fragment>
+            </if>
+            <if expr="$this.pdb_dac_triggering_config.size() &gt; 0">
+               <expr >leftPadding(`/* PDB DAC trigger initialization */`,1)</expr><br/>
+               <fragment id="set_dacs_trigger_configs" for_elements_of="$this.pdb_dac_triggering_config">
+               </fragment>
+            </if>
+            <if expr="$this.pdb_pulse_out_config.size() &gt; 0">
+               <expr>leftPadding(`/* PDB CMP pulse out initialization */`,1)</expr><br/>
+               <fragment id="set_cmps_pulseOut_configs" for_elements_of="$this.pdb_pulse_out_config">
+               </fragment>
+               <fragment id="set_cmps_pulseOut_enable" for_elements_of="$this.pdb_pulse_out_config">
+               </fragment>
+            </if>            
+            <if expr="($this.pdb_delay_interrupt_config.actionAfterDelay.getEnumItemId() != `noAction`) || ($this.pdb_interrupts_config.interrupt_sel.kPDB_SequenceErrorInterruptEnable.getValue())">
+               <expr>leftPadding(`/* Interrupts/DMA initialization */`,1)</expr><br/>
+               <fragment id="set_interrupt_configs" apply_to="$this.pdb_delay_interrupt_config">
+               </fragment>
+            </if>
+            <fragment id="IRQn_set_priority_default" apply_to="$this.pdb_interrupts_config.interrupt" if_expr="$this.pdb_interrupts_config.interrupt.isAvailable() &amp;&amp; $this.pdb_interrupts_config.interrupt.isEnabled()"/>
+            <fragment id="IRQn_enable_default" apply_to="$this.pdb_interrupts_config.interrupt" if_expr="$this.pdb_interrupts_config.interrupt.isAvailable() &amp;&amp; $this.pdb_interrupts_config.interrupt.isEnabled()"/>
+            <expr>leftPadding(`/* Load buffered registers values into the working register for the first time */`,1)</expr><br/>
+            <expr>leftPadding(`PDB_DoLoadValues(` + $configSet.inst_peripheral_ID.getValue() + `);`, 1)</expr><br/>
+            <if expr="($this.pdb_config.initSWtrigger.isAvailable() &amp;&amp; $this.pdb_config.initSWtrigger.isEnabled() &amp;&amp; $this.pdb_config.initSWtrigger.getValue())">
+               <expr>leftPadding(`/* Fire PDB SW trigger */`,1)</expr><br/>
+               <expr>leftPadding(`PDB_DoSoftwareTrigger(` + $configSet.inst_peripheral_ID.getValue() + `);`, 1)</expr><br/>
+            </if>
+         </section>
+      </code>
+      <quick_selections>
+         <quick_selection id="QuickSelection1" label="Default">
+            <set id="pdb_config.loadValueMode">kPDB_LoadValueImmediately</set>
+            <set id="pdb_config.firstDivider">kPDB_PrescalerDivider1</set>
+            <set id="pdb_config.secondDivider">kPDB_DividerMultiplicationFactor1</set>
+            <set id="pdb_config.triggerInputSource">kPDB_TriggerSoftware</set>
+            <set id="pdb_config.enableContinuousMode">false</set>
+         </quick_selection>
+         <quick_selection id="QuickSelection2" label="ADC delayed trigger">
+            <set id="pdb_config.loadValueMode">kPDB_LoadValueImmediately</set>
+            <set id="pdb_config.firstDivider">kPDB_PrescalerDivider1</set>
+            <set id="pdb_config.secondDivider">kPDB_DividerMultiplicationFactor1</set>
+            <set id="pdb_config.triggerInputSource">kPDB_TriggerSoftware</set>
+            <set id="pdb_config.enableContinuousMode">false</set>            
+            <set id="pdb_adc_triggering_config.0.pdb_adc_pretriggers_config.0.enable">true</set>
+            <set id="pdb_adc_triggering_config.0.pdb_adc_pretriggers_config.0.outputSource">delayedTrigger</set>
+         </quick_selection>
+         <quick_selection id="QuickSelection3" label="DAC periodic trigger">
+            <set id="pdb_config.loadValueMode">kPDB_LoadValueImmediately</set>
+            <set id="pdb_config.firstDivider">kPDB_PrescalerDivider1</set>
+            <set id="pdb_config.secondDivider">kPDB_DividerMultiplicationFactor1</set>
+            <set id="pdb_config.triggerInputSource">kPDB_TriggerSoftware</set>
+            <set id="pdb_config.enableContinuousMode">false</set>            
+            <set id="pdb_dac_triggering_config.0.enable">true</set>
+            <set id="pdb_dac_triggering_config.0.outputSource">interval</set>
+         </quick_selection>
+         <quick_selection id="QuickSelection4" label="CMP window/sample pulse generation">
+            <set id="pdb_config.loadValueMode">kPDB_LoadValueImmediately</set>
+            <set id="pdb_config.firstDivider">kPDB_PrescalerDivider1</set>
+            <set id="pdb_config.secondDivider">kPDB_DividerMultiplicationFactor1</set>
+            <set id="pdb_config.triggerInputSource">kPDB_TriggerSoftware</set>
+            <set id="pdb_config.enableContinuousMode">false</set>            
+            <set id="pdb_pulse_out_config.0.enable">true</set>
+         </quick_selection>
+         <quick_selection id="QuickSelection5" label="Delayed interrupt">
+            <set id="pdb_config.loadValueMode">kPDB_LoadValueImmediately</set>
+            <set id="pdb_config.firstDivider">kPDB_PrescalerDivider1</set>
+            <set id="pdb_config.secondDivider">kPDB_DividerMultiplicationFactor1</set>
+            <set id="pdb_config.triggerInputSource">kPDB_TriggerSoftware</set>
+            <set id="pdb_config.enableContinuousMode">false</set>            
+            <set id="pdb_delay_interrupt_config.actionAfterDelay">interrupt</set>
+            <set id="pdb_interrupts_config.interrupt_sel.kPDB_DelayInterruptEnable">true</set>
+            <set id="pdb_interrupts_config.enable_irq">true</set>
+         </quick_selection>
+         <quick_selection id="QuickSelection6" label="Delayed DMA transfer">
+            <set id="pdb_config.loadValueMode">kPDB_LoadValueImmediately</set>
+            <set id="pdb_config.firstDivider">kPDB_PrescalerDivider1</set>
+            <set id="pdb_config.secondDivider">kPDB_DividerMultiplicationFactor1</set>
+            <set id="pdb_config.triggerInputSource">kPDB_TriggerSoftware</set>
+            <set id="pdb_config.enableContinuousMode">false</set>            
+            <set id="pdb_delay_interrupt_config.actionAfterDelay">dma</set>
+            <set id="edma.enable_dma_channel">true</set>
+            <set id="dma.enable_dma_channel">true</set>
+         </quick_selection>
+         <default>QuickSelection1</default>
+      </quick_selections>
+   </config_set>
+</component:config_component>

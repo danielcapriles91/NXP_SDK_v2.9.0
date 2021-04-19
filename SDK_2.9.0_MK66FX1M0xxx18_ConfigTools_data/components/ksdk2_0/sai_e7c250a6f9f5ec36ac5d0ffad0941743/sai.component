@@ -1,0 +1,1574 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="sai" label="SAI" global_only="false" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-5.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="Peripheral driver">
+   <sw_comp_ref name="platform.drivers.sai" version="2.1.7"/>
+   <description>Synchronous audio interface</description>
+   <!-- <mode id="polling" label="Polling" available="true">
+      <description>SAI peripheral set to polling mode</description>
+      <config_set_refs>
+         <config_set_ref>fsl_sai</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>I2S</peripheral_type>
+      </master_peripheral>
+   </mode> -->
+   <mode id="interrupts" label="Interrupts">
+      <description>I2S/SAI peripheral set to interrupt mode</description>
+      <config_set_refs>
+         <config_set_ref>fsl_sai</config_set_ref>
+         <!-- <config_set_ref>interrupt</config_set_ref> -->
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>I2S</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="transfer" label="Transfer">
+      <description>SAI operation using transfer mode (ring buffer). This mode supports transactional APIs that provides asynchronous transfer (non-blocking API is provided; callback functions can be used).
+      </description>
+      <config_set_refs>
+         <config_set_ref>fsl_sai</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>I2S</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="dma" label="DMA" available="featureDefined(`SOC_DMA_COUNT`) &amp;&amp; getFeature(`SOC_DMA_COUNT`)">
+      <description>SAI using DMA mode (DMA device). This mode supports transactional API by using eDMA device.</description>
+      <config_set_refs>
+         <config_set_ref>fsl_sai</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>I2S</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="edma" label="eDMA" available="featureDefined(`SOC_EDMA_COUNT`) &amp;&amp; getFeature(`SOC_EDMA_COUNT`)">
+      <description>SAI using eDMA mode (DMA device). This mode supports transactional API by using eDMA device.</description>
+      <config_set_refs>
+         <config_set_ref>fsl_sai</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>I2S</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <!--<mode id="sdma" label="SDMA" available="featureDefined(`SOC_SDMA_COUNT`) &amp;&amp; getFeature(`SOC_SDMA_COUNT`)">
+      <description>SAI using SDMA mode (DMA device). This mode supports transactional API by using eDMA device.</description>
+      <config_set_refs>
+         <config_set_ref>fsl_sai</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>I2S</peripheral_type>
+      </master_peripheral>
+   </mode>
+    -->
+    <config_set id="fsl_sai" label="General configuration" from_source="fsl_sai.h">
+      <description>Configuration of the whole SAI/I2S peripheral</description>
+      <generated_types>
+         <enum id="sai_protocol_t" label="Define the SAI bus type" from="_sai_protocol">
+            <item id="kSAI_BusLeftJustified" label="Uses left justified format"/>
+            <item id="kSAI_BusRightJustified" label="Uses right justified format"/>
+            <item id="kSAI_BusI2S" label="Uses I2S format"/>
+            <item id="kSAI_BusPCMA" label="Uses I2S PCM A format"/>
+            <item id="kSAI_BusPCMB" label="Uses I2S PCM B format"/>
+         </enum>
+         <enum id="sai_master_slave_t" label="Master or slave mode" from="_sai_master_slave">
+            <item id="kSAI_Master" label="Master mode"/>
+            <item id="kSAI_Slave" label="Slave mode"/>
+         </enum>
+         <enum id="sai_mono_stereo_t" label="Mono or stereo audio format" from="_sai_mono_stereo">
+            <item id="kSAI_Stereo" label="Stereo sound"/>
+            <item id="kSAI_MonoRight" label="Only Right channel have sound"/>
+            <item id="kSAI_MonoLeft" label="Only left channel have sound"/>
+         </enum>
+         <enum id="sai_data_order_t" label="SAI data order, MSB or LSB" from="_sai_data_order">
+            <item id="kSAI_DataLSB" label="LSB bit transferred first"/>
+            <item id="kSAI_DataMSB" label="MSB bit transferred first"/>
+         </enum>
+         <enum id="sai_clock_polarity_t" label="SAI clock polarity, active high or low" from="_sai_clock_polarity">
+            <item id="kSAI_PolarityActiveHigh" label="Clock active high"/>
+            <item id="kSAI_PolarityActiveLow" label="Clock active low"/>
+         </enum>
+         <enum id="sai_sync_mode_t" label="Synchronous or asynchronous mode" from="_sai_sync_mode">
+            <item id="kSAI_ModeAsync" label="Asynchronous mode"/>
+            <item id="kSAI_ModeSync" label="Synchronous mode (with receiver or transmit)"/>
+            <item id="kSAI_ModeSyncWithOtherTx" label="Synchronous with another SAI transmit"/>
+            <item id="kSAI_ModeSyncWithOtherRx" label="Synchronous with another SAI receiver"/>
+         </enum>
+         <enum id="sai_mclk_source_t" label="Mater clock source" from="_sai_mclk_source">
+            <item id="kSAI_MclkSourceSysclk" label="Master clock from the system clock"/>
+            <item id="kSAI_MclkSourceSelect1" label="Master clock from source 1"/>
+            <item id="kSAI_MclkSourceSelect2" label="Master clock from source 2"/>
+            <item id="kSAI_MclkSourceSelect3" label="Master clock from source 3"/>
+         </enum>
+         <enum id="sai_bclk_source_t" label="Bit clock source" from="_sai_bclk_source">
+            <item id="kSAI_BclkSourceBusclk" label="Bit clock using bus clock"/>
+            <item id="kSAI_BclkSourceMclkDiv" label="Bit clock using master clock divider"/>
+            <item id="kSAI_BclkSourceOtherSai0" label="Bit clock from other SAI device"/>
+            <item id="kSAI_BclkSourceOtherSai1" label="Bit clock from other SAI device"/>
+         </enum>
+         <enum id="sai_reset_type_t" label="The reset type" from="_sai_reset_type">
+            <item id="kSAI_ResetTypeSoftware" label="Software reset, reset the logic state"/>
+            <item id="kSAI_ResetTypeFIFO" label="FIFO reset, reset the FIFO read and write pointer"/>
+            <item id="kSAI_ResetAll" label="All reset"/>
+         </enum>
+         <enum id="sai_fifo_packing_t" label="The SAI packing mode The mode includes 8 bit and 16 bit packing" from="_sai_fifo_packing" available="(featureDefined(`FSL_FEATURE_SAI_HAS_FIFO_PACKING`) &amp;&amp; getFeature(`FSL_FEATURE_SAI_HAS_FIFO_PACKING`))">
+            <item id="kSAI_FifoPackingDisabled" label="Packing disabled"/>
+            <item id="kSAI_FifoPacking8bit" label="8 bit packing enabled"/>
+            <item id="kSAI_FifoPacking16bit" label="16bit packing enabled"/>
+         </enum>
+         <struct id="sai_config_t" label="SAI user configuration structure" from="_sai_config">
+            <reference id="protocol" label="Audio bus protocol in SAI" type="sai_protocol_t">
+               <description>Audio bus protocol in SAI</description>
+            </reference>
+            <reference id="syncMode" label="SAI sync mode, control Tx/Rx clock sync" type="sai_sync_mode_t">
+               <description>SAI sync mode, control Tx/Rx clock sync</description>
+            </reference>
+            <bool id="mclkOutputEnable" label="Master clock output enable, true means master clock divider enabled" available="(featureDefined(`FSL_FEATURE_SAI_HAS_MCR`) &amp;&amp; getFeature(`FSL_FEATURE_SAI_HAS_MCR`))">
+               <description>Master clock output enable, true means master clock divider enabled</description>
+            </bool>
+            <reference id="mclkSource" label="Master Clock source" type="sai_mclk_source_t">
+               <description>Master Clock source</description>
+            </reference>
+            <reference id="bclkSource" label="Bit Clock source" type="sai_bclk_source_t">
+               <description>Bit Clock source</description>
+            </reference>
+            <reference id="masterSlave" label="Master or slave" type="sai_master_slave_t">
+               <description>Master or slave</description>
+            </reference>
+         </struct>
+         <enum id="sai_sample_rate_t" label="Audio sample rate" from="_sai_sample_rate">
+            <item id="kSAI_SampleRate8KHz" label="Sample rate 8000 Hz"/>
+            <item id="kSAI_SampleRate11025Hz" label="Sample rate 11025 Hz"/>
+            <item id="kSAI_SampleRate12KHz" label="Sample rate 12000 Hz"/>
+            <item id="kSAI_SampleRate16KHz" label="Sample rate 16000 Hz"/>
+            <item id="kSAI_SampleRate22050Hz" label="Sample rate 22050 Hz"/>
+            <item id="kSAI_SampleRate24KHz" label="Sample rate 24000 Hz"/>
+            <item id="kSAI_SampleRate32KHz" label="Sample rate 32000 Hz"/>
+            <item id="kSAI_SampleRate44100Hz" label="Sample rate 44100 Hz"/>
+            <item id="kSAI_SampleRate48KHz" label="Sample rate 48000 Hz"/>
+            <item id="kSAI_SampleRate96KHz" label="Sample rate 96000 Hz"/>
+         </enum>
+         <enum id="sai_word_width_t" label="Audio word width" from="_sai_word_width">
+            <item id="kSAI_WordWidth8bits" label="Audio data width 8 bits"/>
+            <item id="kSAI_WordWidth16bits" label="Audio data width 16 bits"/>
+            <item id="kSAI_WordWidth24bits" label="Audio data width 24 bits"/>
+            <item id="kSAI_WordWidth32bits" label="Audio data width 32 bits"/>
+         </enum>
+         <struct id="sai_transfer_format_t" label="sai transfer format" from="_sai_transfer_format">
+            <integer id="sampleRate_Hz" label="Sample rate of audio data" type="uint32_t">
+               <description>Sample rate of audio data</description>
+            </integer>
+            <integer id="bitWidth" label="Data length of audio data, usually 8/16/24/32 bits" type="uint32_t">
+               <description>Data length of audio data, usually 8/16/24/32 bits</description>
+            </integer>
+            <reference id="stereo" label="Mono or stereo" type="sai_mono_stereo_t">
+               <description>Mono or stereo</description>
+            </reference>
+            <integer id="masterClockHz" label="Master clock frequency in Hz" type="uint32_t">
+               <description>Master clock frequency in Hz</description>
+            </integer>
+            <integer id="watermark" label="Watermark value" type="uint8_t" available="(featureDefined(`FSL_FEATURE_SAI_FIFO_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SAI_FIFO_COUNT`) &gt; 1))">
+               <description>Watermark value</description>
+            </integer>
+            <integer id="channel" label="Data channel used in transfer" type="uint8_t">
+               <description>Data channel used in transfer.</description>
+            </integer>
+            <reference id="protocol" label="Which audio protocol used" type="sai_protocol_t">
+               <description>Which audio protocol used</description>
+            </reference>
+            <bool id="isFrameSyncCompact" label="True means Frame sync length is configurable according to bitWidth, false means frame sync length is 64 times of bit clock">
+               <description>True means Frame sync length is configurable according to bitWidth, false means frame sync length is 64 times of bit clock.</description>
+            </bool>
+         </struct>
+         <struct id="sai_transfer_t" label="SAI transfer structure" from="_sai_transfer">
+            <fixme id="data" label="Data start address to transfer" type="uint8_t *">
+               <description>Data start address to transfer.</description>
+            </fixme>
+            <fixme id="dataSize" label="Transfer size" type="size_t">
+               <description>Transfer size.</description>
+            </fixme>
+         </struct>
+         <struct id="sai_handle_t" label="" from="_sai_handle">
+            <integer id="state" label="Transfer status" type="uint32_t">
+               <description>Transfer status</description>
+            </integer>
+            <reference id="callback" label="Callback function called at transfer event" type="sai_transfer_callback_t">
+               <description>Callback function called at transfer event</description>
+            </reference>
+            <fixme id="userData" label="Callback parameter passed to callback function" type="void *">
+               <description>Callback parameter passed to callback function</description>
+            </fixme>
+            <integer id="bitWidth" label="Bit width for transfer, 8/16/24/32 bits" type="uint8_t">
+               <description>Bit width for transfer, 8/16/24/32 bits</description>
+            </integer>
+            <integer id="channel" label="Transfer channel" type="uint8_t">
+               <description>Transfer channel</description>
+            </integer>
+            <reference id="saiQueue" label="Transfer queue storing queued transfer" type="sai_transfer_t">
+               <description>Transfer queue storing queued transfer</description>
+            </reference>
+            <fixme id="transferSize" label="Data bytes need to transfer" type="size_t">
+               <description>Data bytes need to transfer</description>
+            </fixme>
+            <integer id="queueUser" label="Index for user to queue transfer" type="uint8_t">
+               <description>Index for user to queue transfer</description>
+            </integer>
+            <integer id="queueDriver" label="Index for driver to get the transfer data and size" type="uint8_t">
+               <description>Index for driver to get the transfer data and size</description>
+            </integer>
+            <integer id="watermark" label="Watermark value" type="uint8_t" available="(featureDefined(`FSL_FEATURE_SAI_FIFO_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SAI_FIFO_COUNT`) &gt; 1))">
+               <description>Watermark value</description>
+            </integer>
+         </struct>
+         <fixme id="sai_transfer_callback_t" label="SAI transfer callback prototype" type="void(*"/>
+      </generated_types>
+      <user_types>
+         <enum id="sai_protocol_t" label="Bus type format" from="_sai_protocol">
+            <item id="kSAI_BusLeftJustified" label="Left justified"/>
+            <item id="kSAI_BusRightJustified" label="Right justified"/>
+            <item id="kSAI_BusI2S" label="I2S"/>
+            <item id="kSAI_BusPCMA" label="I2S PCM A"/>
+            <item id="kSAI_BusPCMB" label="I2S PCM B"/>
+         </enum>
+         <enum id="sai_master_slave_t" label="Clock mode" from="_sai_master_slave">
+            <item id="kSAI_Master" label="Master" >
+               <description>Bit clock is generated internally in the chip.</description>
+            </item>            
+            <item id="kSAI_Slave" label="Slave">
+               <description>Bit clock is taken from external codec.</description>
+            </item>
+         </enum>
+         <enum id="sai_mono_stereo_t" label="Audio format" from="_sai_mono_stereo">
+            <item id="kSAI_Stereo" label="Stereo"/>
+            <item id="kSAI_MonoRight" label="Mono right channel"/>
+            <item id="kSAI_MonoLeft" label="Mono left channel"/>
+         </enum>
+         <enum id="sai_data_order_t" label="Data order" from="_sai_data_order">
+            <item id="kSAI_DataLSB" label="LSB first"/>
+            <item id="kSAI_DataMSB" label="MSB first"/>
+         </enum>
+         <enum id="sai_clock_polarity_t" label="Clock polarity" from="_sai_clock_polarity">
+            <item id="kSAI_PolarityActiveHigh" label="Active high"/>
+            <item id="kSAI_PolarityActiveLow" label="Active low"/>
+         </enum>
+         <enum id="sai_sync_mode_t" label="Synchronization mode" from="_sai_sync_mode">
+            <item id="kSAI_ModeAsync" label="Asynchronous"/>
+            <item id="kSAI_ModeSync" label="Synchronous (with receiver or transmitter)"/>
+         </enum>
+         <enum id="sai_mclk_source_t" label="Master clock (MCLK) source" from="_sai_mclk_source">
+            <item id="kSAI_MclkSourceSysclk" label="System clock"/>
+            <item id="kSAI_MclkSourceSelect1" label="Source 1"/>
+            <item id="kSAI_MclkSourceSelect2" label="Source 2"/>
+            <item id="kSAI_MclkSourceSelect3" label="Source 3"/>
+         </enum>
+         <enum id="sai_bclk_source_t" label="Bit clock (BCLK) source" from="_sai_bclk_source">
+            <item id="kSAI_BclkSourceBusclk" label="Bus clock"/>
+            <item id="kSAI_BclkSourceMclkOption1" label="Bit clock MCLK option 1"/>
+            <item id="kSAI_BclkSourceMclkOption2" label="Bit clock MCLK option2"/>
+            <item id="kSAI_BclkSourceMclkOption3" label="Bit clock MCLK option3"/>
+                        
+            <item id="kSAI_BclkSourceMclkDiv" label="Master clock option 1"/>
+            <item id="kSAI_BclkSourceOtherSai0" label="Master clock option 2"/>
+            <item id="kSAI_BclkSourceOtherSai1" label="Master clock option 3"/>
+            
+         </enum>
+         <enum id="sai_reset_type_t" label="Reset type" from="_sai_reset_type">
+            <item id="kSAI_ResetTypeSoftware" label="SW reset"/>
+            <item id="kSAI_ResetTypeFIFO" label="FIFO reset"/>
+            <item id="kSAI_ResetAll" label="All reset"/>
+         </enum>
+         <enum id="sai_fifo_packing_t" label="Packing mode" from="_sai_fifo_packing" available="(featureDefined(`FSL_FEATURE_SAI_HAS_FIFO_PACKING`) &amp;&amp; getFeature(`FSL_FEATURE_SAI_HAS_FIFO_PACKING`))">
+            <item id="kSAI_FifoPackingDisabled" label="Disabled"/>
+            <item id="kSAI_FifoPacking8bit" label="8 bit"/>
+            <item id="kSAI_FifoPacking16bit" label="16bit"/>
+         </enum>
+         <enum id="master_clock_source_t" label="Master clock source selection" from="mine">            
+            <item id="kSAI_MclkSourceSysclk" label="System clock" value="MCLK_input_0"/> <!-- value = clock_unify_ID -->
+            <item id="kSAI_MclkSourceSelect1" label="Source 1" value="MCLK_input_1"/>               
+            <item id="kSAI_MclkSourceSelect2" label="Source 2" value="MCLK_input_2"/>               
+            <item id="kSAI_MclkSourceSelect3" label="Source 3" value="MCLK_input_3"/>                                       
+         </enum>  
+         <enum id="bit_clock_source_t" label="Bit clock source selection" from="mine">            
+            <!-- <item id="kSAI_BclkSourceBusclk" label="Bus clock" value="BusInterfaceClock"/> --> <!-- value = clock_unify_ID -->
+            <item id="kSAI_BclkSourceBusclk" label="Bus clock" value="MCLK0"/>
+            <item id="kSAI_BclkSourceMclkOption1" label="Master clock option 1" value="MCLK1"/>
+            <item id="kSAI_BclkSourceMclkOption2" label="Master clock option 2" value="MCLK2"/>
+            <item id="kSAI_BclkSourceMclkOption3" label="Master clock option 3" value="MCLK3"/>            
+         </enum> 
+         <struct id="mclk_config_t" label="Master clock configuration" from="mine" available="((featureDefined(`FSL_FEATURE_SAI_HAS_MCR`) &amp;&amp; getFeature(`FSL_FEATURE_SAI_HAS_MCR`)) || (featureDefined(`FSL_FEATURE_SAI_HAS_MCLKDIV_REGISTER`) &amp;&amp; getFeature(`FSL_FEATURE_SAI_HAS_MCLKDIV_REGISTER`)))">
+            <reference id="_masterClockSource" label="Clock source" type="master_clock_source_t" options="remove_from_struct_init" available="false"/> <!-- item used for masterClockSource dynamic enum implementation only -->
+            <variable id="masterClockSourceUId" value="$parent.masterClockSource.getEnumItemValue()"/>
+            <dynamic_enum id="masterClockSource" label="Master clock source/direction" options="remove_from_struct_init" items="enumItemsOf($parent._masterClockSource).arrayToEnumItems(
+               enumItem -> (getPeripheralClockType($instance.getPeripheral(), enumItem.getValue()) != `NOT_CONNECTED`),
+               enumItem -> enumItem.getID(),
+               enumItem -> getPeripheralClock($instance.getPeripheral(), enumItem.getValue()),
+               enumItem -> enumItem.getValue()).addItemToList(`ExternalClock`,`MCLK_IN`,`ExternalClock`,true).addItemToList(`InternalClock`,`MCLK_OUT`,`InternalClock`,(featureDefined(`FSL_FEATURE_SAI_HAS_MCR`) &amp;&amp; !getFeature(`FSL_FEATURE_SAI_HAS_MCR`)))">
+               <description>Master clock source selection</description>
+               <validation>                  
+                  <dependency when_expr="$this.getEnumItemValue() == `ExternalClock`" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.MCLK`" description="MCLK signal fed from external clock source signal is not routed." level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.masterClockSourceUId.getValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.masterClockSourceFreq.getEnumItemId() == `GetFreq`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.masterClockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.masterClockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.masterClockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.masterClockSourceUId.getValue()) + `is inactive.`))"
+                     level="Warning">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.masterClockSourceUId.getValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.masterClockSourceFreq.getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.masterClockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.masterClockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.masterClockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.masterClockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.masterClockSourceUId.getValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <dynamic_enum id="masterClockSourceFreq" label="Master clock source frequency" options="remove_from_struct_init" available="(featureDefined(`FSL_FEATURE_SAI_HAS_MCLKDIV_REGISTER`) &amp;&amp; getFeature(`FSL_FEATURE_SAI_HAS_MCLKDIV_REGISTER`)) &amp;&amp; ($parent.masterClockSource.isAvailable() &amp;&amp; ($parent.masterClockSource.getEnumItemValue() != `ExternalClock`) &amp;&amp; ($parent.masterClockSource.getEnumItemValue() != `InternalClock`))" 
+               items="(getClockFunctionalGroups().arrayToEnumItems(
+                  enumItem -> true,
+                  enumItem -> enumItem,
+                  enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.masterClockSource.getEnumItemValue(), enumItem)) + ` (` + enumItem + `)`,
+                  enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.masterClockSource.getEnumItemValue(), enumItem)))" >
+               <description>Selection of the master clock source frequency</description>               
+               <validation>
+                  <constraint cond_expr="($this.getEnumItemValue().toHertz() != 0) &amp;&amp; ($this.getEnumItemValue().toHertz() &lt;= 0xFFFFFFFF)" level="error" description="Master clock source frequency cannot be 0 or greater than 0xFFFFFFFF when it is used."/>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> ((x.toHertz() &gt;= 0) &amp;&amp; (x.toHertz() &lt;= 0xFFFFFFFF))" />
+            </dynamic_enum>
+            <!-- <integer type="uint32_t" id="masterClockFrequency" label="Master clock frequency [Hz]" options="remove_from_struct_init" available="($parent.masterClockSource.isAvailable())" min_expr="1">
+               <description>Desired frequency of the MCLK clock source - fractional divider calculated in driver or frequency taken directly from External MCLK_IN clock (see MCLK signal item).</description>
+            </integer> -->
+            <string id="masterClockFrequency" label="Master clock frequency" available="(($parent.masterClockSource.isAvailable()) &amp;&amp; (featureDefined(`FSL_FEATURE_SAI_HAS_MCLKDIV_REGISTER`) &amp;&amp; getFeature(`FSL_FEATURE_SAI_HAS_MCLKDIV_REGISTER`))) ">
+               <description>Desired frequency (with unit) of the MCLK clock source - fractional divider calculated in driver or frequency taken directly from External MCLK_IN clock (see MCLK signal item).</description>
+               <validation>
+                  <constraint cond_expr="(!($this.value().isTime())) &amp;&amp; $this.value().isFreq()" level="error" description_expr="`Master clock frequency is not valid.`"/>
+                  <constraint cond_expr="(($this.getValue() != `0 Hz`) &amp;&amp; ($this.getValue() != `0Hz`))" level="error" description_expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID()) + `: Master clock source frequency cannot be 0 when it is used.`"/>
+               </validation>
+            </string>
+         </struct>
+         <struct id="sai_config_t" label="SAI user configuration" from="_sai_config">
+            <reference id="protocol" label="Audio bus protocol" type="sai_protocol_t">
+               <description>Bus type format</description>
+            </reference>
+            <reference id="syncMode" label="Synchronization mode" type="sai_sync_mode_t">
+               <description>SAI sync mode, control Tx/Rx clock sync</description>
+            </reference>
+            <!-- <reference id="masterSlave" label="Bit clock/frame sync mode" type="sai_master_slave_t" enable="$parent.syncMode.getValue() == `kSAI_ModeAsync`">
+               <description>Master or slave mode of the bit clock as well as frame sync. Master = Bit clock is generated internally in the chip. Slave = Bit clock is taken from external codec.</description>
+            </reference> -->
+            <!-- <bool id="mclkOutputEnable" label="Master clock output" available="(featureDefined(`FSL_FEATURE_SAI_HAS_MCR`) &amp;&amp; getFeature(`FSL_FEATURE_SAI_HAS_MCR`))" enable="$parent.masterSlave.isEnabled() &amp;&amp; $parent.masterSlave.getValue() == `kSAI_Master`">
+               <description>Master clock (MCLK) output enable, if selected master clock divider is used</description>
+            </bool>
+            <reference id="mclkSource" label="Master clock (MCLK) source" type="sai_mclk_source_t" enable="$parent.masterSlave.isEnabled() &amp;&amp; $parent.masterSlave.getValue() == `kSAI_Master`">
+               <description>Master Clock source</description>
+            </reference> -->
+            <!-- <reference id="bclkSource" label="Bit clock (BCLK) source" type="sai_bclk_source_t" enable="$parent.masterSlave.isEnabled() &amp;&amp; $parent.masterSlave.getValue() == `kSAI_Master`">
+               <description>Bit Clock source</description>
+            </reference> -->
+            <reference id="_bitClockSource" label="Clock source" type="bit_clock_source_t" options="remove_from_struct_init" available="false"/> <!-- item used for masterClockSource dynamic enum implementation only -->
+            <variable id="bitClockSourceUId" value="$parent.bitClockSource.getEnumItemValue()"/>
+            <dynamic_enum id="bitClockSource" label="Bit clock (BCLK) source" options="remove_from_struct_init" items="enumItemsOf($parent._bitClockSource).arrayToEnumItems(
+               enumItem -> (getPeripheralClockType($instance.getPeripheral(), enumItem.getValue()) == `INPUT_SIGNAL`),
+               enumItem -> enumItem.getID(),
+               enumItem -> getPeripheralClock($instance.getPeripheral(), enumItem.getValue()),
+               enumItem -> enumItem.getValue()).addItemToList(`kSAI_BclkSourceMclkDiv`,$instance.fsl_sai.mclk_config.masterClockFrequency.getValue() + ` (Master clock frequency)`,$instance.fsl_sai.mclk_config.masterClockFrequency.getValue(),(featureDefined(`FSL_FEATURE_SAI_HAS_MCR`) &amp;&amp; getFeature(`FSL_FEATURE_SAI_HAS_MCR`) &amp;&amp; ($instance.fsl_sai.mclk_config.masterClockFrequency.isAvailable())))
+                                               .addItemToList(`ExternalClock`,`BCLK_IN`,`ExternalClock`,true)" enable="($parent.syncMode.getValue() == `kSAI_ModeAsync`)">
+               <description>Bit clock source selection</description>
+               <validation>
+                  <dependency when_expr="$this.getEnumItemValue() == `ExternalClock`" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.BCLK`" description="BCLK signal fed from external clock source signal is not routed." level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.bitClockSourceUId.getValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.bitClockSourceFreq.getEnumItemId() == `GetFreq`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.bitClockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.bitClockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.bitClockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.bitClockSourceUId.getValue()) + `is inactive.`))"
+                     level="Warning">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.bitClockSourceUId.getValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.bitClockSourceFreq.getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.bitClockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.bitClockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.bitClockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.bitClockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.bitClockSourceUId.getValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <dynamic_enum id="bitClockSourceFreq" label="Bit clock source frequency" options="remove_from_struct_init" available="($parent.bitClockSource.isAvailable() &amp;&amp; ($parent.bitClockSource.getEnumItemId() != `ExternalClock`) &amp;&amp; ($parent.bitClockSource.getEnumItemId() != `kSAI_BclkSourceMclkDiv`))" 
+               items="(getClockFunctionalGroups().arrayToEnumItems(
+                  enumItem -> true,
+                  enumItem -> enumItem,
+                  enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.bitClockSource.getEnumItemValue(), enumItem)) + ` (` + enumItem + `)`,
+                  enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.bitClockSource.getEnumItemValue(), enumItem)))" enable="$parent.syncMode.getValue() == `kSAI_ModeAsync`">               
+               <description>Selection of the bit clock source frequency</description>
+               <validation>
+                  <constraint cond_expr="($this.getEnumItemValue().toHertz() != 0) &amp;&amp; ($this.getEnumItemValue().toHertz() &lt;= 0xFFFFFFFF)" level="error" description="Bit clock source frequency cannot be 0 or greater than 0xFFFFFFFF when it is used."/>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> ((x.toHertz() &gt;= 0) &amp;&amp; (x.toHertz() &lt;= 0xFFFFFFFF))" />
+            </dynamic_enum>
+            <string id="slaveBitClockFrequency" label="Slave bit clock frequency" available="($parent.bitClockSource.isAvailable() &amp;&amp; ($parent.bitClockSource.getEnumItemId() == `ExternalClock`))" enable="$parent.syncMode.getValue() == `kSAI_ModeAsync`">
+               <description>Frequency on BCLK input pin. Bit clock is fed by external codec. Frequency taken directly from External BCLK_IN clock (see BCLK signal item). Slave mode for bit clock/frame sync is selected.</description>
+               <validation>
+                  <constraint cond_expr="(((!($this.value().isTime())) &amp;&amp; $this.value().isFreq()) || ((($this.value().isTime())) &amp;&amp; $this.value().isFreq())) &amp;&amp; ($this.getValue().toHertz() &gt; 0) &amp;&amp; ($this.getValue().toHertz() &lt;= 0xFFFFFFFF)" level="error" description_expr="`Slave bit clock frequency cannot be 0 or greater than 0xFFFFFFFF when it is used.`"/>
+               </validation>
+            </string>
+         </struct>
+         <enum id="sai_sample_rate_t" label="Sample rate" from="_sai_sample_rate">
+            <item id="kSAI_SampleRate8KHz" label="8000 Hz"/>
+            <item id="kSAI_SampleRate11025Hz" label="11025 Hz"/>
+            <item id="kSAI_SampleRate12KHz" label="12000 Hz"/>
+            <item id="kSAI_SampleRate16KHz" label="16000 Hz"/>
+            <item id="kSAI_SampleRate22050Hz" label="22050 Hz"/>
+            <item id="kSAI_SampleRate24KHz" label="24000 Hz"/>
+            <item id="kSAI_SampleRate32KHz" label="32000 Hz"/>
+            <item id="kSAI_SampleRate44100Hz" label="44100 Hz"/>
+            <item id="kSAI_SampleRate48KHz" label="48000 Hz"/>
+            <item id="kSAI_SampleRate96KHz" label="96000 Hz"/>
+            <item id="kSAI_SampleRate192KHz" label="192000 Hz"/>
+            <item id="kSAI_SampleRate384KHz" label="384000 Hz"/>
+         </enum>
+         <enum id="sai_word_width_t" label="Word width" from="_sai_word_width">
+            <item id="kSAI_WordWidth8bits" label="8"/>
+            <item id="kSAI_WordWidth16bits" label="16"/>
+            <item id="kSAI_WordWidth24bits" label="24"/>
+            <item id="kSAI_WordWidth32bits" label="32"/>
+         </enum>
+         <struct id="sai_transfer_format_t" label="Transfer format" from="_sai_transfer_format">
+            <!-- <integer id="sampleRate_Hz" label="Sample rate" type="uint32_t">
+               <description>Sample rate of audio data</description>
+            </integer> -->
+            <reference id="_sai_sample_rate_t" label="Sample rate inst" type="sai_sample_rate_t" options="remove_from_struct_init" available="false"/> <!-- item used for clockSource dynamic enum implementation only -->
+            <dynamic_enum id="sampleRate_Hz" label="Sample rate" options="remove_from_struct_init" items="enumItemsOf($parent._sai_sample_rate_t).arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> enumItem.getID(),
+               enumItem -> enumItem.getLabel(),
+               enumItem -> enumItem.getID())">               
+               <description>Sample rate of audio data</description>
+               <validation>
+                  <constraint when_expr="($this.getEnumItemId() == `custom`)" cond_expr="($this.getEnumItemValue().toHertz() &gt; 0) &amp;&amp; ($this.getEnumItemValue().toHertz() &lt;= 0xFFFFFFFF)" level="error" description_expr="`Sample rate is out of range.`"/>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> ((x.toHertz() &gt; 0) &amp;&amp; (x.toHertz() &lt;= 0xFFFFFFFF))" />
+            </dynamic_enum>
+            <!-- <integer id="bitWidth" label="Data length" type="uint32_t">
+               <description>Data length of audio data, usually 8/16/24/32 bits</description>
+            </integer> -->
+            <reference id="_sai_word_width_t" label="Data width inst" type="sai_word_width_t" options="remove_from_struct_init" available="false"/> <!-- item used for clockSource dynamic enum implementation only -->
+            <dynamic_enum id="bitWidth" label="Data width [bits]" options="remove_from_struct_init" items="enumItemsOf($parent._sai_word_width_t).arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> enumItem.getID(),
+               enumItem -> enumItem.getLabel(),
+               enumItem -> enumItem.getID())">               
+               <description>Data length of audio data, usually 8/16/24/32 bits. Custom value range is 8 - 32 bits with step 1.</description>
+               <validation>
+                  <constraint when_expr="($this.getEnumItemId() == `custom`)" cond_expr="($this.getEnumItemValue().toInt() &gt;= 8) &amp;&amp; ($this.getEnumItemValue().toInt() &lt;= 32)" level="error" description_expr="`Word width custom value cannot be less than 8 or greater than 32 when it is used.`"/>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> ((x.toInt() &gt;= 0) &amp;&amp; (x.toInt() &lt;= 32))" />
+            </dynamic_enum>
+            <reference id="stereo" label="Audio format" type="sai_mono_stereo_t">
+               <description>Mono or stereo audio format</description>
+            </reference>
+            <bool id="isFrameSyncCompact" label="Frame synchronization compact">
+               <description>True means Frame sync length is configurable according to Data length, false means frame sync length is mono - 64 times of bit clock.</description>
+            </bool>
+            <variable id="calcBitClock" value="(($parent.isFrameSyncCompact.getValue()) ?
+            ($parent.bitWidth.getEnumItemLabel().toInt()) : 32) * ($parent.sampleRate_Hz.getEnumItemLabel().toHertz() * (($parent.stereo.getValue() == `kSAI_Stereo`) ? (2) : (1)))"></variable>
+            <info id="calcBitClockFrequency" label="Calculated bit clock frequency" value="frequencyToString($parent.calcBitClock.getValue())">
+               <description>
+                  Frequency of the bit clock calculated as: BCLK =  Sample rate * Data length (If Frame synchronization compact is used if not constant 32 is used) * Audio format (number of the channels (L = 1 ,R = 1 and Stereo = 2)).
+               </description>
+            </info>
+            <!-- <integer id="masterClockHz" label="Master clock [Hz]" type="uint32_t">
+               <description>Master clock frequency in Hz</description>
+            </integer> -->
+            <integer id="watermark" label="Watermark value" type="uint8_t" min_expr="0" max_expr="(getFeature(`FSL_FEATURE_SAI_FIFO_COUNT`) - 1)" available="(featureDefined(`FSL_FEATURE_SAI_FIFO_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SAI_FIFO_COUNT`) &gt; 1))">
+               <description>Watermark value</description>
+            </integer>
+            <reference id="channelMask" label="Data channels" type="_sai_channel_mask">
+               <description>Select channels that should be used (2 audio channel (stereo) is coded into 1 data channel).</description>
+               <validation>
+                  <constraint cond_expr="($this.countOccurrences(x -> (x.isAvailable() &amp;&amp; x.getValue())) &gt; 0)" level="error" description="At least one channel should be selected."></constraint>
+               </validation>
+            </reference>
+            <variable id="channel" value="(($parent.channelMask.filter(x -> (x.isAvailable() &amp;&amp; x.getValue())).size() != 0) ?  ($parent.channelMask.filter(x -> (x.isAvailable() &amp;&amp; x.getValue())).getFirst(). getSetItemValue()) : 0)">
+            </variable>
+            <variable id="endChannel" value="(($parent.channelMask.filter(x -> (x.isAvailable() &amp;&amp; x.getValue())).size() != 0) ?  ($parent.channelMask.filter(x -> (x.isAvailable() &amp;&amp; x.getValue())).getLast(). getSetItemValue()) : 0)">
+            </variable>
+            <variable id="channelNums" value="$parent.channelMask.countOccurrences(x -> (x.isAvailable() &amp;&amp; x.getValue()))">               
+            </variable>
+            <!-- removed to be selected on one place only <reference id="protocol" label="Audio bus protocol" type="sai_protocol_t">
+               <description>Which audio protocol used</description>
+            </reference> -->            
+         </struct>
+         <integer id="size_t" label="size_t type" type="uint32_t" max_expr="0x7FFFFFFF">
+            <description>Definition of the size_t type.</description>
+         </integer>
+         <struct id="sai_transfer_t" label="SAI transfer structure" from="_sai_transfer" from_source="fsl_sai.h">
+            <info id="data" label="The ID of the buffer" value="$instance.getFnGroupPrefix() + $instance.getID() + `_` +  ($parent.getParent().hasOption(`function`) ? $parent.getParent().optionValue(`function`) + `_` : ``) + `buffer`">
+               <description>Data start address to transfer.</description>
+            </info>
+            <reference id="dataSize" label="Transfer size [bytes]" type="size_t">
+               <description>The size of the buffer (number of bytes that will be transferred).</description>
+               <validation>
+                  <constraint cond_expr="$this.getValue() > 0" level="error" description="The buffer size must greater than 0."></constraint>
+               </validation>
+            </reference>
+         </struct>
+         <struct id="transfer_config" label="Transfer configuration">
+            <info id="transfer_handle" label="Transfer handle ID" value="$instance.getFnGroupPrefix() + $instance.getID() + `_` + ($parent.hasOption(`function`) ? $parent.optionValue(`function`) : ``) + `_handle`"/>
+            <bool id="init_transfer" label="Initialization of transfer structure"></bool>
+            <reference id="transfer" label="Transfer" type="sai_transfer_t" enable="$parent.init_transfer.getValue()"/>
+            <bool id="init_callback" label="Initialization of transfer callback"></bool>
+            <string id="callback_fcn" label="Transfer callback function name" enable="$parent.init_callback.getValue()">
+               <description>The callback function name that is used in the transfer initialization. User must provide the definition of this function. This item is optional for the transfer mode initialization.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="$this.getValue() != ``" level="error" description="The callback function shall be defined. If the callback function is not used uncheck the Initialization of transfer callback option."/> 
+                  <constraint when_expr="$parent.init_callback.getValue() &amp;&amp; ($this.getValue() != ``)" cond_expr="isCIdentifier($this.getValue())" level="error" description="The callback function name must be a valid identifier."/> 
+               </validation>
+            </string>
+            <string id="user_data" label="User data pointer" enable="$parent.init_callback.getValue()">
+               <description>Definition of the user data pointer ID. When empty the NULL is provided in the initialization function for the callback function.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="(($this.getValue() == ``) || isCIdentifier($this.getValue()))" level="error" description="The user data pointer is not valid C identifier."/>
+               </validation>
+            </string>
+         </struct>
+         <struct id="sai_edma_t" label="SAI eDMA handle type" public="true">
+            <bool id="enable_custom_name" label="Enable SAI custom handle name">
+               <description>When this option is enabled a user custom name of the DMA handle is allowed to set in the settings below.
+               </description>
+            </bool>
+            <string id="handle_custom_name" label="Handle name" available="$parent.enable_custom_name.getValue()">
+               <description>The eDMA handle is used for processing of DMA requests. </description>
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="`The handle name: `+ $this.getCValue() +` is not valid C identifier!`"/>
+                  <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> x.getValue() == $this.getValue())" level="warning" description_expr="`The handle name ` + $this.getValue() + ` is a duplicate.`"/>  
+               </validation>
+            </string>
+            <info id="handle_default_name" label="Handle name" value="$parent.enable_custom_name.getValue() ? $parent.handle_custom_name.getValue() : 
+               $instance.getFnGroupPrefix() + $instance.getID() + 
+               `_SAI_` + ($parent.hasOption(`function`) ? $parent.optionValue(`function`) : ``) + `_eDMA_Handle`" available="!$parent.enable_custom_name.getValue()">
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="`The handle name: `+ $this.getCValue() +` is not valid C identifier!`"/>
+                  <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> x.getValue() == $this.getValue())" level="warning" description_expr="`The handle name ` + $this.getValue() + ` is a duplicate.`"/>  
+               </validation>
+            </info>
+            <variable id="sai_eDMA_handle_id" value="$parent.enable_custom_name.getValue() ? $parent.handle_custom_name.getValue() : $parent.handle_default_name.getValue()" options="id_check"></variable>
+            <bool id="init_callback" label="Initialization of eDMA callback"></bool>
+            <string id="callback_fcn" label="Transfer callback function name" enable="$parent.init_callback.getValue()">
+               <description>The callback function name that is used in the eDMA initialization. User must provide the definition of this function. This item is optional for the eDMA mode initialization.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="$this.getValue() != ``" level="error" description="The callback function shall be defined. If the callback function is not used uncheck the Initialization of eDMA callback option."/> 
+                  <constraint when_expr="$parent.init_callback.getValue() &amp;&amp; ($this.getValue() != ``)" cond_expr="isCIdentifier($this.getValue())" level="error" description="The callback function name must be a valid identifier."/> 
+               </validation>
+            </string>
+            <string id="user_data" label="User data pointer" enable="$parent.init_callback.getValue()">
+               <!--               <string id="user_data" label="User data pointer" enable="$parent.callback_fcn.getValue()!=``">-->
+               <description>Definition of the user data pointer ID. When empty the NULL is provided in the initializaton function for the callback function.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="(($this.getValue() == ``) || isCIdentifier($this.getValue()))" level="error" description="The user data pointer is not valid C identifier."/>
+               </validation>
+            </string>
+         </struct>         
+         <struct id="sai_dma_t" label="SAI DMA handle type" public="true">
+            <bool id="enable_custom_name" label="Enable SAI custom handle name">
+               <description>When this option is enabled a user custom name of the DMA handle is allowed to set in the settings below.
+               </description>
+            </bool>
+            <string id="handle_custom_name" label="Handle name" available="$parent.enable_custom_name.getValue()">
+               <description>The DMA handle is used for processing of DMA requests. </description>
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="`The handle name: `+ $this.getCValue() +` is not valid C identifier!`"/>
+                  <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> x.getValue() == $this.getValue())" level="warning" description_expr="`The handle name ` + $this.getValue() + ` is a duplicate.`"/>  
+               </validation>
+            </string>
+            <info id="handle_default_name" label="Handle name" value="$parent.enable_custom_name.getValue() ? $parent.handle_custom_name.getValue() : 
+               $instance.getFnGroupPrefix() + $instance.getID() + 
+               `_SAI_` + ($parent.hasOption(`function`) ? $parent.optionValue(`function`) : ``) + `_DMA_Handle`" available="!$parent.enable_custom_name.getValue()">
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error" description_expr="`The handle name: `+ $this.getCValue() +` is not valid C identifier!`"/>
+                  <constraint cond_expr="$components.system.#global.duplicit_ids.getValue().noneMatch(x -> x.getValue() == $this.getValue())" level="warning" description_expr="`The handle name ` + $this.getValue() + ` is a duplicate.`"/>  
+               </validation>
+            </info>
+            <variable id="sai_DMA_handle_id" value="$parent.enable_custom_name.getValue() ? $parent.handle_custom_name.getValue() : $parent.handle_default_name.getValue()" options="id_check"></variable>
+            <bool id="init_callback" label="Initialization of DMA callback"></bool>
+            <string id="callback_fcn" label="Transfer callback function name" enable="$parent.init_callback.getValue()">
+               <description>The callback function name that is used in the DMA initialization. User must provide the definition of this function. This item is optional for the DMA mode initialization.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="$this.getValue() != ``" level="error" description="The callback function shall be defined. If the callback function is not used uncheck the Initialization of DMA callback option."/> 
+                  <constraint when_expr="$parent.init_callback.getValue() &amp;&amp; ($this.getValue() != ``)" cond_expr="isCIdentifier($this.getValue())" level="error" description="The callback function name must be a valid identifier."/> 
+               </validation>
+            </string>
+            <string id="user_data" label="User data pointer" enable="$parent.init_callback.getValue()">
+               <!--               <string id="user_data" label="User data pointer" enable="$parent.callback_fcn.getValue()!=``">-->
+               <description>Definition of the user data pointer ID. When empty the NULL is provided in the initializaton function for the callback function.</description>
+               <validation>
+                  <constraint when_expr="$parent.init_callback.getValue()" cond_expr="(($this.getValue() == ``) || isCIdentifier($this.getValue()))" level="error" description="The user data pointer is not valid C identifier."/>
+               </validation>
+            </string>
+         </struct>
+         <set id="interrupt_types" label="Interrupt types">
+            <item id="kSAI_WordStartInterruptEnable" label="Word start" value="kSAI_WordStartInterruptEnable"/>
+            <item id="kSAI_SyncErrorInterruptEnable" label="Sync error" value="kSAI_SyncErrorInterruptEnable"/>            
+            <item id="kSAI_FIFOWarningInterruptEnable" label="FIFO warning" value="kSAI_FIFOWarningInterruptEnable"/>            
+            <item id="kSAI_FIFOErrorInterruptEnable" label="FIFO error" value="kSAI_FIFOErrorInterruptEnable"/>            
+            <item id="kSAI_FIFORequestInterruptEnable" label="FIFO request" value="kSAI_FIFORequestInterruptEnable" available="(featureDefined(`FSL_FEATURE_SAI_FIFO_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SAI_FIFO_COUNT`) &gt; 1))"/>
+         </set>
+         <set id="dma_types" label="DMA types">           
+            <item id="kSAI_FIFOWarningDMAEnable" label="FIFO warning" value="kSAI_FIFOWarningDMAEnable"/>           
+            <item id="kSAI_FIFORequestDMAEnable" label="FIFO request" value="kSAI_FIFORequestDMAEnable" available="(featureDefined(`FSL_FEATURE_SAI_FIFO_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SAI_FIFO_COUNT`) &gt; 1))"/>
+         </set>
+         <set id="_sai_channel_mask" label="Channel mask">           
+            <item id="kSAI_Channel0Mask" label="Channel 0" value="0" available="(featureDefined(`FSL_FEATURE_SAI_CHANNEL_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SAI_CHANNEL_COUNT`) &gt; 0))"/>           
+            <item id="kSAI_Channel1Mask" label="Channel 1" value="1" available="(featureDefined(`FSL_FEATURE_SAI_CHANNEL_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SAI_CHANNEL_COUNT`) &gt; 1))"/>           
+            <item id="kSAI_Channel2Mask" label="Channel 2" value="2" available="(featureDefined(`FSL_FEATURE_SAI_CHANNEL_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SAI_CHANNEL_COUNT`) &gt; 2))"/>
+            <item id="kSAI_Channel3Mask" label="Channel 3" value="3" available="(featureDefined(`FSL_FEATURE_SAI_CHANNEL_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SAI_CHANNEL_COUNT`) &gt; 3))"/>
+            <item id="kSAI_Channel4Mask" label="Channel 4" value="4" available="(featureDefined(`FSL_FEATURE_SAI_CHANNEL_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SAI_CHANNEL_COUNT`) &gt; 4))"/>
+            <item id="kSAI_Channel5Mask" label="Channel 5" value="5" available="(featureDefined(`FSL_FEATURE_SAI_CHANNEL_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SAI_CHANNEL_COUNT`) &gt; 5))"/>
+            <item id="kSAI_Channel6Mask" label="Channel 6" value="6" available="(featureDefined(`FSL_FEATURE_SAI_CHANNEL_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SAI_CHANNEL_COUNT`) &gt; 6))"/>
+            <item id="kSAI_Channel7Mask" label="Channel 7" value="7" available="(featureDefined(`FSL_FEATURE_SAI_CHANNEL_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SAI_CHANNEL_COUNT`) &gt; 7))"/>
+         </set>
+         <enum id="usage_t" label="Usage" from="mine">
+            <item id="playback" label="Playback"/>
+            <item id="record" label="Record"/>
+            <item id="record_playback" label="Record and playback"/>
+         </enum>
+      </user_types>
+      <settings>
+         <reference id="mclk_config" label="Master clock (MCLK) configuration" type="mclk_config_t" config_set_id="fsl_sai" available="true">
+            <description>Master clock preparation to be available as bit clock source.</description>
+         </reference>
+         <reference id="usage" label="Peripheral usage" type="usage_t">
+            <description>Select intense of usage</description>
+         </reference>
+         <variable id="sai_irq_number" value="getResource(`interrupts`, $instance.getCoreId()).countOccurrences(item -> (item.getSetting(`devices`).searchInArray(devItem -> devItem.getSetting(`id`).getValue() == $instance.getPeripheral()) >= 0), false)"></variable>
+         <struct id="whole" label="Whole settings" public="true" options="ShowContentAs=Tabs; UI_LABEL_HIDDEN">            
+            <struct id="tx_group" label="Playback" public="true" available="($instance.fsl_sai.usage.getEnumItemValue() != `record`)">
+               <reference id="sai_config" label="Tx configuration" type="sai_config_t" config_set_id="fsl_sai">
+                  <description>SAI transmitter configuration</description>
+               </reference>
+               <reference id="transfer_format" label="Tx transfer format" type="sai_transfer_format_t" config_set_id="fsl_sai">
+                  <description>Transmitter transfer configuration</description>
+               </reference>
+               <reference id="interrupt_sel" label="Interrupt selection" type="interrupt_types" available="($instance.getMode() == `interrupts`)"/>
+               <reference id="interrupt" label="Interrupt setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" available="(($instance.getMode() == `interrupts`) &amp;&amp; ($parent.getParent().getParent().getSetting(`sai_irq_number`).getValue() > 1))" options="irq_function=serial_tx"/>
+               <reference id="transfer_config_group" label="Tx transfer" type="transfer_config" options="function=Tx" available="($instance.getMode() == `transfer`)"/>
+               <struct id="edma_group" label="DMA settings" public="true" available="($instance.getMode() == `edma`)">
+                  <bool id="enable_edma_channel" label="Enable Tx eDMA channel"></bool>
+                  <!-- <reference id="dma_sel" label="DMA source selection" type="dma_types" available="($instance.getMode() == `edma`)" enable="$parent.enable_edma_channel.getValue()"/> -->
+                  <reference id="edma_channel" label="Tx eDMA channel" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" enable="$parent.enable_edma_channel.getValue()">
+                     <options_expr>
+                       <option id="dma_function" expr="`TX`"/>
+                     </options_expr>
+                  </reference>
+                  <reference id="sai_edma_handle" label="SAI Tx eDMA handle" type="sai_edma_t" options="function=Tx"/>
+               </struct>
+               <struct id="dma_group" label="DMA settings" public="true" available="($instance.getMode() == `dma`)">
+                  <bool id="enable_dma_channel" label="Enable Tx DMA channel"></bool>
+                  <!-- <reference id="dma_sel" label="DMA source selection" type="dma_types" available="($instance.getMode() == `dma`)" enable="$parent.enable_dma_channel.getValue()"/> -->
+                  <reference id="dma_channel" label="Tx DMA channel" type="dma_channel_t" config_set_id="fsl_dma_peripheral" component_id="system" enable="$parent.enable_dma_channel.getValue()">
+                     <options_expr>
+                       <option id="dma_function" expr="`TX`"/>
+                     </options_expr>
+                  </reference>
+                  <reference id="sai_dma_handle" label="SAI Tx DMA handle" type="sai_dma_t" options="function=Tx"/>
+               </struct>
+            </struct>
+            <struct id="rx_group" label="Record" public="true" available="($instance.fsl_sai.usage.getEnumItemValue() != `playback`)">               
+               <reference id="sai_config" label="Rx configuration" type="sai_config_t" config_set_id="fsl_sai">
+                  <description>SAI receiver configuration</description>
+               </reference>
+               <reference id="transfer_format" label="Rx transfer format" type="sai_transfer_format_t" config_set_id="fsl_sai">
+                  <description>Receiver transfer configuration</description>
+               </reference>
+               <reference id="interrupt_sel" label="Interrupt selection" type="interrupt_types" available="($instance.getMode() == `interrupts`)"/>
+               <reference id="interrupt" label="Interrupt setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" available="(($instance.getMode() == `interrupts`) &amp;&amp; ($parent.getParent().getParent().getSetting(`sai_irq_number`).getValue() > 1))" options="irq_function=serial_rx"/>
+               <reference id="transfer_config_group" label="Rx transfer" type="transfer_config" options="function=Rx" available="($instance.getMode() == `transfer`)"/>               
+               <struct id="edma_group" label="DMA settings" public="true" available="($instance.getMode() == `edma`)">
+                  <bool id="enable_edma_channel" label="Enable Rx eDMA channel"></bool>
+                  <!-- <reference id="dma_sel" label="DMA source selection" type="dma_types" available="($instance.getMode() == `edma`)" enable="$parent.enable_edma_channel.getValue()"/> -->
+                  <reference id="edma_channel" label="Rx eDMA channel" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" enable="$parent.enable_edma_channel.getValue()">
+                      <options_expr>
+                        <option id="dma_function" expr="`RX`"/>
+                      </options_expr>
+                  </reference>
+                  <reference id="sai_edma_handle" label="SAI Rx eDMA handle" type="sai_edma_t" options="function=Rx"/>
+               </struct>
+               <struct id="dma_group" label="DMA settings" public="true" available="($instance.getMode() == `dma`)">
+                  <bool id="enable_dma_channel" label="Enable Rx DMA channel"></bool>
+                  <!-- <reference id="dma_sel" label="DMA source selection" type="dma_types" available="($instance.getMode() == `dma`)" enable="$parent.enable_dma_channel.getValue()"/> -->
+                  <reference id="dma_channel" label="Rx DMA channel" type="dma_channel_t" config_set_id="fsl_dma_peripheral" component_id="system" enable="$parent.enable_dma_channel.getValue()">
+                     <options_expr>
+                       <option id="dma_function" expr="`RX`"/>
+                     </options_expr>
+                  </reference>
+                  <reference id="sai_dma_handle" label="SAI Rx DMA handle" type="sai_dma_t" options="function=Rx"/>
+               </struct>
+            </struct>
+         </struct>
+         <reference id="interrupt" label="Interrupt setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" available="(($instance.getMode() == `interrupts`) &amp;&amp; ($parent.sai_irq_number.getValue() == 1))"/>
+         <reference id="interrupt_priority" label="Interrupt priority setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" available="(($instance.getMode() == `transfer`) &amp;&amp; ($parent.sai_irq_number.getValue() == 1))" options="irq_without_enable_control;without_handler_settings">
+            <description>Configuration of interrupt priority (by default Transfer sets interrupt to lower priority than the default level).</description>
+         </reference>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+            <from component_id="system" config_set_id="fsl_edma_peripheral" if_expr="($instance.getMode() == `edma`)"/>
+            <from component_id="system" config_set_id="fsl_dma_peripheral" if_expr="($instance.getMode() == `dma`)"/>
+         </import>
+         <def fragment="sai_config_struct"> <!-- apply_to="$this.whole.tx_group.sai_config" -->
+            <!-- <fragment id="const_struct">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_` + toLowerCase($param.sai_part) + `_config`" />
+               <param id="type" >sai_config_t</param>
+            </fragment> -->
+            <expr>(($this.syncMode.getEnumItemId() == `kSAI_ModeAsync`) ? (`const `) : (``)) + `sai_config_t ` + toUpperCase($instance.getFnGroupPrefix() +  $instance.getId()) + `_` + toLowerCase($param.sai_part) + `_config = {`</expr>
+            <br/>
+            <expr>leftPadding(`.protocol = ` + $this.protocol.getEnumItemId() + `,`, 1)</expr>
+            <br/>
+            <expr>leftPadding(`.syncMode = ` + $this.syncMode.getEnumItemId() + `,`, 1)</expr>
+            <br/>
+            <if expr="(featureDefined(`FSL_FEATURE_SAI_HAS_MCR`) &amp;&amp; getFeature(`FSL_FEATURE_SAI_HAS_MCR`))">
+               <expr>
+                  leftPadding(`.mclkOutputEnable = ` + (($instance.fsl_sai.mclk_config.masterClockSource.getEnumItemId() != `ExternalClock`) ? `true,` : `false,`), 1)
+               </expr>
+               <br/>
+            </if>
+            <if expr="((featureDefined(`FSL_FEATURE_SAI_HAS_MCR`) &amp;&amp; getFeature(`FSL_FEATURE_SAI_HAS_MCR`)) &amp;&amp; (!(featureDefined(`FSL_FEATURE_SAI_HAS_NO_MCR_MICS`) &amp;&amp; getFeature(`FSL_FEATURE_SAI_HAS_NO_MCR_MICS`))))">
+               <expr>leftPadding(((($instance.fsl_sai.mclk_config.masterClockSource.isAvailable()) &amp;&amp; ($instance.fsl_sai.mclk_config.masterClockSource.getEnumItemId() != `ExternalClock`) &amp;&amp; ($instance.fsl_sai.mclk_config.masterClockSource.getEnumItemId() != `InternalClock`)) ? (`/* MCLK clock source */`) : (`/* Unused .mclkSource, MCLK pin is set to be external clock or setting is not available on this device */`)), 1)</expr>
+               <br/>
+               <expr>leftPadding(`.mclkSource = ` + ((($instance.fsl_sai.mclk_config.masterClockSource.isAvailable()) &amp;&amp; ($instance.fsl_sai.mclk_config.masterClockSource.getEnumItemId() != `ExternalClock`) &amp;&amp; ($instance.fsl_sai.mclk_config.masterClockSource.getEnumItemId() != `InternalClock`)) ? ($instance.fsl_sai.mclk_config.masterClockSource.getEnumItemId() + `,`) : (`kSAI_MclkSourceSysclk,`)), 1)</expr>
+               <br/>
+            </if>
+            <if expr="(($this.bitClockSource.isAvailable()) &amp;&amp; ($this.bitClockSource.isEnabled() == `true`))">
+               <expr>leftPadding(`.bclkSource = ` + (($this.bitClockSource.getEnumItemId() != `ExternalClock`) ? ($this.bitClockSource.getEnumItemId() + `,`) : (`kSAI_BclkSourceBusclk, // Unused, BCLK pin is set to be external clock`)), 1)</expr>
+               <br/>
+            </if>
+            <if expr="(($this.bitClockSource.isAvailable()) &amp;&amp; ($this.bitClockSource.isEnabled() == `false`))">
+               <expr>
+                  leftPadding(`/* ` + ($param.sai_part) + ` .bitClockSource will be initialized later due to the synchronization mode selected. */`, 1)                  
+               </expr>
+               <br/>
+               <expr>
+                  leftPadding(`/* Also due to the synchronization mode is selected, masterSlave item below has no meaning, for valid settings see the other Tx/Rx masterSlave settings. */`, 1)
+               </expr>
+               <br/>
+            </if>
+            <expr>leftPadding(`.masterSlave = ` + (($this.bitClockSource.getEnumItemId() != `ExternalClock`) ? `kSAI_Master` : `kSAI_Slave`), 1)</expr>
+            <br/>
+            <expr>`};`</expr>
+            <br/>
+         </def>
+         <def fragment="sai_format_struct"> <!-- apply_to="$this.whole.tx_group.transfer_format" -->
+            <!-- <fragment id="const_struct">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_` + toLowerCase($param.sai_part) + `_format`" />
+               <param id="type" >sai_transfer_format_t</param>
+            </fragment> -->
+            <expr>`sai_transfer_format_t ` + toUpperCase($instance.getFnGroupPrefix() +  $instance.getId()) + `_` + toLowerCase($param.sai_part) + `_format = {`</expr>
+            <br/>
+            <expr>leftPadding(`.sampleRate_Hz = ` + (($this.sampleRate_Hz.getEnumItemId() == `custom`) ? ($this.sampleRate_Hz.getEnumItemValue().toHertz() + `U`) : ($this.sampleRate_Hz.getEnumItemId())) + `,`, 1)</expr>
+            <br/>
+            <expr>leftPadding(`.bitWidth = ` + (($this.bitWidth.getEnumItemId() == `custom`) ? ($this.bitWidth.getEnumItemValue().toInt() + `U`): ($this.bitWidth.getEnumItemId())) + `,`, 1)</expr>
+            <br/>
+            <expr>leftPadding(`.stereo = ` + $this.stereo.getEnumItemId() + `,`, 1)</expr>
+            <br/>
+            <expr>leftPadding(`.masterClockHz = ` + (($instance.fsl_sai.mclk_config.masterClockFrequency.isAvailable()) ? ($instance.fsl_sai.mclk_config.masterClockFrequency.getValue().toHertz()) : `1`) + `UL,`, 1)</expr>
+            <br/>
+            <expr if_expr="(featureDefined(`FSL_FEATURE_SAI_FIFO_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SAI_FIFO_COUNT`) &gt; 1))">
+            leftPadding(`.watermark = ` + $this.watermark.getCValue() + `U,`, 1)</expr>
+            <br/>
+            <expr>leftPadding(`.channel = ` + $this.channel.getValue() + `U,`, 1)</expr>
+            <br/>
+            <expr>leftPadding(`.channelMask = (` + $this.channelMask.getCValue() + `),`, 1)</expr>
+            <br/>
+            <expr>leftPadding(`.endChannel = ` + $this.endChannel.getValue() + `U,`, 1)</expr>
+            <br/>
+            <expr>leftPadding(`.channelNums = ` + $this.channelNums.getValue() + `U,`, 1)</expr>
+            <br/>
+            <expr>leftPadding(`.protocol = ` + (($param.sai_part == `Tx`) ? $instance.fsl_sai.whole.tx_group.sai_config.protocol.getEnumItemId() : $instance.fsl_sai.whole.rx_group.sai_config.protocol.getEnumItemId()) + `,`, 1)</expr>
+            <br/>
+            <expr>leftPadding(`.isFrameSyncCompact = ` + (($this.isFrameSyncCompact.getValue()) ? `true` : `false`), 1)</expr>
+            <br/>
+            <expr>`};`</expr>
+            <br/>
+         </def>        
+         <def fragment="sai_config_struct_extern">
+            <if expr="($param.const)">
+               <fragment id="extern_const_var">
+                  <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_` + toLowerCase($param.sai_part) + `_config`" />
+                  <param id="type" >sai_config_t</param>
+               </fragment>
+            </if>
+            <if expr="(!$param.const)">
+               <fragment id="extern_var">
+                  <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_` + toLowerCase($param.sai_part) + `_config`" />
+                  <param id="type" >sai_config_t</param>
+               </fragment>
+            </if> 
+         </def>
+         <def fragment="sai_format_struct_extern">
+            <fragment id="extern_var">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_` + toLowerCase($param.sai_part) + `_format`" />
+               <param id="type" >sai_transfer_format_t</param>
+            </fragment>
+         </def>
+         <def fragment="sai_sync_one_sai_before_init">            
+            <fragment id="init_line">
+               <param id="code" expr="toUpperCase($param.prefix) + `_` + toLowerCase($param.sai_part) + `_config.bclkSource = ` + toUpperCase($param.prefix) + `_` + (($param.sai_part == `Tx`) ? `rx` : `tx`) + `_config.bclkSource;`"></param>
+               <param id="description" expr="`Configure ` + toUpperCase($param.prefix) + `_` + toLowerCase($param.sai_part) + `_config.bclkSource in case of synchronous mode with second (Tx/Rx) part is selected.`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+         </def>
+         <def fragment="sai_init_call">
+            <fragment id="init_line">
+               <param id="code" expr="`SAI_` + ($param.sai_part) + `Init(` + toUpperCase($param.prefix) + `_PERIPHERAL, &amp;` + toUpperCase($param.prefix) + `_` + toLowerCase($param.sai_part) + `_config);`"></param>
+               <param id="description" expr="`Initialize SAI ` + ($param.sai_part) + ` sub-module functionality`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+         </def>
+         <def fragment="sai_set_format">
+            <fragment id="init_line">
+               <param id="code" expr="`SAI_`+ ($param.sai_transfer) + ($param.sai_part) + `SetFormat` + ($param.sai_dma) + `(` + toUpperCase($param.prefix) + `_PERIPHERAL,` + ($param.sai_handle) + ` &amp;` + toUpperCase($param.prefix) + `_` + toLowerCase($param.sai_part) + `_format` + ($param.mclkSourceClockHz) + `` + ($param.bclkSourceClockHz) + `);`"></param>
+               <param id="description" expr="`Initialize SAI ` + ($param.sai_part) + ` transfer format`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+         </def>
+         <def fragment="sai_enable_interrupts">
+            <fragment id="init_line">
+               <param id="code" expr="`SAI_` + ($param.sai_part) + `EnableInterrupts(` + toUpperCase($param.prefix) + `_PERIPHERAL, (` + (($param.sai_part == `Tx`) ? ($instance.fsl_sai.whole.tx_group.interrupt_sel.getCValue()) : ($instance.fsl_sai.whole.rx_group.interrupt_sel.getCValue())) + `));`"></param>
+               <param id="description" expr="`Enable selected ` + ($param.sai_part) + ` interrupts`"></param>
+               <param id="paddingLevel" expr="1"></param>               
+            </fragment>
+         </def>
+         <!-- <param id="prefix" expr="$instance.getFnGroupPrefix() +  $instance.getId()" /> -->
+         <def fragment="transfer_struct">
+            <text>const </text><expr>$param.type + ` ` + $param.name</expr><text> = {</text><br/>
+            <expr>`  .data = ` + $param.bufferID + `,`</expr><br/>  
+            <expr>`  .dataSize = ` + $param.bufferSize</expr><br/>
+            <text>};</text><br/>
+         </def>
+         <def fragment="buffer_size">
+            <fragment id="define">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $param.sai_part + `_BUFFER_SIZE`)"/>
+               <!-- <param id="value" expr="$instance.fsl_sai.whole.toLowerCase($param.sai_part)_group.toLowerCase($param.sai_part)_transfer_config_group.toLowerCase($param.sai_part)_transfer.dataSize.getCValue()"/>  The getValue() function must be used to provide the symbol name (getCValue() return a string) -->
+               <param id="value" expr="$instance.fsl_sai.whole.tx_group.transfer_config_group.transfer.dataSize.getCValue()"/> <!-- The getValue() function must be used to provide the symbol name (getCValue() return a string) -->
+                                                 
+               <param id="description" expr="($param.sai_part) + ` transfer buffer size`"></param>
+            </fragment>
+         </def>
+         <def fragment="SAI_eDMA_transfer_handle_init" public="true">
+         <!-- SAI_TransferTxCreateHandleEDMA(DEMO_SAI, &txHandle, tx_callback, NULL, &dmaTxHandle); apply_to="$this.whole.tx_group.edma_group" -->
+            <expr>leftPadding(`/* Create the SAI ` + ($param.sai_part) + ` eDMA handle */`,1)</expr><br/>
+            <expr>leftPadding(`SAI_Transfer` + ($param.sai_part) + `CreateHandleEDMA(`, 1) + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, `) 
+               + `&amp;` + $this.sai_edma_handle.sai_eDMA_handle_id.getValue() + `, ` +
+               + ($this.sai_edma_handle.init_callback.getValue() ? $this.sai_edma_handle.callback_fcn.getValue() : `NULL`) + `, `  
+               + (($this.sai_edma_handle.init_callback.getValue() &amp;&amp; ($this.sai_edma_handle.user_data.getValue() != ``)) ? 
+               $this.sai_edma_handle.user_data.getValue() : `NULL`) + `, `  
+               + ($this.enable_edma_channel.getValue() ? (`&amp;` + $this.edma_channel.eDMA_handle.getValue()) : `NULL`)
+               + `);`</expr><br/>
+         </def>
+         <def fragment="SAI_DMA_transfer_handle_init" public="true">
+         <!-- SAI_TransferTxCreateHandleDMA(DEMO_SAI, &txHandle, tx_callback, NULL, &dmaTxHandle); apply_to="$this.whole.tx_group.edma_group" -->
+            <expr>leftPadding(`/* Create the SAI ` + ($param.sai_part) + ` DMA handle */`,1)</expr><br/>
+            <expr>leftPadding(`SAI_Transfer` + ($param.sai_part) + `CreateHandleDMA(`, 1) + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, `) 
+               + `&amp;` + $this.sai_dma_handle.sai_DMA_handle_id.getValue() + `, ` +
+               + ($this.sai_dma_handle.init_callback.getValue() ? $this.sai_dma_handle.callback_fcn.getValue() : `NULL`) + `, `  
+               + (($this.sai_dma_handle.init_callback.getValue() &amp;&amp; ($this.sai_dma_handle.user_data.getValue() != ``)) ? 
+               $this.sai_dma_handle.user_data.getValue() : `NULL`) + `, `  
+               + ($this.enable_dma_channel.getValue() ? (`&amp;` + $this.dma_channel.DMA_handle.getValue()) : `NULL`)
+               + `);`</expr><br/>
+         </def>
+         <def fragment="SAI_transfer_handle_init" public="true">
+         <!-- SAI_TransferTxCreateHandleEDMA(DEMO_SAI, &txHandle, tx_callback, NULL, &dmaTxHandle); apply_to="$this.whole.tx_group.edma_group" -->
+            <expr>leftPadding(`/* Create the SAI ` + ($param.sai_part) + ` transfer handle */`,1)</expr><br/>
+            <expr>leftPadding(`SAI_Transfer` + ($param.sai_part) + `CreateHandle(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, &amp;`)
+               +  $this.transfer_handle.getValue() + `, ` + ($this.init_callback.getValue() ? $this.callback_fcn.getValue() : `NULL`   ) + `, `
+               + (($this.init_callback.getValue() &amp;&amp; ($this.user_data.getValue() != ``)) ? $this.user_data.getValue() : `NULL`)  + `);`, 1)</expr><br/>
+         </def>
+         
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">sai</param>
+               <param id="filename">fsl_sai.h</param>
+            </fragment>
+            <fragment id="include" if_expr="($instance.getMode() == `edma`)">
+               <param id="name">sai</param>
+               <param id="filename">fsl_sai_edma.h</param>
+            </fragment>
+            <fragment id="include" if_expr="($instance.getMode() == `dma`)">
+               <param id="name">sai</param>
+               <param id="filename">fsl_sai_dma.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">clock</param>
+               <param id="filename">fsl_clock.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <fragment id="define">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)"/>
+               <param id="value" expr="$instance.getPeripheral()"/>
+               <param id="description">Definition of peripheral ID</param>
+            </fragment>
+            <fragment id="IRQ_definitions" apply_to="$this.whole.tx_group.interrupt" if_expr="$this.whole.tx_group.interrupt.isAvailable()"/>
+            <fragment id="IRQ_definitions" apply_to="$this.whole.rx_group.interrupt" if_expr="$this.whole.rx_group.interrupt.isAvailable()"/>
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt" if_expr="$this.interrupt.isAvailable()"/>
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_priority" if_expr="$this.interrupt_priority.isAvailable()"/>
+            <fragment id="define" apply_to="$this.whole.tx_group.transfer_config_group" if_expr="(($this.whole.tx_group.transfer_config_group.init_transfer.isAvailable()) &amp;&amp; ($this.whole.tx_group.transfer_config_group.init_transfer.getValue()))">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_TX_BUFFER_SIZE`)"/>               
+               <param id="value" expr="$instance.fsl_sai.whole.tx_group.transfer_config_group.transfer.dataSize.getCValue()"/>                                                 
+               <param id="description">Tx transfer buffer size</param>               
+            </fragment>
+            <fragment id="define" apply_to="$this.whole.rx_group.transfer_config_group" if_expr="(($this.whole.rx_group.transfer_config_group.init_transfer.isAvailable()) &amp;&amp; ($this.whole.rx_group.transfer_config_group.init_transfer.getValue()))">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_RX_BUFFER_SIZE`)"/>               
+               <param id="value" expr="$instance.fsl_sai.whole.rx_group.transfer_config_group.transfer.dataSize.getCValue()"/>                                                 
+               <param id="description">Rx transfer buffer size</param>               
+            </fragment>
+            <fragment id="define" apply_to="$this.whole.tx_group.transfer_format" if_expr="$this.whole.tx_group.transfer_format.isAvailable()">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_TX_MCLK_SOURCE_CLOCK_HZ`)"/>               
+               <param id="value" expr="(($instance.fsl_sai.mclk_config.masterClockSourceFreq.isAvailable()) ?  
+                                                    (($instance.fsl_sai.mclk_config.masterClockSourceFreq.getEnumItemValue().toHertz()) + `UL`) :
+                                                    (($instance.fsl_sai.mclk_config.masterClockFrequency.isAvailable()) ? 
+                                                    (($instance.fsl_sai.mclk_config.masterClockFrequency.getValue().toHertz()) + `UL`) :
+                                                    ((($instance.fsl_sai.whole.tx_group.transfer_format.sampleRate_Hz.getEnumItemLabel().toHertz()) + 1) + `UL`)))"/>
+               <param id="description">Master clock source frequency used for counting the master clock divider in the Tx SetFormat type functions, not available on all devices.</param>
+            </fragment>
+            <fragment id="define" apply_to="$this.whole.rx_group.transfer_format" if_expr="$this.whole.rx_group.transfer_format.isAvailable()">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_RX_MCLK_SOURCE_CLOCK_HZ`)"/>               
+               <param id="value" expr="(($instance.fsl_sai.mclk_config.masterClockSourceFreq.isAvailable()) ?  
+                                                    (($instance.fsl_sai.mclk_config.masterClockSourceFreq.getEnumItemValue().toHertz()) + `UL`) :
+                                                    (($instance.fsl_sai.mclk_config.masterClockFrequency.isAvailable()) ? 
+                                                    (($instance.fsl_sai.mclk_config.masterClockFrequency.getValue().toHertz()) + `UL`) :
+                                                    ((($instance.fsl_sai.whole.rx_group.transfer_format.sampleRate_Hz.getEnumItemLabel().toHertz()) + 1) + `UL`)))"/>
+               <param id="description">Master clock source frequency used for counting the master clock divider in the Rx SetFormat type functions, not available on all devices.</param>               
+            </fragment>
+            <fragment id="define" apply_to="$this.whole.tx_group.sai_config" if_expr="($this.whole.tx_group.sai_config.bitClockSource.isAvailable() &amp;&amp; ($this.whole.tx_group.sai_config.bitClockSource.isEnabled() == `true`) &amp;&amp;  $this.whole.tx_group.sai_config.syncMode.isAvailable() &amp;&amp; ($this.whole.tx_group.sai_config.syncMode.getEnumItemValue() == `kSAI_ModeAsync`))">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_TX_BCLK_SOURCE_CLOCK_HZ`)"/>               
+               <param id="value" expr="(($instance.fsl_sai.whole.tx_group.sai_config.bitClockSourceFreq.isAvailable()) ?  
+                                                    (($instance.fsl_sai.whole.tx_group.sai_config.bitClockSourceFreq.getEnumItemValue().toHertz()) + `UL`) :
+                                                    (($instance.fsl_sai.whole.tx_group.sai_config.slaveBitClockFrequency.isAvailable()) ?
+                                                    (($instance.fsl_sai.whole.tx_group.sai_config.slaveBitClockFrequency.getValue().toHertz()) + `UL`) : 
+                                                    ($instance.fsl_sai.whole.tx_group.sai_config.bitClockSource.getEnumItemValue().toHertz() + `UL`)))"/>               
+               <param id="description">Bit clock source frequency used for counting the bit clock divider in the Tx SetFormat type functions.</param>
+            </fragment>
+            <fragment id="define" apply_to="$this.whole.rx_group.transfer_format" if_expr="($this.whole.rx_group.sai_config.bitClockSource.isAvailable() &amp;&amp; ($this.whole.rx_group.sai_config.bitClockSource.isEnabled() == `true`) &amp;&amp; ($this.whole.rx_group.sai_config.syncMode.isAvailable()) &amp;&amp; ($this.whole.rx_group.sai_config.syncMode.getEnumItemValue() == `kSAI_ModeAsync`))">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_RX_BCLK_SOURCE_CLOCK_HZ`)"/>               
+               <param id="value" expr="(($instance.fsl_sai.whole.rx_group.sai_config.bitClockSourceFreq.isAvailable()) ?  
+                                                    (($instance.fsl_sai.whole.rx_group.sai_config.bitClockSourceFreq.getEnumItemValue().toHertz()) + `UL`) :
+                                                    (($instance.fsl_sai.whole.rx_group.sai_config.slaveBitClockFrequency.isAvailable()) ?
+                                                    (($instance.fsl_sai.whole.rx_group.sai_config.slaveBitClockFrequency.getValue().toHertz()) + `UL`) : 
+                                                    ($instance.fsl_sai.whole.rx_group.sai_config.bitClockSource.getEnumItemValue().toHertz() + `UL`)))"/>                                                
+               <param id="description">Bit clock source frequency used for counting the bit clock divider in the Rx SetFormat type functions.</param>               
+            </fragment>
+            <fragment id="define" apply_to="$this.whole.tx_group.sai_config" if_expr="($this.whole.tx_group.sai_config.bitClockSource.isAvailable() &amp;&amp; ($this.whole.tx_group.sai_config.bitClockSource.isEnabled() == `false`) &amp;&amp;  ($this.whole.tx_group.sai_config.syncMode.isAvailable()) &amp;&amp; ($this.whole.tx_group.sai_config.syncMode.getEnumItemValue() == `kSAI_ModeSync`))">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_TX_BCLK_SOURCE_CLOCK_HZ`)"/>               
+               <param id="value" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_RX_BCLK_SOURCE_CLOCK_HZ`)"/>
+               <param id="description">Bit clock source frequency used for counting the bit clock divider in the Tx SetFormat type functions, this is used when sync mode with Rx part is selected.</param>
+            </fragment>
+            <fragment id="define" apply_to="$this.whole.rx_group.sai_config" if_expr="($this.whole.rx_group.sai_config.bitClockSource.isAvailable() &amp;&amp; ($this.whole.rx_group.sai_config.bitClockSource.isEnabled() == `false`) &amp;&amp;  $this.whole.rx_group.sai_config.syncMode.isAvailable() &amp;&amp; ($this.whole.rx_group.sai_config.syncMode.getEnumItemValue() == `kSAI_ModeSync`))">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_RX_BCLK_SOURCE_CLOCK_HZ`)"/>
+               <param id="value" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_TX_BCLK_SOURCE_CLOCK_HZ`)"/>               
+               <param id="description">Bit clock source frequency used for counting the bit clock divider in the Tx SetFormat type functions, this is used when sync mode with Rx part is selected.</param>
+            </fragment>
+         <!-- EDMA -->
+            <!-- Tx -->
+            <fragment id="DMA_definitions" apply_to="$this.whole.tx_group.edma_group.edma_channel" if_expr="(($this.whole.tx_group.edma_group.enable_edma_channel.isAvailable()) &amp;&amp; ($this.whole.tx_group.edma_group.enable_edma_channel.getValue()))"/>
+            <!-- Rx -->
+            <fragment id="DMA_definitions" apply_to="$this.whole.rx_group.edma_group.edma_channel" if_expr="(($this.whole.rx_group.edma_group.enable_edma_channel.isAvailable()) &amp;&amp; ($this.whole.rx_group.edma_group.enable_edma_channel.getValue()))"/>
+         <!-- DMA -->
+            <!-- Tx -->
+            <fragment id="DMA_definitions" apply_to="$this.whole.tx_group.dma_group.dma_channel" if_expr="(($this.whole.tx_group.dma_group.enable_dma_channel.isAvailable()) &amp;&amp; ($this.whole.tx_group.dma_group.enable_dma_channel.getValue()))"/>
+            <!-- Rx -->
+            <fragment id="DMA_definitions" apply_to="$this.whole.rx_group.dma_group.dma_channel" if_expr="(($this.whole.rx_group.dma_group.enable_dma_channel.isAvailable()) &amp;&amp; ($this.whole.rx_group.dma_group.enable_dma_channel.getValue()))"/>
+         </section>                  
+         <section target="global_vars">
+            <fragment id="comment" if_expr="$this.whole.tx_group.sai_config.isAvailable()">
+               <param id="content" expr="$instance.getFnGroupPrefix() + $instance.getID() + ` Tx configuration`"></param>
+               <param id="paddingLevel" expr="0"></param>
+            </fragment>
+            <fragment id="sai_config_struct" apply_to="$this.whole.tx_group.sai_config" if_expr="$this.whole.tx_group.sai_config.isAvailable()">
+               <param id="sai_part" expr="`Tx`" /> 
+            </fragment>
+            <fragment id="comment" if_expr="$this.whole.tx_group.transfer_format.isAvailable()">
+               <param id="content" expr="$instance.getFnGroupPrefix() + $instance.getID() + ` Tx  transfer format`"></param>
+               <param id="paddingLevel" expr="0"></param>
+            </fragment>
+            <fragment id="sai_format_struct" apply_to="$this.whole.tx_group.transfer_format" if_expr="$this.whole.tx_group.transfer_format.isAvailable()">
+               <param id="sai_part" expr="`Tx`" /> 
+            </fragment>            
+            <fragment id="comment" if_expr="$this.whole.rx_group.sai_config.isAvailable()">
+               <param id="content" expr="$instance.getFnGroupPrefix() + $instance.getID() + ` Rx configuration`"></param>
+               <param id="paddingLevel" expr="0"></param>
+            </fragment>
+            <fragment id="sai_config_struct" apply_to="$this.whole.rx_group.sai_config" if_expr="$this.whole.rx_group.sai_config.isAvailable()">
+               <param id="sai_part" expr="`Rx`" /> 
+            </fragment>
+            <fragment id="comment" if_expr="$this.whole.rx_group.transfer_format.isAvailable()">
+               <param id="content" expr="$instance.getFnGroupPrefix() + $instance.getID() + ` Rx  transfer format`"></param>
+               <param id="paddingLevel" expr="0"></param>
+            </fragment>
+            <fragment id="sai_format_struct" apply_to="$this.whole.rx_group.transfer_format" if_expr="$this.whole.rx_group.transfer_format.isAvailable()">
+               <param id="sai_part" expr="`Rx`" />
+            </fragment>            
+            <!-- Tx transfer buffer definition -->
+            <fragment id="global_var_array" apply_to="$this.whole.tx_group.transfer_config_group.transfer" if_expr="(($this.whole.tx_group.transfer_config_group.init_transfer.isAvailable()) &amp;&amp; ($this.whole.tx_group.transfer_config_group.init_transfer.getValue()))">
+               <param id="name" expr="$this.data.getValue()" />
+               <param id="size" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_TX_BUFFER_SIZE`)"/>
+               <param id="type">uint8_t</param>
+            </fragment>
+            <!-- Tx transfer structures -->
+            <fragment id="transfer_struct" if_expr="(($this.whole.tx_group.transfer_config_group.init_transfer.isAvailable()) &amp;&amp; ($this.whole.tx_group.transfer_config_group.init_transfer.getValue()))">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_txTransfer`"/>
+               <param id="type">sai_transfer_t</param>
+               <param id="bufferID" expr="$this.whole.tx_group.transfer_config_group.transfer.data.getValue()"/>
+               <param id="bufferSize" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_TX_BUFFER_SIZE`)"/>
+            </fragment>            
+            <!-- Rx transfer buffer definition -->
+            <fragment id="global_var_array" apply_to="$this.whole.rx_group.transfer_config_group.transfer" if_expr="(($this.whole.rx_group.transfer_config_group.init_transfer.isAvailable()) &amp;&amp; ($this.whole.rx_group.transfer_config_group.init_transfer.getValue()))">
+               <param id="name" expr="$this.data.getValue()" />
+               <param id="size" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_RX_BUFFER_SIZE`)"/>
+               <param id="type">uint8_t</param>
+            </fragment>
+            <!-- Rx transfer structures -->
+            <fragment id="transfer_struct" if_expr="(($this.whole.rx_group.transfer_config_group.init_transfer.isAvailable()) &amp;&amp; ($this.whole.rx_group.transfer_config_group.init_transfer.getValue()))">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_rxTransfer`"/>
+               <param id="type">sai_transfer_t</param>
+               <param id="bufferID" expr="$this.whole.rx_group.transfer_config_group.transfer.data.getValue()"/>
+               <param id="bufferSize" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_RX_BUFFER_SIZE`)"/>
+            </fragment>
+            <!-- Tx handle -->
+            <fragment id="global_var" apply_to="$this.whole.tx_group.transfer_config_group.transfer_handle" if_expr="$this.whole.tx_group.transfer_config_group.transfer_handle.isAvailable()">
+               <param id="name" expr="$this.getValue()" />
+               <param id="type">sai_handle_t</param>
+            </fragment>
+            <!-- Rx handle -->
+            <fragment id="global_var" apply_to="$this.whole.rx_group.transfer_config_group.transfer_handle" if_expr="$this.whole.rx_group.transfer_config_group.transfer_handle.isAvailable()">
+               <param id="name" expr="$this.getValue()" />
+               <param id="type">sai_handle_t</param>
+            </fragment>
+         <!-- EDMA -->
+            <!-- TX -->
+            <fragment id="DMA_handle_definition" apply_to="$this.whole.tx_group.edma_group.edma_channel" if_expr="(($this.whole.tx_group.edma_group.enable_edma_channel.isAvailable()) &amp;&amp; ($this.whole.tx_group.edma_group.enable_edma_channel.getValue()))"/>
+            <!-- RX -->
+            <fragment id="DMA_handle_definition" apply_to="$this.whole.rx_group.edma_group.edma_channel" if_expr="(($this.whole.rx_group.edma_group.enable_edma_channel.isAvailable()) &amp;&amp; ($this.whole.rx_group.edma_group.enable_edma_channel.getValue()))"/>
+            <!-- SAI Tx eDMA handle -->
+            <fragment id="global_var" if_expr="$this.whole.tx_group.edma_group.sai_edma_handle.sai_eDMA_handle_id.isAvailable()">
+               <param id="name" expr="$this.whole.tx_group.edma_group.sai_edma_handle.sai_eDMA_handle_id.getValue()"/>
+               <param id="type" expr="`sai_edma_handle_t`"/>
+            </fragment>
+            <!-- SAI Rx eDMA handle -->
+            <fragment id="global_var" if_expr="$this.whole.rx_group.edma_group.sai_edma_handle.sai_eDMA_handle_id.isAvailable()">
+               <param id="name" expr="$this.whole.rx_group.edma_group.sai_edma_handle.sai_eDMA_handle_id.getValue()"/>
+               <param id="type" expr="`sai_edma_handle_t`"/>
+            </fragment>
+         <!-- DMA -->
+            <!-- TX -->
+            <fragment id="DMA_handle_definition" apply_to="$this.whole.tx_group.dma_group.dma_channel" if_expr="(($this.whole.tx_group.dma_group.enable_dma_channel.isAvailable()) &amp;&amp; ($this.whole.tx_group.dma_group.enable_dma_channel.getValue()))"/>
+            <!-- RX -->
+            <fragment id="DMA_handle_definition" apply_to="$this.whole.rx_group.dma_group.dma_channel" if_expr="(($this.whole.rx_group.dma_group.enable_dma_channel.isAvailable()) &amp;&amp; ($this.whole.rx_group.dma_group.enable_dma_channel.getValue()))"/>
+            <!-- SAI Tx DMA handle -->
+            <fragment id="global_var" if_expr="$this.whole.tx_group.dma_group.sai_dma_handle.sai_DMA_handle_id.isAvailable()">
+               <param id="name" expr="$this.whole.tx_group.dma_group.sai_dma_handle.sai_DMA_handle_id.getValue()"/>
+               <param id="type" expr="`sai_dma_handle_t`"/>
+            </fragment>
+            <!-- SAI Rx DMA handle -->
+            <fragment id="global_var" if_expr="$this.whole.rx_group.dma_group.sai_dma_handle.sai_DMA_handle_id.isAvailable()">
+               <param id="name" expr="$this.whole.rx_group.dma_group.sai_dma_handle.sai_DMA_handle_id.getValue()"/>
+               <param id="type" expr="`sai_dma_handle_t`"/>
+            </fragment>            
+         </section>
+         <section target="global_vars_extern">
+            <fragment id="sai_config_struct_extern" apply_to="$this.whole.tx_group.sai_config" if_expr="$this.whole.tx_group.sai_config.isAvailable()">
+               <param id="sai_part" expr="`Tx`" />
+               <param id="const" expr="(($this.syncMode.getEnumItemId() == `kSAI_ModeAsync`) ? (true) : (false))" />
+            </fragment>
+            <fragment id="sai_format_struct_extern" apply_to="$this.whole.tx_group.transfer_format" if_expr="$this.whole.tx_group.transfer_format.isAvailable()">
+               <param id="sai_part" expr="`Tx`" /> 
+            </fragment>            
+            <fragment id="sai_config_struct_extern" apply_to="$this.whole.rx_group.sai_config" if_expr="$this.whole.rx_group.sai_config.isAvailable()">
+               <param id="sai_part" expr="`Rx`" /> 
+               <param id="const" expr="(($this.syncMode.getEnumItemId() == `kSAI_ModeAsync`) ? (true) : (false))" />
+            </fragment>
+            <fragment id="sai_format_struct_extern" apply_to="$this.whole.rx_group.transfer_format" if_expr="$this.whole.rx_group.transfer_format.isAvailable()">
+               <param id="sai_part" expr="`Rx`" /> 
+            </fragment>
+            <fragment id="extern_var" apply_to="$this.whole.tx_group.transfer_config_group.transfer_handle" if_expr="$this.whole.tx_group.transfer_config_group.transfer_handle.isAvailable()">
+               <param id="name" expr="$this.getValue()" />
+               <param id="type">sai_handle_t</param>
+            </fragment>
+            <fragment id="extern_var" apply_to="$this.whole.rx_group.transfer_config_group.transfer_handle" if_expr="$this.whole.rx_group.transfer_config_group.transfer_handle.isAvailable()">
+               <param id="name" expr="$this.getValue()" />
+               <param id="type">sai_handle_t</param>
+            </fragment>
+            <!-- Tx transfer buffer definition -->
+            <fragment id="extern_var_array" apply_to="$this.whole.tx_group.transfer_config_group.transfer" if_expr="(($this.whole.tx_group.transfer_config_group.init_transfer.isAvailable()) &amp;&amp; ($this.whole.tx_group.transfer_config_group.init_transfer.getValue()))">
+               <param id="name" expr="$this.data.getValue()" />
+               <param id="size" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_TX_BUFFER_SIZE`)"/>
+               <param id="type">uint8_t</param>
+            </fragment>
+            <!-- TX transfer structures -->
+            <fragment id="extern_const_var" if_expr="(($this.whole.tx_group.transfer_config_group.init_transfer.isAvailable()) &amp;&amp; ($this.whole.tx_group.transfer_config_group.init_transfer.getValue()))">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_txTransfer`"/>
+               <param id="type">sai_transfer_t</param>
+            </fragment>
+            <!-- Rx transfer buffer definition -->
+            <fragment id="extern_var_array" apply_to="$this.whole.rx_group.transfer_config_group.transfer" if_expr="(($this.whole.rx_group.transfer_config_group.init_transfer.isAvailable()) &amp;&amp; ($this.whole.rx_group.transfer_config_group.init_transfer.getValue()))">
+               <param id="name" expr="$this.data.getValue()" />
+               <param id="size" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_RX_BUFFER_SIZE`)"/>
+               <param id="type">uint8_t</param>
+            </fragment>
+            <!-- RX transfer structures -->
+            <fragment id="extern_const_var" if_expr="(($this.whole.rx_group.transfer_config_group.init_transfer.isAvailable()) &amp;&amp; ($this.whole.rx_group.transfer_config_group.init_transfer.getValue()))">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_rxTransfer`"/>
+               <param id="type">sai_transfer_t</param>
+            </fragment>            
+            <!-- user data pointer of the Tx callback function -->
+            <fragment id="extern_var" if_expr="(($this.whole.tx_group.transfer_config_group.isAvailable()) &amp;&amp; ($this.whole.tx_group.transfer_config_group.init_callback.getValue()) &amp;&amp; ($this.whole.tx_group.transfer_config_group.user_data.getValue() != ``))">
+               <param id="name" expr="$this.whole.tx_group.transfer_config_group.user_data.getValue()"/>
+               <param id="type" expr="`void *`"/>
+            </fragment>             
+            <!-- user data pointer of the Rx callback function -->
+            <fragment id="extern_var" if_expr="(($this.whole.rx_group.transfer_config_group.isAvailable()) &amp;&amp; ($this.whole.rx_group.transfer_config_group.init_callback.getValue()) &amp;&amp; ($this.whole.rx_group.transfer_config_group.user_data.getValue() != ``))">
+               <param id="name" expr="$this.whole.rx_group.transfer_config_group.user_data.getValue()"/>
+               <param id="type" expr="`void *`"/>
+            </fragment>
+         <!-- EDMA -->
+            <!-- TX -->
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.whole.tx_group.edma_group.edma_channel" if_expr="(($this.whole.tx_group.edma_group.enable_edma_channel.isAvailable()) &amp;&amp; ($this.whole.tx_group.edma_group.enable_edma_channel.getValue()))"/>
+            <!-- RX -->
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.whole.rx_group.edma_group.edma_channel" if_expr="(($this.whole.rx_group.edma_group.enable_edma_channel.isAvailable()) &amp;&amp; ($this.whole.rx_group.edma_group.enable_edma_channel.getValue()))"/>
+            <!-- user data pointer of the Tx callback function -->
+            <fragment id="extern_var" if_expr="(($this.whole.tx_group.edma_group.sai_edma_handle.isAvailable()) &amp;&amp; ($this.whole.tx_group.edma_group.sai_edma_handle.init_callback.getValue()) &amp;&amp; ($this.whole.tx_group.edma_group.sai_edma_handle.user_data.getValue() != ``))">
+               <param id="name" expr="$this.whole.tx_group.edma_group.sai_edma_handle.user_data.getValue()"/>
+               <param id="type" expr="`void *`"/>
+            </fragment>
+            <!-- user data pointer of the Rx callback function -->
+            <fragment id="extern_var" if_expr="(($this.whole.rx_group.edma_group.sai_edma_handle.isAvailable()) &amp;&amp; ($this.whole.rx_group.edma_group.sai_edma_handle.init_callback.getValue()) &amp;&amp; ($this.whole.rx_group.edma_group.sai_edma_handle.user_data.getValue() != ``))">
+               <param id="name" expr="$this.whole.rx_group.edma_group.sai_edma_handle.user_data.getValue()"/>
+               <param id="type" expr="`void *`"/>
+            </fragment>
+            <!-- SAI Tx eDMA handle -->
+            <fragment id="extern_var" if_expr="$this.whole.tx_group.edma_group.sai_edma_handle.sai_eDMA_handle_id.isAvailable()">
+               <param id="name" expr="$this.whole.tx_group.edma_group.sai_edma_handle.sai_eDMA_handle_id.getValue()"/>
+               <param id="type" expr="`sai_edma_handle_t`"/>
+            </fragment> 
+            <!-- SAI Rx eDMA handle -->
+            <fragment id="extern_var" if_expr="$this.whole.rx_group.edma_group.sai_edma_handle.sai_eDMA_handle_id.isAvailable()">
+               <param id="name" expr="$this.whole.rx_group.edma_group.sai_edma_handle.sai_eDMA_handle_id.getValue()"/>
+               <param id="type" expr="`sai_edma_handle_t`"/>
+            </fragment>
+         <!-- DMA -->
+            <!-- TX -->
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.whole.tx_group.dma_group.dma_channel" if_expr="(($this.whole.tx_group.dma_group.enable_dma_channel.isAvailable()) &amp;&amp; ($this.whole.tx_group.dma_group.enable_dma_channel.getValue()))"/>
+            <!-- RX -->
+            <fragment id="DMAMUX_handle_declaration" apply_to="$this.whole.rx_group.dma_group.dma_channel" if_expr="(($this.whole.rx_group.dma_group.enable_dma_channel.isAvailable()) &amp;&amp; ($this.whole.rx_group.dma_group.enable_dma_channel.getValue()))"/>
+            <!-- user data pointer of the Tx callback function -->
+            <fragment id="extern_var" if_expr="(($this.whole.tx_group.dma_group.sai_dma_handle.isAvailable()) &amp;&amp; ($this.whole.tx_group.dma_group.sai_dma_handle.init_callback.getValue()) &amp;&amp; ($this.whole.tx_group.dma_group.sai_dma_handle.user_data.getValue() != ``))">
+               <param id="name" expr="$this.whole.tx_group.dma_group.sai_dma_handle.user_data.getValue()"/>
+               <param id="type" expr="`void *`"/>
+            </fragment>
+            <!-- user data pointer of the Rx callback function -->
+            <fragment id="extern_var" if_expr="(($this.whole.rx_group.dma_group.sai_dma_handle.isAvailable()) &amp;&amp; ($this.whole.rx_group.dma_group.sai_dma_handle.init_callback.getValue()) &amp;&amp; ($this.whole.rx_group.dma_group.sai_dma_handle.user_data.getValue() != ``))">
+               <param id="name" expr="$this.whole.rx_group.dma_group.sai_dma_handle.user_data.getValue()"/>
+               <param id="type" expr="`void *`"/>
+            </fragment>
+            <!-- SAI Tx DMA handle -->
+            <fragment id="extern_var" if_expr="$this.whole.tx_group.dma_group.sai_dma_handle.sai_DMA_handle_id.isAvailable()">
+               <param id="name" expr="$this.whole.tx_group.dma_group.sai_dma_handle.sai_DMA_handle_id.getValue()"/>
+               <param id="type" expr="`sai_dma_handle_t`"/>
+            </fragment> 
+            <!-- SAI Rx DMA handle -->
+            <fragment id="extern_var" if_expr="$this.whole.rx_group.dma_group.sai_dma_handle.sai_DMA_handle_id.isAvailable()">
+               <param id="name" expr="$this.whole.rx_group.dma_group.sai_dma_handle.sai_DMA_handle_id.getValue()"/>
+               <param id="type" expr="`sai_dma_handle_t`"/>
+            </fragment>
+         </section>
+         <section target="callback_function_extern">
+            <!-- Transfer Tx callback function declaration -->
+<!--            void SAI_tx_callback(I2S_Type *base, sai_handle_t *handle, status_t status, void *userData)-->
+            <fragment id="extern_fcn_def" if_expr="(($this.whole.tx_group.transfer_config_group.init_callback.isAvailable()) &amp;&amp;  ($this.whole.tx_group.transfer_config_group.init_callback.getValue()))">
+               <param id="name" expr="$this.whole.tx_group.transfer_config_group.callback_fcn.getValue()"/>
+               <param id="type">void</param>
+               <param id="params">I2S_Type *base, sai_handle_t *handle, status_t status, void *userData</param>
+               <param id="description" expr="`SAI transfer Tx callback function for the ` + $instance.getID() +` component (init. function `+ $instance.getFnGroupName() + `)` "/>
+            </fragment>
+            <fragment id="extern_fcn_def" if_expr="(($this.whole.tx_group.edma_group.sai_edma_handle.init_callback.isAvailable()) &amp;&amp; ($this.whole.tx_group.edma_group.sai_edma_handle.init_callback.getValue()))">
+               <param id="name" expr="$this.whole.tx_group.edma_group.sai_edma_handle.callback_fcn.getValue()"/>
+               <param id="type">void</param>               
+               <param id="params">I2S_Type *base, sai_edma_handle_t *handle, status_t status, void *userData</param>
+               <param id="description" expr="`SAI transfer Tx callback function for the ` + $instance.getID() +` component (init. function `+ $instance.getFnGroupName() + `)` "/>
+            </fragment>
+            <fragment id="extern_fcn_def" if_expr="(($this.whole.tx_group.dma_group.sai_dma_handle.init_callback.isAvailable()) &amp;&amp; ($this.whole.tx_group.dma_group.sai_dma_handle.init_callback.getValue()))">
+               <param id="name" expr="$this.whole.tx_group.dma_group.sai_dma_handle.callback_fcn.getValue()"/>
+               <param id="type">void</param>               
+               <param id="params">I2S_Type *base, sai_dma_handle_t *handle, status_t status, void *userData</param>
+               <param id="description" expr="`SAI transfer Tx callback function for the ` + $instance.getID() +` component (init. function `+ $instance.getFnGroupName() + `)` "/>
+            </fragment>
+            <!-- Transfer Rx callback function declaration -->
+<!--            void SAI_rx_callback(I2S_Type *base, sai_handle_t *handle, status_t status, void *userData)-->
+            <fragment id="extern_fcn_def" if_expr="(($this.whole.rx_group.transfer_config_group.init_callback.isAvailable()) &amp;&amp;  ($this.whole.rx_group.transfer_config_group.init_callback.getValue()))">
+               <param id="name" expr="$this.whole.rx_group.transfer_config_group.callback_fcn.getValue()"/>
+               <param id="type">void</param>
+               <param id="params">I2S_Type *base, sai_handle_t *handle, status_t status, void *userData</param>
+               <param id="description" expr="`SAI transfer Rx callback function for the ` + $instance.getID() +` component (init. function `+ $instance.getFnGroupName() + `)` "/>
+            </fragment>
+            <fragment id="extern_fcn_def" if_expr="(($this.whole.rx_group.edma_group.sai_edma_handle.init_callback.isAvailable()) &amp;&amp; ($this.whole.rx_group.edma_group.sai_edma_handle.init_callback.getValue()))">
+               <param id="name" expr="$this.whole.rx_group.edma_group.sai_edma_handle.callback_fcn.getValue()"/>
+               <param id="type">void</param>
+               <param id="params">I2S_Type *base, sai_edma_handle_t *handle, status_t status, void *userData</param>
+               <param id="description" expr="`SAI transfer Rx callback function for the ` + $instance.getID() +` component (init. function `+ $instance.getFnGroupName() + `)` "/>
+            </fragment>
+            <fragment id="extern_fcn_def" if_expr="(($this.whole.rx_group.dma_group.sai_dma_handle.init_callback.isAvailable()) &amp;&amp; ($this.whole.rx_group.dma_group.sai_dma_handle.init_callback.getValue()))">
+               <param id="name" expr="$this.whole.rx_group.dma_group.sai_dma_handle.callback_fcn.getValue()"/>
+               <param id="type">void</param>
+               <param id="params">I2S_Type *base, sai_dma_handle_t *handle, status_t status, void *userData</param>
+               <param id="description" expr="`SAI transfer Rx callback function for the ` + $instance.getID() +` component (init. function `+ $instance.getFnGroupName() + `)` "/>
+            </fragment>
+         </section>
+         <section target="init_function_body">
+         <!-- EDMA -->
+            <!-- TX -->            
+            <fragment id="DMAMUX_source_init" apply_to="$this.whole.tx_group.edma_group.edma_channel" if_expr="(($this.whole.tx_group.edma_group.enable_edma_channel.isAvailable()) &amp;&amp; ($this.whole.tx_group.edma_group.enable_edma_channel.getValue()))"/>
+            <!-- RX -->
+            <fragment id="DMAMUX_source_init" apply_to="$this.whole.rx_group.edma_group.edma_channel" if_expr="(($this.whole.rx_group.edma_group.enable_edma_channel.isAvailable()) &amp;&amp; ($this.whole.rx_group.edma_group.enable_edma_channel.getValue()))"/>
+            <!-- TX -->            
+            <fragment id="DMA_handle_init" apply_to="$this.whole.tx_group.edma_group.edma_channel" if_expr="(($this.whole.tx_group.edma_group.enable_edma_channel.isAvailable()) &amp;&amp; ($this.whole.tx_group.edma_group.enable_edma_channel.getValue()))"/>
+            <!-- RX -->
+            <fragment id="DMA_handle_init" apply_to="$this.whole.rx_group.edma_group.edma_channel" if_expr="(($this.whole.rx_group.edma_group.enable_edma_channel.isAvailable()) &amp;&amp; ($this.whole.rx_group.edma_group.enable_edma_channel.getValue()))"/>
+         <!-- DMA -->
+            <!-- TX -->            
+            <fragment id="DMAMUX_source_init" apply_to="$this.whole.tx_group.dma_group.dma_channel" if_expr="(($this.whole.tx_group.dma_group.enable_dma_channel.isAvailable()) &amp;&amp; ($this.whole.tx_group.dma_group.enable_dma_channel.getValue()))"/>
+            <!-- RX -->
+            <fragment id="DMAMUX_source_init" apply_to="$this.whole.rx_group.dma_group.dma_channel" if_expr="(($this.whole.rx_group.dma_group.enable_dma_channel.isAvailable()) &amp;&amp; ($this.whole.rx_group.dma_group.enable_dma_channel.getValue()))"/>
+            <!-- TX -->            
+            <fragment id="DMA_handle_init" apply_to="$this.whole.tx_group.dma_group.dma_channel" if_expr="(($this.whole.tx_group.dma_group.enable_dma_channel.isAvailable()) &amp;&amp; ($this.whole.tx_group.dma_group.enable_dma_channel.getValue()))"/>
+            <!-- RX -->
+            <fragment id="DMA_handle_init" apply_to="$this.whole.rx_group.dma_group.dma_channel" if_expr="(($this.whole.rx_group.dma_group.enable_dma_channel.isAvailable()) &amp;&amp; ($this.whole.rx_group.dma_group.enable_dma_channel.getValue()))"/>
+         <!-- Init -->
+            <fragment id="sai_sync_one_sai_before_init" apply_to="$this.whole.tx_group.sai_config" if_expr="($this.whole.tx_group.sai_config.bitClockSource.isAvailable() &amp;&amp; ($this.whole.tx_group.sai_config.bitClockSource.isEnabled() == `false`) &amp;&amp;  $this.whole.tx_group.sai_config.syncMode.isAvailable() &amp;&amp; ($this.whole.tx_group.sai_config.syncMode.getEnumItemValue() == `kSAI_ModeSync`))">
+               <param id="prefix" expr="$instance.getFnGroupPrefix() +  $instance.getId()" />
+               <param id="sai_part" expr="`Tx`" />
+            </fragment>
+            <fragment id="sai_sync_one_sai_before_init" apply_to="$this.whole.rx_group.sai_config" if_expr="($this.whole.rx_group.sai_config.bitClockSource.isAvailable() &amp;&amp; ($this.whole.rx_group.sai_config.bitClockSource.isEnabled() == `false`) &amp;&amp;  $this.whole.rx_group.sai_config.syncMode.isAvailable() &amp;&amp; ($this.whole.rx_group.sai_config.syncMode.getEnumItemValue() == `kSAI_ModeSync`))">
+               <param id="prefix" expr="$instance.getFnGroupPrefix() +  $instance.getId()" />
+               <param id="sai_part" expr="`Rx`" />
+            </fragment>
+            <fragment id="sai_init_call" apply_to="$this.whole.tx_group.sai_config" if_expr="$this.whole.tx_group.sai_config.isAvailable()">
+               <param id="prefix" expr="$instance.getFnGroupPrefix() +  $instance.getId()" />
+               <param id="sai_part" expr="`Tx`" />               
+            </fragment>
+            <fragment id="sai_init_call" apply_to="$this.whole.rx_group.sai_config" if_expr="$this.whole.rx_group.sai_config.isAvailable()">
+               <param id="prefix" expr="$instance.getFnGroupPrefix() +  $instance.getId()" />
+               <param id="sai_part" expr="`Rx`" />
+            </fragment>
+         </section>
+         <section target="init_function_postinit0">            
+<!--                 SAI_TransferTxCreateHandle(DEMO_SAI, &txHandle, tx_callback, NULL);-->
+<!--             <expr if_expr="$this.whole.tx_group.transfer_config_group.init_transfer.isAvailable()">leftPadding(`SAI_TransferTxCreateHandle(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, &amp;`) +  $this.whole.tx_group.transfer_config_group.transfer_handle.getValue() + `, ` + ($this.whole.tx_group.transfer_config_group.init_callback.getValue() ? $this.whole.tx_group.transfer_config_group.callback_fcn.getValue() : `NULL`   ) + `, ` + (($this.whole.tx_group.transfer_config_group.init_callback.getValue() &amp;&amp; ($this.whole.tx_group.transfer_config_group.user_data.getValue() != ``)) ? $this.whole.tx_group.transfer_config_group.user_data.getValue() : `NULL`)  + `);`, 1)</expr><br/>
+            <expr if_expr="$this.whole.rx_group.transfer_config_group.init_transfer.isAvailable()">leftPadding(`SAI_TransferRxCreateHandle(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL, &amp;`) +  $this.whole.rx_group.transfer_config_group.transfer_handle.getValue() + `, ` + ($this.whole.rx_group.transfer_config_group.init_callback.getValue() ? $this.whole.rx_group.transfer_config_group.callback_fcn.getValue() : `NULL`   ) + `, ` + (($this.whole.rx_group.transfer_config_group.init_callback.getValue() &amp;&amp; ($this.whole.rx_group.transfer_config_group.user_data.getValue() != ``)) ? $this.whole.rx_group.transfer_config_group.user_data.getValue() : `NULL`)  + `);`, 1)</expr><br/> -->
+            <fragment id="SAI_transfer_handle_init" apply_to="$this.whole.tx_group.transfer_config_group" if_expr="$this.whole.tx_group.transfer_config_group.init_transfer.isAvailable()">
+               <param id="sai_part" expr="`Tx`" />
+            </fragment>
+            <fragment id="SAI_transfer_handle_init" apply_to="$this.whole.rx_group.transfer_config_group" if_expr="$this.whole.rx_group.transfer_config_group.init_transfer.isAvailable()">
+               <param id="sai_part" expr="`Rx`" />
+            </fragment>
+            <fragment id="SAI_eDMA_transfer_handle_init" apply_to="$this.whole.tx_group.edma_group" if_expr="$this.whole.tx_group.edma_group.sai_edma_handle.init_callback.isAvailable()">
+               <param id="sai_part" expr="`Tx`" />
+            </fragment>
+            <fragment id="SAI_eDMA_transfer_handle_init" apply_to="$this.whole.rx_group.edma_group" if_expr="$this.whole.rx_group.edma_group.sai_edma_handle.init_callback.isAvailable()">
+               <param id="sai_part" expr="`Rx`" />
+            </fragment>
+            <fragment id="SAI_DMA_transfer_handle_init" apply_to="$this.whole.tx_group.dma_group" if_expr="$this.whole.tx_group.dma_group.sai_dma_handle.init_callback.isAvailable()">
+               <param id="sai_part" expr="`Tx`" />
+            </fragment>
+            <fragment id="SAI_DMA_transfer_handle_init" apply_to="$this.whole.rx_group.dma_group" if_expr="$this.whole.rx_group.dma_group.sai_dma_handle.init_callback.isAvailable()">
+               <param id="sai_part" expr="`Rx`" />
+            </fragment>
+         </section>
+         <section target="init_function_postinit1">            
+            <fragment id="sai_set_format" apply_to="$this.whole.tx_group.transfer_format" if_expr="$this.whole.tx_group.transfer_format.isAvailable()">
+               <param id="prefix" expr="$instance.getFnGroupPrefix() +  $instance.getId()" />
+               <param id="sai_part" expr="`Tx`" /> 
+               <param id="sai_transfer" expr="((($parent.transfer_config_group.init_transfer.isAvailable()) || ($instance.getMode() == `edma`) || ($instance.getMode() == `dma`)) ? `Transfer` : ``)" />
+               <param id="sai_dma" expr="(($instance.getMode() == `edma`) ? `EDMA` : (($instance.getMode() == `dma`) ? `DMA` : ``))" />
+               <param id="sai_handle" expr="(($parent.transfer_config_group.init_transfer.isAvailable()) ? (` &amp;` + ($parent.transfer_config_group.transfer_handle.getValue()) + `,`) : (($instance.fsl_sai.whole.tx_group.edma_group.sai_edma_handle.sai_eDMA_handle_id.isAvailable()) ?  (` &amp;` +         
+                ($instance.fsl_sai.whole.tx_group.edma_group.sai_edma_handle.sai_eDMA_handle_id.getValue()) + `,`) : 
+               (($instance.fsl_sai.whole.tx_group.dma_group.sai_dma_handle.sai_DMA_handle_id.isAvailable()) ?  (` &amp;` +  
+                ($instance.fsl_sai.whole.tx_group.dma_group.sai_dma_handle.sai_DMA_handle_id.getValue()) + `,`) : ``)))" />               
+               <param id="mclkSourceClockHz" expr="`, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_TX_MCLK_SOURCE_CLOCK_HZ`)" />               
+               <param id="bclkSourceClockHz" expr="`, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_TX_BCLK_SOURCE_CLOCK_HZ`)"/>
+            </fragment>
+            <fragment id="sai_set_format" apply_to="$this.whole.rx_group.transfer_format" if_expr="$this.whole.rx_group.transfer_format.isAvailable()">
+               <param id="prefix" expr="$instance.getFnGroupPrefix() +  $instance.getId()" />
+               <param id="sai_part" expr="`Rx`" />                
+               <param id="sai_transfer" expr="((($parent.transfer_config_group.init_transfer.isAvailable()) || ($instance.getMode() == `edma`) || ($instance.getMode() == `dma`)) ? `Transfer` : ``)" />                
+               <param id="sai_dma" expr="(($instance.getMode() == `edma`) ? `EDMA` : (($instance.getMode() == `dma`) ? `DMA` : ``))" />
+               <param id="sai_handle" expr="(($parent.transfer_config_group.init_transfer.isAvailable()) ? (` &amp;` + ($parent.transfer_config_group.transfer_handle.getValue()) + `,`) : (($instance.fsl_sai.whole.rx_group.edma_group.sai_edma_handle.sai_eDMA_handle_id.isAvailable()) ?  (` &amp;` + 
+                ($instance.fsl_sai.whole.rx_group.edma_group.sai_edma_handle.sai_eDMA_handle_id.getValue()) + `,`) : 
+               (($instance.fsl_sai.whole.rx_group.dma_group.sai_dma_handle.sai_DMA_handle_id.isAvailable()) ?  (` &amp;` +  
+                ($instance.fsl_sai.whole.rx_group.dma_group.sai_dma_handle.sai_DMA_handle_id.getValue()) + `,`) : ``)))" />
+                <param id="mclkSourceClockHz" expr="`, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_RX_MCLK_SOURCE_CLOCK_HZ`)" />               
+               <param id="bclkSourceClockHz" expr="`, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_RX_BCLK_SOURCE_CLOCK_HZ`)"/>
+            </fragment>
+         </section>
+         <section target="init_function_postinit3">            
+            <!-- Tx interrupt -->
+            <fragment id="sai_enable_interrupts" apply_to="$this.whole.tx_group.interrupt_sel" if_expr="($this.whole.tx_group.interrupt_sel.isAvailable() &amp;&amp; ($this.whole.tx_group.interrupt_sel.getCValue() != ``))">
+               <param id="prefix" expr="$instance.getFnGroupPrefix() +  $instance.getId()" />
+               <param id="sai_part" expr="`Tx`" /> 
+            </fragment>
+            <fragment id="IRQn_set_priority_default" apply_to="$this.whole.tx_group.interrupt" if_expr="$this.whole.tx_group.interrupt.isAvailable()"/>
+            <fragment id="IRQn_enable_default" apply_to="$this.whole.tx_group.interrupt" if_expr="$this.whole.tx_group.interrupt.isAvailable()"/>
+            <!-- Rx interrupt -->
+            <fragment id="sai_enable_interrupts" apply_to="$this.whole.rx_group.interrupt_sel" if_expr="($this.whole.rx_group.interrupt_sel.isAvailable() &amp;&amp; ($this.whole.rx_group.interrupt_sel.getCValue() != ``))">
+               <param id="prefix" expr="$instance.getFnGroupPrefix() +  $instance.getId()" />
+               <param id="sai_part" expr="`Rx`" />
+            </fragment>
+            <fragment id="IRQn_set_priority_default" apply_to="$this.whole.rx_group.interrupt" if_expr="$this.whole.rx_group.interrupt.isAvailable()"/>
+            <fragment id="IRQn_enable_default" apply_to="$this.whole.rx_group.interrupt" if_expr="$this.whole.rx_group.interrupt.isAvailable()"/>
+            <!-- Common Rx/Tx interrupt -->
+            <fragment id="IRQn_set_priority_default" apply_to="$this.interrupt" if_expr="$this.interrupt.isAvailable()"/>
+            <fragment id="IRQn_enable_default" apply_to="$this.interrupt" if_expr="$this.interrupt.isAvailable()"/>
+            <fragment id="IRQn_set_priority_default" apply_to="$this.interrupt_priority" if_expr="$this.interrupt_priority.isAvailable()"/>
+         </section>
+      </code>
+      <validation>         
+         <dependency when_expr="(($this.usage.getValue() == `record_playback`) || ($this.usage.getValue() == `playback`)) &amp;&amp; 
+                                 ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel0Mask.isAvailable()) &amp;&amp; ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel0Mask.getValue())" 
+                     resource_type="PeripheralUnifiedSignal" 
+                     resource_id_expr="$instance.getPeripheral() + `.i2s_txd` +  ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel0Mask.getSetItemValue())" 
+                     description_expr="$instance.getPeripheral() + `.TX DATA ` + `(` + ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel0Mask.getSetItemValue()) + `)` + ` pin needs to be routed`" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="(($this.usage.getValue() == `record_playback`) || ($this.usage.getValue() == `playback`)) &amp;&amp; 
+                                 ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel1Mask.isAvailable()) &amp;&amp; ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel1Mask.getValue())" 
+                     resource_type="PeripheralUnifiedSignal" 
+                     resource_id_expr="$instance.getPeripheral() + `.i2s_txd` +  ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel1Mask.getSetItemValue())" 
+                     description_expr="$instance.getPeripheral() + `.TX DATA ` + ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel1Mask.getSetItemValue()) + ` pin needs to be routed`" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="(($this.usage.getValue() == `record_playback`) || ($this.usage.getValue() == `playback`)) &amp;&amp; 
+                                 ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel2Mask.isAvailable()) &amp;&amp; ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel2Mask.getValue())" 
+                     resource_type="PeripheralUnifiedSignal" 
+                     resource_id_expr="$instance.getPeripheral() + `.i2s_txd` +  ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel2Mask.getSetItemValue())" 
+                     description_expr="$instance.getPeripheral() + `.TX DATA ` + ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel2Mask.getSetItemValue()) + ` pin needs to be routed`" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="(($this.usage.getValue() == `record_playback`) || ($this.usage.getValue() == `playback`)) &amp;&amp; 
+                                 ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel3Mask.isAvailable()) &amp;&amp; ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel3Mask.getValue())" 
+                     resource_type="PeripheralUnifiedSignal" 
+                     resource_id_expr="$instance.getPeripheral() + `.i2s_txd` +  ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel3Mask.getSetItemValue())" 
+                     description_expr="$instance.getPeripheral() + `.TX DATA ` + ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel3Mask.getSetItemValue()) + ` pin needs to be routed`" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="(($this.usage.getValue() == `record_playback`) || ($this.usage.getValue() == `playback`)) &amp;&amp; 
+                                 ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel4Mask.isAvailable()) &amp;&amp; ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel4Mask.getValue())" 
+                     resource_type="PeripheralUnifiedSignal" 
+                     resource_id_expr="$instance.getPeripheral() + `.i2s_txd` +  ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel4Mask.getSetItemValue())" 
+                     description_expr="$instance.getPeripheral() + `.TX DATA ` + ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel4Mask.getSetItemValue()) + ` pin needs to be routed`" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="(($this.usage.getValue() == `record_playback`) || ($this.usage.getValue() == `playback`)) &amp;&amp; 
+                                 ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel5Mask.isAvailable()) &amp;&amp; ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel5Mask.getValue())" 
+                     resource_type="PeripheralUnifiedSignal" 
+                     resource_id_expr="$instance.getPeripheral() + `.i2s_txd` +  ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel5Mask.getSetItemValue())" 
+                     description_expr="$instance.getPeripheral() + `.TX DATA ` + ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel5Mask.getSetItemValue()) + ` pin needs to be routed`" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="(($this.usage.getValue() == `record_playback`) || ($this.usage.getValue() == `playback`)) &amp;&amp; 
+                                 ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel6Mask.isAvailable()) &amp;&amp; ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel6Mask.getValue())" 
+                     resource_type="PeripheralUnifiedSignal" 
+                     resource_id_expr="$instance.getPeripheral() + `.i2s_txd` +  ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel6Mask.getSetItemValue())" 
+                     description_expr="$instance.getPeripheral() + `.TX DATA ` + ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel6Mask.getSetItemValue()) + ` pin needs to be routed`" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="(($this.usage.getValue() == `record_playback`) || ($this.usage.getValue() == `playback`)) &amp;&amp; 
+                                 ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel7Mask.isAvailable()) &amp;&amp; ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel7Mask.getValue())" 
+                     resource_type="PeripheralUnifiedSignal" 
+                     resource_id_expr="$instance.getPeripheral() + `.i2s_txd` +  ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel7Mask.getSetItemValue())" 
+                     description_expr="$instance.getPeripheral() + `.TX DATA ` + ($this.whole.tx_group.transfer_format.channelMask.kSAI_Channel7Mask.getSetItemValue()) + ` pin needs to be routed`" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="($this.usage.getValue() == `record_playback`) || ($this.usage.getValue() == `playback`)" 
+                     resource_type="PeripheralUnifiedSignal" 
+                     resource_id_expr="$instance.getPeripheral() + `.i2s_tclk`" 
+                     description_expr="$instance.getPeripheral() + `.TX BCLK pin needs to be routed`" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="($this.usage.getValue() == `record_playback`) || ($this.usage.getValue() == `playback`)" 
+                     resource_type="PeripheralUnifiedSignal" 
+                     resource_id_expr="$instance.getPeripheral() + `.i2s_tfs`" 
+                     description_expr="$instance.getPeripheral() + `.TX SYNC pin needs to be routed`" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="(($this.usage.getValue() == `record_playback`) || ($this.usage.getValue() == `record`)) &amp;&amp; 
+                                 ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel0Mask.isAvailable()) &amp;&amp; ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel0Mask.getValue())" 
+                     resource_type="PeripheralUnifiedSignal" 
+                     resource_id_expr="$instance.getPeripheral() + `.i2s_rxd` +  ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel0Mask.getSetItemValue())" 
+                     description_expr="$instance.getPeripheral() + `.RX DATA ` + `(` + ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel0Mask.getSetItemValue()) + `)` + ` pin needs to be routed`" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="(($this.usage.getValue() == `record_playback`) || ($this.usage.getValue() == `record`)) &amp;&amp; 
+                                 ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel1Mask.isAvailable()) &amp;&amp; ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel1Mask.getValue())" 
+                     resource_type="PeripheralUnifiedSignal" 
+                     resource_id_expr="$instance.getPeripheral() + `.i2s_rxd` +  ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel1Mask.getSetItemValue())" 
+                     description_expr="$instance.getPeripheral() + `.RX DATA ` + ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel1Mask.getSetItemValue()) + ` pin needs to be routed`" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="(($this.usage.getValue() == `record_playback`) || ($this.usage.getValue() == `record`)) &amp;&amp; 
+                                 ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel2Mask.isAvailable()) &amp;&amp; ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel2Mask.getValue())" 
+                     resource_type="PeripheralUnifiedSignal" 
+                     resource_id_expr="$instance.getPeripheral() + `.i2s_rxd` +  ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel2Mask.getSetItemValue())" 
+                     description_expr="$instance.getPeripheral() + `.RX DATA ` + ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel2Mask.getSetItemValue()) + ` pin needs to be routed`" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="(($this.usage.getValue() == `record_playback`) || ($this.usage.getValue() == `record`)) &amp;&amp; 
+                                 ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel3Mask.isAvailable()) &amp;&amp; ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel3Mask.getValue())" 
+                     resource_type="PeripheralUnifiedSignal" 
+                     resource_id_expr="$instance.getPeripheral() + `.i2s_rxd` +  ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel3Mask.getSetItemValue())" 
+                     description_expr="$instance.getPeripheral() + `.RX DATA ` + ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel3Mask.getSetItemValue()) + ` pin needs to be routed`" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="(($this.usage.getValue() == `record_playback`) || ($this.usage.getValue() == `record`)) &amp;&amp; 
+                                 ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel4Mask.isAvailable()) &amp;&amp; ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel4Mask.getValue())" 
+                     resource_type="PeripheralUnifiedSignal" 
+                     resource_id_expr="$instance.getPeripheral() + `.i2s_rxd` +  ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel4Mask.getSetItemValue())" 
+                     description_expr="$instance.getPeripheral() + `.RX DATA ` + ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel4Mask.getSetItemValue()) + ` pin needs to be routed`" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="(($this.usage.getValue() == `record_playback`) || ($this.usage.getValue() == `record`)) &amp;&amp; 
+                                 ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel5Mask.isAvailable()) &amp;&amp; ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel5Mask.getValue())" 
+                     resource_type="PeripheralUnifiedSignal" 
+                     resource_id_expr="$instance.getPeripheral() + `.i2s_rxd` +  ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel5Mask.getSetItemValue())" 
+                     description_expr="$instance.getPeripheral() + `.RX DATA ` + ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel5Mask.getSetItemValue()) + ` pin needs to be routed`" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="(($this.usage.getValue() == `record_playback`) || ($this.usage.getValue() == `record`)) &amp;&amp; 
+                                 ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel6Mask.isAvailable()) &amp;&amp; ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel6Mask.getValue())" 
+                     resource_type="PeripheralUnifiedSignal" 
+                     resource_id_expr="$instance.getPeripheral() + `.i2s_rxd` +  ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel6Mask.getSetItemValue())" 
+                     description_expr="$instance.getPeripheral() + `.RX DATA ` + ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel6Mask.getSetItemValue()) + ` pin needs to be routed`" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="(($this.usage.getValue() == `record_playback`) || ($this.usage.getValue() == `record`)) &amp;&amp; 
+                                 ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel7Mask.isAvailable()) &amp;&amp; ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel7Mask.getValue())" 
+                     resource_type="PeripheralUnifiedSignal" 
+                     resource_id_expr="$instance.getPeripheral() + `.i2s_rxd` +  ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel7Mask.getSetItemValue())" 
+                     description_expr="$instance.getPeripheral() + `.RX DATA ` + ($this.whole.rx_group.transfer_format.channelMask.kSAI_Channel7Mask.getSetItemValue()) + ` pin needs to be routed`" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="($this.usage.getValue() == `record_playback`) || ($this.usage.getValue() == `record`)" 
+                     resource_type="PeripheralUnifiedSignal" 
+                     resource_id_expr="$instance.getPeripheral() + `.i2s_rclk`" 
+                     description_expr="$instance.getPeripheral() + `.RX BCLK pin needs to be routed`" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="($this.usage.getValue() == `record_playback`) || ($this.usage.getValue() == `record`)" 
+                     resource_type="PeripheralUnifiedSignal" 
+                     resource_id_expr="$instance.getPeripheral() + `.i2s_rfs`" 
+                     description_expr="$instance.getPeripheral() + `.RX SYNC pin needs to be routed`" level="Warning">
+            <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <constraint when_expr="($this.usage.getValue() == `record_playback`) &amp;&amp; ($this.whole.tx_group.edma_group.edma_channel.eDMAn.isAvailable())  &amp;&amp; ($this.whole.tx_group.edma_group.edma_channel.eDMAn.isEnabled()) &amp;&amp; ($this.whole.rx_group.edma_group.edma_channel.eDMAn.isAvailable()) &amp;&amp; ($this.whole.rx_group.edma_group.edma_channel.eDMAn.isEnabled())" cond_expr="($this.whole.tx_group.edma_group.edma_channel.eDMAn.getValue() != $this.whole.rx_group.edma_group.edma_channel.eDMAn.getValue())" level="error" description="Please select different DMA channel for Tx and Rx."/>
+         <constraint when_expr="($this.usage.getValue() == `record_playback`) &amp;&amp; ($this.whole.tx_group.dma_group.dma_channel.DMAn.isAvailable()) &amp;&amp; ($this.whole.tx_group.dma_group.dma_channel.DMAn.isEnabled()) &amp;&amp; ($this.whole.rx_group.dma_group.dma_channel.DMAn.isAvailable()) &amp;&amp; ($this.whole.rx_group.dma_group.dma_channel.DMAn.isEnabled())" cond_expr="($this.whole.tx_group.dma_group.dma_channel.DMAn.getValue() != $this.whole.rx_group.dma_group.dma_channel.DMAn.getValue())" level="error" description="Please select different DMA channel for Tx and Rx."/>
+         <constraint when_expr="($this.usage.getValue() == `record_playback`) 
+         &amp;&amp; ($this.whole.tx_group.sai_config.syncMode.isAvailable()) 
+         &amp;&amp; ($this.whole.tx_group.sai_config.syncMode.getEnumItemValue() == `kSAI_ModeSync`) 
+         &amp;&amp; ($this.whole.rx_group.sai_config.syncMode.isAvailable()) 
+         &amp;&amp; ($this.whole.rx_group.sai_config.syncMode.getEnumItemValue() == `kSAI_ModeSync`)" cond_expr="false" level="error" description="One of the Tx or Rx has to be source of the bitclock if synchronization between Tx and Rx part of the one SAI module is used."/>
+         <constraint when_expr="($this.usage.getValue() == `playback`) 
+         &amp;&amp; ($this.whole.tx_group.sai_config.syncMode.isAvailable())
+         &amp;&amp; ($this.whole.tx_group.sai_config.syncMode.getEnumItemValue() == `kSAI_ModeSync`)" 
+         cond_expr="false" level="error" description="Tx has to be in asynchronous mode or have other sync source if Rx part of the SAI module is not used (change Peripheral usage to Record and playback, if you want Rx use also)."/>
+         <constraint when_expr="($this.usage.getValue() == `record`)
+         &amp;&amp; ($this.whole.rx_group.sai_config.syncMode.isAvailable()) 
+         &amp;&amp; ($this.whole.rx_group.sai_config.syncMode.getEnumItemValue() == `kSAI_ModeSync`)" 
+         cond_expr="false" level="error" description="Rx has to be in asynchronous mode or have other sync source if Tx part of the SAI module is not used (change Peripheral usage to Record and playback, if you want Tx use also)."/>
+         
+         <dependency when_expr="($instance.getMode() == `edma`)" resource_type="SWComponent" resource_id="platform.drivers.sai_edma" level="Warning" description_expr="$components.system.#global.err_missing_driver.getValue().formatMessage(`fsl_sai_edma`, ` (required for the eDMA mode)`)">
+            <feature name="enabled" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="($instance.getMode() == `edma`)" resource_type="SWComponent" resource_id="platform.drivers.sai_edma" level="Warning" description_expr="$components.system.#global.err_driver_version.getValue().formatMessage(`fsl_sai_edma`, ` (required for the eDMA mode)`)">
+            <feature name="version" evaluation="compatible">
+               <data type="Version" expr="`2.1.5`"/>
+               </feature>
+         </dependency>
+         <dependency when_expr="($instance.getMode() == `dma`)" resource_type="SWComponent" resource_id="platform.drivers.sai_dma" level="Warning" description_expr="$components.system.#global.err_missing_driver.getValue().formatMessage(`fsl_sai_dma`, ` (required for the eDMA mode)`)">
+            <feature name="enabled" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency when_expr="($instance.getMode() == `dma`)" resource_type="SWComponent" resource_id="platform.drivers.sai_dma" level="Warning" description_expr="$components.system.#global.err_driver_version.getValue().formatMessage(`fsl_sai_dma`, ` (required for the eDMA mode)`)">
+            <feature name="version" evaluation="compatible">
+               <data type="Version" expr="`2.1.5`"/>
+               </feature>
+         </dependency>
+      </validation>
+      <quick_selections>
+         <quick_selection id="sai_default" label="Default">
+            <description>Same config as the SAI_TxGetDefaultConfig() and SAI_RxGetDefaultConfig() functions do</description>
+            <set id="mclk_config.masterClockFrequency">6.144 MHz</set>
+            <set id="whole.tx_group.sai_config.protocol">kSAI_BusI2S</set>
+            <set id="whole.tx_group.sai_config.syncMode">kSAI_ModeAsync</set>
+            <set id="whole.tx_group.sai_config.bitClockSource">kSAI_BclkSourceMclkOption1</set>            
+            <set id="whole.tx_group.transfer_format.channelMask.kSAI_Channel0Mask">true</set>
+            <set id="whole.rx_group.sai_config.protocol">kSAI_BusI2S</set>
+            <set id="whole.rx_group.sai_config.syncMode">kSAI_ModeSync</set>
+            <set id="whole.rx_group.sai_config.bitClockSource">kSAI_BclkSourceMclkOption1</set>
+            <set id="whole.rx_group.transfer_format.channelMask.kSAI_Channel0Mask">true</set>
+         </quick_selection>
+         <default>sai_default</default>
+      </quick_selections>     
+   </config_set>
+</component:config_component>

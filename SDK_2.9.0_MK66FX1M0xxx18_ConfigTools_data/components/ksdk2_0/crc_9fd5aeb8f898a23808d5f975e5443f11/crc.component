@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="crc" label="CRC" category="Peripheral driver" global_only="false" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-7.0.xsd"
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <sw_comp_ref name="platform.drivers.crc" version="2.0.1" match_type="greaterOrEqual" until_version="2.1.0"/>
+   <description>Cyclic Redundancy Check (CRC)</description>
+   <mode id="General" label="General" available="true">
+      <description>General mode of CRC peripheral</description>
+      <config_set_refs>
+         <config_set_ref>fsl_crc</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>CRC</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="fsl_crc" label="CRC configuration" from_source="fsl_crc.h">
+      <description>Configuration of CRC peripheral</description>
+      <generated_types>
+      </generated_types>
+      <user_types>
+         <enum id="crc_bits_t" label="CRC bit width." from="_crc_bits">
+            <item id="kCrcBits16" label="16-bit"/>
+            <item id="kCrcBits32" label="32-bit"/>
+         </enum>
+         <enum id="crc_result_t" label="CRC result type." from="_crc_result">
+            <item id="kCrcFinalChecksum" label="Final checksum"/>
+            <item id="kCrcIntermediateChecksum" label="Intermediate checksum"/>
+         </enum>
+         <struct id="crc_config_t" label="CRC protocol configuration." from="_crc_config">
+            <description>This structure holds the configuration for the CRC protocol.</description>
+            <integer id="polynomial" label="CRC Polynomial" type="uint32_t">
+               <description>CRC polynomial with MSB on the left. Example: 0x1021 = 0b1000000100001 = x^12+x^5+1</description>
+               <validation>
+                  <constraint when_expr="$this.value() &gt;= 2**16" cond_expr="$parent.crcBits.getEnumItemValue() == `kCrcBits32`" level="warning"
+                     description_expr="`Use value smaller than ` + 2**16 + ` when configuration is in 16-bit mode as this value will be cliped to 16-bit value`"/>
+               </validation>
+            </integer>
+            <integer id="seed" label="Starting checksum value" type="uint32_t">
+               <description>Starting checksum value</description>
+            </integer>
+            <bool id="reflectIn" label="Invert input">
+               <description>Inverts order of bits in input number if checked. Value 0b11100011 will become 0b11000111.</description>
+            </bool>
+            <bool id="reflectOut" label="Invert output">
+               <description>Inverts order of bits in output number if checked. Value 0b11100011 will become 0b11000111.</description>
+            </bool>
+            <bool id="complementChecksum" label="Complement checksum">
+               <description>When enabled the complement of the checksum is provided as the result</description>
+            </bool>
+            <reference id="crcBits" label="CRC mode" type="crc_bits_t">
+               <description>Selects bit width of CRC protocol.</description>
+            </reference>
+            <reference id="crcResult" label="CRC result type" type="crc_result_t">
+               <description>Selects final or intermediate checksum return from CRC_Get16bitResult() or CRC_Get32bitResult()</description>
+            </reference>
+         </struct>
+      </user_types>
+      <settings>
+         <reference id="config" label="CRC configuration" type="crc_config_t" available="true" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+            <description>Configuration</description>
+         </reference>
+         <variable id="constantPeripheralPrefix" value="$instance.getFnGroupPrefix() + $instance.getId()"/>
+      </settings>
+      <quick_selections>
+         <quick_selection id="default" label="Default">
+            <description>Default configuration</description>
+            <set id="config.crcBits">kCrcBits16</set>
+         </quick_selection>
+         <quick_selection id="crc16CCITFalse" label="CRC16 CCIT false">
+            <description>CCIT false configuration</description>
+            <set id="config.polynomial">0x1021</set>
+            <set id="config.reflectIn">false</set>
+            <set id="config.reflectOut">false</set>
+            <set id="config.complementChecksum">false</set>
+            <set id="config.crcBits">kCrcBits16</set>
+            <set id="config.crcResult">kCrcFinalChecksum</set>
+         </quick_selection>
+         <quick_selection id="crc16" label="CRC16">
+            <description>CRC16 configuration</description>
+            <set id="config.polynomial">0x8005</set>
+            <set id="config.reflectIn">true</set>
+            <set id="config.reflectOut">true</set>
+            <set id="config.complementChecksum">true</set>
+            <set id="config.crcBits">kCrcBits16</set>
+            <set id="config.crcResult">kCrcFinalChecksum</set>
+         </quick_selection>
+         <quick_selection id="crc16Kermit" label="CRC16 Kermit">
+            <description>CRC16 Kermit configuration</description>
+            <set id="config.polynomial">0x1021</set>
+            <set id="config.reflectIn">true</set>
+            <set id="config.reflectOut">true</set>
+            <set id="config.complementChecksum">false</set>
+            <set id="config.crcBits">kCrcBits16</set>
+            <set id="config.crcResult">kCrcFinalChecksum</set>
+         </quick_selection>
+         <quick_selection id="crc32" label="CRC32">
+            <description>CRC32 configuration</description>
+            <set id="config.polynomial">0x04c11db7</set>
+            <set id="config.reflectIn">true</set>
+            <set id="config.reflectOut">true</set>
+            <set id="config.complementChecksum">true</set>
+            <set id="config.crcBits">kCrcBits32</set>
+            <set id="config.crcResult">kCrcFinalChecksum</set>
+         </quick_selection>
+         <quick_selection id="crc32Posix" label="CRC32 Posix">
+            <description>CRC32 POSIX configuration</description>
+            <set id="config.polynomial">0x04c11db7</set>
+            <set id="config.reflectIn">false</set>
+            <set id="config.reflectOut">false</set>
+            <set id="config.complementChecksum">true</set>
+            <set id="config.crcBits">kCrcBits32</set>
+            <set id="config.crcResult">kCrcFinalChecksum</set>
+         </quick_selection>
+         <default>default</default>
+      </quick_selections>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="filename">fsl_crc.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <fragment id="define">
+               <param id="name" expr="$instance.fsl_crc.constantPeripheralPrefix.getValue() + `_PERIPHERAL`"/>
+               <param id="value" expr="getSdkBasePointer($instance)"/>
+               <param id="description">CRC base</param>
+            </fragment>
+         </section>
+         <section target="global_vars_extern">
+            <fragment id="extern_const" apply_to="$instance.fsl_crc.config">
+               <param id="name" expr="$instance.fsl_crc.constantPeripheralPrefix.getValue() + `_config`" />
+               <param id="type">crc_config_t</param>
+            </fragment>
+         </section>
+         <section target="global_vars">
+            <fragment id="const_struct" apply_to="$instance.fsl_crc.config">
+               <param id="name" expr="$instance.fsl_crc.constantPeripheralPrefix.getValue() + `_config`" />
+               <param id="type">crc_config_t</param>
+            </fragment>
+         </section>
+         <section target="init_function_body">
+            <expr>leftPadding(`CRC_Init(` + $instance.fsl_crc.constantPeripheralPrefix.getValue() + `_PERIPHERAL, &amp;` + $instance.fsl_crc.constantPeripheralPrefix.getValue() + `_config` + `);`, 1)</expr><br/>
+         </section>
+      </code>
+      <validation/>
+   </config_set>
+</component:config_component>

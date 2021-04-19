@@ -1,0 +1,407 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="32" name="NVICISER0" description="Interrupt Set Enable Register n">
+    <bit_field offset="0" width="32" name="SETENA" access="RW" reset_value="0" description="Interrupt set enable bits"/>
+  </register>
+  <register offset="0x4" width="32" name="NVICISER1" description="Interrupt Set Enable Register n">
+    <bit_field offset="0" width="32" name="SETENA" access="RW" reset_value="0" description="Interrupt set enable bits"/>
+  </register>
+  <register offset="0x8" width="32" name="NVICISER2" description="Interrupt Set Enable Register n">
+    <bit_field offset="0" width="32" name="SETENA" access="RW" reset_value="0" description="Interrupt set enable bits"/>
+  </register>
+  <register offset="0xC" width="32" name="NVICISER3" description="Interrupt Set Enable Register n">
+    <bit_field offset="0" width="32" name="SETENA" access="RW" reset_value="0" description="Interrupt set enable bits"/>
+  </register>
+  <register offset="0x80" width="32" name="NVICICER0" description="Interrupt Clear Enable Register n">
+    <bit_field offset="0" width="32" name="CLRENA" access="RW" reset_value="0" description="Interrupt clear-enable bits"/>
+  </register>
+  <register offset="0x84" width="32" name="NVICICER1" description="Interrupt Clear Enable Register n">
+    <bit_field offset="0" width="32" name="CLRENA" access="RW" reset_value="0" description="Interrupt clear-enable bits"/>
+  </register>
+  <register offset="0x88" width="32" name="NVICICER2" description="Interrupt Clear Enable Register n">
+    <bit_field offset="0" width="32" name="CLRENA" access="RW" reset_value="0" description="Interrupt clear-enable bits"/>
+  </register>
+  <register offset="0x8C" width="32" name="NVICICER3" description="Interrupt Clear Enable Register n">
+    <bit_field offset="0" width="32" name="CLRENA" access="RW" reset_value="0" description="Interrupt clear-enable bits"/>
+  </register>
+  <register offset="0x100" width="32" name="NVICISPR0" description="Interrupt Set Pending Register n">
+    <bit_field offset="0" width="32" name="SETPEND" access="RW" reset_value="0" description="Interrupt set-pending bits"/>
+  </register>
+  <register offset="0x104" width="32" name="NVICISPR1" description="Interrupt Set Pending Register n">
+    <bit_field offset="0" width="32" name="SETPEND" access="RW" reset_value="0" description="Interrupt set-pending bits"/>
+  </register>
+  <register offset="0x108" width="32" name="NVICISPR2" description="Interrupt Set Pending Register n">
+    <bit_field offset="0" width="32" name="SETPEND" access="RW" reset_value="0" description="Interrupt set-pending bits"/>
+  </register>
+  <register offset="0x10C" width="32" name="NVICISPR3" description="Interrupt Set Pending Register n">
+    <bit_field offset="0" width="32" name="SETPEND" access="RW" reset_value="0" description="Interrupt set-pending bits"/>
+  </register>
+  <register offset="0x180" width="32" name="NVICICPR0" description="Interrupt Clear Pending Register n">
+    <bit_field offset="0" width="32" name="CLRPEND" access="RW" reset_value="0" description="Interrupt clear-pending bits"/>
+  </register>
+  <register offset="0x184" width="32" name="NVICICPR1" description="Interrupt Clear Pending Register n">
+    <bit_field offset="0" width="32" name="CLRPEND" access="RW" reset_value="0" description="Interrupt clear-pending bits"/>
+  </register>
+  <register offset="0x188" width="32" name="NVICICPR2" description="Interrupt Clear Pending Register n">
+    <bit_field offset="0" width="32" name="CLRPEND" access="RW" reset_value="0" description="Interrupt clear-pending bits"/>
+  </register>
+  <register offset="0x18C" width="32" name="NVICICPR3" description="Interrupt Clear Pending Register n">
+    <bit_field offset="0" width="32" name="CLRPEND" access="RW" reset_value="0" description="Interrupt clear-pending bits"/>
+  </register>
+  <register offset="0x200" width="32" name="NVICIABR0" description="Interrupt Active bit Register n">
+    <bit_field offset="0" width="32" name="ACTIVE" access="RW" reset_value="0" description="Interrupt active flags"/>
+  </register>
+  <register offset="0x204" width="32" name="NVICIABR1" description="Interrupt Active bit Register n">
+    <bit_field offset="0" width="32" name="ACTIVE" access="RW" reset_value="0" description="Interrupt active flags"/>
+  </register>
+  <register offset="0x208" width="32" name="NVICIABR2" description="Interrupt Active bit Register n">
+    <bit_field offset="0" width="32" name="ACTIVE" access="RW" reset_value="0" description="Interrupt active flags"/>
+  </register>
+  <register offset="0x20C" width="32" name="NVICIABR3" description="Interrupt Active bit Register n">
+    <bit_field offset="0" width="32" name="ACTIVE" access="RW" reset_value="0" description="Interrupt active flags"/>
+  </register>
+  <register offset="0x300" width="8" name="NVICIP0" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI0" access="RW" reset_value="0" description="Priority of interrupt 0"/>
+  </register>
+  <register offset="0x301" width="8" name="NVICIP1" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI1" access="RW" reset_value="0" description="Priority of interrupt 1"/>
+  </register>
+  <register offset="0x302" width="8" name="NVICIP2" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI2" access="RW" reset_value="0" description="Priority of interrupt 2"/>
+  </register>
+  <register offset="0x303" width="8" name="NVICIP3" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI3" access="RW" reset_value="0" description="Priority of interrupt 3"/>
+  </register>
+  <register offset="0x304" width="8" name="NVICIP4" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI4" access="RW" reset_value="0" description="Priority of interrupt 4"/>
+  </register>
+  <register offset="0x305" width="8" name="NVICIP5" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI5" access="RW" reset_value="0" description="Priority of interrupt 5"/>
+  </register>
+  <register offset="0x306" width="8" name="NVICIP6" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI6" access="RW" reset_value="0" description="Priority of interrupt 6"/>
+  </register>
+  <register offset="0x307" width="8" name="NVICIP7" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI7" access="RW" reset_value="0" description="Priority of interrupt 7"/>
+  </register>
+  <register offset="0x308" width="8" name="NVICIP8" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI8" access="RW" reset_value="0" description="Priority of interrupt 8"/>
+  </register>
+  <register offset="0x309" width="8" name="NVICIP9" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI9" access="RW" reset_value="0" description="Priority of interrupt 9"/>
+  </register>
+  <register offset="0x30A" width="8" name="NVICIP10" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI10" access="RW" reset_value="0" description="Priority of interrupt 10"/>
+  </register>
+  <register offset="0x30B" width="8" name="NVICIP11" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI11" access="RW" reset_value="0" description="Priority of interrupt 11"/>
+  </register>
+  <register offset="0x30C" width="8" name="NVICIP12" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI12" access="RW" reset_value="0" description="Priority of interrupt 12"/>
+  </register>
+  <register offset="0x30D" width="8" name="NVICIP13" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI13" access="RW" reset_value="0" description="Priority of interrupt 13"/>
+  </register>
+  <register offset="0x30E" width="8" name="NVICIP14" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI14" access="RW" reset_value="0" description="Priority of interrupt 14"/>
+  </register>
+  <register offset="0x30F" width="8" name="NVICIP15" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI15" access="RW" reset_value="0" description="Priority of interrupt 15"/>
+  </register>
+  <register offset="0x310" width="8" name="NVICIP16" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI16" access="RW" reset_value="0" description="Priority of interrupt 16"/>
+  </register>
+  <register offset="0x311" width="8" name="NVICIP17" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI17" access="RW" reset_value="0" description="Priority of interrupt 17"/>
+  </register>
+  <register offset="0x312" width="8" name="NVICIP18" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI18" access="RW" reset_value="0" description="Priority of interrupt 18"/>
+  </register>
+  <register offset="0x313" width="8" name="NVICIP19" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI19" access="RW" reset_value="0" description="Priority of interrupt 19"/>
+  </register>
+  <register offset="0x314" width="8" name="NVICIP20" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI20" access="RW" reset_value="0" description="Priority of interrupt 20"/>
+  </register>
+  <register offset="0x315" width="8" name="NVICIP21" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI21" access="RW" reset_value="0" description="Priority of interrupt 21"/>
+  </register>
+  <register offset="0x316" width="8" name="NVICIP22" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI22" access="RW" reset_value="0" description="Priority of interrupt 22"/>
+  </register>
+  <register offset="0x317" width="8" name="NVICIP23" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI23" access="RW" reset_value="0" description="Priority of interrupt 23"/>
+  </register>
+  <register offset="0x318" width="8" name="NVICIP24" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI24" access="RW" reset_value="0" description="Priority of interrupt 24"/>
+  </register>
+  <register offset="0x319" width="8" name="NVICIP25" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI25" access="RW" reset_value="0" description="Priority of interrupt 25"/>
+  </register>
+  <register offset="0x31A" width="8" name="NVICIP26" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI26" access="RW" reset_value="0" description="Priority of interrupt 26"/>
+  </register>
+  <register offset="0x31B" width="8" name="NVICIP27" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI27" access="RW" reset_value="0" description="Priority of interrupt 27"/>
+  </register>
+  <register offset="0x31C" width="8" name="NVICIP28" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI28" access="RW" reset_value="0" description="Priority of interrupt 28"/>
+  </register>
+  <register offset="0x31D" width="8" name="NVICIP29" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI29" access="RW" reset_value="0" description="Priority of interrupt 29"/>
+  </register>
+  <register offset="0x31E" width="8" name="NVICIP30" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI30" access="RW" reset_value="0" description="Priority of interrupt 30"/>
+  </register>
+  <register offset="0x31F" width="8" name="NVICIP31" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI31" access="RW" reset_value="0" description="Priority of interrupt 31"/>
+  </register>
+  <register offset="0x320" width="8" name="NVICIP32" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI32" access="RW" reset_value="0" description="Priority of interrupt 32"/>
+  </register>
+  <register offset="0x321" width="8" name="NVICIP33" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI33" access="RW" reset_value="0" description="Priority of interrupt 33"/>
+  </register>
+  <register offset="0x322" width="8" name="NVICIP34" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI34" access="RW" reset_value="0" description="Priority of interrupt 34"/>
+  </register>
+  <register offset="0x323" width="8" name="NVICIP35" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI35" access="RW" reset_value="0" description="Priority of interrupt 35"/>
+  </register>
+  <register offset="0x324" width="8" name="NVICIP36" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI36" access="RW" reset_value="0" description="Priority of interrupt 36"/>
+  </register>
+  <register offset="0x325" width="8" name="NVICIP37" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI37" access="RW" reset_value="0" description="Priority of interrupt 37"/>
+  </register>
+  <register offset="0x326" width="8" name="NVICIP38" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI38" access="RW" reset_value="0" description="Priority of interrupt 38"/>
+  </register>
+  <register offset="0x327" width="8" name="NVICIP39" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI39" access="RW" reset_value="0" description="Priority of interrupt 39"/>
+  </register>
+  <register offset="0x328" width="8" name="NVICIP40" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI40" access="RW" reset_value="0" description="Priority of interrupt 40"/>
+  </register>
+  <register offset="0x329" width="8" name="NVICIP41" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI41" access="RW" reset_value="0" description="Priority of interrupt 41"/>
+  </register>
+  <register offset="0x32A" width="8" name="NVICIP42" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI42" access="RW" reset_value="0" description="Priority of interrupt 42"/>
+  </register>
+  <register offset="0x32B" width="8" name="NVICIP43" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI43" access="RW" reset_value="0" description="Priority of interrupt 43"/>
+  </register>
+  <register offset="0x32C" width="8" name="NVICIP44" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI44" access="RW" reset_value="0" description="Priority of interrupt 44"/>
+  </register>
+  <register offset="0x32D" width="8" name="NVICIP45" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI45" access="RW" reset_value="0" description="Priority of interrupt 45"/>
+  </register>
+  <register offset="0x32E" width="8" name="NVICIP46" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI46" access="RW" reset_value="0" description="Priority of interrupt 46"/>
+  </register>
+  <register offset="0x32F" width="8" name="NVICIP47" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI47" access="RW" reset_value="0" description="Priority of interrupt 47"/>
+  </register>
+  <register offset="0x330" width="8" name="NVICIP48" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI48" access="RW" reset_value="0" description="Priority of interrupt 48"/>
+  </register>
+  <register offset="0x331" width="8" name="NVICIP49" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI49" access="RW" reset_value="0" description="Priority of interrupt 49"/>
+  </register>
+  <register offset="0x332" width="8" name="NVICIP50" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI50" access="RW" reset_value="0" description="Priority of interrupt 50"/>
+  </register>
+  <register offset="0x333" width="8" name="NVICIP51" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI51" access="RW" reset_value="0" description="Priority of interrupt 51"/>
+  </register>
+  <register offset="0x334" width="8" name="NVICIP52" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI52" access="RW" reset_value="0" description="Priority of interrupt 52"/>
+  </register>
+  <register offset="0x335" width="8" name="NVICIP53" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI53" access="RW" reset_value="0" description="Priority of interrupt 53"/>
+  </register>
+  <register offset="0x336" width="8" name="NVICIP54" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI54" access="RW" reset_value="0" description="Priority of interrupt 54"/>
+  </register>
+  <register offset="0x337" width="8" name="NVICIP55" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI55" access="RW" reset_value="0" description="Priority of interrupt 55"/>
+  </register>
+  <register offset="0x338" width="8" name="NVICIP56" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI56" access="RW" reset_value="0" description="Priority of interrupt 56"/>
+  </register>
+  <register offset="0x339" width="8" name="NVICIP57" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI57" access="RW" reset_value="0" description="Priority of interrupt 57"/>
+  </register>
+  <register offset="0x33A" width="8" name="NVICIP58" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI58" access="RW" reset_value="0" description="Priority of interrupt 58"/>
+  </register>
+  <register offset="0x33B" width="8" name="NVICIP59" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI59" access="RW" reset_value="0" description="Priority of interrupt 59"/>
+  </register>
+  <register offset="0x33C" width="8" name="NVICIP60" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI60" access="RW" reset_value="0" description="Priority of interrupt 60"/>
+  </register>
+  <register offset="0x33D" width="8" name="NVICIP61" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI61" access="RW" reset_value="0" description="Priority of interrupt 61"/>
+  </register>
+  <register offset="0x33E" width="8" name="NVICIP62" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI62" access="RW" reset_value="0" description="Priority of interrupt 62"/>
+  </register>
+  <register offset="0x33F" width="8" name="NVICIP63" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI63" access="RW" reset_value="0" description="Priority of interrupt 63"/>
+  </register>
+  <register offset="0x340" width="8" name="NVICIP64" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI64" access="RW" reset_value="0" description="Priority of interrupt 64"/>
+  </register>
+  <register offset="0x341" width="8" name="NVICIP65" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI65" access="RW" reset_value="0" description="Priority of interrupt 65"/>
+  </register>
+  <register offset="0x342" width="8" name="NVICIP66" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI66" access="RW" reset_value="0" description="Priority of interrupt 66"/>
+  </register>
+  <register offset="0x343" width="8" name="NVICIP67" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI67" access="RW" reset_value="0" description="Priority of interrupt 67"/>
+  </register>
+  <register offset="0x344" width="8" name="NVICIP68" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI68" access="RW" reset_value="0" description="Priority of interrupt 68"/>
+  </register>
+  <register offset="0x345" width="8" name="NVICIP69" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI69" access="RW" reset_value="0" description="Priority of interrupt 69"/>
+  </register>
+  <register offset="0x346" width="8" name="NVICIP70" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI70" access="RW" reset_value="0" description="Priority of interrupt 70"/>
+  </register>
+  <register offset="0x347" width="8" name="NVICIP71" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI71" access="RW" reset_value="0" description="Priority of interrupt 71"/>
+  </register>
+  <register offset="0x348" width="8" name="NVICIP72" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI72" access="RW" reset_value="0" description="Priority of interrupt 72"/>
+  </register>
+  <register offset="0x349" width="8" name="NVICIP73" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI73" access="RW" reset_value="0" description="Priority of interrupt 73"/>
+  </register>
+  <register offset="0x34A" width="8" name="NVICIP74" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI74" access="RW" reset_value="0" description="Priority of interrupt 74"/>
+  </register>
+  <register offset="0x34B" width="8" name="NVICIP75" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI75" access="RW" reset_value="0" description="Priority of interrupt 75"/>
+  </register>
+  <register offset="0x34C" width="8" name="NVICIP76" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI76" access="RW" reset_value="0" description="Priority of interrupt 76"/>
+  </register>
+  <register offset="0x34D" width="8" name="NVICIP77" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI77" access="RW" reset_value="0" description="Priority of interrupt 77"/>
+  </register>
+  <register offset="0x34E" width="8" name="NVICIP78" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI78" access="RW" reset_value="0" description="Priority of interrupt 78"/>
+  </register>
+  <register offset="0x34F" width="8" name="NVICIP79" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI79" access="RW" reset_value="0" description="Priority of interrupt 79"/>
+  </register>
+  <register offset="0x350" width="8" name="NVICIP80" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI80" access="RW" reset_value="0" description="Priority of interrupt 80"/>
+  </register>
+  <register offset="0x351" width="8" name="NVICIP81" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI81" access="RW" reset_value="0" description="Priority of interrupt 81"/>
+  </register>
+  <register offset="0x352" width="8" name="NVICIP82" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI82" access="RW" reset_value="0" description="Priority of interrupt 82"/>
+  </register>
+  <register offset="0x353" width="8" name="NVICIP83" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI83" access="RW" reset_value="0" description="Priority of interrupt 83"/>
+  </register>
+  <register offset="0x354" width="8" name="NVICIP84" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI84" access="RW" reset_value="0" description="Priority of interrupt 84"/>
+  </register>
+  <register offset="0x355" width="8" name="NVICIP85" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI85" access="RW" reset_value="0" description="Priority of interrupt 85"/>
+  </register>
+  <register offset="0x356" width="8" name="NVICIP86" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI86" access="RW" reset_value="0" description="Priority of interrupt 86"/>
+  </register>
+  <register offset="0x357" width="8" name="NVICIP87" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI87" access="RW" reset_value="0" description="Priority of interrupt 87"/>
+  </register>
+  <register offset="0x358" width="8" name="NVICIP88" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI88" access="RW" reset_value="0" description="Priority of interrupt 88"/>
+  </register>
+  <register offset="0x359" width="8" name="NVICIP89" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI89" access="RW" reset_value="0" description="Priority of interrupt 89"/>
+  </register>
+  <register offset="0x35A" width="8" name="NVICIP90" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI90" access="RW" reset_value="0" description="Priority of interrupt 90"/>
+  </register>
+  <register offset="0x35B" width="8" name="NVICIP91" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI91" access="RW" reset_value="0" description="Priority of interrupt 91"/>
+  </register>
+  <register offset="0x35C" width="8" name="NVICIP92" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI92" access="RW" reset_value="0" description="Priority of interrupt 92"/>
+  </register>
+  <register offset="0x35D" width="8" name="NVICIP93" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI93" access="RW" reset_value="0" description="Priority of interrupt 93"/>
+  </register>
+  <register offset="0x35E" width="8" name="NVICIP94" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI94" access="RW" reset_value="0" description="Priority of interrupt 94"/>
+  </register>
+  <register offset="0x35F" width="8" name="NVICIP95" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI95" access="RW" reset_value="0" description="Priority of interrupt 95"/>
+  </register>
+  <register offset="0x360" width="8" name="NVICIP96" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI96" access="RW" reset_value="0" description="Priority of interrupt 96"/>
+  </register>
+  <register offset="0x361" width="8" name="NVICIP97" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI97" access="RW" reset_value="0" description="Priority of interrupt 97"/>
+  </register>
+  <register offset="0x362" width="8" name="NVICIP98" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI98" access="RW" reset_value="0" description="Priority of interrupt 98"/>
+  </register>
+  <register offset="0x363" width="8" name="NVICIP99" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI99" access="RW" reset_value="0" description="Priority of interrupt 99"/>
+  </register>
+  <register offset="0x364" width="8" name="NVICIP100" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI100" access="RW" reset_value="0" description="Priority of interrupt 100"/>
+  </register>
+  <register offset="0x365" width="8" name="NVICIP101" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI101" access="RW" reset_value="0" description="Priority of interrupt 101"/>
+  </register>
+  <register offset="0x366" width="8" name="NVICIP102" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI102" access="RW" reset_value="0" description="Priority of interrupt 102"/>
+  </register>
+  <register offset="0x367" width="8" name="NVICIP103" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI103" access="RW" reset_value="0" description="Priority of interrupt 103"/>
+  </register>
+  <register offset="0x368" width="8" name="NVICIP104" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI104" access="RW" reset_value="0" description="Priority of interrupt 104"/>
+  </register>
+  <register offset="0x369" width="8" name="NVICIP105" description="Interrupt Priority Register n">
+    <bit_field offset="0" width="8" name="PRI105" access="RW" reset_value="0" description="Priority of interrupt 105"/>
+  </register>
+  <register offset="0xE00" width="32" name="NVICSTIR" description="Software Trigger Interrupt Register">
+    <bit_field offset="0" width="9" name="INTID" access="RW" reset_value="0" description="Interrupt ID of the interrupt to trigger, in the range 0-239. For example, a value of 0x03 specifies interrupt IRQ3."/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+</regs:peripheral>

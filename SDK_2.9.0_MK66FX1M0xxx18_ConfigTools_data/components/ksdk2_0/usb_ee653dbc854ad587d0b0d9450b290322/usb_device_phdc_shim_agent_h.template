@@ -1,0 +1,125 @@
+#ifndef _USB_DEVICE_${idSnakeCase}$_SHIM_AGENT_H_
+#define _USB_DEVICE_${idSnakeCase}$_SHIM_AGENT_H_
+
+#include "usb_device_config.h"
+#include "usb.h"
+#include "usb_device.h"
+
+#include "usb_device_class.h"
+#include "usb_device_ch9.h"
+#include "usb_device_descriptor.h"
+
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+
+/*! @brief QoS bin elements */
+#define USB_DEVICE_${idSnakeCase}$_SHIM_AGENT_MAX_QUEUE_NUMBER (0x04U)
+
+/*! @brief Shim event definition */
+#define SHIM_AGENT_EVENT_RECV_MESSAGE_PREAMBLE (0x00U)
+
+#ifndef SHIM_AGENT_EVENT_RECV_OPAQUE_DATA
+#define SHIM_AGENT_EVENT_RECV_OPAQUE_DATA (0x01U)
+#endif
+#ifndef SHIM_AGENT_EVENT_RECV_COMPLETE
+#define SHIM_AGENT_EVENT_RECV_COMPLETE (0x02U)
+#endif
+#ifndef SHIM_AGENT_EVENT_SENT_COMPLETE
+#define SHIM_AGENT_EVENT_SENT_COMPLETE (0x03U)
+#endif
+
+/*! @brief the application data structure */
+typedef struct _usb_device_${idLowerSnakeCase}$_shim_application_data_struct
+{
+    uint32_t transferSize; /*!< Transfer size */
+    uint8_t *buffer;       /*!< Data buffer */
+} usb_device_${idLowerSnakeCase}$_shim_application_data_struct_t;
+
+/*! @brief the TX data structure */
+typedef struct _usb_device_${idLowerSnakeCase}$_shim_tx_data_struct
+{
+    uint8_t epNumber;                                                         /*!< Endpoint number */
+    uint32_t seller;                                                          /*!< Number of queued transfers */
+    uint32_t buyer;                                                           /*!< Number of dequeued transfers */
+    usb_device_${idLowerSnakeCase}$_shim_application_data_struct_t sendData[USB_DEVICE_${idSnakeCase}$_SHIM_AGENT_MAX_QUEUE_NUMBER]; /*!< Data to send */
+} usb_device_${idLowerSnakeCase}$_shim_tx_data_struct_t;
+
+/*! @brief the RX data structure */
+typedef struct _usb_device_${idLowerSnakeCase}$_shim_rx_data_struct
+{
+    uint8_t epNumber;                            /*!< Endpoint number */
+    uint16_t epMaxPacketSize;                    /*!< Endpoint max packet size */
+    uint32_t transferCount;                      /*!< Size of transferred data */
+    usb_device_${idLowerSnakeCase}$_shim_application_data_struct_t recvData; /*!< Data to receive */
+} usb_device_${idLowerSnakeCase}$_shim_rx_data_struct_t;
+
+/*! @brief USB Shim structure */
+typedef struct _usb_device_${idLowerSnakeCase}$_shim_agent_struct
+{
+	class_handle_t classHandle;
+#if USB_${idSnakeCase}$_META_DATA_MESSAGE_PREAMBLE_IMPLEMENTED
+    uint8_t isMetaDataMessagePreambleEnabled; /*!< Used to store whether meta-data feature is active or not */
+    uint8_t numberTransferBulkOut;            /*!< the number of transfer that follow Meta-data Message Preamble */
+    uint8_t numberTransferBulkIn;             /*!< the number of transfer that follow Meta-data Message Preamble */
+#endif
+    uint16_t endpointsHaveData;                /*!< Which endpoints on the device have data */
+    usb_device_${idLowerSnakeCase}$_shim_rx_data_struct_t bulkOutData;     /*!< Receive data information */
+    usb_device_${idLowerSnakeCase}$_shim_tx_data_struct_t bulkInData;      /*!< Send data information */
+    usb_device_${idLowerSnakeCase}$_shim_tx_data_struct_t interruptInData; /*!< Send data information */
+    uint8_t *recvDataBuffer;                    /*!< Receive data buffer */
+    uint8_t *classBuffer;                      /*!< class specific transfer buffer */
+} usb_device_${idLowerSnakeCase}$_shim_agent_struct_t;
+
+/*******************************************************************************
+ * API
+ ******************************************************************************/
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+/*!
+ * @brief USB shim agent receive data callback function.
+ *
+ * This function implements a queue to support receiving the PHDC data with length is more than
+ * maximum of endpoint packet size. Then notify to upper layer when receiving is all completed.
+ *
+ * @param handle                The device handle.
+ * @param param                 The param of receive callback function.
+ *
+ * @return A USB error code or kStatus_USB_Success.
+ */
+usb_status_t USB_Device${idCamelCase}$ShimAgentRecvComplete(uint32_t handle, void *param);
+
+/*!
+ * @brief USB shim agent send data callback function.
+ *
+ * This function is the callback function of USB shim agent send function, it is implemented
+ * to continue sending the data in sending queue if the queue is not empty.
+ *
+ * @param handle                The device handle.
+ * @param event                 The event code.
+ * @param param                 The param of receive callback function.
+ *
+ * @return A USB error code or kStatus_USB_Success.
+ */
+usb_status_t USB_Device${idCamelCase}$ShimAgentSendComplete(uint32_t handle, uint32_t event, void *param);
+
+/*!
+ * @brief USB shim agent send data function.
+ *
+ * This function implements a queue to support sending multiple transfer request.
+ *
+ * @param handle                The device handle.
+ * @param qos                   The current QoS of the transfer.
+ * @param appBuffer             The data buffer.
+ * @param size                  The length of the transfer.
+ *
+ * @return A USB error code or kStatus_USB_Success.
+ */
+usb_status_t USB_Device${idCamelCase}$ShimAgentSendData(uint32_t handle, uint8_t qos, uint8_t *appBuffer, uint32_t size);
+
+#if defined(__cplusplus)
+}
+#endif
+#endif /* _USB_DEVICE_${idSnakeCase}$_SHIM_AGENT_H_ */

@@ -1,0 +1,216 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="8" name="SRS0" description="System Reset Status Register 0">
+    <alias type="CMSIS" value="SRS0"/>
+    <bit_field offset="0" width="1" name="WAKEUP" access="RO" reset_value="0" description="Low Leakage Wakeup Reset">
+      <alias type="CMSIS" value="RCM_SRS0_WAKEUP(x)"/>
+      <bit_field_value name="SRS0_WAKEUP_0b0" value="0b0" description="Reset not caused by LLWU module wakeup source"/>
+      <bit_field_value name="SRS0_WAKEUP_0b1" value="0b1" description="Reset caused by LLWU module wakeup source"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="LVD" access="RO" reset_value="0x1" description="Low-Voltage Detect Reset">
+      <alias type="CMSIS" value="RCM_SRS0_LVD(x)"/>
+      <bit_field_value name="SRS0_LVD_0b0" value="0b0" description="Reset not caused by LVD trip or POR"/>
+      <bit_field_value name="SRS0_LVD_0b1" value="0b1" description="Reset caused by LVD trip or POR"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="LOC" access="RO" reset_value="0" description="Loss-of-Clock Reset">
+      <alias type="CMSIS" value="RCM_SRS0_LOC(x)"/>
+      <bit_field_value name="SRS0_LOC_0b0" value="0b0" description="Reset not caused by a loss of external clock."/>
+      <bit_field_value name="SRS0_LOC_0b1" value="0b1" description="Reset caused by a loss of external clock."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="LOL" access="RO" reset_value="0" description="Loss-of-Lock Reset">
+      <alias type="CMSIS" value="RCM_SRS0_LOL(x)"/>
+      <bit_field_value name="SRS0_LOL_0b0" value="0b0" description="Reset not caused by a loss of lock in the PLL"/>
+      <bit_field_value name="SRS0_LOL_0b1" value="0b1" description="Reset caused by a loss of lock in the PLL"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <bit_field offset="5" width="1" name="WDOG" access="RO" reset_value="0" description="Watchdog">
+      <alias type="CMSIS" value="RCM_SRS0_WDOG(x)"/>
+      <bit_field_value name="SRS0_WDOG_0b0" value="0b0" description="Reset not caused by watchdog timeout"/>
+      <bit_field_value name="SRS0_WDOG_0b1" value="0b1" description="Reset caused by watchdog timeout"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="PIN" access="RO" reset_value="0" description="External Reset Pin">
+      <alias type="CMSIS" value="RCM_SRS0_PIN(x)"/>
+      <bit_field_value name="SRS0_PIN_0b0" value="0b0" description="Reset not caused by external reset pin"/>
+      <bit_field_value name="SRS0_PIN_0b1" value="0b1" description="Reset caused by external reset pin"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="POR" access="RO" reset_value="0x1" description="Power-On Reset">
+      <alias type="CMSIS" value="RCM_SRS0_POR(x)"/>
+      <bit_field_value name="SRS0_POR_0b0" value="0b0" description="Reset not caused by POR"/>
+      <bit_field_value name="SRS0_POR_0b1" value="0b1" description="Reset caused by POR"/>
+    </bit_field>
+  </register>
+  <register offset="0x1" width="8" name="SRS1" description="System Reset Status Register 1">
+    <alias type="CMSIS" value="SRS1"/>
+    <bit_field offset="0" width="1" name="JTAG" access="RO" reset_value="0" description="JTAG Generated Reset">
+      <alias type="CMSIS" value="RCM_SRS1_JTAG(x)"/>
+      <bit_field_value name="SRS1_JTAG_0b0" value="0b0" description="Reset not caused by JTAG"/>
+      <bit_field_value name="SRS1_JTAG_0b1" value="0b1" description="Reset caused by JTAG"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="LOCKUP" access="RO" reset_value="0" description="Core Lockup">
+      <alias type="CMSIS" value="RCM_SRS1_LOCKUP(x)"/>
+      <bit_field_value name="SRS1_LOCKUP_0b0" value="0b0" description="Reset not caused by core LOCKUP event"/>
+      <bit_field_value name="SRS1_LOCKUP_0b1" value="0b1" description="Reset caused by core LOCKUP event"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SW" access="RO" reset_value="0" description="Software">
+      <alias type="CMSIS" value="RCM_SRS1_SW(x)"/>
+      <bit_field_value name="SRS1_SW_0b0" value="0b0" description="Reset not caused by software setting of SYSRESETREQ bit"/>
+      <bit_field_value name="SRS1_SW_0b1" value="0b1" description="Reset caused by software setting of SYSRESETREQ bit"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="MDM_AP" access="RO" reset_value="0" description="MDM-AP System Reset Request">
+      <alias type="CMSIS" value="RCM_SRS1_MDM_AP(x)"/>
+      <bit_field_value name="SRS1_MDM_AP_0b0" value="0b0" description="Reset not caused by host debugger system setting of the System Reset Request bit"/>
+      <bit_field_value name="SRS1_MDM_AP_0b1" value="0b1" description="Reset caused by host debugger system setting of the System Reset Request bit"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="EZPT" access="RO" reset_value="0" description="EzPort Reset">
+      <alias type="CMSIS" value="RCM_SRS1_EZPT(x)"/>
+      <bit_field_value name="SRS1_EZPT_0b0" value="0b0" description="Reset not caused by EzPort receiving the RESET command while the device is in EzPort mode"/>
+      <bit_field_value name="SRS1_EZPT_0b1" value="0b1" description="Reset caused by EzPort receiving the RESET command while the device is in EzPort mode"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="SACKERR" access="RO" reset_value="0" description="Stop Mode Acknowledge Error Reset">
+      <alias type="CMSIS" value="RCM_SRS1_SACKERR(x)"/>
+      <bit_field_value name="SRS1_SACKERR_0b0" value="0b0" description="Reset not caused by peripheral failure to acknowledge attempt to enter stop mode"/>
+      <bit_field_value name="SRS1_SACKERR_0b1" value="0b1" description="Reset caused by peripheral failure to acknowledge attempt to enter stop mode"/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x4" width="8" name="RPFC" description="Reset Pin Filter Control register">
+    <alias type="CMSIS" value="RPFC"/>
+    <bit_field offset="0" width="2" name="RSTFLTSRW" access="RW" reset_value="0" description="Reset Pin Filter Select in Run and Wait Modes">
+      <alias type="CMSIS" value="RCM_RPFC_RSTFLTSRW(x)"/>
+      <bit_field_value name="RPFC_RSTFLTSRW_0b00" value="0b00" description="All filtering disabled"/>
+      <bit_field_value name="RPFC_RSTFLTSRW_0b01" value="0b01" description="Bus clock filter enabled for normal operation"/>
+      <bit_field_value name="RPFC_RSTFLTSRW_0b10" value="0b10" description="LPO clock filter enabled for normal operation"/>
+      <bit_field_value name="RPFC_RSTFLTSRW_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="RSTFLTSS" access="RW" reset_value="0" description="Reset Pin Filter Select in Stop Mode">
+      <alias type="CMSIS" value="RCM_RPFC_RSTFLTSS(x)"/>
+      <bit_field_value name="RPFC_RSTFLTSS_0b0" value="0b0" description="All filtering disabled"/>
+      <bit_field_value name="RPFC_RSTFLTSS_0b1" value="0b1" description="LPO clock filter enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="5" reset_value="0"/>
+  </register>
+  <register offset="0x5" width="8" name="RPFW" description="Reset Pin Filter Width register">
+    <alias type="CMSIS" value="RPFW"/>
+    <bit_field offset="0" width="5" name="RSTFLTSEL" access="RW" reset_value="0" description="Reset Pin Filter Bus Clock Select">
+      <alias type="CMSIS" value="RCM_RPFW_RSTFLTSEL(x)"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b00000" value="0b00000" description="Bus clock filter count is 1"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b00001" value="0b00001" description="Bus clock filter count is 2"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b00010" value="0b00010" description="Bus clock filter count is 3"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b00011" value="0b00011" description="Bus clock filter count is 4"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b00100" value="0b00100" description="Bus clock filter count is 5"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b00101" value="0b00101" description="Bus clock filter count is 6"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b00110" value="0b00110" description="Bus clock filter count is 7"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b00111" value="0b00111" description="Bus clock filter count is 8"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b01000" value="0b01000" description="Bus clock filter count is 9"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b01001" value="0b01001" description="Bus clock filter count is 10"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b01010" value="0b01010" description="Bus clock filter count is 11"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b01011" value="0b01011" description="Bus clock filter count is 12"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b01100" value="0b01100" description="Bus clock filter count is 13"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b01101" value="0b01101" description="Bus clock filter count is 14"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b01110" value="0b01110" description="Bus clock filter count is 15"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b01111" value="0b01111" description="Bus clock filter count is 16"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b10000" value="0b10000" description="Bus clock filter count is 17"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b10001" value="0b10001" description="Bus clock filter count is 18"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b10010" value="0b10010" description="Bus clock filter count is 19"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b10011" value="0b10011" description="Bus clock filter count is 20"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b10100" value="0b10100" description="Bus clock filter count is 21"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b10101" value="0b10101" description="Bus clock filter count is 22"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b10110" value="0b10110" description="Bus clock filter count is 23"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b10111" value="0b10111" description="Bus clock filter count is 24"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b11000" value="0b11000" description="Bus clock filter count is 25"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b11001" value="0b11001" description="Bus clock filter count is 26"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b11010" value="0b11010" description="Bus clock filter count is 27"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b11011" value="0b11011" description="Bus clock filter count is 28"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b11100" value="0b11100" description="Bus clock filter count is 29"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b11101" value="0b11101" description="Bus clock filter count is 30"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b11110" value="0b11110" description="Bus clock filter count is 31"/>
+      <bit_field_value name="RPFW_RSTFLTSEL_0b11111" value="0b11111" description="Bus clock filter count is 32"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="3" reset_value="0"/>
+  </register>
+  <register offset="0x7" width="8" name="MR" description="Mode Register">
+    <alias type="CMSIS" value="MR"/>
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <bit_field offset="1" width="1" name="EZP_MS" access="RO" reset_value="0" description="EZP_MS_B pin state">
+      <alias type="CMSIS" value="RCM_MR_EZP_MS(x)"/>
+      <bit_field_value name="MR_EZP_MS_0b0" value="0b0" description="Pin deasserted (logic 1)"/>
+      <bit_field_value name="MR_EZP_MS_0b1" value="0b1" description="Pin asserted (logic 0)"/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="6" reset_value="0"/>
+  </register>
+  <register offset="0x8" width="8" name="SSRS0" description="Sticky System Reset Status Register 0">
+    <alias type="CMSIS" value="SSRS0"/>
+    <bit_field offset="0" width="1" name="SWAKEUP" access="W1C" reset_value="0" description="Sticky Low Leakage Wakeup Reset">
+      <alias type="CMSIS" value="RCM_SSRS0_SWAKEUP(x)"/>
+      <bit_field_value name="SSRS0_SWAKEUP_0b0" value="0b0" description="Reset not caused by LLWU module wakeup source"/>
+      <bit_field_value name="SSRS0_SWAKEUP_0b1" value="0b1" description="Reset caused by LLWU module wakeup source"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="SLVD" access="W1C" reset_value="0x1" description="Sticky Low-Voltage Detect Reset">
+      <alias type="CMSIS" value="RCM_SSRS0_SLVD(x)"/>
+      <bit_field_value name="SSRS0_SLVD_0b0" value="0b0" description="Reset not caused by LVD trip or POR"/>
+      <bit_field_value name="SSRS0_SLVD_0b1" value="0b1" description="Reset caused by LVD trip or POR"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SLOC" access="W1C" reset_value="0" description="Sticky Loss-of-Clock Reset">
+      <alias type="CMSIS" value="RCM_SSRS0_SLOC(x)"/>
+      <bit_field_value name="SSRS0_SLOC_0b0" value="0b0" description="Reset not caused by a loss of external clock."/>
+      <bit_field_value name="SSRS0_SLOC_0b1" value="0b1" description="Reset caused by a loss of external clock."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="SLOL" access="W1C" reset_value="0" description="Sticky Loss-of-Lock Reset">
+      <alias type="CMSIS" value="RCM_SSRS0_SLOL(x)"/>
+      <bit_field_value name="SSRS0_SLOL_0b0" value="0b0" description="Reset not caused by a loss of lock in the PLL"/>
+      <bit_field_value name="SSRS0_SLOL_0b1" value="0b1" description="Reset caused by a loss of lock in the PLL"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <bit_field offset="5" width="1" name="SWDOG" access="W1C" reset_value="0" description="Sticky Watchdog">
+      <alias type="CMSIS" value="RCM_SSRS0_SWDOG(x)"/>
+      <bit_field_value name="SSRS0_SWDOG_0b0" value="0b0" description="Reset not caused by watchdog timeout"/>
+      <bit_field_value name="SSRS0_SWDOG_0b1" value="0b1" description="Reset caused by watchdog timeout"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="SPIN" access="W1C" reset_value="0" description="Sticky External Reset Pin">
+      <alias type="CMSIS" value="RCM_SSRS0_SPIN(x)"/>
+      <bit_field_value name="SSRS0_SPIN_0b0" value="0b0" description="Reset not caused by external reset pin"/>
+      <bit_field_value name="SSRS0_SPIN_0b1" value="0b1" description="Reset caused by external reset pin"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="SPOR" access="W1C" reset_value="0x1" description="Sticky Power-On Reset">
+      <alias type="CMSIS" value="RCM_SSRS0_SPOR(x)"/>
+      <bit_field_value name="SSRS0_SPOR_0b0" value="0b0" description="Reset not caused by POR"/>
+      <bit_field_value name="SSRS0_SPOR_0b1" value="0b1" description="Reset caused by POR"/>
+    </bit_field>
+  </register>
+  <register offset="0x9" width="8" name="SSRS1" description="Sticky System Reset Status Register 1">
+    <alias type="CMSIS" value="SSRS1"/>
+    <bit_field offset="0" width="1" name="SJTAG" access="W1C" reset_value="0" description="Sticky JTAG Generated Reset">
+      <alias type="CMSIS" value="RCM_SSRS1_SJTAG(x)"/>
+      <bit_field_value name="SSRS1_SJTAG_0b0" value="0b0" description="Reset not caused by JTAG"/>
+      <bit_field_value name="SSRS1_SJTAG_0b1" value="0b1" description="Reset caused by JTAG"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="SLOCKUP" access="W1C" reset_value="0" description="Sticky Core Lockup">
+      <alias type="CMSIS" value="RCM_SSRS1_SLOCKUP(x)"/>
+      <bit_field_value name="SSRS1_SLOCKUP_0b0" value="0b0" description="Reset not caused by core LOCKUP event"/>
+      <bit_field_value name="SSRS1_SLOCKUP_0b1" value="0b1" description="Reset caused by core LOCKUP event"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SSW" access="W1C" reset_value="0" description="Sticky Software">
+      <alias type="CMSIS" value="RCM_SSRS1_SSW(x)"/>
+      <bit_field_value name="SSRS1_SSW_0b0" value="0b0" description="Reset not caused by software setting of SYSRESETREQ bit"/>
+      <bit_field_value name="SSRS1_SSW_0b1" value="0b1" description="Reset caused by software setting of SYSRESETREQ bit"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="SMDM_AP" access="W1C" reset_value="0" description="Sticky MDM-AP System Reset Request">
+      <alias type="CMSIS" value="RCM_SSRS1_SMDM_AP(x)"/>
+      <bit_field_value name="SSRS1_SMDM_AP_0b0" value="0b0" description="Reset not caused by host debugger system setting of the System Reset Request bit"/>
+      <bit_field_value name="SSRS1_SMDM_AP_0b1" value="0b1" description="Reset caused by host debugger system setting of the System Reset Request bit"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="SEZPT" access="W1C" reset_value="0" description="Sticky EzPort Reset">
+      <alias type="CMSIS" value="RCM_SSRS1_SEZPT(x)"/>
+      <bit_field_value name="SSRS1_SEZPT_0b0" value="0b0" description="Reset not caused by EzPort receiving the RESET command while the device is in EzPort mode"/>
+      <bit_field_value name="SSRS1_SEZPT_0b1" value="0b1" description="Reset caused by EzPort receiving the RESET command while the device is in EzPort mode"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="SSACKERR" access="W1C" reset_value="0" description="Sticky Stop Mode Acknowledge Error Reset">
+      <alias type="CMSIS" value="RCM_SSRS1_SSACKERR(x)"/>
+      <bit_field_value name="SSRS1_SSACKERR_0b0" value="0b0" description="Reset not caused by peripheral failure to acknowledge attempt to enter stop mode"/>
+      <bit_field_value name="SSRS1_SSACKERR_0b1" value="0b1" description="Reset caused by peripheral failure to acknowledge attempt to enter stop mode"/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+  </register>
+</regs:peripheral>

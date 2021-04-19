@@ -1,0 +1,328 @@
+<?xml version="1.0"?>
+<clocks:component xmlns:clocks="http://apif.freescale.net/schemas/clocks/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://apif.freescale.net/schemas/clocks/1.1 http://apif.freescale.net/schemas/clocks/1.1/clocks.xsd" id="module_clocks">
+  <interface>
+    <input_clock_signal id="Bus_clock" name="Bus clock" group="system" description="Clocks bus slaves and peripheral (excluding memories)"/>
+    <input_clock_signal id="CLKOUT" name="CLKOUT(FB_CLK)" group="peripheral" description="Clock output or FlexBus device clock output. Please note that when it is used as FlexBus device clock output the FlexBus clock must be selected by the CLKOUTSEL clock selector."/>
+    <input_clock_signal id="Core_clock" name="Core clock" group="system" description="ARM Cortex M4 core clock"/>
+    <input_clock_signal id="ENET1588TSCLK" name="ENET IEEE 1588 timestamp clock" group="peripheral" description=""/>
+    <input_clock_signal id="ERCLK32K" name="ERCLK32K" group="peripheral" description="External reference clock 32k (or 1kHz LPO). Clock source for some modules."/>
+    <input_clock_signal id="Flash_clock" name="Flash clock" group="system" description="Clocks the flash memory."/>
+    <input_clock_signal id="FlexBus_clock" name="FlexBus clock" group="system" description="Clocks the external external FlexBus interface"/>
+    <input_clock_signal id="IRC48MCLK" name="IRC48MCLK" group="peripheral" description="Internal clock 48MHz"/>
+    <input_clock_signal id="LPO_clock" name="LPO clock" group="peripheral" description="Low Power Oscillator clock 1kHz"/>
+    <input_clock_signal id="LPUARTCLK" name="LPUART clock" group="peripheral" description=""/>
+    <input_clock_signal id="MCGFFCLK" name="MCGFFCLK" group="peripheral" description="MCG Fixed Frequency clock output of the slow reference clock or a divided MCG external reference clock. Note: Clock is valid only when its frequency is not more than 1/8 of the MCGOUTCLK frequency. When it is not valid, it is disabled and held high. The MCGFFCLK is not available when the MCG is in BLPI mode. This clock is also disabled in Stop mode."/>
+    <input_clock_signal id="MCGIRCLK" name="MCGIRCLK" group="peripheral" description="MCG Internal reference clock."/>
+    <input_clock_signal id="OSCERCLK" name="OSCERCLK" group="peripheral" description="External reference clock"/>
+    <input_clock_signal id="OSCERCLK_UNDIV" name="OSCERCLK undivided" group="peripheral" description="Undivided system Oscillator External Reference output clock"/>
+    <input_clock_signal id="PLLFLLCLK" name="MCG PLL/FLL/IRC48M/USB1PFD clock" group="peripheral" description="Selected clock signal, either MCGPLLCLK, MCGFLLCLK, IRC48M or USB1PFD clock (if supported)."/>
+    <input_clock_signal id="RMIICLK" name="ENET RMII clock" group="peripheral" description=""/>
+    <input_clock_signal id="RTC_CLKOUT" name="RTC_CLKOUT" group="peripheral" description="RTC oscillator output for the RTC module."/>
+    <input_clock_signal id="SDHCCLK" name="SDHC clock" group="peripheral" description=""/>
+    <input_clock_signal id="System_clock" name="System clock" group="system" description="Clocks the crossbar switch and bus masters directly connected to the crossbar."/>
+    <input_clock_signal id="TPMCLK" name="TPM clock" group="peripheral" description=""/>
+    <input_clock_signal id="TRACECLKIN" name="Trace clock input" group="peripheral" description=""/>
+    <input_clock_signal id="USB48MCLK" name="USB FS clock" group="peripheral" description="USB 48MHz clock for USB Full Speed device."/>
+    <input_clock_signal id="USBPHYPLLCLK" name="USBPHYPLLCLK" group="peripheral" description="USBPHY PLL output clock (480MHz)"/>
+    <input_clock_signal id="USBSLCLK" name="USB slow clock" group="peripheral" description=""/>
+  </interface>
+  <implementation>
+    <peripheral_component id="ADC0" component="ADC16" name="ADC0">
+      <input_signal id="BusInterfaceClock_b00" signal="Bus_clock" description="Bus Interface Clock"/>
+      <peripheral_signal id="AlternateClock2_b01" description="Bus Clock divided by 2"/>
+      <input_signal id="AlternateClock_b10" signal="OSCERCLK" description="Alternate Clock"/>
+      <peripheral_signal id="ADACK_b11" description="Asynchronous clock"/>
+    </peripheral_component>
+    <peripheral_component id="ADC1" component="ADC16" name="ADC1">
+      <input_signal id="BusInterfaceClock_b00" signal="Bus_clock" description="Bus Interface Clock"/>
+      <peripheral_signal id="AlternateClock2_b01" description="Bus Clock divided by 2"/>
+      <input_signal id="AlternateClock_b10" signal="OSCERCLK" description="Alternate Clock"/>
+      <peripheral_signal id="ADACK_b11" description="Asynchronous clock"/>
+    </peripheral_component>
+    <peripheral_component id="AIPS0" component="AIPS" name="AIPS0">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+      <input_signal id="AIPSClock0" signal="Bus_clock" description="AIPS Clock 0"/>
+      <input_signal id="AIPSClock1" signal="Flash_clock" description="AIPS Clock 1"/>
+    </peripheral_component>
+    <peripheral_component id="AIPS1" component="AIPS" name="AIPS1">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+      <input_signal id="AIPSClock0" signal="Bus_clock" description="AIPS Clock 0"/>
+      <input_signal id="AIPSClock1" signal="Flash_clock" description="AIPS Clock 1"/>
+    </peripheral_component>
+    <peripheral_component id="AXBS" component="AXBS" name="AXBS">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="CAN0" component="FLEXCAN" name="CAN0">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+      <input_signal id="OscillatorClock" signal="OSCERCLK" description="Oscillator Clock"/>
+    </peripheral_component>
+    <peripheral_component id="CAN1" component="FLEXCAN" name="CAN1">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+      <input_signal id="OscillatorClock" signal="OSCERCLK" description="Oscillator Clock"/>
+    </peripheral_component>
+    <peripheral_component id="CAU" component="CAU" name="CAU">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="CMP0" component="CMP" name="CMP0">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="CMP1" component="CMP" name="CMP1">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="CMP2" component="CMP" name="CMP2">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="CMP3" component="CMP" name="CMP3">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="CMT" component="CMT" name="CMT">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="CRC" component="CRC" name="CRC">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="CoreDebug" component="CoreDebug" name="CoreDebug">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="DAC0" component="DAC" name="DAC0">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="DAC1" component="DAC" name="DAC1">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="DMA" component="EDMA" name="DMA">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="DMAMUX" component="DMAMUX" name="DMAMUX">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="ENET" component="ENET" name="ENET">
+      <input_signal id="GlobalClock" signal="System_clock" description="Global clock (ungated)"/>
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+      <input_signal id="RMIIClock" signal="RMIICLK" description="RMII Clock"/>
+      <input_signal id="IEEE1588Clock" signal="ENET1588TSCLK" description="IEEE1588 Clock"/>
+    </peripheral_component>
+    <peripheral_component id="ETB" component="ETB" name="ETB">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="ETM" component="ETM" name="ETM">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+      <input_signal id="TraceClock" signal="TRACECLKIN" description="Trace Clock"/>
+    </peripheral_component>
+    <peripheral_component id="EWM" component="EWM" name="EWM">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+      <input_signal id="LPO" signal="LPO_clock" description="LPO Clock"/>
+    </peripheral_component>
+    <peripheral_component id="FB" component="FLEXBUS" name="FB">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+      <input_signal id="FunctionClock" signal="CLKOUT" description="FlexBus Function Clock (The FlexBus clock must be selected by the CLKOUTSEL clock selector)"/>
+    </peripheral_component>
+    <peripheral_component id="FMC" component="FMC" name="FMC">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+      <input_signal id="FlashClock" signal="Flash_clock" description="Flash Clock"/>
+    </peripheral_component>
+    <peripheral_component id="FTFE" component="FLASH" name="FTFE">
+      <input_signal id="BusInterfaceClock" signal="Flash_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="FTM0" component="FTM" name="FTM0">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+      <input_signal id="FixedClock" signal="MCGFFCLK" description="Fixed Clock"/>
+      <pin_signal id="ExternalClock" signal="tmr_clk" description="External clock">
+        <pins_tool_ref signal_id="CLKIN" signal_unified_id="tmr_clk" description="External clock input"/>
+      </pin_signal>
+    </peripheral_component>
+    <peripheral_component id="FTM1" component="FTM" name="FTM1">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+      <input_signal id="FixedClock" signal="MCGFFCLK" description="Fixed Clock"/>
+      <pin_signal id="ExternalClock" signal="tmr_clk" description="External clock">
+        <pins_tool_ref signal_id="CLKIN" signal_unified_id="tmr_clk" description="External clock input"/>
+      </pin_signal>
+    </peripheral_component>
+    <peripheral_component id="FTM2" component="FTM" name="FTM2">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+      <input_signal id="FixedClock" signal="MCGFFCLK" description="Fixed Clock"/>
+      <pin_signal id="ExternalClock" signal="tmr_clk" description="External clock">
+        <pins_tool_ref signal_id="CLKIN" signal_unified_id="tmr_clk" description="External clock input"/>
+      </pin_signal>
+    </peripheral_component>
+    <peripheral_component id="FTM3" component="FTM" name="FTM3">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+      <input_signal id="FixedClock" signal="MCGFFCLK" description="Fixed Clock"/>
+      <pin_signal id="ExternalClock" signal="tmr_clk" description="External clock">
+        <pins_tool_ref signal_id="CLKIN" signal_unified_id="tmr_clk" description="External clock input"/>
+      </pin_signal>
+    </peripheral_component>
+    <peripheral_component id="GPIOA" component="GPIO" name="GPIOA">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="GPIOB" component="GPIO" name="GPIOB">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="GPIOC" component="GPIO" name="GPIOC">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="GPIOD" component="GPIO" name="GPIOD">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="GPIOE" component="GPIO" name="GPIOE">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="I2C0" component="I2C" name="I2C0">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="I2C1" component="I2C" name="I2C1">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="I2C2" component="I2C" name="I2C2">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="I2C3" component="I2C" name="I2C3">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="I2S0" component="SAI" name="I2S0">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+      <input_signal id="MCLK_input_0" signal="System_clock" description="Master Clock Input 0"/>
+      <input_signal id="MCLK_input_2" signal="OSCERCLK" description="Master Clock Input 2"/>
+      <input_signal id="MCLK_input_3" signal="PLLFLLCLK" description="Master Clock Input 3"/>
+      <input_signal id="MCLK0" signal="Bus_clock" description="Master Clock 0"/>
+      <peripheral_signal id="MCLK1" description="Master Clock 1"/>
+      <no_signal id="MCLK2" description="Master Clock 2"/>
+      <no_signal id="MCLK3" description="Master Clock 3"/>
+    </peripheral_component>
+    <peripheral_component id="ITM" component="ITM" name="ITM">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="LLWU" component="LLWU" name="LLWU">
+      <input_signal id="BusInterfaceClock" signal="Flash_clock" description="Bus Interface Clock"/>
+      <input_signal id="LPO" signal="LPO_clock" description="LPO"/>
+    </peripheral_component>
+    <peripheral_component id="LPTMR0" component="LPTMR" name="LPTMR0">
+      <input_signal id="BusInterfaceClock" signal="Flash_clock" description="Bus Interface Clock"/>
+      <input_signal id="PrescalerGlitchFilterClock0" signal="MCGIRCLK" description="Prescaler/glitch filter clock 0"/>
+      <input_signal id="PrescalerGlitchFilterClock1" signal="LPO_clock" description="Prescaler/glitch filter clock 1"/>
+      <input_signal id="PrescalerGlitchFilterClock2" signal="ERCLK32K" description="Prescaler/glitch filter clock 2"/>
+      <input_signal id="PrescalerGlitchFilterClock3" signal="OSCERCLK_UNDIV" description="Prescaler/glitch filter clock 3"/>
+    </peripheral_component>
+    <peripheral_component id="LPUART0" component="LPUART" name="LPUART0">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+      <input_signal id="LpuartClock" signal="LPUARTCLK" description="Lpuart Clock"/>
+    </peripheral_component>
+    <peripheral_component id="MCM" component="MCM" name="MCM">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="NVIC" component="interrupt" name="NVIC">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="PDB0" component="PDB" name="PDB0">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="PIT" component="PIT" name="PIT">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="PORTA" component="PORT" name="PORTA">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="PORTB" component="PORT" name="PORTB">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="PORTC" component="PORT" name="PORTC">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="PORTD" component="PORT" name="PORTD">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+      <input_signal id="LPO" signal="LPO_clock" description="Low Power Oscillator"/>
+    </peripheral_component>
+    <peripheral_component id="PORTE" component="PORT" name="PORTE">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="RCM" component="RCM" name="RCM">
+      <input_signal id="BusInterfaceClock" signal="Flash_clock" description="Bus Interface Clock"/>
+      <input_signal id="LPO" signal="LPO_clock" description="LPO"/>
+    </peripheral_component>
+    <peripheral_component id="RNG" component="RNG" name="RNG">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="SDHC" component="SDHC" name="SDHC">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+      <input_signal id="SdhcClock" signal="SDHCCLK" description="Sdhc Clock"/>
+    </peripheral_component>
+    <peripheral_component id="SDRAM" component="SDRAM" name="SDRAM">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+      <input_signal id="FunctionClock" signal="CLKOUT" description="SDRAM Function Clock (The FlexBus clock must be selected by the CLKOUTSEL clock selector)"/>
+    </peripheral_component>
+    <peripheral_component id="SMC" component="SMC" name="SMC">
+      <input_signal id="BusInterfaceClock" signal="Flash_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="SPI0" component="DSPI" name="SPI0">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="SPI1" component="DSPI" name="SPI1">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="SPI2" component="DSPI" name="SPI2">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="SYSMPU" component="SYSMPU" name="SYSMPU">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="TPIU" component="TPIU" name="TPIU">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+      <input_signal id="TraceClock" signal="TRACECLKIN" description="Trace Clock"/>
+    </peripheral_component>
+    <peripheral_component id="TPM1" component="TPM" name="TPM1">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+      <input_signal id="TPMClock" signal="TPMCLK" description="TPM Clock"/>
+      <pin_signal id="ExternalClock" signal="tmr_clk" description="External clock">
+        <pins_tool_ref signal_id="EXTCLK" signal_unified_id="tmr_clk" description="External clock input"/>
+      </pin_signal>
+    </peripheral_component>
+    <peripheral_component id="TPM2" component="TPM" name="TPM2">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+      <input_signal id="TPMClock" signal="TPMCLK" description="TPM Clock"/>
+      <pin_signal id="ExternalClock" signal="tmr_clk" description="External clock">
+        <pins_tool_ref signal_id="EXTCLK" signal_unified_id="tmr_clk" description="External clock input"/>
+      </pin_signal>
+    </peripheral_component>
+    <peripheral_component id="TSI0" component="TSI" name="TSI0">
+      <input_signal id="BusInterfaceClock" signal="Flash_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="UART0" component="UART" name="UART0">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="UART1" component="UART" name="UART1">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="UART2" component="UART" name="UART2">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="UART3" component="UART" name="UART3">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="UART4" component="UART" name="UART4">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="USB0" component="USB" name="USB0">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+      <input_signal id="FunctionClock" signal="USB48MCLK" description="USB Function Clock"/>
+    </peripheral_component>
+    <peripheral_component id="USBDCD" component="USBDCD" name="USBDCD">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="USBHS" component="USBHS" name="USBHS">
+      <input_signal id="BusInterfaceClock" signal="System_clock" description="Bus Interface Clock"/>
+      <input_signal id="FunctionClock" signal="USBPHYPLLCLK" description="USB Function Clock"/>
+    </peripheral_component>
+    <peripheral_component id="USBHSDCD" component="USBHSDCD" name="USBHSDCD">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="VREF" component="VREF" name="VREF">
+      <input_signal id="BusInterfaceClock" signal="Flash_clock" description="Bus Interface Clock"/>
+    </peripheral_component>
+    <peripheral_component id="WDOG" component="WDOG" name="WDOG">
+      <input_signal id="BusInterfaceClock" signal="Bus_clock" description="Bus Interface Clock"/>
+      <input_signal id="LPO" signal="LPO_clock" description="LPO"/>
+      <input_signal id="AlternateClock" signal="Bus_clock" description="Alternate Clock"/>
+      <input_signal id="FastTestClock" signal="Bus_clock" description="Fast Test Clock"/>
+    </peripheral_component>
+  </implementation>
+</clocks:component>

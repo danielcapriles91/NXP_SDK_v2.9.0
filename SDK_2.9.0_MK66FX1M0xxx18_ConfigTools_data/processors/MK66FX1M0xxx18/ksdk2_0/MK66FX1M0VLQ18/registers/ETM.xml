@@ -1,0 +1,1142 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="32" name="ETMCR" description="Main Control Register">
+    <bit_field offset="0" width="1" name="ETMPD" access="RW" reset_value="0x1" description="ETM power down. This bit can be used by an implementation to control if the ETM is in a low power state. This bit must be cleared by the trace software tools at the beginning of a debug session. When this bit is set to 1, writes to some registers and fields might be ignored."/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="3" name="PS" access="RW" reset_value="0x1" description="Port size. The ETM-M4 has no influence over the external pins used for trace. These bits are implemented but not used. On an ETM reset these bits reset to 0b001."/>
+    <bit_field offset="7" width="1" name="SP" access="RW" reset_value="0" description="Stall processor. The FIFOFULL output can be used to stall the processor to prevent overflow. The FIFOFULL output is only enabled when the stall processor bit is set to 1. When the bit is 0 the FIFOFULL output remains LOW at all times and the FIFO overflows if there are too many trace packets. Trace resumes without corruption once the FIFO has drained, if overflow does occur. An ETM reset sets this bit to 0."/>
+    <bit_field offset="8" width="1" name="BO" access="RW" reset_value="0" description="Branch output. When set to 1 all branch addresses are output, even if the branch was because of a direct branch instruction. Setting this bit enables reconstruction of the program flow without having access to the memory image of the code being executed. When this bit is set to 1, more trace data is generated, and this may affect the performance of the trace system. Information about the execution of a branch is traced regardless of the state of this bit. An ETM reset sets this bit to 0."/>
+    <bit_field offset="9" width="1" name="DRC" access="RW" reset_value="0" description="Debug request control. When set to 1 and the trigger event occurs, the DBGRQ output is asserted until DBGACK is observed. This enables the ARM processor to be forced into Debug state. An ETM reset sets this bit to 0."/>
+    <bit_field offset="10" width="1" name="ETMP" access="RW" reset_value="0x1" description="ETM programming. This bit must be set to 1 at the start of the ETM programming sequence. Tracing is prevented while this bit is set to 1. On an ETM reset this bit is set to b1."/>
+    <bit_field offset="11" width="1" name="ETMPS" access="RW" reset_value="0" description="ETM port selection. This bit can be used to control other trace components in an implementation. This bit must be set by the trace software tools to ensure that trace output is enabled from this ETM. An ETM reset sets this bit to 0.">
+      <bit_field_value name="ETMCR_ETMPS_0b0" value="0b0" description="ETMEN is LOW."/>
+      <bit_field_value name="ETMCR_ETMPS_0b1" value="0b1" description="ETMEN is HIGH."/>
+    </bit_field>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <bit_field offset="13" width="1" name="PM2" access="RW" reset_value="0" description="This bit is implemented but has no function. An ETM reset sets this bit to 0."/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="2" name="PM" access="RW" reset_value="0" description="These bits are implemented but have no function. An ETM reset sets these bits to 0."/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <bit_field offset="21" width="1" name="PS3" access="RW" reset_value="0" description="This bit is implemented but has no function. An ETM reset sets this bit to 0."/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <bit_field offset="28" width="1" name="TE" access="RW" reset_value="0" description="When set, this bit enables timestamping. An ETM reset sets this bit to 0."/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x4" width="32" name="ETMCCR" description="Configuration Code Register">
+    <bit_field offset="0" width="4" name="NumberOfAddressComparatorPairs" access="RO" reset_value="0" description="Number of address comparator pairs. The value of these bits is b0000, indicating that address comparator pairs are not implemented."/>
+    <bit_field offset="4" width="4" name="NDVC" access="RO" reset_value="0" description="Number of data value comparators. The value of these bits is b0000, indicating that data value comparators are not implemented."/>
+    <bit_field offset="8" width="5" name="NMMD" access="RO" reset_value="0" description="Number of memory map decoders. The value of these bits is b00000, indicating that memory map decoder inputs are not implemented."/>
+    <bit_field offset="13" width="3" name="NC" access="RO" reset_value="0x1" description="Number of counters. The value of these bits is b001, indicating that one counter is implemented."/>
+    <bit_field offset="16" width="1" name="SP" access="RO" reset_value="0" description="Sequencer present. The value of this bit is 0, indicating that the sequencer is not implemented."/>
+    <bit_field offset="17" width="3" name="NEI" access="RO" reset_value="0" description="Number of external inputs. The value of these bits is between b000 and b010, indicating the number of external inputs, from 0 to 2, implemented in the system."/>
+    <bit_field offset="20" width="3" name="NEO" access="RO" reset_value="0" description="Number of external outputs. The value of these bits is b000, indicating that no external outputs are supported."/>
+    <bit_field offset="23" width="1" name="FFLP" access="RO" reset_value="0x1" description="FIFOFULL logic present. The value of this bit is 1, indicating that FIFOFULL logic is present in the ETM. To use FIFOFULL the system must also support the function, as indicated by bit [8] of ETMSCR."/>
+    <bit_field offset="24" width="2" name="NCIDC" access="RO" reset_value="0" description="Number of Context ID comparators. The value of these bits is b00, indicating that Context ID comparators are not implemented."/>
+    <bit_field offset="26" width="1" name="TSSBP" access="RO" reset_value="0x1" description="Trace start/stop block present. The value of this bit is 1, indicating that the Trace start/stop block is present."/>
+    <bit_field offset="27" width="1" name="CMA" access="RO" reset_value="0x1" description="Coprocessor and memory access. The value of this bit is 1, indicating that memory-mapped access to registers is supported."/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <bit_field offset="31" width="1" name="ETMIDRP" access="RO" reset_value="0x1" description="The value of this bit is 1, indicating that the ETMIDR, register 0x79, is present and defines the ETM architecture version in use."/>
+  </register>
+  <register offset="0x8" width="32" name="ETMTRIGGER" description="Trigger Event Register">
+    <bit_field offset="0" width="17" name="TriggerEvent" access="RW" reset_value="0" reset_mask="0" description="Trigger event"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x10" width="32" name="ETMSR" description="ETM Status Register">
+    <bit_field offset="0" width="1" name="UOF" access="RO" reset_value="0" reset_mask="0" description="Untraced overflow flag. If set to 1, there is an overflow that has not yet been traced. This bit is cleared to 0 when either: - trace is restarted - the ETM Power Down bit, bit [0] of the ETM Control Register, 0x00, is set to 1. Note: Setting or clearing the ETM programming bit does not cause this bit to be cleared to 0."/>
+    <bit_field offset="1" width="1" name="Progbit" access="RO" reset_value="0" reset_mask="0" description="ETM programming bit value (Progbit). The current effective value of the ETM Programming bit (ETM Control Register bit [10]). Tou must wait for this bit to go to 1 before you start to program the ETM."/>
+    <bit_field offset="2" width="1" name="Status" access="RW" reset_value="0" reset_mask="0" description="Holds the current status of the trace start/stop resource. If set to 1, it indicates that a trace on address has been matched, without a corresponding trace off address match."/>
+    <bit_field offset="3" width="1" name="Trigger" access="RW" reset_value="0" reset_mask="0" description="Trigger bit. Set when the trigger occurs, and prevents the trigger from being output until the ETM is next programmed."/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x14" width="32" name="ETMSCR" description="System Configuration Register">
+    <bit_field offset="0" width="3" name="MaximumPortSize" access="RO" reset_value="0x1" description="Maximum ETM port size bits [2:0]. These bits are used in conjunction with bit [9]. The value of these bits is b001."/>
+    <reserved_bit_field offset="3" width="1" reset_value="0x1"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="FIFOFULLsupported" access="RO" reset_value="0x1" description="FIFOFULL supported. The value of this bit is 1, indicating that FIFOFULL is supported. This bit is used in conjunction with bit [23] of the ETMCCR."/>
+    <bit_field offset="9" width="1" name="MaximumPortSize3" access="RO" reset_value="0" description="Maximum ETM port size bit [3]. This bit is used in conjunction with bits [2:0]. Its value is 0. This has no effect on the TPIU trace port."/>
+    <bit_field offset="10" width="1" name="PortSizeSupported" access="RO" reset_value="0x1" description="Port size supported. This bit reads as 1 if the currently selected port size is supported. This has no effect on the TPIU trace port."/>
+    <bit_field offset="11" width="1" name="PortModeSupported" access="RO" reset_value="0x1" description="Port mode supported. This bit reads as 1 if the currently selected port mode is supported. This has no effect on the TPIU trace port."/>
+    <bit_field offset="12" width="3" name="N" access="RO" reset_value="0" description="These bits give the number of supported processors minus 1. The value of these bits is b000, indicating that there is only one processor connected."/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <bit_field offset="17" width="1" name="NoFetchComparisons" access="RO" reset_value="0x1" description="No Fetch comparisons. The value of this bit is 1, indicating that fetch comparisons are not implemented."/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x20" width="32" name="ETMEEVR" description="Trace Enable Event Register">
+    <bit_field offset="0" width="17" name="TraceEnableEvent" access="RW" reset_value="0" reset_mask="0" description="Trace Enable event."/>
+    <reserved_bit_field offset="17" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0" reset_mask="0"/>
+  </register>
+  <register offset="0x24" width="32" name="ETMTECR1" description="Trace Enable Control 1 Register">
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <bit_field offset="25" width="1" name="TraceControlEnable" access="RW" reset_value="0" reset_mask="0" description="Trace start/stop enable. The trace start/stop resource, resource 0x5F, is unaffected by the value of this bit.">
+      <bit_field_value name="ETMTECR1_TraceControlEnable_0b0" value="0b0" description="Tracing is unaffected by the trace start/stop logic."/>
+      <bit_field_value name="ETMTECR1_TraceControlEnable_0b1" value="0b1" description="Tracing is controlled by the trace on and off addresses configured for the trace start/stop logic."/>
+    </bit_field>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x28" width="32" name="ETMFFLR" description="FIFOFULL Level Register">
+    <bit_field offset="0" width="8" name="FIFOFullLevel" access="RW" reset_value="0" reset_mask="0" description="FIFO full level. The number of bytes left in FIFO, below which the FIFOFULL or SupressData signal is asserted. For example, setting this value to 15 causes data trace suppression or processor stalling, if enabled, when there are less than 15 free bytes in the FIFO."/>
+    <reserved_bit_field offset="8" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0" reset_mask="0"/>
+  </register>
+  <register offset="0x140" width="32" name="ETMCNTRLDVR1" description="Free-running counter reload value">
+    <bit_field offset="0" width="16" name="IntitialCount" access="RW" reset_value="0" reset_mask="0" description="Initial count."/>
+    <reserved_bit_field offset="16" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0" reset_mask="0"/>
+  </register>
+  <register offset="0x1E0" width="32" name="ETMSYNCFR" description="Synchronization Frequency Register">
+    <bit_field offset="0" width="12" name="SyncFrequency" access="RO" reset_value="0x400" description="Synchronization frequency. Default value is 1024."/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x1E4" width="32" name="ETMIDR" description="ID Register">
+    <bit_field offset="0" width="4" name="ImplementationRevision" access="RO" reset_value="0" description="Implementation revision. The value of these bits is b0000, indicating implementation revision, 0."/>
+    <bit_field offset="4" width="4" name="MinorETMarchitectureVersion" access="RO" reset_value="0x5" description="Minor ETM architecture version. The value of these bits is 0b0101, indicating minor architecture version number 5."/>
+    <bit_field offset="8" width="4" name="MajorETMarchitectureVersion" access="RO" reset_value="0x2" description="Major ETM architecture version. The value of these bits is 0b0010, indicating major architecture version number 3, ETMv3."/>
+    <bit_field offset="12" width="4" name="ProcessorFamily" access="RO" reset_value="0xF" description="Processor family. The value of these bits is 0b1111, indicating that the processor family is not identified in this register."/>
+    <bit_field offset="16" width="1" name="LoadPCfirst" access="RO" reset_value="0" description="Load PC first. The value of this bit is 0, indicating that data tracing is not supported."/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <bit_field offset="18" width="1" name="ThumbInstructionTracing" access="RO" reset_value="0x1" description="32-bit Thumb instruction tracing. The value of this bit is 1, indicating that a 32-bit Thumb instruction is traced as a single instruction.">
+      <bit_field_value name="ETMIDR_ThumbInstructionTracing_0b0" value="0b0" description="A 32-bit Thumb instruction is traced as two instructions, and exceptions might occur between these two instructions."/>
+      <bit_field_value name="ETMIDR_ThumbInstructionTracing_0b1" value="0b1" description="A 32-bit Thimb instruction is traced as a single instruction."/>
+    </bit_field>
+    <bit_field offset="19" width="1" name="SecurityExtensionSupport" access="RO" reset_value="0" description="Security Extensions support. The value of this bit is 0, indicating that the ETM behaves as if the processor is in Secure state at all times.">
+      <bit_field_value name="ETMIDR_SecurityExtensionSupport_0b0" value="0b0" description="The ETM behaves as if the processor is in Secure state at all times."/>
+      <bit_field_value name="ETMIDR_SecurityExtensionSupport_0b1" value="0b1" description="The ARM architecture Security Extensions are implemented by the processor."/>
+    </bit_field>
+    <bit_field offset="20" width="1" name="BranchPacketEncoding" access="RO" reset_value="0x1" description="Branch packet encoding. The value of this bit is 1, indicating that alternative branch packet encoding is implemented.">
+      <bit_field_value name="ETMIDR_BranchPacketEncoding_0b0" value="0b0" description="The ETM implements the original branch packet encoding."/>
+      <bit_field_value name="ETMIDR_BranchPacketEncoding_0b1" value="0b1" description="The ETM implements the alternative branch packet encoding."/>
+    </bit_field>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="8" name="ImplementorCode" access="RO" reset_value="0x41" description="Implementor code. These bits identify ARM as the implementor of the processor. The value of these bits is 01000001."/>
+  </register>
+  <register offset="0x1E8" width="32" name="ETMCCER" description="Configuration Code Extension Register">
+    <bit_field offset="0" width="3" name="ExtendedExternalInputSelectors" access="RO" reset_value="0" description="Extended external input selectors. The value of these bits is 0, indicating that extended external input selectors are not implemented."/>
+    <bit_field offset="3" width="8" name="ExtendedExternalInputBus" access="RO" reset_value="0" description="Extended external input bus. The value of these bits is 0, indicating that the extended external input bus is not implemented."/>
+    <bit_field offset="11" width="1" name="ReadableRegisters" access="RO" reset_value="0x1" description="Readable registers. The value of this bit is 1, indicating that all registers are readable."/>
+    <bit_field offset="12" width="1" name="DataAddressComparisons" access="RO" reset_value="0x1" description="Data address comparisons. The value of this bit is 1, indicating that data address comparisons are not supported."/>
+    <bit_field offset="13" width="3" name="InstrumentationResources" access="RO" reset_value="0" description="Instrumentation resources. The value of these bits is 0b000, indicating that no Instrumentation resources are supported."/>
+    <bit_field offset="16" width="4" name="EmbeddedICEwatchpointInputs" access="RO" reset_value="0x4" description="EmbeddedICE watchpoint inputs. The value of these bits is 0b0100, indicating that the number of EmbeddedICE watchpoint inputs implemented is four. These inputs come from the DWT."/>
+    <bit_field offset="20" width="1" name="TraceStartStopBlockUsesEmbeddedICEwatchpointInputs" access="RO" reset_value="0x1" description="Trace Start/Stop block uses EmbeddedICE watchpoint inputs. The value of this bit is 1, indicating that the Trace Start/Stop block uses the EmbeddedICE watchpoint inputs."/>
+    <bit_field offset="21" width="1" name="EmbeddedICEbehaviorControlImplemented" access="RO" reset_value="0" description="EmbeddedICE behavior control implemented. The value of this bit is 0, indicating that the ETMEIBCR is not implemented."/>
+    <bit_field offset="22" width="1" name="TimestampingImplemented" access="RO" reset_value="0x1" description="Timestamping implemented. This bit is set to 1, indicating that timestamping is implemented."/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <bit_field offset="27" width="1" name="ReducedFunctionCounter" access="RO" reset_value="0x1" description="Reduced function counter. Set to 1 to indicate that Counter 1 is a reduced function counter."/>
+    <bit_field offset="28" width="1" name="TimestampEncoding" access="RO" reset_value="0x1" description="Timestamp encoding. Set to 1 to indicate that the timestamp is encoded as a natural binary number."/>
+    <bit_field offset="29" width="1" name="TimestampSize" access="RO" reset_value="0" description="Timestamp size. Set to 0 to indicate a size of 48 bits."/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x1F0" width="32" name="ETMTESSEICR" description="TraceEnable Start/Stop EmbeddedICE Control Register">
+    <bit_field offset="0" width="4" name="StartResourceSelection" access="RW" reset_value="0" reset_mask="0" description="Start resource selection. Setting any of these bits to 1 selects the corresponding EmbeddedICE watchpoint input as a TraceEnable start resource. Bit [0] corresponds to input 1, bit [1] corresponds to input 2, bit [2] corresponds to input 3, and bit [3] corresponds to input 4."/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="4" name="StopResourceSelection" access="RW" reset_value="0" reset_mask="0" description="Stop resource selection. Setting any of these bits to 1 selects the corresponding EmbeddedICE watchpoint input as a TraceEnable stop resource. Bit [16] corresponds to input 1, bit [17] corresponds to input 2, bit [18] corresponds to input 3, and bit [19] corresponds to input 4."/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x1F8" width="32" name="ETMTSEVR" description="Timestamp Event Register">
+    <bit_field offset="0" width="12" name="TimestampEvent" access="RW" reset_value="0" reset_mask="0" description="Timestamp event."/>
+    <reserved_bit_field offset="12" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0" reset_mask="0"/>
+  </register>
+  <register offset="0x200" width="32" name="ETMTRACEIDR" description="CoreSight Trace ID Register">
+    <bit_field offset="0" width="7" name="TraceID" access="RW" reset_value="0" description="Trace ID to output onto the trace bus. On an ETM reset this field is cleared to 0x00."/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x208" width="32" name="ETMIDR2" description="ETM ID Register 2">
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x314" width="32" name="ETMPDSR" description="Device Power-Down Status Register">
+    <bit_field offset="0" width="1" name="ETMpoweredup" access="RO" reset_value="0x1" description="The value of this bit indicates whether you can access the ETM Trace Registers. The value of this bit is always 1, indicating that the ETM Trace Registers can be accessed."/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xEE0" width="32" name="ITMISCIN" description="Integration Test Miscelaneous Inputs Register">
+    <bit_field offset="0" width="2" name="EXTIN" access="RO" reset_value="0" reset_mask="0" description="A read of these bits returns the value of the EXTIN[1:0] input pins."/>
+    <reserved_bit_field offset="2" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0" reset_mask="0"/>
+    <bit_field offset="4" width="1" name="COREHALT" access="RO" reset_value="0" reset_mask="0" description="A read of this bit returns the value of the COREHALT input pin."/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xEE8" width="32" name="ITTRIGOUT" description="Integration Test Trigger Out Register">
+    <bit_field offset="0" width="1" name="TRIGGER" access="WO" reset_value="0" reset_mask="0" description="A write to this bit sets the TRIGGER output."/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xEF0" width="32" name="ITATBCTR2" description="ETM Integration Test ATB Control 2 Register">
+    <bit_field offset="0" width="1" name="ATREADY" access="RO" reset_value="0" reset_mask="0" description="A read of this bit returns the value of the ETM ATREADY input."/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xEF8" width="32" name="ITATBCTR0" description="ETM Integration Test ATB Control 0 Register">
+    <bit_field offset="0" width="1" name="ATVALID" access="WO" reset_value="0" reset_mask="0" description="A write to this bit sets the value of the ETM ATVALID output."/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xF00" width="32" name="ETMITCTRL" description="Integration Mode Control Register">
+    <bit_field offset="0" width="1" name="Mode" access="RW" reset_value="0" description="Enable integration mode. When this bit is set to 1, the device enters integration mode to enable Topology Detection or Integration Testing to be checked. On an ETM reset this bit is cleared to 0."/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFA0" width="32" name="ETMCLAIMSET" description="Claim Tag Set Register">
+    <bit_field offset="0" width="4" name="CLAIMSET" access="RW" reset_value="0" reset_mask="0" description="A bit programmable register bank which sets the Claim Tag Value. Write 1 to set the bit in the claim tag. A read will return a logic 1 for all implemented locations."/>
+    <reserved_bit_field offset="4" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0" reset_mask="0"/>
+  </register>
+  <register offset="0xFA4" width="32" name="ETMCLAIMCLR" description="Claim Tag Clear Register">
+    <bit_field offset="0" width="4" name="CLAIMCLR" access="RW" reset_value="0" reset_mask="0" description="A bit programmable register bank that is zero at reset. Write 1 to clear the bit in the claim tag. On reads, returns the current setting of the claim tag."/>
+    <reserved_bit_field offset="4" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0" reset_mask="0"/>
+  </register>
+  <register offset="0xFB0" width="32" name="ETMLAR" description="Lock Access Register">
+    <bit_field offset="0" width="32" name="WriteAccessCode" access="RW" reset_value="0" reset_mask="0" description="Write Access Code. A write of 0xC5ACCE55 enables further write access to this device. An invalid write will have the affect of removing write access."/>
+  </register>
+  <register offset="0xFB4" width="32" name="ETMLSR" description="Lock Status Register">
+    <bit_field offset="0" width="1" name="IMP" access="RO" reset_value="0x1" description="Lock mechanism is implemented. This bit always reads 1."/>
+    <bit_field offset="1" width="1" name="STATUS" access="RO" reset_value="0" reset_mask="0" description="Lock Status. This bit is HIGH when the device is locked, and LOW when unlocked.">
+      <bit_field_value name="ETMLSR_STATUS_0b0" value="0b0" description="Access permitted."/>
+      <bit_field_value name="ETMLSR_STATUS_0b1" value="0b1" description="Write access to the component is blocked. All writes to control registers are ignored. Reads are permitted."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="s8BIT" access="RO" reset_value="0" description="Access Lock Register size. This bit reads 0 to indicate a 32-bit register is present."/>
+    <reserved_bit_field offset="3" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0" reset_mask="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0" reset_mask="0"/>
+  </register>
+  <register offset="0xFB8" width="32" name="ETMAUTHSTATUS" description="Authentication Status Register">
+    <bit_field offset="0" width="2" name="NSID" access="RO" reset_value="0" reset_mask="0" description="Reads as b00, Non-secure invasive debug not supported by the ETM."/>
+    <bit_field offset="2" width="2" name="NSNID" access="RO" reset_value="0" reset_mask="0" description="Permission for Non-secure non-invasive debug.">
+      <bit_field_value name="ETMAUTHSTATUS_NSNID_0b10" value="0b10" description="Non-secure non-invasive debug disabled"/>
+      <bit_field_value name="ETMAUTHSTATUS_NSNID_0b11" value="0b11" description="Non-secure non-invasive debug enabled"/>
+    </bit_field>
+    <bit_field offset="4" width="2" name="SID" access="RO" reset_value="0" reset_mask="0" description="Reads as b00, Secure invasive debug not supported by the ETM."/>
+    <bit_field offset="6" width="2" name="SNID" access="RO" reset_value="0" reset_mask="0" description="Permission for Secure non-invasive debug."/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFCC" width="32" name="ETMDEVTYPE" description="CoreSight Device Type Register">
+    <bit_field offset="0" width="4" name="MajorType" access="RO" reset_value="0x3" description="Major Type and Class">
+      <bit_field_value name="ETMDEVTYPE_MajorType_0b0011" value="0b0011" description="Trace source"/>
+    </bit_field>
+    <bit_field offset="4" width="4" name="SubType" access="RO" reset_value="0x1" description="Sub Type">
+      <bit_field_value name="ETMDEVTYPE_SubType_0b0001" value="0b0001" description="Processor trace"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFD0" width="32" name="ETMPIDR4" description="Peripheral Identification Register 4">
+    <bit_field offset="0" width="4" name="JEP106" access="RO" reset_value="0x4" description="JEP106 continuation code."/>
+    <bit_field offset="4" width="4" name="c4KB" access="RO" reset_value="0" description="4KB Count"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFD4" width="32" name="ETMPIDR5" description="Peripheral Identification Register 5">
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFD8" width="32" name="ETMPIDR6" description="Peripheral Identification Register 6">
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFDC" width="32" name="ETMPIDR7" description="Peripheral Identification Register 7">
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFE0" width="32" name="ETMPIDR0" description="Peripheral Identification Register 0">
+    <bit_field offset="0" width="8" name="PartNumber" access="RO" reset_value="0x25" description="Part Number [7:0]"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFE4" width="32" name="ETMPIDR1" description="Peripheral Identification Register 1">
+    <bit_field offset="0" width="4" name="PartNumber" access="RO" reset_value="0x9" description="Part Number [11:8]"/>
+    <bit_field offset="4" width="4" name="JEP106_identity_code" access="RO" reset_value="0xB" description="JEP106 identity code [3:0]"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFE8" width="32" name="ETMPIDR2" description="Peripheral Identification Register 2">
+    <bit_field offset="0" width="3" name="JEP106_identity_code" access="RO" reset_value="0x3" description="JEP106 identity code [6:4]"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0x1"/>
+    <bit_field offset="4" width="4" name="Revision" access="RO" reset_value="0" description="Revision"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFEC" width="32" name="ETMPIDR3" description="Peripheral Identification Register 3">
+    <bit_field offset="0" width="4" name="CustomerModified" access="RO" reset_value="0" description="Customer Modified."/>
+    <bit_field offset="4" width="4" name="RevAnd" access="RO" reset_value="0" description="RevAnd"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFF0" width="32" name="ETMCIDR0" description="Component Identification Register 0">
+    <bit_field offset="0" width="8" name="Preamble" access="RO" reset_value="0xD" description="Preamble"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFF4" width="32" name="ETMCIDR1" description="Component Identification Register 1">
+    <bit_field offset="0" width="4" name="Preamble" access="RO" reset_value="0" description="Preamble"/>
+    <bit_field offset="4" width="4" name="ComponentClass" access="RO" reset_value="0x9" description="Component class">
+      <bit_field_value name="ETMCIDR1_ComponentClass_0b0001" value="0b0001" description="ROM table."/>
+      <bit_field_value name="ETMCIDR1_ComponentClass_0b1001" value="0b1001" description="CoreSight component."/>
+      <bit_field_value name="ETMCIDR1_ComponentClass_0b1111" value="0b1111" description="PrimeCell of system component with no standardized register layout, for backward compatibility."/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFF8" width="32" name="ETMCIDR2" description="Component Identification Register 2">
+    <bit_field offset="0" width="8" name="Preamble" access="RO" reset_value="0x5" description="Preamble"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xFFC" width="32" name="ETMCIDR3" description="Component Identification Register 3">
+    <bit_field offset="0" width="8" name="Preamble" access="RO" reset_value="0xB1" description="Preamble"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+</regs:peripheral>

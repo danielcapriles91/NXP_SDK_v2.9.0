@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component:config_component
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd"
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0"
+   id="pmc_reg" label="PMC" category="Register init" registers_init="true" options="UI_COMPONENT_MODE_HIDDEN">
+   
+   <description>Power Management Controller (PMC)</description>
+   <mode id="General" label="General">
+      <description>General PMC initialization</description>
+      <config_set_refs>
+         <config_set_ref>general_config_set</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>PMC</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="general_config_set" label="General configuration">
+      <description>General PMC configuration</description>
+      <generated_types/>
+      <user_types/> 
+      <settings>
+        <struct id="pmc_template_params" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+          <variable id="PERIPHERAL" value="$instance.getPeripheral()"></variable>
+          <variable id="VPREFIX" value="$configSet.inst_ID_def.getValue()"></variable>
+        </struct> 
+        <bool id="CTRL_TRIM_init" label="Use factory trim value" options="UI_LABEL_BOLD;REGISTERS_REFRESH">
+          <description>When enabled, factory trim value is used for the bandgap. When disabled, custom bandgap trim value is used.</description>
+        </bool>
+        <struct id="CTRL_TRIM_config" label="CTRL_TRIM_config" enable="$parent.CTRL_TRIM_init.getValue() == `false`" options="UI_LABEL_HIDDEN">
+          <integer id="CTRL_TRIM" label="Bandgap trim" type="uint8_t" min_expr="0" max_expr="15" options="REGISTERS_REFRESH">
+            <description>Value used to trim the bandgap reference in the regulator</description>
+            <assign when="true">
+              <register name="CTRL" bitfield="TRIM" value="$this.getValue()" reverse_value="x -> x"/>
+            </assign>
+          </integer>
+        </struct>
+        <bool id="CTRL_VRBEN" label="Bandgap reference buffer to ADC" options="REGISTERS_REFRESH">
+          <description>Enables a buffer that drives the 1.2 V bandgap reference to the ADC. It should be enabled if the user wants to calibrate the ADC using the 1.2 V reference. It may be disabled to save power when ADC calibration is not being performed.</description>
+          <assign when="true">
+            <register name="CTRL" bitfield="VRBEN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+          </assign>
+        </bool>
+        <bool id="CTRL_HV27IE" label="2.7 V high voltage interrupt" options="REGISTERS_REFRESH">
+          <description>When enabled, low voltage interrupt is generated when VDDIO becomes greater than 2.7 V.</description>
+          <assign when="true">
+            <register name="CTRL" bitfield="HV27IE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+          </assign>
+        </bool>
+        <bool id="CTRL_HV22IE" label="2.2 V high voltage interrupt" options="REGISTERS_REFRESH">
+          <description>When enabled, low voltage interrupt is generated when VDDIO becomes greater than 2.2 V.</description>
+          <assign when="true">
+            <register name="CTRL" bitfield="HV22IE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+          </assign>
+        </bool>
+        <bool id="CTRL_LV27IE" label="2.7 V low voltage interrupt" options="REGISTERS_REFRESH">
+          <description>When enabled, low voltage interrupt is generated when VDDIO becomes lower than 2.7 V.</description>
+          <assign when="true">
+            <register name="CTRL" bitfield="LV27IE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+          </assign>
+        </bool>
+        <bool id="CTRL_LV22IE" label="2.2 V low voltage interrupt" options="REGISTERS_REFRESH">
+          <description>When enabled, low voltage interrupt is generated when VDDIO becomes lower than 2.2 V.</description>
+          <assign when="true">
+            <register name="CTRL" bitfield="LV22IE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+          </assign>
+        </bool>
+        <bool id="enable_irq" label="Enable interrupt vector" options="UI_LABEL_BOLD;REGISTERS_REFRESH">
+          <description>
+            Enable interrupts initialization, like priority and enablement in the INITC and SIM.
+          </description>
+          <validation>
+            <constraint when_expr="$this.value()"
+              cond_expr="$parent.CTRL_HV27IE.getValue() || $parent.CTRL_HV22IE.getValue() || $parent.CTRL_LV27IE.getValue() || $parent.CTRL_LV22IE.getValue()"
+              level="warning"
+              description_expr="`INTC settings are initialized, but no high or low voltage interrupt source is enabled.`"/>
+          </validation>
+        </bool>
+        <reference id="interrupt" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_irq.getValue()" options="UI_LABEL_HIDDEN"/>
+        <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+        <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+        <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+      </fragment_defs>
+      <code>
+        <section target="includes">
+          <fragment id="include">
+            <param id="name">common</param>
+            <param id="filename">fsl_device_registers.h</param>
+          </fragment>
+        </section>
+        <section target="defines">
+          <fragment id="IRQ_definitions" apply_to="$this.interrupt" if_expr="$this.enable_irq.value()"/>
+          <fragment id="filtered_regs_init">
+            <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+            <param id="filter" expr="`PMC`+ $this.getID() +`.*`"/>
+          </fragment>
+          <fragment id="all_assigned_regs_init">
+            <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+          </fragment>
+          <fragment id="define" if_expr="$configSet.CTRL_TRIM_init.getValue()">
+            <param id="name" expr="$configSet.inst_ID_def.getValue() + `_CTRL_INIT_MASK`"></param>
+            <param id="value" expr="`0x0FFFU`"/>
+            <param id="description" expr="`CTRL register mask`"/>
+          </fragment>
+          <fragment id="define" if_expr="!$configSet.CTRL_TRIM_init.getValue()">
+            <param id="name" expr="$configSet.inst_ID_def.getValue() + `_CTRL_INIT_MASK`"></param>
+            <param id="value" expr="`0xFFFFU`"/>
+            <param id="description" expr="`CTRL register mask`"/>
+          </fragment>
+        </section>
+        <section target="init_function_body">
+          <fragment id="template" apply_to="$configSet.pmc_template_params">
+            <param id="file">fsl_pmc.template</param>
+            <param id="setting" expr="$this"></param>
+            <param id="separators"></param>
+            <param id="description" expr="`PMC initialization`"></param>
+          </fragment>
+        </section>
+      </code> 
+      <quick_selections>
+         <quick_selection id="default" label="Default">
+            <description>Default configuration</description>
+            <set id="CTRL_TRIM_init">true</set>
+            <set id="CTRL_TRIM_config.CTRL_TRIM">7</set>
+         </quick_selection>
+      </quick_selections>
+   </config_set>
+</component:config_component>

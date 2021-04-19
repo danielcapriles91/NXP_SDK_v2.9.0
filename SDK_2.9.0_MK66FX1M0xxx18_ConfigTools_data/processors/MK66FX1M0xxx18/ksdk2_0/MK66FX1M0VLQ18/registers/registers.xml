@@ -1,0 +1,769 @@
+<?xml version="1.0"?>
+<regs:registers version="4.0" xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0 http://swtools.freescale.net/XSD/registers/4.0/registers.xsd">
+  <part_information>
+    <part_number id="MK66FX1M0xxx18" family="Kinetis" endian="little"/>
+  </part_information>
+  <peripherals>
+    <peripheral name="WDOG" full_name="Generation 2008 Watchdog Timer" link="WDOG.xml" size="24">
+      <base_address addr="0x40052000"/>
+      <alias type="type" value="WDOG"/>
+    </peripheral>
+    <peripheral name="VREF" full_name="Voltage Reference" link="VREF.xml" size="2">
+      <base_address addr="0x40074000"/>
+      <alias type="type" value="VREF"/>
+    </peripheral>
+    <peripheral name="USBPHY" full_name="USBPHY Register Reference Index" link="USBPHY.xml" size="320">
+      <base_address addr="0x400A2000"/>
+      <alias type="type" value="USBPHY"/>
+    </peripheral>
+    <peripheral name="USBHSDCD" full_name="USB Device Charger Detection module" link="USBHSDCD.xml" size="28">
+      <base_address addr="0x400A3000"/>
+      <alias type="type" value="USBHSDCD"/>
+    </peripheral>
+    <peripheral name="USBHS" full_name="USB HS/FS/LS OTG Controller" link="USBHS.xml" size="516">
+      <base_address addr="0x400A1000"/>
+      <alias type="type" value="USBHS"/>
+    </peripheral>
+    <peripheral name="USBDCD" full_name="USB Device Charger Detection module" link="USBDCD.xml" size="28">
+      <base_address addr="0x40035000"/>
+      <alias type="type" value="USBDCD"/>
+    </peripheral>
+    <peripheral name="USB0" full_name="Universal Serial Bus, OTG Capable Controller" link="USB0.xml" size="349">
+      <base_address addr="0x40072000"/>
+      <alias type="type" value="USB"/>
+    </peripheral>
+    <peripheral name="UART4" full_name="Universal Asynchronous Receiver/Transmitter" link="UART4.xml" size="23">
+      <base_address addr="0x400EA000"/>
+      <alias type="type" value="UART"/>
+    </peripheral>
+    <peripheral name="UART3" full_name="Universal Asynchronous Receiver/Transmitter" link="UART3.xml" size="23">
+      <base_address addr="0x4006D000"/>
+      <alias type="type" value="UART"/>
+    </peripheral>
+    <peripheral name="UART2" full_name="Universal Asynchronous Receiver/Transmitter" link="UART2.xml" size="23">
+      <base_address addr="0x4006C000"/>
+      <alias type="type" value="UART"/>
+    </peripheral>
+    <peripheral name="UART1" full_name="Universal Asynchronous Receiver/Transmitter" link="UART1.xml" size="23">
+      <base_address addr="0x4006B000"/>
+      <alias type="type" value="UART"/>
+    </peripheral>
+    <peripheral name="UART0" full_name="Universal Asynchronous Receiver/Transmitter" link="UART0.xml" size="64">
+      <base_address addr="0x4006A000"/>
+      <alias type="type" value="UART"/>
+    </peripheral>
+    <peripheral name="TSI0" full_name="Touch sense input" link="TSI0.xml" size="12">
+      <base_address addr="0x40045000"/>
+      <alias type="type" value="TSI"/>
+    </peripheral>
+    <peripheral name="TPM2" full_name="Timer/PWM Module" link="TPM2.xml" size="136">
+      <base_address addr="0x400CA000"/>
+      <alias type="type" value="TPM"/>
+    </peripheral>
+    <peripheral name="TPM1" full_name="Timer/PWM Module" link="TPM1.xml" size="136">
+      <base_address addr="0x400C9000"/>
+      <alias type="type" value="TPM"/>
+    </peripheral>
+    <peripheral name="TPIU" full_name="Trace Port Interface Unit Registers" link="TPIU.xml" size="4096">
+      <base_address addr="0xE0040000"/>
+      <alias type="type" value="TPIU"/>
+    </peripheral>
+    <peripheral name="SystemControl" full_name="System Control Block" link="SystemControl.xml" size="3904">
+      <base_address addr="0xE000E000"/>
+      <alias type="type" value="SCB"/>
+    </peripheral>
+    <peripheral name="SysTick" full_name="System timer" link="SysTick.xml" size="16">
+      <base_address addr="0xE000E010"/>
+      <alias type="type" value="SysTick"/>
+    </peripheral>
+    <peripheral name="SYSMPU" full_name="Memory protection unit" link="SYSMPU.xml" size="2096">
+      <base_address addr="0x4000D000"/>
+      <alias type="type" value="SYSMPU"/>
+    </peripheral>
+    <peripheral name="SPI2" full_name="Serial Peripheral Interface" link="SPI2.xml" size="140">
+      <base_address addr="0x400AC000"/>
+      <alias type="type" value="SPI"/>
+    </peripheral>
+    <peripheral name="SPI1" full_name="Serial Peripheral Interface" link="SPI1.xml" size="140">
+      <base_address addr="0x4002D000"/>
+      <alias type="type" value="SPI"/>
+    </peripheral>
+    <peripheral name="SPI0" full_name="Serial Peripheral Interface" link="SPI0.xml" size="140">
+      <base_address addr="0x4002C000"/>
+      <alias type="type" value="SPI"/>
+    </peripheral>
+    <peripheral name="SMC" full_name="System Mode Controller" link="SMC.xml" size="4">
+      <base_address addr="0x4007E000"/>
+      <alias type="type" value="SMC"/>
+    </peripheral>
+    <peripheral name="SIM" full_name="System Integration Module" link="SIM.xml" size="4204">
+      <base_address addr="0x40047000"/>
+      <alias type="type" value="SIM"/>
+    </peripheral>
+    <peripheral name="SDRAM" full_name="Synchronous DRAM Controller" link="SDRAM.xml" size="88">
+      <base_address addr="0x4000F000"/>
+      <alias type="type" value="SDRAM"/>
+    </peripheral>
+    <peripheral name="SDHC" full_name="Secured Digital Host Controller" link="SDHC.xml" size="256">
+      <base_address addr="0x400B1000"/>
+      <alias type="type" value="SDHC"/>
+    </peripheral>
+    <peripheral name="RTC" full_name="Secure Real Time Clock" link="RTC.xml" size="2056">
+      <base_address addr="0x4003D000"/>
+      <alias type="type" value="RTC"/>
+    </peripheral>
+    <peripheral name="RNG" full_name="Random Number Generator Accelerator" link="RNG.xml" size="16">
+      <base_address addr="0x400A0000"/>
+      <alias type="type" value="RNG"/>
+    </peripheral>
+    <peripheral name="RFVBAT" full_name="VBAT register file" link="RFVBAT.xml" size="32">
+      <base_address addr="0x4003E000"/>
+      <alias type="type" value="RFVBAT"/>
+    </peripheral>
+    <peripheral name="RFSYS" full_name="System register file" link="RFSYS.xml" size="32">
+      <base_address addr="0x40041000"/>
+      <alias type="type" value="RFSYS"/>
+    </peripheral>
+    <peripheral name="RCM" full_name="Reset Control Module" link="RCM.xml" size="10">
+      <base_address addr="0x4007F000"/>
+      <alias type="type" value="RCM"/>
+    </peripheral>
+    <peripheral name="PORTE" full_name="Pin Control and Interrupts" link="PORTE.xml" size="164">
+      <base_address addr="0x4004D000"/>
+      <alias type="type" value="PORT"/>
+    </peripheral>
+    <peripheral name="PORTD" full_name="Pin Control and Interrupts" link="PORTD.xml" size="204">
+      <base_address addr="0x4004C000"/>
+      <alias type="type" value="PORT"/>
+    </peripheral>
+    <peripheral name="PORTC" full_name="Pin Control and Interrupts" link="PORTC.xml" size="164">
+      <base_address addr="0x4004B000"/>
+      <alias type="type" value="PORT"/>
+    </peripheral>
+    <peripheral name="PORTB" full_name="Pin Control and Interrupts" link="PORTB.xml" size="164">
+      <base_address addr="0x4004A000"/>
+      <alias type="type" value="PORT"/>
+    </peripheral>
+    <peripheral name="PORTA" full_name="Pin Control and Interrupts" link="PORTA.xml" size="164">
+      <base_address addr="0x40049000"/>
+      <alias type="type" value="PORT"/>
+    </peripheral>
+    <peripheral name="PMC" full_name="Power Management Controller" link="PMC.xml" size="3">
+      <base_address addr="0x4007D000"/>
+      <alias type="type" value="PMC"/>
+    </peripheral>
+    <peripheral name="PIT" full_name="Periodic Interrupt Timer" link="PIT.xml" size="320">
+      <base_address addr="0x40037000"/>
+      <alias type="type" value="PIT"/>
+    </peripheral>
+    <peripheral name="PDB0" full_name="Programmable Delay Block" link="PDB0.xml" size="420">
+      <base_address addr="0x40036000"/>
+      <alias type="type" value="PDB"/>
+    </peripheral>
+    <peripheral name="OSC" full_name="Oscillator" link="OSC.xml" size="3">
+      <base_address addr="0x40065000"/>
+      <alias type="id" value="OSC0"/>
+      <alias type="type" value="OSC"/>
+    </peripheral>
+    <peripheral name="NVIC" full_name="Nested Vectored Interrupt Controller" link="NVIC.xml" size="3588">
+      <base_address addr="0xE000E100"/>
+      <alias type="type" value="NVIC"/>
+    </peripheral>
+    <peripheral name="MCM" full_name="Core Platform Miscellaneous Control Module" link="MCM.xml" size="68">
+      <base_address addr="0xE0080000"/>
+      <alias type="type" value="MCM"/>
+    </peripheral>
+    <peripheral name="MCG" full_name="Multipurpose Clock Generator module" link="MCG.xml" size="19">
+      <base_address addr="0x40064000"/>
+      <alias type="type" value="MCG"/>
+    </peripheral>
+    <peripheral name="LPUART0" full_name="Low Power Universal Asynchronous Receiver/Transmitter" link="LPUART0.xml" size="24">
+      <base_address addr="0x400C4000"/>
+      <alias type="type" value="LPUART"/>
+    </peripheral>
+    <peripheral name="LPTMR0" full_name="Low Power Timer" link="LPTMR0.xml" size="16">
+      <base_address addr="0x40040000"/>
+      <alias type="type" value="LPTMR"/>
+    </peripheral>
+    <peripheral name="LMEM" full_name="Local Memory Controller" link="LMEM.xml" size="36">
+      <base_address addr="0xE0082000"/>
+      <alias type="type" value="LMEM"/>
+    </peripheral>
+    <peripheral name="LLWU" full_name="Low leakage wakeup unit" link="LLWU.xml" size="18">
+      <base_address addr="0x4007C000"/>
+      <alias type="type" value="LLWU"/>
+    </peripheral>
+    <peripheral name="ITM" full_name="Instrumentation Trace Macrocell Registers" link="ITM.xml" size="4096">
+      <base_address addr="0xE0000000"/>
+      <alias type="type" value="ITM"/>
+    </peripheral>
+    <peripheral name="I2S0" full_name="Inter-IC Sound / Synchronous Audio Interface" link="I2S0.xml" size="264">
+      <base_address addr="0x4002F000"/>
+      <alias type="type" value="I2S"/>
+    </peripheral>
+    <peripheral name="I2C3" full_name="Inter-Integrated Circuit" link="I2C3.xml" size="12">
+      <base_address addr="0x400E7000"/>
+      <alias type="type" value="I2C"/>
+    </peripheral>
+    <peripheral name="I2C2" full_name="Inter-Integrated Circuit" link="I2C2.xml" size="12">
+      <base_address addr="0x400E6000"/>
+      <alias type="type" value="I2C"/>
+    </peripheral>
+    <peripheral name="I2C1" full_name="Inter-Integrated Circuit" link="I2C1.xml" size="12">
+      <base_address addr="0x40067000"/>
+      <alias type="type" value="I2C"/>
+    </peripheral>
+    <peripheral name="I2C0" full_name="Inter-Integrated Circuit" link="I2C0.xml" size="12">
+      <base_address addr="0x40066000"/>
+      <alias type="type" value="I2C"/>
+    </peripheral>
+    <peripheral name="GPIOE" full_name="General Purpose Input/Output" link="GPIOE.xml" size="24">
+      <base_address addr="0x400FF100"/>
+      <alias type="type" value="GPIO"/>
+    </peripheral>
+    <peripheral name="GPIOD" full_name="General Purpose Input/Output" link="GPIOD.xml" size="24">
+      <base_address addr="0x400FF0C0"/>
+      <alias type="type" value="GPIO"/>
+    </peripheral>
+    <peripheral name="GPIOC" full_name="General Purpose Input/Output" link="GPIOC.xml" size="24">
+      <base_address addr="0x400FF080"/>
+      <alias type="type" value="GPIO"/>
+    </peripheral>
+    <peripheral name="GPIOB" full_name="General Purpose Input/Output" link="GPIOB.xml" size="24">
+      <base_address addr="0x400FF040"/>
+      <alias type="type" value="GPIO"/>
+    </peripheral>
+    <peripheral name="GPIOA" full_name="General Purpose Input/Output" link="GPIOA.xml" size="24">
+      <base_address addr="0x400FF000"/>
+      <alias type="type" value="GPIO"/>
+    </peripheral>
+    <peripheral name="FTM3" full_name="FlexTimer Module" link="FTM3.xml" size="156">
+      <base_address addr="0x400B9000"/>
+      <alias type="type" value="FTM"/>
+    </peripheral>
+    <peripheral name="FTM2" full_name="FlexTimer Module" link="FTM2.xml" size="156">
+      <base_address addr="0x4003A000"/>
+      <alias type="type" value="FTM"/>
+    </peripheral>
+    <peripheral name="FTM1" full_name="FlexTimer Module" link="FTM1.xml" size="156">
+      <base_address addr="0x40039000"/>
+      <alias type="type" value="FTM"/>
+    </peripheral>
+    <peripheral name="FTM0" full_name="FlexTimer Module" link="FTM0.xml" size="156">
+      <base_address addr="0x40038000"/>
+      <alias type="type" value="FTM"/>
+    </peripheral>
+    <peripheral name="FTFE_FlashConfig" full_name="Flash configuration field" link="FTFE_FlashConfig.xml" size="16">
+      <base_address addr="0x400"/>
+      <alias type="type" value="NV"/>
+    </peripheral>
+    <peripheral name="FTFE" full_name="Flash Memory Interface" link="FTFE.xml" size="44">
+      <base_address addr="0x40020000"/>
+      <alias type="type" value="FTFE"/>
+    </peripheral>
+    <peripheral name="FPB" full_name="Flash Patch and Breakpoint Unit Registers" link="FPB.xml" size="4096">
+      <base_address addr="0xE0002000"/>
+      <alias type="type" value="FPB"/>
+    </peripheral>
+    <peripheral name="FMC" full_name="Flash Memory Controller-greg" link="FMC.xml" size="768">
+      <base_address addr="0x4001F000"/>
+      <alias type="type" value="FMC"/>
+    </peripheral>
+    <peripheral name="FB" full_name="FlexBus external bus interface" link="FB.xml" size="100">
+      <base_address addr="0x4000C000"/>
+      <alias type="type" value="FB"/>
+    </peripheral>
+    <peripheral name="EWM" full_name="External Watchdog Monitor" link="EWM.xml" size="4">
+      <base_address addr="0x40061000"/>
+      <alias type="type" value="EWM"/>
+    </peripheral>
+    <peripheral name="ETM" full_name="Embedded Trace Macrocell Registers" link="ETM.xml" size="4096">
+      <base_address addr="0xE0041000"/>
+      <alias type="type" value="ETM"/>
+    </peripheral>
+    <peripheral name="ETF" full_name="Embedded Trace Funnel Registers" link="ETF.xml" size="4096">
+      <base_address addr="0xE0043000"/>
+      <alias type="type" value="ETF"/>
+    </peripheral>
+    <peripheral name="ETB" full_name="Embedded Trace Buffer Registers" link="ETB.xml" size="4096">
+      <base_address addr="0xE0042000"/>
+      <alias type="type" value="ETB"/>
+    </peripheral>
+    <peripheral name="ENET" full_name="Ethernet MAC-NET Core" link="ENET.xml" size="1576">
+      <base_address addr="0x400C0000"/>
+      <alias type="type" value="ENET"/>
+    </peripheral>
+    <peripheral name="DWT" full_name="Data Watchpoint and Trace Unit Registers" link="DWT.xml" size="4096">
+      <base_address addr="0xE0001000"/>
+      <alias type="type" value="DWT"/>
+    </peripheral>
+    <peripheral name="DMAMUX" full_name="DMA channel multiplexor" link="DMAMUX.xml" size="32">
+      <base_address addr="0x40021000"/>
+      <alias type="type" value="DMAMUX"/>
+    </peripheral>
+    <peripheral name="DMA" full_name="Enhanced direct memory access controller" link="DMA.xml" size="5120">
+      <base_address addr="0x40008000"/>
+      <alias type="type" value="DMA"/>
+      <alias type="sdk_base_pointer" value="DMA0"/>
+    </peripheral>
+    <peripheral name="DAC1" full_name="12-Bit Digital-to-Analog Converter" link="DAC1.xml" size="36">
+      <base_address addr="0x400CD000"/>
+      <alias type="type" value="DAC"/>
+    </peripheral>
+    <peripheral name="DAC0" full_name="12-Bit Digital-to-Analog Converter" link="DAC0.xml" size="36">
+      <base_address addr="0x400CC000"/>
+      <alias type="type" value="DAC"/>
+    </peripheral>
+    <peripheral name="CoreDebug" full_name="Core Debug Registers" link="CoreDebug.xml" size="16">
+      <base_address addr="0xE000EDF0"/>
+      <alias type="type" value="CoreDebug"/>
+    </peripheral>
+    <peripheral name="CRC" full_name="Cyclic Redundancy Check" link="CRC.xml" size="12">
+      <base_address addr="0x40032000"/>
+      <alias type="type" value="CRC"/>
+      <alias type="sdk_base_pointer" value="CRC0"/>
+    </peripheral>
+    <peripheral name="CMT" full_name="Carrier Modulator Transmitter" link="CMT.xml" size="12">
+      <base_address addr="0x40062000"/>
+      <alias type="type" value="CMT"/>
+    </peripheral>
+    <peripheral name="CMP3" full_name="High-Speed Comparator (CMP), Voltage Reference (VREF) Digital-to-Analog Converter (DAC), and Analog Mux (ANMUX)" link="CMP3.xml" size="6">
+      <base_address addr="0x40073018"/>
+      <alias type="type" value="CMP"/>
+    </peripheral>
+    <peripheral name="CMP2" full_name="High-Speed Comparator (CMP), Voltage Reference (VREF) Digital-to-Analog Converter (DAC), and Analog Mux (ANMUX)" link="CMP2.xml" size="6">
+      <base_address addr="0x40073010"/>
+      <alias type="type" value="CMP"/>
+    </peripheral>
+    <peripheral name="CMP1" full_name="High-Speed Comparator (CMP), Voltage Reference (VREF) Digital-to-Analog Converter (DAC), and Analog Mux (ANMUX)" link="CMP1.xml" size="6">
+      <base_address addr="0x40073008"/>
+      <alias type="type" value="CMP"/>
+    </peripheral>
+    <peripheral name="CMP0" full_name="High-Speed Comparator (CMP), Voltage Reference (VREF) Digital-to-Analog Converter (DAC), and Analog Mux (ANMUX)" link="CMP0.xml" size="6">
+      <base_address addr="0x40073000"/>
+      <alias type="type" value="CMP"/>
+    </peripheral>
+    <peripheral name="CAU" full_name="Memory Mapped Cryptographic Acceleration Unit (MMCAU)" link="CAU.xml" size="2924">
+      <base_address addr="0xE0081000"/>
+      <alias type="type" value="CAU"/>
+    </peripheral>
+    <peripheral name="CAN1" full_name="Flex Controller Area Network module" link="CAN1.xml" size="2240">
+      <base_address addr="0x400A4000"/>
+      <alias type="type" value="CAN"/>
+    </peripheral>
+    <peripheral name="CAN0" full_name="Flex Controller Area Network module" link="CAN0.xml" size="2240">
+      <base_address addr="0x40024000"/>
+      <alias type="type" value="CAN"/>
+    </peripheral>
+    <peripheral name="AXBS" full_name="Crossbar switch" link="AXBS.xml" size="3588">
+      <base_address addr="0x40004000"/>
+      <alias type="type" value="AXBS"/>
+    </peripheral>
+    <peripheral name="AIPS1" full_name="AIPS-Lite Bridge" link="AIPS1.xml" size="112">
+      <base_address addr="0x40080000"/>
+      <alias type="type" value="AIPS"/>
+    </peripheral>
+    <peripheral name="AIPS0" full_name="AIPS-Lite Bridge" link="AIPS0.xml" size="112">
+      <base_address addr="0x40000000"/>
+      <alias type="type" value="AIPS"/>
+    </peripheral>
+    <peripheral name="ADC1" full_name="Analog-to-Digital Converter" link="ADC1.xml" size="112">
+      <base_address addr="0x400BB000"/>
+      <alias type="type" value="ADC"/>
+    </peripheral>
+    <peripheral name="ADC0" full_name="Analog-to-Digital Converter" link="ADC0.xml" size="112">
+      <base_address addr="0x4003B000"/>
+      <alias type="type" value="ADC"/>
+    </peripheral>
+  </peripherals>
+  <clock_gates>
+    <clock_gate name="ADC0">
+      <control peripheral="SIM" register="SCGC6" bit_field="ADC0">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="ADC0"/>
+    </clock_gate>
+    <clock_gate name="ADC1">
+      <control peripheral="SIM" register="SCGC3" bit_field="ADC1">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="ADC1"/>
+    </clock_gate>
+    <clock_gate name="CAN0">
+      <control peripheral="SIM" register="SCGC6" bit_field="FLEXCAN0">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="CAN0"/>
+    </clock_gate>
+    <clock_gate name="CAN1">
+      <control peripheral="SIM" register="SCGC3" bit_field="FLEXCAN1">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="CAN1"/>
+    </clock_gate>
+    <clock_gate name="CMP">
+      <control peripheral="SIM" register="SCGC4" bit_field="CMP">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="CMP0"/>
+      <peripheral name="CMP1"/>
+      <peripheral name="CMP2"/>
+      <peripheral name="CMP3"/>
+    </clock_gate>
+    <clock_gate name="CMT">
+      <control peripheral="SIM" register="SCGC4" bit_field="CMT">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="CMT"/>
+    </clock_gate>
+    <clock_gate name="CRC">
+      <control peripheral="SIM" register="SCGC6" bit_field="CRC">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="CRC"/>
+    </clock_gate>
+    <clock_gate name="DAC0">
+      <control peripheral="SIM" register="SCGC2" bit_field="DAC0">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="DAC0"/>
+    </clock_gate>
+    <clock_gate name="DAC1">
+      <control peripheral="SIM" register="SCGC2" bit_field="DAC1">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="DAC1"/>
+    </clock_gate>
+    <clock_gate name="DMA">
+      <control peripheral="SIM" register="SCGC7" bit_field="DMA">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="DMA"/>
+    </clock_gate>
+    <clock_gate name="DMAMUX">
+      <control peripheral="SIM" register="SCGC6" bit_field="DMAMUX">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="DMAMUX"/>
+    </clock_gate>
+    <clock_gate name="ENET">
+      <control peripheral="SIM" register="SCGC2" bit_field="ENET">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="ENET"/>
+    </clock_gate>
+    <clock_gate name="EWM">
+      <control peripheral="SIM" register="SCGC4" bit_field="EWM">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="EWM"/>
+    </clock_gate>
+    <clock_gate name="FB">
+      <control peripheral="SIM" register="SCGC7" bit_field="FLEXBUS">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="FB"/>
+    </clock_gate>
+    <clock_gate name="FTFE">
+      <control peripheral="SIM" register="SCGC6" bit_field="FTF">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="FTFE"/>
+    </clock_gate>
+    <clock_gate name="FTM0">
+      <control peripheral="SIM" register="SCGC6" bit_field="FTM0">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="FTM0"/>
+    </clock_gate>
+    <clock_gate name="FTM1">
+      <control peripheral="SIM" register="SCGC6" bit_field="FTM1">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="FTM1"/>
+    </clock_gate>
+    <clock_gate name="FTM2">
+      <control peripheral="SIM" register="SCGC3" bit_field="FTM2">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="FTM2"/>
+    </clock_gate>
+    <clock_gate name="FTM3">
+      <control peripheral="SIM" register="SCGC3" bit_field="FTM3">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="FTM3"/>
+    </clock_gate>
+    <clock_gate name="I2C0">
+      <control peripheral="SIM" register="SCGC4" bit_field="I2C0">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="I2C0"/>
+    </clock_gate>
+    <clock_gate name="I2C1">
+      <control peripheral="SIM" register="SCGC4" bit_field="I2C1">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="I2C1"/>
+    </clock_gate>
+    <clock_gate name="I2C2">
+      <control peripheral="SIM" register="SCGC1" bit_field="I2C2">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="I2C2"/>
+    </clock_gate>
+    <clock_gate name="I2C3">
+      <control peripheral="SIM" register="SCGC1" bit_field="I2C3">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="I2C3"/>
+    </clock_gate>
+    <clock_gate name="I2S0">
+      <control peripheral="SIM" register="SCGC6" bit_field="I2S">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="I2S0"/>
+    </clock_gate>
+    <clock_gate name="LPTMR0">
+      <control peripheral="SIM" register="SCGC5" bit_field="LPTMR">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="LPTMR0"/>
+    </clock_gate>
+    <clock_gate name="LPUART0">
+      <control peripheral="SIM" register="SCGC2" bit_field="LPUART0">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="LPUART0"/>
+    </clock_gate>
+    <clock_gate name="PDB0">
+      <control peripheral="SIM" register="SCGC6" bit_field="PDB">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="PDB0"/>
+    </clock_gate>
+    <clock_gate name="PIT">
+      <control peripheral="SIM" register="SCGC6" bit_field="PIT">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="PIT"/>
+    </clock_gate>
+    <clock_gate name="PORTA">
+      <control peripheral="SIM" register="SCGC5" bit_field="PORTA">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="PORTA"/>
+    </clock_gate>
+    <clock_gate name="PORTB">
+      <control peripheral="SIM" register="SCGC5" bit_field="PORTB">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="PORTB"/>
+    </clock_gate>
+    <clock_gate name="PORTC">
+      <control peripheral="SIM" register="SCGC5" bit_field="PORTC">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="PORTC"/>
+    </clock_gate>
+    <clock_gate name="PORTD">
+      <control peripheral="SIM" register="SCGC5" bit_field="PORTD">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="PORTD"/>
+    </clock_gate>
+    <clock_gate name="PORTE">
+      <control peripheral="SIM" register="SCGC5" bit_field="PORTE">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="PORTE"/>
+    </clock_gate>
+    <clock_gate name="RNG">
+      <control peripheral="SIM" register="SCGC3" bit_field="RNGA">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="RNG"/>
+    </clock_gate>
+    <clock_gate name="RTC">
+      <control peripheral="SIM" register="SCGC6" bit_field="RTC">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="RTC"/>
+    </clock_gate>
+    <clock_gate name="SDHC">
+      <control peripheral="SIM" register="SCGC3" bit_field="SDHC">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="SDHC"/>
+    </clock_gate>
+    <clock_gate name="SDRAM">
+      <control peripheral="SIM" register="SCGC7" bit_field="SDRAMC">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="SDRAM"/>
+    </clock_gate>
+    <clock_gate name="SPI0">
+      <control peripheral="SIM" register="SCGC6" bit_field="SPI0">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="SPI0"/>
+    </clock_gate>
+    <clock_gate name="SPI1">
+      <control peripheral="SIM" register="SCGC6" bit_field="SPI1">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="SPI1"/>
+    </clock_gate>
+    <clock_gate name="SPI2">
+      <control peripheral="SIM" register="SCGC3" bit_field="SPI2">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="SPI2"/>
+    </clock_gate>
+    <clock_gate name="SYSMPU">
+      <control peripheral="SIM" register="SCGC7" bit_field="MPU">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="SYSMPU"/>
+    </clock_gate>
+    <clock_gate name="TPM1">
+      <control peripheral="SIM" register="SCGC2" bit_field="TPM1">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="TPM1"/>
+    </clock_gate>
+    <clock_gate name="TPM2">
+      <control peripheral="SIM" register="SCGC2" bit_field="TPM2">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="TPM2"/>
+    </clock_gate>
+    <clock_gate name="TSI0">
+      <control peripheral="SIM" register="SCGC5" bit_field="TSI">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="TSI0"/>
+    </clock_gate>
+    <clock_gate name="UART0">
+      <control peripheral="SIM" register="SCGC4" bit_field="UART0">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="UART0"/>
+    </clock_gate>
+    <clock_gate name="UART1">
+      <control peripheral="SIM" register="SCGC4" bit_field="UART1">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="UART1"/>
+    </clock_gate>
+    <clock_gate name="UART2">
+      <control peripheral="SIM" register="SCGC4" bit_field="UART2">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="UART2"/>
+    </clock_gate>
+    <clock_gate name="UART3">
+      <control peripheral="SIM" register="SCGC4" bit_field="UART3">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="UART3"/>
+    </clock_gate>
+    <clock_gate name="UART4">
+      <control peripheral="SIM" register="SCGC1" bit_field="UART4">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="UART4"/>
+    </clock_gate>
+    <clock_gate name="USB0">
+      <control peripheral="SIM" register="SCGC4" bit_field="USBOTG">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="USB0"/>
+    </clock_gate>
+    <clock_gate name="USBDCD">
+      <control peripheral="SIM" register="SCGC6" bit_field="USBDCD">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="USBDCD"/>
+    </clock_gate>
+    <clock_gate name="USBHS">
+      <control peripheral="SIM" register="SCGC3" bit_field="USBHS">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="USBHS"/>
+    </clock_gate>
+    <clock_gate name="USBHSDCD">
+      <control peripheral="SIM" register="SCGC3" bit_field="USBHSDCD">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="USBHSDCD"/>
+    </clock_gate>
+    <clock_gate name="USBPHY">
+      <control peripheral="SIM" register="SCGC3" bit_field="USBHSPHY">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="USBPHY"/>
+    </clock_gate>
+    <clock_gate name="VREF">
+      <control peripheral="SIM" register="SCGC4" bit_field="VREF">
+        <state name="enabled" value="1"/>
+        <state name="disabled" value="0"/>
+      </control>
+      <peripheral name="VREF"/>
+    </clock_gate>
+  </clock_gates>
+</regs:registers>

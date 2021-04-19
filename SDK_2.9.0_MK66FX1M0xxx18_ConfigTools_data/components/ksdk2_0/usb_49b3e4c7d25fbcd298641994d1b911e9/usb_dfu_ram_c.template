@@ -1,0 +1,64 @@
+#include "usb_flash.h"
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+
+/*******************************************************************************
+ * Prototypes
+ ******************************************************************************/
+
+/*******************************************************************************
+ * Variables
+ ******************************************************************************/
+/*! @brief memory configuration */
+
+/*******************************************************************************
+ * Code
+ ******************************************************************************/
+/*!
+ * @brief USB memory initialization function.
+ *
+ * This function initializes the memory driver structure and variables.
+ *
+ * @return A FLASH error or kStatus_FLASH_Success.
+ */
+usb_memory_status_t USB_MemoryInit(void)
+{
+    usb_memory_status_t status = kStatus_USB_MemorySuccess;
+
+    return status;
+}
+
+/*!
+ * @brief USB memory erasing function.
+ *
+ * This function erases the memory area from start address to the end.
+ *
+ * @param address  The start address.
+ * @param address  The erase size.
+ *
+ * @return A FLASH error or kStatus_FLASH_Success.
+ */
+usb_memory_status_t USB_MemoryErase(uint32_t address, uint32_t size)
+{
+    usb_memory_status_t status = kStatus_USB_MemorySuccess;
+    return status;
+}
+
+/*!
+ * @brief DFU memory programming function.
+ *
+ * This function programs memory with data at locations passed in through parameters.
+ *
+ * @param address The start address to be programmed.
+ * @param buffer  Pointer to buffer data.
+ * @param length  The length of data in byte.
+ *
+ * @return A FLASH error or kStatus_FLASH_Success.
+ */
+usb_memory_status_t USB_MemoryProgram(uint32_t address, uint8_t *buffer, uint32_t length)
+{
+    usb_memory_status_t status = kStatus_USB_MemorySuccess;
+    memcpy((void*)address, (void*)buffer, length);
+    return status;
+}

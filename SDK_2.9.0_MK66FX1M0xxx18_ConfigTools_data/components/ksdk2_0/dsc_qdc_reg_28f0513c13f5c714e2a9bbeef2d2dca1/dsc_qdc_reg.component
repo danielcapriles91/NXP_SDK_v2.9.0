@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="dsc_qdc_reg" label="QDC" options="UI_COMPONENT_MODE_HIDDEN"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd" 
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+   category="Register init" registers_init="true">
+   <description>Quadrature Decoder (QDC)</description>
+   <mode id="general" label="General">
+      <description>General mode</description>
+      <config_set_refs>
+         <config_set_ref>fsl_qdc</config_set_ref>
+      </config_set_refs>
+      <master_peripheral exclusive="true">
+         <peripheral_type>QDC</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="fsl_qdc" label="General configuration">
+      <description>General configuration of ENC</description>      
+      <generated_types/>
+      <user_types>
+         <struct id="qdc_config" label="QDC configuration">
+            
+            <!-- clock config -->
+            <variable id="clockSourceUId" value="`BusInterfaceClock`"/>
+            <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="createArray().addItemToList(`BusInterfaceClock`, getPeripheralClock($instance.getPeripheral(), `BusInterfaceClock`), ($instance.getPeripheral() + `_CLK_SRC`),true)" >
+               <description>Quadrature decoder clock source.</description>
+               <validation>
+                  <dependency when_expr="$parent.clockSourceFreq.getEnumItemId() != `custom`" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" 
+               items="createArray().merge(
+               getClockFunctionalGroups().arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> enumItem,
+               enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)) + ` (` + enumItem + `)`,
+               enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)))" >
+               <description>Selection of the clock source frequency</description>
+               <validation>
+                  <constraint cond_expr="(($this.getEnumItemValue() == `GetFreq`) || ($this.getEnumItemValue().toHertz() != 0))" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+            </dynamic_enum> 
+            
+            
+            <bool id="bEnableReverseDirection" label="Enable reverse direction">
+               <description>Enable reverse direction counting, how the quadrature signal is interpreted.</description>
+               <assign when="true">
+                  <register name="CTRL" bitfield="REV" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/> 
+               </assign>
+            </bool>
+            
+            <enum id="eDecoderWorkMode" label="Decoder work mode">
+               <description>Bypass/use the quadrature decoder logic.</description>
+               <assign when="true">
+                  <register name="CTRL" bitfield="PH1" value="$this.getEnumItemId().toInt()" reverse_value="x -> x"/>
+               </assign>
+               <item id="0" label="Standard">
+                  <description>Use standard quadrature decoder with PHASEA and PHASEB.</description>
+               </item>      
+               <item id="1" label="Signal phase count mode">
+                  <description>PHASEA input generates a count signal while PHASEB input control the direction.</description>
+               </item>
+            </enum>
+            
+            <enum id="eRevolutionCountCondition" label="Revolution count condition">
+               <description>Revolution Counter Modulus selects how the revolution counter (REV) is incremented/decremented. By default, the revolution counter is controlled based on the count direction and the INDEX pulse. </description>
+               <assign when="true">
+                  <register name="CTRL2" bitfield="REVMOD" value="$this.getEnumItemId().toInt()" reverse_value="x -> x"/>
+               </assign>
+               <item id="0" label="Index pulse">
+                  <description>Use INDEX pulse to increment/decrement revolution counter.</description>
+               </item>
+               <item id="1" label="Roll over modulus">
+                  <description>Use modulus counting roll-over/under to increment/decrement revolution counter.</description>
+               </item>
+            </enum>
+
+            <info value="`Position counter behavior configuration`" id="signalConfigInfo" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+            
+            <bool id="bEnableModuloCountMode" label="Enable modulo counting">
+               <description>When Enable Modulo Counting is set, it allows the position counters (UPOS and LPOS) to count in a modulo fashion, using MOD and INIT as the upper and lower bounds of the counting range. </description>
+               <assign when="true">
+                  <register name="CTRL2" bitfield="MOD" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </bool>
+            
+            <integer id="modulusValue" label="Modulus value" type="uint32_t">
+               <description></description>
+               <assign when="true">
+                  <register name="UMOD" bitfield="MOD" value="$this.getValue().toInt() &gt;&gt; 16" reverse_value="x -> ($this.getValue().toInt() &amp; 0xffff) | (x &lt;&lt; 16)"/>
+                  <register name="LMOD" bitfield="MOD" value="$this.getValue().toInt() &amp; 0xffff" reverse_value="x -> ($this.getValue().toInt() &amp; 0xffff0000) | (x)"/>
+               </assign>  
+            </integer>
+
+            <integer id="initValue" label="Position counter initialization value" type="uint32_t"> 
+               <description>The value to be used to initialize the position counter.</description>
+               <assign when="true">
+                  <register name="UINIT" bitfield="INIT" value="$this.getValue().toInt() &gt;&gt; 16" reverse_value="x -> ($this.getValue().toInt() &amp; 0xffff) | (x &lt;&lt; 16)"></register>
+                  <register name="LINIT" bitfield="INIT" value="$this.getValue().toInt() &amp; 0xffff" reverse_value="x -> ($this.getValue().toInt() &amp; 0xffff0000) | (x)"></register>
+               </assign>
+            </integer>
+
+            <bool id="enableHome" label="Enable position counter initialization by HOME">
+               <description>HOME signal initializes position counter with Position counter initialization value (UINIT and LINIT registers value).</description>
+               <assign when="true">
+                  <register name="CTRL" bitfield="HIP" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>   
+               </assign>
+            </bool>
+            
+            <enum id="eHomeTriggerMode" label="HOME trigger mode">
+               <description>Select how HOME signal used to initialize position counters.</description>
+               <assign when="true">
+                  <register name="CTRL" bitfield="HNE" value="$this.getEnumItemId().toInt()" reverse_value="x -> x"></register>
+               </assign>
+               <item id="0" label="Rising edge">
+                  <description>Use positive going edge to trigger initialization of position counters.</description>
+               </item>
+               <item id="1" label="Falling edge">
+                  <description>Use negative going edge to trigger initialization of position counters.</description>
+               </item>
+            </enum>
+            
+            <bool id="enableIndex" label="Enable position counter initialization by INDEX">
+               <description>INDEX signal initializes position counter with Position counter initialization value (UINIT and LINIT registers value).</description>
+               <assign when="true">
+                  <register name="CTRL" bitfield="XIP" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>   
+               </assign>
+            </bool>
+            
+            <enum id="eIndexTriggerMode" label="INDEX trigger mode">
+               <description>Select how INDEX signal used to initialize position counters.</description>
+               <assign when="true">
+                  <register name="CTRL" bitfield="XNE" value="$this.getEnumItemId().toInt()" reverse_value="x -> x"></register>
+               </assign>
+               <item id="0" label="Rising edge">
+                  <description>Use INDEX pulse rising edge to initialize position counter.</description>
+               </item>
+               <item id="1" label="Falling edge">
+                  <description>Use INDEX pulse falling edge to initialize position counter.</description>
+               </item>
+            </enum>
+            
+            <bool id="initPos" label="Enable position counter initialization by TRIGGER" options="REGISTERS_REFRESH; UI_REFRESH" enable="$parent.bEnablePeriodMeasurement.getValue()==`false`">
+               <description>TRIGGER signal initializes position counter with Position counter initialization value (UINIT and LINIT registers value).</description>
+               <assign when="$this.isEnabled()">
+                  <register name="CTRL2" bitfield="INITPOS" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </bool>
+            
+            <bool id="bEnableTriggerClearPositionCounter" label="Enable counters clearing by TRIGGER" options="REGISTERS_REFRESH; UI_REFRESH" enable="$parent.bEnablePeriodMeasurement.getValue()==`false`">
+               <description>Clear position counter(POS), revolution counter(REV), position difference counter (POSD) on TRIGGER's rising edge.</description>
+               <assign when="$this.isEnabled()">
+                  <register name="CTRL2" bitfield="UPDPOS" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </bool>
+         
+            
+            <bool id="bEnableTriggerHoldPositionCounter" label="Enable hold registers updated by TRIGGER" options="REGISTERS_REFRESH; UI_REFRESH" enable="$parent.bEnablePeriodMeasurement.getValue()==`false`">
+               <description>Update position counter(POS), revolution counter(REV), position difference counter (POSD) values to hold registers  on TRIGGER's rising edge.</description>
+               <assign when="$this.isEnabled()">
+                  <register name="CTRL2" bitfield="UPDHLD" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </bool>
+            
+            <integer id="posComp" label="Position compare" type="uint32_t">
+               <description></description>
+               <assign when="true">
+                  <register name="UCOMP" bitfield="COMP" value="$this.getValue().toInt() &gt;&gt; 16" reverse_value="x -> ($this.getValue().toInt() &amp; 0xffff) | (x &lt;&lt; 16)"></register>
+                  <register name="LCOMP" bitfield="COMP" value="$this.getValue().toInt() &amp; 0xffff" reverse_value="x -> ($this.getValue().toInt() &amp; 0xffff0000) | (x)"></register>
+               </assign>
+            </integer>
+            
+            <integer id="posComp1" label="Position compare 1" type="uint32_t">
+               <description></description>
+               <assign when="true">
+                  <register name="UCOMP1" bitfield="COMP" value="$this.getValue().toInt() &gt;&gt; 16" reverse_value="x -> ($this.getValue().toInt() &amp; 0xffff) | (x &lt;&lt; 16)"></register>
+                  <register name="LCOMP1" bitfield="COMP" value="$this.getValue().toInt() &amp; 0xffff" reverse_value="x -> ($this.getValue().toInt() &amp; 0xffff0000) | (x)"></register>
+               </assign>
+            </integer>
+            
+            <enum id="outputControl" label="POSMATCH output">
+               <description>Output Control controls the pulsing of the POSMATCH output signal. This can control when a timer channel captures a timestamp.</description>
+               <assign when="true">
+                  <register name="CTRL2" bitfield="OUTCTL" value="$this.getEnumItemId().toInt()" reverse_value="x -> x"/>   
+               </assign>
+               <item id="0" label="On compare">
+                  <description>POSMATCH pulses when the position counters (POS) matches the corresponding compare value (COMP, COMP1)</description>
+               </item>
+               <item id="1" label="On counters read">
+                  <description>POSMATCH pulses when the UPOS, LPOS, REV, or POSD registers are read.</description>
+               </item>
+            </enum>
+
+            <integer id="posCounter" type="uint32_t" label="Position counter">
+               <description>Position counter</description>
+               <assign when="true">
+                  <register name="UPOS" bitfield="POS" value="$this.getValue().toInt() &gt;&gt; 16" reverse_value="x -> ($this.getValue().toInt() &amp; 0xffff) | (x &lt;&lt; 16)"></register>
+                  <register name="LPOS" bitfield="POS" value="$this.getValue().toInt() &amp; 0xffff"  reverse_value="x -> ($this.getValue().toInt() &amp; 0xffff0000) | (x)"></register>
+               </assign>
+            </integer>
+            
+            <integer type="uint16_t" label="Position difference counter" id="posDiffCount">
+               <description>Position difference counter register contains the position change in value occurring between each read of the Position Register</description>
+               <assign when="true">
+                  <register name="POSD" bitfield="POSD" value="$this.getValue().toInt()" reverse_value="x -> x"></register>
+               </assign>
+            </integer>
+            
+            <integer id="revCounter" label="Revolution counter" type="uint16_t">
+               <description></description>
+               <assign when="true">
+                  <register name="REV" bitfield="REV" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+               </assign>
+            </integer>
+
+            <info value="`Watchdog configuration`" id="wdogConfigInfo" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+            
+            <bool id="bEnableWatchdog" label="Enable watchdog">
+               <description>Enable the watchdog to detect if the target is moving or not.</description>
+               <assign when="true">
+                  <register name="CTRL" bitfield="WDE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </bool>
+            
+            <integer id="u16WatchdogTimeoutValue" type="uint16_t" label="Watchdog timeout value">
+               <description>Watchdog timeout count value. It stores the timeout count for the quadrature decoder module watchdog timer.2 successive counts indicate proper operation and will reset the timer.</description>
+               <assign when="true">
+                  <register name="WTR" bitfield="WDOG" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+               </assign>
+            </integer>
+            
+            <info value="`PHASEA/PHASEB/INDEX/HOME input filter configuration`" id="filterConfigInfo" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+            
+            <enum id="eFilterSampleCount" label="Filter sample count">
+               <description>Input Filter Sample Count. This value should be chosen to reduce the probability of noisy samples causing an incorrect transition to be recognized. The value represent the number of consecutive samples that must agree prior to the input filter accepting an input transition.</description>
+               <assign when="true">
+                  <register name="FILT" bitfield="FILT_CNT" value="$this.getEnumItemId().toInt()" reverse_value="x -> x"/>
+               </assign>
+               <item id="0" label="3"></item>
+               <item id="1" label="4"></item>
+               <item id="2" label="5"></item>
+               <item id="3" label="6"></item>
+               <item id="4" label="7"></item>
+               <item id="5" label="8"></item>
+               <item id="6" label="9"></item>
+               <item id="7" label="10"></item>
+            </enum>
+            
+            <integer type="uint8_t" id="u8FilterSamplePeriod" label="Filter sample period" min_expr="0" max_expr="255">
+               <description>Input Filter Sample Period. This value should be set such that the sampling period is larger than the period of the expected noise. This value represents the sampling period (in IPBus clock cycles) of the decoder input signals.</description>
+               <assign when="true">
+                  <register name="FILT" bitfield="FILT_PER" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+               </assign>
+            </integer>
+      
+            <info id="filterDelay" label="Filtering delay" value="($parent.u8FilterSamplePeriod.getValue().toInt() == 0 || $parent.clockSourceFreq.getEnumItemValue().toHertz() == 0) ? `N/A` : system::calculatePeriod(($parent.eFilterSampleCount.getEnumItemId().toInt() + 3) * $parent.u8FilterSamplePeriod.getValue() + 1, $parent.clockSourceFreq.getEnumItemValue())"> 
+               <description>                     
+                  If input filter is enabled it introduces a latency of (Filter sample count * Filter sample period + 1) IPBus clock periods. And it takes 1 more IPBus clock cycle to monitor the filtered output in the IMR register.
+               </description>
+            </info>
+            
+            <info value="`Period measurement configuration`" id="periodConfigInfo" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+            
+            <bool id="bEnablePeriodMeasurement" label="Enable period measurement" options="REGISTERS_REFRESH; UI_REFRESH">
+               <description>Enable period measurement function. LASTEDGE, LASTEDGEH, POSDPER,POSDPERBFR, and POSDPERH are being used. Enable also means that the position difference hold register will be updated only by position difference counter register read, not by reading of revolution counter or position counter register.</description>
+               <assign when="true">
+                  <register name="CTRL3" bitfield="PMEN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? `true` : `false`)"/>
+               </assign>
+            </bool>
+
+            <enum id="prescaler" label="Prescaler">
+               <description>Pescaler is used to prescale the peripheral clock that is used by the LASTEDGE and POSDPER counters. The clock is prescaled by a value of 2^PRSC which means that the prescaler logic can divide the clock by a minimum of 1 and a maximum of 32,768.
+               </description>
+               <assign when="true">
+                  <register name="CTRL3" bitfield="PRSC" value="$this.getEnumItemId().toInt()" reverse_value="x -> x"/>
+               </assign>
+               <item id="0" label="1" value="1"></item>
+               <item id="1" label="2" value="2"></item>
+               <item id="2" label="4" value="4"></item>
+               <item id="3" label="8" value="8"></item>
+               <item id="4" label="16" value="16"></item>
+               <item id="5" label="32" value="32"></item>
+               <item id="6" label="64" value="64"></item>
+               <item id="7" label="128" value="128"></item>
+               <item id="8" label="256" value="256"></item>
+               <item id="9" label="512" value="512"></item>
+               <item id="10" label="1024" value="1024"></item>
+               <item id="11" label="2048" value="2048"></item>
+               <item id="12" label="4096" value="4096"></item>
+               <item id="13" label="8192" value="8192"></item>
+               <item id="14" label="16384" value="16384"></item>
+               <item id="15" label="32768" value="32768"></item>
+            </enum>
+            
+            <info id="resultantFreqPeriod" label="Resultant frequency/period" value="system::calculateFreqPeriod($parent.prescaler.getEnumItemValue().toInt(), $parent.clockSourceFreq.getEnumItemValue())">
+               <description>Frequency/period of the clock that is used by the LASTEDGE and POSDPER counters.</description>
+            </info>
+            
+            <info value="`Test configuration`" id="testConfigInfo" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"></info>
+            
+            <bool id="enableTestMode" label="Enable test mode">
+               <description>Connects the test module to inputs of the quadrature decoder module</description>
+               <assign when="true">
+                  <register name="TST" bitfield="TEN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </bool>
+            
+            <bool id="enableTestCounter" label="Enable test counter">
+               <description>Connects the test counter to inputs of the quadrature decoder module.</description>
+               <assign when="true">
+                  <register name="TST" bitfield="TCE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </bool>
+            
+            <enum id="quadSignal" label="Quadrature decoder signal">
+               <description>Selects whether a negative or positive Quadrature Decoder signal is generated.</description>
+               <assign when="true">
+                  <register name="TST" bitfield="QDN" value="$this.getEnumItemId().toInt()" reverse_value="x -> x"/>
+               </assign>
+               <item id="0" label="Positive"></item>
+               <item id="1" label="Negative"></item>
+            </enum>
+            
+            <integer id="testPeriod" label="Test period" type="uint8_t" min_expr="0" max_expr="31">
+               <description>Period of quadrature phase in IPBus clock cycles</description>
+               <assign when="true">
+                  <register name="TST" bitfield="TEST_PERIOD" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                </assign>
+            </integer>
+            
+            <integer id="testCount" label="Test count" type="uint8_t">
+               <description>The number of quadrature advances to generate</description>
+               <assign when="true">
+                  <register name="TST" bitfield="TEST_COUNT" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+               </assign>
+            </integer>
+
+         </struct>
+         
+         <set id="interruptTypes" label="Interrupt sources">
+            <description>Interrupt sources</description>
+            <item id="kQDC_HomeTransitionInterruptEnable" label="Home transition">
+               <description></description>
+               <assign when="true">
+                  <register name="CTRL" bitfield="HIE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </item>
+            <item id="kQDC_IndexPulseInterruptEnable" label="Index pulse">
+               <description></description>
+               <assign when="true">
+                  <register name="CTRL" bitfield="XIE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </item>
+            <item id="kQDC_WatchdogTimeoutInterruptEnable" label="Watchdog timeout">
+               <description></description>
+               <assign when="true">
+                  <register name="CTRL" bitfield="DIE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </item>
+            <item id="kQDC_PositionCompareInterruptEnable" label="Position compare">
+               <description></description>
+               <assign when="true">
+                  <register name="CTRL" bitfield="CMPIE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </item>
+            
+            <item id="kQDC_PositionCompare1InterruptEnable" label="Position compare1">
+               <description></description>
+               <assign when="true">
+                  <register name="CTRL3" bitfield="CMP1IE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </item>
+            
+            <item id="kQDC_SimultPhaseChangeInterruptEnable" label="Simultaneous phase change">
+               <description></description>
+               <assign when="true">
+                  <register name="CTRL2" bitfield="SABIE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </item>
+            <item id="kQDC_PositionRollOverInterruptEnable" label="Roll-over">
+               <description></description>
+               <assign when="true">
+                  <register name="CTRL2" bitfield="ROIE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </item>
+            <item id="kQDC_PositionRollUnderInterruptEnable" label="Roll-under">
+               <description></description>
+               <assign when="true">
+                  <register name="CTRL2" bitfield="RUIE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </item>    
+         </set>
+         
+         
+         <struct id="interruptConfig" label="Interrupt configuration">
+            <reference id="interruptSources" type="interruptTypes" label="Interrupt sources"></reference>
+            
+            <bool id="enable_irq_home" label="Enable HOME/Watchdog interrupt vector" options="UI_LABEL_BOLD">
+               <description>
+Interrupt sources of this interrupt are: 
+- Home transition.
+- Watchdog timeout.
+- Simultaneous phase change.   
+               </description>
+               <validation>
+                  <constraint when_expr="$this.getValue() == `true`" cond_expr="($parent.interruptSources.getCValue().contains(`kQDC_HomeTransitionInterruptEnable`) || $parent.interruptSources.getCValue().contains(`kQDC_WatchdogTimeoutInterruptEnable`) ||  $parent.interruptSources.getCValue().contains(`kQDC_SimultPhaseChangeInterruptEnable`))" level="warning" description="Enable the interrupt source, home transition, watchdog timeout or simultaneous phase change"/>
+               </validation>
+            </bool>
+            
+            <reference id="interrupt_home" label="interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=qdc_home;irq_custom_name=QDC_HOME_WDG_SAB;UI_LABEL_HIDDEN" enable="$parent.enable_irq_home.getValue()"/>
+            
+            <bool id="enable_irq_compare" label="Enable compare interrupt vector" options="UI_LABEL_BOLD">
+               <description>
+Interrupt sources of this interrupt are: 
+- Index pulse.
+- Roll-over.
+- Roll-under.   
+- Position compare.
+- Position campare1.
+               </description>
+               <validation>
+                  <constraint when_expr="$this.getValue() == `true`" cond_expr="($parent.interruptSources.getCValue().contains(`kQDC_IndexPulseInterruptEnable`) || $parent.interruptSources.getCValue().contains(`kQDC_PositionRollOverInterruptEnable`) ||  $parent.interruptSources.getCValue().contains(`kQDC_PositionRollUnderInterruptEnable`) ||  $parent.interruptSources.getCValue().contains(`kQDC_PositionCompare1InterruptEnable`) ||  $parent.interruptSources.getCValue().contains(`kQDC_PositionCompareInterruptEnable`))" level="warning" description="Enable the interrupt source, index pulse, roll-over, roll-under, position compare or position compare1"/>
+               </validation>
+            </bool>
+            
+            <reference id="interrupt_compare" label="interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="irq_function=qdc_index;irq_custom_name=QDC_INDEX_RO_RU_CMP;UI_LABEL_HIDDEN" enable="$parent.enable_irq_compare.getValue()"/>
+            
+         </struct>
+      </user_types>
+      <settings>
+         <reference id="main_config" label="General configuration" type="qdc_config" options="UI_LABEL_HIDDEN; UI_BORDER_HIDDEN"></reference>
+         <reference id="interrupt_config" label="Interrupt configuration" type="interruptConfig"></reference>
+
+         <variable id="clockGate" value="1">
+            <assign when="true">
+               <register peripheral_expr="system::getInstanceClockGatePeripheral()" name_expr="system::getInstanceClockGateRegister()" bitfield_expr="system::getInstanceClockGateBitfield()" value="system::getInstanceClockGateEnableValue()"/>
+            </assign>
+         </variable>
+         
+         <variable id="softwareReset" value="0">           
+            <assign when="true">
+               <register peripheral_expr="system::getInstanceSwResetPeripheral()" name_expr="system::getInstanceSwResetRegister()" bitfield_expr="system::getInstanceSwResetBitfield()" value="system::getInstanceSwResetDisableValue()"/>              
+            </assign>
+         </variable>
+
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+         <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+         <variable id="inst_config_ID" value="$parent.inst_ID.getValue() + `_config`"></variable>
+         
+
+         <struct id="qdcTemplateVariables" available="false">
+            <variable id="PERIPHERAL" value="$instance.getPeripheral()"/>
+            <variable id="VPREFIX" value="$configSet.inst_ID.getValue()"/>
+            <!-- Software reset -->
+            <variable id="SW_RESET_CONTROL_PERIPHERAL" value="system::getInstanceSwResetPeripheral()"></variable>
+            <variable id="SW_RESET_CONTROL_REGISTER" value="system::getInstanceSwResetRegister()"></variable>
+            <variable id="SW_RESET_CONTROL_BITFIELD" value="system::getInstanceSwResetBitfield()"></variable>
+         </struct>
+         
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">device_registers</param>
+               <param id="filename">fsl_device_registers.h</param>
+            </fragment>
+         </section>
+         
+         <section target="defines">
+            <fragment id="comment">
+               <param id="content" expr="$instance.getFnGroupName() + ` defines for ` + $instance.getPeripheral()"></param>
+               <param id="paddingLevel" expr="0"></param>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="$this.inst_peripheral_ID.getValue()"/>
+               <param id="value" expr="$instance.getPeripheral()"/>
+               <param id="description">Definition of peripheral ID</param>
+            </fragment> 
+            <fragment id="define">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`)"/>
+               <param id="value" expr="$instance.getPeripheral() + `_CLK_SRC`"/>
+               <param id="description">Definition of the clock source</param>
+            </fragment> 
+            <fragment id="IRQ_definitions" if_expr="$this.interrupt_config.enable_irq_home.getValue()" apply_to="$this.interrupt_config.interrupt_home"/>
+            <fragment id="IRQ_definitions" if_expr="$this.interrupt_config.enable_irq_compare.getValue()" apply_to="$this.interrupt_config.interrupt_compare"/>
+          
+            <fragment id="filtered_assigned_regs_init">
+               <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               <param id="filter" expr="`(?!UINIT|LINIT).*`"/>
+            </fragment>
+         
+            <fragment id="def_assigned_reg_init">
+               <param id="node" expr="$configSet.main_config.initValue"/>
+               <param id="periphName" expr="$instance.getPeripheral()"/>
+               <param id="regName" expr="`UINIT`"/>
+               <param id="name" expr="$configSet.inst_ID_def.getValue()+`_UPINIT_INIT`"/>
+            </fragment>
+            <fragment id="def_assigned_reg_init">
+               <param id="node" expr="$configSet.main_config.initValue"/>
+               <param id="periphName" expr="$instance.getPeripheral()"/>
+               <param id="regName" expr="`LINIT`"/>
+               <param id="name" expr="$configSet.inst_ID_def.getValue()+`_LOWINIT_INIT`"/>
+            </fragment>
+         </section>
+
+         <section target="common_pre_init_function">
+            <fragment id="clock_gate_enable_init"></fragment>
+         </section>
+
+         <section target="init_function_body">
+            <fragment id="template">
+               <param id="file">fsl_qdc.template</param>
+               <param id="setting" expr="$configSet.qdcTemplateVariables"></param>
+            </fragment> 
+         </section> 
+         
+      </code>
+      <quick_selections>
+         <quick_selection id="QS_QDC" label="Default">
+            <description></description>
+            <set id="main_config.posComp">4294967295</set>
+            <set id="main_config.posComp1">4294967295</set>   
+         </quick_selection>
+         <default>QS_QDC</default>  
+      </quick_selections>
+   </config_set>
+</component:config_component>

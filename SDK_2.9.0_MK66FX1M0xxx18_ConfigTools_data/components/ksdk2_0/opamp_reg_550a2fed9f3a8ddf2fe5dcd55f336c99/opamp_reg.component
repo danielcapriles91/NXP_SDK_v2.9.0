@@ -1,0 +1,829 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="opamp_reg" label="OPAMP" options="UI_COMPONENT_MODE_HIDDEN"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd" 
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="Register init" registers_init="true">
+   <description>Operational Amplifier (OPAMP)</description>
+   <mode id="general" label="General" available="true">
+      <description>Modes of the OPAMP peripheries are implemented as quick selection options.</description>
+      <config_set_refs>
+         <config_set_ref>fsl_control</config_set_ref>
+         <config_set_ref>fsl_set_0</config_set_ref>
+         <config_set_ref>fsl_set_1</config_set_ref>
+         <config_set_ref>fsl_set_2</config_set_ref>
+         <config_set_ref>fsl_set_3</config_set_ref>
+         <config_set_ref>fsl_interrupt</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>OPAMP</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="fsl_control" label="General configuration">
+      <description>Configuration of the Control register sub-module.</description>
+      <generated_types/>        
+      <user_types>
+         <struct id="ctr_config_t" label="Configures the comparator">
+            <enum id="ctr_power_mode" label="Power mode">
+                  <description>In high speed mode, OPAMP has higher current consumption with higher slew rate and unity gain
+                  bandwidth performance. In low power mode, OPAMP has lower current consumption with slower slew
+                  rate and unity gain bandwidth performance.</description>
+                  <assign when="true">
+                     <register name="OPAMP_CTR" bitfield="PMD" value="$this.getEnumItemValue().toInt()" />                 
+                  </assign>
+                  <item id="PMD_low"  label="Low power"  value="0"/>
+                  <item id="PMD_high" label="High speed" value="1"/>
+               </enum>
+
+            <enum id="ctr_set_num" label="Number of sets">
+               <description>The setting decides rotation number which defines the number of config SETs participated in
+                  the rotation configuration mechanism.
+               </description>
+               <assign when="true">
+                  <register name="OPAMP_CTR" bitfield="CONFIG_NUM" value="$this.getEnumItemValue().toInt()" />                 
+               </assign>
+               <item id="Rotation0"  label="1" value="0"/>
+               <item id="Rotation1"  label="2" value="1"/>
+               <item id="Rotation2"  label="3" value="2"/>
+               <item id="Rotation3"  label="4" value="3"/>
+            </enum>
+            <variable id="rotations_count" value="$parent.ctr_set_num.getEnumItemValue() + 1"/>
+
+            <enum id="ctr_load_mode" label="Load mode">
+               <description>This setting defines load mode. Delay load mode means loading happens on every loop configuration
+                  completion of config sets in buffer, the number of config sets participated in
+                  the loop decided by "Number of sets" setting. Real-time load mode means loading happens on any
+                  configuration completion of config set in buffer .
+               </description>
+               <assign when="true">
+                  <register name="OPAMP_CTR" bitfield="FAST_LOAD" value="$this.getEnumItemValue().toInt()" />                 
+               </assign>
+               <item id="Delay"     label="Delay"     value="0"/>
+               <item id="RealTime"  label="Real-time" value="1"/>
+            </enum>
+
+            <bool id="ctr_write_protection" label="Write protection">
+               <description>When this is set, registers values remain unchanged with any writing operation excepet this setting.
+                  Clearing this can wake up normal writing operation. When this is not set, registers can perform
+                  normal writing operation. This does not affect the read operation.
+               </description>
+               <assign when="true">
+                  <register name="OPAMP_CTR" bitfield="WP" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+               </assign>
+            </bool> 
+            
+            <bool id="ctr_config_load" label="Config load">
+               <description>
+                  Load  buffered registers automatically after initialization.
+                  Route window counter clock to enable component output. If window counter clock is not routed, component won’t output as expected even if the buffered registers are loaded after initialization.
+               </description>
+               <assign when="true">
+                  <register name="OPAMP_CTR" bitfield="CONFIG_LOAD" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+               </assign>
+            </bool> 
+            
+
+         </struct>
+
+      </user_types>
+      <settings>         
+         <reference id="main_config" label="Main configuration" type="ctr_config_t" config_set_id="fsl_control" available="true" options="UI_LABEL_HIDDEN; UI_BORDER_HIDDEN">
+            <description>Main comparator configuration</description>
+         </reference>
+         
+         <info id="signals" value="`Window counter clock signal`" options="UI_LINE_BREAK;UI_LABEL_HIDDEN">
+            <description>Window counter clock signal used to decrement OPAMP counters. Use Pins tool to route this signal.</description>
+         </info>
+         <info id="window_clock" label="Window clock" value="getPeripheralSignals($instance.getPeripheral()).findFirst(x -> (x.getID() == toUpperCase(`WINCNTR`))).getLabel()" options="UI_LABEL_HIDDEN">
+            <description>Window counter clock signal configured in Pins tool. Rising edge of this signal is used to decrement OPAMP counters.</description>
+            <validation>   
+               <constraint 
+                  cond_expr="!getPeripheralSignals($instance.getPeripheral()).findFirst(x -> (x.getID() == toUpperCase(`WINCNTR`))).getLabel().regexMatch(`.*VDD.*`)" 
+                  level="warning" 
+                  description_expr="`Supply voltage (VDD) has constant value - the OPAMP counters value will not change and the OPAMP output will not have expected value.`"/>
+               <constraint 
+                  cond_expr="!getPeripheralSignals($instance.getPeripheral()).findFirst(x -> (x.getID() == toUpperCase(`WINCNTR`))).getLabel().regexMatch(`.*VSS.*`)" 
+                  level="warning" 
+                  description_expr="`Ground voltage (VSS) has constant value - the OPAMP counters value will not change and the OPAMP output will not have expected value.`"/>
+               <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.opamp_mux_win_ctr`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`Window counter`, $instance.getPeripheral())" level="Warning">
+                  <feature name="routed">
+                     <data expr="true"/>
+                  </feature>
+               </dependency>
+            </validation>   
+         </info>     
+         
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+         <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+         <variable id="inst_config_ID" value="$parent.inst_ID.getValue() + `_config`"></variable>
+         
+         <!-- Enable clock gate -->
+         <variable id="clockGate" value="1">
+            <assign when="true"> 
+               <register peripheral_expr="system::getInstanceClockGatePeripheral()" 
+                  name_expr="system::getInstanceClockGateRegister()" 
+                  bitfield_expr="system::getInstanceClockGateBitfield()" 
+                  value="system::getInstanceClockGateEnableValue()"/>
+            </assign>     
+         </variable>
+         <!-- Software reset -->
+         <variable id="softwareReset" value="0">
+           <assign when="true">
+             <register peripheral_expr="system::getInstanceSwResetPeripheral()" name_expr="system::getInstanceSwResetRegister()" bitfield_expr="system::getInstanceSwResetBitfield()" value="system::getInstanceSwResetDisableValue()"/>              
+           </assign>
+         </variable>
+         
+         <struct id="opampTemplateVariables" available="false">
+            <variable id="PERIPHERAL" value="$instance.getPeripheral()"/>
+            <variable id="VPREFIX" value="$configSet.inst_ID.getValue()"/>
+            <!-- Software reset -->
+            <variable id="SW_RESET_CONTROL_PERIPHERAL" value="system::getInstanceSwResetPeripheral()"></variable>
+            <variable id="SW_RESET_CONTROL_REGISTER" value="system::getInstanceSwResetRegister()"></variable>
+            <variable id="SW_RESET_CONTROL_BITFIELD" value="system::getInstanceSwResetBitfield()"></variable>
+         </struct>
+      </settings>    
+      <validation>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.op_out`"
+            level="Warning" description_expr="`OPAMP output is not routed, component is disabled.`">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+      </validation>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <!-- #includes -->
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">device_registers</param>
+               <param id="filename">fsl_device_registers.h</param>
+            </fragment>
+         </section>
+         
+         <!-- Clock gate enable --> 
+         <section target="common_pre_init_function"> 
+            <fragment id="clock_gate_enable_init"></fragment> 
+         </section>
+         
+         <!-- defines -->
+         <section target="defines">
+            <fragment id="comment">
+               <param id="content" expr="$instance.getFnGroupName() + ` defines for ` + $instance.getPeripheral()"/>
+               <param id="paddingLevel" expr="0"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)"/>
+               <param id="value" expr="$instance.getPeripheral()"/>
+               <param id="description">Definition of peripheral ID.</param>
+            </fragment>
+            
+            
+            <fragment id="all_assigned_regs_init">
+               <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+            </fragment>
+         </section>
+         
+         <section target="init_function_body">
+            <fragment id="template">
+               <param id="file">fsl_opamp.template</param>
+               <param id="setting" expr="$configSet.opampTemplateVariables"></param>
+            </fragment> 
+         </section>   
+      </code>
+      <quick_selections>
+         <quick_selection id="QS_OPAMP" label="Default">
+            <description>Default setting for OPAMP</description> 
+            <set id="main_config.ctr_power_mode">PMD_low</set>
+            <set id="main_config.ctr_set_num">Rotation0</set>
+            <set id="main_config.ctr_load_mode">Delay</set>
+            <set id="main_config.ctr_write_protection">false</set>
+         </quick_selection>
+         <default>QS_OPAMP</default>
+      </quick_selections>
+   </config_set>
+   <config_set id="fsl_set_0" label="Set 0 configuration">
+      <description>This provides the first configuration information for amplifier which contains
+         selecting the positive and negative inputs and gain information .</description>
+      <generated_types/>        
+      <user_types>
+         <struct id="set_0_config_t" label="Configures set 0">
+            <integer id="window_val" label="Counter value" type="uint16_t" min_expr="0" max_expr="15">
+               <description>Rotation control counter initial value.
+                  When the previous OPAMP set configuration in buffer is complete, load this value to reload
+                  4bit-counter initial value. The counter will count down from this value to zero. Complete the
+                  configuration of this set in buffer when the counter reach to 0. 
+                  Last configuration set will affect the amplifier analog part at this time interval.
+               </description>
+               <assign when="$this.isAvailable()">
+                  <register name="OPAMP_CONFIG_SET0" bitfield="WINDOW_VAL" value="$this.getValue()" reverse_value="x -> x"/>                 
+               </assign>
+            </integer> 
+            
+            <variable id="positiveChannelIndex" value="$parent.positiveChannel.getEnumItemValue().regexSubstr(`.*op_in.(\d+).*`,1)"/>
+            <dynamic_enum id="positiveChannel" label="Positive input" items="getPeripheralSignals($instance.getPeripheral()).filter(item -> item.getValue().regexMatch(`.*op_in.\d+.*`)).sort((item1, item2) -> stringCompare(item1,item2))" options="remove_from_struct_init">
+            <description>Positive input.</description>            
+            <validation>
+               <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.op_in.` + $parent.positiveChannelIndex.getValue()" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`Input ` + $parent.positiveChannelIndex.getValue(), $instance.getPeripheral())" level="Warning">
+                  <feature name="routed">
+                     <data expr="true"/>
+                  </feature>
+               </dependency>
+            </validation>
+            <assign when="true">
+               <register name="OPAMP_CONFIG_SET0" bitfield="VPOS_SEL" value="$parent.positiveChannelIndex.getValue().toInt()" reverse_value="x -> (`IN.` + x)"/>                 
+            </assign>
+         </dynamic_enum>
+
+         <bool id="negative_enable" label="Enable negative input">
+               <description>
+This decides the negative input sources of Amplifier. 
+
+
+When negative input and gian are not enabled:
+Working in buffer mode.
+
+
+When negative input is not enabled and gain is enabled:
+Non-Inverting gain application through internal channels on chip. 
+
+
+When negative input and gain are enabled:
+Internal gain is selected. Non-Inverting gain application through internal channels on chip. 
+Suspending capacitor between external negative and output channels can optimize
+transient response, but a key point here is that external resistance net can not be added
+into the external channel which will cause gain confusion.
+
+
+When negative input is enabled and gain is not enabled:
+Negative input of amplifier switch to external channels with external resistance net. Different resistance net determines different gain. 
+               </description>
+               <assign when="true">
+                  <register name="OPAMP_CONFIG_SET0" bitfield="VNEG_EN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+               </assign>
+         </bool> 
+
+         <variable id="negativeChannelIndex" value="$parent.negativeChannel.getEnumItemValue().regexSubstr(`.*op_in.(\d+).*`,1)"/>
+         <dynamic_enum id="negativeChannel" label="Negative input" items="getPeripheralSignals($instance.getPeripheral()).filter(item -> item.getValue().regexMatch(`.*op_in.\d+.*`)).sort((item1, item2) -> stringCompare(item1,item2))" options="remove_from_struct_init">
+            <description>Negative input.</description>            
+            <validation>
+               <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.op_in.` + $parent.negativeChannelIndex.getValue()" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`Input ` + $parent.positiveChannelIndex.getValue(), $instance.getPeripheral())" level="Warning">
+                  <feature name="routed">
+                     <data expr="true"/>
+                  </feature>
+               </dependency>
+            </validation>
+            <assign when="true">
+               <register name="OPAMP_CONFIG_SET0" bitfield="VNEG_SEL" value="$parent.negativeChannelIndex.getValue().toInt()" reverse_value="x -> (`IN.` + x)"/>                 
+            </assign>
+         </dynamic_enum>
+
+         <bool id="gain_enable" label="Enable gain">
+               <description>
+This decides if the gain is used. 
+
+When negative input and gian are not enabled:
+Working in buffer mode.
+
+
+When negative input is not enabled and gain is enabled:
+Non-Inverting gain application through internal channels on chip. 
+
+
+When negative input and gain are enabled:
+Internal gain is selected. Non-Inverting gain application through internal channels on chip. 
+Suspending capacitor between external negative and output channels can optimize
+transient response, but a key point here is that external resistance net can not be added
+into the external channel which will cause gain confusion.
+
+
+When negative input is enabled and gain is not enabled:
+Negative input of amplifier switch to external channels with external resistance net. Different resistance net determines different gain. 
+               </description>
+               <assign when="true">
+                  <register name="OPAMP_CONFIG_SET0" bitfield="GAIN_EN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+               </assign>
+         </bool>
+
+         <enum id="gain" label="Gain">
+               <description>Select gain value.
+               </description>
+               <assign when="true">
+                  <register name="OPAMP_CONFIG_SET0" bitfield="GAIN_SEL" value="$this.getEnumItemValue().toInt()" />                 
+               </assign>
+               <item id="Gain2"  label="2" value="0"/>
+               <item id="Gain4"  label="4" value="1"/>
+               <item id="Gain8"  label="8" value="2"/>
+               <item id="Gain16"  label="16" value="3"/>
+         </enum>
+
+
+         </struct>
+   
+      </user_types>
+      <settings>         
+         <reference id="main_config" label="Main configuration" type="set_0_config_t" config_set_id="fsl_set_0" available="true" options="UI_LABEL_HIDDEN; UI_BORDER_HIDDEN">
+            <description>Set 0 configuration.</description>
+         </reference>
+           
+      </settings>     
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+      </fragment_defs>
+      <code>
+        
+      </code>
+      <validation/>
+      <quick_selections>
+         <quick_selection id="QS_OPAMP" label="Default">
+            <description>Default setting for OPAMP</description> 
+            <set id="main_config.window_val">15</set>
+            <set id="main_config.negative_enable">false</set>
+            <set id="main_config.gain_enable">false</set>
+            <set id="main_config.gain">Gain2</set>
+         </quick_selection>
+         <default>QS_OPAMP</default>
+      </quick_selections>
+   </config_set>
+   <config_set id="fsl_set_1" label="Set 1 configuration">
+      <description>This provides the first configuration information for amplifier which contains
+         selecting the positive and negative inputs and gain information .</description>
+      <generated_types/>        
+      <user_types>
+         <struct id="set_1_config_t" label="Configures set 1">
+            <integer id="window_val" label="Counter value" type="uint16_t" min_expr="0" max_expr="15">
+               <description>Rotation control counter initial value.
+                  When the previous OPAMP set configuration in buffer is complete, load this value to reload
+                  4bit-counter initial value. The counter will count down from this value to zero. Complete the
+                  configuration of this set in buffer when the counter reach to 0. 
+                  Last configuration set will affect the amplifier analog part at this time interval.
+               </description>
+               <assign when="$this.isAvailable()">
+                  <register name="OPAMP_CONFIG_SET1" bitfield="WINDOW_VAL" value="$this.getValue()" reverse_value="x -> x"/>                 
+               </assign>
+            </integer> 
+            
+            <variable id="positiveChannelIndex" value="$parent.positiveChannel.getEnumItemValue().regexSubstr(`.*op_in.(\d+).*`,1)"/>
+            <dynamic_enum id="positiveChannel" label="Positive input" items="getPeripheralSignals($instance.getPeripheral()).filter(item -> item.getValue().regexMatch(`.*op_in.\d+.*`)).sort((item1, item2) -> stringCompare(item1,item2))" options="remove_from_struct_init">
+            <description>Positive input.</description>            
+            <validation>
+               <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.op_in.` + $parent.positiveChannelIndex.getValue()" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`Input ` + $parent.positiveChannelIndex.getValue(), $instance.getPeripheral())" level="Warning">
+                  <feature name="routed">
+                     <data expr="true"/>
+                  </feature>
+               </dependency>
+            </validation>
+            <assign when="true">
+               <register name="OPAMP_CONFIG_SET1" bitfield="VPOS_SEL" value="$parent.positiveChannelIndex.getValue().toInt()" reverse_value="x -> (`IN.` + x)"/>                 
+            </assign>
+         </dynamic_enum>
+
+         <bool id="negative_enable" label="Enable negative input">
+               <description>
+This decides the negative input sources of Amplifier. 
+
+When negative input and gian are not enabled:
+Working in buffer mode.
+
+
+When negative input is not enabled and gain is enabled:
+Non-Inverting gain application through internal channels on chip. 
+
+
+When negative input and gain are enabled:
+Internal gain is selected. Non-Inverting gain application through internal channels on chip. 
+Suspending capacitor between external negative and output channels can optimize
+transient response, but a key point here is that external resistance net can not be added
+into the external channel which will cause gain confusion.
+
+
+When negative input is enabled and gain is not enabled:
+Negative input of amplifier switch to external channels with external resistance net. Different resistance net determines different gain. 
+               </description>
+               <assign when="true">
+                  <register name="OPAMP_CONFIG_SET1" bitfield="VNEG_EN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+               </assign>
+         </bool> 
+
+         <variable id="negativeChannelIndex" value="$parent.negativeChannel.getEnumItemValue().regexSubstr(`.*op_in.(\d+).*`,1)"/>
+         <dynamic_enum id="negativeChannel" label="Negative input" items="getPeripheralSignals($instance.getPeripheral()).filter(item -> item.getValue().regexMatch(`.*op_in.\d+.*`)).sort((item1, item2) -> stringCompare(item1,item2))" options="remove_from_struct_init">
+            <description>Negative input.</description>            
+            <validation>
+               <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.op_in.` + $parent.negativeChannelIndex.getValue()" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`Input ` + $parent.positiveChannelIndex.getValue(), $instance.getPeripheral())" level="Warning">
+                  <feature name="routed">
+                     <data expr="true"/>
+                  </feature>
+               </dependency>
+            </validation>
+            <assign when="true">
+               <register name="OPAMP_CONFIG_SET1" bitfield="VNEG_SEL" value="$parent.negativeChannelIndex.getValue().toInt()" reverse_value="x -> (`IN.` + x)"/>                 
+            </assign>
+         </dynamic_enum>
+
+         <bool id="gain_enable" label="Enable gain">
+               <description>
+This decides if the gain is used. 
+
+When negative input and gian are not enabled:
+Working in buffer mode.
+
+
+When negative input is not enabled and gain is enabled:
+Non-Inverting gain application through internal channels on chip. 
+
+
+When negative input and gain are enabled:
+Internal gain is selected. Non-Inverting gain application through internal channels on chip. 
+Suspending capacitor between external negative and output channels can optimize
+transient response, but a key point here is that external resistance net can not be added
+into the external channel which will cause gain confusion.
+
+
+When negative input is enabled and gain is not enabled:
+Negative input of amplifier switch to external channels with external resistance net. Different resistance net determines different gain. 
+               </description>
+               <assign when="true">
+                  <register name="OPAMP_CONFIG_SET1" bitfield="GAIN_EN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+               </assign>
+         </bool>
+
+         <enum id="gain" label="Gain">
+               <description>Select gain value.
+               </description>
+               <assign when="true">
+                  <register name="OPAMP_CONFIG_SET1" bitfield="GAIN_SEL" value="$this.getEnumItemValue().toInt()" />                 
+               </assign>
+               <item id="Gain2"  label="2" value="0"/>
+               <item id="Gain4"  label="4" value="1"/>
+               <item id="Gain8"  label="8" value="2"/>
+               <item id="Gain16"  label="16" value="3"/>
+         </enum>
+
+
+         </struct>
+   
+      </user_types>
+      <settings>         
+         <reference id="main_config" label="Main configuration" type="set_1_config_t" config_set_id="fsl_set_1" available="true" options="UI_LABEL_HIDDEN; UI_BORDER_HIDDEN">
+            <description>Set 1 configuration.</description>
+         </reference>
+      </settings>     
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+      </fragment_defs>
+      <code>
+      </code>
+      <validation/>
+      <quick_selections>
+         <quick_selection id="QS_OPAMP" label="Default">
+            <description>Default setting for OPAMP</description> 
+            <set id="main_config.window_val">15</set>
+            <set id="main_config.negative_enable">false</set>
+            <set id="main_config.gain_enable">false</set>
+            <set id="main_config.gain">Gain2</set>
+         </quick_selection>
+         <default>QS_OPAMP</default>
+      </quick_selections>
+   </config_set>
+   <config_set id="fsl_set_2" label="Set 2 configuration">
+      <description>This provides the first configuration information for amplifier which contains
+         selecting the positive and negative inputs and gain information .</description>
+      <generated_types/>        
+      <user_types>
+         <struct id="set_2_config_t" label="Configures set 2">
+            <integer id="window_val" label="Counter value" type="uint16_t" min_expr="0" max_expr="15">
+               <description>Rotation control counter initial value.
+                  When the previous OPAMP set configuration in buffer is complete, load this value to reload
+                  4bit-counter initial value. The counter will count down from this value to zero. Complete the
+                  configuration of this set in buffer when the counter reach to 0. 
+                  Last configuration set will affect the amplifier analog part at this time interval.
+               </description>
+               <assign when="$this.isAvailable()">
+                  <register name="OPAMP_CONFIG_SET2" bitfield="WINDOW_VAL" value="$this.getValue()" reverse_value="x -> x"/>                 
+               </assign>
+            </integer> 
+            
+            <variable id="positiveChannelIndex" value="$parent.positiveChannel.getEnumItemValue().regexSubstr(`.*op_in.(\d+).*`,1)"/>
+            <dynamic_enum id="positiveChannel" label="Positive input" items="getPeripheralSignals($instance.getPeripheral()).filter(item -> item.getValue().regexMatch(`.*op_in.\d+.*`)).sort((item1, item2) -> stringCompare(item1,item2))" options="remove_from_struct_init">
+            <description>Positive input.</description>            
+            <validation>
+               <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.op_in.` + $parent.positiveChannelIndex.getValue()" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`Input ` + $parent.positiveChannelIndex.getValue(), $instance.getPeripheral())" level="Warning">
+                  <feature name="routed">
+                     <data expr="true"/>
+                  </feature>
+               </dependency>
+            </validation>
+            <assign when="true">
+               <register name="OPAMP_CONFIG_SET2" bitfield="VPOS_SEL" value="$parent.positiveChannelIndex.getValue().toInt()" reverse_value="x -> (`IN.` + x)"/>                 
+            </assign>
+         </dynamic_enum>
+
+         <bool id="negative_enable" label="Enable negative input">
+               <description>
+This decides the negative input sources of Amplifier.
+
+When negative input and gian are not enabled:
+Working in buffer mode.
+
+
+When negative input is not enabled and gain is enabled:
+Non-Inverting gain application through internal channels on chip. 
+
+
+When negative input and gain are enabled:
+Internal gain is selected. Non-Inverting gain application through internal channels on chip. 
+Suspending capacitor between external negative and output channels can optimize
+transient response, but a key point here is that external resistance net can not be added
+into the external channel which will cause gain confusion.
+
+
+When negative input is enabled and gain is not enabled:
+Negative input of amplifier switch to external channels with external resistance net. Different resistance net determines different gain.          
+               </description>
+               <assign when="true">
+                  <register name="OPAMP_CONFIG_SET2" bitfield="VNEG_EN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+               </assign>
+         </bool> 
+
+         <variable id="negativeChannelIndex" value="$parent.negativeChannel.getEnumItemValue().regexSubstr(`.*op_in.(\d+).*`,1)"/>
+         <dynamic_enum id="negativeChannel" label="Negative input" items="getPeripheralSignals($instance.getPeripheral()).filter(item -> item.getValue().regexMatch(`.*op_in.\d+.*`)).sort((item1, item2) -> stringCompare(item1,item2))" options="remove_from_struct_init">
+            <description>Negative input.</description>            
+            <validation>
+               <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.op_in.` + $parent.negativeChannelIndex.getValue()" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`Input ` + $parent.positiveChannelIndex.getValue(), $instance.getPeripheral())" level="Warning">
+                  <feature name="routed">
+                     <data expr="true"/>
+                  </feature>
+               </dependency>
+            </validation>
+            <assign when="true">
+               <register name="OPAMP_CONFIG_SET2" bitfield="VNEG_SEL" value="$parent.negativeChannelIndex.getValue().toInt()" reverse_value="x -> (`IN.` + x)"/>                 
+            </assign>
+         </dynamic_enum>
+
+         <bool id="gain_enable" label="Enable gain">
+               <description>
+This decides if the gain is used. 
+
+When negative input and gian are not enabled:
+Working in buffer mode.
+
+
+When negative input is not enabled and gain is enabled:
+Non-Inverting gain application through internal channels on chip. 
+
+
+When negative input and gain are enabled:
+Internal gain is selected. Non-Inverting gain application through internal channels on chip. 
+Suspending capacitor between external negative and output channels can optimize
+transient response, but a key point here is that external resistance net can not be added
+into the external channel which will cause gain confusion.
+
+
+When negative input is enabled and gain is not enabled:
+Negative input of amplifier switch to external channels with external resistance net. Different resistance net determines different gain. 
+               </description>
+               <assign when="true">
+                  <register name="OPAMP_CONFIG_SET2" bitfield="GAIN_EN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+               </assign>
+         </bool>
+
+         <enum id="gain" label="Gain">
+               <description>Select gain value.
+               </description>
+               <assign when="true">
+                  <register name="OPAMP_CONFIG_SET2" bitfield="GAIN_SEL" value="$this.getEnumItemValue().toInt()" />                 
+               </assign>
+               <item id="Gain2"  label="2" value="0"/>
+               <item id="Gain4"  label="4" value="1"/>
+               <item id="Gain8"  label="8" value="2"/>
+               <item id="Gain16"  label="16" value="3"/>
+         </enum>
+
+
+         </struct>
+   
+      </user_types>
+      <settings>         
+         <reference id="main_config" label="Main configuration" type="set_2_config_t" config_set_id="fsl_set_2" available="true" options="UI_LABEL_HIDDEN; UI_BORDER_HIDDEN">
+            <description>Set 2 configuration.</description>
+         </reference>
+      </settings>     
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="global_vars">
+         </section>
+         <section target="global_vars_extern">
+         </section>
+      </code>
+      <validation/>
+      <quick_selections>
+         <quick_selection id="QS_OPAMP" label="Default">
+            <description>Default setting for OPAMP</description> 
+            <set id="main_config.window_val">15</set>
+            <set id="main_config.negative_enable">false</set>
+            <set id="main_config.gain_enable">false</set>
+            <set id="main_config.gain">Gain2</set>
+         </quick_selection>
+         <default>QS_OPAMP</default>
+      </quick_selections>
+   </config_set>
+   <config_set id="fsl_set_3" label="Set 3 configuration">
+      <description>This provides the first configuration information for amplifier which contains
+         selecting the positive and negative inputs and gain information .</description>
+      <generated_types/>        
+      <user_types>
+         <struct id="set_3_config_t" label="Configures set 3">
+            <integer id="window_val" label="Counter value" type="uint16_t" min_expr="0" max_expr="15">
+               <description>Rotation control counter initial value.
+                  When the previous OPAMP set configuration in buffer is complete, load this value to reload
+                  4bit-counter initial value. The counter will count down from this value to zero. Complete the
+                  configuration of this set in buffer when the counter reach to 0. 
+                  Last configuration set will affect the amplifier analog part at this time interval.
+               </description>
+               <assign when="$this.isAvailable()">
+                  <register name="OPAMP_CONFIG_SET3" bitfield="WINDOW_VAL" value="$this.getValue()" reverse_value="x -> x"/>                 
+               </assign>
+            </integer> 
+            
+            <variable id="positiveChannelIndex" value="$parent.positiveChannel.getEnumItemValue().regexSubstr(`.*op_in.(\d+).*`,1)"/>
+            <dynamic_enum id="positiveChannel" label="Positive input" items="getPeripheralSignals($instance.getPeripheral()).filter(item -> item.getValue().regexMatch(`.*op_in.\d+.*`)).sort((item1, item2) -> stringCompare(item1,item2))" options="remove_from_struct_init">
+            <description>Positive input.</description>            
+            <validation>
+               <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.op_in.` + $parent.positiveChannelIndex.getValue()" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`Input ` + $parent.positiveChannelIndex.getValue(), $instance.getPeripheral())" level="Warning">
+                  <feature name="routed">
+                     <data expr="true"/>
+                  </feature>
+               </dependency>
+            </validation>
+            <assign when="true">
+               <register name="OPAMP_CONFIG_SET3" bitfield="VPOS_SEL" value="$parent.positiveChannelIndex.getValue().toInt()" reverse_value="x -> (`IN.` + x)"/>                 
+            </assign>
+         </dynamic_enum>
+
+         <bool id="negative_enable" label="Enable negative input">
+               <description>
+This decides the negative input sources of Amplifier. 
+
+
+When negative input and gian are not enabled:
+Working in buffer mode.
+
+
+When negative input is not enabled and gain is enabled:
+Non-Inverting gain application through internal channels on chip. 
+
+
+When negative input and gain are enabled:
+Internal gain is selected. Non-Inverting gain application through internal channels on chip. 
+Suspending capacitor between external negative and output channels can optimize
+transient response, but a key point here is that external resistance net can not be added
+into the external channel which will cause gain confusion.
+
+
+When negative input is enabled and gain is not enabled:
+Negative input of amplifier switch to external channels with external resistance net. Different resistance net determines different gain. 
+               </description>
+               <assign when="true">
+                  <register name="OPAMP_CONFIG_SET3" bitfield="VNEG_EN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+               </assign>
+         </bool> 
+
+         <variable id="negativeChannelIndex" value="$parent.negativeChannel.getEnumItemValue().regexSubstr(`.*op_in.(\d+).*`,1)"/>
+         <dynamic_enum id="negativeChannel" label="Negative input" items="getPeripheralSignals($instance.getPeripheral()).filter(item -> item.getValue().regexMatch(`.*op_in.\d+.*`)).sort((item1, item2) -> stringCompare(item1,item2))" options="remove_from_struct_init">
+            <description>Negative input.</description>            
+            <validation>
+               <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.op_in.` + $parent.negativeChannelIndex.getValue()" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`Input ` + $parent.positiveChannelIndex.getValue(), $instance.getPeripheral())" level="Warning">
+                  <feature name="routed">
+                     <data expr="true"/>
+                  </feature>
+               </dependency>
+            </validation>
+            <assign when="true">
+               <register name="OPAMP_CONFIG_SET3" bitfield="VNEG_SEL" value="$parent.negativeChannelIndex.getValue().toInt()" reverse_value="x -> (`IN.` + x)"/>                 
+            </assign>
+         </dynamic_enum>
+
+         <bool id="gain_enable" label="Enable gain">
+               <description>
+This decides if the gain is used.
+
+When negative input and gian are not enabled:
+Working in buffer mode.
+
+
+When negative input is not enabled and gain is enabled:
+Non-Inverting gain application through internal channels on chip. 
+
+
+When negative input and gain are enabled:
+Internal gain is selected. Non-Inverting gain application through internal channels on chip. 
+Suspending capacitor between external negative and output channels can optimize
+transient response, but a key point here is that external resistance net can not be added
+into the external channel which will cause gain confusion.
+
+
+When negative input is enabled and gain is not enabled:
+Negative input of amplifier switch to external channels with external resistance net. Different resistance net determines different gain. 
+               </description>
+               <assign when="true">
+                  <register name="OPAMP_CONFIG_SET3" bitfield="GAIN_EN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+               </assign>
+         </bool>
+
+         <enum id="gain" label="Gain">
+               <description>Select gain value.
+               </description>
+               <assign when="true">
+                  <register name="OPAMP_CONFIG_SET3" bitfield="GAIN_SEL" value="$this.getEnumItemValue().toInt()" />                 
+               </assign>
+               <item id="Gain2"  label="2" value="0"/>
+               <item id="Gain4"  label="4" value="1"/>
+               <item id="Gain8"  label="8" value="2"/>
+               <item id="Gain16"  label="16" value="3"/>
+         </enum>
+
+
+         </struct>
+   
+      </user_types>
+      <settings>         
+         <reference id="main_config" label="Main configuration" type="set_3_config_t" config_set_id="fsl_set_3" available="true" options="UI_LABEL_HIDDEN; UI_BORDER_HIDDEN">
+            <description>Set 3 configuration.</description>
+         </reference>
+      </settings>     
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="global_vars">
+         </section>
+         <section target="global_vars_extern">
+         </section>
+      </code>
+      <validation/>
+      <quick_selections>
+         <quick_selection id="QS_OPAMP" label="Default">
+            <description>Default setting for OPAMP</description> 
+            <set id="main_config.window_val">15</set>
+            <set id="main_config.negative_enable">false</set>
+            <set id="main_config.gain_enable">false</set>
+            <set id="main_config.gain">Gain2</set>
+         </quick_selection>
+         <default>QS_OPAMP</default>
+      </quick_selections>
+   </config_set>
+   <config_set id="fsl_interrupt" label="Interrupt configuration">
+      <description> Interrupt settings</description>
+      <generated_types/>        
+      <user_types>
+         <set id="interrupt_types" label="Interrupt types">
+            <item id="ctr_load_interrupt" label="Completion interrupt" value="1">
+               <assign when="true">
+                  <register name="OPAMP_CTR" bitfield="LDCMIE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </item>          
+         </set>
+      </user_types>
+      <settings>         
+         <reference id="interrupt_sel" label="Interrupt sources" type="interrupt_types"/>
+         <bool id="enable_irq" label="Enable interrupt vector" options="UI_LABEL_BOLD;REGISTERS_REFRESH" >
+            <description>
+               Enable interrupts initialization, like priority and enablement in the INITC and SIM.
+            </description>
+         </bool>
+         <reference id="interrupt" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_irq.getValue()" options="UI_LABEL_HIDDEN"/>
+      </settings>     
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="defines">
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt" if_expr="$this.enable_irq.value()"/>
+         </section>
+      </code>
+      <validation/>
+      <quick_selections>
+      </quick_selections>
+   </config_set>
+</component:config_component>

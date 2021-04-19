@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="32" name="SYST_CSR" description="SysTick Control and Status Register">
+    <alias type="id" value="CSR"/>
+    <bit_field offset="0" width="1" name="ENABLE" access="RW" reset_value="0" description="">
+      <bit_field_value name="SYST_CSR_ENABLE_0b0" value="0b0" description="counter disabled"/>
+      <bit_field_value name="SYST_CSR_ENABLE_0b1" value="0b1" description="counter enabled"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="TICKINT" access="RW" reset_value="0" description="">
+      <bit_field_value name="SYST_CSR_TICKINT_0b0" value="0b0" description="counting down to 0 does not assert the SysTick exception request"/>
+      <bit_field_value name="SYST_CSR_TICKINT_0b1" value="0b1" description="counting down to 0 asserts the SysTick exception request"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="CLKSOURCE" access="RW" reset_value="0x1" description="">
+      <bit_field_value name="SYST_CSR_CLKSOURCE_0b0" value="0b0" description="external clock"/>
+      <bit_field_value name="SYST_CSR_CLKSOURCE_0b1" value="0b1" description="processor clock"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="1" name="COUNTFLAG" access="RW" reset_value="0" description=""/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x4" width="32" name="SYST_RVR" description="SysTick Reload Value Register">
+    <alias type="id" value="RVR"/>
+    <bit_field offset="0" width="24" name="RELOAD" access="RW" reset_value="0" description="Value to load into the SysTick Current Value Register when the counter reaches 0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x8" width="32" name="SYST_CVR" description="SysTick Current Value Register">
+    <alias type="id" value="CVR"/>
+    <bit_field offset="0" width="24" name="CURRENT" access="RW" reset_value="0" description="Current value at the time the register is accessed"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xC" width="32" name="SYST_CALIB" description="SysTick Calibration Value Register">
+    <alias type="id" value="CALIB"/>
+    <bit_field offset="0" width="24" name="TENMS" access="RO" reset_value="0" description="Reload value to use for 10ms timing"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <bit_field offset="30" width="1" name="SKEW" access="RO" reset_value="0" description="">
+      <bit_field_value name="SYST_CALIB_SKEW_0b0" value="0b0" description="10ms calibration value is exact"/>
+      <bit_field_value name="SYST_CALIB_SKEW_0b1" value="0b1" description="10ms calibration value is inexact, because of the clock frequency"/>
+    </bit_field>
+    <bit_field offset="31" width="1" name="NOREF" access="RO" reset_value="0x1" description="">
+      <bit_field_value name="SYST_CALIB_NOREF_0b0" value="0b0" description="The reference clock is provided"/>
+      <bit_field_value name="SYST_CALIB_NOREF_0b1" value="0b1" description="The reference clock is not provided"/>
+    </bit_field>
+  </register>
+</regs:peripheral>

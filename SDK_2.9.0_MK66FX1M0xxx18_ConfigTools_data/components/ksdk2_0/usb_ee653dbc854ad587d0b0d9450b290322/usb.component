@@ -1,0 +1,1365 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-6.0.xsd"
+    xmlns:component="http://swtools.freescale.net/XSD/component/1.0" id="usb" label="USB" category="Middleware">
+    <sw_comp_ref name="middleware.usb.stack_common" version="2.2.0"/> 
+    <description>Universal Serial Bus (USB)</description>
+    <mode id="device" label="Device">
+        <description>USB device configuration</description>
+        <config_set_refs>
+            <config_set_ref>deviceSetting</config_set_ref>
+        </config_set_refs>
+        <master_peripheral>
+            <peripheral_type>USB</peripheral_type>
+            <peripheral_type>USBHS</peripheral_type>
+            <peripheral_type>USBHSD</peripheral_type>
+        </master_peripheral>
+    </mode>
+    <mode id="host" label="Host">
+        <description>USB device configuration</description>
+        <config_set_refs>
+            <config_set_ref>hostSettings</config_set_ref>
+        </config_set_refs>
+        <master_peripheral>
+            <peripheral_type>USB</peripheral_type>
+            <peripheral_type>USBHS</peripheral_type>
+            <peripheral_type>USBFSH</peripheral_type>
+            <peripheral_type>USBHSH</peripheral_type>
+        </master_peripheral>
+    </mode>
+    <script file="usb_codegenerator.js"/>
+    <user_functions>
+        <function_def id="calculateEndpointNumberByDirection">
+            (arrayOfEndpoints, endpointIndex, endpointDirection, startingNumber) -> arrayOfEndpoints.reduce(
+                startingNumber,
+                (acc, endpoint) -> acc + (((endpointIndex &lt; 0) || (endpoint.getId().toInt() &lt;= endpointIndex))
+                    ? (endpoint.getSetting(`direction`).getValue() == endpointDirection
+                        ? 1 : 0) : 0))
+        </function_def>
+        <function_def id="checkEndpoint">
+            (endpoint, transferType, endpointDirection) -> (endpoint.getSetting(`transfer_type`).getEnumItemId() == transferType) &amp;&amp; (endpoint.getSetting(`direction`).getEnumItemId() == endpointDirection)
+        </function_def>
+        <function_def id="checkEndpointDirectionSymmetry">
+            arrayOfEndpoints -> arrayOfEndpoints.reduce(
+                0,
+                (acc, endpoint) -> (endpoint.getSetting(`direction`).getEnumItemId() == `kIn`) ? acc + 1 : ((endpoint.getSetting(`direction`).getEnumItemId() == `kOut`) ? acc - 1 : acc)
+                ) == 0
+        </function_def>
+        <function_def id="countDataTransmissionInterfaces">
+            (arrayOfInterfaces, interfaceIndex, interfaceCount) -> arrayOfInterfaces.reduce(
+                0,
+                (acc, interface) -> acc + (((interface.getSetting(`interface_class`).getEnumItemId() == `kClassDic`) &amp;&amp; (interface.getId().toInt() &gt; interfaceIndex) &amp;&amp; (interface.getId().toInt() &lt;= (interfaceIndex + interfaceCount)))
+                    ? 1 : 0)) 
+        </function_def>
+        <function_def id="countInterfaceEndpointsByDirection">
+            (arrayOfInterfaces, interfaceIndex, endpointDirection) -> arrayOfInterfaces.reduce(
+                0,
+                (acc, interface) -> acc + (((interfaceIndex &lt; 0) || (interface.getId().toInt() &lt; interfaceIndex))
+                    ? interface.getSelectedInterface().getSetting(`endpoints`).getValue().calculateEndpointNumberByDirection(
+                        -1, endpointDirection, 0) : 0))
+        </function_def>
+        <function_def id="countTotalUniqueEndpoints">
+            arrayOfInterfaces -> arrayOfInterfaces.reduce(
+                0,
+                (acc, interface) -> acc + interface.getSelectedInterface().countUniqueInterfaceEndpoints())
+        </function_def>
+        <function_def id="countUniqueInterfaceEndpoints">
+            interface -> interface.isAvailable() ? interface.getSetting(`endpoints`).getValue().size() : 0
+        </function_def>
+        <function_def id="endpointCount">
+            () -> $instance.getPeripheral() == `USB0` ? fsEndpointCount() : hsEndpointCount() 
+        </function_def>
+        <function_def id="enumerateSucceedingInterfaceKeys">
+            (arrayOfInterfaces, interfaceIndex, interfaceCount) -> arrayOfInterfaces.reduce(
+                toArray(),
+                (acc, interface) -> acc.merge(((interface.getId().toInt() &gt; interfaceIndex) &amp;&amp; (interface.getId().toInt() &lt;= (interfaceIndex + interfaceCount)))
+                    ? interface.generateInterfaceKey().toArray() : toArray())) 
+        </function_def>
+        <function_def id="fsEndpointCount">
+            () -> (featureDefined(`USB_ENDPT_COUNT`)
+                ? getFeature(`USB_ENDPT_COUNT`) : (featureDefined(`USB_EP_NUM`)
+                    ? getFeature(`USB_EP_NUM`) : 0)) - 1
+        </function_def>
+        <function_def id="generateEndpointKey">
+            (endpoint, arrayOfEndpoints) -> arrayOfEndpoints.calculateEndpointNumberByDirection(
+                endpoint.getId().toInt(),
+                endpoint.getSetting(`direction`).getValue(),
+                arrayOfEndpoints.getArrayOfInterfaces().countInterfaceEndpointsByDirection(
+                    arrayOfEndpoints.getInterfaceIndex(), endpoint.getSetting(`direction`).getValue()))
+        </function_def>
+        <function_def id="generateInterfaceKey">
+            interface -> `#` + interface.getId() + ` ` + interface.getSelectedInterface().getSetting(`interface_name`).getValue()
+        </function_def>
+        <function_def id="getArrayOfInterfaces">
+            arrayOfEndpoints -> arrayOfEndpoints.getParent().getParent().getParent()
+        </function_def>
+        <function_def id="getHighestEndpointNumber">
+            arrayOfInterfaces -> system::max(
+                arrayOfInterfaces.countInterfaceEndpointsByDirection(-1, `kIn`),
+                arrayOfInterfaces.countInterfaceEndpointsByDirection(-1, `kOut`)) 
+        </function_def>
+        <function_def id="getInterfaceIndex">
+            arrayOfEndpoints -> arrayOfEndpoints.getParent().getParent().getId().toInt()
+        </function_def>
+        <function_def id="getSelectedInterface">
+            interface -> interface.getSetting(`interface_class`).getEnumItemId() == `kClassCic`
+                ? interface.getSetting(`setting_cic`) : (interface.getSetting(`interface_class`).getEnumItemId() == `kClassDic`
+                    ? interface.getSetting(`setting_dic`) : (interface.getSetting(`interface_class`).getEnumItemId() == `kClassHid`
+                        ? interface.getSetting(`setting_hid`) : (interface.getSetting(`interface_class`).getEnumItemId() == `kClassMsc`
+                            ? interface.getSetting(`setting_msc`) : (interface.getSetting(`interface_class`).getEnumItemId() == `kClassPrinter`
+                            ? interface.getSetting(`setting_printer`) : (interface.getSetting(`interface_class`).getEnumItemId() == `kClassPhdc`
+                            ? interface.getSetting(`setting_phdc`) : `FALLBACK`)))))
+        </function_def>
+        <function_def id="hsEndpointCount">
+            () -> (featureDefined(`USBHS_ENDPT_COUNT`)
+            ? getFeature(`USBHS_ENDPT_COUNT`) : (featureDefined(`USBHSD_EP_NUM`)
+            ? getFeature(`USBHSD_EP_NUM`) : 0)) - 1
+        </function_def>
+        <function_def id="isFsEndpointCountKnown">
+            () -> featureDefined(`USB_ENDPT_COUNT`) || featureDefined(`USB_EP_NUM`)
+        </function_def>
+        <function_def id="isHsEndpointCountKnown">
+            () -> featureDefined(`USBHS_ENDPT_COUNT`) || featureDefined(`USBHSD_EP_NUM`)
+        </function_def>
+        <function_def id="isEndpointCountKnown">
+            () -> $instance.getPeripheral() == `USB0` ? isFsEndpointCountKnown() : isHsEndpointCountKnown() 
+        </function_def>
+        <function_def id="isStandaloneDataTransmissionInterface">
+            (arrayOfInterfaces, interfaceIndex) -> (arrayOfInterfaces.reduce(
+                0,
+                (acc, interface) -> acc + (((interface.getSetting(`interface_class`).getEnumItemId() == `kClassDic`) &amp;&amp; (interface.getId().toInt() &lt;= interfaceIndex))
+                    ? 1 : 0)) - arrayOfInterfaces.reduce(
+                        0,
+                        (acc, interface) -> acc + (((interface.getSetting(`interface_class`).getEnumItemId() == `kClassCic`) &amp;&amp; (interface.getId().toInt() &lt;= interfaceIndex))
+                            ? interface.getSetting(`setting_cic`).getSetting(`data_interface_count`).getValue() : 0))) &gt; 0
+        </function_def>
+        <function_def id="isLpcUsbController">
+            () -> featureDefined(`USB_EP_NUM`) || featureDefined(`USBHSD_EP_NUM`)
+        </function_def>
+        <function_def id="countEndpoints">
+            (arrayOfEndpoints, transferType, endpointDirection) -> arrayOfEndpoints.reduce(
+            0,
+            (acc, endpoint) -> acc + (endpoint.checkEndpoint(transferType, endpointDirection) ? 1 : 0))
+        </function_def>
+        <function_def id="isIeee11073TypesRequired">
+            (arrayOfInterfaces) -> arrayOfInterfaces.reduce(false, (requireTypes, interface) -> requireTypes || (interface.getSelectedInterface().getSetting(`implementation`).getValue() == `kImplementationWeightScale`))
+        </function_def>
+        <function_def id="getConfigSet">
+            (component, mode) -> mode == `device` ? component.getSetting(`deviceSetting`) : component.getSetting(`hostSettings`)
+        </function_def>
+        <function_def id="isUsbMode">
+            (component, mode) -> (component.getParent().getId() == `usb`) &amp;&amp; (component.getMode() == mode) &amp;&amp; component.isEnabled()
+        </function_def>
+        <function_def id="hasComponentPhdc">
+            (component, mode) -> component.getConfigSet(mode).getSetting(`interfaces`).reduce(false, (instanceHasPhdc, interface) -> instanceHasPhdc || interface.getSetting(`interface_class`).getValue() == `kClassPhdc`)
+        </function_def>
+        <function_def id="hasModePhdc">
+            (mode) -> $root.reduce(false, (deviceHasPhdc, group) -> deviceHasPhdc || (group.countOccurrences(component -> (component.isUsbMode(mode) &amp;&amp; component.hasComponentPhdc(mode))) &gt; 0))
+        </function_def>
+        <function_def id="isIeee11073TypesRequiredInMode">
+            (mode) -> $root.reduce(false, (required, group) -> required || (group.countOccurrences(component -> (component.isUsbMode(mode) &amp;&amp; component.getConfigSet(mode).getSetting(`ieee11073TypesRequired`).getValue())) &gt; 0))
+        </function_def>
+    </user_functions>
+    <config_set id="commonSettings" label="Common role">
+        <description>Common mode settings</description>
+        <generated_types/>
+        <user_types>
+            <enum id="interface_class_t" label="USB class" from="_class">
+                <item id="kClassCic" label="CIC"/>
+                <item id="kClassDic" label="DIC"/>
+                <item id="kClassHid" label="HID"/>
+                <item id="kClassMsc" label="MSC" available="$this.getMode() == `device`"/>
+                <item id="kClassPhdc" label="PHDC" available="$this.getMode() == `device`"/>
+                <item id="kClassPrinter" label="Printer"/>
+            </enum>
+            <enum id="subclass_cic_t" from="_subclass_cic">
+                <item id="kSubclassAcm" label="Abstract Control Model"/>
+            </enum>
+            <enum id="protocol_cic_t" from="_protocol_cic">
+                <item id="kProtocolNone" label="None"/>
+            </enum>
+            <enum id="subclass_dic_t" from="_subclass_dic">
+                <item id="kSubclassNone" label="None"/>
+            </enum>
+            <enum id="protocol_dic_t" from="_protocol_dic">
+                <item id="kProtocolNone" label="None"/>
+            </enum>
+            <enum id="subclass_hid_t" from="_subclass_hid">
+                <item id="kSubclassBootInterface" label="Boot Interface"/>
+            </enum>
+            <enum id="protocol_hid_t" from="_protocol_hid">
+                <item id="kProtocolNone" label="None"/>
+                <item id="kProtocolMouse" label="Mouse"/>
+                <item id="kProtocolKeyboard" label="Keyboard"/>
+            </enum>
+            <enum id="subclass_msc_t" from="_subclass_msc">
+                <item id="kSubclassScsi" label="SCSI transparent command set"/>
+            </enum>
+            <enum id="protocol_msc_t" from="_protocol_msc">
+                <item id="kProtocolBbb" label="BBB (bulk-only transport)"/>
+            </enum>
+            <enum id="subclass_phdc_t" from="_subclass_phdc">
+                <item id="kSubclassNone" label="None"/>
+            </enum>
+            <enum id="protocol_phdc_t" from="_protocol_phdc">
+                <item id="kProtocolNone" label="None"/>
+            </enum>
+            <enum id="subclass_printer_t" from="_subclass_printer">
+                <item id="kSubclassPrinters" label="Printers"/>
+            </enum>
+            <enum id="protocol_printer_t" from="_protocol_printer">
+                <item id="kProtocolBiDirectional" label="Bi-directional interface"/>
+            </enum>
+            <struct id="report_descriptor_entry_t">
+                <reference id="type" type="report_descriptor_item_t" label="HID item"/>
+                <integer id="value" type="int32_t" label="Value" available="$parent.intType.getValue() != `N/A`">
+                    <description>Negative values can be entered in decimal format or in 32-bit hexadecimal format, even if the minimum value requires less bits. E.g. when a value range is limited to 8bit number, -128 must be entered either as -128 or as 0xFFFFFF80. The generated value is optimized for the lowest possible number of bits.</description>
+                    <validation>
+                        <constraint when_expr="$parent.intType.getValue() == `uint`" cond_expr="($this.getValue() &gt;= 0) &amp;&amp; ($this.getValue() &lt;= $parent.maxValue.getValue())" level="error" 
+                            description_expr="`The value of the ` + $parent.type.getEnumItemLabel() + ` item is out of the range (0 - ` + $parent.maxValue.getValue() + `)`"/>
+                        <constraint when_expr="$parent.intType.getValue() == `int`" cond_expr="($this.getValue() &gt;= (-($parent.maxValue.getValue()/2))) &amp;&amp; ($this.getValue() &lt;= (($parent.maxValue.getValue()/2)-1))" level="error" 
+                            description_expr="`The value of the ` + $parent.type.getEnumItemLabel() + ` item is out of the range (-` + ($parent.maxValue.getValue()/2) + ` - ` + (($parent.maxValue.getValue()/2)-1) + `)`"/>
+                    </validation>
+                </integer>
+                <!-- Value type mapping array: true - signed, false - unsigned -->
+                <variable id="intType" value="$configSet.enumItemsOfType(`report_descriptor_features_t`).get($parent.type.getEnumItemValue().toInt()).getLabel()"/>
+                <variable id="maxValue" value="$configSet.enumItemsOfType(`report_descriptor_features_t`).get($parent.type.getEnumItemValue().toInt()).getValue().toInt()"/>
+                <!-- number of Bytes - bSize code (1=1byte; 2=2bytes; 3=4bytes) -->
+                <variable id="bSize" value="
+                    ($parent.intType.getValue() == `int`) ?
+                    ((($parent.value.getValue() &lt; 2**7) &amp;&amp; ($parent.value.getValue() &gt;= -2**7)) 
+                    ? 1
+                    : ((($parent.value.getValue() &lt; 2**15) &amp;&amp; ($parent.value.getValue() &gt;= -2**15))
+                    ? 2
+                    : 3
+                    ))
+                    : (($parent.intType.getValue() == `uint`) ?
+                    (($parent.value.getValue() &lt; 2**8) 
+                    ? 1
+                    : (($parent.value.getValue() &lt; 2**16)
+                    ? 2
+                    : 3
+                    ))
+                    : 0)"/>
+                <!-- number of bits -->
+                <variable id="sizeInBits" value="
+                    ($parent.intType.getValue() == `int`) ?
+                    ((($parent.value.getValue() &lt; 2**7) &amp;&amp; ($parent.value.getValue() &gt;= -2**7)) 
+                    ? 8
+                    : ((($parent.value.getValue() &lt; 2**15) &amp;&amp; ($parent.value.getValue() &gt;= -2**15))
+                    ? 16
+                    : 32
+                    ))
+                    : (($parent.intType.getValue() == `uint`) ?
+                    (($parent.value.getValue() &lt; 2**8) 
+                    ? 8
+                    : (($parent.value.getValue() &lt; 2**16)
+                    ? 16
+                    : 32
+                    ))
+                    : 0)"/>
+                <string id="remarks" label="Remarks"/>
+            </struct>
+            <enum id="report_descriptor_item_t" from="_report_descriptor_item">
+                <item id="kCollection" label="Collection" value="0"/>
+                <item id="kDelimiter" label="Delimiter" value="1"/>
+                <item id="kDesignator_Index" label="Designator Index" value="2"/>
+                <item id="kDesignator_Maximum" label="Designator Maximum" value="3"/>
+                <item id="kDesignator_Minimum" label="Designator Minimum"  value="4"/>
+                <item id="kEnd_Collection" label="End Collection" value="5"/>
+                <item id="kFeature" label="Feature"  value="6"/>
+                <item id="kInput" label="Input"  value="7"/>
+                <item id="kLogical_Maximum" label="Logical Maximum" value="8"/>
+                <item id="kLogical_Minimum" label="Logical Minimum"  value="9"/>
+                <item id="kOutput" label="Output"  value="10"/>
+                <item id="kPhysical_Maximum" label="Physical Maximum" value="11"/>
+                <item id="kPhysical_Minimum" label="Physical Minimum"  value="12"/>
+                <item id="kPop" label="Pop"  value="13"/>
+                <item id="kPush" label="Push"  value="14"/>
+                <item id="kReport_Count" label="Report Count" value="15"/>
+                <item id="kReport_Id" label="Report Id" value="16"/>
+                <item id="kReport_Size" label="Report Size"  value="17"/>
+                <item id="kString_Index" label="String Index" value="18"/>
+                <item id="kString_Maximum" label="String Maximum"  value="19"/>
+                <item id="kString_Minimum" label="String Minimum"  value="20"/>
+                <item id="kUnit" label="Unit"  value="21"/>
+                <item id="kUnit_Exponent" label="Unit Exponent" value="22"/>
+                <item id="kUsage" label="Usage"  value="23"/>
+                <item id="kUsage_Maximum" label="Usage Maximum" value="24"/>
+                <item id="kUsage_Minimum" label="Usage Minimum" value="25"/>
+                <item id="kUsage_Page" label="Usage Page" value="26"/>                
+            </enum>
+            <enum id="direction_t" from="_direction">
+                <item id="kIn" label="In"/>
+                <item id="kOut" label="Out"/>
+            </enum>
+            <enum id="control_max_packet_size_fs_t" from="_control_max_packet_size_fs_t">
+                <item id="k8" label="8"/>
+                <item id="k16" label="16"/>
+                <item id="k32" label="32"/>
+                <item id="k64" label="64"/>
+            </enum>
+            <enum id="bulk_max_packet_size_fs_t" from="_bulk_max_packet_size_fs_t">
+                <item id="k8" label="8"/>
+                <item id="k16" label="16"/>
+                <item id="k32" label="32"/>
+                <item id="k64" label="64"/>
+            </enum>
+            <enum id="interrupt_max_packet_size_fs_t" from="_interrupt_max_packet_size_fs_t">
+                <item id="k8" label="8"/>
+                <item id="k16" label="16"/>
+                <item id="k32" label="32"/>
+                <item id="k64" label="64"/>
+            </enum>
+            <enum id="isochronous_max_packet_size_fs_t" from="_isochronous_max_packet_size_fs_t">
+                <item id="k8" label="8"/>
+                <item id="k16" label="16"/>
+                <item id="k32" label="32"/>
+                <item id="k64" label="64"/>
+                <item id="k128" label="128"/>
+                <item id="k256" label="256"/>
+                <item id="k512" label="512"/>
+                <item id="k1023" label="1023"/>
+            </enum>
+            <enum id="control_max_packet_size_hs_t" from="_control_max_packet_size_hs_t">
+                <item id="k64" label="64"/>
+            </enum>
+            <enum id="bulk_max_packet_size_hs_t" from="_bulk_max_packet_size_hs_t">
+                <item id="k8" label="8"/>
+                <item id="k16" label="16"/>
+                <item id="k32" label="32"/>
+                <item id="k64" label="64"/>
+                <item id="k128" label="128"/>
+                <item id="k256" label="256"/>
+                <item id="k512" label="512"/>
+            </enum>
+            <enum id="interrupt_max_packet_size_hs_t" from="_interrupt_max_packet_size_hs_t">
+                <item id="k8" label="8"/>
+                <item id="k16" label="16"/>
+                <item id="k32" label="32"/>
+                <item id="k64" label="64"/>
+                <item id="k128" label="128"/>
+                <item id="k256" label="256"/>
+                <item id="k512" label="512"/>
+                <item id="k1024" label="1024"/>
+            </enum>
+            <enum id="isochronous_max_packet_size_hs_t" from="_isochronous_max_packet_size_hs_t">
+                <item id="k8" label="8"/>
+                <item id="k16" label="16"/>
+                <item id="k32" label="32"/>
+                <item id="k64" label="64"/>
+                <item id="k128" label="128"/>
+                <item id="k256" label="256"/>
+                <item id="k512" label="512"/>
+                <item id="k1024" label="1024"/>
+            </enum>
+            <enum id="transfer_type_t" from="_transfer_type">
+                <item id="kBulk" label="Bulk" 
+                    available=" $parent.getParent().getParent().getParent().getSetting(`interface_class`).getValue() != `kClassHid`"/>
+                <item id="kControl" label="Control" 
+                    available=" $parent.getParent().getParent().getParent().getSetting(`interface_class`).getValue() != `kClassPhdc` &amp;&amp; 
+                                $parent.getParent().getParent().getParent().getSetting(`interface_class`).getValue() != `kClassPrinter` &amp;&amp; 
+                                !isLpcUsbController()"/>
+                <item id="kInterrupt" label="Interrupt" 
+                    available=" $parent.getParent().getParent().getParent().getSetting(`interface_class`).getValue() != `kClassDic` &amp;&amp; 
+                                $parent.getParent().getParent().getParent().getSetting(`interface_class`).getValue() != `kClassPrinter`"/>
+                <item id="kIsochronous" label="Isochronous" 
+                    available=" $parent.getParent().getParent().getParent().getSetting(`interface_class`).getValue() != `kClassHid` &amp;&amp; 
+                                $parent.getParent().getParent().getParent().getSetting(`interface_class`).getValue() != `kClassPhdc` &amp;&amp; 
+                                $parent.getParent().getParent().getParent().getSetting(`interface_class`).getValue() != `kClassMsc` &amp;&amp; 
+                                $parent.getParent().getParent().getParent().getSetting(`interface_class`).getValue() != `kClassPrinter`"/>
+            </enum>
+            <enum id="implementation_cic_t" from="_implementation_cic">
+                <item id="kImplementationNone" label="None"/>
+                <item id="kImplementationCicVcom" label="Virtual COM port (bare metal)"/>
+            </enum>
+            <enum id="implementation_dic_t" from="_implementation_dic">
+                <item id="kImplementationNone" label="None"/>
+                <item id="kImplementationDicVcom" label="Virtual COM port (bare metal)"/>
+            </enum>
+            <enum id="implementation_hid_t" from="_implementation_hid">
+                <item id="kImplementationNone" label="None"/>
+                <item id="kImplementationGeneric" label="Generic (bare metal)"/>
+                <item id="kImplementationKeyboard" label="Keyboard (bare metal)"/>
+                <item id="kImplementationMouse" label="Mouse (bare metal)"/>
+            </enum>
+            <enum id="implementation_msc_t" from="_implementation_msc">
+                <item id="kImplementationNone" label="None"/>
+                <item id="kImplementationRamDisk" label="RAM disk (bare metal)"/>
+            </enum>
+            <enum id="implementation_phdc_t" from="_implementation_phdc">
+                <item id="kImplementationNone" label="None"/>
+                <item id="kImplementationWeightScale" label="Weight scale (bare metal)"/>
+            </enum>
+            <enum id="implementation_printer_t" from="_implementation_printer">
+                <item id="kImplementationNone" label="None"/>
+                <item id="kImplementationPlainTextPrinter" label="Plain text (bare metal)"/>
+            </enum>
+            <string id="interface_name_t" validation_expr="x -> x.regexMatch(`(\s*[A-Za-z_][0-9A-Za-z_]*\s*)*`)">
+                <description>Interface identifier for UI and generated filenames and code. Can contain spaces to visually separate each part - these get processed depending on the used notation (either snake or camel case).</description>
+            </string>
+            <struct id="endpoint_t">
+                <reference id="direction" type="direction_t" label="Direction"/>
+                <reference id="transfer_type" type="transfer_type_t" label="Transfer type"/>
+                <dynamic_enum id="max_packet_size_fs" label="Max packet size (FS)" items="enumItemsOf($parent.transfer_type.getEnumItemId() == `kBulk` ? $configSet.bulk_max_packet_size_fs : ($parent.transfer_type.getEnumItemId() == `kInterrupt` ? $configSet.interrupt_max_packet_size_fs : ($parent.transfer_type.getEnumItemId() == `kIsochronous` ? $configSet.isochronous_max_packet_size_fs : ($parent.transfer_type.getEnumItemId() == `kControl` ? $configSet.control_max_packet_size_fs :-1)))).arrayToEnumItems(
+                    enumItem -> true,
+                    enumItem -> enumItem.getID(),
+                    enumItem -> enumItem.getLabel(),
+                    enumItem -> enumItem.getValue())" available="true"/>
+                <integer id="polling_interval_fs" type="uint16_t" label="Interval (FS)" enable="(($parent.transfer_type.getEnumItemId()) != `kBulk` &amp;&amp; ($parent.transfer_type.getEnumItemId() != `kControl`))" min_expr="(($parent.transfer_type.getEnumItemId() == `kBulk`) || ($parent.transfer_type.getEnumItemId() == `kControl`))? 0 : 1" max_expr="(($parent.transfer_type.getEnumItemId() == `kBulk`) || ($parent.transfer_type.getEnumItemId() == `kControl`)) ? 0 : ($parent.transfer_type.getEnumItemId() == `kInterrupt` ? 255 : ($parent.transfer_type.getEnumItemId() == `kIsochronous` ? 16 : -1))">
+                    <description>Interval for polling endpoint for data transfers expressed in 1 millisecond frames.
+                        For Control endpoints,this value is ignored and set to 0. 
+                        For bulk endpoints, this value is ignored and set to 0. 
+                        For interrupt endpoints, this value must be in the range from 1 to 255. 
+                        For isochronous endpoints, this value must be in the range from 1 to 16.</description>
+                </integer>
+                <dynamic_enum id="max_packet_size_hs" label="Max packet size (HS)" items="enumItemsOf($parent.transfer_type.getEnumItemId() == `kBulk` ? $configSet.bulk_max_packet_size_hs : ($parent.transfer_type.getEnumItemId() == `kInterrupt` ? $configSet.interrupt_max_packet_size_hs : ($parent.transfer_type.getEnumItemId() == `kIsochronous` ? $configSet.isochronous_max_packet_size_hs : ($parent.transfer_type.getEnumItemId() == `kControl` ? $configSet.control_max_packet_size_fs :-1)))).arrayToEnumItems(
+                    enumItem -> true,
+                    enumItem -> enumItem.getID(),
+                    enumItem -> enumItem.getLabel(),
+                    enumItem -> enumItem.getValue())" available="$configSet.high_speed_supported.value()"/>
+                <integer id="polling_interval_hs" type="uint16_t" label="Interval (HS)" enable="!((($parent.transfer_type.getEnumItemId() == `kControl`) || ($parent.transfer_type.getEnumItemId()) == `kBulk`) &amp;&amp; ($parent.direction.getEnumItemId() == `kIn`))" available="$configSet.high_speed_supported.value()" min_expr="($parent.transfer_type.getEnumItemId() == `kBulk` || $parent.transfer_type.getEnumItemId() == `kControl`) ? 0 : 1" max_expr="($parent.transfer_type.getEnumItemId() == `kBulk` || $parent.transfer_type.getEnumItemId() == `kControl`) ? ($parent.direction.getEnumItemId() == `kIn` ? 0 : ($parent.direction.getEnumItemId() == `kOut` ? 255 : -1)) : (($parent.transfer_type.getEnumItemId() == `kInterrupt` || $parent.transfer_type.getEnumItemId() == `kIsochronous`) ? 16 : -1)">
+                    <description>Interval for polling endpoint for data transfers expressed in 125µs frames.
+                        For Control IN endpoints, this value is ignored and set to 0. 
+                        For bulk IN endpoints, this value is ignored and set to 0. 
+                        For bulk OUT and Control Out endpoints, this value must be in the range from 0 to 255, where a value of 0 indicates the endpoint never NAKs (other values indicate at most 1 NAK each interval number of microframes). 
+                        For isochronous and interrupt endpoints, this value must be in the range from 1 to 16.</description>
+                </integer>
+            </struct>
+            <struct id="setting_cic_t" from="_setting_cic_t">
+                <quick_selections>
+                    <quick_selection id="QS_INTERFACE_CIC_NONE" label="None">
+                        <set id="interface_name">CIC</set>
+                        <set id="implementation">kImplementationNone</set>
+                        <set id="subclass">kSubclassAcm</set>
+                        <set id="protocol">kProtocolNone</set>
+                        <set id="data_interface_count">0</set>
+                    </quick_selection>
+                    <quick_selection id="QS_INTERFACE_CIC_VCOM" label="Virtual COM port (bare metal)" available="$this.getMode() == `device`">
+                        <set id="interface_name">CIC VCOM</set>
+                        <set id="implementation">kImplementationCicVcom</set>
+                        <set id="subclass">kSubclassAcm</set>
+                        <set id="protocol">kProtocolNone</set>
+                        <set id="endpoints.0.direction">kIn</set>
+                        <set id="endpoints.0.transfer_type">kInterrupt</set>
+                        <set id="endpoints.0.max_packet_size_fs">k16</set>
+                        <set id="endpoints.0.polling_interval_fs">8</set>
+                        <set id="endpoints.0.max_packet_size_hs">k16</set>
+                        <set id="endpoints.0.polling_interval_hs">7</set>
+                        <set id="data_interface_count">1</set>
+                    </quick_selection>
+                    <quick_selection id="QS_INTERFACE_CIC_VCOM" label="Virtual COM port (bare metal)" available="$this.getMode() == `host`">
+                        <set id="interface_name">CIC VCOM</set>
+                        <set id="implementation">kImplementationCicVcom</set>
+                        <set id="subclass">kSubclassAcm</set>
+                        <set id="protocol">kProtocolNone</set>
+                        <set id="data_interface_count">1</set>
+                    </quick_selection>
+                    <default>QS_INTERFACE_CIC_VCOM</default>
+                </quick_selections>
+                <reference id="interface_name" type="interface_name_t" label="Custom interface name"/>
+                <reference id="implementation" type="implementation_cic_t" label="Generate class implementation code"/>
+                <reference id="subclass" type="subclass_cic_t" label="Subclass"/> 
+                <reference id="protocol" type="protocol_cic_t" label="Protocol"/> 
+                <array id="endpoints" type="endpoint_t" label="Endpoints" options="ShowContentAs=TABLE;UI_ARRAY_REORDER" key_selector_expr="x -> x.generateEndpointKey($parent)" available="$this.getMode() == `device`">
+                    <validation>
+                        <constraint cond_expr="$this.getSize() &lt; 2" when_expr="$parent.implementation.getEnumItemId() == `kImplementationCicVcom`" level="warning" description="Only the first endpoint will be used in the generated implementation code"/>
+                        <constraint cond_expr="$this.getSize() != 0" level="error" description="At least 1 endpoint is required"/>
+                        <constraint cond_expr="($this.getSize() != 0) &amp;&amp; $this.get(0).checkEndpoint(`kInterrupt`, `kIn`)" when_expr="$parent.implementation.getEnumItemId() == `kImplementationCicVcom`" level="error" description="Need exactly one interrupt IN endpoint as the first one for the generated implementation code"/>
+                    </validation>
+                </array>
+                <integer id="data_interface_count" type="uint8_t" label="Succeeding data transmission interfaces">
+                    <description>Number of interfaces to use for data transmission. These must succeed CIC interface.</description>
+                    <validation>
+                        <constraint cond_expr="$this.value() == 1" level="warning" description="CIC implementation expects exactly one DIC as a data transmission interface"/>
+                        <constraint cond_expr="$this.value() &lt;= $parent.getParent().getParent().getSize() - $parent.getParent().getId().toInt() - 1" level="error" description="Not enough data transmission interfaces"/>
+                    </validation>
+                </integer>
+                <info id="data_interfaces" value="$parent.getParent().getParent().enumerateSucceedingInterfaceKeys($parent.getParent().getId().toInt(), $parent.data_interface_count.value()).join(`, `)" label="Data transmission interfaces">
+                    <description>List of interfaces used by CIC for data transmission.</description>
+                    <validation>
+                        <constraint cond_expr="$parent.getParent().getParent().countDataTransmissionInterfaces($parent.getParent().getId().toInt(), $parent.data_interface_count.value()) == $parent.getParent().getParent().enumerateSucceedingInterfaceKeys($parent.getParent().getId().toInt(), $parent.data_interface_count.value()).size()" when_expr="$parent.getParent().getParent().enumerateSucceedingInterfaceKeys($parent.getParent().getId().toInt(), $parent.data_interface_count.value()).size() != 0" level="warning" description="Only DIC interfaces are supported for data transmission"/>
+                    </validation>
+                </info>
+            </struct>
+            <struct id="setting_dic_t" from="_setting_dic_t">
+                <validation>
+                    <constraint cond_expr="!$parent.getParent().isStandaloneDataTransmissionInterface($parent.getId().toInt())" level="error" description="DIC interface must be used for data transmission in a CIC interface"/>
+                </validation>
+                <quick_selections>
+                    <quick_selection id="QS_INTERFACE_DIC_NONE" label="None">
+                        <set id="interface_name">DIC</set>
+                        <set id="implementation">kImplementationNone</set>
+                        <set id="subclass">kSubclassNone</set>
+                        <set id="protocol">kProtocolNone</set>
+                    </quick_selection>
+                    <quick_selection id="QS_INTERFACE_DIC_VCOM" label="Virtual COM port (bare metal)" available="$this.getMode() == `device`">
+                        <set id="interface_name">DIC VCOM</set>
+                        <set id="implementation">kImplementationDicVcom</set>
+                        <set id="subclass">kSubclassNone</set>
+                        <set id="protocol">kProtocolNone</set>
+                        <set id="endpoints.0.direction">kIn</set>
+                        <set id="endpoints.0.transfer_type">kBulk</set>
+                        <set id="endpoints.0.max_packet_size_fs">k64</set>
+                        <set id="endpoints.0.polling_interval_fs">0</set>
+                        <set id="endpoints.0.max_packet_size_hs">k512</set>
+                        <set id="endpoints.0.polling_interval_hs">0</set>
+                        <set id="endpoints.1.direction">kOut</set>
+                        <set id="endpoints.1.transfer_type">kBulk</set>
+                        <set id="endpoints.1.max_packet_size_fs">k64</set>
+                        <set id="endpoints.1.polling_interval_fs">0</set>
+                        <set id="endpoints.1.max_packet_size_hs">k512</set>
+                        <set id="endpoints.1.polling_interval_hs">0</set>
+                    </quick_selection>
+                    <quick_selection id="QS_INTERFACE_DIC_VCOM" label="Virtual COM port (bare metal)" available="$this.getMode() == `host`">
+                        <set id="interface_name">DIC VCOM</set>
+                        <set id="implementation">kImplementationDicVcom</set>
+                        <set id="subclass">kSubclassNone</set>
+                        <set id="protocol">kProtocolNone</set>
+                    </quick_selection>
+                    <default>QS_INTERFACE_DIC_VCOM</default>
+                </quick_selections>
+                <reference id="interface_name" type="interface_name_t" label="Custom interface name"/>
+                <reference id="implementation" type="implementation_dic_t" label="Generate class implementation code"/>
+                <reference id="subclass" type="subclass_dic_t" label="Subclass"/> 
+                <reference id="protocol" type="protocol_dic_t" label="Protocol"/> 
+                <array id="endpoints" type="endpoint_t" label="Endpoints" options="ShowContentAs=TABLE;UI_ARRAY_REORDER" key_selector_expr="x -> x.generateEndpointKey($parent)" available="$this.getMode() == `device`">
+                    <validation>
+                        <constraint cond_expr="$this.getSize() &lt;= 2" when_expr="$parent.implementation.getEnumItemId() == `kImplementationDicVcom`" level="warning" description="Only the first two endpoints will be used in the generated implementation code"/>
+                        <constraint cond_expr="$this.getSize() != 0" level="error" description="At least 1 endpoint is required"/>
+                        <constraint cond_expr="$this.checkEndpointDirectionSymmetry()" level="warning" description="Endpoints belonging to DIC are expected to exist in pairs of the same type (one IN and one OUT)"/>
+                        <constraint cond_expr="($this.getSize() == 0) || (($this.getSize() > 1) &amp;&amp; $this.get(0).checkEndpoint(`kBulk`, `kIn`) &amp;&amp; $this.get(1).checkEndpoint(`kBulk`, `kOut`))" when_expr="$parent.implementation.getEnumItemId() == `kImplementationDicVcom`" level="error" description="Need exactly one IN and one OUT bulk endpoints as the first two for the generated implementation code"/>
+                    </validation>
+                </array>
+            </struct>
+            <struct id="setting_hid_t" from="_setting_hid_t">
+                <quick_selections>
+                    <quick_selection id="QS_INTERFACE_HID_NONE" label="None">
+                        <set id="interface_name">HID None</set>
+                        <set id="implementation">kImplementationNone</set>
+                        <set id="subclass">kSubclassBootInterface</set>
+                        <set id="protocol">kProtocolNone</set>
+                    </quick_selection>
+                    <quick_selection id="QS_INTERFACE_HID_GENERIC" label="Generic (bare metal)" available="$this.getMode() == `device`">
+                        <set id="interface_name">HID Generic</set>
+                        <set id="implementation">kImplementationGeneric</set>
+                        <set id="subclass">kSubclassBootInterface</set>
+                        <set id="protocol">kProtocolNone</set>
+                        <set id="endpoints.0.direction">kIn</set>
+                        <set id="endpoints.0.transfer_type">kInterrupt</set>
+                        <set id="endpoints.0.max_packet_size_fs">k8</set>
+                        <set id="endpoints.0.polling_interval_fs">1</set>
+                        <set id="endpoints.0.max_packet_size_hs">k8</set>
+                        <set id="endpoints.0.polling_interval_hs">1</set>
+                        <set id="endpoints.1.direction">kOut</set>
+                        <set id="endpoints.1.transfer_type">kInterrupt</set>
+                        <set id="endpoints.1.max_packet_size_fs">k8</set>
+                        <set id="endpoints.1.polling_interval_fs">1</set>
+                        <set id="endpoints.1.max_packet_size_hs">k8</set>
+                        <set id="endpoints.1.polling_interval_hs">1</set>
+                        <set id="report_descriptor.0.type">kUsage_Page</set>
+                        <set id="report_descriptor.0.value">0x81</set>
+                        <set id="report_descriptor.0.remarks">Usage Page (Vendor defined)</set>
+                        <set id="report_descriptor.1.type">kUsage</set>
+                        <set id="report_descriptor.1.value">0x82</set>
+                        <set id="report_descriptor.1.remarks">Usage (Vendor defined)</set>
+                        <set id="report_descriptor.2.type">kCollection</set>
+                        <set id="report_descriptor.2.value">0x01</set>
+                        <set id="report_descriptor.2.remarks">Collection (Application)</set>
+                        <set id="report_descriptor.3.type">kUsage</set>
+                        <set id="report_descriptor.3.value">0x83</set>
+                        <set id="report_descriptor.3.remarks">Usage (Vendor defined)</set>
+                        <set id="report_descriptor.4.type">kUsage</set>
+                        <set id="report_descriptor.4.value">0x84</set>
+                        <set id="report_descriptor.4.remarks">Usage (Vendor defined)</set>
+                        <set id="report_descriptor.5.type">kLogical_Minimum</set>
+                        <set id="report_descriptor.5.value">-128</set>
+                        <set id="report_descriptor.5.remarks">Logical Minimum (-128)</set>
+                        <set id="report_descriptor.6.type">kLogical_Maximum</set>
+                        <set id="report_descriptor.6.value">0x7F</set>
+                        <set id="report_descriptor.6.remarks">Logical Maximum (127)</set>
+                        <set id="report_descriptor.7.type">kReport_Size</set>
+                        <set id="report_descriptor.7.value">0x08</set>
+                        <set id="report_descriptor.7.remarks">Report Size (8U)</set>
+                        <set id="report_descriptor.8.type">kReport_Count</set>
+                        <set id="report_descriptor.8.value">0x08</set>
+                        <set id="report_descriptor.8.remarks">Report Count (8U)</set>
+                        <set id="report_descriptor.9.type">kInput</set>
+                        <set id="report_descriptor.9.value">0x02</set>
+                        <set id="report_descriptor.9.remarks">Input(Data, Variable, Absolute)</set>
+                        <set id="report_descriptor.10.type">kUsage</set>
+                        <set id="report_descriptor.10.value">0x84</set>
+                        <set id="report_descriptor.10.remarks">Usage (Vendor defined)</set>
+                        <set id="report_descriptor.11.type">kLogical_Minimum</set>
+                        <set id="report_descriptor.11.value">-128</set>
+                        <set id="report_descriptor.11.remarks">Logical Minimum (-128)</set>
+                        <set id="report_descriptor.12.type">kLogical_Maximum</set>
+                        <set id="report_descriptor.12.value">0x7F</set>
+                        <set id="report_descriptor.12.remarks">Logical Maximum (127)</set>
+                        <set id="report_descriptor.13.type">kReport_Size</set>
+                        <set id="report_descriptor.13.value">0x08</set>
+                        <set id="report_descriptor.13.remarks">Report Size (8U)</set>
+                        <set id="report_descriptor.14.type">kReport_Count</set>
+                        <set id="report_descriptor.14.value">0x08</set>
+                        <set id="report_descriptor.14.remarks">Report Count (8U)</set>
+                        <set id="report_descriptor.15.type">kOutput</set>
+                        <set id="report_descriptor.15.value">0x02</set>
+                        <set id="report_descriptor.15.remarks">Output(Data, Variable, Absolute)</set>
+                        <set id="report_descriptor.16.type">kEnd_Collection</set>
+                        <set id="report_descriptor.16.remarks">End collection,</set>
+                    </quick_selection>
+                    <quick_selection id="QS_INTERFACE_HID_GENERIC" label="Generic (bare metal)" available="$this.getMode() == `host`">
+                        <set id="interface_name">HID Generic</set>
+                        <set id="implementation">kImplementationGeneric</set>
+                        <set id="subclass">kSubclassBootInterface</set>
+                        <set id="protocol">kProtocolNone</set>
+                    </quick_selection>
+                    <quick_selection id="QS_INTERFACE_HID_KEYBOARD" label="Keyboard (bare metal)" available="$this.getMode() == `device`">
+                        <set id="interface_name">HID Keyboard</set>
+                        <set id="implementation">kImplementationKeyboard</set>
+                        <set id="subclass">kSubclassBootInterface</set>
+                        <set id="protocol">kProtocolKeyboard</set>
+                        <set id="endpoints.0.direction">kIn</set>
+                        <set id="endpoints.0.transfer_type">kInterrupt</set>
+                        <set id="endpoints.0.max_packet_size_fs">k8</set>
+                        <set id="endpoints.0.polling_interval_fs">4</set>
+                        <set id="endpoints.0.max_packet_size_hs">k8</set>
+                        <set id="endpoints.0.polling_interval_hs">6</set>
+                        <set id="report_descriptor.0.type">kUsage_Page</set>
+                        <set id="report_descriptor.0.value">0x01</set>
+                        <set id="report_descriptor.0.remarks">Usage Page (Generic Desktop)</set>
+                        <set id="report_descriptor.1.type">kUsage</set>
+                        <set id="report_descriptor.1.value">0x06</set>
+                        <set id="report_descriptor.1.remarks">Usage (Keyboard)</set>
+                        <set id="report_descriptor.2.type">kCollection</set>
+                        <set id="report_descriptor.2.value">0x01</set>
+                        <set id="report_descriptor.2.remarks">Collection (Application)</set>
+                        <set id="report_descriptor.3.type">kReport_Size</set>
+                        <set id="report_descriptor.3.value">0x01</set>
+                        <set id="report_descriptor.3.remarks">Report Size (1U)</set>
+                        <set id="report_descriptor.4.type">kReport_Count</set>
+                        <set id="report_descriptor.4.value">0x08</set>
+                        <set id="report_descriptor.4.remarks">Report Count (8U)</set>
+                        <set id="report_descriptor.5.type">kUsage_Page</set>
+                        <set id="report_descriptor.5.value">0x07</set>
+                        <set id="report_descriptor.5.remarks">Usage Page(Key Codes)</set>
+                        <set id="report_descriptor.6.type">kUsage_Minimum</set>
+                        <set id="report_descriptor.6.value">0xE0</set>
+                        <set id="report_descriptor.6.remarks">Usage Minimum (224U)</set>
+                        <set id="report_descriptor.7.type">kUsage_Maximum</set>
+                        <set id="report_descriptor.7.value">0xE7</set>
+                        <set id="report_descriptor.7.remarks">Usage Maximum (231U)</set>
+                        <set id="report_descriptor.8.type">kLogical_Minimum</set>
+                        <set id="report_descriptor.8.value">0x00</set>
+                        <set id="report_descriptor.8.remarks">Logical Minimum (0U)</set>
+                        <set id="report_descriptor.9.type">kLogical_Maximum</set>
+                        <set id="report_descriptor.9.value">0x01</set>
+                        <set id="report_descriptor.9.remarks">Logical Maximum (1U)</set>
+                        <set id="report_descriptor.10.type">kInput</set>
+                        <set id="report_descriptor.10.value">0x02</set>
+                        <set id="report_descriptor.10.remarks">Input(Data, Variable, Absolute) Modifier byte</set>
+                        <set id="report_descriptor.11.type">kReport_Count</set>
+                        <set id="report_descriptor.11.value">0x01</set>
+                        <set id="report_descriptor.11.remarks">Report Count (1U)</set>
+                        <set id="report_descriptor.12.type">kReport_Size</set>
+                        <set id="report_descriptor.12.value">0x08</set>
+                        <set id="report_descriptor.12.remarks">Report Size (8U)</set>
+                        <set id="report_descriptor.13.type">kInput</set>
+                        <set id="report_descriptor.13.value">0x01</set>
+                        <set id="report_descriptor.13.remarks">Input(Constant), Reserved byte</set>
+                        <set id="report_descriptor.14.type">kReport_Count</set>
+                        <set id="report_descriptor.14.value">0x05</set>
+                        <set id="report_descriptor.14.remarks">Report Count (5U)</set>
+                        <set id="report_descriptor.15.type">kReport_Size</set>
+                        <set id="report_descriptor.15.value">0x01</set>
+                        <set id="report_descriptor.15.remarks">Report Size (1U)</set>
+                        <set id="report_descriptor.16.type">kUsage_Page</set>
+                        <set id="report_descriptor.16.value">0x08</set>
+                        <set id="report_descriptor.16.remarks">Usage Page (Page# for LEDs)</set>
+                        <set id="report_descriptor.17.type">kUsage_Minimum</set>
+                        <set id="report_descriptor.17.value">0x01</set>
+                        <set id="report_descriptor.17.remarks">Usage Minimum (1U)</set>
+                        <set id="report_descriptor.18.type">kUsage_Maximum</set>
+                        <set id="report_descriptor.18.value">0x05</set>
+                        <set id="report_descriptor.18.remarks">Usage Maximum (5U)</set>
+                        <set id="report_descriptor.19.type">kOutput</set>
+                        <set id="report_descriptor.19.value">0x02</set>
+                        <set id="report_descriptor.19.remarks">Output (Data, Variable, Absolute) LED report</set>
+                        <set id="report_descriptor.20.type">kReport_Count</set>
+                        <set id="report_descriptor.20.value">0x01</set>
+                        <set id="report_descriptor.20.remarks">Report Count (1U)</set>
+                        <set id="report_descriptor.21.type">kReport_Size</set>
+                        <set id="report_descriptor.21.value">0x03</set>
+                        <set id="report_descriptor.21.remarks">Report Size (3U)</set>
+                        <set id="report_descriptor.22.type">kOutput</set>
+                        <set id="report_descriptor.22.value">0x03</set>
+                        <set id="report_descriptor.22.remarks">Output (Constant), LED report padding</set>
+                        <set id="report_descriptor.23.type">kReport_Count</set>
+                        <set id="report_descriptor.23.value">0x06</set>
+                        <set id="report_descriptor.23.remarks">Report Count (6U)</set>
+                        <set id="report_descriptor.24.type">kReport_Size</set>
+                        <set id="report_descriptor.24.value">0x08</set>
+                        <set id="report_descriptor.24.remarks">Report Size (8U)</set>
+                        <set id="report_descriptor.25.type">kLogical_Minimum</set>
+                        <set id="report_descriptor.25.value">0x00</set>
+                        <set id="report_descriptor.25.remarks">Logical Minimum (0U)</set>
+                        <set id="report_descriptor.26.type">kLogical_Maximum</set>
+                        <set id="report_descriptor.26.value">0xFF</set>
+                        <set id="report_descriptor.26.remarks">Logical Maximum (255U)</set>
+                        <set id="report_descriptor.27.type">kUsage_Page</set>
+                        <set id="report_descriptor.27.value">0x07</set>
+                        <set id="report_descriptor.27.remarks">Usage Page (Key Codes)</set>
+                        <set id="report_descriptor.28.type">kUsage_Minimum</set>
+                        <set id="report_descriptor.28.value">0x00</set>
+                        <set id="report_descriptor.28.remarks">Usage Minimum (0U)</set>
+                        <set id="report_descriptor.29.type">kUsage_Maximum</set>
+                        <set id="report_descriptor.29.value">0xFF</set>
+                        <set id="report_descriptor.29.remarks">Usage Maximum (255U)</set>
+                        <set id="report_descriptor.30.type">kInput</set>
+                        <set id="report_descriptor.30.value">0x00</set>
+                        <set id="report_descriptor.30.remarks">Input(Data, Array), Key arrays(6U bytes)</set>
+                        <set id="report_descriptor.31.type">kEnd_Collection</set>
+                    </quick_selection>
+                    <quick_selection id="QS_INTERFACE_HID_KEYBOARD" label="Keyboard (bare metal)" available="$this.getMode() == `host`">
+                        <set id="interface_name">HID Keyboard</set>
+                        <set id="implementation">kImplementationKeyboard</set>
+                        <set id="subclass">kSubclassBootInterface</set>
+                        <set id="protocol">kProtocolKeyboard</set>
+                    </quick_selection>
+                    <quick_selection id="QS_INTERFACE_HID_MOUSE" label="Mouse (bare metal)" available="$this.getMode() == `device`">
+                        <set id="interface_name">HID Mouse</set>
+                        <set id="implementation">kImplementationMouse</set>
+                        <set id="subclass">kSubclassBootInterface</set>
+                        <set id="protocol">kProtocolMouse</set>
+                        <set id="endpoints.0.direction">kIn</set>
+                        <set id="endpoints.0.transfer_type">kInterrupt</set>
+                        <set id="endpoints.0.max_packet_size_fs">k8</set>
+                        <set id="endpoints.0.polling_interval_fs">4</set>
+                        <set id="endpoints.0.max_packet_size_hs">k8</set>
+                        <set id="endpoints.0.polling_interval_hs">6</set>
+                        <set id="report_descriptor.0.type">kUsage_Page</set>
+                        <set id="report_descriptor.0.value">0x01</set>
+                        <set id="report_descriptor.0.remarks">Usage Page (Generic Desktop)</set>
+                        <set id="report_descriptor.1.type">kUsage</set>
+                        <set id="report_descriptor.1.value">0x02</set>
+                        <set id="report_descriptor.1.remarks">Usage (Mouse)</set>
+                        <set id="report_descriptor.2.type">kCollection</set>
+                        <set id="report_descriptor.2.value">0x01</set>
+                        <set id="report_descriptor.2.remarks">Collection (Application)</set>
+                        <set id="report_descriptor.3.type">kUsage</set>
+                        <set id="report_descriptor.3.value">0x01</set>
+                        <set id="report_descriptor.3.remarks">Usage (Pointer)</set>
+                        <set id="report_descriptor.4.type">kCollection</set>
+                        <set id="report_descriptor.4.value">0x00</set>
+                        <set id="report_descriptor.4.remarks">Collection (Physical)</set>
+                        <set id="report_descriptor.5.type">kUsage_Page</set>
+                        <set id="report_descriptor.5.value">0x09</set>
+                        <set id="report_descriptor.5.remarks">Usage Page (Buttons)</set>
+                        <set id="report_descriptor.6.type">kUsage_Minimum</set>
+                        <set id="report_descriptor.6.value">0x01</set>
+                        <set id="report_descriptor.6.remarks">Usage Minimum (01U)</set>
+                        <set id="report_descriptor.7.type">kUsage_Maximum</set>
+                        <set id="report_descriptor.7.value">0x03</set>
+                        <set id="report_descriptor.7.remarks">Usage Maximum (03U)</set>
+                        <set id="report_descriptor.8.type">kLogical_Minimum</set>
+                        <set id="report_descriptor.8.value">0x00</set>
+                        <set id="report_descriptor.8.remarks">Logical Minimum</set>
+                        <set id="report_descriptor.9.type">kLogical_Maximum</set>
+                        <set id="report_descriptor.9.value">0x01</set>
+                        <set id="report_descriptor.9.remarks">Logical Maximum (1U)</set>
+                        <set id="report_descriptor.10.type">kReport_Count</set>
+                        <set id="report_descriptor.10.value">0x03</set>
+                        <set id="report_descriptor.10.remarks">Report Count (3U)</set>
+                        <set id="report_descriptor.11.type">kReport_Size</set>
+                        <set id="report_descriptor.11.value">0x01</set>
+                        <set id="report_descriptor.11.remarks">Report Size (1U)</set>
+                        <set id="report_descriptor.12.type">kInput</set>
+                        <set id="report_descriptor.12.value">0x02</set>
+                        <set id="report_descriptor.12.remarks">Input(Data, Variable, Absolute) 3U button bit fields</set>
+                        <set id="report_descriptor.13.type">kReport_Count</set>
+                        <set id="report_descriptor.13.value">0x01</set>
+                        <set id="report_descriptor.13.remarks">Report Count (1U)</set>
+                        <set id="report_descriptor.14.type">kReport_Size</set>
+                        <set id="report_descriptor.14.value">0x05</set>
+                        <set id="report_descriptor.14.remarks">Report Size (5U)</set>
+                        <set id="report_descriptor.15.type">kInput</set>
+                        <set id="report_descriptor.15.value">0x01</set>
+                        <set id="report_descriptor.15.remarks">Input (Constant), 5U constant field</set>
+                        <set id="report_descriptor.16.type">kUsage_Page</set>
+                        <set id="report_descriptor.16.value">0x01</set>
+                        <set id="report_descriptor.16.remarks">Usage Page (Generic Desktop)</set>
+                        <set id="report_descriptor.17.type">kUsage</set>
+                        <set id="report_descriptor.17.value">0x30</set>
+                        <set id="report_descriptor.17.remarks">Usage (X)</set>
+                        <set id="report_descriptor.18.type">kUsage</set>
+                        <set id="report_descriptor.18.value">0x31</set>
+                        <set id="report_descriptor.18.remarks">Usage (Y)</set>
+                        <set id="report_descriptor.19.type">kUsage</set>
+                        <set id="report_descriptor.19.value">0x38</set>
+                        <set id="report_descriptor.19.remarks">Usage (Z)</set>
+                        <set id="report_descriptor.20.type">kLogical_Minimum</set>
+                        <set id="report_descriptor.20.value">-127</set>
+                        <set id="report_descriptor.20.remarks">Logical Minimum (-127)</set>
+                        <set id="report_descriptor.21.type">kLogical_Maximum</set>
+                        <set id="report_descriptor.21.value">0x7F</set>
+                        <set id="report_descriptor.21.remarks">Logical Maximum (127)</set>
+                        <set id="report_descriptor.22.type">kReport_Size</set>
+                        <set id="report_descriptor.22.value">0x08</set>
+                        <set id="report_descriptor.22.remarks">Report Size (8U)</set>
+                        <set id="report_descriptor.23.type">kReport_Count</set>
+                        <set id="report_descriptor.23.value">0x03</set>
+                        <set id="report_descriptor.23.remarks">Report Count (3U)</set>
+                        <set id="report_descriptor.24.type">kInput</set>
+                        <set id="report_descriptor.24.value">0x06</set>
+                        <set id="report_descriptor.24.remarks">Input(Data, Variable, Relative), Three position bytes (X, Y, Z)</set>
+                        <set id="report_descriptor.25.type">kEnd_Collection</set>
+                        <set id="report_descriptor.25.remarks">End collection, Close Pointer collection</set>
+                        <set id="report_descriptor.26.type">kEnd_Collection</set>
+                        <set id="report_descriptor.26.remarks">End collection, Close Mouse collection</set>
+                    </quick_selection>
+                    <quick_selection id="QS_INTERFACE_HID_MOUSE" label="Mouse (bare metal)" available="$this.getMode() == `host`">
+                        <set id="interface_name">HID Mouse</set>
+                        <set id="implementation">kImplementationMouse</set>
+                        <set id="subclass">kSubclassBootInterface</set>
+                        <set id="protocol">kProtocolMouse</set>
+                    </quick_selection>
+                    <default>QS_INTERFACE_HID_MOUSE</default>
+                </quick_selections>
+                <reference id="interface_name" type="interface_name_t" label="Custom interface name"/>
+                <reference id="implementation" type="implementation_hid_t" label="Generate class implementation code"/>
+                <reference id="subclass" type="subclass_hid_t" label="Subclass"/> 
+                <reference id="protocol" type="protocol_hid_t" label="Protocol"/> 
+                <array id="endpoints" type="endpoint_t" label="Endpoints" options="ShowContentAs=TABLE;UI_BORDER_HIDDEN;UI_ARRAY_REORDER" key_selector_expr="x -> x.generateEndpointKey($parent)" available="$this.getMode() == `device`">
+                    <validation>
+                        <constraint cond_expr="$this.getSize() &lt; 2" when_expr="$parent.implementation.getEnumItemId() == `kImplementationKeyboard` || $parent.implementation.getEnumItemId() == `kImplementationMouse`" level="warning" description="Only the first endpoint will be used in the generated implementation code"/>
+                        <constraint cond_expr="$this.getSize() &gt; 0" when_expr="$parent.protocol.getEnumItemId() == `kProtocolKeyboard`" level="error" description="At least one endpoint is required for keyboard protocol"/>
+                        <constraint cond_expr="$this.get(0).getSetting(`direction`).getEnumItemId() == `kIn` &amp;&amp; $this.get(0).getSetting(`transfer_type`).getEnumItemId() == `kInterrupt`" when_expr="$parent.protocol.getEnumItemId() == `kProtocolKeyboard`" level="error" description="First endpoint is required to be interrupt IN endpoint for keyboard protocol"/>
+                        <constraint cond_expr="$this.getSize() &gt; 0" when_expr="$parent.protocol.getEnumItemId() == `kProtocolMouse`" level="error" description="At least one endpoint is required for mouse protocol"/>
+                        <constraint cond_expr="$this.get(0).getSetting(`direction`).getEnumItemId() == `kIn` &amp;&amp; $this.get(0).getSetting(`transfer_type`).getEnumItemId() == `kInterrupt`" when_expr="$parent.protocol.getEnumItemId() == `kProtocolMouse`" level="error" description="First endpoint is required to be interrupt IN endpoint for mouse protocol"/>
+                        <constraint cond_expr="$this.getSize() &gt; 1" when_expr="$parent.implementation.getEnumItemId() == `kImplementationGeneric`" level="error" description="At least two endpoints are required for generated implementation code"/>
+                        <constraint cond_expr="($this.getSize() &lt; 3)" when_expr="$parent.implementation.getEnumItemId() == `kImplementationGeneric`" level="warning" description="Only the first two endpoints will be used in the generated implementation code"/>
+                        <constraint cond_expr="($this.get(0).getSetting(`direction`).getEnumItemId() == `kIn` &amp;&amp; $this.get(1).getSetting(`direction`).getEnumItemId() == `kOut`) &amp;&amp; ($this.get(0).getSetting(`transfer_type`).getEnumItemId() == `kInterrupt` &amp;&amp; $this.get(1).getSetting(`transfer_type`).getEnumItemId() == `kInterrupt`)" when_expr="$parent.implementation.getEnumItemId() == `kImplementationGeneric`" level="error" description="First endpoint is required to be interrupt IN and second endpoint is required to be interrupt OUT, for the generated implementation code"/>
+                    </validation>
+                </array>
+                <array id="report_descriptor" type="report_descriptor_entry_t" label="Report descriptor" options="ShowContentAs=TABLE;UI_BORDER_HIDDEN;UI_TABLE_COLUMN_WIDTHS=-1,12,-1,33;UI_ARRAY_REORDER" available="$this.getMode() == `device`">
+                    <validation>
+                        <constraint cond_expr="$this.getSize() != 0" level="error" description="Report descriptor cannot be empty"/>
+                    </validation>
+                </array>
+            </struct>
+            <struct id="setting_msc_t" from="_setting_msc_t">
+                <quick_selections>
+                    <quick_selection id="QS_INTERFACE_MSC_NONE" label="None">
+                        <set id="interface_name">MSC</set>
+                        <set id="implementation">kImplementationNone</set>
+                        <set id="subclass">kSubclassScsi</set>
+                        <set id="protocol">kProtocolBbb</set>
+                    </quick_selection>
+                    <quick_selection id="QS_INTERFACE_MSC_RAM_DISK" label="RAM disk (bare metal)" available="$this.getMode() == `device`">
+                        <set id="interface_name">MSC RAM Disk</set>
+                        <set id="implementation">kImplementationRamDisk</set>
+                        <set id="subclass">kSubclassScsi</set>
+                        <set id="protocol">kProtocolBbb</set>
+                        <set id="endpoints.0.direction">kIn</set>
+                        <set id="endpoints.0.transfer_type">kBulk</set>
+                        <set id="endpoints.0.max_packet_size_fs">k64</set>
+                        <set id="endpoints.0.polling_interval_fs">0</set>
+                        <set id="endpoints.0.max_packet_size_hs">k512</set>
+                        <set id="endpoints.0.polling_interval_hs">0</set>
+                        <set id="endpoints.1.direction">kOut</set>
+                        <set id="endpoints.1.transfer_type">kBulk</set>
+                        <set id="endpoints.1.max_packet_size_fs">k64</set>
+                        <set id="endpoints.1.polling_interval_fs">0</set>
+                        <set id="endpoints.1.max_packet_size_hs">k512</set>
+                        <set id="endpoints.1.polling_interval_hs">0</set>
+                    </quick_selection>
+                    <default>QS_INTERFACE_MSC_RAM_DISK</default>
+                </quick_selections>
+                <reference id="interface_name" type="interface_name_t" label="Custom interface name"/>
+                <reference id="implementation" type="implementation_msc_t" label="Generate class implementation code"/>
+                <reference id="subclass" type="subclass_msc_t" label="Subclass"/> 
+                <reference id="protocol" type="protocol_msc_t" label="Protocol"/> 
+                <array id="endpoints" type="endpoint_t" label="Endpoints" options="ShowContentAs=TABLE;UI_ARRAY_REORDER" key_selector_expr="x -> x.generateEndpointKey($parent)" available="$this.getMode() == `device`">
+                    <validation>
+                        <constraint cond_expr="$this.countEndpoints(`kBulk`, `kIn`)  &gt; 0" when_expr="$parent.protocol.getEnumItemId() == `kProtocolBbb`" level="error" description="At least one bulk IN is required for bulk-only transport protocol."/>
+                        <constraint cond_expr="$this.countEndpoints(`kBulk`, `kOut`)  &gt; 0" when_expr="$parent.protocol.getEnumItemId() == `kProtocolBbb`" level="error" description="At least one bulk OUT is required for bulk-only transport protocol."/>
+                        <constraint cond_expr="$this.getSize() &lt;= 2" when_expr="$parent.protocol.getEnumItemId() == `kProtocolBbb`" level="error" description="Only one bulk IN and one bulk OUT endpoint are allowed in bulk-only transport protocol."/>
+                    </validation>
+                </array>
+            </struct>
+            <struct id="setting_phdc_t" from="_setting_phdc_t">
+                <quick_selections>
+                    <quick_selection id="QS_INTERFACE_PHDC_NONE" label="None">
+                        <set id="interface_name">PHDC</set>
+                        <set id="implementation">kImplementationNone</set>
+                        <set id="subclass">kSubclassNone</set>
+                        <set id="protocol">kProtocolNone</set>
+                    </quick_selection>
+                    <quick_selection id="QS_INTERFACE_PHDC_WEIGHT_SCALE" label="Weight scale (bare metal)">
+                        <set id="interface_name">PHDC Weight scale</set>
+                        <set id="implementation">kImplementationWeightScale</set>
+                        <set id="subclass">kSubclassNone</set>
+                        <set id="protocol">kProtocolNone</set>
+                        <set id="endpoints.0.direction">kIn</set>
+                        <set id="endpoints.0.transfer_type">kBulk</set>
+                        <set id="endpoints.0.max_packet_size_fs">k64</set>
+                        <set id="endpoints.0.polling_interval_fs">0</set>
+                        <set id="endpoints.0.max_packet_size_hs">k64</set>
+                        <set id="endpoints.0.polling_interval_hs">0</set>
+                        <set id="endpoints.1.direction">kOut</set>
+                        <set id="endpoints.1.transfer_type">kBulk</set>
+                        <set id="endpoints.1.max_packet_size_fs">k64</set>
+                        <set id="endpoints.1.polling_interval_fs">0</set>
+                        <set id="endpoints.1.max_packet_size_hs">k64</set>
+                        <set id="endpoints.1.polling_interval_hs">0</set>
+                        <set id="endpoints.2.transfer_type">kInterrupt</set>
+                        <set id="endpoints.2.max_packet_size_fs">k8</set>
+                        <set id="endpoints.2.polling_interval_fs">1</set>
+                        <set id="endpoints.2.max_packet_size_hs">k8</set>
+                        <set id="endpoints.2.polling_interval_hs">4</set>
+                    </quick_selection>
+                    <default>QS_INTERFACE_PHDC_WEIGHT_SCALE</default>
+                </quick_selections>
+                <reference id="interface_name" type="interface_name_t" label="Custom interface name"/>
+                <reference id="implementation" type="implementation_phdc_t" label="Generate class implementation code"/>
+                <reference id="subclass" type="subclass_phdc_t" label="Subclass"/> 
+                <reference id="protocol" type="protocol_phdc_t" label="Protocol"/> 
+                <array id="endpoints" type="endpoint_t" label="Endpoints" options="ShowContentAs=TABLE;UI_BORDER_HIDDEN;UI_ARRAY_REORDER" key_selector_expr="x -> x.generateEndpointKey($parent)" available="$this.getMode() == `device`">
+                    <validation>
+                        <constraint cond_expr="$this.countEndpoints(`kBulk`,`kIn`) &gt; 0" level="error" description="PHDC class must implement at least one Bulk IN endpoint"/>
+                        <constraint cond_expr="$this.countEndpoints(`kBulk`,`kOut`) &gt; 0" level="error" description="PHDC class must implement at least one Bulk OUT endpoint"/>
+                        <constraint cond_expr="$this.countEndpoints(`kInterrupt`,`kIn`) &gt; 0" when_expr="$parent.implementation.getEnumItemId() == `kImplementationWeightScale`" level="error" description="Selected implementation requires one Interrupt IN endpoint"/>
+                        <constraint cond_expr="$this.getSize() &lt; 4" when_expr="$parent.implementation.getEnumItemId() == `kImplementationWeightScale`" level="warning" description="Only the first Bulk IN, Bulk OUT and Interrupt IN endpoints will be used in the generated implementation code"/>
+                    </validation>
+                </array>
+            </struct>
+            <struct id="setting_printer_t" from="_setting_printer_t">
+                <quick_selections>
+                    <quick_selection id="QS_INTERFACE_PRINTER_NONE" label="None">
+                        <set id="interface_name">Printer</set>
+                        <set id="implementation">kImplementationNone</set>
+                        <set id="subclass">kSubclassPrinters</set>
+                        <set id="protocol">kProtocolBiDirectional</set>
+                    </quick_selection>
+                    <quick_selection id="QS_INTERFACE_PRINTER_PLAIN_TEXT" label="Plain text (bare metal)">
+                        <set id="interface_name">Printer</set>
+                        <set id="implementation">kImplementationPlainTextPrinter</set>
+                        <set id="subclass">kSubclassPrinters</set>
+                        <set id="protocol">kProtocolBiDirectional</set>
+                        <set id="endpoints.0.direction">kOut</set>
+                        <set id="endpoints.0.transfer_type">kBulk</set>
+                        <set id="endpoints.0.max_packet_size_fs">k64</set>
+                        <set id="endpoints.0.polling_interval_fs">4</set>
+                        <set id="endpoints.0.max_packet_size_hs">k64</set>
+                        <set id="endpoints.0.polling_interval_hs">6</set>
+                        <set id="endpoints.1.direction">kIn</set>
+                        <set id="endpoints.1.transfer_type">kBulk</set>
+                        <set id="endpoints.1.max_packet_size_fs">k64</set>
+                        <set id="endpoints.1.polling_interval_fs">4</set>
+                        <set id="endpoints.1.max_packet_size_hs">k64</set>
+                        <set id="endpoints.1.polling_interval_hs">6</set>
+                    </quick_selection>
+                    <default>QS_INTERFACE_PRINTER_PLAIN_TEXT</default>
+                </quick_selections>
+                <reference id="interface_name" type="interface_name_t" label="Custom interface name"/>
+                <reference id="implementation" type="implementation_printer_t" label="Generate class implementation code"/>
+                <reference id="subclass" type="subclass_printer_t" label="Subclass"/> 
+                <reference id="protocol" type="protocol_printer_t" label="Protocol"/> 
+                <array id="endpoints" type="endpoint_t" label="Endpoints" options="ShowContentAs=TABLE;UI_BORDER_HIDDEN;UI_ARRAY_REORDER" key_selector_expr="x -> x.generateEndpointKey($parent)" available="$this.getMode() == `device`">
+                    <validation>
+                        <constraint cond_expr="$this.getSize() &lt; 3" level="error" description="Only one OUT and one IN endpoint are supported by the printer class."/>
+                        <constraint cond_expr="!($this.countEndpoints(`kBulk`,`kOut`) == 0)" level="error" description="At least one OUT endpoint is required for the printer class."/>
+                        <constraint cond_expr="($this.countEndpoints(`kBulk`,`kOut`) &lt;= 1)" level="error" description="Only one OUT endpoint is supported by the printer class."/>
+                        <constraint cond_expr="($this.countEndpoints(`kBulk`,`kIn`) == 1)" when_expr="($parent.protocol.getEnumItemId() == `kProtocolBiDirectional`) &amp;&amp; ($this.countEndpoints(`kBulk`,`kOut`) == 1) &amp;&amp; ($this.getSize() &lt; 3)" level="error" description="One IN and one OUT endpoint are required for bi-directional printer"/>
+                    </validation>
+                </array>
+            </struct>
+            <struct id="interface_setting_t" label="Interface setting" from="_interface_setting">
+                <reference id="interface_class" type="interface_class_t" label="Class"/>
+                <reference id="setting_cic" type="setting_cic_t" label="Use case" available="$parent.interface_class.value() == `kClassCic`"/>
+                <reference id="setting_dic" type="setting_dic_t" label="Use case" available="$parent.interface_class.value() == `kClassDic`"/>
+                <reference id="setting_msc" type="setting_msc_t" label="Use case" available="$parent.interface_class.value() == `kClassMsc`"/>
+                <reference id="setting_hid" type="setting_hid_t" label="Use case" available="$parent.interface_class.value() == `kClassHid`"/>
+                <reference id="setting_phdc" type="setting_phdc_t" label="Use case" available="$parent.interface_class.value() == `kClassPhdc`"/>
+                <reference id="setting_printer" type="setting_printer_t" label="Use case" available="$parent.interface_class.value() == `kClassPrinter`"/>
+            </struct>
+            <array id="interfaces_t" type="interface_setting_t" label="Supported interfaces" options="ShowContentAs=MASTER_DETAIL;UI_ARRAY_REORDER;UI_TABLE_COLUMN_WIDTHS=12" key_selector_expr="x -> x.generateInterfaceKey()"/>
+        </user_types>
+        <settings/>
+        <validation/>
+        <quick_selections/>
+    </config_set>
+    <config_set id="hostSettings" label="Host role">
+        <description>Host mode settings</description>
+        <generated_types/>
+        <user_types/>
+        <settings>
+            <variable id="hasDevicePhdc" value="hasModePhdc(`device`)"/>
+            <variable id="ieee11073TypesRequired" value="$parent.interfaces.isIeee11073TypesRequired()"/>
+            <variable id="isIeee11073TypesRequiredInDevice" value="isIeee11073TypesRequiredInMode(`device`)"/>
+            <variable id="high_speed_supported" value="$instance.getPeripheral() != `USB0`"></variable>
+            <reference id="control_max_packet_size_fs" type="control_max_packet_size_fs_t" config_set_id="commonSettings" options="remove_from_struct_init" available="false"/><!-- used for max_packet_size_fs dynamic enum only -->
+            <reference id="bulk_max_packet_size_fs" type="bulk_max_packet_size_fs_t" config_set_id="commonSettings" options="remove_from_struct_init" available="false"/><!-- used for max_packet_size_fs dynamic enum only -->
+            <reference id="interrupt_max_packet_size_fs" type="interrupt_max_packet_size_fs_t" config_set_id="commonSettings" options="remove_from_struct_init" available="false"/><!-- used for max_packet_size_fs dynamic enum only -->
+            <reference id="isochronous_max_packet_size_fs" type="isochronous_max_packet_size_fs_t" config_set_id="commonSettings" options="remove_from_struct_init" available="false"/><!-- used for max_packet_size_fs dynamic enum only -->
+            <reference id="control_max_packet_size_hs" type="control_max_packet_size_hs_t" config_set_id="commonSettings" options="remove_from_struct_init" available="false"/><!-- used for max_packet_size_hs dynamic enum only -->
+            <reference id="bulk_max_packet_size_hs" type="bulk_max_packet_size_hs_t" config_set_id="commonSettings" options="remove_from_struct_init" available="false"/><!-- used for max_packet_size_hs dynamic enum only -->
+            <reference id="interrupt_max_packet_size_hs" type="interrupt_max_packet_size_hs_t" config_set_id="commonSettings" options="remove_from_struct_init" available="false"/><!-- used for max_packet_size_fs dynamic enum only -->
+            <reference id="isochronous_max_packet_size_hs" type="isochronous_max_packet_size_hs_t" config_set_id="commonSettings" options="remove_from_struct_init" available="false"/><!-- used for max_packet_size_fs dynamic enum only -->
+            <variable id="irq_handler" value="getResource(`interrupts`, `core0`)
+                .filter(
+                    enumItem -> (
+                        enumItem.getSetting(`devices`).searchInArray(
+                            item -> (
+                                (item.getSetting(`id`).getValue() == $instance.getPeripheral()) &amp;&amp; (item.getSetting(`function`).getValue() == `usb`)
+                            )
+                        ) >= 0
+                    )
+                ).getFirst().getSetting(`handler_id`).getValue()"/>
+            <integer id="max_power" label="Max power [mA]" type="uint16_t">
+                <description>Maximum power that can be supplied by the host.</description>
+                <validation>
+                    <constraint cond_expr="$this.value() &gt;= 100" level="error" description="Host must be able to provide at least 100 mA."/>
+                </validation>
+            </integer>
+            <bool id="hub_support" label="HUB support"/>
+            <info id="host_task_call" label="Host task call" value="`USB_HostTasks();`" options="UI_INFO_COPY_BUTTON">
+                <description>Generated polling routine to put inside the while loop of the main() function.</description>
+            </info>
+            <reference id="interfaces" type="interfaces_t" config_set_id="commonSettings"/>
+            <variable id="sharedPeripherals_supported" value="toArray(`NVIC`)"/>
+            <variable id="sharedPeripherals" value="getResource(`interrupts`, $instance.getCoreId()).filter(irqItem -> (irqItem.getSetting(`devices`).size() &gt; 1) &amp;&amp; (irqItem.getSetting(`devices`).anyMatch(item -> (item.getSetting(`id`).getValue() == $instance.getPeripheral())))).map(item -> ((item.getSetting(`devices`).size() > 1) ? (item.getSetting(`devices`).findFirst(dev -> (dev.getSetting(`id`).getValue() != $instance.getPeripheral())).getSetting(`id`).getValue()) : `N/A`)).removeDuplicates(x -> x).filter(dev -> $parent.sharedPeripherals_supported.getValue().noneMatch(i -> (i == dev)))"/>
+        </settings>
+        <validation>
+            <dependency resource_type="SWComponent" resource_id="platform.drivers.sysmpu" level="error" when_expr="featureDefined(`SOC_SYSMPU_COUNT`) &amp;&amp; (getFeature(`SOC_SYSMPU_COUNT`) &gt; 0)" description="&quot;SYSMPU&quot; driver is missing in the project.">
+                <feature name="enabled" evaluation="equal">
+                    <data expr="true"/>
+                </feature>
+            </dependency>
+            <dependency resource_type="SWComponent" resource_id="platform.drivers.power" level="Error" when_expr="featureDefined(`USBHSH_USB_RAM_BASE_ADDRESS`)" description="Component Power is missing in the project.">
+                <feature name="enabled" evaluation="equal">
+                    <data expr="true"/>
+                </feature>
+            </dependency>
+            <dependency resource_type="SWComponent" resource_id="middleware.usb.host_stack" level="Error" description="Component USB host is missing in the project.">
+                <feature name="enabled" evaluation="equal">
+                    <data expr="true"/>
+                </feature>
+            </dependency>
+            <dependency resource_type="SWComponent" resource_id="platform.drivers.common" level="Error" description="&quot;Common&quot; driver is missing in the project.">
+                <feature name="enabled" evaluation="equal">
+                    <data expr="true"/>
+                </feature>
+            </dependency>
+            <dependency resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(), `FunctionClock`)" level="Error" 
+                description_expr="getPeripheralClockDescription($instance.getPeripheral(), `FunctionClock`) + ` (`+ getPeripheralClockSignal($instance.getPeripheral(), `FunctionClock`) +`) is inactive and USB module will not work.`">
+                <feature name="frequency" evaluation="greaterThan">
+                    <data expr="0" unit="Hz" type="Frequency"/>
+                </feature>
+            </dependency>
+            <dependency resource_type="PeripheralUnifiedSignal" level="Error" resource_id_expr="`USBFSH.usb_vbus`" description_expr="msg::message(`err_routed_signal`, `USB_VBUS`, `USBFSH`)" when_expr="queryFeatureAdvanced(`Configuration`, `Processor`, `Series`, false) == `[LPC LPC54000]` &amp;&amp; (($instance.getPeripheral() == `USB0`) || ($instance.getPeripheral() == `USBFSH`))">
+                <feature name="routed" evaluation="equal">
+                    <data expr="true"></data>
+                </feature>
+            </dependency>
+            <dependency resource_type="PeripheralUnifiedSignal" level="Error" resource_id_expr="`USBFSH.usb_portpwrn`" description_expr="msg::message(`err_routed_signal`, `USB_PORTPWRN`, `USBFSH`)" when_expr="queryFeatureAdvanced(`Configuration`, `Processor`, `Series`, false) == `[LPC LPC54000]` &amp;&amp; $instance.getPeripheral() == `USBFSH`">
+                <feature name="routed" evaluation="equal">
+                    <data expr="true"></data>
+                </feature>
+            </dependency>
+            <dependency resource_type="PeripheralUnifiedSignal" level="Error" resource_id_expr="`USBHSH.usb_vbus`" description_expr="msg::message(`err_routed_signal`, `USB_VBUS`, `USBHSH`)" when_expr="queryFeatureAdvanced(`Configuration`, `Processor`, `Series`, false) == `[LPC LPC54000]` &amp;&amp; (($instance.getPeripheral() == `USBHSD`) || ($instance.getPeripheral() == `USBHSH`))">
+                <feature name="routed" evaluation="equal">
+                    <data expr="true"></data>
+                </feature>
+            </dependency>
+            <dependency resource_type="PeripheralUnifiedSignal" level="Error" resource_id_expr="`USBHSH.usb_portpwrn`" description_expr="msg::message(`err_routed_signal`, `USB_PORTPWRN`, `USBHSH`)" when_expr="queryFeatureAdvanced(`Configuration`, `Processor`, `Series`, false) == `[LPC LPC54000]` &amp;&amp; $instance.getPeripheral() == `USBHSH`">
+                <feature name="routed" evaluation="equal">
+                    <data expr="true"></data>
+                </feature>
+            </dependency>
+            <constraint cond_expr="$root.reduce(0, (acc, group) -> acc + group.countOccurrences(component -> ((component.getParent().getId() == `usb`) &amp;&amp; (component.getMode() == `host`) &amp;&amp; component.isEnabled()))) &lt; 2" level="error" description="Only one host instance of the USB component is allowed in the configuration"/>
+            <constraint cond_expr="!(($this.getMode() == `host`) &amp;&amp; ($instance.getPeripheral() == `USB0`))" when_expr="featureDefined(`USBFSH_USB_RAM_BASE_ADDRESS`)" level="error" description="Selected mode: Host cannot use peripheral: USB0."/>
+            <constraint cond_expr="!((getFeature(`USB_KHCI_HOST_ENABLED`) == 0) &amp;&amp; ($this.getMode() == `host`) &amp;&amp; ($instance.getPeripheral() == `USB0`))" when_expr="featureDefined(`USB_KHCI_HOST_ENABLED`)" level="error" description="Selected mode: Host cannot use peripheral: USB0."/>
+            <constraint when_expr="$configSet.sharedPeripherals.getValue().size() &gt; 0" cond_expr="$configSet.sharedPeripherals.getValue().noneMatch(peripheral -> $components.system.#global.all_enabled_instances.getValue().anyMatch(i -> (i.getPeripheral() == peripheral)))" level="error"
+                description_expr="`The selected ` + $instance.getPeripheral() + ` peripheral of this component has shared resources with ` + $configSet.sharedPeripherals.getValue().reduce(``, (last, i) -> (last + ((last == ``) ? i : `, ` + i))) + ` peripheral(s). Select different peripheral.`"/>
+        </validation>
+        <quick_selections>
+            <quick_selection id="QS_HOST_DEFAULT" label="None">
+                <set id="max_power">500</set>
+                <set id="hub_support">true</set>
+            </quick_selection>
+            <quick_selection id="QS_HOST_CDC_VCOM" label="CDC VCOM (bare metal)">
+                <set id="max_power">500</set>
+                <set id="hub_support">true</set>
+                <set id="interfaces.0.interface_class">kClassCic</set>
+                <set id="interfaces.0.setting_cic">QS_INTERFACE_CIC_VCOM</set>                
+                <set id="interfaces.1.interface_class">kClassDic</set>
+                <set id="interfaces.1.setting_dic">QS_INTERFACE_DIC_VCOM</set>                
+            </quick_selection>
+            <quick_selection id="QS_HOST_HID_KEYBOARD" label="HID Keyboard (bare metal)">
+                <set id="max_power">500</set>
+                <set id="hub_support">true</set>
+                <set id="interfaces.0.interface_class">kClassHid</set>
+                <set id="interfaces.0.setting_hid">QS_INTERFACE_HID_KEYBOARD</set>                
+            </quick_selection>
+            <quick_selection id="QS_HOST_HID_MOUSE" label="HID Mouse (bare metal)">
+                <set id="max_power">500</set>
+                <set id="hub_support">true</set>
+                <set id="interfaces.0.interface_class">kClassHid</set>
+                <set id="interfaces.0.setting_hid">QS_INTERFACE_HID_MOUSE</set>                
+            </quick_selection>
+            <quick_selection id="QS_HOST_HID_GENERIC" label="HID Generic (bare metal)">
+                <set id="max_power">500</set>
+                <set id="hub_support">true</set>
+                <set id="interfaces.0.interface_class">kClassHid</set>
+                <set id="interfaces.0.setting_hid">QS_INTERFACE_HID_GENERIC</set>                
+            </quick_selection>
+            <quick_selection id="QS_DEVICE_PRINTER_PLAIN_TEXT" label="Printer plain text (bare metal)">
+                <set id="max_power">500</set>
+                <set id="hub_support">true</set>
+                <set id="interfaces.0.interface_class">kClassPrinter</set>
+                <set id="interfaces.0.setting_printer">QS_INTERFACE_PRINTER_PLAIN_TEXT</set>                
+            </quick_selection>
+            <default>QS_HOST_DEFAULT</default>
+        </quick_selections>
+    </config_set>
+    <config_set id="deviceSetting" label="Device role">
+        <description>Device mode settings</description>
+        <generated_types/>
+        <user_types>
+            <!-- Features type mapping array for HID reprot descritor: 
+                label: uint - unsigned integer, int - signed integer, N/A - no value appliacable
+                value: maximum value (in usingned hexadecimal format)
+            -->
+            <enum id="report_descriptor_features_t" from="_report_descriptor_item">
+                <item id="kCollection" label="uint" value="0x7F"/>
+                <item id="kDelimiter" label="uint" value="0x1"/> <!-- only two values: 1 = open set, 0 = close set -->
+                <item id="kDesignator_Index" label="int" value="0xFFFFFFFF"/>
+                <item id="kDesignator_Maximum" label="int" value="0xFFFFFFFF"/>
+                <item id="kDesignator_Minimum" label="int"  value="0xFFFFFFFF"/>
+                <item id="kEnd_Collection" label="N/A" value="0"/>
+                <item id="kFeature" label="uint"  value="0x1FF"/>
+                <item id="kInput" label="uint"  value="0x1FF"/>
+                <item id="kLogical_Maximum" label="int" value="0xFFFFFFFF"/>
+                <item id="kLogical_Minimum" label="int"  value="0xFFFFFFFF"/>
+                <item id="kOutput" label="uint"  value="0x1FF"/>
+                <item id="kPhysical_Maximum" label="int" value="0xFFFFFFFF"/>
+                <item id="kPhysical_Minimum" label="int"  value="0xFFFFFFFF"/>
+                <item id="kPush" label="N/A"  value="0"/>
+                <item id="kPop" label="N/A"  value="0"/>
+                <item id="kReport_Count" label="uint" value="0xFFFFFFFF"/>
+                <item id="kReport_Id" label="uint" value="0xFFFFFFFF"/>
+                <item id="kReport_Size" label="uint"  value="0xFFFFFFFF"/>
+                <item id="kString_Index" label="int" value="0xFFFFFFFF"/>
+                <item id="kString_Maximum" label="int"  value="0xFFFFFFFF"/>
+                <item id="kString_Minimum" label="int"  value="0xFFFFFFFF"/>
+                <item id="kUnit" label="uint"  value="0xFFFFFFFF"/>
+                <item id="kUnit_Exponent" label="uint" value="0xF"/>
+                <item id="kUsage" label="uint"  value="0xFFFF"/>
+                <item id="kUsage_Maximum" label="int" value="0xFFFFFFFF"/>
+                <item id="kUsage_Minimum" label="int" value="0xFFFFFFFF"/>
+                <item id="kUsage_Page" label="uint" value="0xFFFFFFFF"/>
+            </enum>
+        </user_types>
+        <settings>
+            <variable id="hasHostPhdc" value="hasModePhdc(`host`)"/>
+            <variable id="ieee11073TypesRequired" value="$parent.interfaces.isIeee11073TypesRequired()"/>
+            <variable id="isIeee11073TypesRequiredInHost" value="isIeee11073TypesRequiredInMode(`host`)"/>
+            <variable id="high_speed_supported" value="$instance.getPeripheral() != `USB0`"></variable>
+            <reference id="control_max_packet_size_fs" type="control_max_packet_size_fs_t" config_set_id="commonSettings" options="remove_from_struct_init" available="false"/><!-- used for max_packet_size_fs dynamic enum only -->
+            <reference id="bulk_max_packet_size_fs" type="bulk_max_packet_size_fs_t" config_set_id="commonSettings" options="remove_from_struct_init" available="false"/><!-- used for max_packet_size_fs dynamic enum only -->
+            <reference id="interrupt_max_packet_size_fs" type="interrupt_max_packet_size_fs_t" config_set_id="commonSettings" options="remove_from_struct_init" available="false"/><!-- used for max_packet_size_fs dynamic enum only -->
+            <reference id="isochronous_max_packet_size_fs" type="isochronous_max_packet_size_fs_t" config_set_id="commonSettings" options="remove_from_struct_init" available="false"/><!-- used for max_packet_size_fs dynamic enum only -->
+            <reference id="control_max_packet_size_hs" type="control_max_packet_size_hs_t" config_set_id="commonSettings" options="remove_from_struct_init" available="false"/><!-- used for max_packet_size_hs dynamic enum only -->
+            <reference id="bulk_max_packet_size_hs" type="bulk_max_packet_size_hs_t" config_set_id="commonSettings" options="remove_from_struct_init" available="false"/><!-- used for max_packet_size_hs dynamic enum only -->
+            <reference id="interrupt_max_packet_size_hs" type="interrupt_max_packet_size_hs_t" config_set_id="commonSettings" options="remove_from_struct_init" available="false"/><!-- used for max_packet_size_fs dynamic enum only -->
+            <reference id="isochronous_max_packet_size_hs" type="isochronous_max_packet_size_hs_t" config_set_id="commonSettings" options="remove_from_struct_init" available="false"/><!-- used for max_packet_size_fs dynamic enum only -->
+            <variable id="irq_handler" value="getResource(`interrupts`, `core0`)
+                .filter(
+                    enumItem -> (
+                        enumItem.getSetting(`devices`).searchInArray(
+                            item -> (
+                                (item.getSetting(`id`).getValue() == $instance.getPeripheral()) &amp;&amp; (item.getSetting(`function`).getValue() == `usb`)
+                            )
+                        ) >= 0
+                    )
+                ).getFirst().getSetting(`handler_id`).getValue()"/>
+            <integer id="vendor_id" type="uint16_t" label="Vendor ID" enable="" min_expr="0x0000" max_expr="0xFFFF">
+                <description>Vendor ID is assigned by the USB-IF.</description>
+            </integer>
+            <integer id="product_id" type="uint16_t" label="Product ID" enable="" min_expr="0x0000" max_expr="0xFFFF">
+                <description>Product ID is assigned by the manufacturer.</description>
+            </integer>
+            <string id="manufacturer_string" label="Manufacturer">
+                <description>Maximum length is 126 characters</description>
+                <validation>
+                    <constraint cond_expr="$this.getValue().getLength() != 0" level="error" description="Manufacturer string must not be empty"/>
+                    <constraint cond_expr="$this.getValue().getLength() &lt; 127" level="error" description="Manufacturer string is too long (maximum length is 126 characters)"/>
+                </validation>
+            </string>
+            <string id="product_string" label="Product">
+                <description>Maximum length is 126 characters</description>
+                <validation>
+                    <constraint cond_expr="$this.getValue().getLength() != 0" level="error" description="Product string must not be empty"/>
+                    <constraint cond_expr="$this.getValue().getLength() &lt; 127" level="error" description="Product string is too long (maximum length is 126 characters)"/>
+                </validation>
+            </string>
+            <bool id="self_powered" label="Self-powered" />
+            <integer id="max_power" label="Max power [mA]" type="uint16_t">
+                <description>Requested power from Host.</description>
+                <validation>
+                    <constraint cond_expr="$this.value() &lt;= 500" level="error" description="USB 2.0 compliant device can request a maximum of 500 mA."/>
+                    <constraint cond_expr="($this.value() &gt; 0) || $parent.self_powered.value()" level="error" description="Max power can be set to zero only when the device is Self-powered."/>
+                    <constraint cond_expr="($this.value() &amp; 1) == 0" level="error" description="Power must be specified in increments of 2 mA."/>
+                </validation>
+            </integer>
+            <info id="device_task_call" label="Device task call" value="`USB_DeviceTasks();`" options="UI_INFO_COPY_BUTTON">
+                <description>Generated polling routine to put inside the while loop of the main() function.</description>
+            </info>
+            <variable id="max_endpoint_count" value="endpointCount()" ></variable>
+            <variable id="endpoint_count" value="$configSet.interfaces.getHighestEndpointNumber()" available="isEndpointCountKnown()"/>
+            <variable id="endpoint_count_in" value="$configSet.interfaces.countInterfaceEndpointsByDirection(-1, `kIn`)" available="isEndpointCountKnown()"/>
+            <variable id="endpoint_count_out" value="$configSet.interfaces.countInterfaceEndpointsByDirection(-1, `kOut`)" available="isEndpointCountKnown()"/>
+            <info id="endpoint_count_info" label="Remaining endpoints" 
+                value=" (($configSet.max_endpoint_count.getValue() &gt;= $configSet.endpoint_count_in.getValue()) ? ($configSet.max_endpoint_count.getValue() - $configSet.endpoint_count_in.getValue()) : 0) + ` In, ` + (($configSet.max_endpoint_count.getValue() &gt;= $configSet.endpoint_count_out.getValue()) ? ($configSet.max_endpoint_count.getValue() - $configSet.endpoint_count_out.getValue()) : 0) + ` Out`"
+                available="isEndpointCountKnown()">
+                <description>Number of remaining input and output endpoints that are supported by this USB peripheral and which can be configured and used in interfaces.</description>
+            </info>
+            <variable id="highest_endpoint_number" value="$configSet.endpoint_count.getValue()"/>
+            <reference id="interfaces" type="interfaces_t" config_set_id="commonSettings">
+                <validation>
+                    <constraint when_expr="isEndpointCountKnown()" cond_expr="$parent.endpoint_count_in.getValue() &lt;= $configSet.max_endpoint_count.getValue()" level="error" description_expr="`Maximum number of input endpoints (` + $configSet.max_endpoint_count.getValue() + `) is exceeded for the ` + $instance.getPeripheral() + ` peripheral`"/>
+                    <constraint when_expr="isEndpointCountKnown()" cond_expr="$parent.endpoint_count_out.getValue() &lt;= $configSet.max_endpoint_count.getValue()" level="error" description_expr="`Maximum number of output endpoints (` + $configSet.max_endpoint_count.getValue() + `) is exceeded for the ` + $instance.getPeripheral() + ` peripheral`"/>
+                </validation>
+            </reference>
+            <variable id="sharedPeripherals_supported" value="toArray(`NVIC`)"/>
+            <variable id="sharedPeripherals" value="getResource(`interrupts`, $instance.getCoreId()).filter(irqItem -> (irqItem.getSetting(`devices`).size() &gt; 1) &amp;&amp; (irqItem.getSetting(`devices`).anyMatch(item -> (item.getSetting(`id`).getValue() == $instance.getPeripheral())))).map(item -> ((item.getSetting(`devices`).size() > 1) ? (item.getSetting(`devices`).findFirst(dev -> (dev.getSetting(`id`).getValue() != $instance.getPeripheral())).getSetting(`id`).getValue()) : `N/A`)).removeDuplicates(x -> x).filter(dev -> $parent.sharedPeripherals_supported.getValue().noneMatch(i -> (i == dev)))"/>
+        </settings>
+        <fragment_defs/>
+        <code/>
+        <validation>
+            <dependency resource_type="SWComponent" resource_id="platform.drivers.sysmpu" level="error" when_expr="featureDefined(`SOC_SYSMPU_COUNT`) &amp;&amp; (getFeature(`SOC_SYSMPU_COUNT`) &gt; 0)" description="&quot;SYSMPU&quot; driver is missing in the project.">
+                <feature name="enabled" evaluation="equal">
+                    <data expr="true"/>
+                </feature>
+            </dependency>
+            <dependency resource_type="SWComponent" resource_id="platform.drivers.mrt" level="Error" when_expr="featureDefined(`USBHSD_EP_NUM`) &amp;&amp; ($instance.getPeripheral() != `USB0`)" description="Component MRT is missing in the project.">
+                <feature name="enabled" evaluation="equal">
+                    <data expr="true"/>
+                </feature>
+            </dependency>
+            <dependency resource_type="SWComponent" resource_id="platform.drivers.power" level="Error" when_expr="featureDefined(`USBHSD_EP_NUM`)" description="Component Power is missing in the project.">
+                <feature name="enabled" evaluation="equal">
+                    <data expr="true"/>
+                </feature>
+            </dependency>
+            <dependency resource_type="SWComponent" resource_id="middleware.usb.device_stack" level="Error" description="Component USB device is missing in the project.">
+                <feature name="enabled" evaluation="equal">
+                    <data expr="true"/>
+                </feature>
+            </dependency>
+            <dependency resource_type="SWComponent" resource_id="platform.drivers.common" level="Error" description="&quot;Common&quot; driver is missing in the project.">
+                <feature name="enabled" evaluation="equal">
+                    <data expr="true"/>
+                </feature>
+            </dependency>
+            <dependency resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(), `FunctionClock`)" level="Error" 
+                description_expr="getPeripheralClockDescription($instance.getPeripheral(), `FunctionClock`) + ` (`+ getPeripheralClockSignal($instance.getPeripheral(), `FunctionClock`) +`) is inactive and USB module will not work.`">
+                <feature name="frequency" evaluation="greaterThan">
+                    <data expr="0" unit="Hz" type="Frequency"/>
+                </feature>
+            </dependency>
+            <dependency resource_type="PeripheralUnifiedSignal" level="Error" resource_id_expr="`USBFSH.usb_vbus`" description_expr="msg::message(`err_routed_signal`, `USB_VBUS`, `USBFSH`)" when_expr="queryFeatureAdvanced(`Configuration`, `Processor`, `Series`, false) == `[LPC LPC54000]` &amp;&amp; $instance.getPeripheral() == `USB0`">
+                <feature name="routed" evaluation="equal">
+                    <data expr="true"></data>
+                </feature>
+            </dependency>
+            <constraint cond_expr="$root.reduce(0, (acc, group) -> acc + group.countOccurrences(component -> ((component.getParent().getId() == `usb`) &amp;&amp; (component.getMode() == `device`) &amp;&amp; component.isEnabled()))) &lt; 2" level="error" description="Only one device instance of the USB component is allowed in the configuration"/>
+            <constraint when_expr="$configSet.sharedPeripherals.getValue().size() &gt; 0" cond_expr="$configSet.sharedPeripherals.getValue().noneMatch(peripheral -> $components.system.#global.all_enabled_instances.getValue().anyMatch(i -> (i.getPeripheral() == peripheral)))" level="error"
+                description_expr="`The selected ` + $instance.getPeripheral() + ` peripheral of this component has shared resources with ` + $configSet.sharedPeripherals.getValue().reduce(``, (last, i) -> (last + ((last == ``) ? i : `, ` + i))) + ` peripheral(s). Select different peripheral.`"/>
+        </validation>
+        <quick_selections>
+            <quick_selection id="QS_DEVICE_DEFAULT" label="None">
+                <set id="vendor_id">0x1FC9</set>
+                <set id="product_id">0x0090</set>
+                <set id="manufacturer_string">NXP</set>
+                <set id="product_string">Product</set>
+                <set id="self_powered">false</set>
+                <set id="max_power">100</set>
+            </quick_selection>
+            <quick_selection id="QS_DEVICE_CDC_VCOM" label="CDC VCOM (bare metal)">
+                <set id="vendor_id">0x1FC9</set>
+                <set id="product_id">0x0094</set>
+                <set id="manufacturer_string">NXP</set>
+                <set id="product_string">VCOM</set>
+                <set id="self_powered">true</set>
+                <set id="max_power">100</set>
+                <set id="interfaces.0.interface_class">kClassCic</set>
+                <set id="interfaces.0.setting_cic">QS_INTERFACE_CIC_VCOM</set>                
+                <set id="interfaces.1.interface_class">kClassDic</set>
+                <set id="interfaces.1.setting_dic">QS_INTERFACE_DIC_VCOM</set>                
+            </quick_selection>
+            <quick_selection id="QS_DEVICE_HID_GENERIC" label="HID Generic (bare metal)">
+                <set id="vendor_id">0x1FC9</set>
+                <set id="product_id">0x00A2</set>
+                <set id="manufacturer_string">NXP</set>
+                <set id="product_string">Generic</set>
+                <set id="self_powered">false</set>
+                <set id="max_power">100</set>
+                <set id="interfaces.0.interface_class">kClassHid</set>
+                <set id="interfaces.0.setting_hid">QS_INTERFACE_HID_GENERIC</set>                
+            </quick_selection>
+            <quick_selection id="QS_DEVICE_HID_KEYBOARD" label="HID Keyboard (bare metal)">
+                <set id="vendor_id">0x1FC9</set>
+                <set id="product_id">0x00A0</set>
+                <set id="manufacturer_string">NXP</set>
+                <set id="product_string">Keyboard</set>
+                <set id="self_powered">false</set>
+                <set id="max_power">100</set>
+                <set id="interfaces.0.interface_class">kClassHid</set>
+                <set id="interfaces.0.setting_hid">QS_INTERFACE_HID_KEYBOARD</set>                
+            </quick_selection>
+            <quick_selection id="QS_DEVICE_HID_MOUSE" label="HID Mouse (bare metal)">
+                <set id="vendor_id">0x1FC9</set>
+                <set id="product_id">0x0091</set>
+                <set id="manufacturer_string">NXP</set>
+                <set id="product_string">Mouse</set>
+                <set id="self_powered">false</set>
+                <set id="max_power">100</set>
+                <set id="interfaces.0.interface_class">kClassHid</set>
+                <set id="interfaces.0.setting_hid">QS_INTERFACE_HID_MOUSE</set>                
+            </quick_selection>
+            <quick_selection id="QS_DEVICE_MSC_RAM_DISK" label="MSC RAM disk (bare metal)">
+                <set id="vendor_id">0x1FC9</set>
+                <set id="product_id">0x0092</set>
+                <set id="manufacturer_string">NXP</set>
+                <set id="product_string">RAM disk</set>
+                <set id="self_powered">true</set>
+                <set id="max_power">50</set>
+                <set id="interfaces.0.interface_class">kClassMsc</set>
+                <set id="interfaces.0.setting_msc">QS_INTERFACE_MSC_RAM_DISK</set>                
+            </quick_selection>
+            <quick_selection id="QS_DEVICE_PHDC_WEIGHT_SCALE" label="PHDC Weight scale (bare metal)">
+                <set id="vendor_id">0x1FC9</set>
+                <set id="product_id">0x0096</set>
+                <set id="manufacturer_string">NXP</set>
+                <set id="product_string">Weight scale</set>
+                <set id="self_powered">true</set>
+                <set id="max_power">50</set>
+                <set id="interfaces.0.interface_class">kClassPhdc</set>
+                <set id="interfaces.0.setting_phdc">QS_INTERFACE_PHDC_WEIGHT_SCALE</set>                
+            </quick_selection>
+            <quick_selection id="QS_DEVICE_PRINTER_PLAIN_TEXT" label="Printer plain text (bare metal)">
+                <set id="vendor_id">0x1FC9</set>
+                <set id="product_id">0x009B</set>
+                <set id="manufacturer_string">NXP</set>
+                <set id="product_string">Printer</set>
+                <set id="self_powered">true</set>
+                <set id="max_power">50</set>
+                <set id="interfaces.0.interface_class">kClassPrinter</set>
+                <set id="interfaces.0.setting_printer">QS_INTERFACE_PRINTER_PLAIN_TEXT</set>                
+            </quick_selection>
+            <default>QS_DEVICE_DEFAULT</default>
+        </quick_selections>
+    </config_set>
+</component:config_component>

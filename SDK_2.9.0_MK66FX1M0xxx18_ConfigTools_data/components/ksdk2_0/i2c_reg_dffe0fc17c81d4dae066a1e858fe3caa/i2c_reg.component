@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component:config_component
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd"
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0" options="UI_COMPONENT_MODE_HIDDEN"
+   id="i2c_reg" label="I2C" category="Register init" registers_init="true">
+   <description>Inter-Integrated Circuit (I2C)</description>
+   <mode id="general" label="General">
+      <description>General I2C initialization</description>
+      <config_set_refs>
+         <config_set_ref>generalConfig</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>I2C</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="generalConfig" label="General configuration">
+      <description>General configuration</description>
+      <generated_types/>
+       <user_types>
+           <struct id="interruptSources_t" options="UI_LABEL_HIDDEN;REGISTERS_REFRESH;UI_MULTI_COLUMN=3">
+               <bool id="SSIE" label="START/STOP detection" available="bitfieldExists($instance.getPeripheral(),`FLT`, `SSIE`)" options="REGISTERS_REFRESH">
+                   <description>Enables the interrupt requests for I2C bus START or STOP detection.</description>
+                   <assign when="bitfieldExists($instance.getPeripheral(),`FLT`, `SSIE`)">
+                       <register name="FLT" bitfield="SSIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <bool id="SHTF2IE" label="SCL high and SDA low timeout" available="bitfieldExists($instance.getPeripheral(),`SMB`, `SHTF2IE`)" options="REGISTERS_REFRESH">
+                   <description>Enables SCL high and SDA low timeout interrupt request</description>
+                   <assign when="bitfieldExists($instance.getPeripheral(),`SMB`, `SHTF2IE`)">
+                       <register name="SMB" bitfield="SHTF2IE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <bool id="WUEN" label="Wake up enable" options="REGISTERS_REFRESH">
+                   <description>The I2C module can wake the MCU from low power mode with no peripheral bus running when slave address matching occurs (wake up from stop or wait mode). If disabled no interrupt is generated when address matching in low power mode. If enabled the wakeup function is generated in low power mode.</description>
+                   <assign when="true">
+                       <register name="C1" bitfield="WUEN" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+           </struct>
+           <struct id="clkConfig_t">
+               <variable id="clockSourceUId" value="`BusInterfaceClock`"/>
+               <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="createArray().addItemToList($parent.clockSourceUId.getValue(), getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()), ($instance.getPeripheral() + `_CLK_SRC`),true)" >
+                   <description>Clock source</description>
+                   <validation>
+                       <dependency resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                           description_expr="getPeripheralClockSignal($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + ` is inactive.`"
+                           level="Error">
+                           <feature name="frequency" evaluation="greaterThan">
+                               <data expr="0" unit="Hz" type="Frequency"/>
+                           </feature>
+                       </dependency>
+                   </validation>
+               </dynamic_enum>
+               <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" 
+                   items="createArray().merge(
+                   getClockFunctionalGroups().arrayToEnumItems(
+                   enumItem -> true,
+                   enumItem -> enumItem,
+                   enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)) + ` (` + enumItem + `)`,
+                   enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)))" >
+                   <description>Selection of the clock source frequency</description>
+                   <validation>
+                       <constraint cond_expr="$this.getEnumItemValue().toHertz() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+                   </validation>
+                   <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+               </dynamic_enum>
+               <info id="calculateFreqPeriod" label="Clock frequency/period" 
+                   value="system::calculateFreqPeriod(1,$parent.clockSourceFreq.getEnumItemValue())">
+                   <description>Clock frequency and period of 1 bus clock (in time units).</description>
+               </info>
+               <!-- Calculated real timer counter input frequency - one tick of timer-->
+               <variable id="calculatedFreq" value="system::calculateRealFreq(1, $parent.clockSourceFreq.getEnumItemValue())"/>
+               <enum id="MULT" label="Multiplier Factor" options="REGISTERS_REFRESH">
+                   <description>Defines the multiplier factor. This factor is used along with the SCL divider to generate the I2C baud rate.
+                   </description>
+                   <assign when="true">
+                       <register name="F" bitfield="MULT" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="1" value="0"><description>Multiplier factor 1</description></item>
+                   <item id="1" label="2" value="1"><description>Multiplier factor 2</description></item>
+                   <item id="2" label="4" value="2"><description>Multiplier factor 4</description></item>
+               </enum>
+               <variable id="icrIndex" value="createArray(0,1,63)"></variable>
+               <variable id="sclDivider" value="toArray(
+                   20,22,24,26,28,30,34,40,28,32,36,40,44,48,56,68,48,56,64,72,80,88,104,128,80,96,112,128,144,160,192,240,
+                   160,192,224,256,288,320,384,480,320,384,448,512,576,640,768,960,640,768,896,1024,1152,1280,1536,1920,1280,1536,1792,2048,2304,2560,3072,3840)"/>
+               <variable id="sdaHold" value="toArray(
+                   7,7,8,8,9,9,10,10,7,7,9,9,11,11,13,13,9,9,13,13,17,17,21,21,9,9,17,17,25,25,33,33,
+                   17,17,33,33,49,49,65,65,33,33,65,65,97,97,129,129,65,65,129,129,193,193,257,257,129,129,257,257,385,385,513,513)"/>
+               <variable id="sclStart" value="toArray(
+                   6,7,8,9,10,11,13,16,10,12,14,16,18,20,24,30,18,22,26,30,34,38,46,58,38,46,57,62,70,78,94,118,
+                   78,94,110,126,142,158,190,238,158,290,222,256,286,318,382,478,318,382,446,510,574,638,766,958,638,766,894,1022,1150,1278,1534,1918)"/>
+               <variable id="sclStop" value="toArray(
+                   11,12,13,14,15,16,18,21,15,17,19,21,23,25,29,35,25,29,33,37,41,45,53,65,41,49,57,65,73,81,97,121,
+                   81,97,113,129,145,161,193,241,161,193,225,257,289,321,385,481,321,385,449,513,577,641,769,961,641,769,897,1025,1153,1281,1537,1921)"/>
+               <dynamic_enum id="icr" label="Baud rate and hold times" items="$parent.icrIndex.getValue().arrayToEnumItems(
+                   enumItem -> true,
+                   enumItem -> enumItem,
+                   enumItem -> ($configSet.clkConfig.calculatedFreq.getValue()!=`N/A` ? frequencyToString($configSet.clkConfig.calculatedFreq.getValue().toInt()/($parent.MULT.getEnumItemLabel().toInt()*$parent.sclDivider.getValue().get(enumItem).toInt())) + 
+                   `;  SDA = ` + timeToString((1000000.0/(1.0*$configSet.clkConfig.calculatedFreq.getValue()))*(1.0*$parent.MULT.getEnumItemLabel().toInt()*$parent.sdaHold.getValue().get(enumItem).toInt())) + 
+                   `  |  SCL START = ` + timeToString((1000000.0/(1.0*$configSet.clkConfig.calculatedFreq.getValue()))*(1.0*$parent.MULT.getEnumItemLabel().toInt()*$parent.sclStart.getValue().get(enumItem).toInt())) + 
+                   `  |  SCL STOP = ` + timeToString((1000000.0/(1.0*$configSet.clkConfig.calculatedFreq.getValue()))*(1.0*$parent.MULT.getEnumItemLabel().toInt()*$parent.sclStop.getValue().get(enumItem).toInt()))
+                   : `N/A`),
+                   enumItem -> enumItem)">
+                   <description>
+This setting field and the multiplier factor (*MULT*) field determine the I2C baud rate, the SDA hold time, the SCL start hold time, and the SCL stop hold time. 
+The calculated values are taken from a list of values corresponding to each ICR setting 
+(SCL divide, SDA hold value, SCL start hold value and SCL stop hold value, see "I2C divider and hold values" from the reference manual).  
+The **I2C baud rate** is defined by SCL divider multiplied by multiplier factor value (mul).  
+`I2C baud rate = I2C module clock speed (Hz)/(mul × SCL divider)`  
+The **SDA hold time** is the delay from the falling edge of SCL (I2C clock) to the changing of SDA (I2C data):  
+`SDA hold time = I2C module clock period (s) × mul × SDA hold value`  
+The **SCL start hold time** is the delay from the falling edge of SDA (I2C data) while SCL is high (start condition) to the falling edge of SCL (I2C clock).  
+`SCL start hold time = I2C module clock period (s) × mul × SCL start hold value`  
+The **SCL stop hold time** is the delay from the rising edge of SCL (I2C clock) to the rising edge of SDA (I2C data) while SCL is high (stop condition).  
+`SCL stop hold time = I2C module clock period (s) × mul × SCL stop hold value`  
+                   </description>
+                   <assign when="true">
+                       <register name="F" bitfield="ICR" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+               </dynamic_enum>
+           </struct>
+           <struct id="glitch_filter_t">
+               <variable id="clockSourceUId" value="`GlitchFilterClock`"/>
+               <dynamic_enum id="clockSource" label="Filter clock source" options="remove_from_struct_init" items="createArray().addItemToList($parent.clockSourceUId.getValue(), getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()), ($instance.getPeripheral() + `_CLK_SRC`),true)" >
+                   <description>Glitch filter clock source.</description>
+                   <validation>
+                       <dependency resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                           description_expr="getPeripheralClockSignal($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + ` is inactive.`"
+                           level="Error">
+                           <feature name="frequency" evaluation="greaterThan">
+                               <data expr="0" unit="Hz" type="Frequency"/>
+                           </feature>
+                       </dependency>
+                   </validation>
+               </dynamic_enum>
+               <dynamic_enum id="clockSourceFreq" label="Filter clock source frequency" options="remove_from_struct_init" 
+                   items="createArray().merge(
+                   getClockFunctionalGroups().arrayToEnumItems(
+                   enumItem -> true,
+                   enumItem -> enumItem,
+                   enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)) + ` (` + enumItem + `)`,
+                   enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemId(), enumItem)))" >
+                   <description>Selection of the clock source frequency.</description>
+                   <validation>
+                       <constraint cond_expr="$this.getEnumItemValue().toHertz() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+                   </validation>
+                   <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+               </dynamic_enum>
+               <info id="calculateFreqPeriod" label="Filter clock frequency/period" 
+                   value="system::calculateFreqPeriod(1,$parent.clockSourceFreq.getEnumItemValue())">
+                   <description>Glitch filter clock source frequency and period (in time units).</description>
+               </info>
+               <!-- Calculated real timer counter input frequency - one tick of timer-->
+               <variable id="calculatedFreq" value="system::calculateRealFreq(1, $parent.clockSourceFreq.getEnumItemValue())"/>
+               <variable id="maxFilterWidth" value="featureDefined(`I2C_MAX_GLITCH_FILTER_WIDTH`) ? getFeature(`I2C_MAX_GLITCH_FILTER_WIDTH`).toInt() : 15"></variable>
+               <string id="FLT" label="Filter glitch width" options="REGISTERS_REFRESH"
+                   validation_expr="x -> system::validateValueFreqPeriod(x, 0, $parent.maxFilterWidth.getValue())">
+                   <description>
+Sets the glitch width which will be filtered. This setting controls the width of the glitch, in terms of I2C module clock cycles, that the filter must absorb.
+For any glitch whose size is less than or equal to this width setting, the filter does not allow the glitch to pass.  
+**Values:**  
+- **0** - No filter (bypass)  
+- **1-15** - Filter glitches up to width of 1-15 I2C module clock cycles
+
+An integer number is processed as a value in *ticks of bus clock* (register value), a frequency value must be in format &quot;float_number [*Hz, kHz, MHz* or *GHz*]&quot;, a period value must be in format &quot;float_number [*ns, us, ms, s, m, h* or *d*]&quot;.  
+                   </description>
+                   <validation>
+                       <constraint when_expr="$parent.filterVal.getValue() != `N/A`" cond_expr="($parent.filterVal.getValue() &gt;= 0) &amp;&amp; ($parent.filterVal.getValue() &lt;= $parent.maxFilterWidth.getValue())" level="error" description_expr="`The Filter glitch width must be in the range 0 - `+ $parent.maxFilterWidth.getValue() +` ticks.`"/>
+                   </validation>
+                   <assign when="true">
+                       <register name="FLT"  bitfield="FLT" value="$parent.filterVal.getValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+               </string> 
+               <variable id="filterVal" value="isFloat(system::getRealDividerValueRationalClk($parent.FLT.getValue(), $parent.calculatedFreq.getValue())) ? round(1.0 * system::getRealDividerValueRationalClk($parent.FLT.getValue(), $parent.calculatedFreq.getValue()),0) : 0"/>
+               <info id="filterInfo" label="Glitch width" 
+                   value="$parent.filterVal.getValue()==0 ? `Filter bypassed` : system::calculateTicksFreqPeriod($parent.filterVal.getValue().toInt(), $parent.calculatedFreq.getValue())">
+                   <description>Glitch width to be filtered in ticks, period and frequency.</description>
+               </info>
+           </struct>
+           <struct id="control_t">
+               <enum id="SHEN" label="Stop hold enable" options="REGISTERS_REFRESH" available="bitfieldExists($instance.getPeripheral(),`FLT`, `SHEN`)">
+                   <description>
+Set this bit to hold off entry to stop mode when any data transmission or reception is occurring.
+The following scenario explains the holdoff functionality:  
+
+1. The I2C module is configured for a basic transfer, and the SHEN bit is set to 1.  
+2. A transfer begins.  
+3. The MCU signals the I2C module to enter stop mode.  
+4. The byte currently being transferred, including both address and data, completes its transfer.  
+5. The I2C slave or master acknowledges that the in-transfer byte completed its transfer and acknowledges the request to enter stop mode.  
+6. After receiving the I2C module's acknowledgment of the request to enter stop mode, the MCU determines whether to shut off the I2C module's clock.   
+
+If the SHEN bit is set to 1 and the I2C module is in an idle or disabled state when the MCU signals to enter stop mode, 
+the module immediately acknowledges the request to enter stop mode.
+If SHEN is cleared to 0 and the overall data transmission or reception that was suspended by stop mode
+entry was incomplete: To resume the overall transmission or reception after the MCU exits stop mode,
+software must reinitialize the transfer by resending the address of the slave.  
+If the I2C Control Register 1's IICIE bit (Interrut requests) was set to 1 before the MCU entered stop mode, system software
+will receive the interrupt triggered by the I2C Status Register's TCF bit after the MCU wakes from the stop mode.  
+**Values:**  
+- **0** - Stop holdoff is disabled. Suspends current transfer when chip enters stop mode.  
+- **1** - Stop holdoff is enabled. Finishes current transfer when chip enters stop mode.  
+                   </description>
+                   <assign when="bitfieldExists($instance.getPeripheral(),`FLT`, `SHEN`)">
+                       <register name="FLT" bitfield="SHEN" value="$this.getValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="Suspend current transfer when MCU enters stop mode" value="0"><description>Stop holdoff is disabled. The MCU's entry to stop mode is not gated.</description></item>
+                   <item id="1" label="Finish current transfer when MCU enters stop mode" value="1"><description>Stop holdoff is enabled.</description></item>
+               </enum>
+               <enum id="HDRS" label="Drive capability" options="REGISTERS_REFRESH" available="bitfieldExists($instance.getPeripheral(),`C2`, `HDRS`)">
+                   <description>Controls the drive capability of the I2C pads.</description>
+                   <assign when="bitfieldExists($instance.getPeripheral(),`C2`, `HDRS`)">
+                       <register name="C2" bitfield="HDRS" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="Normal drive mode" value="0"><description>Normal drive mode</description></item>
+                   <item id="1" label="High drive mode" value="1"><description>High drive mode</description></item>
+               </enum>
+               <enum id="TX" label="Transmit mode" options="REGISTERS_REFRESH">
+                   <description>Selects the direction of master and slave transfers. In master mode this bit must be set according to the
+                       type of transfer required. Therefore, for address cycles, this bit is always set. When addressed as a slave
+                       this bit must be set by software according to the SRW bit (Slave Read/Write) in the status register.
+                   </description>
+                   <assign when="true">
+                       <register name="C1" bitfield="TX" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="Receive" value="0"><description>Master receives data from the slave</description></item>
+                   <item id="1" label="Transmit" value="1"><description>Master transmits data to the slave</description></item>
+               </enum>
+               <enum id="TXAK" label="Transmit ACK or NACK" options="REGISTERS_REFRESH">
+                   <description>
+Specifies the value driven onto the SDA during data acknowledge cycles for both master and slave
+receivers. The value of transmit acknowledge mode (*SMB[FACK]*) affects NACK/ACK generation.  
+**Values:**  
+- **0** - An acknowledge signal is sent to the bus on the following receiving byte (if FACK is cleared) or the current receiving byte (if FACK is set).  
+- **1** - No acknowledge signal is sent to the bus on the following receiving data byte (if FACK is cleared) or the current receiving data byte (if FACK is set).  
+                   </description>
+                   <assign when="true">
+                       <register name="C1" bitfield="TXAK" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="ACK" value="0"><description>ACK is sent</description></item>
+                   <item id="1" label="NACK" value="1"><description>NACK is sent</description></item>
+               </enum>
+               <bool id="FACK" label="Fast NACK/ACK enable" available="bitfieldExists($instance.getPeripheral(),`SMB`, `FACK`)" options="REGISTERS_REFRESH">
+                   <description>
+For SMBus packet error checking, the CPU must be able to issue an ACK or NACK according to the result of receiving data byte.
+**Values:**  
+- **Disabled** - An ACK or NACK is sent on the following receiving data byte
+- **Enabled** - Writing 0 to TXAK after receiving a data byte generates an ACK. Writing 1 to TXAK after receiving a data byte generates a NACK.
+                   </description>
+                   <assign when="bitfieldExists($instance.getPeripheral(),`SMB`, `FACK`)">
+                       <register name="SMB" bitfield="FACK" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <!--bool id="RSTA" label="Enable repeat start" options="REGISTERS_REFRESH">
+                   <description>Writing 1 to this bit generates a repeated START condition for the current master. This bit will
+                       always be read as 0. Attempting a repeat at the wrong time results in loss of arbitration.
+                   </description>
+                   <assign when="true">
+                       <register name="C1" bitfield="RSTA" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool-->
+               <bool id="DMAEN" label="DMA enable" options="REGISTERS_REFRESH" available="bitfieldExists($instance.getPeripheral(),`C1`, `DMAEN`)">
+                   <description>
+Enables or disables the DMA function.  
+**Values:**   
+- **Disabled** - all DMA signalling disabled.  
+- **Enabled** - DMA transfer is enabled. While SMB[FACK] = 0, the following conditions trigger the DMA request:  
+    1. A data byte is received, and either address or data is transmitted (ACK/NACK is automatic)  
+    2. The first byte received matches the A1 register (Slave address) or is a general call address.   
+If any address matching occurs, S[IAAS] and S[TCF] are set. If the direction of transfer is known from
+master to slave, then it is not required to check S[SRW]. With this assumption, DMA can also be used
+in this case. In other cases, if the master reads data from the slave, then it is required to rewrite the
+C1 register operation. With this assumption, DMA cannot be used.
+When FACK = 1, an address or a data byte is transmitted.
+                   </description>
+                   <assign when="bitfieldExists($instance.getPeripheral(),`C1`, `DMAEN`)">
+                       <register name="C1" bitfield="DMAEN" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <enum id="TCKSEL" label="Timeout counter divider" options="REGISTERS_REFRESH" available="bitfieldExists($instance.getPeripheral(),`SMB`, `TCKSEL`)">
+                   <description>Selects the clock source of the timeout counter</description>
+                   <assign when="bitfieldExists($instance.getPeripheral(),`SMB`, `TCKSEL`)">
+                       <register name="SMB" bitfield="TCKSEL" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="64" value="0"><description>Timeout counter counts at the frequency of the I2C module clock / 64</description></item>
+                   <item id="1" label="1" value="1"><description>Timeout counter counts at the frequency of the I2C module clock</description></item>
+               </enum>
+               <integer type="uint16_t" id="SSLT" label="SCL low timeout [ticks]" options="REGISTERS_REFRESH" available="bitfieldExists($instance.getPeripheral(),`SLTL`, `SSLT`)">
+                   <description>Timeout value that determines the timeout period of SCL low</description>
+                   <assign when="true">
+                       <register name="SLTL"  bitfield="SSLT" value="($this.getValue() &amp; 0x00FF) &gt;&gt; 0" reverse_value="x -> ($this.getValue() &amp; ~0x00FF) | (toInt(x &amp; 0xFF) &lt;&lt; 0)"/>
+                   </assign>
+                   <assign when="true">
+                       <register name="SLTH"  bitfield="SSLT" value="($this.getValue() &amp; 0xFF00) &gt;&gt; 8" reverse_value="x -> ($this.getValue() &amp; ~0xFF00) | (toInt(x &amp; 0xFF) &lt;&lt; 8)"/>
+                   </assign>
+               </integer>
+               <info id="timeoutValue" label="SCL low timeout" value="$parent.SSLT.getValue()!=0 ? system::calculatePeriod($parent.TCKSEL.getEnumItemLabel().toInt() * $parent.SSLT.getValue(),$configSet.clkConfig.calculatedFreq.getValue()) : `Disabled`">
+                   <description>Low timeout (LoValue) occurrence time (SLTF flag)</description>
+               </info>
+               <info id="sclValue" label="SCL high and SDA low timeout" value="$parent.SSLT.getValue()!=0 ? system::calculatePeriod($parent.TCKSEL.getEnumItemLabel().toInt() * $parent.SSLT.getValue(), $configSet.clkConfig.calculatedFreq.getValue()*512) : `Disabled`">
+                   <description>SCL high and SDA low timeout (LoValue/512) occurrence time (SHTF2 flag)</description>
+               </info>
+           </struct>
+           <struct id="slaveConfig_t">
+               <description>I2C slave module configuration. Initialized registers: A1, A2, C2, RA (partially SMB).</description>
+               <enum id="ADEXT" label="Slave address scheme" options="REGISTERS_REFRESH">
+                   <description>Controls the number of bits used for the slave address</description>
+                   <assign when="true">
+                       <register name="C2" bitfield="ADEXT" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="7-bit" value="0"><description>7-bit address scheme</description></item>
+                   <item id="1" label="10-bit" value="1"><description>10-bit address scheme</description></item>
+               </enum>
+               <bool id="SBRC" label="Slave clock stretching enable" options="REGISTERS_REFRESH" available="bitfieldExists($instance.getPeripheral(),`C2`, `SBRC`)">
+                   <description>
+**Values:** 
+- **Disabled** - Clock stretching occurs on the low period during a byte transfer (if the slave's bit transfer rate is slower than the master's), and between bytes until the slave has read/written the data register.
+- **Enabled** - Clock stretching occurs only between bytes until the slave has read/written the data register.
+                   </description>
+                   <assign when="bitfieldExists($instance.getPeripheral(),`C2`, `SBRC`)">
+                       <register name="C2" bitfield="SBRC" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <integer type="uint16_t" id="AD" label="Slave address" options="REGISTERS_REFRESH" max_expr="$parent.ADEXT.getValue()==`1` ? 2**10 : 2**7">
+                   <description>Slave Address. Contains the primary slave address used by the I2C module when it is addressed as a slave. This field is
+                       used in the 7-bit address scheme and the lower seven bits in the 10-bit address scheme
+                   </description>
+                   <assign when="true">
+                       <register name="A1"  bitfield="AD" value="$this.getValue() &amp; 0x007F" reverse_value="x -> ($this.getValue() &amp; ~0x007F) | (x &amp; 0x007F)"/>
+                   </assign>
+                   <assign when="true">
+                       <register name="C2"  bitfield="AD" value="($this.getValue() &amp; 0x0380) &gt;&gt; 7" reverse_value="x -> ($this.getValue() &amp; ~0x0380) | (toInt(x &amp; 0x0380) &lt;&lt; 7)"/>
+                   </assign>
+               </integer>
+               <bool id="GCAEN" label="General call address enable" options="REGISTERS_REFRESH">
+                   <description>Enables general call address (0x00)</description>
+                   <assign when="true">
+                       <register name="C2" bitfield="GCAEN" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <bool id="ALERTEN" label="Alert response address enable" options="REGISTERS_REFRESH" available="bitfieldExists($instance.getPeripheral(),`SMB`, `ALERTEN`)">
+                   <description>
+Enables or disables SMBus alert response address (0x0C) matching.  
+NOTE: After the host responds to a device that used the alert response address, you must use software to put the device's address on the bus.
+The alert protocol is described in the SMBus specification.  
+**Values:**  
+- **Disabled** - SMBus alert response address matching is disabled   
+- **Enabled** - SMBus alert response address matching is enabled   
+                   </description>
+                   <assign when="bitfieldExists($instance.getPeripheral(),`SMB`, `ALERTEN`)">
+                       <register name="SMB" bitfield="ALERTEN" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <bool id="SIICAEN" label="Second address enable" available="bitfieldExists($instance.getPeripheral(),`SMB`, `SIICAEN`) &amp;&amp; $parent.ADEXT.getValue()==`0`" options="REGISTERS_REFRESH">
+                   <description>
+Enables or disables SMBus device default address  
+**Values:**  
+- **Disabled** - I2C address register 2 matching is disabled  
+- **Enabled** - I2C address register 2 matching is enabled     
+                   </description>
+                   <assign when="bitfieldExists($instance.getPeripheral(),`SMB`, `SIICAEN`)">
+                       <register name="SMB" bitfield="SIICAEN" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <integer type="uint8_t" id="SAD" label="SMBus address" options="REGISTERS_REFRESH" enable="$parent.SIICAEN.getValue(false)" max_expr="2**7" available="bitfieldExists($instance.getPeripheral(),`A2`, `SAD`) &amp;&amp; $parent.ADEXT.getValue()==`0`">
+                   <description>SMBus Address. Contains the slave address used by the SMBus. This field is used on the device default address or other related addresses
+                       (e.g. SMBus Device Default Address 0x61, SMBus Alert Response Address 0x0C).
+                   </description>
+                   <assign when="bitfieldExists($instance.getPeripheral(),`A2`, `SAD`)">
+                       <register name="A2"  bitfield="SAD" value="$this.getValue() &amp; 0x7F" reverse_value="x -> ($this.getValue() &amp; ~0x7F) | (x &amp; 0x7F)"/>
+                   </assign>
+               </integer>
+               <bool id="RMEN" label="Enable range matching mode" available="$parent.ADEXT.getValue()==`0`" options="REGISTERS_REFRESH">
+                   <description>
+Controls the slave address matching for addresses between the values of the A1 (slave address) and RA (maximum slave address) registers.
+When this bit is set, a slave address matching occurs for any address greater than the value of the A1
+register and less than or equal to the value of the RA register.  
+**Values:**  
+- **Disabled** - Range mode disabled. No address matching occurs for an address within the range of values of the A1 and RA registers.  
+- **Enabled** - Range mode enabled. Address matching occurs when a slave receives an address within the range of values of the A1 and RA registers.
+                   </description>
+                   <assign when="true">
+                       <register name="C2" bitfield="RMEN" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <integer type="uint8_t" id="RA" label="Maximum slave address" enable="$parent.RMEN.getValue(false)" available="$parent.ADEXT.getValue()==`0`" options="REGISTERS_REFRESH" max_expr="2**7">
+                   <description>This field contains the slave address to be used by the I2C module. The field is used in the 7-bit address
+                       scheme. If I2C_C2[RMEN] is set to 1, any nonzero value write enables this register. This register value
+                       can be considered as a maximum boundary in the range matching mode.
+                   </description>
+                   <assign when="true">
+                       <register name="RA"  bitfield="RAD" value="$this.getValue()" reverse_value="x -> x"/>
+                   </assign>
+               </integer>
+           </struct>
+       </user_types>
+       <settings>
+           <bool id="IICEN" label="I2C enable" options="REGISTERS_REFRESH">
+               <description>Enables I2C module operation</description>
+               <assign when="true">
+                   <register name="C1" bitfield="IICEN" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+           </bool>
+           <info id="MST" label="I2C initial mode" value="`Slave`">
+               <description>
+I2C mode (MST bit) is initialized as Slave.  
+When MST is changed from 0 to 1, a START signal is generated on the bus and master mode is selected.  
+When this bit changes from 1 to 0, a STOP signal is generated and the mode of operation changes from master to slave.  
+*NOTE:* Master mode has to be initialized in runtime.  
+               </description>
+               <assign when="true">
+                   <register name="C1" bitfield="MST" value="0" reverse_value="x -> x"/>
+               </assign>
+           </info>
+           <reference type="clkConfig_t" id="clkConfig" label="Clock configuration"></reference>
+           <reference type="glitch_filter_t" id="filterConfig" label="Glitch filter configuration"></reference>
+           <reference type="control_t" id="control" options="UI_BORDER_HIDDEN;UI_LABEL_HIDDEN"></reference>
+           <bool id="enableSlave" label="Slave configuration" options="UI_LABEL_BOLD;REGISTERS_REFRESH">
+               <description>Enable I2C slave module configuration</description>
+           </bool>
+           <reference type="slaveConfig_t" id="slaveCfg" label="Slave configuration" enable="$parent.enableSlave.getValue(true)" options="UI_LABEL_HIDDEN"></reference>
+           <bool id="IICIE" label="Interrupt requests" options="UI_LABEL_BOLD;REGISTERS_REFRESH">
+               <description>Enables I2C interrupt requests (complete 1-byte transfer, match of recieved calling address, arbitration lost, SMBus SCL low timeout)</description>
+               <assign when="true">
+                   <register name="C1" bitfield="IICIE" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+           </bool>
+           <reference type="interruptSources_t" id="interruptSources" enable="$parent.IICIE.getValue()"></reference>
+           <bool id="enable_irq" label="Enable interrupt vector" options="UI_LABEL_BOLD;REGISTERS_REFRESH">
+               <description>Enable interrupts initialization, like priority and enablement in the INTC and SIM.</description>
+           </bool>
+           <reference id="interrupt" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_irq.getValue()" options="UI_LABEL_HIDDEN"/>
+           <!-- Enable clock gate -->
+           <variable id="clockGate" value="1">                
+               <assign when="true"> 
+                   <register peripheral_expr="system::getInstanceClockGatePeripheral()" 
+                       name_expr="system::getInstanceClockGateRegister()" 
+                       bitfield_expr="system::getInstanceClockGateBitfield()" 
+                       value="system::getInstanceClockGateEnableValue()"/>
+               </assign>     
+           </variable>
+           <!-- Software reset -->
+           <variable id="softwareReset" value="0">           
+               <assign when="true">
+                   <register peripheral_expr="system::getInstanceSwResetPeripheral()" name_expr="system::getInstanceSwResetRegister()" bitfield_expr="system::getInstanceSwResetBitfield()" value="system::getInstanceSwResetDisableValue()"/>              
+               </assign>
+           </variable>
+           <!-- Fragment variables -->
+           <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+           <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+           <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+           <!-- SIM template params -->
+           <struct id="i2c_params" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+               <variable id="PERIPHERAL" value="$instance.getPeripheral()"></variable>
+               <variable id="VPREFIX" value="$configSet.inst_ID_def.getValue()"></variable>
+               <!-- Software reset -->
+               <variable id="SW_RESET_CONTROL_PERIPHERAL" value="system::getInstanceSwResetPeripheral()"></variable>
+               <variable id="SW_RESET_CONTROL_REGISTER" value="system::getInstanceSwResetRegister()"></variable>
+               <variable id="SW_RESET_CONTROL_BITFIELD" value="system::getInstanceSwResetBitfield()"></variable>
+           </struct>
+       </settings>
+       <validation>
+           <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.i2c_scl`"
+               level="Warning" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`SCL (serial clock)`, $instance.getPeripheral())">
+               <feature name="routed">
+                   <data expr="true"/>
+               </feature>
+           </dependency>
+           <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.i2c_sda`"
+               level="Warning" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`SDA (serial data)`, $instance.getPeripheral())">
+               <feature name="routed">
+                   <data expr="true"/>
+               </feature>
+           </dependency>
+       </validation>
+       <fragment_defs>
+           <import>
+               <from component_id="system" config_set_id="common_code_templates"/>
+               <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+           </import>
+       </fragment_defs>
+       <code>
+           <section target="includes">
+               <fragment id="include">
+                   <param id="name">device_registers</param>
+                   <param id="filename">fsl_device_registers.h</param>
+               </fragment>
+           </section>
+           <section target="common_pre_init_function"> 
+               <!-- Clock gate enable --> 
+               <fragment id="clock_gate_enable_init"></fragment> 
+           </section>
+           <section target="defines">
+               <fragment id="IRQ_definitions" apply_to="$configSet.interrupt" if_expr="$configSet.enable_irq.getValue()"/>
+               <fragment id="all_assigned_regs_init">
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               </fragment>
+           </section> 
+           <section target="init_function_body">
+               <fragment id="template">
+                   <param id="file">i2c.template</param>
+                   <param id="setting" expr="$configSet.i2c_params"></param>
+                   <param id="separators"></param>
+                   <param id="description" expr="$configSet.inst_ID.getValue() + ` initialization`"></param>
+               </fragment>
+           </section>
+       </code>
+       <quick_selections>
+           <quick_selection id="default" label="Default">
+               <set id="slaveCfg.SAD">0x61</set>
+               <set id="enableSlave">true</set>
+               <set id="filterConfig.FLT">150 ns</set>
+           </quick_selection>
+           <default>default</default>
+       </quick_selections>
+   </config_set>
+</component:config_component>

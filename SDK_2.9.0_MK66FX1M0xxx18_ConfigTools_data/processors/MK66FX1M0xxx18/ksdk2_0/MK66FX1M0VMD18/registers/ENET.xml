@@ -1,0 +1,1216 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0x4" width="32" name="EIR" description="Interrupt Event Register">
+    <alias type="CMSIS" value="EIR"/>
+    <reserved_bit_field offset="0" width="8" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="3" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="2" reset_value="0"/>
+    <bit_field offset="15" width="1" name="TS_TIMER" access="W1C" reset_value="0" description="Timestamp Timer">
+      <alias type="CMSIS" value="ENET_EIR_TS_TIMER(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="1" name="TS_AVAIL" access="W1C" reset_value="0" description="Transmit Timestamp Available">
+      <alias type="CMSIS" value="ENET_EIR_TS_AVAIL(x)"/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="WAKEUP" access="W1C" reset_value="0" description="Node Wakeup Request Indication">
+      <alias type="CMSIS" value="ENET_EIR_WAKEUP(x)"/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="PLR" access="W1C" reset_value="0" description="Payload Receive Error">
+      <alias type="CMSIS" value="ENET_EIR_PLR(x)"/>
+    </bit_field>
+    <bit_field offset="19" width="1" name="UN" access="W1C" reset_value="0" description="Transmit FIFO Underrun">
+      <alias type="CMSIS" value="ENET_EIR_UN(x)"/>
+    </bit_field>
+    <bit_field offset="20" width="1" name="RL" access="W1C" reset_value="0" description="Collision Retry Limit">
+      <alias type="CMSIS" value="ENET_EIR_RL(x)"/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="LC" access="W1C" reset_value="0" description="Late Collision">
+      <alias type="CMSIS" value="ENET_EIR_LC(x)"/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="EBERR" access="W1C" reset_value="0" description="Ethernet Bus Error">
+      <alias type="CMSIS" value="ENET_EIR_EBERR(x)"/>
+    </bit_field>
+    <bit_field offset="23" width="1" name="MII" access="W1C" reset_value="0" description="MII Interrupt.">
+      <alias type="CMSIS" value="ENET_EIR_MII(x)"/>
+    </bit_field>
+    <bit_field offset="24" width="1" name="RXB" access="W1C" reset_value="0" description="Receive Buffer Interrupt">
+      <alias type="CMSIS" value="ENET_EIR_RXB(x)"/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="RXF" access="W1C" reset_value="0" description="Receive Frame Interrupt">
+      <alias type="CMSIS" value="ENET_EIR_RXF(x)"/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="TXB" access="W1C" reset_value="0" description="Transmit Buffer Interrupt">
+      <alias type="CMSIS" value="ENET_EIR_TXB(x)"/>
+    </bit_field>
+    <bit_field offset="27" width="1" name="TXF" access="W1C" reset_value="0" description="Transmit Frame Interrupt">
+      <alias type="CMSIS" value="ENET_EIR_TXF(x)"/>
+    </bit_field>
+    <bit_field offset="28" width="1" name="GRA" access="W1C" reset_value="0" description="Graceful Stop Complete">
+      <alias type="CMSIS" value="ENET_EIR_GRA(x)"/>
+    </bit_field>
+    <bit_field offset="29" width="1" name="BABT" access="W1C" reset_value="0" description="Babbling Transmit Error">
+      <alias type="CMSIS" value="ENET_EIR_BABT(x)"/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="BABR" access="W1C" reset_value="0" description="Babbling Receive Error">
+      <alias type="CMSIS" value="ENET_EIR_BABR(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x8" width="32" name="EIMR" description="Interrupt Mask Register">
+    <alias type="CMSIS" value="EIMR"/>
+    <reserved_bit_field offset="0" width="8" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="3" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="2" reset_value="0"/>
+    <bit_field offset="15" width="1" name="TS_TIMER" access="RW" reset_value="0" description="TS_TIMER Interrupt Mask">
+      <alias type="CMSIS" value="ENET_EIMR_TS_TIMER(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="1" name="TS_AVAIL" access="RW" reset_value="0" description="TS_AVAIL Interrupt Mask">
+      <alias type="CMSIS" value="ENET_EIMR_TS_AVAIL(x)"/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="WAKEUP" access="RW" reset_value="0" description="WAKEUP Interrupt Mask">
+      <alias type="CMSIS" value="ENET_EIMR_WAKEUP(x)"/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="PLR" access="RW" reset_value="0" description="PLR Interrupt Mask">
+      <alias type="CMSIS" value="ENET_EIMR_PLR(x)"/>
+    </bit_field>
+    <bit_field offset="19" width="1" name="UN" access="RW" reset_value="0" description="UN Interrupt Mask">
+      <alias type="CMSIS" value="ENET_EIMR_UN(x)"/>
+    </bit_field>
+    <bit_field offset="20" width="1" name="RL" access="RW" reset_value="0" description="RL Interrupt Mask">
+      <alias type="CMSIS" value="ENET_EIMR_RL(x)"/>
+    </bit_field>
+    <bit_field offset="21" width="1" name="LC" access="RW" reset_value="0" description="LC Interrupt Mask">
+      <alias type="CMSIS" value="ENET_EIMR_LC(x)"/>
+    </bit_field>
+    <bit_field offset="22" width="1" name="EBERR" access="RW" reset_value="0" description="EBERR Interrupt Mask">
+      <alias type="CMSIS" value="ENET_EIMR_EBERR(x)"/>
+    </bit_field>
+    <bit_field offset="23" width="1" name="MII" access="RW" reset_value="0" description="MII Interrupt Mask">
+      <alias type="CMSIS" value="ENET_EIMR_MII(x)"/>
+    </bit_field>
+    <bit_field offset="24" width="1" name="RXB" access="RW" reset_value="0" description="RXB Interrupt Mask">
+      <alias type="CMSIS" value="ENET_EIMR_RXB(x)"/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="RXF" access="RW" reset_value="0" description="RXF Interrupt Mask">
+      <alias type="CMSIS" value="ENET_EIMR_RXF(x)"/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="TXB" access="RW" reset_value="0" description="TXB Interrupt Mask">
+      <alias type="CMSIS" value="ENET_EIMR_TXB(x)"/>
+      <bit_field_value name="EIMR_TXB_0b0" value="0b0" description="The corresponding interrupt source is masked."/>
+      <bit_field_value name="EIMR_TXB_0b1" value="0b1" description="The corresponding interrupt source is not masked."/>
+    </bit_field>
+    <bit_field offset="27" width="1" name="TXF" access="RW" reset_value="0" description="TXF Interrupt Mask">
+      <alias type="CMSIS" value="ENET_EIMR_TXF(x)"/>
+      <bit_field_value name="EIMR_TXF_0b0" value="0b0" description="The corresponding interrupt source is masked."/>
+      <bit_field_value name="EIMR_TXF_0b1" value="0b1" description="The corresponding interrupt source is not masked."/>
+    </bit_field>
+    <bit_field offset="28" width="1" name="GRA" access="RW" reset_value="0" description="GRA Interrupt Mask">
+      <alias type="CMSIS" value="ENET_EIMR_GRA(x)"/>
+      <bit_field_value name="EIMR_GRA_0b0" value="0b0" description="The corresponding interrupt source is masked."/>
+      <bit_field_value name="EIMR_GRA_0b1" value="0b1" description="The corresponding interrupt source is not masked."/>
+    </bit_field>
+    <bit_field offset="29" width="1" name="BABT" access="RW" reset_value="0" description="BABT Interrupt Mask">
+      <alias type="CMSIS" value="ENET_EIMR_BABT(x)"/>
+      <bit_field_value name="EIMR_BABT_0b0" value="0b0" description="The corresponding interrupt source is masked."/>
+      <bit_field_value name="EIMR_BABT_0b1" value="0b1" description="The corresponding interrupt source is not masked."/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="BABR" access="RW" reset_value="0" description="BABR Interrupt Mask">
+      <alias type="CMSIS" value="ENET_EIMR_BABR(x)"/>
+      <bit_field_value name="EIMR_BABR_0b0" value="0b0" description="The corresponding interrupt source is masked."/>
+      <bit_field_value name="EIMR_BABR_0b1" value="0b1" description="The corresponding interrupt source is not masked."/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x10" width="32" name="RDAR" description="Receive Descriptor Active Register">
+    <alias type="CMSIS" value="RDAR"/>
+    <reserved_bit_field offset="0" width="24" reset_value="0"/>
+    <bit_field offset="24" width="1" name="RDAR" access="RW" reset_value="0" description="Receive Descriptor Active">
+      <alias type="CMSIS" value="ENET_RDAR_RDAR(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="25" width="7" reset_value="0"/>
+  </register>
+  <register offset="0x14" width="32" name="TDAR" description="Transmit Descriptor Active Register">
+    <alias type="CMSIS" value="TDAR"/>
+    <reserved_bit_field offset="0" width="24" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TDAR" access="RW" reset_value="0" description="Transmit Descriptor Active">
+      <alias type="CMSIS" value="ENET_TDAR_TDAR(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="25" width="7" reset_value="0"/>
+  </register>
+  <register offset="0x24" width="32" name="ECR" description="Ethernet Control Register">
+    <alias type="CMSIS" value="ECR"/>
+    <bit_field offset="0" width="1" name="RESET" access="RW" reset_value="0" description="Ethernet MAC Reset">
+      <alias type="CMSIS" value="ENET_ECR_RESET(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="ETHEREN" access="RW" reset_value="0" description="Ethernet Enable">
+      <alias type="CMSIS" value="ENET_ECR_ETHEREN(x)"/>
+      <bit_field_value name="ECR_ETHEREN_0b0" value="0b0" description="Reception immediately stops and transmission stops after a bad CRC is appended to any currently transmitted frame."/>
+      <bit_field_value name="ECR_ETHEREN_0b1" value="0b1" description="MAC is enabled, and reception and transmission are possible."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="MAGICEN" access="RW" reset_value="0" description="Magic Packet Detection Enable">
+      <alias type="CMSIS" value="ENET_ECR_MAGICEN(x)"/>
+      <bit_field_value name="ECR_MAGICEN_0b0" value="0b0" description="Magic detection logic disabled."/>
+      <bit_field_value name="ECR_MAGICEN_0b1" value="0b1" description="The MAC core detects magic packets and asserts EIR[WAKEUP] when a frame is detected."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="SLEEP" access="RW" reset_value="0" description="Sleep Mode Enable">
+      <alias type="CMSIS" value="ENET_ECR_SLEEP(x)"/>
+      <bit_field_value name="ECR_SLEEP_0b0" value="0b0" description="Normal operating mode."/>
+      <bit_field_value name="ECR_SLEEP_0b1" value="0b1" description="Sleep mode."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="EN1588" access="RW" reset_value="0" description="EN1588 Enable">
+      <alias type="CMSIS" value="ENET_ECR_EN1588(x)"/>
+      <bit_field_value name="ECR_EN1588_0b0" value="0b0" description="Legacy FEC buffer descriptors and functions enabled."/>
+      <bit_field_value name="ECR_EN1588_0b1" value="0b1" description="Enhanced frame time-stamping functions enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <bit_field offset="6" width="1" name="DBGEN" access="RW" reset_value="0" description="Debug Enable">
+      <alias type="CMSIS" value="ENET_ECR_DBGEN(x)"/>
+      <bit_field_value name="ECR_DBGEN_0b0" value="0b0" description="MAC continues operation in debug mode."/>
+      <bit_field_value name="ECR_DBGEN_0b1" value="0b1" description="MAC enters hardware freeze mode when the processor is in debug mode."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="STOPEN" access="RW" reset_value="0" description="STOPEN Signal Control">
+      <alias type="CMSIS" value="ENET_ECR_STOPEN(x)"/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="DBSWP" access="RW" reset_value="0" description="Descriptor Byte Swapping Enable">
+      <alias type="CMSIS" value="ENET_ECR_DBSWP(x)"/>
+      <bit_field_value name="ECR_DBSWP_0b0" value="0b0" description="The buffer descriptor bytes are not swapped to support big-endian devices."/>
+      <bit_field_value name="ECR_DBSWP_0b1" value="0b1" description="The buffer descriptor bytes are swapped to support little-endian devices."/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="20" reset_value="0xF0000"/>
+  </register>
+  <register offset="0x40" width="32" name="MMFR" description="MII Management Frame Register">
+    <alias type="CMSIS" value="MMFR"/>
+    <bit_field offset="0" width="16" name="DATA" access="RW" reset_value="0" description="Management Frame Data">
+      <alias type="CMSIS" value="ENET_MMFR_DATA(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="2" name="TA" access="RW" reset_value="0" description="Turn Around">
+      <alias type="CMSIS" value="ENET_MMFR_TA(x)"/>
+    </bit_field>
+    <bit_field offset="18" width="5" name="RA" access="RW" reset_value="0" description="Register Address">
+      <alias type="CMSIS" value="ENET_MMFR_RA(x)"/>
+    </bit_field>
+    <bit_field offset="23" width="5" name="PA" access="RW" reset_value="0" description="PHY Address">
+      <alias type="CMSIS" value="ENET_MMFR_PA(x)"/>
+    </bit_field>
+    <bit_field offset="28" width="2" name="OP" access="RW" reset_value="0" description="Operation Code">
+      <alias type="CMSIS" value="ENET_MMFR_OP(x)"/>
+    </bit_field>
+    <bit_field offset="30" width="2" name="ST" access="RW" reset_value="0" description="Start Of Frame Delimiter">
+      <alias type="CMSIS" value="ENET_MMFR_ST(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x44" width="32" name="MSCR" description="MII Speed Control Register">
+    <alias type="CMSIS" value="MSCR"/>
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <bit_field offset="1" width="6" name="MII_SPEED" access="RW" reset_value="0" description="MII Speed">
+      <alias type="CMSIS" value="ENET_MSCR_MII_SPEED(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="DIS_PRE" access="RW" reset_value="0" description="Disable Preamble">
+      <alias type="CMSIS" value="ENET_MSCR_DIS_PRE(x)"/>
+      <bit_field_value name="MSCR_DIS_PRE_0b0" value="0b0" description="Preamble enabled."/>
+      <bit_field_value name="MSCR_DIS_PRE_0b1" value="0b1" description="Preamble (32 ones) is not prepended to the MII management frame."/>
+    </bit_field>
+    <bit_field offset="8" width="3" name="HOLDTIME" access="RW" reset_value="0" description="Hold time On MDIO Output">
+      <alias type="CMSIS" value="ENET_MSCR_HOLDTIME(x)"/>
+      <bit_field_value name="MSCR_HOLDTIME_0b000" value="0b000" description="1 internal module clock cycle"/>
+      <bit_field_value name="MSCR_HOLDTIME_0b001" value="0b001" description="2 internal module clock cycles"/>
+      <bit_field_value name="MSCR_HOLDTIME_0b010" value="0b010" description="3 internal module clock cycles"/>
+      <bit_field_value name="MSCR_HOLDTIME_0b111" value="0b111" description="8 internal module clock cycles"/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="21" reset_value="0"/>
+  </register>
+  <register offset="0x64" width="32" name="MIBC" description="MIB Control Register">
+    <alias type="CMSIS" value="MIBC"/>
+    <reserved_bit_field offset="0" width="29" reset_value="0"/>
+    <bit_field offset="29" width="1" name="MIB_CLEAR" access="RW" reset_value="0" description="MIB Clear">
+      <alias type="CMSIS" value="ENET_MIBC_MIB_CLEAR(x)"/>
+      <bit_field_value name="MIBC_MIB_CLEAR_0b0" value="0b0" description="See note above."/>
+      <bit_field_value name="MIBC_MIB_CLEAR_0b1" value="0b1" description="All statistics counters are reset to 0."/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="MIB_IDLE" access="RO" reset_value="0x1" description="MIB Idle">
+      <alias type="CMSIS" value="ENET_MIBC_MIB_IDLE(x)"/>
+      <bit_field_value name="MIBC_MIB_IDLE_0b0" value="0b0" description="The MIB block is updating MIB counters."/>
+      <bit_field_value name="MIBC_MIB_IDLE_0b1" value="0b1" description="The MIB block is not currently updating any MIB counters."/>
+    </bit_field>
+    <bit_field offset="31" width="1" name="MIB_DIS" access="RW" reset_value="0x1" description="Disable MIB Logic">
+      <alias type="CMSIS" value="ENET_MIBC_MIB_DIS(x)"/>
+      <bit_field_value name="MIBC_MIB_DIS_0b0" value="0b0" description="MIB logic is enabled."/>
+      <bit_field_value name="MIBC_MIB_DIS_0b1" value="0b1" description="MIB logic is disabled. The MIB logic halts and does not update any MIB counters."/>
+    </bit_field>
+  </register>
+  <register offset="0x84" width="32" name="RCR" description="Receive Control Register">
+    <alias type="CMSIS" value="RCR"/>
+    <bit_field offset="0" width="1" name="LOOP" access="RW" reset_value="0x1" description="Internal Loopback">
+      <alias type="CMSIS" value="ENET_RCR_LOOP(x)"/>
+      <bit_field_value name="RCR_LOOP_0b0" value="0b0" description="Loopback disabled."/>
+      <bit_field_value name="RCR_LOOP_0b1" value="0b1" description="Transmitted frames are looped back internal to the device and transmit MII output signals are not asserted. DRT must be cleared."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="DRT" access="RW" reset_value="0" description="Disable Receive On Transmit">
+      <alias type="CMSIS" value="ENET_RCR_DRT(x)"/>
+      <bit_field_value name="RCR_DRT_0b0" value="0b0" description="Receive path operates independently of transmit. Used for full-duplex or to monitor transmit activity in half-duplex mode."/>
+      <bit_field_value name="RCR_DRT_0b1" value="0b1" description="Disable reception of frames while transmitting. Normally used for half-duplex mode."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="MII_MODE" access="RW" reset_value="0" description="Media Independent Interface Mode">
+      <alias type="CMSIS" value="ENET_RCR_MII_MODE(x)"/>
+      <bit_field_value name="RCR_MII_MODE_0b0" value="0b0" description="Reserved."/>
+      <bit_field_value name="RCR_MII_MODE_0b1" value="0b1" description="MII or RMII mode, as indicated by the RMII_MODE field."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="PROM" access="RW" reset_value="0" description="Promiscuous Mode">
+      <alias type="CMSIS" value="ENET_RCR_PROM(x)"/>
+      <bit_field_value name="RCR_PROM_0b0" value="0b0" description="Disabled."/>
+      <bit_field_value name="RCR_PROM_0b1" value="0b1" description="Enabled."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="BC_REJ" access="RW" reset_value="0" description="Broadcast Frame Reject">
+      <alias type="CMSIS" value="ENET_RCR_BC_REJ(x)"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="FCE" access="RW" reset_value="0" description="Flow Control Enable">
+      <alias type="CMSIS" value="ENET_RCR_FCE(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="RMII_MODE" access="RW" reset_value="0" description="RMII Mode Enable">
+      <alias type="CMSIS" value="ENET_RCR_RMII_MODE(x)"/>
+      <bit_field_value name="RCR_RMII_MODE_0b0" value="0b0" description="MAC configured for MII mode."/>
+      <bit_field_value name="RCR_RMII_MODE_0b1" value="0b1" description="MAC configured for RMII operation."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="RMII_10T" access="RW" reset_value="0" description="Enables 10-Mbps mode of the RMII .">
+      <alias type="CMSIS" value="ENET_RCR_RMII_10T(x)"/>
+      <bit_field_value name="RCR_RMII_10T_0b0" value="0b0" description="100 Mbps operation."/>
+      <bit_field_value name="RCR_RMII_10T_0b1" value="0b1" description="10 Mbps operation."/>
+    </bit_field>
+    <reserved_bit_field offset="10" width="2" reset_value="0"/>
+    <bit_field offset="12" width="1" name="PADEN" access="RW" reset_value="0" description="Enable Frame Padding Remove On Receive">
+      <alias type="CMSIS" value="ENET_RCR_PADEN(x)"/>
+      <bit_field_value name="RCR_PADEN_0b0" value="0b0" description="No padding is removed on receive by the MAC."/>
+      <bit_field_value name="RCR_PADEN_0b1" value="0b1" description="Padding is removed from received frames."/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="PAUFWD" access="RW" reset_value="0" description="Terminate/Forward Pause Frames">
+      <alias type="CMSIS" value="ENET_RCR_PAUFWD(x)"/>
+      <bit_field_value name="RCR_PAUFWD_0b0" value="0b0" description="Pause frames are terminated and discarded in the MAC."/>
+      <bit_field_value name="RCR_PAUFWD_0b1" value="0b1" description="Pause frames are forwarded to the user application."/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="CRCFWD" access="RW" reset_value="0" description="Terminate/Forward Received CRC">
+      <alias type="CMSIS" value="ENET_RCR_CRCFWD(x)"/>
+      <bit_field_value name="RCR_CRCFWD_0b0" value="0b0" description="The CRC field of received frames is transmitted to the user application."/>
+      <bit_field_value name="RCR_CRCFWD_0b1" value="0b1" description="The CRC field is stripped from the frame."/>
+    </bit_field>
+    <bit_field offset="15" width="1" name="CFEN" access="RW" reset_value="0" description="MAC Control Frame Enable">
+      <alias type="CMSIS" value="ENET_RCR_CFEN(x)"/>
+      <bit_field_value name="RCR_CFEN_0b0" value="0b0" description="MAC control frames with any opcode other than 0x0001 (pause frame) are accepted and forwarded to the client interface."/>
+      <bit_field_value name="RCR_CFEN_0b1" value="0b1" description="MAC control frames with any opcode other than 0x0001 (pause frame) are silently discarded."/>
+    </bit_field>
+    <bit_field offset="16" width="14" name="MAX_FL" access="RW" reset_value="0x5EE" description="Maximum Frame Length">
+      <alias type="CMSIS" value="ENET_RCR_MAX_FL(x)"/>
+    </bit_field>
+    <bit_field offset="30" width="1" name="NLC" access="RW" reset_value="0" description="Payload Length Check Disable">
+      <alias type="CMSIS" value="ENET_RCR_NLC(x)"/>
+      <bit_field_value name="RCR_NLC_0b0" value="0b0" description="The payload length check is disabled."/>
+      <bit_field_value name="RCR_NLC_0b1" value="0b1" description="The core checks the frame's payload length with the frame length/type field. Errors are indicated in the EIR[PLC] field."/>
+    </bit_field>
+    <bit_field offset="31" width="1" name="GRS" access="RO" reset_value="0" description="Graceful Receive Stopped">
+      <alias type="CMSIS" value="ENET_RCR_GRS(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xC4" width="32" name="TCR" description="Transmit Control Register">
+    <alias type="CMSIS" value="TCR"/>
+    <bit_field offset="0" width="1" name="GTS" access="RW" reset_value="0" description="Graceful Transmit Stop">
+      <alias type="CMSIS" value="ENET_TCR_GTS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="1" name="FDEN" access="RW" reset_value="0" description="Full-Duplex Enable">
+      <alias type="CMSIS" value="ENET_TCR_FDEN(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="TFC_PAUSE" access="RW" reset_value="0" description="Transmit Frame Control Pause">
+      <alias type="CMSIS" value="ENET_TCR_TFC_PAUSE(x)"/>
+      <bit_field_value name="TCR_TFC_PAUSE_0b0" value="0b0" description="No PAUSE frame transmitted."/>
+      <bit_field_value name="TCR_TFC_PAUSE_0b1" value="0b1" description="The MAC stops transmission of data frames after the current transmission is complete."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="RFC_PAUSE" access="RO" reset_value="0" description="Receive Frame Control Pause">
+      <alias type="CMSIS" value="ENET_TCR_RFC_PAUSE(x)"/>
+    </bit_field>
+    <bit_field offset="5" width="3" name="ADDSEL" access="RW" reset_value="0" description="Source MAC Address Select On Transmit">
+      <alias type="CMSIS" value="ENET_TCR_ADDSEL(x)"/>
+      <bit_field_value name="TCR_ADDSEL_0b000" value="0b000" description="Node MAC address programmed on PADDR1/2 registers."/>
+      <bit_field_value name="TCR_ADDSEL_0b100" value="0b100" description="Reserved."/>
+      <bit_field_value name="TCR_ADDSEL_0b101" value="0b101" description="Reserved."/>
+      <bit_field_value name="TCR_ADDSEL_0b110" value="0b110" description="Reserved."/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="ADDINS" access="RW" reset_value="0" description="Set MAC Address On Transmit">
+      <alias type="CMSIS" value="ENET_TCR_ADDINS(x)"/>
+      <bit_field_value name="TCR_ADDINS_0b0" value="0b0" description="The source MAC address is not modified by the MAC."/>
+      <bit_field_value name="TCR_ADDINS_0b1" value="0b1" description="The MAC overwrites the source MAC address with the programmed MAC address according to ADDSEL."/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="CRCFWD" access="RW" reset_value="0" description="Forward Frame From Application With CRC">
+      <alias type="CMSIS" value="ENET_TCR_CRCFWD(x)"/>
+      <bit_field_value name="TCR_CRCFWD_0b0" value="0b0" description="TxBD[TC] controls whether the frame has a CRC from the application."/>
+      <bit_field_value name="TCR_CRCFWD_0b1" value="0b1" description="The transmitter does not append any CRC to transmitted frames, as it is expecting a frame with CRC from the application."/>
+    </bit_field>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="21" reset_value="0"/>
+  </register>
+  <register offset="0xE4" width="32" name="PALR" description="Physical Address Lower Register">
+    <alias type="CMSIS" value="PALR"/>
+    <bit_field offset="0" width="32" name="PADDR1" access="RW" reset_value="0" description="Pause Address">
+      <alias type="CMSIS" value="ENET_PALR_PADDR1(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xE8" width="32" name="PAUR" description="Physical Address Upper Register">
+    <alias type="CMSIS" value="PAUR"/>
+    <bit_field offset="0" width="16" name="TYPE" access="RO" reset_value="0x8808" description="Type Field In PAUSE Frames">
+      <alias type="CMSIS" value="ENET_PAUR_TYPE(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="16" name="PADDR2" access="RW" reset_value="0" description="Bytes 4 (bits 31:24) and 5 (bits 23:16) of the 6-byte individual address used for exact match, and the source address field in PAUSE frames.">
+      <alias type="CMSIS" value="ENET_PAUR_PADDR2(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xEC" width="32" name="OPD" description="Opcode/Pause Duration Register">
+    <alias type="CMSIS" value="OPD"/>
+    <bit_field offset="0" width="16" name="PAUSE_DUR" access="RW" reset_value="0" description="Pause Duration">
+      <alias type="CMSIS" value="ENET_OPD_PAUSE_DUR(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="16" name="OPCODE" access="RO" reset_value="0x1" description="Opcode Field In PAUSE Frames">
+      <alias type="CMSIS" value="ENET_OPD_OPCODE(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x118" width="32" name="IAUR" description="Descriptor Individual Upper Address Register">
+    <alias type="CMSIS" value="IAUR"/>
+    <bit_field offset="0" width="32" name="IADDR1" access="RW" reset_value="0" description="Contains the upper 32 bits of the 64-bit hash table used in the address recognition process for receive frames with a unicast address. Bit 31 of IADDR1 contains hash index bit 63. Bit 0 of IADDR1 contains hash index bit 32.">
+      <alias type="CMSIS" value="ENET_IAUR_IADDR1(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x11C" width="32" name="IALR" description="Descriptor Individual Lower Address Register">
+    <alias type="CMSIS" value="IALR"/>
+    <bit_field offset="0" width="32" name="IADDR2" access="RW" reset_value="0" description="Contains the lower 32 bits of the 64-bit hash table used in the address recognition process for receive frames with a unicast address. Bit 31 of IADDR2 contains hash index bit 31. Bit 0 of IADDR2 contains hash index bit 0.">
+      <alias type="CMSIS" value="ENET_IALR_IADDR2(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x120" width="32" name="GAUR" description="Descriptor Group Upper Address Register">
+    <alias type="CMSIS" value="GAUR"/>
+    <bit_field offset="0" width="32" name="GADDR1" access="RW" reset_value="0" description="Contains the upper 32 bits of the 64-bit hash table used in the address recognition process for receive frames with a multicast address. Bit 31 of GADDR1 contains hash index bit 63. Bit 0 of GADDR1 contains hash index bit 32.">
+      <alias type="CMSIS" value="ENET_GAUR_GADDR1(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x124" width="32" name="GALR" description="Descriptor Group Lower Address Register">
+    <alias type="CMSIS" value="GALR"/>
+    <bit_field offset="0" width="32" name="GADDR2" access="RW" reset_value="0" description="Contains the lower 32 bits of the 64-bit hash table used in the address recognition process for receive frames with a multicast address. Bit 31 of GADDR2 contains hash index bit 31. Bit 0 of GADDR2 contains hash index bit 0.">
+      <alias type="CMSIS" value="ENET_GALR_GADDR2(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x144" width="32" name="TFWR" description="Transmit FIFO Watermark Register">
+    <alias type="CMSIS" value="TFWR"/>
+    <bit_field offset="0" width="6" name="TFWR" access="RW" reset_value="0" description="Transmit FIFO Write">
+      <alias type="CMSIS" value="ENET_TFWR_TFWR(x)"/>
+      <bit_field_value name="TFWR_TFWR_0b000000" value="0b000000" description="64 bytes written."/>
+      <bit_field_value name="TFWR_TFWR_0b000001" value="0b000001" description="64 bytes written."/>
+      <bit_field_value name="TFWR_TFWR_0b000010" value="0b000010" description="128 bytes written."/>
+      <bit_field_value name="TFWR_TFWR_0b000011" value="0b000011" description="192 bytes written."/>
+      <bit_field_value name="TFWR_TFWR_0b011111" value="0b011111" description="1984 bytes written."/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="2" reset_value="0"/>
+    <bit_field offset="8" width="1" name="STRFWD" access="RW" reset_value="0" description="Store And Forward Enable">
+      <alias type="CMSIS" value="ENET_TFWR_STRFWD(x)"/>
+      <bit_field_value name="TFWR_STRFWD_0b0" value="0b0" description="Reset. The transmission start threshold is programmed in TFWR[TFWR]."/>
+      <bit_field_value name="TFWR_STRFWD_0b1" value="0b1" description="Enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="23" reset_value="0"/>
+  </register>
+  <register offset="0x180" width="32" name="RDSR" description="Receive Descriptor Ring Start Register">
+    <alias type="CMSIS" value="RDSR"/>
+    <reserved_bit_field offset="0" width="2" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <bit_field offset="3" width="29" name="R_DES_START" access="RW" reset_value="0" description="Pointer to the beginning of the receive buffer descriptor queue.">
+      <alias type="CMSIS" value="ENET_RDSR_R_DES_START(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x184" width="32" name="TDSR" description="Transmit Buffer Descriptor Ring Start Register">
+    <alias type="CMSIS" value="TDSR"/>
+    <reserved_bit_field offset="0" width="2" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <bit_field offset="3" width="29" name="X_DES_START" access="RW" reset_value="0" description="Pointer to the beginning of the transmit buffer descriptor queue.">
+      <alias type="CMSIS" value="ENET_TDSR_X_DES_START(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x188" width="32" name="MRBR" description="Maximum Receive Buffer Size Register">
+    <alias type="CMSIS" value="MRBR"/>
+    <reserved_bit_field offset="0" width="4" reset_value="0"/>
+    <bit_field offset="4" width="7" name="R_BUF_SIZE" access="RW" reset_value="0" description="Receive buffer size in bytes. This value, concatenated with the four least-significant bits of this register (which are always zero), is the effective maximum receive buffer size.">
+      <alias type="CMSIS" value="ENET_MRBR_R_BUF_SIZE(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="11" width="21" reset_value="0"/>
+  </register>
+  <register offset="0x190" width="32" name="RSFL" description="Receive FIFO Section Full Threshold">
+    <alias type="CMSIS" value="RSFL"/>
+    <bit_field offset="0" width="8" name="RX_SECTION_FULL" access="RW" reset_value="0" description="Value Of Receive FIFO Section Full Threshold">
+      <alias type="CMSIS" value="ENET_RSFL_RX_SECTION_FULL(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="24" reset_value="0"/>
+  </register>
+  <register offset="0x194" width="32" name="RSEM" description="Receive FIFO Section Empty Threshold">
+    <alias type="CMSIS" value="RSEM"/>
+    <bit_field offset="0" width="8" name="RX_SECTION_EMPTY" access="RW" reset_value="0" description="Value Of The Receive FIFO Section Empty Threshold">
+      <alias type="CMSIS" value="ENET_RSEM_RX_SECTION_EMPTY(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="8" reset_value="0"/>
+    <bit_field offset="16" width="5" name="STAT_SECTION_EMPTY" access="RW" reset_value="0" description="RX Status FIFO Section Empty Threshold">
+      <alias type="CMSIS" value="ENET_RSEM_STAT_SECTION_EMPTY(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="21" width="11" reset_value="0"/>
+  </register>
+  <register offset="0x198" width="32" name="RAEM" description="Receive FIFO Almost Empty Threshold">
+    <alias type="CMSIS" value="RAEM"/>
+    <bit_field offset="0" width="8" name="RX_ALMOST_EMPTY" access="RW" reset_value="0x4" description="Value Of The Receive FIFO Almost Empty Threshold">
+      <alias type="CMSIS" value="ENET_RAEM_RX_ALMOST_EMPTY(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="24" reset_value="0"/>
+  </register>
+  <register offset="0x19C" width="32" name="RAFL" description="Receive FIFO Almost Full Threshold">
+    <alias type="CMSIS" value="RAFL"/>
+    <bit_field offset="0" width="8" name="RX_ALMOST_FULL" access="RW" reset_value="0x4" description="Value Of The Receive FIFO Almost Full Threshold">
+      <alias type="CMSIS" value="ENET_RAFL_RX_ALMOST_FULL(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="24" reset_value="0"/>
+  </register>
+  <register offset="0x1A0" width="32" name="TSEM" description="Transmit FIFO Section Empty Threshold">
+    <alias type="CMSIS" value="TSEM"/>
+    <bit_field offset="0" width="8" name="TX_SECTION_EMPTY" access="RW" reset_value="0" description="Value Of The Transmit FIFO Section Empty Threshold">
+      <alias type="CMSIS" value="ENET_TSEM_TX_SECTION_EMPTY(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="24" reset_value="0"/>
+  </register>
+  <register offset="0x1A4" width="32" name="TAEM" description="Transmit FIFO Almost Empty Threshold">
+    <alias type="CMSIS" value="TAEM"/>
+    <bit_field offset="0" width="8" name="TX_ALMOST_EMPTY" access="RW" reset_value="0x4" description="Value of Transmit FIFO Almost Empty Threshold">
+      <alias type="CMSIS" value="ENET_TAEM_TX_ALMOST_EMPTY(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="24" reset_value="0"/>
+  </register>
+  <register offset="0x1A8" width="32" name="TAFL" description="Transmit FIFO Almost Full Threshold">
+    <alias type="CMSIS" value="TAFL"/>
+    <bit_field offset="0" width="8" name="TX_ALMOST_FULL" access="RW" reset_value="0x8" description="Value Of The Transmit FIFO Almost Full Threshold">
+      <alias type="CMSIS" value="ENET_TAFL_TX_ALMOST_FULL(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="24" reset_value="0"/>
+  </register>
+  <register offset="0x1AC" width="32" name="TIPG" description="Transmit Inter-Packet Gap">
+    <alias type="CMSIS" value="TIPG"/>
+    <bit_field offset="0" width="5" name="IPG" access="RW" reset_value="0xC" description="Transmit Inter-Packet Gap">
+      <alias type="CMSIS" value="ENET_TIPG_IPG(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="27" reset_value="0"/>
+  </register>
+  <register offset="0x1B0" width="32" name="FTRL" description="Frame Truncation Length">
+    <alias type="CMSIS" value="FTRL"/>
+    <bit_field offset="0" width="14" name="TRUNC_FL" access="RW" reset_value="0x7FF" description="Frame Truncation Length">
+      <alias type="CMSIS" value="ENET_FTRL_TRUNC_FL(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="14" width="18" reset_value="0"/>
+  </register>
+  <register offset="0x1C0" width="32" name="TACC" description="Transmit Accelerator Function Configuration">
+    <alias type="CMSIS" value="TACC"/>
+    <bit_field offset="0" width="1" name="SHIFT16" access="RW" reset_value="0" description="TX FIFO Shift-16">
+      <alias type="CMSIS" value="ENET_TACC_SHIFT16(x)"/>
+      <bit_field_value name="TACC_SHIFT16_0b0" value="0b0" description="Disabled."/>
+      <bit_field_value name="TACC_SHIFT16_0b1" value="0b1" description="Indicates to the transmit data FIFO that the written frames contain two additional octets before the frame data. This means the actual frame begins at bit 16 of the first word written into the FIFO. This function allows putting the frame payload on a 32-bit boundary in memory, as the 14-byte Ethernet header is extended to a 16-byte header."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="2" reset_value="0"/>
+    <bit_field offset="3" width="1" name="IPCHK" access="RW" reset_value="0" description="Enables insertion of IP header checksum.">
+      <alias type="CMSIS" value="ENET_TACC_IPCHK(x)"/>
+      <bit_field_value name="TACC_IPCHK_0b0" value="0b0" description="Checksum is not inserted."/>
+      <bit_field_value name="TACC_IPCHK_0b1" value="0b1" description="If an IP frame is transmitted, the checksum is inserted automatically. The IP header checksum field must be cleared. If a non-IP frame is transmitted the frame is not modified."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="PROCHK" access="RW" reset_value="0" description="Enables insertion of protocol checksum.">
+      <alias type="CMSIS" value="ENET_TACC_PROCHK(x)"/>
+      <bit_field_value name="TACC_PROCHK_0b0" value="0b0" description="Checksum not inserted."/>
+      <bit_field_value name="TACC_PROCHK_0b1" value="0b1" description="If an IP frame with a known protocol is transmitted, the checksum is inserted automatically into the frame. The checksum field must be cleared. The other frames are not modified."/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="27" reset_value="0"/>
+  </register>
+  <register offset="0x1C4" width="32" name="RACC" description="Receive Accelerator Function Configuration">
+    <alias type="CMSIS" value="RACC"/>
+    <bit_field offset="0" width="1" name="PADREM" access="RW" reset_value="0" description="Enable Padding Removal For Short IP Frames">
+      <alias type="CMSIS" value="ENET_RACC_PADREM(x)"/>
+      <bit_field_value name="RACC_PADREM_0b0" value="0b0" description="Padding not removed."/>
+      <bit_field_value name="RACC_PADREM_0b1" value="0b1" description="Any bytes following the IP payload section of the frame are removed from the frame."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="IPDIS" access="RW" reset_value="0" description="Enable Discard Of Frames With Wrong IPv4 Header Checksum">
+      <alias type="CMSIS" value="ENET_RACC_IPDIS(x)"/>
+      <bit_field_value name="RACC_IPDIS_0b0" value="0b0" description="Frames with wrong IPv4 header checksum are not discarded."/>
+      <bit_field_value name="RACC_IPDIS_0b1" value="0b1" description="If an IPv4 frame is received with a mismatching header checksum, the frame is discarded. IPv6 has no header checksum and is not affected by this setting. Discarding is only available when the RX FIFO operates in store and forward mode (RSFL cleared)."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="PRODIS" access="RW" reset_value="0" description="Enable Discard Of Frames With Wrong Protocol Checksum">
+      <alias type="CMSIS" value="ENET_RACC_PRODIS(x)"/>
+      <bit_field_value name="RACC_PRODIS_0b0" value="0b0" description="Frames with wrong checksum are not discarded."/>
+      <bit_field_value name="RACC_PRODIS_0b1" value="0b1" description="If a TCP/IP, UDP/IP, or ICMP/IP frame is received that has a wrong TCP, UDP, or ICMP checksum, the frame is discarded. Discarding is only available when the RX FIFO operates in store and forward mode (RSFL cleared)."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="3" reset_value="0"/>
+    <bit_field offset="6" width="1" name="LINEDIS" access="RW" reset_value="0" description="Enable Discard Of Frames With MAC Layer Errors">
+      <alias type="CMSIS" value="ENET_RACC_LINEDIS(x)"/>
+      <bit_field_value name="RACC_LINEDIS_0b0" value="0b0" description="Frames with errors are not discarded."/>
+      <bit_field_value name="RACC_LINEDIS_0b1" value="0b1" description="Any frame received with a CRC, length, or PHY error is automatically discarded and not forwarded to the user application interface."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="SHIFT16" access="RW" reset_value="0" description="RX FIFO Shift-16">
+      <alias type="CMSIS" value="ENET_RACC_SHIFT16(x)"/>
+      <bit_field_value name="RACC_SHIFT16_0b0" value="0b0" description="Disabled."/>
+      <bit_field_value name="RACC_SHIFT16_0b1" value="0b1" description="Instructs the MAC to write two additional bytes in front of each frame received into the RX FIFO."/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="24" reset_value="0"/>
+  </register>
+  <register offset="0x200" width="32" name="RMON_T_DROP" description="Reserved Statistic Register">
+    <alias type="CMSIS" value="RMON_T_DROP"/>
+    <reserved_bit_field offset="0" width="32" reset_value="0"/>
+  </register>
+  <register offset="0x204" width="32" name="RMON_T_PACKETS" description="Tx Packet Count Statistic Register">
+    <alias type="CMSIS" value="RMON_T_PACKETS"/>
+    <bit_field offset="0" width="16" name="TXPKTS" access="RO" reset_value="0" description="Packet count">
+      <alias type="CMSIS" value="ENET_RMON_T_PACKETS_TXPKTS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x208" width="32" name="RMON_T_BC_PKT" description="Tx Broadcast Packets Statistic Register">
+    <alias type="CMSIS" value="RMON_T_BC_PKT"/>
+    <bit_field offset="0" width="16" name="TXPKTS" access="RO" reset_value="0" description="Broadcast packets">
+      <alias type="CMSIS" value="ENET_RMON_T_BC_PKT_TXPKTS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x20C" width="32" name="RMON_T_MC_PKT" description="Tx Multicast Packets Statistic Register">
+    <alias type="CMSIS" value="RMON_T_MC_PKT"/>
+    <bit_field offset="0" width="16" name="TXPKTS" access="RO" reset_value="0" description="Multicast packets">
+      <alias type="CMSIS" value="ENET_RMON_T_MC_PKT_TXPKTS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x210" width="32" name="RMON_T_CRC_ALIGN" description="Tx Packets with CRC/Align Error Statistic Register">
+    <alias type="CMSIS" value="RMON_T_CRC_ALIGN"/>
+    <bit_field offset="0" width="16" name="TXPKTS" access="RO" reset_value="0" description="Packets with CRC/align error">
+      <alias type="CMSIS" value="ENET_RMON_T_CRC_ALIGN_TXPKTS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x214" width="32" name="RMON_T_UNDERSIZE" description="Tx Packets Less Than Bytes and Good CRC Statistic Register">
+    <alias type="CMSIS" value="RMON_T_UNDERSIZE"/>
+    <bit_field offset="0" width="16" name="TXPKTS" access="RO" reset_value="0" description="Number of transmit packets less than 64 bytes with good CRC">
+      <alias type="CMSIS" value="ENET_RMON_T_UNDERSIZE_TXPKTS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x218" width="32" name="RMON_T_OVERSIZE" description="Tx Packets GT MAX_FL bytes and Good CRC Statistic Register">
+    <alias type="CMSIS" value="RMON_T_OVERSIZE"/>
+    <bit_field offset="0" width="16" name="TXPKTS" access="RO" reset_value="0" description="Number of transmit packets greater than MAX_FL bytes with good CRC">
+      <alias type="CMSIS" value="ENET_RMON_T_OVERSIZE_TXPKTS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x21C" width="32" name="RMON_T_FRAG" description="Tx Packets Less Than 64 Bytes and Bad CRC Statistic Register">
+    <alias type="CMSIS" value="RMON_T_FRAG"/>
+    <bit_field offset="0" width="16" name="TXPKTS" access="RO" reset_value="0" description="Number of packets less than 64 bytes with bad CRC">
+      <alias type="CMSIS" value="ENET_RMON_T_FRAG_TXPKTS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x220" width="32" name="RMON_T_JAB" description="Tx Packets Greater Than MAX_FL bytes and Bad CRC Statistic Register">
+    <alias type="CMSIS" value="RMON_T_JAB"/>
+    <bit_field offset="0" width="16" name="TXPKTS" access="RO" reset_value="0" description="Number of transmit packets greater than MAX_FL bytes and bad CRC">
+      <alias type="CMSIS" value="ENET_RMON_T_JAB_TXPKTS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x224" width="32" name="RMON_T_COL" description="Tx Collision Count Statistic Register">
+    <alias type="CMSIS" value="RMON_T_COL"/>
+    <bit_field offset="0" width="16" name="TXPKTS" access="RO" reset_value="0" description="Number of transmit collisions">
+      <alias type="CMSIS" value="ENET_RMON_T_COL_TXPKTS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x228" width="32" name="RMON_T_P64" description="Tx 64-Byte Packets Statistic Register">
+    <alias type="CMSIS" value="RMON_T_P64"/>
+    <bit_field offset="0" width="16" name="TXPKTS" access="RO" reset_value="0" description="Number of 64-byte transmit packets">
+      <alias type="CMSIS" value="ENET_RMON_T_P64_TXPKTS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x22C" width="32" name="RMON_T_P65TO127" description="Tx 65- to 127-byte Packets Statistic Register">
+    <alias type="CMSIS" value="RMON_T_P65TO127"/>
+    <bit_field offset="0" width="16" name="TXPKTS" access="RO" reset_value="0" description="Number of 65- to 127-byte transmit packets">
+      <alias type="CMSIS" value="ENET_RMON_T_P65TO127_TXPKTS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x230" width="32" name="RMON_T_P128TO255" description="Tx 128- to 255-byte Packets Statistic Register">
+    <alias type="CMSIS" value="RMON_T_P128TO255"/>
+    <bit_field offset="0" width="16" name="TXPKTS" access="RO" reset_value="0" description="Number of 128- to 255-byte transmit packets">
+      <alias type="CMSIS" value="ENET_RMON_T_P128TO255_TXPKTS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x234" width="32" name="RMON_T_P256TO511" description="Tx 256- to 511-byte Packets Statistic Register">
+    <alias type="CMSIS" value="RMON_T_P256TO511"/>
+    <bit_field offset="0" width="16" name="TXPKTS" access="RO" reset_value="0" description="Number of 256- to 511-byte transmit packets">
+      <alias type="CMSIS" value="ENET_RMON_T_P256TO511_TXPKTS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x238" width="32" name="RMON_T_P512TO1023" description="Tx 512- to 1023-byte Packets Statistic Register">
+    <alias type="CMSIS" value="RMON_T_P512TO1023"/>
+    <bit_field offset="0" width="16" name="TXPKTS" access="RO" reset_value="0" description="Number of 512- to 1023-byte transmit packets">
+      <alias type="CMSIS" value="ENET_RMON_T_P512TO1023_TXPKTS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x23C" width="32" name="RMON_T_P1024TO2047" description="Tx 1024- to 2047-byte Packets Statistic Register">
+    <alias type="CMSIS" value="RMON_T_P1024TO2047"/>
+    <bit_field offset="0" width="16" name="TXPKTS" access="RO" reset_value="0" description="Number of 1024- to 2047-byte transmit packets">
+      <alias type="CMSIS" value="ENET_RMON_T_P1024TO2047_TXPKTS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x240" width="32" name="RMON_T_P_GTE2048" description="Tx Packets Greater Than 2048 Bytes Statistic Register">
+    <alias type="CMSIS" value="RMON_T_P_GTE2048"/>
+    <bit_field offset="0" width="16" name="TXPKTS" access="RO" reset_value="0" description="Number of transmit packets greater than 2048 bytes">
+      <alias type="CMSIS" value="ENET_RMON_T_P_GTE2048_TXPKTS(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x244" width="32" name="RMON_T_OCTETS" description="Tx Octets Statistic Register">
+    <alias type="CMSIS" value="RMON_T_OCTETS"/>
+    <bit_field offset="0" width="32" name="TXOCTS" access="RO" reset_value="0" description="Number of transmit octets">
+      <alias type="CMSIS" value="ENET_RMON_T_OCTETS_TXOCTS(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x248" width="32" name="IEEE_T_DROP" description="IEEE_T_DROP Reserved Statistic Register">
+    <alias type="CMSIS" value="IEEE_T_DROP"/>
+    <reserved_bit_field offset="0" width="32" reset_value="0"/>
+  </register>
+  <register offset="0x24C" width="32" name="IEEE_T_FRAME_OK" description="Frames Transmitted OK Statistic Register">
+    <alias type="CMSIS" value="IEEE_T_FRAME_OK"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of frames transmitted OK">
+      <alias type="CMSIS" value="ENET_IEEE_T_FRAME_OK_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x250" width="32" name="IEEE_T_1COL" description="Frames Transmitted with Single Collision Statistic Register">
+    <alias type="CMSIS" value="IEEE_T_1COL"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of frames transmitted with one collision">
+      <alias type="CMSIS" value="ENET_IEEE_T_1COL_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x254" width="32" name="IEEE_T_MCOL" description="Frames Transmitted with Multiple Collisions Statistic Register">
+    <alias type="CMSIS" value="IEEE_T_MCOL"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of frames transmitted with multiple collisions">
+      <alias type="CMSIS" value="ENET_IEEE_T_MCOL_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x258" width="32" name="IEEE_T_DEF" description="Frames Transmitted after Deferral Delay Statistic Register">
+    <alias type="CMSIS" value="IEEE_T_DEF"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of frames transmitted with deferral delay">
+      <alias type="CMSIS" value="ENET_IEEE_T_DEF_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x25C" width="32" name="IEEE_T_LCOL" description="Frames Transmitted with Late Collision Statistic Register">
+    <alias type="CMSIS" value="IEEE_T_LCOL"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of frames transmitted with late collision">
+      <alias type="CMSIS" value="ENET_IEEE_T_LCOL_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x260" width="32" name="IEEE_T_EXCOL" description="Frames Transmitted with Excessive Collisions Statistic Register">
+    <alias type="CMSIS" value="IEEE_T_EXCOL"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of frames transmitted with excessive collisions">
+      <alias type="CMSIS" value="ENET_IEEE_T_EXCOL_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x264" width="32" name="IEEE_T_MACERR" description="Frames Transmitted with Tx FIFO Underrun Statistic Register">
+    <alias type="CMSIS" value="IEEE_T_MACERR"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of frames transmitted with transmit FIFO underrun">
+      <alias type="CMSIS" value="ENET_IEEE_T_MACERR_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x268" width="32" name="IEEE_T_CSERR" description="Frames Transmitted with Carrier Sense Error Statistic Register">
+    <alias type="CMSIS" value="IEEE_T_CSERR"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of frames transmitted with carrier sense error">
+      <alias type="CMSIS" value="ENET_IEEE_T_CSERR_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x26C" width="32" name="IEEE_T_SQE" description="">
+    <alias type="CMSIS" value="IEEE_T_SQE"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of frames transmitted with SQE error">
+      <alias type="CMSIS" value="ENET_IEEE_T_SQE_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x270" width="32" name="IEEE_T_FDXFC" description="Flow Control Pause Frames Transmitted Statistic Register">
+    <alias type="CMSIS" value="IEEE_T_FDXFC"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of flow-control pause frames transmitted">
+      <alias type="CMSIS" value="ENET_IEEE_T_FDXFC_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x274" width="32" name="IEEE_T_OCTETS_OK" description="Octet Count for Frames Transmitted w/o Error Statistic Register">
+    <alias type="CMSIS" value="IEEE_T_OCTETS_OK"/>
+    <bit_field offset="0" width="32" name="COUNT" access="RO" reset_value="0" description="Octet count for frames transmitted without error Counts total octets (includes header and FCS fields).">
+      <alias type="CMSIS" value="ENET_IEEE_T_OCTETS_OK_COUNT(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x284" width="32" name="RMON_R_PACKETS" description="Rx Packet Count Statistic Register">
+    <alias type="CMSIS" value="RMON_R_PACKETS"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of packets received">
+      <alias type="CMSIS" value="ENET_RMON_R_PACKETS_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x288" width="32" name="RMON_R_BC_PKT" description="Rx Broadcast Packets Statistic Register">
+    <alias type="CMSIS" value="RMON_R_BC_PKT"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of receive broadcast packets">
+      <alias type="CMSIS" value="ENET_RMON_R_BC_PKT_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x28C" width="32" name="RMON_R_MC_PKT" description="Rx Multicast Packets Statistic Register">
+    <alias type="CMSIS" value="RMON_R_MC_PKT"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of receive multicast packets">
+      <alias type="CMSIS" value="ENET_RMON_R_MC_PKT_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x290" width="32" name="RMON_R_CRC_ALIGN" description="Rx Packets with CRC/Align Error Statistic Register">
+    <alias type="CMSIS" value="RMON_R_CRC_ALIGN"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of receive packets with CRC or align error">
+      <alias type="CMSIS" value="ENET_RMON_R_CRC_ALIGN_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x294" width="32" name="RMON_R_UNDERSIZE" description="Rx Packets with Less Than 64 Bytes and Good CRC Statistic Register">
+    <alias type="CMSIS" value="RMON_R_UNDERSIZE"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of receive packets with less than 64 bytes and good CRC">
+      <alias type="CMSIS" value="ENET_RMON_R_UNDERSIZE_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x298" width="32" name="RMON_R_OVERSIZE" description="Rx Packets Greater Than MAX_FL and Good CRC Statistic Register">
+    <alias type="CMSIS" value="RMON_R_OVERSIZE"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of receive packets greater than MAX_FL and good CRC">
+      <alias type="CMSIS" value="ENET_RMON_R_OVERSIZE_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x29C" width="32" name="RMON_R_FRAG" description="Rx Packets Less Than 64 Bytes and Bad CRC Statistic Register">
+    <alias type="CMSIS" value="RMON_R_FRAG"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of receive packets with less than 64 bytes and bad CRC">
+      <alias type="CMSIS" value="ENET_RMON_R_FRAG_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x2A0" width="32" name="RMON_R_JAB" description="Rx Packets Greater Than MAX_FL Bytes and Bad CRC Statistic Register">
+    <alias type="CMSIS" value="RMON_R_JAB"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of receive packets greater than MAX_FL and bad CRC">
+      <alias type="CMSIS" value="ENET_RMON_R_JAB_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x2A4" width="32" name="RMON_R_RESVD_0" description="Reserved Statistic Register">
+    <alias type="CMSIS" value="RMON_R_RESVD_0"/>
+    <reserved_bit_field offset="0" width="16" reset_value="0"/>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x2A8" width="32" name="RMON_R_P64" description="Rx 64-Byte Packets Statistic Register">
+    <alias type="CMSIS" value="RMON_R_P64"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of 64-byte receive packets">
+      <alias type="CMSIS" value="ENET_RMON_R_P64_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x2AC" width="32" name="RMON_R_P65TO127" description="Rx 65- to 127-Byte Packets Statistic Register">
+    <alias type="CMSIS" value="RMON_R_P65TO127"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of 65- to 127-byte recieve packets">
+      <alias type="CMSIS" value="ENET_RMON_R_P65TO127_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x2B0" width="32" name="RMON_R_P128TO255" description="Rx 128- to 255-Byte Packets Statistic Register">
+    <alias type="CMSIS" value="RMON_R_P128TO255"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of 128- to 255-byte recieve packets">
+      <alias type="CMSIS" value="ENET_RMON_R_P128TO255_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x2B4" width="32" name="RMON_R_P256TO511" description="Rx 256- to 511-Byte Packets Statistic Register">
+    <alias type="CMSIS" value="RMON_R_P256TO511"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of 256- to 511-byte recieve packets">
+      <alias type="CMSIS" value="ENET_RMON_R_P256TO511_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x2B8" width="32" name="RMON_R_P512TO1023" description="Rx 512- to 1023-Byte Packets Statistic Register">
+    <alias type="CMSIS" value="RMON_R_P512TO1023"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of 512- to 1023-byte recieve packets">
+      <alias type="CMSIS" value="ENET_RMON_R_P512TO1023_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x2BC" width="32" name="RMON_R_P1024TO2047" description="Rx 1024- to 2047-Byte Packets Statistic Register">
+    <alias type="CMSIS" value="RMON_R_P1024TO2047"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of 1024- to 2047-byte recieve packets">
+      <alias type="CMSIS" value="ENET_RMON_R_P1024TO2047_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x2C0" width="32" name="RMON_R_P_GTE2048" description="Rx Packets Greater than 2048 Bytes Statistic Register">
+    <alias type="CMSIS" value="RMON_R_P_GTE2048"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of greater-than-2048-byte recieve packets">
+      <alias type="CMSIS" value="ENET_RMON_R_P_GTE2048_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x2C4" width="32" name="RMON_R_OCTETS" description="Rx Octets Statistic Register">
+    <alias type="CMSIS" value="RMON_R_OCTETS"/>
+    <bit_field offset="0" width="32" name="COUNT" access="RO" reset_value="0" description="Number of receive octets">
+      <alias type="CMSIS" value="ENET_RMON_R_OCTETS_COUNT(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x2C8" width="32" name="IEEE_R_DROP" description="Frames not Counted Correctly Statistic Register">
+    <alias type="CMSIS" value="IEEE_R_DROP"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Frame count">
+      <alias type="CMSIS" value="ENET_IEEE_R_DROP_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x2CC" width="32" name="IEEE_R_FRAME_OK" description="Frames Received OK Statistic Register">
+    <alias type="CMSIS" value="IEEE_R_FRAME_OK"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of frames received OK">
+      <alias type="CMSIS" value="ENET_IEEE_R_FRAME_OK_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x2D0" width="32" name="IEEE_R_CRC" description="Frames Received with CRC Error Statistic Register">
+    <alias type="CMSIS" value="IEEE_R_CRC"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of frames received with CRC error">
+      <alias type="CMSIS" value="ENET_IEEE_R_CRC_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x2D4" width="32" name="IEEE_R_ALIGN" description="Frames Received with Alignment Error Statistic Register">
+    <alias type="CMSIS" value="IEEE_R_ALIGN"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of frames received with alignment error">
+      <alias type="CMSIS" value="ENET_IEEE_R_ALIGN_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x2D8" width="32" name="IEEE_R_MACERR" description="Receive FIFO Overflow Count Statistic Register">
+    <alias type="CMSIS" value="IEEE_R_MACERR"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Receive FIFO overflow count">
+      <alias type="CMSIS" value="ENET_IEEE_R_MACERR_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x2DC" width="32" name="IEEE_R_FDXFC" description="Flow Control Pause Frames Received Statistic Register">
+    <alias type="CMSIS" value="IEEE_R_FDXFC"/>
+    <bit_field offset="0" width="16" name="COUNT" access="RO" reset_value="0" description="Number of flow-control pause frames received">
+      <alias type="CMSIS" value="ENET_IEEE_R_FDXFC_COUNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="16" reset_value="0"/>
+  </register>
+  <register offset="0x2E0" width="32" name="IEEE_R_OCTETS_OK" description="Octet Count for Frames Received without Error Statistic Register">
+    <alias type="CMSIS" value="IEEE_R_OCTETS_OK"/>
+    <bit_field offset="0" width="32" name="COUNT" access="RO" reset_value="0" description="Number of octets for frames received without error">
+      <alias type="CMSIS" value="ENET_IEEE_R_OCTETS_OK_COUNT(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x400" width="32" name="ATCR" description="Adjustable Timer Control Register">
+    <alias type="CMSIS" value="ATCR"/>
+    <bit_field offset="0" width="1" name="EN" access="RW" reset_value="0" description="Enable Timer">
+      <alias type="CMSIS" value="ENET_ATCR_EN(x)"/>
+      <bit_field_value name="ATCR_EN_0b0" value="0b0" description="The timer stops at the current value."/>
+      <bit_field_value name="ATCR_EN_0b1" value="0b1" description="The timer starts incrementing."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="1" name="OFFEN" access="RW" reset_value="0" description="Enable One-Shot Offset Event">
+      <alias type="CMSIS" value="ENET_ATCR_OFFEN(x)"/>
+      <bit_field_value name="ATCR_OFFEN_0b0" value="0b0" description="Disable."/>
+      <bit_field_value name="ATCR_OFFEN_0b1" value="0b1" description="The timer can be reset to zero when the given offset time is reached (offset event). The field is cleared when the offset event is reached, so no further event occurs until the field is set again. The timer offset value must be set before setting this field."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="OFFRST" access="RW" reset_value="0" description="Reset Timer On Offset Event">
+      <alias type="CMSIS" value="ENET_ATCR_OFFRST(x)"/>
+      <bit_field_value name="ATCR_OFFRST_0b0" value="0b0" description="The timer is not affected and no action occurs, besides clearing OFFEN, when the offset is reached."/>
+      <bit_field_value name="ATCR_OFFRST_0b1" value="0b1" description="If OFFEN is set, the timer resets to zero when the offset setting is reached. The offset event does not cause a timer interrupt."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="PEREN" access="RW" reset_value="0" description="Enable Periodical Event">
+      <alias type="CMSIS" value="ENET_ATCR_PEREN(x)"/>
+      <bit_field_value name="ATCR_PEREN_0b0" value="0b0" description="Disable."/>
+      <bit_field_value name="ATCR_PEREN_0b1" value="0b1" description="A period event interrupt can be generated (EIR[TS_TIMER]) and the event signal output is asserted when the timer wraps around according to the periodic setting ATPER. The timer period value must be set before setting this bit. Not all devices contain the event signal output. See the chip configuration details."/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <bit_field offset="7" width="1" name="PINPER" access="RW" reset_value="0" description="Enables event signal output assertion on period event. Not all devices contain the event signal output. See the chip configuration details.">
+      <alias type="CMSIS" value="ENET_ATCR_PINPER(x)"/>
+      <bit_field_value name="ATCR_PINPER_0b0" value="0b0" description="Disable."/>
+      <bit_field_value name="ATCR_PINPER_0b1" value="0b1" description="Enable."/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <bit_field offset="9" width="1" name="RESTART" access="RW" reset_value="0" description="Reset Timer">
+      <alias type="CMSIS" value="ENET_ATCR_RESTART(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <bit_field offset="11" width="1" name="CAPTURE" access="RW" reset_value="0" description="Capture Timer Value">
+      <alias type="CMSIS" value="ENET_ATCR_CAPTURE(x)"/>
+      <bit_field_value name="ATCR_CAPTURE_0b0" value="0b0" description="No effect."/>
+      <bit_field_value name="ATCR_CAPTURE_0b1" value="0b1" description="The current time is captured and can be read from the ATVR register."/>
+    </bit_field>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <bit_field offset="13" width="1" name="SLAVE" access="RW" reset_value="0" description="Enable Timer Slave Mode">
+      <alias type="CMSIS" value="ENET_ATCR_SLAVE(x)"/>
+      <bit_field_value name="ATCR_SLAVE_0b0" value="0b0" description="The timer is active and all configuration fields in this register are relevant."/>
+      <bit_field_value name="ATCR_SLAVE_0b1" value="0b1" description="The internal timer is disabled and the externally provided timer value is used. All other fields, except CAPTURE, in this register have no effect. CAPTURE can still be used to capture the current timer value."/>
+    </bit_field>
+    <reserved_bit_field offset="14" width="18" reset_value="0"/>
+  </register>
+  <register offset="0x404" width="32" name="ATVR" description="Timer Value Register">
+    <alias type="CMSIS" value="ATVR"/>
+    <bit_field offset="0" width="32" name="ATIME" access="RW" reset_value="0" description="A write sets the timer. A read returns the last captured value. To read the current value, issue a capture command (i.e., set ATCR[CAPTURE]) prior to reading this register.">
+      <alias type="CMSIS" value="ENET_ATVR_ATIME(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x408" width="32" name="ATOFF" description="Timer Offset Register">
+    <alias type="CMSIS" value="ATOFF"/>
+    <bit_field offset="0" width="32" name="OFFSET" access="RW" reset_value="0" description="Offset value for one-shot event generation. When the timer reaches the value, an event can be generated to reset the counter. If the increment value in ATINC is given in true nanoseconds, this value is also given in true nanoseconds.">
+      <alias type="CMSIS" value="ENET_ATOFF_OFFSET(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x40C" width="32" name="ATPER" description="Timer Period Register">
+    <alias type="CMSIS" value="ATPER"/>
+    <bit_field offset="0" width="32" name="PERIOD" access="RW" reset_value="0x3B9ACA00" description="Value for generating periodic events. Each instance the timer reaches this value, the period event occurs and the timer restarts. If the increment value in ATINC is given in true nanoseconds, this value is also given in true nanoseconds. The value should be initialized to 1,000,000,000 (1✕109) to represent a timer wrap around of one second. The increment value set in ATINC should be set to the true nanoseconds of the period of clock ts_clk, hence implementing a true 1 second counter.">
+      <alias type="CMSIS" value="ENET_ATPER_PERIOD(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x410" width="32" name="ATCOR" description="Timer Correction Register">
+    <alias type="CMSIS" value="ATCOR"/>
+    <bit_field offset="0" width="31" name="COR" access="RW" reset_value="0" description="Correction Counter Wrap-Around Value">
+      <alias type="CMSIS" value="ENET_ATCOR_COR(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x414" width="32" name="ATINC" description="Time-Stamping Clock Period Register">
+    <alias type="CMSIS" value="ATINC"/>
+    <bit_field offset="0" width="7" name="INC" access="RW" reset_value="0" description="Clock Period Of The Timestamping Clock (ts_clk) In Nanoseconds">
+      <alias type="CMSIS" value="ENET_ATINC_INC(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="7" name="INC_CORR" access="RW" reset_value="0" description="Correction Increment Value">
+      <alias type="CMSIS" value="ENET_ATINC_INC_CORR(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="15" width="17" reset_value="0"/>
+  </register>
+  <register offset="0x418" width="32" name="ATSTMP" description="Timestamp of Last Transmitted Frame">
+    <alias type="CMSIS" value="ATSTMP"/>
+    <bit_field offset="0" width="32" name="TIMESTAMP" access="RO" reset_value="0" description="Timestamp of the last frame transmitted by the core that had TxBD[TS] set . This register is only valid when EIR[TS_AVAIL] is set.">
+      <alias type="CMSIS" value="ENET_ATSTMP_TIMESTAMP(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x604" width="32" name="TGSR" description="Timer Global Status Register">
+    <alias type="CMSIS" value="TGSR"/>
+    <bit_field offset="0" width="1" name="TF0" access="W1C" reset_value="0" description="Copy Of Timer Flag For Channel 0">
+      <alias type="CMSIS" value="ENET_TGSR_TF0(x)"/>
+      <bit_field_value name="TGSR_TF0_0b0" value="0b0" description="Timer Flag for Channel 0 is clear"/>
+      <bit_field_value name="TGSR_TF0_0b1" value="0b1" description="Timer Flag for Channel 0 is set"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="TF1" access="W1C" reset_value="0" description="Copy Of Timer Flag For Channel 1">
+      <alias type="CMSIS" value="ENET_TGSR_TF1(x)"/>
+      <bit_field_value name="TGSR_TF1_0b0" value="0b0" description="Timer Flag for Channel 1 is clear"/>
+      <bit_field_value name="TGSR_TF1_0b1" value="0b1" description="Timer Flag for Channel 1 is set"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="TF2" access="W1C" reset_value="0" description="Copy Of Timer Flag For Channel 2">
+      <alias type="CMSIS" value="ENET_TGSR_TF2(x)"/>
+      <bit_field_value name="TGSR_TF2_0b0" value="0b0" description="Timer Flag for Channel 2 is clear"/>
+      <bit_field_value name="TGSR_TF2_0b1" value="0b1" description="Timer Flag for Channel 2 is set"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="TF3" access="W1C" reset_value="0" description="Copy Of Timer Flag For Channel 3">
+      <alias type="CMSIS" value="ENET_TGSR_TF3(x)"/>
+      <bit_field_value name="TGSR_TF3_0b0" value="0b0" description="Timer Flag for Channel 3 is clear"/>
+      <bit_field_value name="TGSR_TF3_0b1" value="0b1" description="Timer Flag for Channel 3 is set"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="28" reset_value="0"/>
+  </register>
+  <register offset="0x608" width="32" name="TCSR0" description="Timer Control Status Register">
+    <alias type="CMSIS" value="CHANNEL[0].TCSR"/>
+    <bit_field offset="0" width="1" name="TDRE" access="RW" reset_value="0" description="Timer DMA Request Enable">
+      <alias type="CMSIS" value="ENET_TCSR_TDRE(x)"/>
+      <bit_field_value name="CHANNEL_TDRE_0b0" value="0b0" description="DMA request is disabled"/>
+      <bit_field_value name="CHANNEL_TDRE_0b1" value="0b1" description="DMA request is enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="4" name="TMODE" access="RW" reset_value="0" description="Timer Mode">
+      <alias type="CMSIS" value="ENET_TCSR_TMODE(x)"/>
+      <bit_field_value name="CHANNEL_TMODE_0b0000" value="0b0000" description="Timer Channel is disabled."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0001" value="0b0001" description="Timer Channel is configured for Input Capture on rising edge."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0010" value="0b0010" description="Timer Channel is configured for Input Capture on falling edge."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0011" value="0b0011" description="Timer Channel is configured for Input Capture on both edges."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0100" value="0b0100" description="Timer Channel is configured for Output Compare - software only."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0101" value="0b0101" description="Timer Channel is configured for Output Compare - toggle output on compare."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0110" value="0b0110" description="Timer Channel is configured for Output Compare - clear output on compare."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0111" value="0b0111" description="Timer Channel is configured for Output Compare - set output on compare."/>
+      <bit_field_value name="CHANNEL_TMODE_0b1000" value="0b1000" description="Reserved"/>
+      <bit_field_value name="CHANNEL_TMODE_0b1010" value="0b1010" description="Timer Channel is configured for Output Compare - clear output on compare, set output on overflow."/>
+      <bit_field_value name="CHANNEL_TMODE_0b10x1" value="0b10?1" description="Timer Channel is configured for Output Compare - set output on compare, clear output on overflow."/>
+      <bit_field_value name="CHANNEL_TMODE_0b110x" value="0b110?" description="Reserved"/>
+      <bit_field_value name="CHANNEL_TMODE_0b1110" value="0b1110" description="Timer Channel is configured for Output Compare - pulse output low on compare for one 1588-clock cycle."/>
+      <bit_field_value name="CHANNEL_TMODE_0b1111" value="0b1111" description="Timer Channel is configured for Output Compare - pulse output high on compare for one 1588-clock cycle."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="TIE" access="RW" reset_value="0" description="Timer Interrupt Enable">
+      <alias type="CMSIS" value="ENET_TCSR_TIE(x)"/>
+      <bit_field_value name="CHANNEL_TIE_0b0" value="0b0" description="Interrupt is disabled"/>
+      <bit_field_value name="CHANNEL_TIE_0b1" value="0b1" description="Interrupt is enabled"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="TF" access="W1C" reset_value="0" description="Timer Flag">
+      <alias type="CMSIS" value="ENET_TCSR_TF(x)"/>
+      <bit_field_value name="CHANNEL_TF_0b0" value="0b0" description="Input Capture or Output Compare has not occurred."/>
+      <bit_field_value name="CHANNEL_TF_0b1" value="0b1" description="Input Capture or Output Compare has occurred."/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="24" reset_value="0"/>
+  </register>
+  <register offset="0x60C" width="32" name="TCCR0" description="Timer Compare Capture Register">
+    <alias type="CMSIS" value="CHANNEL[0].TCCR"/>
+    <bit_field offset="0" width="32" name="TCC" access="RW" reset_value="0" description="Timer Capture Compare">
+      <alias type="CMSIS" value="ENET_TCCR_TCC(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x610" width="32" name="TCSR1" description="Timer Control Status Register">
+    <alias type="CMSIS" value="CHANNEL[1].TCSR"/>
+    <bit_field offset="0" width="1" name="TDRE" access="RW" reset_value="0" description="Timer DMA Request Enable">
+      <alias type="CMSIS" value="ENET_TCSR_TDRE(x)"/>
+      <bit_field_value name="CHANNEL_TDRE_0b0" value="0b0" description="DMA request is disabled"/>
+      <bit_field_value name="CHANNEL_TDRE_0b1" value="0b1" description="DMA request is enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="4" name="TMODE" access="RW" reset_value="0" description="Timer Mode">
+      <alias type="CMSIS" value="ENET_TCSR_TMODE(x)"/>
+      <bit_field_value name="CHANNEL_TMODE_0b0000" value="0b0000" description="Timer Channel is disabled."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0001" value="0b0001" description="Timer Channel is configured for Input Capture on rising edge."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0010" value="0b0010" description="Timer Channel is configured for Input Capture on falling edge."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0011" value="0b0011" description="Timer Channel is configured for Input Capture on both edges."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0100" value="0b0100" description="Timer Channel is configured for Output Compare - software only."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0101" value="0b0101" description="Timer Channel is configured for Output Compare - toggle output on compare."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0110" value="0b0110" description="Timer Channel is configured for Output Compare - clear output on compare."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0111" value="0b0111" description="Timer Channel is configured for Output Compare - set output on compare."/>
+      <bit_field_value name="CHANNEL_TMODE_0b1000" value="0b1000" description="Reserved"/>
+      <bit_field_value name="CHANNEL_TMODE_0b1010" value="0b1010" description="Timer Channel is configured for Output Compare - clear output on compare, set output on overflow."/>
+      <bit_field_value name="CHANNEL_TMODE_0b10x1" value="0b10?1" description="Timer Channel is configured for Output Compare - set output on compare, clear output on overflow."/>
+      <bit_field_value name="CHANNEL_TMODE_0b110x" value="0b110?" description="Reserved"/>
+      <bit_field_value name="CHANNEL_TMODE_0b1110" value="0b1110" description="Timer Channel is configured for Output Compare - pulse output low on compare for one 1588-clock cycle."/>
+      <bit_field_value name="CHANNEL_TMODE_0b1111" value="0b1111" description="Timer Channel is configured for Output Compare - pulse output high on compare for one 1588-clock cycle."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="TIE" access="RW" reset_value="0" description="Timer Interrupt Enable">
+      <alias type="CMSIS" value="ENET_TCSR_TIE(x)"/>
+      <bit_field_value name="CHANNEL_TIE_0b0" value="0b0" description="Interrupt is disabled"/>
+      <bit_field_value name="CHANNEL_TIE_0b1" value="0b1" description="Interrupt is enabled"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="TF" access="W1C" reset_value="0" description="Timer Flag">
+      <alias type="CMSIS" value="ENET_TCSR_TF(x)"/>
+      <bit_field_value name="CHANNEL_TF_0b0" value="0b0" description="Input Capture or Output Compare has not occurred."/>
+      <bit_field_value name="CHANNEL_TF_0b1" value="0b1" description="Input Capture or Output Compare has occurred."/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="24" reset_value="0"/>
+  </register>
+  <register offset="0x614" width="32" name="TCCR1" description="Timer Compare Capture Register">
+    <alias type="CMSIS" value="CHANNEL[1].TCCR"/>
+    <bit_field offset="0" width="32" name="TCC" access="RW" reset_value="0" description="Timer Capture Compare">
+      <alias type="CMSIS" value="ENET_TCCR_TCC(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x618" width="32" name="TCSR2" description="Timer Control Status Register">
+    <alias type="CMSIS" value="CHANNEL[2].TCSR"/>
+    <bit_field offset="0" width="1" name="TDRE" access="RW" reset_value="0" description="Timer DMA Request Enable">
+      <alias type="CMSIS" value="ENET_TCSR_TDRE(x)"/>
+      <bit_field_value name="CHANNEL_TDRE_0b0" value="0b0" description="DMA request is disabled"/>
+      <bit_field_value name="CHANNEL_TDRE_0b1" value="0b1" description="DMA request is enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="4" name="TMODE" access="RW" reset_value="0" description="Timer Mode">
+      <alias type="CMSIS" value="ENET_TCSR_TMODE(x)"/>
+      <bit_field_value name="CHANNEL_TMODE_0b0000" value="0b0000" description="Timer Channel is disabled."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0001" value="0b0001" description="Timer Channel is configured for Input Capture on rising edge."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0010" value="0b0010" description="Timer Channel is configured for Input Capture on falling edge."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0011" value="0b0011" description="Timer Channel is configured for Input Capture on both edges."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0100" value="0b0100" description="Timer Channel is configured for Output Compare - software only."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0101" value="0b0101" description="Timer Channel is configured for Output Compare - toggle output on compare."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0110" value="0b0110" description="Timer Channel is configured for Output Compare - clear output on compare."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0111" value="0b0111" description="Timer Channel is configured for Output Compare - set output on compare."/>
+      <bit_field_value name="CHANNEL_TMODE_0b1000" value="0b1000" description="Reserved"/>
+      <bit_field_value name="CHANNEL_TMODE_0b1010" value="0b1010" description="Timer Channel is configured for Output Compare - clear output on compare, set output on overflow."/>
+      <bit_field_value name="CHANNEL_TMODE_0b10x1" value="0b10?1" description="Timer Channel is configured for Output Compare - set output on compare, clear output on overflow."/>
+      <bit_field_value name="CHANNEL_TMODE_0b110x" value="0b110?" description="Reserved"/>
+      <bit_field_value name="CHANNEL_TMODE_0b1110" value="0b1110" description="Timer Channel is configured for Output Compare - pulse output low on compare for one 1588-clock cycle."/>
+      <bit_field_value name="CHANNEL_TMODE_0b1111" value="0b1111" description="Timer Channel is configured for Output Compare - pulse output high on compare for one 1588-clock cycle."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="TIE" access="RW" reset_value="0" description="Timer Interrupt Enable">
+      <alias type="CMSIS" value="ENET_TCSR_TIE(x)"/>
+      <bit_field_value name="CHANNEL_TIE_0b0" value="0b0" description="Interrupt is disabled"/>
+      <bit_field_value name="CHANNEL_TIE_0b1" value="0b1" description="Interrupt is enabled"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="TF" access="W1C" reset_value="0" description="Timer Flag">
+      <alias type="CMSIS" value="ENET_TCSR_TF(x)"/>
+      <bit_field_value name="CHANNEL_TF_0b0" value="0b0" description="Input Capture or Output Compare has not occurred."/>
+      <bit_field_value name="CHANNEL_TF_0b1" value="0b1" description="Input Capture or Output Compare has occurred."/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="24" reset_value="0"/>
+  </register>
+  <register offset="0x61C" width="32" name="TCCR2" description="Timer Compare Capture Register">
+    <alias type="CMSIS" value="CHANNEL[2].TCCR"/>
+    <bit_field offset="0" width="32" name="TCC" access="RW" reset_value="0" description="Timer Capture Compare">
+      <alias type="CMSIS" value="ENET_TCCR_TCC(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x620" width="32" name="TCSR3" description="Timer Control Status Register">
+    <alias type="CMSIS" value="CHANNEL[3].TCSR"/>
+    <bit_field offset="0" width="1" name="TDRE" access="RW" reset_value="0" description="Timer DMA Request Enable">
+      <alias type="CMSIS" value="ENET_TCSR_TDRE(x)"/>
+      <bit_field_value name="CHANNEL_TDRE_0b0" value="0b0" description="DMA request is disabled"/>
+      <bit_field_value name="CHANNEL_TDRE_0b1" value="0b1" description="DMA request is enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="4" name="TMODE" access="RW" reset_value="0" description="Timer Mode">
+      <alias type="CMSIS" value="ENET_TCSR_TMODE(x)"/>
+      <bit_field_value name="CHANNEL_TMODE_0b0000" value="0b0000" description="Timer Channel is disabled."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0001" value="0b0001" description="Timer Channel is configured for Input Capture on rising edge."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0010" value="0b0010" description="Timer Channel is configured for Input Capture on falling edge."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0011" value="0b0011" description="Timer Channel is configured for Input Capture on both edges."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0100" value="0b0100" description="Timer Channel is configured for Output Compare - software only."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0101" value="0b0101" description="Timer Channel is configured for Output Compare - toggle output on compare."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0110" value="0b0110" description="Timer Channel is configured for Output Compare - clear output on compare."/>
+      <bit_field_value name="CHANNEL_TMODE_0b0111" value="0b0111" description="Timer Channel is configured for Output Compare - set output on compare."/>
+      <bit_field_value name="CHANNEL_TMODE_0b1000" value="0b1000" description="Reserved"/>
+      <bit_field_value name="CHANNEL_TMODE_0b1010" value="0b1010" description="Timer Channel is configured for Output Compare - clear output on compare, set output on overflow."/>
+      <bit_field_value name="CHANNEL_TMODE_0b10x1" value="0b10?1" description="Timer Channel is configured for Output Compare - set output on compare, clear output on overflow."/>
+      <bit_field_value name="CHANNEL_TMODE_0b110x" value="0b110?" description="Reserved"/>
+      <bit_field_value name="CHANNEL_TMODE_0b1110" value="0b1110" description="Timer Channel is configured for Output Compare - pulse output low on compare for one 1588-clock cycle."/>
+      <bit_field_value name="CHANNEL_TMODE_0b1111" value="0b1111" description="Timer Channel is configured for Output Compare - pulse output high on compare for one 1588-clock cycle."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="TIE" access="RW" reset_value="0" description="Timer Interrupt Enable">
+      <alias type="CMSIS" value="ENET_TCSR_TIE(x)"/>
+      <bit_field_value name="CHANNEL_TIE_0b0" value="0b0" description="Interrupt is disabled"/>
+      <bit_field_value name="CHANNEL_TIE_0b1" value="0b1" description="Interrupt is enabled"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="TF" access="W1C" reset_value="0" description="Timer Flag">
+      <alias type="CMSIS" value="ENET_TCSR_TF(x)"/>
+      <bit_field_value name="CHANNEL_TF_0b0" value="0b0" description="Input Capture or Output Compare has not occurred."/>
+      <bit_field_value name="CHANNEL_TF_0b1" value="0b1" description="Input Capture or Output Compare has occurred."/>
+    </bit_field>
+    <reserved_bit_field offset="8" width="24" reset_value="0"/>
+  </register>
+  <register offset="0x624" width="32" name="TCCR3" description="Timer Compare Capture Register">
+    <alias type="CMSIS" value="CHANNEL[3].TCCR"/>
+    <bit_field offset="0" width="32" name="TCC" access="RW" reset_value="0" description="Timer Capture Compare">
+      <alias type="CMSIS" value="ENET_TCCR_TCC(x)"/>
+    </bit_field>
+  </register>
+</regs:peripheral>

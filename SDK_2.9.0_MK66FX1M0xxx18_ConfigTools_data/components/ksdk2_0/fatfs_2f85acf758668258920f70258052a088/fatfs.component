@@ -1,0 +1,1032 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd"
+    xmlns:component="http://swtools.freescale.net/XSD/component/1.0" id="fatfs" label="FATFS"
+    category="Middleware" global_only="false" options="UI_COMPONENT_MODE_HIDDEN">
+    <sw_comp_ref name="middleware.fatfs" version="0.14.0"/>
+    <description>Generic FAT Filesystem module (FATFS)</description>
+    <mode id="general" label="General">
+        <description>FAT Filesystem configuration</description>
+        <config_set_refs>
+            <config_set_ref>ff_config</config_set_ref>
+            <config_set_ref>init_config</config_set_ref>
+        </config_set_refs>
+    </mode>
+    <script file="fatfs_codegenerator.js"/>
+    <user_functions>
+        <!--function_def id="ifDefGet">(x) -> (system::getValueOrDefault(x,false))</function_def-->
+        <function_def id="ifDefGet">(node, default) -> ((node.isAvailable() &amp;&amp; node.isEnabled()) ? ((node.getType() == `enum`) ? node.getEnumItemValue() : node.getValue()) : default)</function_def>
+        <function_def id="boolToInt">x -> ((x != `false`) ? ((x == `true`) ? 1 : -1) : 0)</function_def>
+    </user_functions>
+    <config_set id="ff_config" label="General configuration">
+        <description>General configuration of generic FAT Filesystem module</description>
+        <generated_types/>
+        <user_types>
+            <struct id="volumes_t">
+                <string id="volumeStr" label="Volume ID">
+                    <validation>
+                        <constraint cond_expr="isCIdentifier($this.getValue())" level="error"
+                            description="The volume ID must be a C identifier!"/>
+                    </validation>
+                </string>
+            </struct>
+            <!--FUNCTIONS CONFIGURATION-->
+            <struct id="functionConfig_t">
+                <bool id="FF_FS_READONLY" label="Disable write">
+                    <!--default 0-->
+                    <description>
+Macro: **FF_FS_READONLY**  
+Read-only configuration removes writing API functions `f_write, f_sync, f_unlink, f_mkdir, f_chmod, f_rename, f_truncate, f_getfree` and optional writing functions as well.  
+**Values:**                          
+- **0**: Read/Write configuration
+- **1**: Read-only configuration
+                    </description>
+                </bool>
+                <enum id="FF_FS_MINIMIZE" label="Remove API functions">
+                    <!--default 0-->
+                    <description>
+Macro: **FF_FS_MINIMIZE**  
+This option defines minimization level to remove some basic API functions  
+**Values:**  
+- **0**: All basic API functions are available
+- **1**: Group 1 removes: `f_stat(), f_getfree(), f_unlink(), f_mkdir(), f_chmod(), f_utime(), f_truncate(), f_rename()`
+- **2**: Group 2 removes: `f_opendir(), f_readdir(), f_closedir()` + Group 1
+- **3**: Group 3 removes: `f_lseek()` + Group 2
+                    </description>
+                    <item id="level1" label="All functions available" value="0">
+                        <description>All basic API functions are available</description>
+                    </item>
+                    <item id="group1" label="Group 1" value="1">
+                        <description>f_stat(), f_getfree(), f_unlink(), f_mkdir(), f_chmod(), f_utime(), f_truncate(), f_rename() functions are removed</description>
+                    </item>
+                    <item id="group2" label="Group 2" value="2">
+                        <description>f_stat(), f_getfree(), f_unlink(), f_mkdir(), f_chmod(), f_utime(), f_truncate(), f_rename(), f_opendir(), f_readdir(), f_closedir() functions are removed</description>
+                    </item>
+                    <item id="group3" label="Group 3" value="3">
+                        <description>f_stat(), f_getfree(), f_unlink(), f_mkdir(), f_chmod(), f_utime(), f_truncate(), f_rename(), f_opendir(), f_readdir(), f_closedir(), f_lseek() functions are removed</description>
+                    </item>
+                </enum>
+                <enum id="FF_USE_STRFUNC" label="String functions">
+                    <!--default 1-->
+                    <description>
+Macro: **FF_USE_STRFUNC**  
+This option enables/disables string functions `f_gets(), f_putc(), f_puts()` and `f_printf()`.  
+**Values:**  
+- **0**: Disable string functions
+- **1**: Enable without LF-CRLF conversion
+- **2**: Enable with LF-CRLF conversion
+                    </description>
+                    <item id="disableStr" label="Disable" value="0"/>
+                    <item id="enableWithoutConversion" label="Enable without LF-CRLF conversion"
+                        value="1"/>
+                    <item id="enableWithConversion" label="Enable with LF-CRLF conversion" value="2"
+                    />
+                </enum>
+                <enum id="FF_USE_FIND" label="Filtered directory read"
+                    enable="($parent.FF_FS_MINIMIZE.ifDefGet(5).toInt() &lt; 2)">
+                    <!--default 0-->
+                    <description>
+Macro: **FF_USE_FIND**  
+This option enables/disables filtered directory read functions `f_findfirst()` and `f_findnext()`.  
+**Values:**  
+- **0**: Disable
+- **1**: Enable
+- **2**: Enable with matching altname[] (alternative file name - see FILINFO object)
+                    </description>
+                    <item id="disableDirRead" label="Disable" value="0"/>
+                    <item id="enableDirRead" label="Enable" value="1"/>
+                    <item id="enableDirReadAlt" label="Enable with matching altname" value="2"/>
+                </enum>
+                <bool id="FF_USE_MKFS" label="Enable MKFS">
+                    <!--default 1-->
+                    <description>
+Macro: **FF_USE_MKFS**  
+This option enables/disables `f_mkfs()` function. The `f_mkfs()` fucntion creates an FAT/exFAT volume on the logical drive.   
+**Values:**                          
+- **0**: Disable
+- **1**: Enable
+                    </description>
+                </bool>
+                <bool id="FF_USE_FASTSEEK" label="Enable fast seek"
+                    enable="($parent.FF_FS_MINIMIZE.ifDefGet(5).toInt() &lt; 3)">
+                    <!--default 0-->
+                    <description>
+Macro: **FF_USE_FASTSEEK**  
+This option enables/disables fast seek function for accelerated mode for `f_lseek(), f_read()` and `f_write()` function.  
+**Values:**                          
+- **0**: Disable
+- **1**: Enable
+                    </description>
+                </bool>
+                <bool id="FF_USE_EXPAND" label="Enable EXPAND">
+                    <!--default 0-->
+                    <description>
+Macro: **FF_USE_EXPAND**  
+This option enables/disables `f_expand()` function. The `f_expand()` function prepares or allocates a contiguous data area to the file.  
+**Values:**                          
+- **0**: Disable
+- **1**: Enable
+                    </description>
+                </bool>
+                <bool id="FF_USE_CHMOD" label="Enable metadata control">
+                    <!--default 0-->
+                    <description>
+Macro: **FF_USE_CHMOD**  
+This option enables/disables metadata control (attribute manipulation) functions `f_chmod()` and `f_utime()`.  
+**Values:**                          
+- **0**: Disable
+- **1**: Enable
+                    </description>
+                    <validation>
+                        <constraint when_expr="$this.getValue()"
+                            cond_expr="$parent.FF_FS_READONLY.ifDefGet(true) == false"
+                            level="warning"
+                            description="Read-only is enabled. Metadata control requires write mode enabled. (FF_FS_READONLY)"
+                        />
+                    </validation>
+                </bool>
+                <bool id="FF_USE_LABEL" label="Enable volume label">
+                    <!--default 0-->
+                    <description>
+Macro: **FF_USE_LABEL**  
+This option enables/disables volume label functions `f_getlabel()` and `f_setlabel()`.  
+**Values:**  
+- **0**: Disable
+- **1**: Enable
+                    </description>
+                </bool>
+                <bool id="FF_USE_FORWARD" label="Enable FORWARD">
+                    <!--default 0-->
+                    <description>
+Macro: **FF_USE_FORWARD**  
+This option enables/disables `f_forward()` function. The `f_forward()` function reads the file data and forward it to the data streaming device.  
+**Values:**                          
+- **0**: Disable
+- **1**: Enable
+                    </description>
+                </bool>
+            </struct>
+            <!-- NAMESPACE & LOCALE CONFIGURATION -->
+            <struct id="namespaceConfig_t">
+                <!--info id="FF_STRF_ENCODEinfo" label="File character encoding" value="`ANSI/OEM in current CP`" available="!$parent.FF_STRF_ENCODE.isAvailable()" enable=" $parent.FF_USE_LFN.ifDefGet(0) != 0" ></info-->
+                <enum id="FF_USE_LFN" label="Enable long file name (LFN)">
+                    <description>
+Macro: **FF_USE_LFN**  
+This option enables/disables LFN (long file name) support. To enable the LFN, **ffunicode.c** needs to be added to the project. When using stack for the working buffer, stack overflow should be avoided.
+When using heap memory for the working buffer, memory management functions `ff_memalloc()` and `ff_memfree()` in **ffsystem.c** need to be added to the project.  
+**Values:**                          
+- **0**: Disable LFN
+- **1**: Enable LFN with static working buffer on the BSS. Always NOT thread-safe
+- **2**: Enable LFN with dynamic working buffer on the STACK
+- **3**: Enable LFN with dynamic working buffer on the HEAP
+                    </description>
+                    <item id="disableLfn" label="Disable" value="0"/>
+                    <item id="enableLfnStatic" label="Enable with static buffer (BSS)" value="1"/>
+                    <item id="enableLfnStack" label="Enable with dynamic buffer (STACK)" value="2"/>
+                    <item id="enableLfnHeap" label="Enable with dynamic buffer (HEAP)" value="3"/>
+                </enum>
+                <integer type="uint16_t" id="FF_MAX_LFN" label="Maximum LFN length"
+                    enable="$parent.FF_USE_LFN.ifDefGet(0) != 0"
+                    min_expr="$parent.SFNbuf.getValue()"
+                    max_expr="$parent.LFNbuf.getValue()">
+                    <description>
+Macro: **FF_MAX_LFN**                         
+The LFN function requires certain internal working buffer of size 
+(FF\_MAX\_LFN + 1) \* 2 bytes and additional (FF\_MAX\_LFN + 44) / 15 \* 32 bytes when exFAT is enabled. 
+The FF\_MAX\_LFN defines size of the working buffer in UTF-16 code unit and it can be in range of 12 to 255. 
+It is recommended to be set 255 to fully support LFN specification. 
+                    </description>
+                </integer>
+                <variable id="LFNbuf"
+                    value="(($parent.FF_USE_LFN.ifDefGet(0) != 0) ? (($parent.FF_LFN_UNICODE.ifDefGet(0) == 0) ? (($parent.FF_CODE_PAGE.ifDefGet(0).toInt() &gt; 931) ? 510: 255) : (($parent.FF_LFN_UNICODE.ifDefGet(0) == 2) ? 756 : 255) ): 255)"/>
+                <variable id="SFNbuf"
+                    value="(($parent.FF_USE_LFN.ifDefGet(0) != 0) ? (($parent.FF_LFN_UNICODE.ifDefGet(0) == 2)? 34 : 12) : 12)"/>
+                <dynamic_enum id="FF_LFN_BUF" label="Primary file name size"
+                    enable="$parent.FF_USE_LFN.ifDefGet(0) != 0"
+                    items="createArray().addItemToList(`LFNID`,$parent.LFNbuf.getValue(),$parent.LFNbuf.getValue(),true)">
+                    <description>
+Macro: **FF_LFN_BUF**                         
+This option defines size of file name member *fname[]* (primary object name) in the FILINFO structure which is used to read out directory items.
+The maximum possible length of the read file name depends on character encoding.
+                    </description>
+                    <validation>
+                        <constraint cond_expr="$this.getEnumItemValue().toInt() &gt; 0"
+                            level="error" description="Invalid size!"/>
+                    </validation>
+                    <custom_value_support default="255"
+                        validation_expr="x -> (x.regexMatch(system::decHexNumRegExpr()) &amp;&amp; (x.toInt() &gt;=0))"
+                    />
+                </dynamic_enum>
+                <dynamic_enum id="FF_SFN_BUF" label="Alternative file name size"
+                    enable="$parent.FF_USE_LFN.ifDefGet(0) != 0"
+                    items="createArray().addItemToList(`SFNID`,$parent.SFNbuf.getValue(),$parent.SFNbuf.getValue(),true)">
+                    <description>
+Macro: **FF_SFN_BUF**                         
+This option defines size of file name member *altname[]* (alternativ eobject name) in the FILINFO structure which is used to read out directory items.
+                    </description>
+                    <validation>
+                        <constraint cond_expr="$this.getEnumItemValue().toInt() &gt; 0"
+                            level="error" description="Invalid size!"/>
+                    </validation>
+                    <custom_value_support default="12"
+                        validation_expr="x -> (x.regexMatch(system::decHexNumRegExpr()) &amp;&amp; (x.toInt() &gt;=0))"
+                    />
+                </dynamic_enum>
+                <enum id="FF_LFN_UNICODE" label="API character encoding" enable="$parent.FF_USE_LFN.ifDefGet(0) != 0">
+                    <!--default 1-->
+                    <description>
+Macro: **FF_LFN_UNICODE**  
+This option switches the character encoding of the API when LFN is enabled. Also behavior of string I/O functions will be affected by this option. 
+When Unicode is selected, OEM code page (**FF_CODE_PAGE**) has actually no meaning except for compatibility with legacy systems, such as MS-DOS and any system without support for LFN.
+FatFs supports the code point up to U+10FFFF.  
+**Values:**                          
+- **0**: ANSI/OEM in current CP (TCHAR = char)
+- **1**: Unicode in UTF-16 (TCHAR = WCHAR)
+- **2**: Unicode in UTF-8 (TCHAR = char)
+- **3**: Unicode in UTF-32 (TCHAR = DWORD)
+                    </description>
+                    <item id="ansiOEM" label="ANSI/OEM" value="0">
+                        <description>ANSI/OEM in current CP (TCHAR = char)</description>
+                    </item>
+                    <item id="UTF16" label="Unicode UTF-16" value="1">
+                        <description>Unicode in UTF-16 (TCHAR = WCHAR)</description>
+                    </item>
+                    <item id="UTF8" label="Unicode UTF-8" value="2">
+                        <description>Unicode in UTF-8 (TCHAR = char)</description>
+                    </item>
+                    <item id="UTF32" label="Unicode UTF-32" value="3">
+                        <description>Unicode in UTF-32 (TCHAR = DWORD)</description>
+                    </item>
+                </enum>
+                <enum id="FF_STRF_ENCODE" label="File character encoding"
+                    enable="$parent.FF_USE_LFN.getEnumItemValue() != 0 &amp;&amp; $parent.FF_LFN_UNICODE.ifDefGet(0) != 0">
+                    <!--default 1-->
+                    <description>
+Macro: **FF_STRF_ENCODE**  
+When character encoding of the API is Unicode string I/O functions `f_gets, f_putc, f_puts` and `f_printf` convert the character encoding in it.
+This option defines the assumption of character encoding ON THE FILE to be read/written via those functions.  
+**Values:**                          
+- **0**: ANSI/OEM in current CP
+- **1**: Unicode in UTF-16LE
+- **2**: Unicode in UTF-16BE
+- **3**: Unicode in UTF-8
+                    </description>
+                    <item id="ansiOEM" label="ANSI/OEM" value="0">
+                        <description>ANSI/OEM in current CP</description>
+                    </item>
+                    <item id="UTF16LE" label="Unicode UTF-16LE" value="1">
+                        <description>Unicode in UTF-16LE</description>
+                    </item>
+                    <item id="UTF16BE" label="Unicode UTF-16BE" value="2">
+                        <description>Unicode in UTF-16BE</description>
+                    </item>
+                    <item id="UTF8" label="Unicode UTF-8" value="3">
+                        <description>Unicode in UTF-8</description>
+                    </item>
+                </enum>
+                <enum id="FF_CODE_PAGE" label="OEM code page"> <!--default 437-->
+                    <description>
+Macro: **FF_CODE_PAGE**  
+This option specifies the OEM code page to be used on the target system. Incorrect code page setting can cause a file open failure.  
+**Values:**
+- 0 - All code pages below and set by `f_setcp()`
+- 437 - U.S.
+- 720 - Arabic
+- 737 - Greek
+- 771 - KBL
+- 775 - Baltic
+- 850 - Latin 1
+- 852 - Latin 2
+- 855 - Cyrillic
+- 857 - Turkish
+- 860 - Portuguese
+- 861 - Icelandic
+- 862 - Hebrew
+- 863 - Canadian French
+- 864 - Arabic
+- 865 - Nordic
+- 866 - Russian
+- 869 - Greek 2
+- 932 - Japanese (DBCS)
+- 936 - Simplified Chinese (DBCS)
+- 949 - Korean (DBCS)
+- 950 - Traditional Chinese (DBCS)
+                    </description>
+                    <item id="cpAll" label="Include all code pages (0)" value="0"/>
+                    <item id="cpUS" label="U.S (437)" value="437"/>
+                    <item id="cpArabic1" label="Arabic 1 (720)" value="720"/>
+                    <item id="cpGreek1" label="Greek 1 (737)" value="737"/>
+                    <item id="cpKBL" label="KBL (771)" value="771"/>
+                    <item id="cpBaltic" label="Baltic (775)" value="775"/>
+                    <item id="cpLatin1" label="Latin 1 (850)" value="850"/>
+                    <item id="cpLatin2" label="Latin 2 (852)" value="852"/>
+                    <item id="cpCyrilic" label="Cyrilic (855)" value="855"/>
+                    <item id="cpTurkish" label="Turkish (857)" value="857"/>
+                    <item id="cpPortuguese" label="Portuguese (860)" value="860"/>
+                    <item id="cpIcelandic" label="Icelandic (861)" value="861"/>
+                    <item id="cpHebrew" label="Hebrew (862)" value="862"/>
+                    <item id="cpCanadianFrench" label="Canadian French (863)" value="863"/>
+                    <item id="cpArabic2" label="Arabic 2 (864)" value="864"/>
+                    <item id="cpNordic" label="Nordic (865)" value="865"/>
+                    <item id="cpRussian" label="Russian (866)" value="866"/>
+                    <item id="cpGreek2" label="Greek 2 (869)" value="869"/>
+                    <item id="cpJapanese" label="Japanese DBCS (932)" value="932"/>
+                    <item id="cpSimpleChinese" label="Simplified Chinese DBCS (936)" value="936"/>
+                    <item id="cpKorean" label="Korean DBCS (949)" value="949"/>
+                    <item id="cpTradChinese" label="Traditional Chinese DBCS (950)" value="950"/>
+                </enum>
+                <enum id="FF_FS_RPATH" label="Relative path function">
+                    <description>
+Macro: **FF_FS_RPATH**  
+This option configures relative path function.  
+**Values:**                          
+- **0**: Disable relative path function and remove related functions
+- **1**: Enable relative path function, `f_chdir` and `f_chdrive` functions are available
+- **2**: Enable relative path function, `f_chdir`, `f_chdrive` and `f_getcwd` functions are available
+                    </description>
+                    <item id="disableRP" label="Disable relative path function" value="0"/>
+                    <item id="enableRP1" label="Enable f_chdir(), f_chdrive()" value="1"/>
+                    <item id="enableRP2" label="Enable f_chdir(), f_chdrive(), f_getcwd()" value="2"
+                    />
+                </enum>
+            </struct>
+            <!-- DRIVE AND VOLUME CONFIGURATION -->
+            <struct id="driveConfig_t">
+                <integer type="uint16_t" id="FF_VOLUMES" label="Used volumes/drives" min_expr="1"
+                    max_expr="10">
+                    <description>
+Macro: **FF_VOLUMES**  
+Number of volumes (logical drives) to be used (1-10).  
+  
+This setting changes number of **Volume IDs**. It has effect when **Volume ID configuration** is selected as *String ID* configuration</description>
+                </integer>
+                <enum id="FF_STR_VOLUME_ID" label="Volume IDs configuration" options="UI_LABEL_BOLD">
+                    <description>
+Macro: **FF_STR_VOLUME_ID**  
+This option enables/disables the support for string volume ID. When arbitrary string for the volume ID is enabled for the drive prefix, 
+also pre-defined strings by FF_VOLUME_STRS or user defined strings can be used as drive prefix in the path name. 
+Numeric drive number is always valid regardless of this option, and also either format of drive prefix can be enabled by this option.  
+**Values:**                          
+- **0**: Only DOS/Windows style drive prefix in numeric ID can be used (e.g.: `0:/Filename`)
+- **1**: Also DOS/Windows style drive prefix in string ID can be used (e.g.: `drive:/Filename`)	
+- **2**: Also Unix style drive prefix in string ID can be used (e.g.: `/drive/Filename`)
+                    </description>
+                    <item id="numericId" label="Numeric ID (DOS/Windows)" value="0">
+                        <description>Only DOS/Windows style drive prefix in numeric ID can be used (e.g.: 0:/Filename)</description>
+                    </item>
+                    <item id="stringIdWindows" label="String ID (DOS/Windows)" value="1">
+                        <description>Also DOS/Windows style drive prefix in string ID can be used (e.g.: drive:/Filename)</description>
+                    </item>
+                    <item id="stingIdUnix" label="String ID (Unix)" value="2">
+                        <description>Also Unix style drive prefix in string ID can be used (e.g.: /drive/Filename)</description>
+                    </item>
+                </enum>
+                <variable id="FF_VOLUME_STRS" value="$parent.volumes.reduce(``, (lastResult, x) -> (lastResult + (lastResult!=``?`, `:``) + `&quot;` + x.getSetting(`volumeStr`).getValue() + `&quot;` ))"></variable>
+                <array type="volumes_t" id="volumes" label="String volume IDs"
+                    enable="$parent.FF_STR_VOLUME_ID.ifDefGet(0) != 0"
+                    options="UI_SHOW_CONTENT_AS=TABLE;UI_TABLE_COLUMN_WIDTHS=3,10;UI_ARRAY_REORDER"
+                    size="$parent.FF_VOLUMES.getValue() &gt;= 10 ? 10 : $parent.FF_VOLUMES.getValue()" key_selector_expr="x -> x.getID()">
+                    <description>
+Macro: **FF_VOLUME_STRS**  
+This option defines the volume ID strings for each logical drives. Number of items must not be less than number of used volumes(**FF_VOLUMES**). Valid characters for the volume ID string are A-Z, a-z and 0-9, however,
+they are compared in *case-insensitive*. If volume IDs configuration (**FF_STR_VOLUME_ID**) is not *Numeric ID* and this option is not defined, a user defined volume string table needs to be defined as:  
+`/* User defined volume ID strings for 0:, 1:, 2:, 3:, ... */`  
+`const char* VolumeStr[FF_VOLUMES] = {"ram","flash","sd","usb", ... }`  
+The table should not be modified on the fly.
+                    </description>
+                    <validation>
+                        <constraint cond_expr="$this.size() >= $parent.FF_VOLUMES.ifDefGet(0)"
+                            level="error"
+                            description_expr="`At least ` + $parent.FF_VOLUMES.ifDefGet(0) + ` volume ID(s) must be defined`"
+                        />
+                    </validation>
+                    <item_defaults>
+                        <set_default id="volumeStr" value_expr="x -> `VOL` + x.getID()"/>
+                    </item_defaults>
+                </array>
+                <bool id="FF_MULTI_PARTITION" label="Enable multiple partitions">
+                    <description>
+Macro: **FF_MULTI_PARTITION**  
+This option enables/disables support for multiple volumes on the physical drive. By default (0), each logical drive number is bound to the same physical drive number and only a FAT volume found on the physical drive will be mounted.
+When enabled (1), each logical drive number can be bound to arbitrary physical drive and partition listed in the user defined partition mappping table `VolToPart[]`.
+Also `f_fdisk()` function will be available.  
+**Values:**  
+- **0**: Disable
+- **1**: Enable
+
+When enabled, the definition of **volume-partition mapping table** is available as part of **initialization configuration**.  
+  
+*Example:*  
+"0:", "1:" and "2:" are tied to three pri-partitions on the physical drive 0 (fixed drive) "3:" is tied to an FAT volume on the physical drive 1 (removable drive)
+  
+`PARTITION VolToPart[] = {`  
+`{0, 1},     /* "0:" ==> Physical drive 0, 1st partition */`  
+`{0, 2},     /* "1:" ==> Physical drive 0, 2nd partition */`  
+`{0, 3},     /* "2:" ==> Physical drive 0, 3rd partition */`  
+`{1, 0}      /* "3:" ==> Physical drive 1, auto detection */`  
+`};`  
+`  `
+*Notes:*
+- The physical drive that has two or more mounted partitions must be non-removable. Media change while a system operation is prohibited.
+- Only four primary partitions can be specified. Extended partition is not supported.
+- Windows does not support multiple volumes on the removable storage. Only first parition will be recognized.
+                    </description>
+                </bool>
+                <enum id="FF_MIN_SS" label="Minimum sector size">
+                    <description>
+Macro: **FF_MIN_SS**                         
+This option defines the extent of sector size used on the low level disk I/O interface, `disk_read()` and `disk_write()` function. **FF_MIN_SS** defines minimum sector size. 
+Always set 512 for most systems, generic memory card and harddisk. Larger value may be required for on-board flash memory and some type of optical media. 
+When **FF_MAX_SS** > **FF_MIN_SS**, support of variable sector size is enabled and `GET_SECTOR_SIZE` command needs to be implemented to the `disk_ioctl()` function.  
+**Supported values:** 512, 1024, 2048 or 4096
+                    </description>
+                    <item id="value512" label="512" value="512"/>
+                    <item id="value1024" label="1024" value="1024"/>
+                    <item id="value2048" label="2048" value="2048"/>
+                    <item id="value4096" label="4096" value="4096"/>
+                </enum>
+                <enum id="FF_MAX_SS" label="Maximum sector size">
+                    <description>
+Macro: **FF_MAX_SS**                         
+This option defines the extent of sector size used on the low level disk I/O interface, `disk_read()` and `disk_write()` function. ***FF_MAX_SS** defines maximum sector size. 
+Always set 512 for most systems, generic memory card and harddisk. Larger value may be required for on-board flash memory and some type of optical media. 
+When **FF_MAX_SS** > **FF_MIN_SS**, support of variable sector size is enabled and `GET_SECTOR_SIZE` command needs to be implemented to the `disk_ioctl()` function.  
+**Supported values:** 512, 1024, 2048 or 4096
+                    </description>
+                    <item id="value512" label="512" value="512"/>
+                    <item id="value1024" label="1024" value="1024"/>
+                    <item id="value2048" label="2048" value="2048"/>
+                    <item id="value4096" label="4096" value="4096"/>
+                </enum>
+                <bool id="FF_LBA64" label="Enable 64-bit LBA (GPT)" enable="$configSet.systemConfig.FF_FS_EXFAT.ifDefGet(false)">
+                    <description>
+Macro: **FF_LBA64**  
+This option switches support for 64-bit LBA (Logical Block Addressing) and enables GPT (GUID Partition Table) for partition management.
+To enable the 64-bit LBA, also exFAT needs to be enabled.  
+**Values:**  
+- **0**: Disable  
+- **1**: Enable  
+                    </description>
+                </bool>
+                <integer type="int64_t" id="FF_MIN_GPT" label="Minimum GPT sectors" enable="$parent.FF_LBA64.ifDefGet(false)" min_expr="1" max_expr="0x100000000">
+                    <description>
+Macro: **FF_MIN_GPT**  
+Minimum number of sectors to switch GPT format to create partition in `f_mkfs()` and `f_fdisk()` function. When number of sectors on the drive is equal or larger than this value, the drive will be partitioned in GPT.
+This option has no effect when **FF_LBA64** is disabled.  
+**Values:**    
+- **Maximal value:** 0x100000000  
+                    </description>
+                </integer>
+                <bool id="FF_USE_TRIM" label="Enable ATA-TRIM">
+                    <description>
+Macro: **FF_USE_TRIM**  
+This option enables/disables support for ATA-TRIM. To enable Trim function, also `CTRL_TRIM` command should be implemented to the `disk_ioctl()` function.  
+**Values:**  
+- **0**: Disable
+- **1**: Enable
+                    </description>
+                </bool>
+                <!-- SYSTEM CONFIGURATIONS -->
+            </struct>
+            <struct id="systemConfig_t" label="System configuration">
+                <bool id="FF_FS_TINY" label="Use tiny buffer">
+                    <description>
+Macro: **FF_FS_TINY**  
+This option enables/disables configuration of tiny buffer. At the tiny configuration, size of the file object (FIL) is shrank **FF_MAX_SS** (maximum sector size) bytes.
+Instead of private sector buffer eliminated from the file object, common sector buffer in the filesystem object (FATFS) is used for the file data transfer.  
+**Values:**  
+- **0**: Normal configuration
+- **1**: Tiny configuration
+                    </description>
+                </bool>
+                <bool id="FF_FS_EXFAT" label="Enable exFAT" enable="$configSet.namespaceConfig.FF_USE_LFN.getValue() != `disableLfn`">
+                    <description>
+Macro: **FF_FS_EXFAT**  
+This option enables/disables support for the exFAT filesystem in addition to the FAT/FAT32 filesystem.
+To enable exFAT, also LFN must be enabled and configured and **FF_MAX_LFN** is recommended to be 255 for full-featured exFAT function.
+Note that enabling exFAT discards ANSI C (C89) compatibility because of need for 64-bit integer type.  
+**Values:**  
+- **0**: Disable
+- **1**: Enable
+                    </description>
+                    <validation>
+                        <constraint when_expr="$this.getValue()"
+                            cond_expr="$configSet.namespaceConfig.FF_LFN_UNICODE.ifDefGet(0) != 0"
+                            level="warning"
+                            description="Enabling exFat discards ANSI C (C89) compatibility. Check: API character encoding (FF_LFN_UNICODE)."/>
+                        <constraint when_expr="$this.getValue()"
+                            cond_expr="$configSet.namespaceConfig.FF_USE_LFN.ifDefGet(0) != 0"
+                            level="warning"
+                            description="Long file name must be enabled (FF_USE_LFN). "/>
+                    </validation>
+                </bool>
+                <bool id="FF_FS_NORTC" label="Disable RTC" enable="!$configSet.functionConfig.FF_FS_READONLY.getValue()">
+                    <description>
+Macro: **FF_FS_NORTC**   
+This option controls timestamp function. If the system does not have any RTC function or valid timestamp is not needed, disable the timestamp function. 
+Every objects modified by FatFs will have a fixed timestamp defined by **FF_NORTC_MON**, **FF_NORTC_MDAY** and **FF_NORTC_YEAR**.
+To use the timestamp function, enable this option and add `get_fattime()` function to the project to get current time form the RTC.
+This option has no effect at read-only configuration (enabled **Disable write** setting).  
+**Values:**  
+- **0**: RTC enabled
+- **1**: RTC disabled
+                    </description>
+                </bool>
+                <integer type="int16_t" id="FF_NORTC_MON" label="Month" min_expr="1" max_expr="12"
+                    enable="$parent.FF_FS_NORTC.getValue() == true">
+                    <description>
+Macro: **FF_NORTC_MON**  
+This option defines the month (time) to be used at no RTC systems. This option has no effect at read-only configuration or with enabled RTC.
+                    </description>
+                </integer>
+                <integer type="int16_t" id="FF_NORTC_MDAY" label="Day" min_expr="1" max_expr="31"
+                    enable="$parent.FF_FS_NORTC.getValue() == true">
+                    <description>
+Macro: **FF_NORTC_MDAY**  
+This option defines the day (time) to be used at no RTC systems. This option has no effect at read-only configuration or with enabled RTC.
+                    </description>
+                </integer>
+                <integer type="int16_t" id="FF_NORTC_YEAR" label="Year" min_expr="0"
+                    enable="$parent.FF_FS_NORTC.getValue() == true">
+                    <description>
+Macro: **FF_NORTC_YEAR**   
+This option defines the year (time) to be used at no RTC systems. This option has no effect at read-only configuration or with enabled RTC.
+                    </description>
+                </integer>
+                <set id="FF_FS_NOFSINFO" label="FSINFO cluster configuration">
+                    <description>
+Macro: **FF_FS_NOFSINFO**  
+If you need to know correct free space on the FAT32 volume, use free cluster count (Bit 0) of this option, and `f_getfree()` function at first time after volume mount will force a full FAT scan.
+Bit 1 controls the use of last allocated cluster number.
+                    </description>
+                    <item id="bit0" value="0" label="Use free cluster count">
+                        <description>If enabled use last allocated cluster number in the FSINFO if available otherwise do not trust last allocated cluster number in the FSINFO.</description>
+                    </item>
+                    <item id="bit1" value="1" label="Use last allocated cluster number">
+                        <description>If enabled use free cluster count in the FSINFO if available otherwise do not trust free cluster count in the FSINFO.</description>
+                    </item>
+                </set>
+                <variable id="nosinfoMask"
+                    value="(($parent.FF_FS_NOFSINFO.getCValue()==``) ? 0 : $parent.FF_FS_NOFSINFO.filter(item -> (item.getValue() == `true`)).reduce(0, (lastResult, x) -> (lastResult | (2**x.getSetItemValue().toInt())*x.getValue().boolToInt())))"/>
+                <integer type="int16_t" id="FF_FS_LOCK" label="File lock control" min_expr="0">
+                    <description>
+Macro: **FF_FS_LOCK**  
+This option enables/disables file lock function to control duplicated file open and illegal operations to open objects.
+Note that the file lock function is independent of re-entrancy. This option must be 0 at read-only configuration.  
+**Values:**  
+- **0**: Disable file lock function. To avoid collapsing file by wrong file operation, application program needs to avoid illegal open, remove and rename to the open objects.
+- **>0**: Enable file lock function. The value defines how many files/sub-directories can be opened simultaneously under the file lock control. Illegal operations to the open object will be rejected with **FR_LOCKED**.
+
+                    </description>
+                    <validation>
+                        <constraint when_expr="$this.getValue() > 0"
+                            cond_expr="$configSet.functionConfig.FF_FS_READONLY.getValue() != true"
+                            level="warning"
+                            description="File lock must be 0 in read-only configuration (FF_FS_READONLY). Enable write functions."
+                        />
+                    </validation>
+                </integer>
+                <bool id="FF_FS_REENTRANT" label="Enable re-entrancy">
+                    <description>
+Macro: **FF_FS_REENTRANT**  
+This option enables/disables the re-entrancy (thread safe) of the FatFs module itself.
+Note that regardless of this option, file/directory access to the different volume is always re-entrant and it can work simultaneously regardless of this option, however, volume management functions `f_mount, f_mkfs` and `f_fdisk` are always not re-entrant.
+Only file/directory access to the same volume, in other words, exclusive use of each filesystem object, is under control of this function. To enable this feature, also user provided synchronization handlers `ff_req_grant, ff_rel_grant, ff_del_syncobj` and `ff_cre_syncobj` need to be added to the project.
+Sample code is available in *option/syscall.c*.  
+**Values:**  
+- **0**: Disable
+- **1**: Enable
+                    </description>
+                </bool>
+                <integer type="int16_t" id="FF_FS_TIMEOUT" label="Timeout period [ticks]"
+                    enable="$parent.FF_FS_REENTRANT.ifDefGet(false) != false" min_expr="0">
+                    <description>
+Macro: **FF_FS_TIMEOUT**                         
+Number of time ticks to abort the file function with **FR_TIMEOUT** when wait time is too long.
+                    </description>
+                </integer>
+                <string id="FF_SYNC_t" label="Sync object type"
+                    enable="$parent.FF_FS_REENTRANT.ifDefGet(false) != false">
+                    <description>
+Macro: **FF_SYNC_t**                         
+This option defines O/S dependent sync object type. e.g. `HANDLE, ID, OS_EVENT*, SemaphoreHandle_t` etc. A header file for O/S definitions (e.g. `#include &lt;somertos.h&gt;`) needs to be included somewhere in the scope of *ff.h*.
+It can be configured with **Include O/S definition** setting.
+
+                    </description>
+                    <validation>
+                        <constraint cond_expr="isCIdentifier($this.getValue())" level="error"
+                            description="The sync object type must be a C identifier!"/>
+                    </validation>
+                </string>
+                <bool id="includeOS" label="Include O/S definition" enable="$parent.FF_FS_REENTRANT.ifDefGet(false) != false"><description> A header file for O/S definitions, which is included in format #include &lt;somertos.h&gt; </description></bool>
+                <string id="headerFileName" label="Header file name" enable="$parent.includeOS.getValue()">
+                    <description expr="`Resulting include in peripherals.h file: #include &amp;lt;` + $this.getValue() + `&gt;`"></description>
+                </string>
+                <variable id="INCLUDE_OS" value="($parent.includeOS.getValue() ? `#include &lt;` + $parent.headerFileName.getValue() : `// #include &lt;somertos.h`) + `&gt;	// O/S definitions`"></variable>
+            </struct>           
+        </user_types>
+        <settings>
+            <dynamic_enum id="revisionID" label="Configuration revision ID" items="createArray().addItemToList(`rev14_1`, `Revision 86606`,`86606`,true)">
+                <description>
+Macro: **FFCONF_DEF**  
+FatFS functional configuration revision ID of used SDK middleware driver.
+**FFCONF_DEF** ID has to correspond with **FF_DEFINED** ID that is part of the SDK driver *ff.h* file</description>
+                <custom_value_support default="1" validation_expr="x->x.toInt() != `` "/>
+            </dynamic_enum>
+            <enum id="MSDKadaptation" label="MSDK adaptation configuration">
+                <description>
+Select specific FATFS driver module for initialization low-level disk I/O module.
+
+*Note*: This setting does not include the physical layer driver module. The physical layer implementation has to be initialized before the FatFS module initialization.
+                </description>
+                <validation>
+                    <dependency when_expr="$this.getValue()==`RAM_DISK_ENABLE`" resource_type="SWComponent" resource_id="middleware.fatfs.ram" level="Warning" description_expr="$components.system.#global.err_missing_driver.getValue().formatMessage(`fsl_ram_disk`, ` (required for FATFS)`)">
+                        <feature name="enabled" evaluation="equal">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="$this.getValue()==`USB_DISK_ENABLE`" resource_type="SWComponent" resource_id="middleware.fatfs.usb" level="Warning" description_expr="$components.system.#global.err_missing_driver.getValue().formatMessage(`fsl_usb_disk`, ` (required for FATFS)`)">
+                        <feature name="enabled" evaluation="equal">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="$this.getValue()==`SD_DISK_ENABLE`" resource_type="SWComponent" resource_id="middleware.fatfs.sd" level="Warning" description_expr="$components.system.#global.err_missing_driver.getValue().formatMessage(`fsl_sd_disk`, ` (required for FATFS)`)">
+                        <feature name="enabled" evaluation="equal">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="$this.getValue()==`MMC_DISK_ENABLE`" resource_type="SWComponent" resource_id="middleware.fatfs.mmc" level="Warning" description_expr="$components.system.#global.err_missing_driver.getValue().formatMessage(`fsl_mmc_disk`, ` (required for FATFS)`)">
+                        <feature name="enabled" evaluation="equal">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="$this.getValue()==`SDSPI_DISK_ENABLE`" resource_type="SWComponent" resource_id="middleware.fatfs.sdspi" level="Warning" description_expr="$components.system.#global.err_missing_driver.getValue().formatMessage(`fsl_sdspi_disk`, ` (required for FATFS)`)">
+                        <feature name="enabled" evaluation="equal">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                    <dependency when_expr="$this.getValue()==`NAND_DISK_ENABLE`" resource_type="SWComponent" resource_id="middleware.fatfs.nand" level="Warning" description_expr="$components.system.#global.err_missing_driver.getValue().formatMessage(`fsl_nand_disk`, ` (required for FATFS)`)">
+                        <feature name="enabled" evaluation="equal">
+                            <data expr="true"/>
+                        </feature>
+                    </dependency>
+                </validation>
+                <item id="RAM_DISK_ENABLE" label="RAM disk" value="RAMDISK" available="isSdkComponentDefined(`middleware.fatfs.ram`)"></item>
+                <item id="USB_DISK_ENABLE" label="USB disk" value="USBDISK" available="isSdkComponentDefined(`middleware.fatfs.usb`)"></item>
+                <item id="SD_DISK_ENABLE" label="SD disk" value="SDDISK" available="isSdkComponentDefined(`middleware.fatfs.sd`)"></item>
+                <item id="MMC_DISK_ENABLE" label="MMC disk" value="MMCDISK" available="isSdkComponentDefined(`middleware.fatfs.mmc`)"></item>
+                <item id="SDSPI_DISK_ENABLE" label="SDSPI disk" value="SDSPIDISK" available="isSdkComponentDefined(`middleware.fatfs.sdspi`)"></item>
+                <item id="NAND_DISK_ENABLE" label="NAND disk" value="NANDDISK" available="isSdkComponentDefined(`middleware.fatfs.nand`)"></item>
+            </enum>
+            <reference id="functionConfig" type="functionConfig_t" label="Functions configuration"/>
+            <reference id="namespaceConfig" type="namespaceConfig_t" label="Namespace and locale configuration"/>
+            <reference id="driveConfig" type="driveConfig_t" label="Drive/Volume configuration"/>
+            <reference id="systemConfig" type="systemConfig_t" label="System configuration"/>            
+            <!-- FATFS CODEGENERATOR PARAMETER VARIABLES -->
+            <struct id="fatfs_codegenerator" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+                <variable id="revisionID" value="$configSet.revisionID.getEnumItemValue()"></variable>
+                <variable id="MSDKadaptation" value="$configSet.MSDKadaptation.getValue()"></variable>
+                <!-- Functions config-->
+                <variable id="FF_FS_READONLY" value="$configSet.functionConfig.FF_FS_READONLY.getValue().boolToInt() "></variable>
+                <variable id="FF_FS_MINIMIZE" value="$configSet.functionConfig.FF_FS_MINIMIZE.ifDefGet(`0`)"></variable>
+                <variable id="FF_USE_STRFUNC" value="$configSet.functionConfig.FF_USE_STRFUNC.ifDefGet(`0`)"></variable>
+                <variable id="FF_USE_FIND" value="$configSet.functionConfig.FF_USE_FIND.ifDefGet(`0`)"></variable>
+                <variable id="FF_USE_MKFS" value="$configSet.functionConfig.FF_USE_MKFS.ifDefGet(false).boolToInt()"></variable>
+                <variable id="FF_USE_FASTSEEK" value="$configSet.functionConfig.FF_USE_FASTSEEK.ifDefGet(false).boolToInt()"></variable>
+                <variable id="FF_USE_EXPAND" value="$configSet.functionConfig.FF_USE_EXPAND.ifDefGet(false).boolToInt()"></variable>
+                <variable id="FF_USE_CHMOD" value="$configSet.functionConfig.FF_USE_CHMOD.ifDefGet(false).boolToInt()"></variable>
+                <variable id="FF_USE_LABEL" value="$configSet.functionConfig.FF_USE_LABEL.ifDefGet(false).boolToInt()"></variable>
+                <variable id="FF_USE_FORWARD" value="$configSet.functionConfig.FF_USE_FORWARD.ifDefGet(false).boolToInt()"></variable>
+                <!-- Namespace config-->
+                <variable id="FF_CODE_PAGE" value="$configSet.namespaceConfig.FF_CODE_PAGE.ifDefGet(`0`)"></variable>
+                <variable id="FF_USE_LFN" value="$configSet.namespaceConfig.FF_USE_LFN.ifDefGet(`0`)"></variable>
+                <variable id="FF_MAX_LFN" value="$configSet.namespaceConfig.FF_MAX_LFN.ifDefGet(`0`)"></variable>
+                <variable id="FF_LFN_UNICODE" value="$configSet.namespaceConfig.FF_LFN_UNICODE.ifDefGet(`0`)"></variable>
+                <variable id="FF_LFN_BUF" value="$configSet.namespaceConfig.FF_LFN_BUF.ifDefGet(`0`)"></variable>
+                <variable id="FF_SFN_BUF" value="$configSet.namespaceConfig.FF_SFN_BUF.ifDefGet(`0`)"></variable>
+                <variable id="FF_STRF_ENCODE" value="$configSet.namespaceConfig.FF_STRF_ENCODE.ifDefGet(`0`)"></variable>
+                <variable id="FF_FS_RPATH" value="$configSet.namespaceConfig.FF_FS_RPATH.ifDefGet(`0`)"></variable>
+                <!-- Drive/volume config-->
+                <variable id="FF_VOLUMES" value="$configSet.driveConfig.FF_VOLUMES.ifDefGet(`0`)"></variable>
+                <variable id="FF_STR_VOLUME_ID" value="$configSet.driveConfig.FF_STR_VOLUME_ID.ifDefGet(`0`)"></variable>
+                <variable id="FF_VOLUME_STRS" value="$configSet.driveConfig.FF_VOLUME_STRS.ifDefGet(`0`)"></variable>
+                <variable id="FF_MULTI_PARTITION" value="$configSet.driveConfig.FF_MULTI_PARTITION.ifDefGet(false).boolToInt()"></variable>
+                <variable id="FF_MIN_SS" value="$configSet.driveConfig.FF_MIN_SS.ifDefGet(`0`)"></variable>
+                <variable id="FF_MAX_SS" value="$configSet.driveConfig.FF_MAX_SS.ifDefGet(`0`)"></variable>
+                <variable id="FF_LBA64" value="$configSet.driveConfig.FF_LBA64.ifDefGet(false).boolToInt()"></variable>
+                <variable id="FF_MIN_GPT" value="$configSet.driveConfig.FF_MIN_GPT.ifDefGet(`0`)"></variable>
+                <variable id="FF_USE_TRIM" value="$configSet.driveConfig.FF_USE_TRIM.ifDefGet(`0`).boolToInt()"></variable>
+                <!-- System config -->
+                <variable id="FF_FS_TINY" value="$configSet.systemConfig.FF_FS_TINY.ifDefGet(false).boolToInt()"></variable>
+                <variable id="FF_FS_EXFAT" value="$configSet.systemConfig.FF_FS_EXFAT.ifDefGet(false).boolToInt()"></variable> 
+                <variable id="FF_FS_NORTC" value="$configSet.systemConfig.FF_FS_NORTC.ifDefGet(false).boolToInt()"></variable> 
+                <variable id="FF_NORTC_MON" value="$configSet.systemConfig.FF_NORTC_MON.ifDefGet(`1`)"></variable> 
+                <variable id="FF_NORTC_MDAY" value="$configSet.systemConfig.FF_NORTC_MDAY.ifDefGet(`1`)"></variable> 
+                <variable id="FF_NORTC_YEAR" value="$configSet.systemConfig.FF_NORTC_YEAR.ifDefGet(`2020`)"></variable>
+                <variable id="FF_FS_NOFSINFO" value="$configSet.systemConfig.nosinfoMask.ifDefGet(`0`)"></variable>
+                <variable id="FF_FS_LOCK" value="$configSet.systemConfig.FF_FS_LOCK.ifDefGet(`0`)"></variable>
+                <variable id="INCLUDE_OS" value="$configSet.systemConfig.INCLUDE_OS.ifDefGet(`/* #include &lt;somertos.h&gt;	// O/S definitions */`)"></variable> 
+                <variable id="FF_FS_REENTRANT" value="$configSet.systemConfig.FF_FS_REENTRANT.ifDefGet(`false`).boolToInt()"></variable> 
+                <variable id="FF_FS_TIMEOUT" value="$configSet.systemConfig.FF_FS_TIMEOUT.ifDefGet(`0`)"></variable> 
+                <variable id="FF_SYNC_t" value="$configSet.systemConfig.FF_SYNC_t.ifDefGet(`HANDLE`)"></variable>
+            </struct>
+        </settings>
+        <validation>
+            <constraint level="error" description_expr="msg::message(`err_component_instance`, `FatFS`)"
+                cond_expr="$components.system.#global.all_enabled_instances.getValue().countOccurrences(i -> (i.getType() == $instance.getType()), false) == 1"/>
+        </validation>
+        <quick_selections>
+            <quick_selection id="default" label="Default">
+                <set id="functionConfig.FF_USE_STRFUNC">enableWithoutConversion</set>
+                <set id="functionConfig.FF_USE_MKFS">true</set>
+                <set id="namespaceConfig.FF_LFN_UNICODE">UTF16</set>
+                <set id="namespaceConfig.FF_STRF_ENCODE">UTF16LE</set>
+                <set id="namespaceConfig.FF_CODE_PAGE">cpUS</set>
+                <set id="namespaceConfig.FF_MAX_LFN">255</set>
+                <set id="namespaceConfig.FF_FS_RPATH">enableRP2</set>
+                <set id="driveConfig.FF_VOLUMES">6</set>
+                <set id="driveConfig.volumes.0.volumeStr">RAM</set>
+                <set id="driveConfig.volumes.1.volumeStr">NAND</set>
+                <set id="driveConfig.volumes.2.volumeStr">CF</set>
+                <set id="driveConfig.volumes.3.volumeStr">SD</set>
+                <set id="driveConfig.volumes.4.volumeStr">SD2</set>
+                <set id="driveConfig.volumes.5.volumeStr">USB</set>
+                <set id="driveConfig.FF_MIN_GPT">0x100000000</set>
+                <set id="systemConfig.FF_NORTC_YEAR">2020</set>
+                <set id="systemConfig.FF_FS_TIMEOUT">1000</set>
+                <set id="systemConfig.FF_SYNC_t">HANDLE</set>
+                <set id="systemConfig.headerFileName">somertos.h</set>
+            </quick_selection>
+            <default>default</default>
+        </quick_selections>
+    </config_set>      
+    <config_set id="init_config"  label="Initialization configuration">
+        <description>Initialization of FATFS middleware component.</description>
+        <generated_types/>
+        <user_types>
+            <struct id="objects_t">
+                <string id="objID" label="ID">
+                    <validation>
+                        <constraint cond_expr="isCIdentifier($this.getValue())" level="error"  description_expr="$this.getValue() + ` is not a valid C identifier!`"/>
+                    </validation>
+                </string>
+            </struct>
+            <struct id="objectsFS_t">
+                <string id="objID" label="ID">
+                    <validation>
+                        <constraint cond_expr="isCIdentifier($this.getValue())" level="error"  description_expr="$this.getValue() + ` is not a valid C identifier!`"/>
+                    </validation>
+                </string>
+                <bool id="diskMount" label="Mount"><description>The f_mount fucntion gives work area to the FatFs module. Be sure that physical layer is properly initialized.</description></bool>
+                <string id="mountPath" label="Path" enable="$parent.diskMount.getValue()"><description>Pointer to the null-terminated string that specifies the logical drive. The string without drive number (empty string) means the default drive.</description></string>
+                <bool id="mountInitOpt" label="Force mount" enable="$parent.diskMount.getValue()"><description>Enable force mount the volume to check if it is ready to work. If disabled do not mount now (to be mounted on the first access to the volume).</description></bool> 
+                <variable id="returnValue" value="$parent.getParent().getParent().getSetting(`initResultObject`).getValue()? $parent.getParent().getParent().getSetting(`resultName`).ifDefGet(``) + ` =` : `(void)`"></variable>
+            </struct>
+ <struct id="partition_t">
+                <integer type="uint8_t" id="Volume" min_expr="0" max_expr="$instance.ff_config.driveConfig.FF_VOLUMES.getValue()-1">
+                    <description>
+Physical drive/volume number that is used. It is dependend on **Used volumes/drives** setting (*FF_VOLUMES*).
+                    </description>
+                </integer>
+                <enum id="Partition">
+                    <description>
+Partition number.  
+*0:* Auto detect  
+*1-4:* Forced partition number  
+                    </description>
+                    <item id="autoDetect" label="Auto" value="0"><description>Partition auto detection</description></item>
+                    <item id="part1" label="1" value="1"><description>1st partition</description></item>
+                    <item id="part2" label="2" value="2"><description>2nd partition</description></item>
+                    <item id="part3" label="3" value="3"><description>3rd partition</description></item>
+                    <item id="part4" label="4" value="4"><description>4th partition</description></item>
+                </enum>
+            </struct>
+            <struct id="initConfig_t">
+                <bool id="initPartitionsStr" label="Multiple partitions mapping table" enable="$instance.ff_config.driveConfig.FF_MULTI_PARTITION.getValue()" options="UI_LABEL_BOLD">
+                    <description>Initialize multiple partition mapping table.</description>
+                </bool>
+                <array type="partition_t" id="multiplePartitions" label="Volume-partition mapping table" enable="$parent.initPartitionsStr.ifDefGet(false)" 
+                    options="UI_SHOW_CONTENT_AS=TABLE;UI_TABLE_COLUMN_WIDTHS=6,6;UI_ARRAY_REORDER;UI_ARRAY_INDICES_HIDDEN;UI_LABEL_HIDDEN;" min_expr="2">
+                </array>
+                <variable id="VolToPart" value="$parent.multiplePartitions.reduce(`` ,(last,x) -> (
+                    ( (last == ``) ? `{` : (last + `, {`) ) +
+                    x.getSetting(`Volume`).getValue().toString() + `, ` +
+                    x.getSetting(`Partition`).getEnumItemValue().toString() + `}`
+                    ))">                 
+                </variable>
+                <bool id="enablePhysicalLayerInit" label="User physical layer configuration" options="UI_LABEL_BOLD"></bool>
+                <struct id="diskConfig" enable="$parent.enablePhysicalLayerInit.getValue()" options="UI_LABEL_HIDDEN">
+                    <description>FATFS requires proper physical layer initialization of the selected module.</description>
+                    <info id="layerInfo" value="$instance.ff_config.MSDKadaptation.getEnumItemLabel()" label="Physical layer"></info>
+                    <string id="initFunctionID" label="User init function ID">
+                        <description>Set extern initialization function ID of physical layer that is called before FATFS initialization. This function needs to be defined in user code.</description>
+                        <validation>
+                            <constraint cond_expr="isCIdentifier($this.getValue())" level="error"  description_expr="$this.getValue() + ` is not a valid C identifier!`"/>
+                        </validation>
+                    </string>
+                    <variable id="textSD" value="`/* Initialize card descriptor (sd_card_t g_sd) of SDMMC Stack */&#10;&#10;` +
+                        leftPadding(`/* Example code */&#10;`,1) +
+                        leftPadding(`g_sd.host.base = SD_HOST_BASEADDR;&#10;`,1) +
+                        leftPadding(`g_sd.host.sourceClock_Hz = SD_HOST_CLK_FREQ;&#10;&#10;`,1) +
+                        leftPadding(`/* Here place the rest of the SD MMC physical layer configuration code */&#10;&#10;`,1) +
+                        leftPadding(`SD_HostInit(&amp;g_sd);&#10;`,1)">
+                    </variable>
+                    <variable id="functionBody" value="$instance.ff_config.MSDKadaptation.getValue() == `RAM_DISK_ENABLE` ? `/* Place your code here */` :
+                        $instance.ff_config.MSDKadaptation.getValue() == `USB_DISK_ENABLE` ? `/* Initialize USB physical layer here */` :
+                        $instance.ff_config.MSDKadaptation.getValue() == `SD_DISK_ENABLE` ? $parent.textSD.getValue() :
+                        $instance.ff_config.MSDKadaptation.getValue() == `MMC_DISK_ENABLE` ? `/* Place your code here */` :
+                        $instance.ff_config.MSDKadaptation.getValue() == `SDSPI_DISK_ENABLE` ? `/* Place your code here */` :
+                        $instance.ff_config.MSDKadaptation.getValue() == `NAND_DISK_ENABLE` ? `/* Initialize card descriptor (nand_config_t disknandConfig) of NAND flash physical layer */&#10;` :
+                        `/* Place your code here */`">
+                    </variable>
+                    <variable id="templateText" value="`void ` + $parent.initFunctionID.getValue() + `(void){&#10;` + leftPadding($parent.functionBody.getValue(),1) + `&#10;};`"></variable>
+                    <info id="functionTemplate" label="Function template" options="UI_INFO_COPY_BUTTON" value="$parent.templateText.getValue()">
+                        <description>Copy template of user function handler.</description>
+                    </info> 
+                </struct>
+                <bool id="initResultObject" label="Create FATFS result object"><description>Create function results return code (FRESULT) object.</description></bool>
+                <string id="resultName" label="Result object name" enable="$parent.initResultObject.getValue()">
+                    <validation>
+                        <constraint cond_expr="isCIdentifier($this.getValue())" level="error"  description_expr="$this.getValue() + ` is not a valid C identifier!`"/>
+                    </validation>
+                </string>
+                <array type="objectsFS_t" id="fatfsObjects" label="Create FATFS objects" options="UI_SHOW_CONTENT_AS=TABLE;UI_BORDER_HIDDEN;UI_TABLE_COLUMN_WIDTHS=12,5,15,8;UI_ARRAY_REORDER;UI_ARRAY_INDICES_HIDDEN;">
+                    <description>Create filesystem object structure (FATFS)</description>
+                    <item_defaults>
+                        <set_default id="objID" value_expr="x -> `FATFS_System_` + x.getID()"/>
+                        <set_default id="mountPath" value_expr="x ->x.getID() +`:`"/>
+                    </item_defaults>
+                </array>                
+                <array type="objects_t" id="filObjects" label="Create file objects" options="UI_SHOW_CONTENT_AS=TABLE;UI_BORDER_HIDDEN;UI_TABLE_COLUMN_WIDTHS=20;UI_ARRAY_REORDER;UI_ARRAY_INDICES_HIDDEN;">
+                    <description>Create file object structure (FIL)</description>
+                    <item_defaults>
+                        <set_default id="objID" value_expr="x -> `FATFS_File_` + x.getID()"/>
+                    </item_defaults>
+                </array>
+                <array type="objects_t" id="filInfoObjects" label="Create file info objects" options="UI_SHOW_CONTENT_AS=TABLE;UI_BORDER_HIDDEN;UI_TABLE_COLUMN_WIDTHS=20;UI_ARRAY_REORDER;UI_ARRAY_INDICES_HIDDEN;">
+                    <description>Create file object structure (FILINFO)</description>
+                    <item_defaults>
+                        <set_default id="objID" value_expr="x -> `FATFS_FileInfo_` + x.getID()"/>
+                    </item_defaults>
+                </array>
+                <array type="objects_t" id="dirObjects" label="Create directory objects" options="UI_SHOW_CONTENT_AS=TABLE;UI_BORDER_HIDDEN;UI_TABLE_COLUMN_WIDTHS=20;UI_ARRAY_REORDER;UI_ARRAY_INDICES_HIDDEN;">
+                    <description>Create directory object structure (DIR)</description>
+                    <item_defaults>
+                        <set_default id="objID" value_expr="x -> `FATFS_Directory_` + x.getID()"/>
+                    </item_defaults>
+                </array>
+            </struct>
+        </user_types>
+        <settings>
+            <reference id="initConfig" type="initConfig_t" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN"/>
+            <!-- Fragment variables -->
+            <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+            <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+            <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+        </settings>
+        <fragment_defs>
+            <import>
+                <from component_id="system" config_set_id="common_code_templates"/>
+            </import>
+            <!-- Defines DEF -->
+            <def fragment="general_def">
+                <fragment id="define">
+                    <param id="name" expr="$this.inst_peripheral_ID.ifDefGet(false)"/>
+                    <param id="value" expr="$instance.getPeripheral()"/>
+                    <param id="description">Definition of peripheral ID</param>
+                </fragment>
+            </def>
+            <def fragment="extern_vars_def">
+                <fragment id="extern_var" for_elements_of="$this.initConfig.fatfsObjects">
+                    <param id="description">FATFS System object</param>
+                    <param id="name" expr="$this.objID.getValue()"/> 
+                    <param id="type" expr="`FATFS`"/>
+                </fragment>
+                <fragment id="extern_var" for_elements_of="$this.initConfig.filObjects">
+                    <param id="description">FATFS File object</param>
+                    <param id="name" expr="$this.objID.getValue()"/> 
+                    <param id="type" expr="`FIL`"/>
+                </fragment>
+                <fragment id="extern_var" for_elements_of="$this.initConfig.filInfoObjects">
+                    <param id="description">FATFS File info object</param>
+                    <param id="name" expr="$this.objID.getValue()"/> 
+                    <param id="type" expr="`FILINFO`"/>
+                </fragment>
+                <fragment id="extern_var" for_elements_of="$this.initConfig.dirObjects">
+                    <param id="description">FATFS Directory object</param>
+                    <param id="name" expr="$this.objID.getValue()"/> 
+                    <param id="type" expr="`DIR`"/>
+                </fragment>
+                <fragment id="extern_var" if_expr="$this.initConfig.initResultObject.ifDefGet(false)">
+                    <param id="description">FATFS Result object</param>
+                    <param id="name" expr="$this.initConfig.resultName.getValue()"/> 
+                    <param id="type" expr="`FRESULT`"/>
+                </fragment>
+            </def>
+            <def fragment="global_vars_def">
+                <fragment id="global_var" for_elements_of="$this.initConfig.fatfsObjects">
+                    <param id="description">FATFS System object</param>
+                    <param id="name" expr="$this.objID.getValue()"/> 
+                    <param id="type" expr="`FATFS`"/>
+                </fragment>
+                <fragment id="global_var" for_elements_of="$this.initConfig.filObjects">
+                    <param id="description">FATFS File object</param>
+                    <param id="name" expr="$this.objID.getValue()"/> 
+                    <param id="type" expr="`FIL`"/>
+                </fragment>
+                <fragment id="global_var" for_elements_of="$this.initConfig.filInfoObjects">
+                    <param id="description">FATFS File info object</param>
+                    <param id="name" expr="$this.objID.getValue()"/> 
+                    <param id="type" expr="`FILINFO`"/>
+                </fragment>
+                <fragment id="global_var" for_elements_of="$this.initConfig.dirObjects">
+                    <param id="description">FATFS Directory object</param>
+                    <param id="name" expr="$this.objID.getValue()"/> 
+                    <param id="type" expr="`DIR`"/>
+                </fragment>
+                <fragment id="global_var" if_expr="$this.initConfig.initResultObject.ifDefGet(false)">
+                    <param id="description">FATFS Result object</param>
+                    <param id="name" expr="$this.initConfig.resultName.getValue()"/> 
+                    <param id="type" expr="`FRESULT`"/>
+                </fragment>
+            </def>
+            <def fragment="init_functions_def">
+                <fragment id="init_line" if_expr="$this.initConfig.diskConfig.initFunctionID.isEnabled()">
+                    <param id="code" expr="$this.initConfig.diskConfig.initFunctionID.getValue()+`();`"></param>
+                    <param id="description" expr="$instance.getId() + ` physical layer user initialization`"></param>
+                    <param id="paddingLevel" expr="1"></param>               
+                </fragment>
+                <fragment id="init_line" for_elements_of="$this.initConfig.fatfsObjects.filter(x->x.getSetting(`diskMount`).getValue()==true)">
+                    <param id="code"
+                        expr="$this.returnValue.getValue() + 
+                        ` f_mount(&amp;`+ $this.objID.getValue() +`, (const TCHAR*)&quot;`+ $this.mountPath.getValue() +`&quot;, `+ $this.mountInitOpt.getValue().boolToInt() +`);`
+                        + ($instance.init_config.initConfig.initResultObject.getValue() ? `&#10;  assert(` + $this.returnValue.getValue() + `= FR_OK);` : ``)"> 
+                    </param>
+                    <param id="description" expr="$instance.getId() + ` Filesystem work area initialization`"></param>
+                    <param id="paddingLevel" expr="1"></param>               
+                </fragment>
+                <!--fragment id="init_line" for_elements_of="$this.initConfig.fatfsObjects.filter(x->x.getSetting(`diskMount`).getValue()==true) " if_expr="$this.initConfig.initResultObject.getValue()">
+                    <param id="code" expr="`assert(` + $this.returnValue.getValue() + `= FR_OK);`"></param>
+                    <param id="paddingLevel" expr="1"></param>               
+                </fragment-->
+            </def>
+            <def fragment="extern_functions_def">
+                <fragment id="extern_fcn_def" if_expr="$this.initConfig.enablePhysicalLayerInit.getValue()">
+                    <param id="name" expr="$this.initConfig.diskConfig.initFunctionID.getValue()"/>
+                    <param id="type">void</param>
+                    <param id="params">void</param>
+                    <param id="description" expr="`Extern function for the physical layer initialization` "/>
+                </fragment>
+            </def>
+        </fragment_defs>
+        <code>
+            <!-- .h -->
+            <section target="includes">
+                <fragment id="include" if_expr="$configSet.initConfig.initResultObject.getValue() &amp;&amp; 
+                    $configSet.initConfig.fatfsObjects.countOccurrences(x->x.getSetting(`diskMount`).getValue()==true)!=0">
+                    <param id="filename">assert.h</param>
+                </fragment>
+                <fragment id="include">
+                    <param id="name">ff</param>
+                    <param id="filename">ff.h</param>
+                </fragment>
+                <fragment id="include">
+                    <param id="name">diskio</param>
+                    <param id="filename">diskio.h</param>
+                </fragment>
+            </section>
+            <section target="global_vars_extern">
+                <fragment id="extern_vars_def"></fragment>
+            </section>
+            <section target="callback_function_extern">
+                <fragment id="extern_functions_def"></fragment>
+            </section>
+            <!-- .c -->
+            <section target="global_vars">
+                <fragment id="global_var" if_expr="$this.initConfig.initPartitionsStr.ifDefGet(false)">
+                    <param id="description">Volume-partition mapping table</param>
+                    <param id="name" expr="$this.initConfig.VolToPart.getValue() + ` }`"/> 
+                    <param id="type" expr="`PARTITION VolToPart[] = {`"/>
+                </fragment>
+                <fragment id="global_vars_def"></fragment>
+            </section>
+            <section target="init_function_body">
+                <fragment id="init_functions_def"></fragment>
+            </section>
+        </code>
+        <quick_selections>
+            <quick_selection id="default" label="Default">
+                <set id="initConfig.multiplePartitions.0.Partition">autoDetect</set>
+                <set id="initConfig.multiplePartitions.1.Partition">autoDetect</set>
+                <set id="initConfig.fatfsObjects.0"></set>
+                <set id="initConfig.fatfsInfoName">FATFS_SystemInfo</set>
+                <set id="initConfig.dirName">FATFS_Directory</set>
+                <set id="initConfig.filName">FATFS_File</set>
+                <set id="initConfig.filInfoName">FATFS_FileInfo</set>
+                <set id="initConfig.resultName">FATFS_Result</set>
+                <set id="initConfig.diskConfig.initFunctionID">FATFS_DiskInit</set>
+            </quick_selection>
+            <default>default</default>
+        </quick_selections>
+    </config_set>
+</component:config_component>

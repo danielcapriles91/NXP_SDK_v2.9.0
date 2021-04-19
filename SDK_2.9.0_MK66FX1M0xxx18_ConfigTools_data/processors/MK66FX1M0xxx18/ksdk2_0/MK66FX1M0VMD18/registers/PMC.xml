@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="8" name="LVDSC1" description="Low Voltage Detect Status And Control 1 register">
+    <alias type="CMSIS" value="LVDSC1"/>
+    <bit_field offset="0" width="2" name="LVDV" access="RW" reset_value="0" description="Low-Voltage Detect Voltage Select">
+      <alias type="CMSIS" value="PMC_LVDSC1_LVDV(x)"/>
+      <bit_field_value name="LVDSC1_LVDV_0b00" value="0b00" description="Low trip point selected (V LVD = V LVDL )"/>
+      <bit_field_value name="LVDSC1_LVDV_0b01" value="0b01" description="High trip point selected (V LVD = V LVDH )"/>
+      <bit_field_value name="LVDSC1_LVDV_0b10" value="0b10" description="Reserved"/>
+      <bit_field_value name="LVDSC1_LVDV_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="2" reset_value="0"/>
+    <bit_field offset="4" width="1" name="LVDRE" access="RW" reset_value="0x1" description="Low-Voltage Detect Reset Enable">
+      <alias type="CMSIS" value="PMC_LVDSC1_LVDRE(x)"/>
+      <bit_field_value name="LVDSC1_LVDRE_0b0" value="0b0" description="LVDF does not generate hardware resets"/>
+      <bit_field_value name="LVDSC1_LVDRE_0b1" value="0b1" description="Force an MCU reset when LVDF = 1"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="LVDIE" access="RW" reset_value="0" description="Low-Voltage Detect Interrupt Enable">
+      <alias type="CMSIS" value="PMC_LVDSC1_LVDIE(x)"/>
+      <bit_field_value name="LVDSC1_LVDIE_0b0" value="0b0" description="Hardware interrupt disabled (use polling)"/>
+      <bit_field_value name="LVDSC1_LVDIE_0b1" value="0b1" description="Request a hardware interrupt when LVDF = 1"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="LVDACK" access="WORZ" reset_value="0" description="Low-Voltage Detect Acknowledge">
+      <alias type="CMSIS" value="PMC_LVDSC1_LVDACK(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="LVDF" access="RO" reset_value="0" description="Low-Voltage Detect Flag">
+      <alias type="CMSIS" value="PMC_LVDSC1_LVDF(x)"/>
+      <bit_field_value name="LVDSC1_LVDF_0b0" value="0b0" description="Low-voltage event not detected"/>
+      <bit_field_value name="LVDSC1_LVDF_0b1" value="0b1" description="Low-voltage event detected"/>
+    </bit_field>
+  </register>
+  <register offset="0x1" width="8" name="LVDSC2" description="Low Voltage Detect Status And Control 2 register">
+    <alias type="CMSIS" value="LVDSC2"/>
+    <bit_field offset="0" width="2" name="LVWV" access="RW" reset_value="0" description="Low-Voltage Warning Voltage Select">
+      <alias type="CMSIS" value="PMC_LVDSC2_LVWV(x)"/>
+      <bit_field_value name="LVDSC2_LVWV_0b00" value="0b00" description="Low trip point selected (VLVW = VLVW1)"/>
+      <bit_field_value name="LVDSC2_LVWV_0b01" value="0b01" description="Mid 1 trip point selected (VLVW = VLVW2)"/>
+      <bit_field_value name="LVDSC2_LVWV_0b10" value="0b10" description="Mid 2 trip point selected (VLVW = VLVW3)"/>
+      <bit_field_value name="LVDSC2_LVWV_0b11" value="0b11" description="High trip point selected (VLVW = VLVW4)"/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="3" reset_value="0"/>
+    <bit_field offset="5" width="1" name="LVWIE" access="RW" reset_value="0" description="Low-Voltage Warning Interrupt Enable">
+      <alias type="CMSIS" value="PMC_LVDSC2_LVWIE(x)"/>
+      <bit_field_value name="LVDSC2_LVWIE_0b0" value="0b0" description="Hardware interrupt disabled (use polling)"/>
+      <bit_field_value name="LVDSC2_LVWIE_0b1" value="0b1" description="Request a hardware interrupt when LVWF = 1"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="LVWACK" access="WORZ" reset_value="0" description="Low-Voltage Warning Acknowledge">
+      <alias type="CMSIS" value="PMC_LVDSC2_LVWACK(x)"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="LVWF" access="RO" reset_value="0" description="Low-Voltage Warning Flag">
+      <alias type="CMSIS" value="PMC_LVDSC2_LVWF(x)"/>
+      <bit_field_value name="LVDSC2_LVWF_0b0" value="0b0" description="Low-voltage warning event not detected"/>
+      <bit_field_value name="LVDSC2_LVWF_0b1" value="0b1" description="Low-voltage warning event detected"/>
+    </bit_field>
+  </register>
+  <register offset="0x2" width="8" name="REGSC" description="Regulator Status And Control register">
+    <alias type="CMSIS" value="REGSC"/>
+    <bit_field offset="0" width="1" name="BGBE" access="RW" reset_value="0" description="Bandgap Buffer Enable">
+      <alias type="CMSIS" value="PMC_REGSC_BGBE(x)"/>
+      <bit_field_value name="REGSC_BGBE_0b0" value="0b0" description="Bandgap buffer not enabled"/>
+      <bit_field_value name="REGSC_BGBE_0b1" value="0b1" description="Bandgap buffer enabled"/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <bit_field offset="2" width="1" name="REGONS" access="RO" reset_value="0x1" description="Regulator In Run Regulation Status">
+      <alias type="CMSIS" value="PMC_REGSC_REGONS(x)"/>
+      <bit_field_value name="REGSC_REGONS_0b0" value="0b0" description="Regulator is in stop regulation or in transition to/from it"/>
+      <bit_field_value name="REGSC_REGONS_0b1" value="0b1" description="Regulator is in run regulation"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="ACKISO" access="W1C" reset_value="0" description="Acknowledge Isolation">
+      <alias type="CMSIS" value="PMC_REGSC_ACKISO(x)"/>
+      <bit_field_value name="REGSC_ACKISO_0b0" value="0b0" description="Peripherals and I/O pads are in normal run state."/>
+      <bit_field_value name="REGSC_ACKISO_0b1" value="0b1" description="Certain peripherals and I/O pads are in an isolated and latched state."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="BGEN" access="RW" reset_value="0" description="Bandgap Enable In VLPx Operation">
+      <alias type="CMSIS" value="PMC_REGSC_BGEN(x)"/>
+      <bit_field_value name="REGSC_BGEN_0b0" value="0b0" description="Bandgap voltage reference is disabled in VLPx , LLS , and VLLSx modes."/>
+      <bit_field_value name="REGSC_BGEN_0b1" value="0b1" description="Bandgap voltage reference is enabled in VLPx , LLS , and VLLSx modes."/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0x1"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+  </register>
+</regs:peripheral>

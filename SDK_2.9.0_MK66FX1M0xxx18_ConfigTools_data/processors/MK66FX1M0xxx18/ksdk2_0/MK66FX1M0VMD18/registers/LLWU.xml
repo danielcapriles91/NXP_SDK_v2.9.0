@@ -1,0 +1,589 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="8" name="PE1" description="LLWU Pin Enable 1 register">
+    <alias type="CMSIS" value="PE1"/>
+    <bit_field offset="0" width="2" name="WUPE0" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P0">
+      <alias type="CMSIS" value="LLWU_PE1_WUPE0(x)"/>
+      <bit_field_value name="PE1_WUPE0_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE1_WUPE0_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE1_WUPE0_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE1_WUPE0_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="2" width="2" name="WUPE1" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P1">
+      <alias type="CMSIS" value="LLWU_PE1_WUPE1(x)"/>
+      <bit_field_value name="PE1_WUPE1_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE1_WUPE1_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE1_WUPE1_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE1_WUPE1_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="4" width="2" name="WUPE2" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P2">
+      <alias type="CMSIS" value="LLWU_PE1_WUPE2(x)"/>
+      <bit_field_value name="PE1_WUPE2_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE1_WUPE2_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE1_WUPE2_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE1_WUPE2_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="WUPE3" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P3">
+      <alias type="CMSIS" value="LLWU_PE1_WUPE3(x)"/>
+      <bit_field_value name="PE1_WUPE3_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE1_WUPE3_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE1_WUPE3_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE1_WUPE3_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+  </register>
+  <register offset="0x1" width="8" name="PE2" description="LLWU Pin Enable 2 register">
+    <alias type="CMSIS" value="PE2"/>
+    <bit_field offset="0" width="2" name="WUPE4" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P4">
+      <alias type="CMSIS" value="LLWU_PE2_WUPE4(x)"/>
+      <bit_field_value name="PE2_WUPE4_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE2_WUPE4_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE2_WUPE4_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE2_WUPE4_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="2" width="2" name="WUPE5" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P5">
+      <alias type="CMSIS" value="LLWU_PE2_WUPE5(x)"/>
+      <bit_field_value name="PE2_WUPE5_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE2_WUPE5_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE2_WUPE5_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE2_WUPE5_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="4" width="2" name="WUPE6" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P6">
+      <alias type="CMSIS" value="LLWU_PE2_WUPE6(x)"/>
+      <bit_field_value name="PE2_WUPE6_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE2_WUPE6_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE2_WUPE6_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE2_WUPE6_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="WUPE7" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P7">
+      <alias type="CMSIS" value="LLWU_PE2_WUPE7(x)"/>
+      <bit_field_value name="PE2_WUPE7_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE2_WUPE7_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE2_WUPE7_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE2_WUPE7_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+  </register>
+  <register offset="0x2" width="8" name="PE3" description="LLWU Pin Enable 3 register">
+    <alias type="CMSIS" value="PE3"/>
+    <bit_field offset="0" width="2" name="WUPE8" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P8">
+      <alias type="CMSIS" value="LLWU_PE3_WUPE8(x)"/>
+      <bit_field_value name="PE3_WUPE8_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE3_WUPE8_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE3_WUPE8_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE3_WUPE8_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="2" width="2" name="WUPE9" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P9">
+      <alias type="CMSIS" value="LLWU_PE3_WUPE9(x)"/>
+      <bit_field_value name="PE3_WUPE9_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE3_WUPE9_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE3_WUPE9_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE3_WUPE9_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="4" width="2" name="WUPE10" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P10">
+      <alias type="CMSIS" value="LLWU_PE3_WUPE10(x)"/>
+      <bit_field_value name="PE3_WUPE10_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE3_WUPE10_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE3_WUPE10_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE3_WUPE10_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="WUPE11" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P11">
+      <alias type="CMSIS" value="LLWU_PE3_WUPE11(x)"/>
+      <bit_field_value name="PE3_WUPE11_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE3_WUPE11_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE3_WUPE11_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE3_WUPE11_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+  </register>
+  <register offset="0x3" width="8" name="PE4" description="LLWU Pin Enable 4 register">
+    <alias type="CMSIS" value="PE4"/>
+    <bit_field offset="0" width="2" name="WUPE12" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P12">
+      <alias type="CMSIS" value="LLWU_PE4_WUPE12(x)"/>
+      <bit_field_value name="PE4_WUPE12_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE4_WUPE12_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE4_WUPE12_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE4_WUPE12_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="2" width="2" name="WUPE13" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P13">
+      <alias type="CMSIS" value="LLWU_PE4_WUPE13(x)"/>
+      <bit_field_value name="PE4_WUPE13_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE4_WUPE13_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE4_WUPE13_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE4_WUPE13_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="4" width="2" name="WUPE14" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P14">
+      <alias type="CMSIS" value="LLWU_PE4_WUPE14(x)"/>
+      <bit_field_value name="PE4_WUPE14_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE4_WUPE14_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE4_WUPE14_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE4_WUPE14_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="WUPE15" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P15">
+      <alias type="CMSIS" value="LLWU_PE4_WUPE15(x)"/>
+      <bit_field_value name="PE4_WUPE15_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE4_WUPE15_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE4_WUPE15_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE4_WUPE15_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+  </register>
+  <register offset="0x4" width="8" name="PE5" description="LLWU Pin Enable 5 register">
+    <alias type="CMSIS" value="PE5"/>
+    <bit_field offset="0" width="2" name="WUPE16" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P16">
+      <alias type="CMSIS" value="LLWU_PE5_WUPE16(x)"/>
+      <bit_field_value name="PE5_WUPE16_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE5_WUPE16_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE5_WUPE16_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE5_WUPE16_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="2" width="2" name="WUPE17" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P17">
+      <alias type="CMSIS" value="LLWU_PE5_WUPE17(x)"/>
+      <bit_field_value name="PE5_WUPE17_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE5_WUPE17_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE5_WUPE17_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE5_WUPE17_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="4" width="2" name="WUPE18" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P18">
+      <alias type="CMSIS" value="LLWU_PE5_WUPE18(x)"/>
+      <bit_field_value name="PE5_WUPE18_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE5_WUPE18_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE5_WUPE18_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE5_WUPE18_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="WUPE19" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P19">
+      <alias type="CMSIS" value="LLWU_PE5_WUPE19(x)"/>
+      <bit_field_value name="PE5_WUPE19_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE5_WUPE19_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE5_WUPE19_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE5_WUPE19_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+  </register>
+  <register offset="0x5" width="8" name="PE6" description="LLWU Pin Enable 6 register">
+    <alias type="CMSIS" value="PE6"/>
+    <bit_field offset="0" width="2" name="WUPE20" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P20">
+      <alias type="CMSIS" value="LLWU_PE6_WUPE20(x)"/>
+      <bit_field_value name="PE6_WUPE20_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE6_WUPE20_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE6_WUPE20_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE6_WUPE20_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="2" width="2" name="WUPE21" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P21">
+      <alias type="CMSIS" value="LLWU_PE6_WUPE21(x)"/>
+      <bit_field_value name="PE6_WUPE21_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE6_WUPE21_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE6_WUPE21_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE6_WUPE21_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="4" width="2" name="WUPE22" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P22">
+      <alias type="CMSIS" value="LLWU_PE6_WUPE22(x)"/>
+      <bit_field_value name="PE6_WUPE22_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE6_WUPE22_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE6_WUPE22_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE6_WUPE22_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="WUPE23" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P23">
+      <alias type="CMSIS" value="LLWU_PE6_WUPE23(x)"/>
+      <bit_field_value name="PE6_WUPE23_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE6_WUPE23_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE6_WUPE23_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE6_WUPE23_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+  </register>
+  <register offset="0x6" width="8" name="PE7" description="LLWU Pin Enable 7 register">
+    <alias type="CMSIS" value="PE7"/>
+    <bit_field offset="0" width="2" name="WUPE24" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P24">
+      <alias type="CMSIS" value="LLWU_PE7_WUPE24(x)"/>
+      <bit_field_value name="PE7_WUPE24_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE7_WUPE24_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE7_WUPE24_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE7_WUPE24_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="2" width="2" name="WUPE25" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P25">
+      <alias type="CMSIS" value="LLWU_PE7_WUPE25(x)"/>
+      <bit_field_value name="PE7_WUPE25_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE7_WUPE25_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE7_WUPE25_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE7_WUPE25_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="4" width="2" name="WUPE26" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P26">
+      <alias type="CMSIS" value="LLWU_PE7_WUPE26(x)"/>
+      <bit_field_value name="PE7_WUPE26_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE7_WUPE26_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE7_WUPE26_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE7_WUPE26_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="WUPE27" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P27">
+      <alias type="CMSIS" value="LLWU_PE7_WUPE27(x)"/>
+      <bit_field_value name="PE7_WUPE27_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE7_WUPE27_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE7_WUPE27_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE7_WUPE27_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+  </register>
+  <register offset="0x7" width="8" name="PE8" description="LLWU Pin Enable 8 register">
+    <alias type="CMSIS" value="PE8"/>
+    <bit_field offset="0" width="2" name="WUPE28" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P28">
+      <alias type="CMSIS" value="LLWU_PE8_WUPE28(x)"/>
+      <bit_field_value name="PE8_WUPE28_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE8_WUPE28_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE8_WUPE28_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE8_WUPE28_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="2" width="2" name="WUPE29" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P29">
+      <alias type="CMSIS" value="LLWU_PE8_WUPE29(x)"/>
+      <bit_field_value name="PE8_WUPE29_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE8_WUPE29_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE8_WUPE29_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE8_WUPE29_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="4" width="2" name="WUPE30" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P30">
+      <alias type="CMSIS" value="LLWU_PE8_WUPE30(x)"/>
+      <bit_field_value name="PE8_WUPE30_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE8_WUPE30_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE8_WUPE30_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE8_WUPE30_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="WUPE31" access="RW" reset_value="0" description="Wakeup Pin Enable For LLWU_P31">
+      <alias type="CMSIS" value="LLWU_PE8_WUPE31(x)"/>
+      <bit_field_value name="PE8_WUPE31_0b00" value="0b00" description="External input pin disabled as wakeup input"/>
+      <bit_field_value name="PE8_WUPE31_0b01" value="0b01" description="External input pin enabled with rising edge detection"/>
+      <bit_field_value name="PE8_WUPE31_0b10" value="0b10" description="External input pin enabled with falling edge detection"/>
+      <bit_field_value name="PE8_WUPE31_0b11" value="0b11" description="External input pin enabled with any change detection"/>
+    </bit_field>
+  </register>
+  <register offset="0x8" width="8" name="ME" description="LLWU Module Enable register">
+    <alias type="CMSIS" value="ME"/>
+    <bit_field offset="0" width="1" name="WUME0" access="RW" reset_value="0" description="Wakeup Module Enable For Module 0">
+      <alias type="CMSIS" value="LLWU_ME_WUME0(x)"/>
+      <bit_field_value name="ME_WUME0_0b0" value="0b0" description="Internal module flag not used as wakeup source"/>
+      <bit_field_value name="ME_WUME0_0b1" value="0b1" description="Internal module flag used as wakeup source"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WUME1" access="RW" reset_value="0" description="Wakeup Module Enable for Module 1">
+      <alias type="CMSIS" value="LLWU_ME_WUME1(x)"/>
+      <bit_field_value name="ME_WUME1_0b0" value="0b0" description="Internal module flag not used as wakeup source"/>
+      <bit_field_value name="ME_WUME1_0b1" value="0b1" description="Internal module flag used as wakeup source"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="WUME2" access="RW" reset_value="0" description="Wakeup Module Enable For Module 2">
+      <alias type="CMSIS" value="LLWU_ME_WUME2(x)"/>
+      <bit_field_value name="ME_WUME2_0b0" value="0b0" description="Internal module flag not used as wakeup source"/>
+      <bit_field_value name="ME_WUME2_0b1" value="0b1" description="Internal module flag used as wakeup source"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="WUME3" access="RW" reset_value="0" description="Wakeup Module Enable For Module 3">
+      <alias type="CMSIS" value="LLWU_ME_WUME3(x)"/>
+      <bit_field_value name="ME_WUME3_0b0" value="0b0" description="Internal module flag not used as wakeup source"/>
+      <bit_field_value name="ME_WUME3_0b1" value="0b1" description="Internal module flag used as wakeup source"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="WUME4" access="RW" reset_value="0" description="Wakeup Module Enable For Module 4">
+      <alias type="CMSIS" value="LLWU_ME_WUME4(x)"/>
+      <bit_field_value name="ME_WUME4_0b0" value="0b0" description="Internal module flag not used as wakeup source"/>
+      <bit_field_value name="ME_WUME4_0b1" value="0b1" description="Internal module flag used as wakeup source"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WUME5" access="RW" reset_value="0" description="Wakeup Module Enable For Module 5">
+      <alias type="CMSIS" value="LLWU_ME_WUME5(x)"/>
+      <bit_field_value name="ME_WUME5_0b0" value="0b0" description="Internal module flag not used as wakeup source"/>
+      <bit_field_value name="ME_WUME5_0b1" value="0b1" description="Internal module flag used as wakeup source"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="WUME6" access="RW" reset_value="0" description="Wakeup Module Enable For Module 6">
+      <alias type="CMSIS" value="LLWU_ME_WUME6(x)"/>
+      <bit_field_value name="ME_WUME6_0b0" value="0b0" description="Internal module flag not used as wakeup source"/>
+      <bit_field_value name="ME_WUME6_0b1" value="0b1" description="Internal module flag used as wakeup source"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="WUME7" access="RW" reset_value="0" description="Wakeup Module Enable For Module 7">
+      <alias type="CMSIS" value="LLWU_ME_WUME7(x)"/>
+      <bit_field_value name="ME_WUME7_0b0" value="0b0" description="Internal module flag not used as wakeup source"/>
+      <bit_field_value name="ME_WUME7_0b1" value="0b1" description="Internal module flag used as wakeup source"/>
+    </bit_field>
+  </register>
+  <register offset="0x9" width="8" name="PF1" description="LLWU Pin Flag 1 register">
+    <alias type="CMSIS" value="PF1"/>
+    <bit_field offset="0" width="1" name="WUF0" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P0">
+      <alias type="CMSIS" value="LLWU_PF1_WUF0(x)"/>
+      <bit_field_value name="PF1_WUF0_0b0" value="0b0" description="LLWU_P0 input was not a wakeup source"/>
+      <bit_field_value name="PF1_WUF0_0b1" value="0b1" description="LLWU_P0 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WUF1" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P1">
+      <alias type="CMSIS" value="LLWU_PF1_WUF1(x)"/>
+      <bit_field_value name="PF1_WUF1_0b0" value="0b0" description="LLWU_P1 input was not a wakeup source"/>
+      <bit_field_value name="PF1_WUF1_0b1" value="0b1" description="LLWU_P1 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="WUF2" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P2">
+      <alias type="CMSIS" value="LLWU_PF1_WUF2(x)"/>
+      <bit_field_value name="PF1_WUF2_0b0" value="0b0" description="LLWU_P2 input was not a wakeup source"/>
+      <bit_field_value name="PF1_WUF2_0b1" value="0b1" description="LLWU_P2 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="WUF3" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P3">
+      <alias type="CMSIS" value="LLWU_PF1_WUF3(x)"/>
+      <bit_field_value name="PF1_WUF3_0b0" value="0b0" description="LLWU_P3 input was not a wakeup source"/>
+      <bit_field_value name="PF1_WUF3_0b1" value="0b1" description="LLWU_P3 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="WUF4" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P4">
+      <alias type="CMSIS" value="LLWU_PF1_WUF4(x)"/>
+      <bit_field_value name="PF1_WUF4_0b0" value="0b0" description="LLWU_P4 input was not a wakeup source"/>
+      <bit_field_value name="PF1_WUF4_0b1" value="0b1" description="LLWU_P4 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WUF5" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P5">
+      <alias type="CMSIS" value="LLWU_PF1_WUF5(x)"/>
+      <bit_field_value name="PF1_WUF5_0b0" value="0b0" description="LLWU_P5 input was not a wakeup source"/>
+      <bit_field_value name="PF1_WUF5_0b1" value="0b1" description="LLWU_P5 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="WUF6" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P6">
+      <alias type="CMSIS" value="LLWU_PF1_WUF6(x)"/>
+      <bit_field_value name="PF1_WUF6_0b0" value="0b0" description="LLWU_P6 input was not a wakeup source"/>
+      <bit_field_value name="PF1_WUF6_0b1" value="0b1" description="LLWU_P6 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="WUF7" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P7">
+      <alias type="CMSIS" value="LLWU_PF1_WUF7(x)"/>
+      <bit_field_value name="PF1_WUF7_0b0" value="0b0" description="LLWU_P7 input was not a wakeup source"/>
+      <bit_field_value name="PF1_WUF7_0b1" value="0b1" description="LLWU_P7 input was a wakeup source"/>
+    </bit_field>
+  </register>
+  <register offset="0xA" width="8" name="PF2" description="LLWU Pin Flag 2 register">
+    <alias type="CMSIS" value="PF2"/>
+    <bit_field offset="0" width="1" name="WUF8" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P8">
+      <alias type="CMSIS" value="LLWU_PF2_WUF8(x)"/>
+      <bit_field_value name="PF2_WUF8_0b0" value="0b0" description="LLWU_P8 input was not a wakeup source"/>
+      <bit_field_value name="PF2_WUF8_0b1" value="0b1" description="LLWU_P8 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WUF9" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P9">
+      <alias type="CMSIS" value="LLWU_PF2_WUF9(x)"/>
+      <bit_field_value name="PF2_WUF9_0b0" value="0b0" description="LLWU_P9 input was not a wakeup source"/>
+      <bit_field_value name="PF2_WUF9_0b1" value="0b1" description="LLWU_P9 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="WUF10" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P10">
+      <alias type="CMSIS" value="LLWU_PF2_WUF10(x)"/>
+      <bit_field_value name="PF2_WUF10_0b0" value="0b0" description="LLWU_P10 input was not a wakeup source"/>
+      <bit_field_value name="PF2_WUF10_0b1" value="0b1" description="LLWU_P10 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="WUF11" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P11">
+      <alias type="CMSIS" value="LLWU_PF2_WUF11(x)"/>
+      <bit_field_value name="PF2_WUF11_0b0" value="0b0" description="LLWU_P11 input was not a wakeup source"/>
+      <bit_field_value name="PF2_WUF11_0b1" value="0b1" description="LLWU_P11 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="WUF12" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P12">
+      <alias type="CMSIS" value="LLWU_PF2_WUF12(x)"/>
+      <bit_field_value name="PF2_WUF12_0b0" value="0b0" description="LLWU_P12 input was not a wakeup source"/>
+      <bit_field_value name="PF2_WUF12_0b1" value="0b1" description="LLWU_P12 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WUF13" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P13">
+      <alias type="CMSIS" value="LLWU_PF2_WUF13(x)"/>
+      <bit_field_value name="PF2_WUF13_0b0" value="0b0" description="LLWU_P13 input was not a wakeup source"/>
+      <bit_field_value name="PF2_WUF13_0b1" value="0b1" description="LLWU_P13 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="WUF14" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P14">
+      <alias type="CMSIS" value="LLWU_PF2_WUF14(x)"/>
+      <bit_field_value name="PF2_WUF14_0b0" value="0b0" description="LLWU_P14 input was not a wakeup source"/>
+      <bit_field_value name="PF2_WUF14_0b1" value="0b1" description="LLWU_P14 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="WUF15" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P15">
+      <alias type="CMSIS" value="LLWU_PF2_WUF15(x)"/>
+      <bit_field_value name="PF2_WUF15_0b0" value="0b0" description="LLWU_P15 input was not a wakeup source"/>
+      <bit_field_value name="PF2_WUF15_0b1" value="0b1" description="LLWU_P15 input was a wakeup source"/>
+    </bit_field>
+  </register>
+  <register offset="0xB" width="8" name="PF3" description="LLWU Pin Flag 3 register">
+    <alias type="CMSIS" value="PF3"/>
+    <bit_field offset="0" width="1" name="WUF16" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P16">
+      <alias type="CMSIS" value="LLWU_PF3_WUF16(x)"/>
+      <bit_field_value name="PF3_WUF16_0b0" value="0b0" description="LLWU_P16 input was not a wakeup source"/>
+      <bit_field_value name="PF3_WUF16_0b1" value="0b1" description="LLWU_P16 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WUF17" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P17">
+      <alias type="CMSIS" value="LLWU_PF3_WUF17(x)"/>
+      <bit_field_value name="PF3_WUF17_0b0" value="0b0" description="LLWU_P17 input was not a wakeup source"/>
+      <bit_field_value name="PF3_WUF17_0b1" value="0b1" description="LLWU_P17 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="WUF18" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P18">
+      <alias type="CMSIS" value="LLWU_PF3_WUF18(x)"/>
+      <bit_field_value name="PF3_WUF18_0b0" value="0b0" description="LLWU_P18 input was not a wakeup source"/>
+      <bit_field_value name="PF3_WUF18_0b1" value="0b1" description="LLWU_P18 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="WUF19" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P19">
+      <alias type="CMSIS" value="LLWU_PF3_WUF19(x)"/>
+      <bit_field_value name="PF3_WUF19_0b0" value="0b0" description="LLWU_P19 input was not a wakeup source"/>
+      <bit_field_value name="PF3_WUF19_0b1" value="0b1" description="LLWU_P19 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="WUF20" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P20">
+      <alias type="CMSIS" value="LLWU_PF3_WUF20(x)"/>
+      <bit_field_value name="PF3_WUF20_0b0" value="0b0" description="LLWU_P20 input was not a wakeup source"/>
+      <bit_field_value name="PF3_WUF20_0b1" value="0b1" description="LLWU_P20 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WUF21" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P21">
+      <alias type="CMSIS" value="LLWU_PF3_WUF21(x)"/>
+      <bit_field_value name="PF3_WUF21_0b0" value="0b0" description="LLWU_P21 input was not a wakeup source"/>
+      <bit_field_value name="PF3_WUF21_0b1" value="0b1" description="LLWU_P21 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="WUF22" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P22">
+      <alias type="CMSIS" value="LLWU_PF3_WUF22(x)"/>
+      <bit_field_value name="PF3_WUF22_0b0" value="0b0" description="LLWU_P22 input was not a wakeup source"/>
+      <bit_field_value name="PF3_WUF22_0b1" value="0b1" description="LLWU_P22 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="WUF23" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P23">
+      <alias type="CMSIS" value="LLWU_PF3_WUF23(x)"/>
+      <bit_field_value name="PF3_WUF23_0b0" value="0b0" description="LLWU_P23 input was not a wakeup source"/>
+      <bit_field_value name="PF3_WUF23_0b1" value="0b1" description="LLWU_P23 input was a wakeup source"/>
+    </bit_field>
+  </register>
+  <register offset="0xC" width="8" name="PF4" description="LLWU Pin Flag 4 register">
+    <alias type="CMSIS" value="PF4"/>
+    <bit_field offset="0" width="1" name="WUF24" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P24">
+      <alias type="CMSIS" value="LLWU_PF4_WUF24(x)"/>
+      <bit_field_value name="PF4_WUF24_0b0" value="0b0" description="LLWU_P24 input was not a wakeup source"/>
+      <bit_field_value name="PF4_WUF24_0b1" value="0b1" description="LLWU_P24 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WUF25" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P25">
+      <alias type="CMSIS" value="LLWU_PF4_WUF25(x)"/>
+      <bit_field_value name="PF4_WUF25_0b0" value="0b0" description="LLWU_P25 input was not a wakeup source"/>
+      <bit_field_value name="PF4_WUF25_0b1" value="0b1" description="LLWU_P25 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="WUF26" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P26">
+      <alias type="CMSIS" value="LLWU_PF4_WUF26(x)"/>
+      <bit_field_value name="PF4_WUF26_0b0" value="0b0" description="LLWU_P26 input was not a wakeup source"/>
+      <bit_field_value name="PF4_WUF26_0b1" value="0b1" description="LLWU_P26 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="WUF27" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P27">
+      <alias type="CMSIS" value="LLWU_PF4_WUF27(x)"/>
+      <bit_field_value name="PF4_WUF27_0b0" value="0b0" description="LLWU_P27 input was not a wakeup source"/>
+      <bit_field_value name="PF4_WUF27_0b1" value="0b1" description="LLWU_P27 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="WUF28" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P28">
+      <alias type="CMSIS" value="LLWU_PF4_WUF28(x)"/>
+      <bit_field_value name="PF4_WUF28_0b0" value="0b0" description="LLWU_P28 input was not a wakeup source"/>
+      <bit_field_value name="PF4_WUF28_0b1" value="0b1" description="LLWU_P28 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="WUF29" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P29">
+      <alias type="CMSIS" value="LLWU_PF4_WUF29(x)"/>
+      <bit_field_value name="PF4_WUF29_0b0" value="0b0" description="LLWU_P29 input was not a wakeup source"/>
+      <bit_field_value name="PF4_WUF29_0b1" value="0b1" description="LLWU_P29 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="WUF30" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P30">
+      <alias type="CMSIS" value="LLWU_PF4_WUF30(x)"/>
+      <bit_field_value name="PF4_WUF30_0b0" value="0b0" description="LLWU_P30 input was not a wakeup source"/>
+      <bit_field_value name="PF4_WUF30_0b1" value="0b1" description="LLWU_P30 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="WUF31" access="W1C" reset_value="0" description="Wakeup Flag For LLWU_P31">
+      <alias type="CMSIS" value="LLWU_PF4_WUF31(x)"/>
+      <bit_field_value name="PF4_WUF31_0b0" value="0b0" description="LLWU_P31 input was not a wakeup source"/>
+      <bit_field_value name="PF4_WUF31_0b1" value="0b1" description="LLWU_P31 input was a wakeup source"/>
+    </bit_field>
+  </register>
+  <register offset="0xD" width="8" name="MF5" description="LLWU Module Flag 5 register">
+    <alias type="CMSIS" value="MF5"/>
+    <bit_field offset="0" width="1" name="MWUF0" access="RO" reset_value="0" description="Wakeup flag For module 0">
+      <alias type="CMSIS" value="LLWU_MF5_MWUF0(x)"/>
+      <bit_field_value name="MF5_MWUF0_0b0" value="0b0" description="Module 0 input was not a wakeup source"/>
+      <bit_field_value name="MF5_MWUF0_0b1" value="0b1" description="Module 0 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="MWUF1" access="RO" reset_value="0" description="Wakeup flag For module 1">
+      <alias type="CMSIS" value="LLWU_MF5_MWUF1(x)"/>
+      <bit_field_value name="MF5_MWUF1_0b0" value="0b0" description="Module 1 input was not a wakeup source"/>
+      <bit_field_value name="MF5_MWUF1_0b1" value="0b1" description="Module 1 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="MWUF2" access="RO" reset_value="0" description="Wakeup flag For module 2">
+      <alias type="CMSIS" value="LLWU_MF5_MWUF2(x)"/>
+      <bit_field_value name="MF5_MWUF2_0b0" value="0b0" description="Module 2 input was not a wakeup source"/>
+      <bit_field_value name="MF5_MWUF2_0b1" value="0b1" description="Module 2 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="MWUF3" access="RO" reset_value="0" description="Wakeup flag For module 3">
+      <alias type="CMSIS" value="LLWU_MF5_MWUF3(x)"/>
+      <bit_field_value name="MF5_MWUF3_0b0" value="0b0" description="Module 3 input was not a wakeup source"/>
+      <bit_field_value name="MF5_MWUF3_0b1" value="0b1" description="Module 3 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="MWUF4" access="RO" reset_value="0" description="Wakeup flag For module 4">
+      <alias type="CMSIS" value="LLWU_MF5_MWUF4(x)"/>
+      <bit_field_value name="MF5_MWUF4_0b0" value="0b0" description="Module 4 input was not a wakeup source"/>
+      <bit_field_value name="MF5_MWUF4_0b1" value="0b1" description="Module 4 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="MWUF5" access="RO" reset_value="0" description="Wakeup flag For module 5">
+      <alias type="CMSIS" value="LLWU_MF5_MWUF5(x)"/>
+      <bit_field_value name="MF5_MWUF5_0b0" value="0b0" description="Module 5 input was not a wakeup source"/>
+      <bit_field_value name="MF5_MWUF5_0b1" value="0b1" description="Module 5 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="MWUF6" access="RO" reset_value="0" description="Wakeup flag For module 6">
+      <alias type="CMSIS" value="LLWU_MF5_MWUF6(x)"/>
+      <bit_field_value name="MF5_MWUF6_0b0" value="0b0" description="Module 6 input was not a wakeup source"/>
+      <bit_field_value name="MF5_MWUF6_0b1" value="0b1" description="Module 6 input was a wakeup source"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="MWUF7" access="RO" reset_value="0" description="Wakeup flag For module 7">
+      <alias type="CMSIS" value="LLWU_MF5_MWUF7(x)"/>
+      <bit_field_value name="MF5_MWUF7_0b0" value="0b0" description="Module 7 input was not a wakeup source"/>
+      <bit_field_value name="MF5_MWUF7_0b1" value="0b1" description="Module 7 input was a wakeup source"/>
+    </bit_field>
+  </register>
+  <register offset="0xE" width="8" name="FILT1" description="LLWU Pin Filter 1 register">
+    <alias type="CMSIS" value="FILT1"/>
+    <bit_field offset="0" width="5" name="FILTSEL" access="RW" reset_value="0" description="Filter Pin Select">
+      <alias type="CMSIS" value="LLWU_FILT1_FILTSEL(x)"/>
+      <bit_field_value name="FILT1_FILTSEL_0b00000" value="0b00000" description="Select LLWU_P0 for filter"/>
+      <bit_field_value name="FILT1_FILTSEL_0b11111" value="0b11111" description="Select LLWU_P31 for filter"/>
+    </bit_field>
+    <bit_field offset="5" width="2" name="FILTE" access="RW" reset_value="0" description="Digital Filter On External Pin">
+      <alias type="CMSIS" value="LLWU_FILT1_FILTE(x)"/>
+      <bit_field_value name="FILT1_FILTE_0b00" value="0b00" description="Filter disabled"/>
+      <bit_field_value name="FILT1_FILTE_0b01" value="0b01" description="Filter posedge detect enabled"/>
+      <bit_field_value name="FILT1_FILTE_0b10" value="0b10" description="Filter negedge detect enabled"/>
+      <bit_field_value name="FILT1_FILTE_0b11" value="0b11" description="Filter any edge detect enabled"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="FILTF" access="W1C" reset_value="0" description="Filter Detect Flag">
+      <alias type="CMSIS" value="LLWU_FILT1_FILTF(x)"/>
+      <bit_field_value name="FILT1_FILTF_0b0" value="0b0" description="Pin Filter 1 was not a wakeup source"/>
+      <bit_field_value name="FILT1_FILTF_0b1" value="0b1" description="Pin Filter 1 was a wakeup source"/>
+    </bit_field>
+  </register>
+  <register offset="0xF" width="8" name="FILT2" description="LLWU Pin Filter 2 register">
+    <alias type="CMSIS" value="FILT2"/>
+    <bit_field offset="0" width="5" name="FILTSEL" access="RW" reset_value="0" description="Filter Pin Select">
+      <alias type="CMSIS" value="LLWU_FILT2_FILTSEL(x)"/>
+      <bit_field_value name="FILT2_FILTSEL_0b00000" value="0b00000" description="Select LLWU_P0 for filter"/>
+      <bit_field_value name="FILT2_FILTSEL_0b11111" value="0b11111" description="Select LLWU_P31 for filter"/>
+    </bit_field>
+    <bit_field offset="5" width="2" name="FILTE" access="RW" reset_value="0" description="Digital Filter On External Pin">
+      <alias type="CMSIS" value="LLWU_FILT2_FILTE(x)"/>
+      <bit_field_value name="FILT2_FILTE_0b00" value="0b00" description="Filter disabled"/>
+      <bit_field_value name="FILT2_FILTE_0b01" value="0b01" description="Filter posedge detect enabled"/>
+      <bit_field_value name="FILT2_FILTE_0b10" value="0b10" description="Filter negedge detect enabled"/>
+      <bit_field_value name="FILT2_FILTE_0b11" value="0b11" description="Filter any edge detect enabled"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="FILTF" access="W1C" reset_value="0" description="Filter Detect Flag">
+      <alias type="CMSIS" value="LLWU_FILT2_FILTF(x)"/>
+      <bit_field_value name="FILT2_FILTF_0b0" value="0b0" description="Pin Filter 2 was not a wakeup source"/>
+      <bit_field_value name="FILT2_FILTF_0b1" value="0b1" description="Pin Filter 2 was a wakeup source"/>
+    </bit_field>
+  </register>
+  <register offset="0x10" width="8" name="FILT3" description="LLWU Pin Filter 3 register">
+    <alias type="CMSIS" value="FILT3"/>
+    <bit_field offset="0" width="5" name="FILTSEL" access="RW" reset_value="0" description="Filter Pin Select">
+      <alias type="CMSIS" value="LLWU_FILT3_FILTSEL(x)"/>
+      <bit_field_value name="FILT3_FILTSEL_0b00000" value="0b00000" description="Select LLWU_P0 for filter"/>
+      <bit_field_value name="FILT3_FILTSEL_0b11111" value="0b11111" description="Select LLWU_P31 for filter"/>
+    </bit_field>
+    <bit_field offset="5" width="2" name="FILTE" access="RW" reset_value="0" description="Digital Filter On External Pin">
+      <alias type="CMSIS" value="LLWU_FILT3_FILTE(x)"/>
+      <bit_field_value name="FILT3_FILTE_0b00" value="0b00" description="Filter disabled"/>
+      <bit_field_value name="FILT3_FILTE_0b01" value="0b01" description="Filter posedge detect enabled"/>
+      <bit_field_value name="FILT3_FILTE_0b10" value="0b10" description="Filter negedge detect enabled"/>
+      <bit_field_value name="FILT3_FILTE_0b11" value="0b11" description="Filter any edge detect enabled"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="FILTF" access="W1C" reset_value="0" description="Filter Detect Flag">
+      <alias type="CMSIS" value="LLWU_FILT3_FILTF(x)"/>
+      <bit_field_value name="FILT3_FILTF_0b0" value="0b0" description="Pin Filter 3 was not a wakeup source"/>
+      <bit_field_value name="FILT3_FILTF_0b1" value="0b1" description="Pin Filter 3 was a wakeup source"/>
+    </bit_field>
+  </register>
+  <register offset="0x11" width="8" name="FILT4" description="LLWU Pin Filter 4 register">
+    <alias type="CMSIS" value="FILT4"/>
+    <bit_field offset="0" width="5" name="FILTSEL" access="RW" reset_value="0" description="Filter Pin Select">
+      <alias type="CMSIS" value="LLWU_FILT4_FILTSEL(x)"/>
+      <bit_field_value name="FILT4_FILTSEL_0b00000" value="0b00000" description="Select LLWU_P0 for filter"/>
+      <bit_field_value name="FILT4_FILTSEL_0b11111" value="0b11111" description="Select LLWU_P31 for filter"/>
+    </bit_field>
+    <bit_field offset="5" width="2" name="FILTE" access="RW" reset_value="0" description="Digital Filter On External Pin">
+      <alias type="CMSIS" value="LLWU_FILT4_FILTE(x)"/>
+      <bit_field_value name="FILT4_FILTE_0b00" value="0b00" description="Filter disabled"/>
+      <bit_field_value name="FILT4_FILTE_0b01" value="0b01" description="Filter posedge detect enabled"/>
+      <bit_field_value name="FILT4_FILTE_0b10" value="0b10" description="Filter negedge detect enabled"/>
+      <bit_field_value name="FILT4_FILTE_0b11" value="0b11" description="Filter any edge detect enabled"/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="FILTF" access="W1C" reset_value="0" description="Filter Detect Flag">
+      <alias type="CMSIS" value="LLWU_FILT4_FILTF(x)"/>
+      <bit_field_value name="FILT4_FILTF_0b0" value="0b0" description="Pin Filter 4 was not a wakeup source"/>
+      <bit_field_value name="FILT4_FILTF_0b1" value="0b1" description="Pin Filter 4 was a wakeup source"/>
+    </bit_field>
+  </register>
+</regs:peripheral>

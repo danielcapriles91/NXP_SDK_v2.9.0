@@ -1,0 +1,75 @@
+#ifndef __USB_HOST_KEYBOARD_MOUSE_H__
+#define __USB_HOST_KEYBOARD_MOUSE_H__
+
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+
+/*! @brief buffer for receiving report descriptor and data */
+#define HID_BUFFER_SIZE (200U)
+
+/*! @brief host app run status */
+typedef enum _usb_host_cdc_run_state
+{
+    kUSB_HostCdcRunIdle = 0,                /*!< idle */
+    kUSB_HostCdcRunSetControlInterface,     /*!< execute set interface code */
+    kUSB_HostCdcRunWaitSetControlInterface, /*!< wait set interface done */
+    kUSB_HostCdcRunSetControlInterfaceDone, /*!< set interface is done, execute next step */
+    kUSB_HostCdcRunSetDataInterface,        /*!< execute set interface code */
+    kUSB_HostCdcRunWaitSetDataInterface,    /*!< wait set interface done */
+    kUSB_HostCdcRunSetDataInterfaceDone,    /*!< set interface is done, execute next step */
+    kUSB_HostCdcRunWaitDataReceived,        /*!< wait data receive done */
+    kUSB_HostCdcRunDataReceivedDone,        /*!< data receive is done, execute next step  */
+    kUSB_HostCdcRunWaitGetState,            /*!< wait get state done*/
+    kUSB_HostCdcRunGetStateDone,            /*!< get state done , execute next step*/
+    kUSB_HostCdcRunWaitDataSend,            /*!< wait data send done */
+    kUSB_HostCdcRunCheckData,               /*!< check whether uart has store data in send buffer*/
+    kUSB_HostCdcRunPrimeDateSend,           /*!< prime bulk out send ,  execute data send*/
+    kUSB_HostCdcRunPrimeDateReceive,        /*!< prime bulk in receive,  start data receive */
+    kUSB_HostCdcRunWaitGetLineCode,         /*!< wait get line code  */
+    kUSB_HostCdcRunGetLineCodeDone,         /*!< get line code done, execute next step*/
+    kUSB_HostCdcRunWaitSetCtrlState,        /*!< wait set control state*/
+    kUSB_HostCdcRunSetCtrlStateDone,        /*!< set control state done , execute next step*/
+} usb_host_cdc_run_state_t;
+
+/*! @brief host app run status */
+typedef enum _usb_host_hid_run_state
+{
+    kUSB_HostHidRunIdle = 0,                /*!< idle */
+    kUSB_HostHidRunSetInterface,            /*!< execute set interface code */
+    kUSB_HostHidRunWaitSetInterface,        /*!< wait set interface done */
+    kUSB_HostHidRunSetInterfaceDone,        /*!< set interface is done, execute next step */
+    kUSB_HostHidRunWaitSetIdle,             /*!< wait set idle done */
+    kUSB_HostHidRunSetIdleDone,             /*!< set idle is done, execute next step */
+    kUSB_HostHidRunWaitGetReportDescriptor, /*!< wait get report descriptor done */
+    kUSB_HostHidRunGetReportDescriptorDone, /*!< get report descriptor is done, execute next step */
+    kUSB_HostHidRunWaitSetProtocol,         /*!< wait set protocol done */
+    kUSB_HostHidRunSetProtocolDone,         /*!< set protocol is done, execute next step */
+    kUSB_HostHidRunWaitDataReceived,        /*!< wait interrupt in data */
+    kUSB_HostHidRunDataReceived,            /*!< interrupt in data received */
+    kUSB_HostHidRunPrimeDataReceive,        /*!< prime interrupt in receive */
+} usb_host_hid_run_state_t;
+
+/*! @brief host app run status */
+typedef enum _usb_host_printer_run_state
+{
+    kUSB_HostPrinterRunIdle = 0,            /*!< idle */
+    kUSB_HostPrinterRunSetInterface,        /*!< execute set interface code */
+    kUSB_HostPrinterRunWaitSetInterface,    /*!< wait set interface done */
+    kUSB_HostPrinterRunGetDeviceId,         /*!< get device id, get all the string */
+    kUSB_HostPrinterRunWaitGetDeviceId,     /*!< wait get device id callback */
+    kUSB_HostPrinterRunGetDeviceIdDone,     /*!< get device id success */
+    kUSB_HostPrinterRunWaitGetDeviceIdAll,  /*!< get whole device id */
+    kUSB_HostPrinterRunGetDeviceIdAllDone,  /*!< get whole device id done */
+    kUSB_HostPrinterRunGetDeviceIdAllError, /*!< get whole device id error */
+    kUSB_HostPrinterRunPrinterTest,         /*!< test the device printer */
+    kUSB_HostPrinterRunPrimeReceive,        /*!< prime receive */
+    kUSB_HostPrinterRunDataReceived,        /*!< receive data done */
+    kUSB_HostPrinterRunParseDeviceId,       /*!< parse device id */
+} usb_host_printer_run_state_t;
+
+/*******************************************************************************
+ * API
+ ******************************************************************************/
+
+#endif /* __USB_HOST_KEYBOARD_MOUSE_H__ */

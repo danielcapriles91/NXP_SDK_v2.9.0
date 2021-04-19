@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="8" name="PMPROT" description="Power Mode Protection register">
+    <alias type="CMSIS" value="PMPROT"/>
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <bit_field offset="1" width="1" name="AVLLS" access="RW" reset_value="0" description="Allow Very-Low-Leakage Stop Mode">
+      <alias type="CMSIS" value="SMC_PMPROT_AVLLS(x)"/>
+      <bit_field_value name="PMPROT_AVLLS_0b0" value="0b0" description="Any VLLSx mode is not allowed"/>
+      <bit_field_value name="PMPROT_AVLLS_0b1" value="0b1" description="Any VLLSx mode is allowed"/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <bit_field offset="3" width="1" name="ALLS" access="RW" reset_value="0" description="Allow Low-Leakage Stop Mode">
+      <alias type="CMSIS" value="SMC_PMPROT_ALLS(x)"/>
+      <bit_field_value name="PMPROT_ALLS_0b0" value="0b0" description="Any LLSx mode is not allowed"/>
+      <bit_field_value name="PMPROT_ALLS_0b1" value="0b1" description="Any LLSx mode is allowed"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <bit_field offset="5" width="1" name="AVLP" access="RW" reset_value="0" description="Allow Very-Low-Power Modes">
+      <alias type="CMSIS" value="SMC_PMPROT_AVLP(x)"/>
+      <bit_field_value name="PMPROT_AVLP_0b0" value="0b0" description="VLPR, VLPW, and VLPS are not allowed."/>
+      <bit_field_value name="PMPROT_AVLP_0b1" value="0b1" description="VLPR, VLPW, and VLPS are allowed."/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <bit_field offset="7" width="1" name="AHSRUN" access="RW" reset_value="0" description="Allow High Speed Run mode">
+      <alias type="CMSIS" value="SMC_PMPROT_AHSRUN(x)"/>
+      <bit_field_value name="PMPROT_AHSRUN_0b0" value="0b0" description="HSRUN is not allowed"/>
+      <bit_field_value name="PMPROT_AHSRUN_0b1" value="0b1" description="HSRUN is allowed"/>
+    </bit_field>
+  </register>
+  <register offset="0x1" width="8" name="PMCTRL" description="Power Mode Control register">
+    <alias type="CMSIS" value="PMCTRL"/>
+    <bit_field offset="0" width="3" name="STOPM" access="RW" reset_value="0" description="Stop Mode Control">
+      <alias type="CMSIS" value="SMC_PMCTRL_STOPM(x)"/>
+      <bit_field_value name="PMCTRL_STOPM_0b000" value="0b000" description="Normal Stop (STOP)"/>
+      <bit_field_value name="PMCTRL_STOPM_0b001" value="0b001" description="Reserved"/>
+      <bit_field_value name="PMCTRL_STOPM_0b010" value="0b010" description="Very-Low-Power Stop (VLPS)"/>
+      <bit_field_value name="PMCTRL_STOPM_0b011" value="0b011" description="Low-Leakage Stop (LLSx)"/>
+      <bit_field_value name="PMCTRL_STOPM_0b100" value="0b100" description="Very-Low-Leakage Stop (VLLSx)"/>
+      <bit_field_value name="PMCTRL_STOPM_0b101" value="0b101" description="Reserved"/>
+      <bit_field_value name="PMCTRL_STOPM_0b110" value="0b110" description="Reseved"/>
+      <bit_field_value name="PMCTRL_STOPM_0b111" value="0b111" description="Reserved"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="STOPA" access="RO" reset_value="0" description="Stop Aborted">
+      <alias type="CMSIS" value="SMC_PMCTRL_STOPA(x)"/>
+      <bit_field_value name="PMCTRL_STOPA_0b0" value="0b0" description="The previous stop mode entry was successsful."/>
+      <bit_field_value name="PMCTRL_STOPA_0b1" value="0b1" description="The previous stop mode entry was aborted."/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <bit_field offset="5" width="2" name="RUNM" access="RW" reset_value="0" description="Run Mode Control">
+      <alias type="CMSIS" value="SMC_PMCTRL_RUNM(x)"/>
+      <bit_field_value name="PMCTRL_RUNM_0b00" value="0b00" description="Normal Run mode (RUN)"/>
+      <bit_field_value name="PMCTRL_RUNM_0b01" value="0b01" description="Reserved"/>
+      <bit_field_value name="PMCTRL_RUNM_0b10" value="0b10" description="Very-Low-Power Run mode (VLPR)"/>
+      <bit_field_value name="PMCTRL_RUNM_0b11" value="0b11" description="High Speed Run mode (HSRUN)"/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+  </register>
+  <register offset="0x2" width="8" name="STOPCTRL" description="Stop Control Register">
+    <alias type="CMSIS" value="STOPCTRL"/>
+    <bit_field offset="0" width="3" name="LLSM" access="RW" reset_value="0x3" description="LLS or VLLS Mode Control">
+      <alias type="CMSIS" value="SMC_STOPCTRL_LLSM(x)"/>
+      <alias type="id" value="__VLLSM"/>
+      <bit_field_value name="STOPCTRL_LLSM_0b000" value="0b000" description="VLLS0 if PMCTRL[STOPM]=VLLSx, reserved if PMCTRL[STOPM]=LLSx"/>
+      <bit_field_value name="STOPCTRL_LLSM_0b001" value="0b001" description="VLLS1 if PMCTRL[STOPM]=VLLSx, reserved if PMCTRL[STOPM]=LLSx"/>
+      <bit_field_value name="STOPCTRL_LLSM_0b010" value="0b010" description="VLLS2 if PMCTRL[STOPM]=VLLSx, LLS2 if PMCTRL[STOPM]=LLSx"/>
+      <bit_field_value name="STOPCTRL_LLSM_0b011" value="0b011" description="VLLS3 if PMCTRL[STOPM]=VLLSx, LLS3 if PMCTRL[STOPM]=LLSx"/>
+      <bit_field_value name="STOPCTRL_LLSM_0b100" value="0b100" description="Reserved"/>
+      <bit_field_value name="STOPCTRL_LLSM_0b101" value="0b101" description="Reserved"/>
+      <bit_field_value name="STOPCTRL_LLSM_0b110" value="0b110" description="Reserved"/>
+      <bit_field_value name="STOPCTRL_LLSM_0b111" value="0b111" description="Reserved"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="RAM2PO" access="RW" reset_value="0" description="RAM2 Power Option">
+      <alias type="CMSIS" value="SMC_STOPCTRL_RAM2PO(x)"/>
+      <bit_field_value name="STOPCTRL_RAM2PO_0b0" value="0b0" description="RAM2 not powered in LLS2/VLLS2"/>
+      <bit_field_value name="STOPCTRL_RAM2PO_0b1" value="0b1" description="RAM2 powered in LLS2/VLLS2"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="PORPO" access="RW" reset_value="0" description="POR Power Option">
+      <alias type="CMSIS" value="SMC_STOPCTRL_PORPO(x)"/>
+      <bit_field_value name="STOPCTRL_PORPO_0b0" value="0b0" description="POR detect circuit is enabled in VLLS0"/>
+      <bit_field_value name="STOPCTRL_PORPO_0b1" value="0b1" description="POR detect circuit is disabled in VLLS0"/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="PSTOPO" access="RW" reset_value="0" description="Partial Stop Option">
+      <alias type="CMSIS" value="SMC_STOPCTRL_PSTOPO(x)"/>
+      <bit_field_value name="STOPCTRL_PSTOPO_0b00" value="0b00" description="STOP - Normal Stop mode"/>
+      <bit_field_value name="STOPCTRL_PSTOPO_0b01" value="0b01" description="PSTOP1 - Partial Stop with both system and bus clocks disabled"/>
+      <bit_field_value name="STOPCTRL_PSTOPO_0b10" value="0b10" description="PSTOP2 - Partial Stop with system clock disabled and bus clock enabled"/>
+      <bit_field_value name="STOPCTRL_PSTOPO_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+  </register>
+  <register offset="0x3" width="8" name="PMSTAT" description="Power Mode Status register">
+    <alias type="CMSIS" value="PMSTAT"/>
+    <bit_field offset="0" width="8" name="PMSTAT" access="RO" reset_value="0x1" description="Power Mode Status">
+      <alias type="CMSIS" value="SMC_PMSTAT_PMSTAT(x)"/>
+    </bit_field>
+  </register>
+</regs:peripheral>

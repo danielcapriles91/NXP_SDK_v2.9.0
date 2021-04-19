@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="uart_cmsis" label="UART_CMSIS" 
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-9.0.xsd" 
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="Universal driver">
+   <sw_comp_ref name="platform.drivers.uart_cmsis" version="2.1.0" required="true"/>
+   <description>Universal Asynchronous Receiver/Transmitter (UART) - CMSIS</description>
+   <mode id="interrupt" label="Interrupt">
+      <description>Interrupts mode - CMSIS driver operation using interrupts.</description>
+      <config_set_refs>
+         <config_set_ref>general</config_set_ref>
+         <config_set_ref>fsl_cmsis_uart</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>UART</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="dma" label="DMA" available="featureDefined(`FSL_FEATURE_SOC_DMA_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SOC_DMA_COUNT`) &gt; 0)">
+      <description>DMA transfer mode - Operation using DMA mode (DMA device). This mode supports transactional API by using DMA device.
+      </description>
+      <config_set_refs>
+         <config_set_ref>general</config_set_ref>
+         <config_set_ref>fsl_cmsis_uart</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>UART</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="edma" label="eDMA" available="featureDefined(`FSL_FEATURE_SOC_EDMA_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SOC_EDMA_COUNT`) &gt; 0)">
+      <description>DMA transfer mode - Operation using DMA mode (DMA device). This mode supports transactional API by using DMA device.
+      </description>
+      <config_set_refs>
+         <config_set_ref>general</config_set_ref>
+         <config_set_ref>fsl_cmsis_uart</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>UART</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="fsl_cmsis_uart" label="General configuration" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+      <description>Configuration of CMSIS UART</description>
+    <generated_types></generated_types>
+      <user_types>
+      </user_types>
+      <settings> 
+         
+         <reference id="interrupt" label="Interrupt setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" available="$instance.getMode() == `interrupt`">
+            <options_expr>
+               <option id="without_handler_settings"/>
+               <option id="irq_without_enable_control"/>
+               <option id="without_periodic_trigger" expr="true"/>
+            </options_expr>
+         </reference>
+         
+         <!-- DMA settings -->
+         <struct id="dma_channels" label="DMA channels" available="$instance.getMode()== `dma`">
+            <reference id="dma_rx_channel" label="Rx DMA channel" type="dma_channel_t" config_set_id="fsl_dma_peripheral" component_id="system" options="dma_function=RX">
+               <options_expr>
+                  <option id="without_handle" expr="true"></option>
+                  <option id="without_priority" expr="true"/>
+                  <option id="without_periodic_trigger" expr="true"/>
+               </options_expr>
+            </reference>
+            <reference id="dma_tx_channel" label="Tx DMA channel" type="dma_channel_t" config_set_id="fsl_dma_peripheral" component_id="system" options="dma_function=TX">
+               <options_expr>
+                  <option id="without_handle" expr="true"></option>
+                  <option id="without_priority" expr="true"/>
+                  <option id="without_periodic_trigger" expr="true"/>
+               </options_expr>
+            </reference>            
+         </struct>
+         
+         <!-- eDMA settings -->
+         <struct id="edma_channels" label="eDMA channels" available="$instance.getMode() == `edma`">
+            <reference id="edma_rx_channel" label="Rx eDMA channel" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" options="dma_function=RX" >
+               <options_expr>
+                  <option id="without_handle" expr="true"></option>
+                  <option id="without_priority" expr="true"/>
+                  <option id="without_periodic_trigger" expr="true"/>
+               </options_expr>
+            </reference>
+            <reference id="edma_tx_channel" label="Tx eDMA channel" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" options="dma_function=TX">
+               <options_expr>
+                  <option id="without_handle" expr="true"></option>
+                  <option id="without_priority" expr="true"/>
+                  <option id="without_periodic_trigger" expr="true"/>
+               </options_expr>
+            </reference>
+         </struct>
+         
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+         <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+         <variable id="inst_config_ID" value="$parent.inst_ID.getValue() + `_config`"></variable>
+         
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+            <from component_id="system" config_set_id="fsl_edma_peripheral"/>
+            <from component_id="system" config_set_id="fsl_dma_peripheral"/>   
+         </import>
+         
+         <def fragment="dma_def_RTE">  
+            <fragment id="define">
+               <param id="name" expr="`RTE_USART` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_DMA_` + ($this.getId().contains(`rx`) ? `RX` : `TX`) + `_CH`"/>
+               <param id="value" expr="$this.DMAn.getCValue()"/> 
+               <param id="description" expr="`Selected DMA channel number.`"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="`RTE_USART` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_DMA_` + ($this.getId().contains(`rx`) ? `RX` : `TX`) + `_PERI_SEL`"/>
+               <param id="value" expr="`(uint8_t) ` + $this.DMA_source.getValue()"/> 
+               <param id="description" expr="$instance.getID() + ` DMA source request.`"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="`RTE_USART` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_DMA_` + ($this.getId().contains(`rx`) ? `RX` : `TX`) + `_DMAMUX_BASE`"/>
+               <param id="value" expr="$this.dmamux_instance.getValue()"/> 
+               <param id="description" expr="`DMAMUX device that is used for muxing of the request.`"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="`RTE_USART` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_DMA_` + ($this.getId().contains(`rx`) ? `RX` : `TX`) + `_DMA_BASE`"/>
+               <param id="value" expr="$this.dma_cmsis_instance.getValue()"/> 
+               <param id="description" expr="`Used DMA device.`"/>
+            </fragment>
+         </def>
+         <def fragment="edma_def_RTE">  
+            <fragment id="define">
+               <param id="name" expr="`RTE_USART` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_DMA_` + ($this.getId().contains(`rx`) ? `RX` : `TX`) + `_CH`"/>
+               <param id="value" expr="$this.eDMAn.getCValue()"/> 
+               <param id="description" expr="`Selected DMA channel number.`"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="`RTE_USART` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_DMA_` + ($this.getId().contains(`rx`) ? `RX` : `TX`) + `_PERI_SEL`"/>
+               <param id="value" expr="`(uint8_t) ` + $this.eDMA_source.getValue()"/> 
+               <param id="description" expr="$instance.getID() + ` DMA source request.`"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="`RTE_USART` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_DMA_` + ($this.getId().contains(`rx`) ? `RX` : `TX`) + `_DMAMUX_BASE`"/>
+               <param id="value" expr="$this.dmamux_instance.getValue()"/> 
+               <param id="description" expr="`DMAMUX device that is used for muxing of the request.`"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="`RTE_USART` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_DMA_` + ($this.getId().contains(`rx`) ? `RX` : `TX`) + `_DMA_BASE`"/>
+               <param id="value" expr="$this.dma_cmsis_instance.getValue()"/> 
+               <param id="description" expr="`Used DMA device.`"/>
+            </fragment>    
+         </def>
+         
+         <def fragment="rx_enable">
+            <fragment id="define">
+               <param id="name" expr="`RTE_USART` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_RX_BUFFER_ENABLE`"/>
+               <param id="value" expr="$instance.general.main_config.enableRX.getValue() == `true` ? 1 : 0"/> 
+               <param id="description" expr="`Enable RX buffer`"/>
+            </fragment>
+         </def>
+         
+         <def fragment="pins_enable">
+            <fragment id="define" if_expr="$instance.general.main_config.enableInitPinsFnCustomName.getValue(false)">
+               <param id="name" expr="`RTE_USART` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_PIN_INIT`"/>
+               <param id="value" expr="$instance.general.main_config.initPinFunctionCustomID.getValue()"/> 
+               <param id="description" expr="`Init pins.`"/>
+            </fragment>
+            <fragment id="define" if_expr="$instance.general.main_config.enableDeinitPinsFnCustomName.getValue(false)">
+               <param id="name" expr="`RTE_USART` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_PIN_DEINIT`"/>
+               <param id="value" expr="$instance.general.main_config.deinitPinFunctionCustomID.getValue()"/> 
+               <param id="description" expr="`Deinit pins.`"/>
+            </fragment>
+         </def>
+         
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">usart</param>
+               <param id="filename">fsl_uart_cmsis.h</param>
+            </fragment>
+         </section>
+         
+         <section target="defines">
+            <fragment id="IRQ_definitions" apply_to="$configSet.interrupt" if_expr="$configSet.interrupt.enable_priority.getValue(false)"/>
+         </section>
+         
+         <section target="driver_name_map_defines">
+            <fragment id="define">
+               <param id="name" expr="`RTE_USART` + $instance.getPeripheral().regexSubstr(`\d+`,0)"/>
+               <param id="value" expr="1"/>
+               <param id="description">Enable peripheral</param>
+            </fragment>
+            <fragment id="define" if_expr="(($instance.getMode() == `dma`) || ($instance.getMode() == `edma`))">
+               <param id="name" expr="`RTE_USART` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_DMA_EN`"/>
+               <param id="value" expr="1"/>
+               <param id="description">Enable USART DMA</param>
+            </fragment>
+         </section>
+         
+         <section target="driver_config_defines">   
+            <fragment id="pins_enable"/>
+            <!--fragment id="rx_enable"/-->
+            <fragment id="dma_def_RTE" apply_to="$this.dma_channels.dma_rx_channel" if_expr="$instance.getMode() == `dma`"/>
+            <fragment id="dma_def_RTE" apply_to="$this.dma_channels.dma_tx_channel" if_expr="$instance.getMode() == `dma`"/> 
+            
+            <fragment id="edma_def_RTE" apply_to="$this.edma_channels.edma_rx_channel" if_expr="$instance.getMode() == `edma`"/>
+            <fragment id="edma_def_RTE" apply_to="$this.edma_channels.edma_tx_channel" if_expr="$instance.getMode() == `edma`"/>
+         </section>
+         
+         <section target="init_function_preinit0">
+            <fragment id="IRQn_set_priority_default" apply_to="$configSet.interrupt" if_expr="$instance.getMode() == `interrupt`"/>
+         </section>
+         
+
+      </code>
+      <validation>
+     </validation>
+      <quick_selections>
+         <quick_selection id="default_edma" label="Default">
+            <set id="edma_channels.edma_rx_channel.eDMAn">0</set>
+            <set id="edma_channels.edma_tx_channel.eDMAn">1</set>
+            <set id="dma_channels.dma_rx_channel.DMAn">0</set>
+            <set id="dma_channels.dma_tx_channel.DMAn">1</set>
+         </quick_selection>
+         <default>default_edma</default>
+         
+      </quick_selections>      
+   </config_set>
+   
+   <config_set_reference id="general" label="General configuration" config_component="uart_cmsis_common" config_set_id="fsl_cmsis_uart_common">
+      <options_expr>
+         <option id="clockSourceUId" expr="`BusInterfaceClock`"/>
+         <option id="asynchronous" expr="true"/>
+         <option id="synchronous_master" expr="false"/>
+         <option id="synchronous_slave" expr="false"/>
+         <option id="single_wire" expr="false"/>
+         <option id="irda" expr="false"/>
+         <option id="smart_card" expr="false"/>
+         <option id="clock_polarity" expr="false"/>
+         <option id="clock_phase" expr="false"/>
+         <option id="power_low" expr="false"/>
+         <option id="flow_control" expr="false"/>
+         <option id="rx_signal_id" expr="`.uart_rx`"/>
+         <option id="tx_signal_id" expr="`.uart_tx`"/>
+      </options_expr>
+   </config_set_reference>
+</component:config_component>

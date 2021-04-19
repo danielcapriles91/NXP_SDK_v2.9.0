@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component:config_component
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-5.0.xsd"
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0"
+   id="pit" label="PIT" category="Peripheral driver">
+   
+   <sw_comp_ref name="platform.drivers.pit" version="2.0.0"/>
+   <description>Periodic Interrupt Timer (PIT)</description>
+   <mode id="LPTMR_GENERAL" label="General">
+      <description>General PIT initialization</description>
+      <config_set_refs>
+         <config_set_ref>fsl_pit</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>PIT</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="fsl_pit" label="General PIT configuration" from_source="fsl_pit.h">
+      <description>General PIT configuration</description>
+      <generated_types>
+         <enum id="pit_chnl_t" label="List of PIT channels" from="_pit_chnl">
+            <description>Actual number of available channels is SoC dependent</description>
+            <item id="kPIT_Chnl_0" label="PIT channel number 0"/>
+            <item id="kPIT_Chnl_1" label="PIT channel number 1"/>
+            <item id="kPIT_Chnl_2" label="PIT channel number 2"/>
+            <item id="kPIT_Chnl_3" label="PIT channel number 3"/>
+         </enum>
+         <enum id="pit_interrupt_enable_t" label="List of PIT interrupts." from="_pit_interrupt_enable">
+            <item id="kPIT_TimerInterruptEnable" label="Timer interrupt enable"/>
+         </enum>
+         <enum id="pit_status_flags_t" label="List of PIT status flags." from="_pit_status_flags">
+            <item id="kPIT_TimerFlag" label="Timer flag"/>
+         </enum>
+         <struct id="pit_config_t" label="PIT configuration structure." from="_pit_config">
+            <description>This structure holds the configuration settings for the PIT peripheral. To initialize this structure to reasonable defaults, call the PIT_GetDefaultConfig() function and pass a pointer to your config structure instance.The configuration structure can be made constant so it resides in flash.</description>
+            <bool id="enableRunInDebug" label="true: Timers run in debug mode; false: Timers stop in debug mode">
+               <description>true: Timers run in debug mode; false: Timers stop in debug mode</description>
+            </bool>
+         </struct>
+      </generated_types>
+      <user_types>
+         <struct id="pit_channel" label="PIT channel">
+            <description>Configuration of PIT module channel properties.</description>
+            <variable id="channelsIdsArray"
+               value="merge(toArray(0), toArray(1), toArray(2), toArray(3), toArray(4), toArray(5), toArray(6), toArray(7))"/>
+            <string id="channel_id" label="Channel ID">
+               <description>Channel ID is used in generated code.</description>
+               <validation>
+                  <constraint when_expr="$this.getValue() != ``" cond_expr="(isCIdentifier($this.getValue()))" level="error" description="The Channel ID is not a valid C identifier."/>
+                  <constraint when_expr="$this.getValue() != ``" cond_expr="($parent.getParent().searchInArray(item -> (($parent.getID() != item.getID()) &amp;&amp; 
+                     ((item.getSetting(`channel_id`).getValue())  ==  ($this.getValue())))) &lt; 0)" 
+                     level="error" description_expr="`The identifier ` + $this.getValue() + ` is duplicated, i.e. it is already used for another channel.`"/>
+               </validation>
+            </string>
+            <dynamic_enum
+               available="featureDefined(`FSL_FEATURE_PIT_TIMER_COUNT`)"
+               id="channelNumber"
+               label="Channel number"
+               items="$parent.channelsIdsArray.value()
+               .arrayToEnumItems(
+                  enumItem -> getFeature(`FSL_FEATURE_PIT_TIMER_COUNT`) &gt; enumItem,
+                  enumItem -> enumItem,
+                  enumItem -> `Channel ` + enumItem,
+                  enumItem -> `kPIT_Chnl_` + enumItem
+               )">
+               <description>
+                  PIT channel number. Each channel can be configured with a different period or optionally chained to the previous channel.
+               </description>
+               <validation>
+                  <!-- constraint for checking of duplicated channels -->
+                  <constraint cond_expr="($parent.getParent().searchInArray(item -> (($parent.getID() != item.getID()) &amp;&amp; 
+                                      ((item.getSetting(`channelNumber`).getValue())  ==  ($this.getValue())))) &lt; 0)" level="warning" 
+                                      description_expr="`Duplicated channel (` + $this.getEnumItemLabel() + `) is selected. Please, select each channel once only.`"/>
+               </validation>
+            </dynamic_enum>
+            <variable id="allowChain"
+               value="featureDefined(`FSL_FEATURE_PIT_HAS_CHAIN_MODE`)
+               &amp;&amp; getFeature(`FSL_FEATURE_PIT_HAS_CHAIN_MODE`)
+               &amp;&amp; ($parent.channelNumber.getEnumItemValue() != ``)
+               &amp;&amp; $parent.getParent()
+                              .anyMatch(
+                                  item -> (item.getSetting(`channelNumber`).value() != ``) &amp;&amp; (item.getSetting(`channelNumber`).value().toInt() == $parent.channelNumber.value().toInt() - 1)
+                              )"/>
+            <bool id="enableChain" label="Chained" enable="$parent.allowChain.value()">
+               <description>
+                  When the channel is chained to the previous channel, the channel counter is decremented after the end of the previous channel period (for example, channel 2 is decremented each time channel 1 counter reaches value 0). Using this option, more n-bit channels can be used together as one m*n-bit channel.
+               </description>
+            </bool>
+            <variable id="prevTimerPeriod" available="$parent.allowChain.value() &amp;&amp; $parent.enableChain.value()"
+               value="($parent.channelNumber.value().toInt() == 0) 
+                        ? 0 
+                        : ($parent.getParent().anyMatch(i -> (i.getSetting(`channelNumber`).value() != ``) &amp;&amp; (i.getSetting(`channelNumber`).getEnumItemId() == ($parent.channelNumber.value().toInt() - 1)))) 
+                        ? $parent.getParent().findFirst(i -> (i.getSetting(`channelNumber`).value() != ``) &amp;&amp; (i.getSetting(`channelNumber`).getEnumItemId() == ($parent.channelNumber.value().toInt() - 1))).getSetting(`resultingPeriodNs`).value() 
+                        : 0"/>
+            <variable id="resultingPeriodTicksText" value="($parent.resultingPeriodTicks.value() &gt; 0) ? (` (` + $parent.resultingPeriodTicks.value() + ` tick` + (($parent.resultingPeriodTicks.value() == 1) ? `` : `s`) + `)`) : ``"/>
+            <variable id="resultingPeriodNs"
+               value="$parent.prevTimerPeriod.isAvailable()
+                          ? ($parent.prevTimerPeriod.value() * $parent.timerMultiplier.value())
+                          : ($parent.timerPeriod.value().isFreq() || $parent.timerPeriod.value().isTime())
+                                ? $parent.timerPeriod.value().getTime(`ns`, `us`)
+                                : !$instance.fsl_pit.getFreqSelected.value() &amp;&amp; $parent.timerPeriodinTicks.getValue() ? 1.0 / $instance.fsl_pit.timingConfig.clockSourceFreq.getEnumItemValue().getFreq(`Hz`, `Hz`) * $parent.timerValue.getValue() * 1e09 : 0"/>
+            <variable id="resultingPeriodTicks"
+               value="$instance.fsl_pit.getFreqSelected.value() ? 0 : toHertz(($parent.resultingPeriodNs.value() * $instance.fsl_pit.timingConfig.clockSourceFreq.getEnumItemValue().getFreqFloat(`Hz`, `Hz`)) / 1000000000.0)"/>
+            <variable id="decHexTicksRegExpr" value="`((\d+)|(0x[0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,a,b,c,d,e,f]+))(\s*)ticks`" ></variable> 
+			<variable id="timerPeriodinTicks" value="($parent.timerPeriod.getValue().regexMatch($parent.decHexTicksRegExpr.getValue()))"/>
+			<string id="timerPeriod" label="Channel period/frequency" available="!$parent.allowChain.value() || !$parent.enableChain.value()" validation_expr="x -> !(x.regexMatch($parent.decHexTicksRegExpr.getValue())) ? (system::validateValueFreqPeriod(x,1,0x100000000)) : ((x.regexSubstr($parent.decHexTicksRegExpr.getValue(),1).toInt() &gt;= 1) &amp;&amp; (x.regexSubstr($parent.decHexTicksRegExpr.getValue(),1).toInt()&lt;= 0x100000000))">
+               <description>
+Sets the channel period. The channel is initialized with the corresponding value of ticks and counts down until it reaches 0, then it optionally generates an interrupt request and loads the initial value again. The value can be defined as a period or as a frequency by adding a unit of measurement (default unit is [us]).     
+
+Supported formats of values:   
+* An integer number is processed as a time in [us].     
+* A number with the ticks unit (range 1 ticks - 4294967296 ticks (0x100000000)) is processed as a value in ticks (the supported format is &quot;integer_number [ticks]&quot;)
+* A frequency value must be in format &quot;float_number [Hz, kHz, MHz or GHz]&quot;.
+* A period value must be in format &quot;float_number [ns, us, ms, s, m, h, or d]&quot;.
+
+When the runtime calculation is selected as clock source frequency, the smallest supported value of the channel period/frequency is 1us.
+               </description>   
+               <validation>
+                  <constraint when_expr="($parent.channelNumber.value() != ``) &amp;&amp; (!$instance.fsl_pit.getFreqSelected.getValue()) &amp;&amp; ($parent.timerValue.getValue() != `N/A`)" cond_expr="($parent.timerValue.getValue().toInt() &lt;= 0x100000000) &amp;&amp; ($parent.timerValue.getValue().toInt() &gt; 0)"  
+                     level="error" description_expr="`Channel ` + $parent.channelNumber.value() + ` period must be in the range 1 - 4294967296 (0x100000000) ticks because of the 32 bits width of the timer.`"/>
+                  <constraint
+                     when_expr="($parent.channelNumber.value() != ``) &amp;&amp; !$instance.fsl_pit.getFreqSelected.value() &amp;&amp; $instance.fsl_pit.timingConfig.clockSourceFreq.getEnumItemValue() != 0"
+                     cond_expr="$parent.calculatedPeriod.value() &gt;= $instance.fsl_pit.timingConfig.clockSourceFreq.getEnumItemValue().getTime(`ns`, `Hz`)"
+                     level="error"
+                     description="Period is too short."/>
+                  <constraint
+                     when_expr="($parent.channelNumber.value() != ``) &amp;&amp; !$instance.fsl_pit.getFreqSelected.value() &amp;&amp; (!$parent.allowChain.value() || !$parent.enableChain.value())"
+                     cond_expr="$parent.resultingPeriodTicks.value() &lt;= 4294967296"
+                     level="error"
+                     description="Period is too long."/>
+					<constraint
+                     when_expr="($parent.channelNumber.value() != ``) &amp;&amp; $instance.fsl_pit.getFreqSelected.value()"
+                     cond_expr="($parent.timerValue.getValue() &gt; 0) &amp;&amp; ($parent.timerValue.getValue() &lt;= 4294967296)"
+                     level="error"
+                     description_expr=" `Channel ` + $parent.channelNumber.value() + ` period is too long or too short.`"/>                 
+               </validation>
+            </string>
+            <variable id="timerValueAvailable" value="$parent.timerPeriod.getValue().regexMatch(decHexNumRegExpr())" />
+            <variable id="timerValue" value="!$instance.fsl_pit.getFreqSelected.getValue() ? !$parent.timerPeriodinTicks.getValue() ? system::getRealDividerValue($parent.timerPeriod.getValue(), $instance.fsl_pit.timingConfig.clockSourceFreq.getEnumItemValue()) : $parent.timerPeriod.getValue().regexSubstr($parent.decHexTicksRegExpr.getValue(),1).toInt() : $parent.timerPeriodinTicks.getValue() ? $parent.timerPeriod.getValue().regexSubstr($parent.decHexTicksRegExpr.getValue(),1).toInt() : $parent.timerPeriod.getValue().getTime(`us`,`us`)" />
+            <integer type="int64_t" id="timerMultiplier" min_expr="1" max_expr="4294967296" label="Number of previous channel periods" available="$parent.prevTimerPeriod.isAvailable()">
+               <description>
+                  Sets the channel period. This setting defines the count of the previous channel periods.
+               </description>
+            </integer>
+            <variable id="calculatedPeriod" value="(!$instance.fsl_pit.getFreqSelected.getValue() &amp;&amp; $instance.fsl_pit.timingConfig.clockSourceFreq.getEnumItemValue() != 0 &amp;&amp; $parent.resultingPeriodTicks.value() != 0) ? 1.0 / $instance.fsl_pit.timingConfig.clockSourceFreq.getEnumItemValue().getFreq(`Hz`, `Hz`) * $parent.resultingPeriodTicks.value()*1000000000 : 0"/>
+            <info id="resultingPeriodText" label="Resulting period" value="!$instance.fsl_pit.getFreqSelected.value() &amp;&amp; ($parent.resultingPeriodTicksText.getValue() != ``) &amp;&amp; ($parent.calculatedPeriod.getValue() &gt;= 0) ? timeToString($parent.calculatedPeriod.value() / 1000.0) + $parent.resultingPeriodTicksText.value() : `N/A`">
+               <description>Period calculated from the previous channel period (in chained mode) or from the entered period.       
+               </description>
+               <validation>
+                  <constraint cond_expr="$this.getValue() != `N/A`" level="info" description="Period can not be calculated because you are using runtime calculation of clock source frequency or the channel period is too long/short."/>
+               </validation>  
+            </info>
+            <bool id="startTimer" label="Start channel">
+               <description>
+                  Start the channel immediately after initialization.
+               </description>
+               <validation>
+                  <constraint
+                     when_expr="$this.value() &amp;&amp; $parent.allowChain.value() &amp;&amp; $parent.enableChain.value()"
+                     cond_expr="($parent.getParent().anyMatch(i -> (i.getSetting(`channelNumber`).value() != ``) &amp;&amp; (i.getSetting(`channelNumber`).getEnumItemId() == ($parent.channelNumber.value().toInt() - 1)))) 
+                     ? $parent.getParent().findFirst(i -> (i.getSetting(`channelNumber`).value() != ``) &amp;&amp; (i.getSetting(`channelNumber`).getEnumItemId() == ($parent.channelNumber.value().toInt() - 1))).getSetting(`startTimer`).value() 
+                     : false"
+                     level="warning"
+                     description_expr="`Channel ` + ($parent.channelNumber.value().toInt() - 1) + ` is not configured to start.`"/>
+               </validation>
+            </bool>
+            <bool id="enableInterrupt" label="Interrupt">
+               <description>Generate interrupt from this channel at the end of its period.</description>
+            </bool>
+            <reference id="interrupt" label="Interrupt setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN" enable="$parent.enableInterrupt.value()" available="!(featureDefined(`FSL_FEATURE_PIT_HAS_SHARED_IRQ_HANDLER`) &amp;&amp; getFeature(`FSL_FEATURE_PIT_HAS_SHARED_IRQ_HANDLER`))">
+              <options_expr>
+                 <option id="irq_channel" expr="$parent.channelNumber.getValue()"/>
+                 <option id="irq_custom_name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + ($parent.channel_id.getValue() != `` ? $parent.channel_id.getValue() : $parent.channelNumber.getValue()))"/>
+                 <option id="irq_handler_insert" expr="
+leftPadding(`uint32_t intStatus;`, 1) + `&#10;` +
+leftPadding(`/* Reading all interrupt flags of status register */`, 1) + `&#10;` +
+leftPadding(`intStatus = PIT_GetStatusFlags(` + $configSet.inst_peripheral_ID.getValue() + `, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + ($parent.channel_id.getValue() != `` ? $parent.channel_id.getValue() : $this.channelNumber.getValue())) + `);`, 1) + `&#10;` +
+leftPadding(`PIT_ClearStatusFlags(` + $configSet.inst_peripheral_ID.getValue() +`, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + ($parent.channel_id.getValue() != `` ? $parent.channel_id.getValue() : $this.channelNumber.getValue())) + `, intStatus);`, 1) + `&#10;&#10;` +
+leftPadding(`/* Place your code here */`, 1) + `&#10;`"/>
+              </options_expr>
+            </reference>
+         </struct>
+         <struct id="clockSetting" label="Clock setting">
+            <variable id="clockSourceUId" value="`BusInterfaceClock`"/>
+            <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="createArray().addItemToList(`BusInterfaceClock`, getPeripheralClock($instance.getPeripheral(), `BusInterfaceClock`), ($instance.getPeripheral() + `_CLK_SRC`), true)">
+               <description>PIT clock source.</description>
+               <validation>
+                  <dependency when_expr="$instance.fsl_pit.getFreqSelected.value()" resource_type="ClockOutput" 
+                     resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(), $parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Warning">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="!$instance.fsl_pit.getFreqSelected.value() &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" 
+                     resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" items="createArray()
+               .addItemToList(`GetFreq`,`Runtime calculation by CLOCK_GetFreq()`,`GetFreq`, getPeripheralClockSignal($instance.getPeripheral(), `BusInterfaceClock`).contains(`Bus`))
+               .merge(getClockFunctionalGroups().arrayToEnumItems(
+                   enumItem -> true,
+                   enumItem -> enumItem,
+                   enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), `BusInterfaceClock`, enumItem)) + ` (`+ enumItem + `)`,
+                   enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), `BusInterfaceClock` , enumItem))
+               )">
+               <validation>
+                  <constraint cond_expr="($this.getEnumItemId() == `GetFreq`) || ($this.getEnumItemValue().toHertz() != 0)" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> toHertz(x) &gt;= 0"/>
+            </dynamic_enum>
+         </struct>
+      </user_types>
+      <settings>
+         <bool id="enableRunInDebug" label="Run PIT in debug mode">
+            <description>
+               Run PIT in debug mode.
+            </description>
+         </bool>
+         <bool id="enableSharedInterrupt" label="Interrupt" available="featureDefined(`FSL_FEATURE_PIT_HAS_SHARED_IRQ_HANDLER`) &amp;&amp; getFeature(`FSL_FEATURE_PIT_HAS_SHARED_IRQ_HANDLER`)">
+            <description>
+               Generate an interrupt from PIT at the end of each configured channel period.
+            </description>
+         </bool>
+         <reference id="sharedInterrupt" label="Interrupt setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enableSharedInterrupt.value()" available="$parent.enableSharedInterrupt.isAvailable()"/>
+         <reference type="clockSetting" id="timingConfig" label="Clock setting"/>
+         <variable id="getFreqSelected" value="$instance.fsl_pit.timingConfig.clockSourceFreq.getEnumItemId() == `GetFreq`"/>
+         <array type="pit_channel" id="channels" label="PIT channels" available="featureDefined(`FSL_FEATURE_PIT_TIMER_COUNT`)" options="ShowContentAs=MasterDetail" key_selector_expr="x -> (x.getSetting(`channel_id`).getValue() == ``) ? x.getSetting(`channelNumber`).getEnumItemLabel() : x.getSetting(`channel_id`).getValue()">                
+            <item_defaults>
+               <set_default id="channel_id" value_expr="x -> (`CHANNEL_` + x.getID())"/>
+               <set_default id="channelNumber" value_expr="x -> (x.getID()==`0`) ? (`0`) : (x.getParent().get(x.getID().toInt() - 1).getSetting(`channelNumber`).getEnumItemId().toInt() + 1)"/>
+               <set_default id="enableChain" value_expr="x -> false"/>
+               <set_default id="timerPeriod" value_expr="x -> `1s`"/>
+               <set_default id="timerMultiplier" value_expr="x -> 1"/>
+               <set_default id="enableInterrupt" value_expr="x -> false"/>
+               <set_default id="startTimer" value_expr="x -> true"/>
+               <set_default id="interrupt.enable_priority" value_expr="x -> false"/>
+               <set_default id="interrupt.priority" value_expr="x -> 0"/>
+               <set_default id="interrupt.enable_custom_name" value_expr="x -> false"/>
+            </item_defaults>
+         </array>
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+         <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+         <variable id="inst_config_ID" value="$parent.inst_ID.getValue() + `_config`"></variable>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+         <def fragment="channels_ticks_definitions">
+            <if expr="(!$this.allowChain.value() || !$this.enableChain.value())">
+               <fragment id="define" if_expr="!$instance.fsl_pit.getFreqSelected.value()">
+                  <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.channelNumber.value() + `_TICKS`)"/>
+                  <param id="value" expr="$this.resultingPeriodTicks.value() &gt; 0 ? ($this.resultingPeriodTicks.value() - 1) + `U`: `0U`"/>
+                  <param id="description" expr="`Definition of ticks count for channel ` + $this.channelNumber.value() + ` - deprecated.`"/>
+               </fragment>
+               <fragment id="define" if_expr="$instance.fsl_pit.getFreqSelected.value() &amp;&amp; !$this.timerPeriodinTicks.getValue()">
+                  <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.channelNumber.value() + `_TICKS`)"/>
+                  <param id="value" expr="`USEC_TO_COUNT(` + $this.timerValue.value() + `U, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLK_FREQ) - 1U`)"/>
+                  <param id="description" expr="`Definition of ticks count for channel ` + $this.channelNumber.value() + ` - deprecated.`"/>
+               </fragment>
+               <fragment id="define" if_expr="$instance.fsl_pit.getFreqSelected.value() &amp;&amp; $this.timerPeriodinTicks.getValue()">
+                  <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.channelNumber.value() + `_TICKS`)"/>
+                  <param id="value" expr="($this.timerValue.value() - 1) + `U`"/>
+                  <param id="description" expr="`Definition of ticks count for channel ` + $this.channelNumber.value() + ` - deprecated.`"/>
+               </fragment>
+            </if>
+            <fragment id="define" if_expr="$this.allowChain.value() &amp;&amp; $this.enableChain.value()">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.channelNumber.value() + `_TICKS`)"/>
+               <param id="value" expr="($this.timerMultiplier.value() - 1) + `U`"/>
+               <param id="description" expr="`Definition of ticks count for channel ` + $this.channelNumber.value() + ` - deprecated.`"/>
+            </fragment>
+         </def>
+         <def fragment="pit_channel_start">
+            <fragment id="init_line" if_expr="$this.startTimer.value()">
+               <param id="code" expr="`PIT_StartTimer(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID()) + `_PERIPHERAL, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + ($this.channel_id.getValue() != `` ? $this.channel_id.getValue() : $this.channelNumber.getValue()) ) + `);`"/>
+               <param id="description" expr="`Start channel ` + $this.channelNumber.value() + `.`"/>
+               <param id="paddingLevel" expr="1"/>
+            </fragment>
+         </def>
+         <def fragment="pit_channel_init">
+            <fragment id="init_line">
+               <param id="code" expr="`PIT_SetTimerPeriod(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID()) + `_PERIPHERAL, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + ($this.channel_id.getValue() != `` ? $this.channel_id.getValue() : $this.channelNumber.getValue()) ) + `, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + ($this.channel_id.getValue() != `` ? $this.channel_id.getValue() : $this.channelNumber.getValue()) + `_TICKS`) + `);`"/>
+               <param id="description" expr="`Set channel ` + $this.channelNumber.value() + ` period to ` + $this.resultingPeriodText.value() + `.`"/>
+               <param id="paddingLevel" expr="1"/>
+            </fragment>
+            <fragment id="init_line" if_expr="$this.enableChain.value() &amp;&amp; $this.allowChain.value()">
+               <param id="code" expr="`PIT_SetTimerChainMode(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID()) + `_PERIPHERAL, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + ($this.channel_id.getValue() != `` ? $this.channel_id.getValue() : $this.channelNumber.getValue()) ) + `, ` + $this.enableChain.value() + `);`"/>
+               <param id="description" expr="`Chain the channel ` +  $this.channelNumber.value().toInt() + ` to channel ` + ($this.channelNumber.value().toInt() - 1) + `.`"/>
+               <param id="paddingLevel" expr="1"/>
+            </fragment>
+         </def>
+         <def fragment="pit_channel_irq">
+            <fragment id="init_line" if_expr="$this.enableInterrupt.value()">
+               <param id="code" expr="`PIT_EnableInterrupts(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID()) + `_PERIPHERAL, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + ($this.channel_id.getValue() != `` ? $this.channel_id.getValue() : $this.channelNumber.getValue()) ) + `, kPIT_TimerInterruptEnable);`"/>
+               <param id="description" expr="`Enable interrupts from channel ` + $this.channelNumber.value() + `.`"/>
+               <param id="paddingLevel" expr="1"/>
+            </fragment>
+         </def>
+         <def fragment="channels_ticks_definitions_new">
+            <if expr="$this.channel_id.getValue() != ``">
+               <if expr="(!$this.allowChain.value() || !$this.enableChain.value())">
+                  <fragment id="define" if_expr="!$instance.fsl_pit.getFreqSelected.value()">
+                     <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.channel_id.value() + `_TICKS`)"/>
+                     <param id="value" expr="$this.resultingPeriodTicks.value() &gt; 0 ?($this.resultingPeriodTicks.value() - 1) + `U`: `0U`"/>
+                     <param id="description" expr="`Definition of ticks count for channel ` + $this.channelNumber.value() + `.`"/>
+                  </fragment>
+                  <fragment id="define" if_expr="$instance.fsl_pit.getFreqSelected.value() &amp;&amp; !$this.timerPeriodinTicks.getValue()">
+                     <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.channel_id.value() + `_TICKS`)"/>
+                     <param id="value" expr="`USEC_TO_COUNT(` + $this.timerValue.value() + `U, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLK_FREQ) - 1U`)"/>
+                     <param id="description" expr="`Definition of ticks count for channel ` + $this.channelNumber.value() + `.`"/>
+                  </fragment>
+                  <fragment id="define" if_expr="$instance.fsl_pit.getFreqSelected.value() &amp;&amp; $this.timerPeriodinTicks.getValue()">
+                  <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.channel_id.value() + `_TICKS`)"/>
+                  <param id="value" expr="($this.timerValue.value() - 1) + `U`"/>
+                  <param id="description" expr="`Definition of ticks count for channel ` + $this.channelNumber.value() + `.`"/>
+                  </fragment>
+               </if>
+               <fragment id="define" if_expr="$this.allowChain.value() &amp;&amp; $this.enableChain.value()">
+                  <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.channel_id.value() + `_TICKS`)"/>
+                  <param id="value" expr="($this.timerMultiplier.value() - 1) + `U`"/>
+                  <param id="description" expr="`Definition of ticks count for channel ` + $this.channelNumber.value() + `.`"/>
+               </fragment>
+            </if>
+         </def>
+         <def fragment="channel_number_definition">
+            <fragment id="define">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + ($this.channel_id.getValue() != `` ? $this.channel_id.getValue() : $this.channelNumber.getValue()))"/>
+               <param id="value" expr="$this.channelNumber.getEnumItemValue()"/>
+               <param id="description" expr="`Definition of channel number for channel ` + $this.channelNumber.value() + `.`"/>
+            </fragment>
+         </def>
+         <def fragment="irq_defs">
+            <if expr="$this.channel_id.getValue() != ``">
+               <fragment id="define" if_expr="$this.enableInterrupt.value()">
+                  <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.channelNumber.value() + `_IRQN`)"/>
+                  <param id="value" expr="$this.interrupt.IRQn.value()"/>
+                  <param id="description" expr="$instance.getID() + ` interrupt vector ID (number) - deprecated.`"/>
+               </fragment>
+               <fragment id="define" if_expr="$this.enableInterrupt.value() &amp;&amp; $this.interrupt.enable_priority.value()">
+                  <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.channelNumber.value() + `_IRQ_PRIORITY`)"/>
+                  <param id="value" expr="$this.interrupt.priority.getCValue()"/>
+                  <param id="description" expr="$instance.getID() + ` interrupt vector priority - deprecated.`"/>
+               </fragment>
+               <fragment id="define" if_expr="$this.enableInterrupt.value() &amp;&amp; !($this.interrupt.enable_custom_name.value())">
+                  <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + $this.channelNumber.value() + `_IRQHANDLER`)"/>
+                  <param id="value" expr="`PIT`+ $this.channelNumber.value() + `_IRQHandler`"/>
+                  <param id="description" expr="$instance.getID() + ` interrupt handler identifier - deprecated.`"/>
+               </fragment>
+            </if>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">pit</param>
+               <param id="filename">fsl_pit.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <fragment id="comment">
+               <param id="content" expr="$instance.getFnGroupName() + ` defines for ` + $instance.getPeripheral()"/>
+               <param id="paddingLevel" expr="0"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)"/>
+               <param id="value" expr="$instance.getPeripheral()"/>
+               <param id="description">Definition of peripheral ID.</param>
+            </fragment>
+            <fragment id="define" if_expr="getPeripheralClockSignal($instance.getPeripheral(), `BusInterfaceClock`).contains(`Bus`)">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE`)"/>
+               <param id="value" expr="`kCLOCK_BusClk`"/>
+               <param id="description">Definition of clock source.</param>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLK_FREQ`)"/>
+               <param id="value" expr="$instance.fsl_pit.getFreqSelected.value() ? `CLOCK_GetFreq(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_CLOCK_SOURCE)`) : $this.timingConfig.clockSourceFreq.getEnumItemValue().getFreq(`Hz`, `Hz`) + `UL`"/>
+               <param id="description">Definition of clock source frequency.</param>
+            </fragment>
+            <fragment id="channels_ticks_definitions" for_elements_of="$this.channels"/>
+            <fragment id="irq_defs" for_elements_of="$this.channels"/>
+            <fragment id="channel_number_definition" for_elements_of="$this.channels"/>
+            <fragment id="channels_ticks_definitions_new" for_elements_of="$this.channels"/>
+            <fragment id="IRQ_definitions" for_elements_of="$this.channels.filter(x -> x.getSetting(`enableInterrupt`).value()).map(x -> x.getSetting(`interrupt`))" if_expr="!$this.enableSharedInterrupt.isAvailable()">
+               <param id="irq_custom_name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + ($parent.channel_id.getValue() != `` ? $parent.channel_id.getValue() : $parent.channelNumber.getValue()))"/>
+            </fragment> 
+            <fragment id="IRQ_definitions" apply_to="$this.sharedInterrupt" if_expr="$this.enableSharedInterrupt.isAvailable() &amp;&amp; $this.enableSharedInterrupt.value()"/>
+         </section>
+         <section target="global_vars">
+            <expr>`const pit_config_t ` + $instance.getFnGroupPrefix() + $instance.getID() + `_config = {`</expr><br/>
+            <expr>leftPadding(`.enableRunInDebug = ` + $this.enableRunInDebug.value(), 1)</expr><br/>
+            <text>};</text><br/>
+         </section>
+         <section target="global_vars_extern">
+            <fragment id="extern_const">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_config`"/>
+               <param id="type">pit_config_t</param>
+            </fragment>
+         </section>
+         <section target="init_function_body">
+            <fragment id="init_line">
+               <param id="code" expr="`PIT_Init(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID()) + `_PERIPHERAL, &amp;` + $instance.getFnGroupPrefix() + $instance.getID() + `_config);`"/>
+               <param id="description">Initialize the PIT.</param>
+               <param id="paddingLevel" expr="1"/>
+            </fragment>
+            <fragment id="pit_channel_init" for_elements_of="$this.channels"/>
+            <fragment id="pit_channel_irq" for_elements_of="$this.channels"/>
+            <fragment id="IRQn_set_priority" for_elements_of="$this.channels.filter(x -> x.getSetting(`enableInterrupt`).value() &amp;&amp; x.getSetting(`interrupt`).getSetting(`enable_priority`).isAvailable() &amp;&amp; x.getSetting(`interrupt`).getSetting(`enable_priority`).value())" if_expr="!$this.enableSharedInterrupt.isAvailable()">
+               <param id="IRQn" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + ($this.channel_id.getValue() != `` ? $this.channel_id.getValue() : $this.channelNumber.getValue()) + `_IRQN`)"/>
+               <param id="priority" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + ($this.channel_id.getValue() != `` ? $this.channel_id.getValue() : $this.channelNumber.getValue()) + `_IRQ_PRIORITY`)"/>
+            </fragment>
+            <fragment id="IRQn_set_priority" if_expr="$this.enableSharedInterrupt.isAvailable() &amp;&amp; $this.enableSharedInterrupt.value() &amp;&amp; $this.sharedInterrupt.enable_priority.isAvailable() &amp;&amp; $this.sharedInterrupt.enable_priority.value()">
+               <param id="IRQn" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_IRQN`)"/>
+               <param id="priority" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_IRQ_PRIORITY`)"/>
+            </fragment>
+            <fragment id="IRQn_enable" for_elements_of="$this.channels.filter(x -> x.getSetting(`enableInterrupt`).value())" if_expr="!$this.enableSharedInterrupt.isAvailable()">
+               <param id="IRQn" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_` + ($this.channel_id.getValue() != `` ? $this.channel_id.getValue() : $this.channelNumber.getValue()) + `_IRQN`)"/>
+               <param id="irq_enabled" expr="$this.interrupt.enable_interrrupt.getEnumItemValue() == `true`"></param>
+            </fragment>
+            <fragment id="IRQn_enable" if_expr="$this.enableSharedInterrupt.isAvailable() &amp;&amp; $this.enableSharedInterrupt.value()">
+               <param id="IRQn" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_IRQN`)"/>
+               <param id="irq_enabled" expr="$this.sharedInterrupt.enable_interrrupt.getEnumItemValue() == `true`"></param>
+            </fragment>
+            <fragment id="pit_channel_start" for_elements_of="$this.channels"/>
+         </section>
+      </code>
+      <quick_selections>
+         <quick_selection id="QS_PIT_1" label="Default">
+            <description>Default setting for PIT.</description>
+            <set id="enableRunInDebug">false</set>
+            <set id="channels.0.channelNumber">0</set>
+            <set id="channels.0.timerPeriod">1s</set>
+            <set id="channels.0.enableChain">false</set>
+            <set id="channels.0.enableInterrupt">true</set>
+            <set id="channels.0.startTimer">true</set>
+            <set id="channels.0.interrupt.IRQn">PIT0_IRQn</set>
+         </quick_selection>
+         <default>QS_PIT_1</default>
+      </quick_selections>
+   </config_set>
+</component:config_component>

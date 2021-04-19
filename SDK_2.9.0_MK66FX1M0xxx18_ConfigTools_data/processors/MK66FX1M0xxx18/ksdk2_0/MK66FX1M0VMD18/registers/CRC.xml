@@ -1,0 +1,169 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="16" name="DATAL" description="CRC_DATAL register.">
+    <alias type="CMSIS" value="ACCESS16BIT.DATAL"/>
+    <bit_field offset="0" width="16" name="DATAL" access="RW" reset_value="0xFFFF" description="DATAL stores the lower 16 bits of the 16/32 bit CRC">
+      <alias type="CMSIS" value="CRC_DATAL_DATAL(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0" width="8" name="DATALL" description="CRC_DATALL register.">
+    <alias type="CMSIS" value="ACCESS8BIT.DATALL"/>
+    <bit_field offset="0" width="8" name="DATALL" access="RW" reset_value="0xFF" description="CRCLL stores the first 8 bits of the 32 bit DATA">
+      <alias type="CMSIS" value="CRC_DATALL_DATALL(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0" width="32" name="DATA" description="CRC Data register">
+    <alias type="id" value="CRC_Word_ref"/>
+    <alias type="CMSIS" value="DATA"/>
+    <bit_field offset="0" width="8" name="LL" access="RW" reset_value="0xFF" description="CRC Low Lower Byte">
+      <alias type="CMSIS" value="CRC_DATA_LL(x)"/>
+    </bit_field>
+    <bit_field offset="8" width="8" name="LU" access="RW" reset_value="0xFF" description="CRC Low Upper Byte">
+      <alias type="CMSIS" value="CRC_DATA_LU(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="8" name="HL" access="RW" reset_value="0xFF" description="CRC High Lower Byte">
+      <alias type="CMSIS" value="CRC_DATA_HL(x)"/>
+    </bit_field>
+    <bit_field offset="24" width="8" name="HU" access="RW" reset_value="0xFF" description="CRC High Upper Byte">
+      <alias type="CMSIS" value="CRC_DATA_HU(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x1" width="8" name="DATALU" description="CRC_DATALU register.">
+    <alias type="CMSIS" value="ACCESS8BIT.DATALU"/>
+    <bit_field offset="0" width="8" name="DATALU" access="RW" reset_value="0xFF" description="DATALL stores the second 8 bits of the 32 bit CRC">
+      <alias type="CMSIS" value="CRC_DATALU_DATALU(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x2" width="16" name="DATAH" description="CRC_DATAH register.">
+    <alias type="CMSIS" value="ACCESS16BIT.DATAH"/>
+    <bit_field offset="0" width="16" name="DATAH" access="RW" reset_value="0xFFFF" description="DATAH stores the high 16 bits of the 16/32 bit CRC">
+      <alias type="CMSIS" value="CRC_DATAH_DATAH(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x2" width="8" name="DATAHL" description="CRC_DATAHL register.">
+    <alias type="CMSIS" value="ACCESS8BIT.DATAHL"/>
+    <bit_field offset="0" width="8" name="DATAHL" access="RW" reset_value="0xFF" description="DATAHL stores the third 8 bits of the 32 bit CRC">
+      <alias type="CMSIS" value="CRC_DATAHL_DATAHL(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x3" width="8" name="DATAHU" description="CRC_DATAHU register.">
+    <alias type="CMSIS" value="ACCESS8BIT.DATAHU"/>
+    <bit_field offset="0" width="8" name="DATAHU" access="RW" reset_value="0xFF" description="DATAHU stores the fourth 8 bits of the 32 bit CRC">
+      <alias type="CMSIS" value="CRC_DATAHU_DATAHU(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x4" width="16" name="GPOLYL" description="CRC_GPOLYL register.">
+    <alias type="CMSIS" value="GPOLY_ACCESS16BIT.GPOLYL"/>
+    <bit_field offset="0" width="16" name="GPOLYL" access="RW" reset_value="0xFFFF" description="POLYL stores the lower 16 bits of the 16/32 bit CRC polynomial value">
+      <alias type="CMSIS" value="CRC_GPOLYL_GPOLYL(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x4" width="8" name="GPOLYLL" description="CRC_GPOLYLL register.">
+    <alias type="CMSIS" value="GPOLY_ACCESS8BIT.GPOLYLL"/>
+    <bit_field offset="0" width="8" name="GPOLYLL" access="RW" reset_value="0xFF" description="POLYLL stores the first 8 bits of the 32 bit CRC">
+      <alias type="CMSIS" value="CRC_GPOLYLL_GPOLYLL(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x4" width="32" name="GPOLY" description="CRC Polynomial register">
+    <alias type="id" value="GEN_POLY_ref"/>
+    <alias type="CMSIS" value="GPOLY"/>
+    <bit_field offset="0" width="16" name="LOW" access="RW" reset_value="0x1021" description="Low Polynominal Half-word">
+      <alias type="CMSIS" value="CRC_GPOLY_LOW(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="16" name="HIGH" access="RW" reset_value="0" description="High Polynominal Half-word">
+      <alias type="CMSIS" value="CRC_GPOLY_HIGH(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x5" width="8" name="GPOLYLU" description="CRC_GPOLYLU register.">
+    <alias type="CMSIS" value="GPOLY_ACCESS8BIT.GPOLYLU"/>
+    <bit_field offset="0" width="8" name="GPOLYLU" access="RW" reset_value="0xFF" description="POLYLL stores the second 8 bits of the 32 bit CRC">
+      <alias type="CMSIS" value="CRC_GPOLYLU_GPOLYLU(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x6" width="16" name="GPOLYH" description="CRC_GPOLYH register.">
+    <alias type="CMSIS" value="GPOLY_ACCESS16BIT.GPOLYH"/>
+    <bit_field offset="0" width="16" name="GPOLYH" access="RW" reset_value="0xFFFF" description="POLYH stores the high 16 bits of the 16/32 bit CRC polynomial value">
+      <alias type="CMSIS" value="CRC_GPOLYH_GPOLYH(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x6" width="8" name="GPOLYHL" description="CRC_GPOLYHL register.">
+    <alias type="CMSIS" value="GPOLY_ACCESS8BIT.GPOLYHL"/>
+    <bit_field offset="0" width="8" name="GPOLYHL" access="RW" reset_value="0xFF" description="POLYHL stores the third 8 bits of the 32 bit CRC">
+      <alias type="CMSIS" value="CRC_GPOLYHL_GPOLYHL(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x7" width="8" name="GPOLYHU" description="CRC_GPOLYHU register.">
+    <alias type="CMSIS" value="GPOLY_ACCESS8BIT.GPOLYHU"/>
+    <bit_field offset="0" width="8" name="GPOLYHU" access="RW" reset_value="0xFF" description="POLYHU stores the fourth 8 bits of the 32 bit CRC">
+      <alias type="CMSIS" value="CRC_GPOLYHU_GPOLYHU(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x8" width="32" name="CTRL" description="CRC Control register">
+    <alias type="id" value="CTRL_ref"/>
+    <alias type="CMSIS" value="CTRL"/>
+    <reserved_bit_field offset="0" width="24" reset_value="0"/>
+    <bit_field offset="24" width="1" name="TCRC" access="RW" reset_value="0" description="Width of CRC protocol.">
+      <alias type="CMSIS" value="CRC_CTRL_TCRC(x)"/>
+      <bit_field_value name="CTRL_TCRC_0b0" value="0b0" description="16-bit CRC protocol."/>
+      <bit_field_value name="CTRL_TCRC_0b1" value="0b1" description="32-bit CRC protocol."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="WAS" access="RW" reset_value="0" description="Write CRC Data Register As Seed">
+      <alias type="CMSIS" value="CRC_CTRL_WAS(x)"/>
+      <bit_field_value name="CTRL_WAS_0b0" value="0b0" description="Writes to the CRC data register are data values."/>
+      <bit_field_value name="CTRL_WAS_0b1" value="0b1" description="Writes to the CRC data register are seed values."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="FXOR" access="RW" reset_value="0" description="Complement Read Of CRC Data Register">
+      <alias type="CMSIS" value="CRC_CTRL_FXOR(x)"/>
+      <bit_field_value name="CTRL_FXOR_0b0" value="0b0" description="No XOR on reading."/>
+      <bit_field_value name="CTRL_FXOR_0b1" value="0b1" description="Invert or complement the read value of the CRC Data register."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <bit_field offset="28" width="2" name="TOTR" access="RW" reset_value="0" description="Type Of Transpose For Read">
+      <alias type="CMSIS" value="CRC_CTRL_TOTR(x)"/>
+      <bit_field_value name="CTRL_TOTR_0b00" value="0b00" description="No transposition."/>
+      <bit_field_value name="CTRL_TOTR_0b01" value="0b01" description="Bits in bytes are transposed; bytes are not transposed."/>
+      <bit_field_value name="CTRL_TOTR_0b10" value="0b10" description="Both bits in bytes and bytes are transposed."/>
+      <bit_field_value name="CTRL_TOTR_0b11" value="0b11" description="Only bytes are transposed; no bits in a byte are transposed."/>
+    </bit_field>
+    <bit_field offset="30" width="2" name="TOT" access="RW" reset_value="0" description="Type Of Transpose For Writes">
+      <alias type="CMSIS" value="CRC_CTRL_TOT(x)"/>
+      <bit_field_value name="CTRL_TOT_0b00" value="0b00" description="No transposition."/>
+      <bit_field_value name="CTRL_TOT_0b01" value="0b01" description="Bits in bytes are transposed; bytes are not transposed."/>
+      <bit_field_value name="CTRL_TOT_0b10" value="0b10" description="Both bits in bytes and bytes are transposed."/>
+      <bit_field_value name="CTRL_TOT_0b11" value="0b11" description="Only bytes are transposed; no bits in a byte are transposed."/>
+    </bit_field>
+  </register>
+  <register offset="0xB" width="8" name="CTRLHU" description="CRC_CTRLHU register.">
+    <alias type="CMSIS" value="CTRL_ACCESS8BIT.CTRLHU"/>
+    <bit_field offset="0" width="1" name="TCRC" access="RW" reset_value="0" description="">
+      <alias type="CMSIS" value="CRC_CTRLHU_TCRC(x)"/>
+      <bit_field_value name="CTRLHU_TCRC_0b0" value="0b0" description="16-bit CRC protocol."/>
+      <bit_field_value name="CTRLHU_TCRC_0b1" value="0b1" description="32-bit CRC protocol."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="WAS" access="RW" reset_value="0" description="">
+      <alias type="CMSIS" value="CRC_CTRLHU_WAS(x)"/>
+      <bit_field_value name="CTRLHU_WAS_0b0" value="0b0" description="Writes to CRC data register are data values."/>
+      <bit_field_value name="CTRLHU_WAS_0b1" value="0b1" description="Writes to CRC data reguster are seed values."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="FXOR" access="RW" reset_value="0" description="">
+      <alias type="CMSIS" value="CRC_CTRLHU_FXOR(x)"/>
+      <bit_field_value name="CTRLHU_FXOR_0b0" value="0b0" description="No XOR on reading."/>
+      <bit_field_value name="CTRLHU_FXOR_0b1" value="0b1" description="Invert or complement the read value of CRC data register."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="2" name="TOTR" access="RW" reset_value="0" description="">
+      <alias type="CMSIS" value="CRC_CTRLHU_TOTR(x)"/>
+      <bit_field_value name="CTRLHU_TOTR_0b00" value="0b00" description="No Transposition."/>
+      <bit_field_value name="CTRLHU_TOTR_0b01" value="0b01" description="Bits in bytes are transposed, bytes are not transposed."/>
+      <bit_field_value name="CTRLHU_TOTR_0b10" value="0b10" description="Both bits in bytes and bytes are transposed."/>
+      <bit_field_value name="CTRLHU_TOTR_0b11" value="0b11" description="Only bytes are transposed; no bits in a byte are transposed."/>
+    </bit_field>
+    <bit_field offset="6" width="2" name="TOT" access="RW" reset_value="0" description="">
+      <alias type="CMSIS" value="CRC_CTRLHU_TOT(x)"/>
+      <bit_field_value name="CTRLHU_TOT_0b00" value="0b00" description="No Transposition."/>
+      <bit_field_value name="CTRLHU_TOT_0b01" value="0b01" description="Bits in bytes are transposed, bytes are not transposed."/>
+      <bit_field_value name="CTRLHU_TOT_0b10" value="0b10" description="Both bits in bytes and bytes are transposed."/>
+      <bit_field_value name="CTRLHU_TOT_0b11" value="0b11" description="Only bytes are transposed; no bits in a byte are transposed."/>
+    </bit_field>
+  </register>
+</regs:peripheral>

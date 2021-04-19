@@ -1,0 +1,133 @@
+${<code>
+var inEpId = "";
+var endpoints = endpointsSettings[0].endpoints;
+for (i = 0; i < endpoints.length; i++) {
+    if (endpoints[i].directionSnakeCase === "IN" && endpoints[i].typeSnakeCase === "INTERRUPT") {
+        inEpId = endpoints[i].idSnakeCase;
+        break;
+    }
+}
+</code>}$#include "usb_device_config.h"
+#include "usb.h"
+#include "usb_device.h"
+
+#include "usb_device_class.h"
+#include "usb_device_hid.h"
+#include "usb_device_ch9.h"
+#include "usb_device_descriptor.h"
+
+#include "usb_device_composite.h"
+
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+#define KEY_PAGEUP 0x4BU
+#define KEY_PAGEDOWN 0x4EU
+
+typedef struct _usb_device_hid_keyboard_struct
+{
+    uint8_t *buffer;
+    uint8_t idleRate;
+} usb_device_hid_keyboard_struct_t;
+
+/*******************************************************************************
+ * Prototypes
+ ******************************************************************************/
+
+static usb_status_t USB_DeviceHidKeyboardAction(void);
+
+/*******************************************************************************
+ * Variables
+ ******************************************************************************/
+
+USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static uint8_t s_KeyboardBuffer[USB_${idSnakeCase}$_INPUT_REPORT_LENGTH];
+static usb_device_composite_struct_t *s_UsbDeviceComposite;
+static usb_device_hid_keyboard_struct_t s_UsbDeviceHidKeyboard;
+
+/*******************************************************************************
+ * Code
+ ******************************************************************************/
+static usb_status_t USB_DeviceHidKeyboardAction(void)
+{
+    static int x = 0U;
+    enum
+    {
+        DOWN,
+        UP
+    };
+    static uint8_t dir = DOWN;
+
+    s_UsbDeviceHidKeyboard.buffer[2] = 0x00U;
+    switch (dir)
+    {
+        case DOWN:
+            x++;
+            if (x > 200U)
+            {
+                dir++;
+                s_UsbDeviceHidKeyboard.buffer[2] = KEY_PAGEUP;
+            }
+            break;
+        case UP:
+            x--;
+            if (x < 1U)
+            {
+                dir = DOWN;
+                s_UsbDeviceHidKeyboard.buffer[2] = KEY_PAGEDOWN;
+            }
+            break;
+        default:
+            break;
+    }
+
+    return USB_DeviceHidSend(s_UsbDeviceComposite->${idLowerCamelCase}$Handle, USB_${inEpId}$,
+                             s_UsbDeviceHidKeyboard.buffer, USB_${idSnakeCase}$_INPUT_REPORT_LENGTH);
+}
+
+/* Interface callback */
+usb_status_t USB_Device${idCamelCase}$Callback(class_handle_t handle, uint32_t event, void *param)
+{
+    usb_status_t error = kStatus_USB_Error;
+
+    switch (event)
+    {
+        case kUSB_DeviceHidEventSendResponse:
+            if (s_UsbDeviceComposite->attach)
+            {
+                return USB_DeviceHidKeyboardAction();
+            }
+            break;
+        case kUSB_DeviceHidEventGetReport:
+        case kUSB_DeviceHidEventSetReport:
+        case kUSB_DeviceHidEventRequestReportBuffer:
+            error = kStatus_USB_InvalidRequest;
+            break;
+        case kUSB_DeviceHidEventGetIdle:
+        case kUSB_DeviceHidEventGetProtocol:
+        case kUSB_DeviceHidEventSetIdle:
+        case kUSB_DeviceHidEventSetProtocol:
+            break;
+        default:
+            break;
+    }
+
+    return error;
+}
+
+/* set Configuration */
+usb_status_t USB_Device${idCamelCase}$SetConfiguration(class_handle_t handle, uint8_t configuration_idx)
+{
+   return USB_DeviceHidKeyboardAction();
+}
+
+usb_status_t USB_Device${idCamelCase}$SetInterface(class_handle_t handle, uint8_t alternateSetting)
+{
+   return USB_DeviceHidKeyboardAction();
+}
+
+usb_status_t USB_Device${idCamelCase}$Init(usb_device_composite_struct_t *deviceComposite)
+{
+    s_UsbDeviceComposite = deviceComposite;
+    s_UsbDeviceHidKeyboard.buffer = s_KeyboardBuffer;
+    return kStatus_USB_Success;
+}

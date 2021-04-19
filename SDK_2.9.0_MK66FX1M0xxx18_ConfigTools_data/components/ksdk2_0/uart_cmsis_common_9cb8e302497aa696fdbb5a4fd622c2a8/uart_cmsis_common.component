@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="uart_cmsis_common" label="UART_CMSIS" global_only="true"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-9.0.xsd" 
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="System">
+   <!-- GENERAL COMPONENT  -->
+   <description>Universal Asynchronous Receiver/Transmitter (UART) - CMSIS</description>
+   
+   <config_set id="fsl_cmsis_uart_common" label="General configuration">
+      <description>Configuration of CMSIS UART</description>
+    <generated_types></generated_types>
+      <user_types>
+         <struct id="cmsis_usart_config" label=" "> 
+            
+            <enum id="operationMode" label="Operation mode">
+               <item id="ARM_USART_MODE_ASYNCHRONOUS" label="Asynchronous" available="$parent.getParent().optionValue(`asynchronous`)">
+                  <description>Set to asynchronous UART mode.</description>
+               </item>
+               <item id="ARM_USART_MODE_SYNCHRONOUS_MASTER" label="Synchronous master" available="$parent.getParent().optionValue(`synchronous_master`)">
+                  <description>Set to synchronous master mode with clock signal generation.</description>
+               </item> 
+               <item id="ARM_USART_MODE_SYNCHRONOUS_SLAVE" label="Synchronous slave" available="$parent.getParent().optionValue(`synchronous_slave`)">
+                  <description>Set to synchronous slave mode with external clock signal.</description>
+               </item>
+               <item id="ARM_USART_MODE_SINGLE_WIRE" label="Single wire" available="$parent.getParent().optionValue(`single_wire`)">
+                  <description>Set to single-wire (half-duplex) mode.</description>
+               </item>
+               <item id="ARM_USART_MODE_IRDA" label="Infra red data" available="$parent.getParent().optionValue(`irda`)">
+                  <description>Set to Infra-red data mode.</description>
+               </item>
+               <item id="ARM_USART_MODE_SMART_CARD" label="Smart card" available="$parent.getParent().optionValue(`smart_card`)">
+                  <description>Set to Smart Card mode.</description>
+               </item>
+            </enum>
+            <!-- clockSourceUId will be the option -->
+            <variable id="clockSourceUId" value="$parent.getParent().optionValue(`clockSourceUId`)" />
+            
+            <variable id="peripheralName" value="($configSet.hasOption(`peripheralPrefix`) ? $configSet.optionValue(`peripheralPrefix`) + $configSet.peripheralIndex.getValue() : $instance.getPeripheral())"/>
+            
+            <variable id="partName" value="queryFeatureAdvanced(`Configuration`, `processor`, `name`,false)"/>
+            <variable id="isGetFreqSupported" value="!$parent.partName.getValue().regexMatch(`\[MKE0[2,4,6].*`)"/>
+            <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init"  items="createArray()
+               .addItemToList($parent.clockSourceUId.getValue(), getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()), ($instance.getPeripheral() + `_CLK_SRC`),true)">
+               <description>UART clock source</description>
+               <validation>
+                  <dependency when_expr="$parent.clockSourceFreq.getEnumItemId() == `GetFreq`" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Warning">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="($parent.clockSourceFreq.getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" items="createArray()
+               .merge(getClockFunctionalGroups().arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> enumItem,
+               enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSourceUId.getValue(), enumItem)) + ` (`+ enumItem + `)`,
+               enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSourceUId.getValue() , enumItem)))">
+               <validation>
+                  <constraint cond_expr="(($this.getEnumItemValue() == `GetFreq`) || $this.getEnumItemValue().toHertz() != 0)" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> toHertz(x) >= 0" />
+            </dynamic_enum>
+            
+            <enum id="clockPolarity" label="Clock polarity" available="$parent.getParent().optionValue(`synchronous_master`) || $parent.getParent().optionValue(`synchronous_slave`)">
+               <item id="ARM_USART_CPOL0" label="CPOL=0">
+                  <description>CPOL=0 : data are captured on rising edge (low->high transition)</description>
+               </item>
+               <item id="ARM_USART_CPOL1" label="CPOL=1">
+                  <description>CPOL=1 : data are captured on falling edge (high->lowh transition)</description>
+               </item>
+            </enum>
+            
+            <enum id="clockPhase" label="Clock phase" available="$parent.getParent().optionValue(`synchronous_master`) || $parent.getParent().optionValue(`synchronous_slave`)">
+               <item id="ARM_USART_CPHA0" label="CPHA=0">
+                  <description>CPHA=0 : sample on first (leading) edge</description>
+               </item>
+               <item id="ARM_USART_CPHA1" label="CPHA=1">
+                  <description>CPHA=1 : sample on second (trailing) edge</description>
+               </item>
+            </enum>
+    
+            <enum id="power_state" label="Power state">
+               <item id="ARM_POWER_OFF" label="Power off">
+                  <description>No operation possible</description>
+               </item>
+               <item id="ARM_POWER_LOW" label="Power low" available="$parent.getParent().optionValue(`power_low`)">
+                  <description>Low Power mode is retain state, detect and signal wake-up events</description>
+               </item>
+               <item id="ARM_POWER_FULL" label="Power full">
+                  <description>Full operation at maximum performance</description>
+               </item>
+            </enum>
+            
+            
+            <integer id="baudRate_Bps" label="Baud rate [bps]" type="uint32_t"  min_expr="1">
+               <description>Baud Rate in bps</description>
+            </integer>
+          
+
+            <enum id="dataBits" label="Data bits">
+               <item id="ARM_USART_DATA_BITS_5" label="5">
+                  <description>Set to 5 data bits.</description>
+               </item>
+               <item id="ARM_USART_DATA_BITS_6" label="6">
+                  <description>Set to 6 data bits.</description>
+               </item>
+               <item id="ARM_USART_DATA_BITS_7" label="7">
+                  <description>Set to 7 data bits.</description>
+               </item>
+               <item id="ARM_USART_DATA_BITS_8" label="8">
+                  <description>Set to 8 data bits.</description>
+               </item>
+               <item id="ARM_USART_DATA_BITS_9" label="9">
+                  <description>Set to 9 data bits.</description>
+               </item>  
+            </enum>
+            
+            <enum id="parityBit" label="Parity bit">
+               <item id="ARM_USART_PARITY_EVEN" label="Even">
+                  <description>Set to Even Parity.</description>
+               </item>
+               <item id="ARM_USART_PARITY_NONE" label="None">
+                  <description>Set to No Parity.</description>
+               </item>
+               <item id="ARM_USART_PARITY_ODD" label="Odd">
+                  <description>Set to Odd Parity.</description>
+               </item>
+            </enum>
+            
+            <enum id="stopBit" label="Stop bit">
+               <item id="ARM_USART_STOP_BITS_1" label="1">
+                  <description>Set to 1 Stop bit.</description>
+               </item>
+               <item id="ARM_USART_STOP_BITS_2" label="2">
+                  <description>Set to 2 Stop bits.</description>
+               </item>
+               <item id="ARM_USART_STOP_BITS_1_5" label="1.5">
+                  <description>Set to 1.5 Stop bits.</description>
+               </item>
+               <item id="ARM_USART_STOP_BITS_0_5" label="0.5">
+                  <description>Set to 0.5 Stop bits.</description>
+               </item>
+            </enum>
+            
+            <enum id="flowControl" label="Flow control" available="$parent.getParent().getOptionValue(`flow_control`)">
+               <item id="ARM_USART_FLOW_CONTROL_NONE"  label="None">
+                  <description>No flow control signal.</description>
+               </item>
+               <item id="ARM_USART_FLOW_CONTROL_CTS" label="Clear to send">
+                  <description>Set to use the CTS(Clear to Send) flow control signal.</description>
+               </item>
+               <item id="ARM_USART_FLOW_CONTROL_RTS" label="Request to send">
+                  <description>Set to use the RTS(Request to Send) flow control signal.</description>
+               </item>
+               <item id="ARM_USART_FLOW_CONTROL_RTS_CTS"  label="Request to send and Clear to send">
+                  <description>Set to use the RTS(Request to Send) and CTS(Clear to Send) flow control signal.</description>
+               </item>
+            </enum>
+            
+            <bool id="enableBreakTrans" label="Enable continuous break transmission" available="$configSet.hasOption(`ARM_USART_CONTROL_BREAK`)"></bool>
+            
+            <bool id="enableRX" label="Enable RX">
+               <description>Enable receiver.</description>
+               <validation>
+                  <dependency resource_type="PeripheralUnifiedSignal" when_expr="$this.getValue()" resource_id_expr="$instance.getPeripheral() + $parent.getParent().optionValue(`rx_signal_id`)" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`RX`, $instance.getPeripheral())" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </bool>
+            
+            <bool id="enableTX" label="Enable TX">
+               <description>Enable transmitter.</description>
+               <validation>
+                  <dependency resource_type="PeripheralUnifiedSignal" when_expr="$this.getValue()" resource_id_expr="$instance.getPeripheral() + $parent.getParent().optionValue(`tx_signal_id`)" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`TX`, $instance.getPeripheral())" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </bool>
+
+            <integer id="defaultValue" label="Default transmission value" type="uint32_t" available="$parent.operationMode.getEnumItemId().contains(`SYNCHRONOUS`) &amp;&amp; $configSet.hasOption(`ARM_USART_SET_DEFAULT_TX_VALUE`)" max_expr="524287"></integer>
+            
+            <integer id="irdaPulse" label="IrDA pulse value[ns]" type="uint32_t" max_expr="524287" available="$parent.operationMode.getEnumItemId() == `ARM_USART_MODE_IRDA`">
+               <description>IrDA(Infrared Data Association) pulse value.</description>
+            </integer>
+            
+            <bool id="enableSmartNack" label="Enable smart card NACK generation" available="$parent.operationMode.getEnumItemId() == `ARM_USART_MODE_SMART_CARD`"></bool>
+            
+            <integer id="smartCardClock" label="Smart card clock frequency [Hz]" type="uint32_t" max_expr="524287" available="$parent.operationMode.getEnumItemId() == `ARM_USART_MODE_SMART_CARD`"/>
+            
+            <integer id="smartCardGuardTime" label="Smart card guard time[bit periods]" available="$parent.operationMode.getEnumItemId() == `ARM_USART_MODE_SMART_CARD`" type="uint32_t" max_expr="524287"/>  
+
+            <!-- periheral name + peripheral index will be in options: SPI0, LPSPI0, DSPI0-->
+            
+            <variable id="getFreqFunctionID" value="$parent.peripheralName.getValue() + `_GetFreq`"/>
+            <variable id="initPinFunctionID" value="$parent.peripheralName.getValue() + `_InitPins`"/>
+            <variable id="deinitPinFunctionID" value="$parent.peripheralName.getValue() + `_DeinitPins`"/>
+            
+            <string id="signalEventFunctionId" label="Signal event callback function id" validation_expr="x -> (isCIdentifier(x) || (x == `NULL`))">
+               <description>Signal event callback function is called if the event is occured. If ID is NULL, the callback function is not called.</description>
+            </string>
+            
+            <variable id="signalEventFunctionIdDefault" value="$parent.peripheralName.getValue() + `_SignalEvent`"/>
+            
+            <variable id="getFreqFunctionIdDefault" value="$parent.peripheralName.getValue() + `_GetFreq`"/>
+            
+            <!-- 
+            <variable id="copyToClipBoardTextSEFI" enable="$parent.signalEventFunctionId.getValue() != `NULL`" 
+               value="`/* ` + $instance.getID() + ` signal event callback function */&#10;` + 
+               `void ` + $parent.signalEventFunctionId.getValue() + `(uint32_t event) {&#10;` + 
+               (leftPadding(`/* Master/Slave Transmit/Receive finished */&#10;`,1)) +
+               (leftPadding(`if (event &amp; ARM_SPI_EVENT_TRANSFER_DONE) {&#10;`,1)) +
+               (leftPadding(`/* Place your code here */&#10;`,2)) +
+               (leftPadding(`}&#10;`,1)) +
+               (leftPadding(`/* Master/Slave Transmit/Receive incomplete transfer */&#10;`,1)) +
+               (leftPadding(`if (event &amp; ARM_SPI_EVENT_TRANSFER_INCOMPLETE) {&#10;`,1)) +
+               (leftPadding(`/* Place your code here */&#10;`,2)) +
+               (leftPadding(`}&#10;`,1)) +
+               (($parent.spi_mode_user.getValue() == `ARM_SPI_MODE_MASTER`)? 
+               (leftPadding(`/* Address not acknowledged from Slave */&#10;`,1)) +
+               (leftPadding(`if (event &amp; ARM_SPI_EVENT_ADDRESS_NACK) {&#10;`,1)) +
+               (leftPadding(`/* Place your code here */&#10;`,2)) +
+               (leftPadding(`}&#10;`,1)) +
+               (leftPadding(`/* Master lost arbitration */&#10;`,1)) +
+               (leftPadding(`if (event &amp; ARM_SPI_EVENT_ARBITRATION_LOST) {&#10;`,1)) +
+               (leftPadding(`/* Place your code here */&#10;`,2)) +
+               (leftPadding(`}&#10;`,1)) :
+               (leftPadding(`/* Slave addressed with general call address */&#10;`,1)) +
+               (leftPadding(`if (event &amp; ARM_SPI_EVENT_GENERAL_CALL) {&#10;`,1)) +
+               (leftPadding(`/* Place your code here */&#10;`,2)) +
+               (leftPadding(`}&#10;`,1))) +
+               `}&#10;` 
+               ">   
+            </variable>
+            
+            <info id="copyToClipBoardSEFI" label="Callback function template" value="$parent.copyToClipBoardTextSEFI.getValue()" options="UI_INFO_COPY_BUTTON">
+               <description>Copy template of the signal event callback function.</description>
+            </info>
+            -->
+            
+            <bool id="enableGetFreqFnCustomName" label="Enable custom get frequency function">
+               <description>When this option is enabled, the custom get frequency (getFreq) function is called during setting of the communication baudrate. The ID of the function is set in the "Custom get frequency function id" setting. This function is created by user in the Pins tool or in the user code. Example of the function uint32_t userId(void).</description>
+            </bool>
+            <string id="getFreqFunctionCustomID" label="Custom get frequency function id" validation_expr="x -> isCIdentifier(x)" enable="$parent.enableGetFreqFnCustomName.getValue()">
+               <description expr="`Get frequency function id. The uint32_t ` + $this.getValue() + `(void) function is created by user in the user code. If custom ID is equal to ` + $parent.getFreqFunctionID.getValue() + `, the function is not called in peripherals.c file and the function is directly used in the UART CMSIS driver.`"/>
+            </string>
+           
+            <bool id="enableInitPinsFnCustomName" label="Enable pins initialization function" >
+               <description>When this option is enabled, the initialization function is called during initialization of the driver. The ID of the function is set in the "Pins initialization function id" setting. This function is created by user in the Pins tool or in the user code. Example of the function void userId(void).</description>
+            </bool>
+            <string id="initPinFunctionCustomID" label="Pins initialization function id" validation_expr="x -> isCIdentifier(x)" enable="$parent.enableInitPinsFnCustomName.getValue()">
+               <description expr="`The pins initialization function ID. The void ` + $this.getValue() +`(void) function is created by user in the Pins tool or in the user code. If custom ID is equal to ` + $parent.initPinFunctionID.getValue() +`, the function is not called in peripherals.c file and the function is directly used from USART CMSIS driver.`"/>
+            </string>
+            <bool id="enableDeinitPinsFnCustomName" label="Enable pins deinitialization function">
+               <description>When this option is enabled, the deinitialization function is called during deinitialization of the driver. The ID of the function is set in the "Pins deinitialization function id" setting. This function is created by user in the Pins tool or in the user code. Example of the function void userId(void).</description>
+            </bool>
+            <string id="deinitPinFunctionCustomID" label="Pins deinitialization function id" validation_expr="x -> isCIdentifier(x)" enable="$parent.enableDeinitPinsFnCustomName.getValue()" >
+               <description expr="`The pins initialization function ID. The void ` + $this.getValue() +`(void) function is created by user in the Pins tool or in the user code. If custom ID is equal to ` + $parent.deinitPinFunctionID.getValue() +`, the function is not called in peripherals.c file and the function is directly used from USART CMSIS driver.`"/>
+            </string>
+           
+         </struct>
+       
+        
+      </user_types>
+      <settings>
+         <variable id="peripheralIndex" value="($configSet.hasOption(`peripheralIndex`) ? toInt($configSet.optionValue(`peripheralIndex`)) :($instance.getPeripheral().regexMatch(`.*(\d+)`) ? toInt($instance.getPeripheral().regexSubstr(`.*(\d+)`,1)) : 0 ))"/>
+         <variable id="isPeripheralAvailable" value="$parent.peripheralIndex.getValue() &gt;= 0"/>
+         <info id="peripheraIsNotAvailable" label="Note:"  value="`The USART functionality is not available on ` + $instance.getPeripheral() + ` peripheral.`" available="!$parent.isPeripheralAvailable.getValue()">
+            <validation>
+               <constraint cond_expr="$parent.isPeripheralAvailable.getValue()" level="error" description_expr="`The USART functionality is not available on ` + $instance.getPeripheral() + ` peripheral.`"/>
+            </validation>
+         </info>
+         <reference id="main_config" label=" " type="cmsis_usart_config" options="UI_LABEL_HIDDEN; UI_BORDER_HIDDEN" available="$parent.isPeripheralAvailable.getValue()"></reference>
+         
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+         <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+         <variable id="inst_config_ID" value="$parent.inst_ID.getValue() + `_config`"></variable>
+         
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+         <def fragment="function">
+            <expr>leftPadding(`/* ` + $param.fnComment + ` */`,0)</expr><br/>
+            <expr>leftPadding($param.fnRetType + ` ` + $param.fnID + `(` + $param.fnParams + `){`,0)</expr><br/>
+            <expr>leftPadding($param.fnBody,1)</expr><br/>
+            <expr>leftPadding(`};`,0)</expr><br/>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include" if_expr="$configSet.isPeripheralAvailable.getValue()">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <fragment id="define" if_expr="$configSet.isPeripheralAvailable.getValue()">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)"/>
+               <param id="value" expr="`Driver_USART` + $configSet.peripheralIndex.getValue()"/>
+               <param id="description">Definition of peripheral ID</param>
+            </fragment>
+            <fragment id="define" if_expr="$configSet.isPeripheralAvailable.getValue()">
+               <param id="name" expr="toUpperCase($configSet.inst_ID_def.getValue() + `_CLOCK_SOURCE_FREQ`)"/>
+               <param id="value" expr="$configSet.main_config.clockSourceFreq.getEnumItemValue().toHertz() + `UL`"/>
+               <param id="description">Definition of the clock source frequency</param>
+            </fragment>
+         </section>  
+
+         <section target="global_vars">
+            <fragment id="function" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; !($configSet.main_config.enableGetFreqFnCustomName.getValue(false) &amp;&amp; ($configSet.main_config.getFreqFunctionID.getValue(``) == $configSet.main_config.getFreqFunctionCustomID.getValue(``)))">
+               <param id="fnRetType">uint32_t</param>
+               <param id="fnID" expr="$configSet.main_config.getFreqFunctionID.getValue()"/>
+               <param id="fnParams">void</param>
+               <param id="fnBody" expr="`return ` + ($configSet.main_config.enableGetFreqFnCustomName.getValue(false) ? $configSet.main_config.getFreqFunctionCustomID.getValue(``) + `()` : toUpperCase($configSet.inst_ID_def.getValue() + `_CLOCK_SOURCE_FREQ`)) + `;`"/>
+               <param id="fnComment" expr="`Get clock source frequency`"/>
+            </fragment>
+         </section>
+         
+         <section target="global_functions_extern">
+            <fragment id="extern_fcn_def" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; ($configSet.main_config.signalEventFunctionId.getValue() != `NULL`)">
+               <param id="name" expr="$configSet.main_config.signalEventFunctionId.getValue()"/>
+               <param id="type">void</param>
+               <param id="params" expr="`uint32_t event`"/>
+               <param id="description" expr="`Signal event function for component ` + $instance.getID()"/>
+            </fragment>
+            <fragment id="global_fcn_def" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; !$configSet.main_config.enableGetFreqFnCustomName.getValue(false)">
+               <param id="name" expr="$configSet.main_config.getFreqFunctionID.getValue()"/>
+               <param id="type">uint32_t</param>
+               <param id="params" expr="`void`"/>
+               <param id="description" expr="`Get clock source frequency function for component ` + $instance.getID()"/>
+            </fragment>
+            <fragment id="extern_fcn_def" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; $configSet.main_config.enableGetFreqFnCustomName.getValue(false)">
+               <param id="name" expr="$configSet.main_config.getFreqFunctionCustomID.getValue()"/>
+               <param id="type">uint32_t</param>
+               <param id="params" expr="`void`"/>
+               <param id="description" expr="`User get clock source frequency function for component ` + $instance.getID()"/>
+            </fragment>
+
+         </section>
+         
+         <section target="driver_functions_extern">
+            <fragment id="extern_fcn_def" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; $configSet.main_config.enableInitPinsFnCustomName.getValue(false)">
+               <param id="name" expr="$configSet.main_config.initPinFunctionCustomID.getValue()"/>
+               <param id="type">void</param>
+               <param id="params" expr="`void`"/>
+               <param id="description" expr="`Pins initialization function for component ` + $instance.getID()"/>
+            </fragment>
+            <fragment id="extern_fcn_def" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; $configSet.main_config.enableDeinitPinsFnCustomName.getValue(false)">
+               <param id="name" expr="$configSet.main_config.deinitPinFunctionCustomID.getValue()"/>
+               <param id="type">void</param>
+               <param id="params" expr="`void`"/>
+               <param id="description" expr="`Pins deinitialization function for component ` + $instance.getID()"/>
+            </fragment>
+         </section>
+         
+         
+         <section target="init_function_body">
+            <fragment id="init_line" if_expr="$configSet.isPeripheralAvailable.getValue()">
+               <param id="code" expr="`assert(` + toUpperCase($instance.getFnGroupPrefix() +  $instance.getId()) + `_PERIPHERAL.Initialize(` + $configSet.main_config.signalEventFunctionId.getValue() +`) == ARM_DRIVER_OK);`"></param>
+               <param id="description" expr="`Initialize CMSIS USART`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            
+            <fragment id="init_line"  if_expr="$configSet.isPeripheralAvailable.getValue()">
+               <param id="code" expr="`assert(` + toUpperCase($instance.getFnGroupPrefix() +  $instance.getId()) + `_PERIPHERAL.PowerControl(` + $configSet.main_config.power_state.getEnumItemId() +`) == ARM_DRIVER_OK);`"></param>
+               <param id="description" expr="`Power control of CMSIS USART`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            
+            <fragment id="init_line"  if_expr="$configSet.isPeripheralAvailable.getValue()">
+               <param id="code" expr="`assert(` + toUpperCase($instance.getFnGroupPrefix() +  $instance.getId()) + `_PERIPHERAL.Control(` + $configSet.main_config.operationMode.getEnumItemId() + ` | ` + $configSet.main_config.dataBits.getEnumItemId() + ` | ` + $configSet.main_config.parityBit.getEnumItemId() +  ` | ` + $configSet.main_config.stopBit.getEnumItemId() + `, `+ $configSet.main_config.baudRate_Bps.getValue() +`) == ARM_DRIVER_OK);`"></param>
+               <param id="description" expr="`Control of CMSIS USART`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            
+            <fragment id="init_line" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; $configSet.main_config.enableBreakTrans.isAvailable()">
+               <param id="code" expr="`assert(` + toUpperCase($instance.getFnGroupPrefix() +  $instance.getId()) + `_PERIPHERAL.Control(` + `ARM_USART_CONTROL_BREAK , ` + ($configSet.main_config.enableBreakTrans.getValue() == `false` ? `0` : `1`) +`) == ARM_DRIVER_OK);`"></param>
+               <param id="description" expr="`Enable or disable continuous break transmission.`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            
+            <fragment id="init_line" if_expr="$configSet.isPeripheralAvailable.getValue()">
+               <param id="code" expr="`assert(` + toUpperCase($instance.getFnGroupPrefix() +  $instance.getId()) + `_PERIPHERAL.Control(` + `ARM_USART_CONTROL_RX , ` + ($configSet.main_config.enableRX.getValue() == `false` ? `0` : `1`) +`) == ARM_DRIVER_OK);`"></param>
+               <param id="description" expr="`Enable or disable receiver.`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            
+            <fragment id="init_line" if_expr="$configSet.isPeripheralAvailable.getValue()">
+               <param id="code" expr="`assert(` + toUpperCase($instance.getFnGroupPrefix() +  $instance.getId()) + `_PERIPHERAL.Control(` + `ARM_USART_CONTROL_TX , ` + ($configSet.main_config.enableTX.getValue() == `false` ? `0` : `1`) +`) == ARM_DRIVER_OK);`"></param>
+               <param id="description" expr="`Enable or disable transmitter.`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            
+            <fragment id="init_line" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; $configSet.main_config.defaultValue.isAvailable()">
+               <param id="code" expr="`assert(` + toUpperCase($instance.getFnGroupPrefix() +  $instance.getId()) + `_PERIPHERAL.Control(` + `ARM_USART_SET_DEFAULT_TX_VALUE , ` + $configSet.main_config.defaultValue.getValue() +`) == ARM_DRIVER_OK);`"></param>
+               <param id="description" expr="`Set the default transmission value.`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            
+            <fragment id="init_line" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; $configSet.main_config.irdaPulse.isAvailable()">
+               <param id="code" expr="`assert(` + toUpperCase($instance.getFnGroupPrefix() +  $instance.getId()) + `_PERIPHERAL.Control(` + `ARM_USART_SET_IRDA_PULSE , ` + $configSet.main_config.irdaPulse.getValue() +`) == ARM_DRIVER_OK);`"></param>
+               <param id="description" expr="`Set the default transmit value.`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            
+            <fragment id="init_line" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; $configSet.main_config.enableSmartNack.isAvailable()">
+               <param id="code" expr="`assert(` + toUpperCase($instance.getFnGroupPrefix() +  $instance.getId()) + `_PERIPHERAL.Control(` + `ARM_USART_CONTROL_SMART_NACK, ` + ($configSet.main_config.enableSmartNack.getValue() == `false` ? `0` : `1`) +`) == ARM_DRIVER_OK);`"></param>
+               <param id="description" expr="`Enable or disable Smart Card NACK generation.`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            
+            <fragment id="init_line" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; $configSet.main_config.smartCardClock.isAvailable()">
+               <param id="code" expr="`assert(` + toUpperCase($instance.getFnGroupPrefix() +  $instance.getId()) + `_PERIPHERAL.Control(` + `ARM_USART_SET_SMART_CARD_CLOCK, ` + $configSet.main_config.smartCardClock.getValue()  +`) == ARM_DRIVER_OK);`"></param>
+               <param id="description" expr="`Set the Smart Card Clock.`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            
+            <fragment id="init_line" if_expr="$configSet.isPeripheralAvailable.getValue() &amp;&amp; $configSet.main_config.smartCardGuardTime.isAvailable()">
+               <param id="code" expr="`assert(` + toUpperCase($instance.getFnGroupPrefix() +  $instance.getId()) + `_PERIPHERAL.Control(` + `ARM_USART_SET_SMART_CARD_GUARD_TIME, ` + $configSet.main_config.smartCardGuardTime.getValue()  +`) == ARM_DRIVER_OK;`"></param>
+               <param id="description" expr="`Set the Smart Card guard time.`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            
+         </section>
+      </code>
+      <validation>
+     </validation>
+      <quick_selections>
+         <quick_selection id="default" label="Default">
+            <set id="main_config.power_state">ARM_POWER_FULL</set>
+            <set id="main_config.baudRate_Bps">500000</set>
+            <set id="main_config.dataBits">ARM_USART_DATA_BITS_8</set>
+            <set id="main_config.parityBit">ARM_USART_PARITY_NONE</set>
+            <set id="main_config.stopBit">ARM_USART_STOP_BITS_1</set>
+            <set id="main_config.signalEventFunctionId" from_resource="$configSet.main_config.signalEventFunctionIdDefault.getValue(`USART_SignalEvent`)"/>
+            <set id="main_config.initPinFunctionCustomID" from_resource="$configSet.main_config.initPinFunctionID.getValue(`USART_InitPins`)"/>
+            <set id="main_config.deinitPinFunctionCustomID" from_resource="$configSet.main_config.deinitPinFunctionID.getValue(`USART_DeinitPins`)"/>  
+            <set id="main_config.getFreqFunctionCustomID" from_resource="$configSet.main_config.getFreqFunctionID.getValue(`USART_GetFreq`)"/>
+         </quick_selection>
+      </quick_selections>      
+   </config_set>
+</component:config_component>

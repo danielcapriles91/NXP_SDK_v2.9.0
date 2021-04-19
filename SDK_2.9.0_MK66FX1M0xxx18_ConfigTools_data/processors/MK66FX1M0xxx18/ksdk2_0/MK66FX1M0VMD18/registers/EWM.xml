@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="8" name="CTRL" description="Control Register">
+    <alias type="CMSIS" value="CTRL"/>
+    <bit_field offset="0" width="1" name="EWMEN" access="RW" reset_value="0" description="EWM enable.">
+      <alias type="CMSIS" value="EWM_CTRL_EWMEN(x)"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="ASSIN" access="RW" reset_value="0" description="EWM_in's Assertion State Select.">
+      <alias type="CMSIS" value="EWM_CTRL_ASSIN(x)"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="INEN" access="RW" reset_value="0" description="Input Enable.">
+      <alias type="CMSIS" value="EWM_CTRL_INEN(x)"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="INTEN" access="RW" reset_value="0" description="Interrupt Enable.">
+      <alias type="CMSIS" value="EWM_CTRL_INTEN(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="4" reset_value="0"/>
+  </register>
+  <register offset="0x1" width="8" name="SERV" description="Service Register">
+    <alias type="CMSIS" value="SERV"/>
+    <bit_field offset="0" width="8" name="SERVICE" access="WORZ" reset_value="0" description="The EWM service mechanism requires the CPU to write two values to the SERV register: a first data byte of 0xB4, followed by a second data byte of 0x2C. The EWM service is illegal if either of the following conditions is true. The first or second data byte is not written correctly. The second data byte is not written within a fixed number of peripheral bus cycles of the first data byte. This fixed number of cycles is called EWM_service_time.">
+      <alias type="CMSIS" value="EWM_SERV_SERVICE(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x2" width="8" name="CMPL" description="Compare Low Register">
+    <alias type="CMSIS" value="CMPL"/>
+    <bit_field offset="0" width="8" name="COMPAREL" access="RW" reset_value="0" description="To prevent runaway code from changing this field, software should write to this field after a CPU reset even if the (default) minimum service time is required.">
+      <alias type="CMSIS" value="EWM_CMPL_COMPAREL(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x3" width="8" name="CMPH" description="Compare High Register">
+    <alias type="CMSIS" value="CMPH"/>
+    <bit_field offset="0" width="8" name="COMPAREH" access="RW" reset_value="0xFF" description="To prevent runaway code from changing this field, software should write to this field after a CPU reset even if the (default) maximum service time is required.">
+      <alias type="CMSIS" value="EWM_CMPH_COMPAREH(x)"/>
+    </bit_field>
+  </register>
+</regs:peripheral>

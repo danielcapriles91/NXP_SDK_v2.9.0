@@ -1,0 +1,200 @@
+#include "fsl_device_registers.h"
+#include "timer_queue.h"
+#if ((defined TIMER_QUEUE_MAX_TIMER_OBJECTS) && (TIMER_QUEUE_MAX_TIMER_OBJECTS > 0))
+#include "stdio.h"
+#include "string.h"
+#include "fsl_clock.h"
+
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+#define SYSTICK_CLOCK_DIVISION (1000U)  //divide the sysTick clock to result in 1 milisecond run time
+
+/*******************************************************************************
+ * Prototypes
+ ******************************************************************************/
+
+
+/*******************************************************************************
+ * Variables
+ ******************************************************************************/
+
+/*! @brief array of timer objects */
+timerQueue_timer_object_t s_timerQueueTimerObjectArray[TIMER_QUEUE_MAX_TIMER_OBJECTS];
+
+/*******************************************************************************
+ * Code
+ ******************************************************************************/
+
+/*!
+ * @brief SysTick event handler.
+ *
+ * This function is called whenever sysTick timer expires.
+ */
+void SysTick_Handler(void)
+{
+    TimerIsr();
+}
+
+/*!
+ * @brief timer initialization.
+ *
+ * This function initializes the sysTick timer in its free running mode to run at preconfigured frequency.
+ * Timer is disabled after calling.
+ */
+void TimerQueue_TimerHWInit()
+{
+    /* Configure the SysTick timer */
+    SysTick_Config(CLOCK_GetFreq(kCLOCK_CoreSysClk) / SYSTICK_CLOCK_DIVISION);
+    /* Disable the SysTick timer */
+    SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
+}
+
+/*!
+ * @brief timer enable/disable function.
+ *
+ * Enables or disables sysTick timer.
+ *
+ * @param enable    non-zero value enables timer, zero value disables.
+ */
+void HW_TimerControl(uint8_t enable)
+{
+    if (enable)
+    {
+        SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
+    }
+    else
+    {
+        SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
+    }
+}
+
+/*!
+ * @brief timer queue and hardware initialization.
+ *
+ * This function initializes the timer object queue and system clock counter.
+ *
+ * @param controller_ID     the identify of timer controller.
+ *
+ * @retval success or error.
+ */
+void TimerQueue_TimerInit(void)
+{
+    TimerQueue_TimerHWInit();
+}
+
+/*!
+ * @brief add timer queue.
+ *
+ * This function is called to add timer object to timer queue.
+ *
+ * @param pTimerObject      timer object.
+ *
+ * @retval Returns timer ID on success or -1 on error.
+ */
+uint8_t TimerQueue_AddTimerQueue(timerQueue_timer_object_t *timerObject)
+{
+    uint8_t index;
+    index = (uint8_t)-1;
+    if (NULL != timerObject)
+    {
+        /* Timer Index return value */
+        uint8_t timerId = 0U;
+        /* Queue full checking */
+        uint8_t isQueueFull = 1U;
+        /* Disable the timer */
+        HW_TimerControl(0U);
+        /* Add timerObject to queue */
+        for (timerId = 0U; timerId < TIMER_QUEUE_MAX_TIMER_OBJECTS; timerId++)
+        {
+            if (s_timerQueueTimerObjectArray[timerId].timerCallback == NULL)
+            {
+                isQueueFull = 0U;
+                (void)memcpy(&s_timerQueueTimerObjectArray[timerId], timerObject, sizeof(timerQueue_timer_object_t));
+                break;
+            }
+        }
+        if (isQueueFull)
+        {
+            /* Timer queue is full */
+           index = (uint8_t)-1;
+        }
+        else
+        {
+            /* only enable the timer if queue is not full*/
+            HW_TimerControl(1U);
+            index = timerId;
+        }
+    }
+    /* Invalid parameter */
+    return index;
+}
+
+/*!
+ * @brief remove timer object.
+ *
+ * This function is called to remove the timer object from timer queue.
+ *
+ * @param timerId      index of the timer object in queue.
+ *
+ * @retval Returns 0 on success or -1 on error.
+ */
+uint8_t TimerQueue_RemoveTimer(uint8_t timerId)
+{
+    uint8_t i;
+
+    if (timerId < TIMER_QUEUE_MAX_TIMER_OBJECTS)
+    {
+        /* Disable the  timer */
+        HW_TimerControl(0U);
+        if (NULL != s_timerQueueTimerObjectArray[timerId].timerCallback)
+        {
+            /* Clear the time object in queue corresponding with timerId */
+            (void)memset(&s_timerQueueTimerObjectArray[timerId], 0U, sizeof(timerQueue_timer_object_t));
+            s_timerQueueTimerObjectArray[timerId].timerCallback = NULL;   
+        }
+        /* Queue empty checking */
+        for (i = 0U; i < TIMER_QUEUE_MAX_TIMER_OBJECTS; i++)
+        {
+            if (NULL != s_timerQueueTimerObjectArray[i].timerCallback)
+            {
+                /* Queue is not empty, enable the timer again */
+                HW_TimerControl(1U);
+                break;
+            }
+        }
+        return (uint8_t)0;
+    }
+    else
+    {
+        return (uint8_t)-1;
+    }
+}
+
+/*!
+ * @brief timer interrupt service function.
+ *
+ * This function services programmable interrupt timer when a timer object
+ * expires, then removes the timer object from timer queue and calls its
+ * callback function (if registered).
+ */
+void TimerIsr(void)
+{
+    uint8_t index;
+    for (index = 0U; index < TIMER_QUEUE_MAX_TIMER_OBJECTS; index++)
+    {
+        if (NULL != s_timerQueueTimerObjectArray[index].timerCallback)
+        {
+            timerQueue_timer_object_t *timerObject = &s_timerQueueTimerObjectArray[index];
+            timerObject->timerCount--;
+            if (timerObject->timerCount <= 0U)
+            {
+                /* Call Pending Timer CallBacks */
+                timerObject->timerCallback(timerObject->timerArgument);
+                /* remove timer object from timer queue */
+                TimerQueue_RemoveTimer(index);
+            }
+        }
+    }
+}
+#endif

@@ -1,0 +1,74 @@
+${<code>
+// Audio generator global variable
+var USB_AudioGenerator_Name = "USB_" + idCamelCase + "AudioGenerator";
+// Audio version global variable
+var AudioVersion20 = interfaceProtocol == CONST.AUDIO_PROTOCOL_IPV20;
+
+</code>}$
+#include "usb_device_config.h"
+#include "usb_device_descriptor.h"
+#include "usb_device_audio.h"
+
+#ifndef __USB_DEVICE_${idSnakeCase}$_H__
+#define __USB_DEVICE_${idSnakeCase}$_H__ 1U
+
+/******************************************************************************
+* Definitions
+******************************************************************************/
+#define AUDIO_SAMPLING_RATE_KHZ (8)
+#define USB_DEVICE_INTERRUPT_PRIORITY (3U)
+
+/* Define the types for application */
+typedef struct _usb_audio_generator_struct
+{
+    uint8_t copyProtect;
+    uint8_t curMute;
+    uint8_t curVolume[2]; /* need to consider the endians */
+    uint8_t minVolume[2]; /* need to consider the endians */
+    uint8_t maxVolume[2]; /* need to consider the endians */
+    uint8_t resVolume[2]; /* need to consider the endians */
+    uint8_t curBass;
+    uint8_t minBass;
+    uint8_t maxBass;
+    uint8_t resBass;
+    uint8_t curMid;
+    uint8_t minMid;
+    uint8_t maxMid;
+    uint8_t resMid;
+    uint8_t curTreble;
+    uint8_t minTreble;
+    uint8_t maxTreble;
+    uint8_t resTreble;
+    uint8_t curAutomaticGain;
+    uint8_t curDelay[2]; /* need to consider the endians */
+    uint8_t minDelay[2]; /* need to consider the endians */
+    uint8_t maxDelay[2]; /* need to consider the endians */
+    uint8_t resDelay[2]; /* need to consider the endians */
+    uint8_t curLoudness;
+    uint8_t curSamplingFrequency[3]; /* need to consider the endians */
+    uint8_t minSamplingFrequency[3]; /* need to consider the endians */
+    uint8_t maxSamplingFrequency[3]; /* need to consider the endians */
+    uint8_t resSamplingFrequency[3]; /* need to consider the endians */${<code>
+if(AudioVersion20){ </code>}$
+    uint8_t curMute20;
+    uint8_t curClockValid;
+    uint8_t curVolume20[2];
+    uint32_t curSampleFrequency;
+    usb_device_control_range_layout3_struct_t freqControlRange;
+    usb_device_control_range_layout2_struct_t volumeControlRange;${<code>
+} </code>}$
+} usb_audio_generator_struct_t;
+
+/*******************************************************************************
+ * Variables
+ ******************************************************************************/
+extern usb_audio_generator_struct_t ${USB_AudioGenerator_Name}$;
+
+/*!
+ * @brief Audio wav data prepare function.
+ *
+ * This function prepare audio wav data before send.
+ */
+void USB_AudioRecorderGetBuffer(uint8_t *buffer, uint32_t size);
+
+#endif /* __USB_DEVICE_${idSnakeCase}$_H__ */

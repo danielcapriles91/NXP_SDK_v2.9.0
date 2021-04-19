@@ -1,0 +1,183 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="32" name="GENCS" description="TSI General Control and Status Register">
+    <alias type="CMSIS" value="GENCS"/>
+    <bit_field offset="0" width="1" name="EOSDMEO" access="RW" reset_value="0" description="End-of-Scan DMA Transfer Request Enable Only">
+      <alias type="CMSIS" value="TSI_GENCS_EOSDMEO(x)"/>
+      <bit_field_value name="GENCS_EOSDMEO_0b0" value="0b0" description="Do not enable the End-of-Scan DMA transfer request only. Depending on ESOR state, either Out-of-Range or End-of-Scan can trigger a DMA transfer request and interrupt."/>
+      <bit_field_value name="GENCS_EOSDMEO_0b1" value="0b1" description="Only the End-of-Scan event can trigger a DMA transfer request. The Out-of-Range event only and always triggers an interrupt if TSIIE is set."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="CURSW" access="RW" reset_value="0" description="CURSW">
+      <alias type="CMSIS" value="TSI_GENCS_CURSW(x)"/>
+      <bit_field_value name="GENCS_CURSW_0b0" value="0b0" description="The current source pair are not swapped."/>
+      <bit_field_value name="GENCS_CURSW_0b1" value="0b1" description="The current source pair are swapped."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="EOSF" access="W1C" reset_value="0" description="End of Scan Flag">
+      <alias type="CMSIS" value="TSI_GENCS_EOSF(x)"/>
+      <bit_field_value name="GENCS_EOSF_0b0" value="0b0" description="Scan not complete."/>
+      <bit_field_value name="GENCS_EOSF_0b1" value="0b1" description="Scan complete."/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="SCNIP" access="RO" reset_value="0" description="Scan In Progress Status">
+      <alias type="CMSIS" value="TSI_GENCS_SCNIP(x)"/>
+      <bit_field_value name="GENCS_SCNIP_0b0" value="0b0" description="No scan in progress."/>
+      <bit_field_value name="GENCS_SCNIP_0b1" value="0b1" description="Scan in progress."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="STM" access="RW" reset_value="0" description="Scan Trigger Mode">
+      <alias type="CMSIS" value="TSI_GENCS_STM(x)"/>
+      <bit_field_value name="GENCS_STM_0b0" value="0b0" description="Software trigger scan."/>
+      <bit_field_value name="GENCS_STM_0b1" value="0b1" description="Hardware trigger scan."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="STPE" access="RW" reset_value="0" description="TSI STOP Enable">
+      <alias type="CMSIS" value="TSI_GENCS_STPE(x)"/>
+      <bit_field_value name="GENCS_STPE_0b0" value="0b0" description="TSI is disabled when MCU goes into low power mode."/>
+      <bit_field_value name="GENCS_STPE_0b1" value="0b1" description="Allows TSI to continue running in all low power modes."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="TSIIEN" access="RW" reset_value="0" description="Touch Sensing Input Interrupt Enable">
+      <alias type="CMSIS" value="TSI_GENCS_TSIIEN(x)"/>
+      <bit_field_value name="GENCS_TSIIEN_0b0" value="0b0" description="TSI interrupt is disabled."/>
+      <bit_field_value name="GENCS_TSIIEN_0b1" value="0b1" description="TSI interrupt is enabled."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="TSIEN" access="RW" reset_value="0" description="Touch Sensing Input Module Enable">
+      <alias type="CMSIS" value="TSI_GENCS_TSIEN(x)"/>
+      <bit_field_value name="GENCS_TSIEN_0b0" value="0b0" description="TSI module disabled."/>
+      <bit_field_value name="GENCS_TSIEN_0b1" value="0b1" description="TSI module enabled."/>
+    </bit_field>
+    <bit_field offset="8" width="5" name="NSCN" access="RW" reset_value="0" description="NSCN">
+      <alias type="CMSIS" value="TSI_GENCS_NSCN(x)"/>
+      <bit_field_value name="GENCS_NSCN_0b00000" value="0b00000" description="Once per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b00001" value="0b00001" description="Twice per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b00010" value="0b00010" description="3 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b00011" value="0b00011" description="4 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b00100" value="0b00100" description="5 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b00101" value="0b00101" description="6 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b00110" value="0b00110" description="7 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b00111" value="0b00111" description="8 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b01000" value="0b01000" description="9 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b01001" value="0b01001" description="10 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b01010" value="0b01010" description="11 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b01011" value="0b01011" description="12 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b01100" value="0b01100" description="13 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b01101" value="0b01101" description="14 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b01110" value="0b01110" description="15 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b01111" value="0b01111" description="16 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b10000" value="0b10000" description="17 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b10001" value="0b10001" description="18 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b10010" value="0b10010" description="19 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b10011" value="0b10011" description="20 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b10100" value="0b10100" description="21 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b10101" value="0b10101" description="22 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b10110" value="0b10110" description="23 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b10111" value="0b10111" description="24 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b11000" value="0b11000" description="25 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b11001" value="0b11001" description="26 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b11010" value="0b11010" description="27 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b11011" value="0b11011" description="28 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b11100" value="0b11100" description="29 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b11101" value="0b11101" description="30 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b11110" value="0b11110" description="31 times per electrode"/>
+      <bit_field_value name="GENCS_NSCN_0b11111" value="0b11111" description="32 times per electrode"/>
+    </bit_field>
+    <bit_field offset="13" width="3" name="PS" access="RW" reset_value="0" description="PS">
+      <alias type="CMSIS" value="TSI_GENCS_PS(x)"/>
+      <bit_field_value name="GENCS_PS_0b000" value="0b000" description="Electrode Oscillator Frequency divided by 1"/>
+      <bit_field_value name="GENCS_PS_0b001" value="0b001" description="Electrode Oscillator Frequency divided by 2"/>
+      <bit_field_value name="GENCS_PS_0b010" value="0b010" description="Electrode Oscillator Frequency divided by 4"/>
+      <bit_field_value name="GENCS_PS_0b011" value="0b011" description="Electrode Oscillator Frequency divided by 8"/>
+      <bit_field_value name="GENCS_PS_0b100" value="0b100" description="Electrode Oscillator Frequency divided by 16"/>
+      <bit_field_value name="GENCS_PS_0b101" value="0b101" description="Electrode Oscillator Frequency divided by 32"/>
+      <bit_field_value name="GENCS_PS_0b110" value="0b110" description="Electrode Oscillator Frequency divided by 64"/>
+      <bit_field_value name="GENCS_PS_0b111" value="0b111" description="Electrode Oscillator Frequency divided by 128"/>
+    </bit_field>
+    <bit_field offset="16" width="3" name="EXTCHRG" access="RW" reset_value="0" description="EXTCHRG">
+      <alias type="CMSIS" value="TSI_GENCS_EXTCHRG(x)"/>
+      <bit_field_value name="GENCS_EXTCHRG_0b000" value="0b000" description="500 nA."/>
+      <bit_field_value name="GENCS_EXTCHRG_0b001" value="0b001" description="1 uA."/>
+      <bit_field_value name="GENCS_EXTCHRG_0b010" value="0b010" description="2 uA."/>
+      <bit_field_value name="GENCS_EXTCHRG_0b011" value="0b011" description="4 uA."/>
+      <bit_field_value name="GENCS_EXTCHRG_0b100" value="0b100" description="8 uA."/>
+      <bit_field_value name="GENCS_EXTCHRG_0b101" value="0b101" description="16 uA."/>
+      <bit_field_value name="GENCS_EXTCHRG_0b110" value="0b110" description="32 uA."/>
+      <bit_field_value name="GENCS_EXTCHRG_0b111" value="0b111" description="64 uA."/>
+    </bit_field>
+    <bit_field offset="19" width="2" name="DVOLT" access="RW" reset_value="0" description="DVOLT">
+      <alias type="CMSIS" value="TSI_GENCS_DVOLT(x)"/>
+      <bit_field_value name="GENCS_DVOLT_0b00" value="0b00" description="DV = 1.026 V; VP = 1.328 V; Vm = 0.302 V."/>
+      <bit_field_value name="GENCS_DVOLT_0b01" value="0b01" description="DV = 0.592 V; VP = 1.111 V; Vm = 0.519 V."/>
+      <bit_field_value name="GENCS_DVOLT_0b10" value="0b10" description="DV = 0.342 V; VP = 0.986 V; Vm = 0.644 V."/>
+      <bit_field_value name="GENCS_DVOLT_0b11" value="0b11" description="DV = 0.197 V; VP = 0.914 V; Vm = 0.716 V."/>
+    </bit_field>
+    <bit_field offset="21" width="3" name="REFCHRG" access="RW" reset_value="0" description="REFCHRG">
+      <alias type="CMSIS" value="TSI_GENCS_REFCHRG(x)"/>
+      <bit_field_value name="GENCS_REFCHRG_0b000" value="0b000" description="500 nA."/>
+      <bit_field_value name="GENCS_REFCHRG_0b001" value="0b001" description="1 uA."/>
+      <bit_field_value name="GENCS_REFCHRG_0b010" value="0b010" description="2 uA."/>
+      <bit_field_value name="GENCS_REFCHRG_0b011" value="0b011" description="4 uA."/>
+      <bit_field_value name="GENCS_REFCHRG_0b100" value="0b100" description="8 uA."/>
+      <bit_field_value name="GENCS_REFCHRG_0b101" value="0b101" description="16 uA."/>
+      <bit_field_value name="GENCS_REFCHRG_0b110" value="0b110" description="32 uA."/>
+      <bit_field_value name="GENCS_REFCHRG_0b111" value="0b111" description="64 uA."/>
+    </bit_field>
+    <bit_field offset="24" width="4" name="MODE" access="RW" reset_value="0" description="TSI analog modes setup and status bits.">
+      <alias type="CMSIS" value="TSI_GENCS_MODE(x)"/>
+      <bit_field_value name="GENCS_MODE_0b0000" value="0b0000" description="Set TSI in capacitive sensing(non-noise detection) mode."/>
+      <bit_field_value name="GENCS_MODE_0b0100" value="0b0100" description="Set TSI analog to work in single threshold noise detection mode and the frequency limitation circuit is disabled."/>
+      <bit_field_value name="GENCS_MODE_0b1000" value="0b1000" description="Set TSI analog to work in single threshold noise detection mode and the frequency limitation circuit is enabled to work in higher frequencies operations."/>
+      <bit_field_value name="GENCS_MODE_0b1100" value="0b1100" description="Set TSI analog to work in automatic noise detection mode."/>
+    </bit_field>
+    <bit_field offset="28" width="1" name="ESOR" access="RW" reset_value="0" description="End-of-scan or Out-of-Range Interrupt Selection">
+      <alias type="CMSIS" value="TSI_GENCS_ESOR(x)"/>
+      <bit_field_value name="GENCS_ESOR_0b0" value="0b0" description="Out-of-range interrupt is allowed."/>
+      <bit_field_value name="GENCS_ESOR_0b1" value="0b1" description="End-of-scan interrupt is allowed."/>
+    </bit_field>
+    <reserved_bit_field offset="29" width="2" reset_value="0"/>
+    <bit_field offset="31" width="1" name="OUTRGF" access="W1C" reset_value="0" description="Out of Range Flag.">
+      <alias type="CMSIS" value="TSI_GENCS_OUTRGF(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x4" width="32" name="DATA" description="TSI DATA Register">
+    <alias type="CMSIS" value="DATA"/>
+    <bit_field offset="0" width="16" name="TSICNT" access="RO" reset_value="0" description="TSI Conversion Counter Value">
+      <alias type="CMSIS" value="TSI_DATA_TSICNT(x)"/>
+    </bit_field>
+    <reserved_bit_field offset="16" width="6" reset_value="0"/>
+    <bit_field offset="22" width="1" name="SWTS" access="WORZ" reset_value="0" description="Software Trigger Start">
+      <alias type="CMSIS" value="TSI_DATA_SWTS(x)"/>
+      <bit_field_value name="DATA_SWTS_0b0" value="0b0" description="No effect."/>
+      <bit_field_value name="DATA_SWTS_0b1" value="0b1" description="Start a scan to determine which channel is specified by TSI_DATA[TSICH]."/>
+    </bit_field>
+    <bit_field offset="23" width="1" name="DMAEN" access="RW" reset_value="0" description="DMA Transfer Enabled">
+      <alias type="CMSIS" value="TSI_DATA_DMAEN(x)"/>
+      <bit_field_value name="DATA_DMAEN_0b0" value="0b0" description="Interrupt is selected when the interrupt enable bit is set and the corresponding TSI events assert."/>
+      <bit_field_value name="DATA_DMAEN_0b1" value="0b1" description="DMA transfer request is selected when the interrupt enable bit is set and the corresponding TSI events assert."/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="4" reset_value="0"/>
+    <bit_field offset="28" width="4" name="TSICH" access="RW" reset_value="0" description="TSICH">
+      <alias type="CMSIS" value="TSI_DATA_TSICH(x)"/>
+      <bit_field_value name="DATA_TSICH_0b0000" value="0b0000" description="Channel 0."/>
+      <bit_field_value name="DATA_TSICH_0b0001" value="0b0001" description="Channel 1."/>
+      <bit_field_value name="DATA_TSICH_0b0010" value="0b0010" description="Channel 2."/>
+      <bit_field_value name="DATA_TSICH_0b0011" value="0b0011" description="Channel 3."/>
+      <bit_field_value name="DATA_TSICH_0b0100" value="0b0100" description="Channel 4."/>
+      <bit_field_value name="DATA_TSICH_0b0101" value="0b0101" description="Channel 5."/>
+      <bit_field_value name="DATA_TSICH_0b0110" value="0b0110" description="Channel 6."/>
+      <bit_field_value name="DATA_TSICH_0b0111" value="0b0111" description="Channel 7."/>
+      <bit_field_value name="DATA_TSICH_0b1000" value="0b1000" description="Channel 8."/>
+      <bit_field_value name="DATA_TSICH_0b1001" value="0b1001" description="Channel 9."/>
+      <bit_field_value name="DATA_TSICH_0b1010" value="0b1010" description="Channel 10."/>
+      <bit_field_value name="DATA_TSICH_0b1011" value="0b1011" description="Channel 11."/>
+      <bit_field_value name="DATA_TSICH_0b1100" value="0b1100" description="Channel 12."/>
+      <bit_field_value name="DATA_TSICH_0b1101" value="0b1101" description="Channel 13."/>
+      <bit_field_value name="DATA_TSICH_0b1110" value="0b1110" description="Channel 14."/>
+      <bit_field_value name="DATA_TSICH_0b1111" value="0b1111" description="Channel 15."/>
+    </bit_field>
+  </register>
+  <register offset="0x8" width="32" name="TSHD" description="TSI Threshold Register">
+    <alias type="CMSIS" value="TSHD"/>
+    <bit_field offset="0" width="16" name="THRESL" access="RW" reset_value="0" description="TSI Wakeup Channel Low-threshold">
+      <alias type="CMSIS" value="TSI_TSHD_THRESL(x)"/>
+    </bit_field>
+    <bit_field offset="16" width="16" name="THRESH" access="RW" reset_value="0" description="TSI Wakeup Channel High-threshold">
+      <alias type="CMSIS" value="TSI_TSHD_THRESH(x)"/>
+    </bit_field>
+  </register>
+</regs:peripheral>

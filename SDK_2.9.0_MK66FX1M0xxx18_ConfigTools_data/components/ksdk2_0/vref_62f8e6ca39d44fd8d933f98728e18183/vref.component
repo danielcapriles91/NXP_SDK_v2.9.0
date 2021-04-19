@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="vref" label="VREF" global_only="false" category="Peripheral driver" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <sw_comp_ref name="platform.drivers.vref" version="2.1.0"/>
+   <description>Voltage Reference (VREF)</description>
+   <mode id="vref" label="General">
+      <description>General mode of voltage reference.</description>
+      <config_set_refs>
+         <config_set_ref>fsl_vref</config_set_ref>
+      </config_set_refs>
+      <master_peripheral exclusive="true">
+         <peripheral_type>VREF</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="fsl_vref" label="General configuration" from_source="fsl_vref.h">
+      <description>general mode of vref</description>
+      <validation/>
+      <generated_types>
+         <enum id="vref_buffer_mode_t" label="VREF modes" from="_vref_buffer_mode">
+            <item id="kVREF_ModeBandgapOnly"  label="Bandgap on only, for stabilization and startup"/>
+            <item id="kVREF_ModeHighPowerBuffer" label="High-power buffer mode enabled" available="(featureDefined(`FSL_FEATURE_VREF_MODE_LV_TYPE`) &amp;&amp; getFeature(`FSL_FEATURE_VREF_MODE_LV_TYPE`))"/>
+            <item id="kVREF_ModeLowPowerBuffer" label="Low-power buffer mode enabled Tight regulation buffer enabled" available="(featureDefined(`FSL_FEATURE_VREF_MODE_LV_TYPE`) &amp;&amp; getFeature(`FSL_FEATURE_VREF_MODE_LV_TYPE`))"/>
+         </enum>
+         <struct id="vref_config_t" label="The description structure for the VREF module" from="_vref_config">
+            <reference id="bufferMode" label="Buffer mode selection" type="vref_buffer_mode_t">
+               <description>Buffer mode selection</description>
+            </reference>
+            <bool id="enableLowRef" label="Set VREFL (0.4 V) reference buffer enable or disable" available="(featureDefined(`FSL_FEATURE_VREF_HAS_LOW_REFERENCE`) &amp;&amp; getFeature(`FSL_FEATURE_VREF_HAS_LOW_REFERENCE`))">
+               <description>Set VREFL (0.4 V) reference buffer enable or disable</description>
+            </bool>
+            <bool id="enableExternalVoltRef" label="Select external voltage reference or not (internal)" available="(featureDefined(`FSL_FEATURE_VREF_HAS_LOW_REFERENCE`) &amp;&amp; getFeature(`FSL_FEATURE_VREF_HAS_LOW_REFERENCE`))">
+               <description>Select external voltage reference or not (internal)</description>
+            </bool>
+            <bool id="enable2V1VoltRef" label="Enable Internal Voltage Reference (2.1V)" available="(featureDefined(`FSL_FEATURE_VREF_HAS_TRM4`) &amp;&amp; getFeature(`FSL_FEATURE_VREF_HAS_TRM4`))">
+               <description>Enable Internal Voltage Reference (2.1V)</description>
+            </bool>
+         </struct>
+      </generated_types>
+      <user_types>        
+         <enum id="vref_buffer_mode_t" label="VREF modes" from="_vref_buffer_mode">
+            <item id="kVREF_ModeBandgapOnly" value="0U" label="Bandgap only"/>
+            <item id="kVREF_ModeHighPowerBuffer" value="1U" label="High-power buffer" available="(featureDefined(`FSL_FEATURE_VREF_MODE_LV_TYPE`) &amp;&amp; getFeature(`FSL_FEATURE_VREF_MODE_LV_TYPE`))"/>
+            <item id="kVREF_ModeLowPowerBuffer" value="2U" label="Low-power buffer" available="(featureDefined(`FSL_FEATURE_VREF_MODE_LV_TYPE`) &amp;&amp; getFeature(`FSL_FEATURE_VREF_MODE_LV_TYPE`))"/>
+            <item id="kVREF_ModeTightRegulationBuffer" value="2U" label="Tight regulation buffer" available="(!(featureDefined(`FSL_FEATURE_VREF_MODE_LV_TYPE`) &amp;&amp; getFeature(`FSL_FEATURE_VREF_MODE_LV_TYPE`)))"/>
+         </enum>         
+         <struct id="vref_config_t" label="The description structure for the VREF module" from="_vref_config" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+            <reference id="bufferMode" label="Buffer mode selection" type="vref_buffer_mode_t">
+               <description>Buffer mode selection</description>
+            </reference>
+            <bool id="enableLowRef" label="Reference buffer" available="(featureDefined(`FSL_FEATURE_VREF_HAS_LOW_REFERENCE`) &amp;&amp; getFeature(`FSL_FEATURE_VREF_HAS_LOW_REFERENCE`))">
+               <description>reference buffer</description>
+            </bool>
+            <bool id="enableExternalVoltRef" label="External voltage reference" available="(featureDefined(`FSL_FEATURE_VREF_HAS_LOW_REFERENCE`) &amp;&amp; getFeature(`FSL_FEATURE_VREF_HAS_LOW_REFERENCE`))">
+               <description>Select external voltage reference</description>
+            </bool>
+            <bool id="enable2V1VoltRef" label="Internal Voltage Reference (2.1V)" available="(featureDefined(`FSL_FEATURE_VREF_HAS_TRM4`) &amp;&amp; getFeature(`FSL_FEATURE_VREF_HAS_TRM4`))">
+               <description>Internal Voltage Reference</description>
+            </bool>
+         </struct>         
+      </user_types>
+      <settings>
+         <reference type="vref_config_t" id="vref_config" label="VREF configuration"  options="UI_LABEL_HIDDEN" ></reference>
+         <bool id="vref_enable_trim" label="Initialize trim value">
+            <description>When enabled TRIM register will be initialized during component initialization.</description>
+         </bool>
+         <integer type="uint8_t" min_expr="0" max_expr="63" id="vref_trim" label="Trim value" available="$parent.vref_enable_trim.value()">
+            <description>These bits change the resulting voltage by approximately ± 0.5 mV for each step. 0 results in minimum value, 63 in maximum.</description>
+         </integer>    
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="filename">fsl_vref.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <fragment id="define">
+               <param id="name" expr="toUpperCase($configSet.inst_ID.getValue() + `_PERIPHERAL`)"/>
+               <param id="value" expr="$instance.getPeripheral()"/>
+               <param id="description" expr="`Alias for ` + $instance.getPeripheral() + ` peripheral`"></param>
+            </fragment>
+            <fragment id="define" if_expr="$this.vref_enable_trim.value()">
+               <param id="name" expr="toUpperCase($configSet.inst_ID.getValue() + `_INITIAL_TRIM`)"/>
+               <param id="value" expr="$this.vref_trim.value() + `U`"/>
+               <param id="description" expr="`Alias for ` + $instance.getPeripheral() + ` initial trim value`"></param>
+            </fragment>
+         </section>
+         <section target="global_vars">
+            <fragment id="const_struct" apply_to="$this.vref_config">
+               <param id="name" expr="$configSet.inst_ID.getValue() + `_config`"/>
+               <param id="type">vref_config_t</param>
+            </fragment>
+         </section>
+         <section target="global_vars_extern">
+            <fragment id="extern_const">
+               <param id="name" expr="$configSet.inst_ID.getValue() + `_config`"/>
+               <param id="type">vref_config_t</param>
+            </fragment>
+         </section>
+         <section target="init_function_body">
+            <fragment id="init_line">
+               <param id="code" expr="`VREF_Init(` + toUpperCase($configSet.inst_ID.getValue() + `_PERIPHERAL, &amp;`) + $configSet.inst_ID.getValue() + `_config);`"></param>
+               <param id="description">Initialize VREF module</param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <fragment id="init_line" if_expr="$this.vref_enable_trim.value()">
+               <param id="code" expr="`VREF_SetTrimVal(` + toUpperCase($configSet.inst_ID.getValue() + `_PERIPHERAL,` +  $configSet.inst_ID.getValue() + `_INITIAL_TRIM`) + `);`"></param>
+               <param id="description">Change TRIM register value</param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+         </section>
+      </code>
+      <quick_selections>
+         <quick_selection id="QS_VREF" label="Default">
+            <description>Default VREF configuration</description>
+            <set id="vref_config.bufferMode">kVREF_ModeBandgapOnly</set>
+            <set id="vref_config.enableLowRef">false</set>
+            <set id="vref_config.enableExternalVoltRef">false</set>
+            <set id="vref_config.enable2V1VoltRef">false</set>
+            <set id="vref_enable_trim_t">false</set>
+            <set id="vref_trim_t">32</set>
+         </quick_selection>
+         <default>QS_VREF</default>
+      </quick_selections>
+   </config_set>
+</component:config_component>

@@ -1,0 +1,208 @@
+<?xml version="1.0"?>
+<clocks:component xmlns:clocks="http://apif.freescale.net/schemas/clocks/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://apif.freescale.net/schemas/clocks/1.1 http://apif.freescale.net/schemas/clocks/1.1/clocks.xsd" id="RTC">
+  <instance_header>
+    <instance_description>Clock model for the RTC module oscillator (parameterized, shared accross all Kinetis parts)</instance_description>
+  </instance_header>
+  <interface>
+    <output_clock_signal id="RTC1HzCLK" name="RTC 1Hz clock"/>
+    <output_clock_signal id="RTC32KCLK" name="RTC 32kHz clock"/>
+    <pin id="EXTAL32" name="EXTAL32" direction="in">
+      <peripheral_signal_ref signal="RTC.EXTAL32"/>
+    </pin>
+    <pin id="XTAL32" name="XTAL32" direction="out">
+      <peripheral_signal_ref signal="RTC.XTAL32"/>
+    </pin>
+  </interface>
+  <implementation>
+    <clock_source id="RTC32kHz" name="RTC32kHz" description="RTC 32kHz output">
+      <external_source default_freq="32768 Hz">
+        <pin id="EXTAL32"/>
+        <pin id="XTAL32"/>
+        <range min_freq="32768 Hz" max_freq="32768 Hz"/>
+      </external_source>
+      <enable cond_expr="CR[OSCE] == 1" description="The RTC oscillator can be enabled by the {{RTC_CR_OSCE_CFG}} settings."/>
+      <configuration_element id="RTC_CR_OSCE_CFG" name="RTC 32kHz oscillator" description="Enable 32kHz oscillator of the RTC.">
+        <default value="Disabled"/>
+        <item id="Enabled" description="Enabled">
+          <assigns>
+            <assign register="RTC::CR" bit_field="OSCE" value="1"/>
+          </assigns>
+        </item>
+        <item id="Disabled" description="Disabled">
+          <assigns>
+            <assign register="RTC::CR" bit_field="OSCE" value="0"/>
+          </assigns>
+        </item>
+      </configuration_element>
+      <configuration_element id="RTC_CR_CLKO_CFG" name="RTC32KCLK output" description="Enable RTC 32kHz clock output of the RTC.">
+        <default value="Enabled"/>
+        <item id="Enabled" description="Enabled">
+          <assigns>
+            <assign register="RTC::CR" bit_field="CLKO" value="0"/>
+          </assigns>
+        </item>
+        <item id="Disabled" description="Disabled">
+          <assigns>
+            <assign register="RTC::CR" bit_field="CLKO" value="1"/>
+          </assigns>
+        </item>
+      </configuration_element>
+      <configuration_element id="RTC_CR_OSC_CAP_LOAD_CFG" name="RTC Oscillator Capacity Load">
+        <default value="SC0PF"/>
+        <item id="SC0PF" description="0 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="0"/>
+            <assign register="CR" bit_field="SC4P" value="0"/>
+            <assign register="CR" bit_field="SC8P" value="0"/>
+            <assign register="CR" bit_field="SC16P" value="0"/>
+          </assigns>
+        </item>
+        <item id="SC2PF" description="2 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="1"/>
+            <assign register="CR" bit_field="SC4P" value="0"/>
+            <assign register="CR" bit_field="SC8P" value="0"/>
+            <assign register="CR" bit_field="SC16P" value="0"/>
+          </assigns>
+        </item>
+        <item id="SC4PF" description="4 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="0"/>
+            <assign register="CR" bit_field="SC4P" value="1"/>
+            <assign register="CR" bit_field="SC8P" value="0"/>
+            <assign register="CR" bit_field="SC16P" value="0"/>
+          </assigns>
+        </item>
+        <item id="SC6PF" description="6 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="1"/>
+            <assign register="CR" bit_field="SC4P" value="1"/>
+            <assign register="CR" bit_field="SC8P" value="0"/>
+            <assign register="CR" bit_field="SC16P" value="0"/>
+          </assigns>
+        </item>
+        <item id="SC8PF" description="8 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="0"/>
+            <assign register="CR" bit_field="SC4P" value="0"/>
+            <assign register="CR" bit_field="SC8P" value="1"/>
+            <assign register="CR" bit_field="SC16P" value="0"/>
+          </assigns>
+        </item>
+        <item id="SC10PF" description="10 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="1"/>
+            <assign register="CR" bit_field="SC4P" value="0"/>
+            <assign register="CR" bit_field="SC8P" value="1"/>
+            <assign register="CR" bit_field="SC16P" value="0"/>
+          </assigns>
+        </item>
+        <item id="SC12PF" description="12 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="0"/>
+            <assign register="CR" bit_field="SC4P" value="1"/>
+            <assign register="CR" bit_field="SC8P" value="1"/>
+            <assign register="CR" bit_field="SC16P" value="0"/>
+          </assigns>
+        </item>
+        <item id="SC14PF" description="14 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="1"/>
+            <assign register="CR" bit_field="SC4P" value="1"/>
+            <assign register="CR" bit_field="SC8P" value="1"/>
+            <assign register="CR" bit_field="SC16P" value="0"/>
+          </assigns>
+        </item>
+        <item id="SC16PF" description="16 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="0"/>
+            <assign register="CR" bit_field="SC4P" value="0"/>
+            <assign register="CR" bit_field="SC8P" value="0"/>
+            <assign register="CR" bit_field="SC16P" value="1"/>
+          </assigns>
+        </item>
+        <item id="SC18PF" description="18 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="1"/>
+            <assign register="CR" bit_field="SC4P" value="0"/>
+            <assign register="CR" bit_field="SC8P" value="0"/>
+            <assign register="CR" bit_field="SC16P" value="1"/>
+          </assigns>
+        </item>
+        <item id="SC20PF" description="20 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="0"/>
+            <assign register="CR" bit_field="SC4P" value="1"/>
+            <assign register="CR" bit_field="SC8P" value="0"/>
+            <assign register="CR" bit_field="SC16P" value="1"/>
+          </assigns>
+        </item>
+        <item id="SC22PF" description="22 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="1"/>
+            <assign register="CR" bit_field="SC4P" value="1"/>
+            <assign register="CR" bit_field="SC8P" value="0"/>
+            <assign register="CR" bit_field="SC16P" value="1"/>
+          </assigns>
+        </item>
+        <item id="SC24PF" description="24 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="0"/>
+            <assign register="CR" bit_field="SC4P" value="0"/>
+            <assign register="CR" bit_field="SC8P" value="1"/>
+            <assign register="CR" bit_field="SC16P" value="1"/>
+          </assigns>
+        </item>
+        <item id="SC26PF" description="26 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="1"/>
+            <assign register="CR" bit_field="SC4P" value="0"/>
+            <assign register="CR" bit_field="SC8P" value="1"/>
+            <assign register="CR" bit_field="SC16P" value="1"/>
+          </assigns>
+        </item>
+        <item id="SC28PF" description="28 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="0"/>
+            <assign register="CR" bit_field="SC4P" value="1"/>
+            <assign register="CR" bit_field="SC8P" value="1"/>
+            <assign register="CR" bit_field="SC16P" value="1"/>
+          </assigns>
+        </item>
+        <item id="SC30PF" description="30 pF">
+          <assigns>
+            <assign register="CR" bit_field="SC2P" value="1"/>
+            <assign register="CR" bit_field="SC4P" value="1"/>
+            <assign register="CR" bit_field="SC8P" value="1"/>
+            <assign register="CR" bit_field="SC16P" value="1"/>
+          </assigns>
+        </item>
+      </configuration_element>
+      <configuration_element id="RTCClkConfig" name="RTC initialization">
+        <default value="yes"/>
+        <item id="yes" description="yes">
+          <long_description>
+                        Initialization source code is generated for the RTC device (control register).
+                    </long_description>
+        </item>
+        <item id="user_code" description="user code">
+          <long_description>
+                        Declaration of initialization function is generated only. User code must be provided for the RTC device initialization.
+                    </long_description>
+        </item>
+      </configuration_element>
+    </clock_source>
+    <prescaler id="RTC1HzCLK_DIV" name="RTC 1Hz prescaler" description="RTC second counter prescaler (fixed)">
+      <input signal="RTC32kHz.clk"/>
+      <divide expr="32768"/>
+      <enable cond_expr="CR[OSCE] == 1"/>
+    </prescaler>
+    <map_output id="RTC1HzCLK">
+      <input signal="RTC1HzCLK_DIV.clk"/>
+    </map_output>
+    <map_output id="RTC32KCLK">
+      <input signal="RTC32kHz.clk"/>
+      <enable cond_expr="CR[CLKO] == 0"/>
+    </map_output>
+  </implementation>
+</clocks:component>

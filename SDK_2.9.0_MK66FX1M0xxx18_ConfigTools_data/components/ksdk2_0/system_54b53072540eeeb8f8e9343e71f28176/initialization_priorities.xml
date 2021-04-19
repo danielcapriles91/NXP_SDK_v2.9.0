@@ -1,0 +1,41 @@
+<initialization_priorities:priorities
+    xsi:schemaLocation="http://swtools.freescale.net/XSD/initialization_priorities/1.0 http://swtools.freescale.net/XSD/initialization_priorities/1.0/initialization_priorities-9.0.xsd"
+    xmlns:initialization_priorities="http://swtools.freescale.net/XSD/initialization_priorities/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    default_group="default_priority_group">
+    <!-- Selection of the priorities is done by using groups. Each component can be assigned to a group. Component that are not specified here (unassigned) are assigned to the default group (see the atttribute default_group).
+        
+        Priority values:
+        - 64-bits signed integer is used for the priority value (range is from -2**63 to 2**63-1
+        - higher priority value means higher initialization priority, i.e. the component with the highest priority is initialized as first and the component with the lowest priority is initialized as the last.
+        
+       Note: The default_priority_group (priority value 0) is used for peripheral components. This group is used as the default_group.   
+     -->
+    <group id="system_priority_group" label="System" priority="100">
+        <component>sim_reg</component>
+    </group>
+    <group id="dma_priority_group" label="DMA" priority="50">
+        <component>dma</component>
+        <component>edma</component>
+        <component>lpc_dma</component>
+    </group>
+    <group id="higher_priority_group" label="Pre-init" priority="10">
+        <component>snvs_lp</component>
+    </group>
+    <group id="default_priority_group" label="Default" priority="0">
+        <description>Standard priority group</description>
+    </group>
+    <group id="lower_priority_group" label="Post-init" priority="-10">
+        <description>Lower priority group</description>
+        <component>documentation</component>
+        <component>capt</component>
+    </group>
+    <group id="middleware_priority_group" label="Middleware and utilities" priority="-20">
+        <description>Middleware and utilities priority group</description>
+        <component>usb</component>
+        <component>littlefs</component>
+        <component>fatfs</component>
+        <component>freemaster</component>
+        <component>debug_console</component>
+        <component>camera</component>
+    </group>
+</initialization_priorities:priorities>

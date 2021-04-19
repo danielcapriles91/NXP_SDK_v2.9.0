@@ -1,0 +1,651 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0x8" width="32" name="SCB_ACTLR" description="Auxiliary Control Register,">
+    <bit_field offset="0" width="1" name="DISMCYCINT" access="RW" reset_value="0" description="Disables interruption of multi-cycle instructions."/>
+    <bit_field offset="1" width="1" name="DISDEFWBUF" access="RW" reset_value="0" description="Disables write buffer use during default memory map accesses."/>
+    <bit_field offset="2" width="1" name="DISFOLD" access="RW" reset_value="0" description="Disables folding of IT instructions."/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xD00" width="32" name="SCB_CPUID" description="CPUID Base Register">
+    <bit_field offset="0" width="4" name="REVISION" access="RO" reset_value="0" description="Indicates patch release: 0x0 = Patch 0"/>
+    <bit_field offset="4" width="12" name="PARTNO" access="RO" reset_value="0xC24" description="Indicates part number"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0x1"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0x1"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0x1"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0x1"/>
+    <bit_field offset="20" width="4" name="VARIANT" access="RO" reset_value="0" description="Indicates processor revision: 0x2 = Revision 2"/>
+    <bit_field offset="24" width="8" name="IMPLEMENTER" access="RO" reset_value="0x41" description="Implementer code"/>
+  </register>
+  <register offset="0xD04" width="32" name="SCB_ICSR" description="Interrupt Control and State Register">
+    <bit_field offset="0" width="9" name="VECTACTIVE" access="RO" reset_value="0" description="Active exception number"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <bit_field offset="11" width="1" name="RETTOBASE" access="RO" reset_value="0" description="">
+      <bit_field_value name="SCB_ICSR_RETTOBASE_0b0" value="0b0" description="there are preempted active exceptions to execute"/>
+      <bit_field_value name="SCB_ICSR_RETTOBASE_0b1" value="0b1" description="there are no active exceptions, or the currently-executing exception is the only active exception"/>
+    </bit_field>
+    <bit_field offset="12" width="6" name="VECTPENDING" access="RO" reset_value="0" description="Exception number of the highest priority pending enabled exception"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <bit_field offset="22" width="1" name="ISRPENDING" access="RO" reset_value="0" description=""/>
+    <bit_field offset="23" width="1" name="ISRPREEMPT" access="RO" reset_value="0" description="">
+      <bit_field_value name="SCB_ICSR_ISRPREEMPT_0b0" value="0b0" description="Will not service"/>
+      <bit_field_value name="SCB_ICSR_ISRPREEMPT_0b1" value="0b1" description="Will service a pending exception"/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <bit_field offset="25" width="1" name="PENDSTCLR" access="WO" reset_value="0" description="">
+      <bit_field_value name="SCB_ICSR_PENDSTCLR_0b0" value="0b0" description="no effect"/>
+      <bit_field_value name="SCB_ICSR_PENDSTCLR_0b1" value="0b1" description="removes the pending state from the SysTick exception"/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="PENDSTSET" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_ICSR_PENDSTSET_0b0" value="0b0" description="write: no effect; read: SysTick exception is not pending"/>
+      <bit_field_value name="SCB_ICSR_PENDSTSET_0b1" value="0b1" description="write: changes SysTick exception state to pending; read: SysTick exception is pending"/>
+    </bit_field>
+    <bit_field offset="27" width="1" name="PENDSVCLR" access="WO" reset_value="0" description="">
+      <bit_field_value name="SCB_ICSR_PENDSVCLR_0b0" value="0b0" description="no effect"/>
+      <bit_field_value name="SCB_ICSR_PENDSVCLR_0b1" value="0b1" description="removes the pending state from the PendSV exception"/>
+    </bit_field>
+    <bit_field offset="28" width="1" name="PENDSVSET" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_ICSR_PENDSVSET_0b0" value="0b0" description="write: no effect; read: PendSV exception is not pending"/>
+      <bit_field_value name="SCB_ICSR_PENDSVSET_0b1" value="0b1" description="write: changes PendSV exception state to pending; read: PendSV exception is pending"/>
+    </bit_field>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <bit_field offset="31" width="1" name="NMIPENDSET" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_ICSR_NMIPENDSET_0b0" value="0b0" description="write: no effect; read: NMI exception is not pending"/>
+      <bit_field_value name="SCB_ICSR_NMIPENDSET_0b1" value="0b1" description="write: changes NMI exception state to pending; read: NMI exception is pending"/>
+    </bit_field>
+  </register>
+  <register offset="0xD08" width="32" name="SCB_VTOR" description="Vector Table Offset Register">
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <bit_field offset="7" width="25" name="TBLOFF" access="RW" reset_value="0" description="Vector table base offset"/>
+  </register>
+  <register offset="0xD0C" width="32" name="SCB_AIRCR" description="Application Interrupt and Reset Control Register">
+    <bit_field offset="0" width="1" name="VECTRESET" access="WO" reset_value="0" description=""/>
+    <bit_field offset="1" width="1" name="VECTCLRACTIVE" access="WO" reset_value="0" description=""/>
+    <bit_field offset="2" width="1" name="SYSRESETREQ" access="WO" reset_value="0" description="">
+      <bit_field_value name="SCB_AIRCR_SYSRESETREQ_0b0" value="0b0" description="no system reset request"/>
+      <bit_field_value name="SCB_AIRCR_SYSRESETREQ_0b1" value="0b1" description="asserts a signal to the outer system that requests a reset"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="3" name="PRIGROUP" access="RW" reset_value="0" description="Interrupt priority grouping field. This field determines the split of group priority from subpriority."/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <bit_field offset="15" width="1" name="ENDIANNESS" access="RO" reset_value="0" description="">
+      <bit_field_value name="SCB_AIRCR_ENDIANNESS_0b0" value="0b0" description="Little-endian"/>
+      <bit_field_value name="SCB_AIRCR_ENDIANNESS_0b1" value="0b1" description="Big-endian"/>
+    </bit_field>
+    <bit_field offset="16" width="16" name="VECTKEY" access="RW" reset_value="0xFA05" description="Register key"/>
+  </register>
+  <register offset="0xD10" width="32" name="SCB_SCR" description="System Control Register">
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <bit_field offset="1" width="1" name="SLEEPONEXIT" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_SCR_SLEEPONEXIT_0b0" value="0b0" description="o not sleep when returning to Thread mode"/>
+      <bit_field_value name="SCB_SCR_SLEEPONEXIT_0b1" value="0b1" description="enter sleep, or deep sleep, on return from an ISR"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="SLEEPDEEP" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_SCR_SLEEPDEEP_0b0" value="0b0" description="sleep"/>
+      <bit_field_value name="SCB_SCR_SLEEPDEEP_0b1" value="0b1" description="deep sleep"/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <bit_field offset="4" width="1" name="SEVONPEND" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_SCR_SEVONPEND_0b0" value="0b0" description="only enabled interrupts or events can wakeup the processor, disabled interrupts are excluded"/>
+      <bit_field_value name="SCB_SCR_SEVONPEND_0b1" value="0b1" description="enabled events and all interrupts, including disabled interrupts, can wakeup the processor"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xD14" width="32" name="SCB_CCR" description="Configuration and Control Register">
+    <bit_field offset="0" width="1" name="NONBASETHRDENA" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_CCR_NONBASETHRDENA_0b0" value="0b0" description="processor can enter Thread mode only when no exception is active"/>
+      <bit_field_value name="SCB_CCR_NONBASETHRDENA_0b1" value="0b1" description="processor can enter Thread mode from any level under the control of an EXC_RETURN value"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="USERSETMPEND" access="RW" reset_value="0" description="Enables unprivileged software access to the STIR">
+      <bit_field_value name="SCB_CCR_USERSETMPEND_0b0" value="0b0" description="disable"/>
+      <bit_field_value name="SCB_CCR_USERSETMPEND_0b1" value="0b1" description="enable"/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <bit_field offset="3" width="1" name="UNALIGN_TRP" access="RW" reset_value="0" description="Enables unaligned access traps">
+      <bit_field_value name="SCB_CCR_UNALIGN_TRP_0b0" value="0b0" description="do not trap unaligned halfword and word accesses"/>
+      <bit_field_value name="SCB_CCR_UNALIGN_TRP_0b1" value="0b1" description="trap unaligned halfword and word accesses"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="DIV_0_TRP" access="RW" reset_value="0" description="Enables faulting or halting when the processor executes an SDIV or UDIV instruction with a divisor of 0">
+      <bit_field_value name="SCB_CCR_DIV_0_TRP_0b0" value="0b0" description="do not trap divide by 0"/>
+      <bit_field_value name="SCB_CCR_DIV_0_TRP_0b1" value="0b1" description="trap divide by 0"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="BFHFNMIGN" access="RW" reset_value="0" description="Enables handlers with priority -1 or -2 to ignore data BusFaults caused by load and store instructions.">
+      <bit_field_value name="SCB_CCR_BFHFNMIGN_0b0" value="0b0" description="data bus faults caused by load and store instructions cause a lock-up"/>
+      <bit_field_value name="SCB_CCR_BFHFNMIGN_0b1" value="0b1" description="handlers running at priority -1 and -2 ignore data bus faults caused by load and store instructions"/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="STKALIGN" access="RW" reset_value="0" description="Indicates stack alignment on exception entry">
+      <bit_field_value name="SCB_CCR_STKALIGN_0b0" value="0b0" description="4-byte aligned"/>
+      <bit_field_value name="SCB_CCR_STKALIGN_0b1" value="0b1" description="8-byte aligned"/>
+    </bit_field>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xD18" width="32" name="SCB_SHPR1" description="System Handler Priority Register 1">
+    <bit_field offset="0" width="8" name="PRI_4" access="RW" reset_value="0" description="Priority of system handler 4, MemManage"/>
+    <bit_field offset="8" width="8" name="PRI_5" access="RW" reset_value="0" description="Priority of system handler 5, BusFault"/>
+    <bit_field offset="16" width="8" name="PRI_6" access="RW" reset_value="0" description="Priority of system handler 6, UsageFault"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xD1C" width="32" name="SCB_SHPR2" description="System Handler Priority Register 2">
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="8" name="PRI_11" access="RW" reset_value="0" description="Priority of system handler 11, SVCall"/>
+  </register>
+  <register offset="0xD20" width="32" name="SCB_SHPR3" description="System Handler Priority Register 3">
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <bit_field offset="16" width="8" name="PRI_14" access="RW" reset_value="0" description="Priority of system handler 14, PendSV"/>
+    <bit_field offset="24" width="8" name="PRI_15" access="RW" reset_value="0" description="Priority of system handler 15, SysTick exception"/>
+  </register>
+  <register offset="0xD24" width="32" name="SCB_SHCSR" description="System Handler Control and State Register">
+    <bit_field offset="0" width="1" name="MEMFAULTACT" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_SHCSR_MEMFAULTACT_0b0" value="0b0" description="exception is not active"/>
+      <bit_field_value name="SCB_SHCSR_MEMFAULTACT_0b1" value="0b1" description="exception is active"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="BUSFAULTACT" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_SHCSR_BUSFAULTACT_0b0" value="0b0" description="exception is not active"/>
+      <bit_field_value name="SCB_SHCSR_BUSFAULTACT_0b1" value="0b1" description="exception is active"/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <bit_field offset="3" width="1" name="USGFAULTACT" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_SHCSR_USGFAULTACT_0b0" value="0b0" description="exception is not active"/>
+      <bit_field_value name="SCB_SHCSR_USGFAULTACT_0b1" value="0b1" description="exception is active"/>
+    </bit_field>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <bit_field offset="7" width="1" name="SVCALLACT" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_SHCSR_SVCALLACT_0b0" value="0b0" description="exception is not active"/>
+      <bit_field_value name="SCB_SHCSR_SVCALLACT_0b1" value="0b1" description="exception is active"/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="MONITORACT" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_SHCSR_MONITORACT_0b0" value="0b0" description="exception is not active"/>
+      <bit_field_value name="SCB_SHCSR_MONITORACT_0b1" value="0b1" description="exception is active"/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <bit_field offset="10" width="1" name="PENDSVACT" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_SHCSR_PENDSVACT_0b0" value="0b0" description="exception is not active"/>
+      <bit_field_value name="SCB_SHCSR_PENDSVACT_0b1" value="0b1" description="exception is active"/>
+    </bit_field>
+    <bit_field offset="11" width="1" name="SYSTICKACT" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_SHCSR_SYSTICKACT_0b0" value="0b0" description="exception is not active"/>
+      <bit_field_value name="SCB_SHCSR_SYSTICKACT_0b1" value="0b1" description="exception is active"/>
+    </bit_field>
+    <bit_field offset="12" width="1" name="USGFAULTPENDED" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_SHCSR_USGFAULTPENDED_0b0" value="0b0" description="exception is not pending"/>
+      <bit_field_value name="SCB_SHCSR_USGFAULTPENDED_0b1" value="0b1" description="exception is pending"/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="MEMFAULTPENDED" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_SHCSR_MEMFAULTPENDED_0b0" value="0b0" description="exception is not pending"/>
+      <bit_field_value name="SCB_SHCSR_MEMFAULTPENDED_0b1" value="0b1" description="exception is pending"/>
+    </bit_field>
+    <bit_field offset="14" width="1" name="BUSFAULTPENDED" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_SHCSR_BUSFAULTPENDED_0b0" value="0b0" description="exception is not pending"/>
+      <bit_field_value name="SCB_SHCSR_BUSFAULTPENDED_0b1" value="0b1" description="exception is pending"/>
+    </bit_field>
+    <bit_field offset="15" width="1" name="SVCALLPENDED" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_SHCSR_SVCALLPENDED_0b0" value="0b0" description="exception is not pending"/>
+      <bit_field_value name="SCB_SHCSR_SVCALLPENDED_0b1" value="0b1" description="exception is pending"/>
+    </bit_field>
+    <bit_field offset="16" width="1" name="MEMFAULTENA" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_SHCSR_MEMFAULTENA_0b0" value="0b0" description="disable the exception"/>
+      <bit_field_value name="SCB_SHCSR_MEMFAULTENA_0b1" value="0b1" description="enable the exception"/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="BUSFAULTENA" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_SHCSR_BUSFAULTENA_0b0" value="0b0" description="disable the exception"/>
+      <bit_field_value name="SCB_SHCSR_BUSFAULTENA_0b1" value="0b1" description="enable the exception"/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="USGFAULTENA" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_SHCSR_USGFAULTENA_0b0" value="0b0" description="disable the exception"/>
+      <bit_field_value name="SCB_SHCSR_USGFAULTENA_0b1" value="0b1" description="enable the exception"/>
+    </bit_field>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xD28" width="32" name="SCB_CFSR" description="Configurable Fault Status Registers">
+    <bit_field offset="0" width="1" name="IACCVIOL" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_CFSR_IACCVIOL_0b0" value="0b0" description="no instruction access violation fault"/>
+      <bit_field_value name="SCB_CFSR_IACCVIOL_0b1" value="0b1" description="the processor attempted an instruction fetch from a location that does not permit execution"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="DACCVIOL" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_CFSR_DACCVIOL_0b0" value="0b0" description="no data access violation fault"/>
+      <bit_field_value name="SCB_CFSR_DACCVIOL_0b1" value="0b1" description="the processor attempted a load or store at a location that does not permit the operation"/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <bit_field offset="3" width="1" name="MUNSTKERR" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_CFSR_MUNSTKERR_0b0" value="0b0" description="no unstacking fault"/>
+      <bit_field_value name="SCB_CFSR_MUNSTKERR_0b1" value="0b1" description="unstack for an exception return has caused one or more access violations"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="MSTKERR" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_CFSR_MSTKERR_0b0" value="0b0" description="no stacking fault"/>
+      <bit_field_value name="SCB_CFSR_MSTKERR_0b1" value="0b1" description="stacking for an exception entry has caused one or more access violations"/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="MLSPERR" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_CFSR_MLSPERR_0b0" value="0b0" description="No MemManage fault occurred during floating-point lazy state preservation"/>
+      <bit_field_value name="SCB_CFSR_MLSPERR_0b1" value="0b1" description="A MemManage fault occurred during floating-point lazy state preservation"/>
+    </bit_field>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <bit_field offset="7" width="1" name="MMARVALID" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_CFSR_MMARVALID_0b0" value="0b0" description="value in MMAR is not a valid fault address"/>
+      <bit_field_value name="SCB_CFSR_MMARVALID_0b1" value="0b1" description="MMAR holds a valid fault address"/>
+    </bit_field>
+    <bit_field offset="8" width="1" name="IBUSERR" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_CFSR_IBUSERR_0b0" value="0b0" description="no instruction bus error"/>
+      <bit_field_value name="SCB_CFSR_IBUSERR_0b1" value="0b1" description="instruction bus error"/>
+    </bit_field>
+    <bit_field offset="9" width="1" name="PRECISERR" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_CFSR_PRECISERR_0b0" value="0b0" description="no precise data bus error"/>
+      <bit_field_value name="SCB_CFSR_PRECISERR_0b1" value="0b1" description="a data bus error has occurred, and the PC value stacked for the exception return points to the instruction that caused the fault"/>
+    </bit_field>
+    <bit_field offset="10" width="1" name="IMPRECISERR" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_CFSR_IMPRECISERR_0b0" value="0b0" description="no imprecise data bus error"/>
+      <bit_field_value name="SCB_CFSR_IMPRECISERR_0b1" value="0b1" description="a data bus error has occurred, but the return address in the stack frame is not related to the instruction that caused the error"/>
+    </bit_field>
+    <bit_field offset="11" width="1" name="UNSTKERR" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_CFSR_UNSTKERR_0b0" value="0b0" description="no unstacking fault"/>
+      <bit_field_value name="SCB_CFSR_UNSTKERR_0b1" value="0b1" description="unstack for an exception return has caused one or more BusFaults"/>
+    </bit_field>
+    <bit_field offset="12" width="1" name="STKERR" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_CFSR_STKERR_0b0" value="0b0" description="no stacking fault"/>
+      <bit_field_value name="SCB_CFSR_STKERR_0b1" value="0b1" description="stacking for an exception entry has caused one or more BusFaults"/>
+    </bit_field>
+    <bit_field offset="13" width="1" name="LSPERR" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_CFSR_LSPERR_0b0" value="0b0" description="No bus fault occurred during floating-point lazy state preservation"/>
+      <bit_field_value name="SCB_CFSR_LSPERR_0b1" value="0b1" description="A bus fault occurred during floating-point lazy state preservation"/>
+    </bit_field>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <bit_field offset="15" width="1" name="BFARVALID" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_CFSR_BFARVALID_0b0" value="0b0" description="value in BFAR is not a valid fault address"/>
+      <bit_field_value name="SCB_CFSR_BFARVALID_0b1" value="0b1" description="BFAR holds a valid fault address"/>
+    </bit_field>
+    <bit_field offset="16" width="1" name="UNDEFINSTR" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_CFSR_UNDEFINSTR_0b0" value="0b0" description="no undefined instruction UsageFault"/>
+      <bit_field_value name="SCB_CFSR_UNDEFINSTR_0b1" value="0b1" description="the processor has attempted to execute an undefined instruction"/>
+    </bit_field>
+    <bit_field offset="17" width="1" name="INVSTATE" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_CFSR_INVSTATE_0b0" value="0b0" description="no invalid state UsageFault"/>
+      <bit_field_value name="SCB_CFSR_INVSTATE_0b1" value="0b1" description="the processor has attempted to execute an instruction that makes illegal use of the EPSR"/>
+    </bit_field>
+    <bit_field offset="18" width="1" name="INVPC" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_CFSR_INVPC_0b0" value="0b0" description="no invalid PC load UsageFault"/>
+      <bit_field_value name="SCB_CFSR_INVPC_0b1" value="0b1" description="the processor has attempted an illegal load of EXC_RETURN to the PC"/>
+    </bit_field>
+    <bit_field offset="19" width="1" name="NOCP" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_CFSR_NOCP_0b0" value="0b0" description="no UsageFault caused by attempting to access a coprocessor"/>
+      <bit_field_value name="SCB_CFSR_NOCP_0b1" value="0b1" description="the processor has attempted to access a coprocessor"/>
+    </bit_field>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <bit_field offset="24" width="1" name="UNALIGNED" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_CFSR_UNALIGNED_0b0" value="0b0" description="no unaligned access fault, or unaligned access trapping not enabled"/>
+      <bit_field_value name="SCB_CFSR_UNALIGNED_0b1" value="0b1" description="the processor has made an unaligned memory access"/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="DIVBYZERO" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_CFSR_DIVBYZERO_0b0" value="0b0" description="no divide by zero fault, or divide by zero trapping not enabled"/>
+      <bit_field_value name="SCB_CFSR_DIVBYZERO_0b1" value="0b1" description="the processor has executed an SDIV or UDIV instruction with a divisor of 0"/>
+    </bit_field>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xD2C" width="32" name="SCB_HFSR" description="HardFault Status register">
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <bit_field offset="1" width="1" name="VECTTBL" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_HFSR_VECTTBL_0b0" value="0b0" description="no BusFault on vector table read"/>
+      <bit_field_value name="SCB_HFSR_VECTTBL_0b1" value="0b1" description="BusFault on vector table read"/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <bit_field offset="30" width="1" name="FORCED" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_HFSR_FORCED_0b0" value="0b0" description="no forced HardFault"/>
+      <bit_field_value name="SCB_HFSR_FORCED_0b1" value="0b1" description="forced HardFault"/>
+    </bit_field>
+    <bit_field offset="31" width="1" name="DEBUGEVT" access="RW" reset_value="0" description=""/>
+  </register>
+  <register offset="0xD30" width="32" name="SCB_DFSR" description="Debug Fault Status Register">
+    <bit_field offset="0" width="1" name="HALTED" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_DFSR_HALTED_0b0" value="0b0" description="No active halt request debug event"/>
+      <bit_field_value name="SCB_DFSR_HALTED_0b1" value="0b1" description="Halt request debug event active"/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="BKPT" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_DFSR_BKPT_0b0" value="0b0" description="No current breakpoint debug event"/>
+      <bit_field_value name="SCB_DFSR_BKPT_0b1" value="0b1" description="At least one current breakpoint debug event"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="DWTTRAP" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_DFSR_DWTTRAP_0b0" value="0b0" description="No current debug events generated by the DWT"/>
+      <bit_field_value name="SCB_DFSR_DWTTRAP_0b1" value="0b1" description="At least one current debug event generated by the DWT"/>
+    </bit_field>
+    <bit_field offset="3" width="1" name="VCATCH" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_DFSR_VCATCH_0b0" value="0b0" description="No Vector catch triggered"/>
+      <bit_field_value name="SCB_DFSR_VCATCH_0b1" value="0b1" description="Vector catch triggered"/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="EXTERNAL" access="RW" reset_value="0" description="">
+      <bit_field_value name="SCB_DFSR_EXTERNAL_0b0" value="0b0" description="No EDBGRQ debug event"/>
+      <bit_field_value name="SCB_DFSR_EXTERNAL_0b1" value="0b1" description="EDBGRQ debug event"/>
+    </bit_field>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <reserved_bit_field offset="20" width="1" reset_value="0"/>
+    <reserved_bit_field offset="21" width="1" reset_value="0"/>
+    <reserved_bit_field offset="22" width="1" reset_value="0"/>
+    <reserved_bit_field offset="23" width="1" reset_value="0"/>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xD34" width="32" name="SCB_MMFAR" description="MemManage Address Register">
+    <bit_field offset="0" width="32" name="ADDRESS" access="RW" reset_value="0" description="Address of MemManage fault location"/>
+  </register>
+  <register offset="0xD38" width="32" name="SCB_BFAR" description="BusFault Address Register">
+    <bit_field offset="0" width="32" name="ADDRESS" access="RW" reset_value="0" description="Address of the BusFault location"/>
+  </register>
+  <register offset="0xD3C" width="32" name="SCB_AFSR" description="Auxiliary Fault Status Register">
+    <bit_field offset="0" width="32" name="AUXFAULT" access="RW" reset_value="0" description="Latched version of the AUXFAULT inputs"/>
+  </register>
+  <register offset="0xD88" width="32" name="SCB_CPACR" description="Coprocessor Access Control Register">
+    <reserved_bit_field offset="0" width="1" reset_value="0"/>
+    <reserved_bit_field offset="1" width="1" reset_value="0"/>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <reserved_bit_field offset="5" width="1" reset_value="0"/>
+    <reserved_bit_field offset="6" width="1" reset_value="0"/>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <reserved_bit_field offset="8" width="1" reset_value="0"/>
+    <reserved_bit_field offset="9" width="1" reset_value="0"/>
+    <reserved_bit_field offset="10" width="1" reset_value="0"/>
+    <reserved_bit_field offset="11" width="1" reset_value="0"/>
+    <reserved_bit_field offset="12" width="1" reset_value="0"/>
+    <reserved_bit_field offset="13" width="1" reset_value="0"/>
+    <reserved_bit_field offset="14" width="1" reset_value="0"/>
+    <reserved_bit_field offset="15" width="1" reset_value="0"/>
+    <reserved_bit_field offset="16" width="1" reset_value="0"/>
+    <reserved_bit_field offset="17" width="1" reset_value="0"/>
+    <reserved_bit_field offset="18" width="1" reset_value="0"/>
+    <reserved_bit_field offset="19" width="1" reset_value="0"/>
+    <bit_field offset="20" width="2" name="CP10" access="RW" reset_value="0" description="Access privileges for coprocessor 10.">
+      <bit_field_value name="SCB_CPACR_CP10_0b00" value="0b00" description="Access denied. Any attempted access generates a NOCP UsageFault"/>
+      <bit_field_value name="SCB_CPACR_CP10_0b01" value="0b01" description="Privileged access only. An unprivileged access generates a NOCP fault."/>
+      <bit_field_value name="SCB_CPACR_CP10_0b10" value="0b10" description="Reserved. The result of any access is UNPREDICTABLE."/>
+      <bit_field_value name="SCB_CPACR_CP10_0b11" value="0b11" description="Full access."/>
+    </bit_field>
+    <bit_field offset="22" width="2" name="CP11" access="RW" reset_value="0" description="Access privileges for coprocessor 11.">
+      <bit_field_value name="SCB_CPACR_CP11_0b00" value="0b00" description="Access denied. Any attempted access generates a NOCP UsageFault"/>
+      <bit_field_value name="SCB_CPACR_CP11_0b01" value="0b01" description="Privileged access only. An unprivileged access generates a NOCP fault."/>
+      <bit_field_value name="SCB_CPACR_CP11_0b10" value="0b10" description="Reserved. The result of any access is UNPREDICTABLE."/>
+      <bit_field_value name="SCB_CPACR_CP11_0b11" value="0b11" description="Full access."/>
+    </bit_field>
+    <reserved_bit_field offset="24" width="1" reset_value="0"/>
+    <reserved_bit_field offset="25" width="1" reset_value="0"/>
+    <reserved_bit_field offset="26" width="1" reset_value="0"/>
+    <reserved_bit_field offset="27" width="1" reset_value="0"/>
+    <reserved_bit_field offset="28" width="1" reset_value="0"/>
+    <reserved_bit_field offset="29" width="1" reset_value="0"/>
+    <reserved_bit_field offset="30" width="1" reset_value="0"/>
+    <reserved_bit_field offset="31" width="1" reset_value="0"/>
+  </register>
+  <register offset="0xF34" width="32" name="SCB_FPCCR" description="Floating-point Context Control Register">
+    <bit_field offset="0" width="1" name="LSPACT" access="RW" reset_value="0" description="Lazy state preservation.">
+      <bit_field_value name="SCB_FPCCR_LSPACT_0b0" value="0b0" description="Lazy state preservation is not active."/>
+      <bit_field_value name="SCB_FPCCR_LSPACT_0b1" value="0b1" description="Lazy state preservation is active. floating-point stack frame has been allocated but saving state to it has been deferred."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="USER" access="RW" reset_value="0" description="Privilege level when the floating-point stack frame was allocated.">
+      <bit_field_value name="SCB_FPCCR_USER_0b0" value="0b0" description="Privilege level was not user when the floating-point stack frame was allocated."/>
+      <bit_field_value name="SCB_FPCCR_USER_0b1" value="0b1" description="Privilege level was user when the floating-point stack frame was allocated."/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="1" reset_value="0"/>
+    <bit_field offset="3" width="1" name="THREAD" access="RW" reset_value="0" description="Mode when the floating-point stack frame was allocated.">
+      <bit_field_value name="SCB_FPCCR_THREAD_0b0" value="0b0" description="Mode was not Thread Mode when the floating-point stack frame was allocated."/>
+      <bit_field_value name="SCB_FPCCR_THREAD_0b1" value="0b1" description="Mode was Thread Mode when the floating-point stack frame was allocated."/>
+    </bit_field>
+    <bit_field offset="4" width="1" name="HFRDY" access="RW" reset_value="0" description="Permission to set the HardFault handler to the pending state when the floating-point stack frame was allocated.">
+      <bit_field_value name="SCB_FPCCR_HFRDY_0b0" value="0b0" description="Priority did not permit setting the HardFault handler to the pending state when the floating-point stack frame was allocated."/>
+      <bit_field_value name="SCB_FPCCR_HFRDY_0b1" value="0b1" description="Priority permitted setting the HardFault handler to the pending state when the floating-point stack frame was allocated."/>
+    </bit_field>
+    <bit_field offset="5" width="1" name="MMRDY" access="RW" reset_value="0" description="Permission to set the MemManage handler to the pending state when the floating-point stack frame was allocated.">
+      <bit_field_value name="SCB_FPCCR_MMRDY_0b0" value="0b0" description="MemManage is disabled or priority did not permit setting the MemManage handler to the pending state when the floating-point stack frame was allocated."/>
+      <bit_field_value name="SCB_FPCCR_MMRDY_0b1" value="0b1" description="MemManage is enabled and priority permitted setting the MemManage handler to the pending state when the floating-point stack frame was allocated."/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="BFRDY" access="RW" reset_value="0" description="Permission to set the BusFault handler to the pending state when the floating-point stack frame was allocated.">
+      <bit_field_value name="SCB_FPCCR_BFRDY_0b0" value="0b0" description="BusFault is disabled or priority did not permit setting the BusFault handler to the pending state when the floating-point stack frame was allocated."/>
+      <bit_field_value name="SCB_FPCCR_BFRDY_0b1" value="0b1" description="BusFault is disabled or priority did not permit setting the BusFault handler to the pending state when the floating-point stack frame was allocated."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0"/>
+    <bit_field offset="8" width="1" name="MONRDY" access="RW" reset_value="0" description="Permission to set the MON_PEND when the floating-point stack frame was allocated.">
+      <bit_field_value name="SCB_FPCCR_MONRDY_0b0" value="0b0" description="DebugMonitor is disabled or priority did not permit setting MON_PEND when the floating-point stack frame was allocated."/>
+      <bit_field_value name="SCB_FPCCR_MONRDY_0b1" value="0b1" description="DebugMonitor is enabled and priority permits setting MON_PEND when the floating-point stack frame was allocated."/>
+    </bit_field>
+    <reserved_bit_field offset="9" width="21" reset_value="0"/>
+    <bit_field offset="30" width="1" name="LSPEN" access="RW" reset_value="0x1" description="Lazy state preservation for floating-point context.">
+      <bit_field_value name="SCB_FPCCR_LSPEN_0b0" value="0b0" description="Disable automatic lazy state preservation for floating-point context."/>
+      <bit_field_value name="SCB_FPCCR_LSPEN_0b1" value="0b1" description="Enable automatic lazy state preservation for floating-point context."/>
+    </bit_field>
+    <bit_field offset="31" width="1" name="ASPEN" access="RW" reset_value="0x1" description="Enables CONTROL2 setting on execution of a floating-point instruction. This results in automatic hardware state preservation and restoration, for floating-point context, on exception entry and exit.">
+      <bit_field_value name="SCB_FPCCR_ASPEN_0b0" value="0b0" description="Disable CONTROL2 setting on execution of a floating-point instruction."/>
+      <bit_field_value name="SCB_FPCCR_ASPEN_0b1" value="0b1" description="Enable CONTROL2 setting on execution of a floating-point instruction."/>
+    </bit_field>
+  </register>
+  <register offset="0xF38" width="32" name="SCB_FPCAR" description="Floating-point Context Address Register">
+    <reserved_bit_field offset="0" width="3" reset_value="0" reset_mask="0"/>
+    <bit_field offset="3" width="29" name="ADDRESS" access="RW" reset_value="0" reset_mask="0" description="The location of the unpopulated floating-point register space allocated on an exception stack frame."/>
+  </register>
+  <register offset="0xF3C" width="32" name="SCB_FPDSCR" description="Floating-point Default Status Control Register">
+    <reserved_bit_field offset="0" width="22" reset_value="0"/>
+    <bit_field offset="22" width="2" name="RMode" access="RW" reset_value="0" description="Default value for FPSCR.RMode (Rounding Mode control field).">
+      <bit_field_value name="SCB_FPDSCR_RMode_0b00" value="0b00" description="Round to Nearest (RN) mode"/>
+      <bit_field_value name="SCB_FPDSCR_RMode_0b01" value="0b01" description="Round towards Plus Infinity (RP) mode."/>
+      <bit_field_value name="SCB_FPDSCR_RMode_0b10" value="0b10" description="Round towards Minus Infinity (RM) mode."/>
+      <bit_field_value name="SCB_FPDSCR_RMode_0b11" value="0b11" description="Round towards Zero (RZ) mode."/>
+    </bit_field>
+    <bit_field offset="24" width="1" name="FZ" access="RW" reset_value="0" description="Default value for FPSCR.FZ (Flush-to-zero mode control bit).">
+      <bit_field_value name="SCB_FPDSCR_FZ_0b0" value="0b0" description="Flush-to-zero mode disabled. Behavior of the floating-point system is fully compliant with the IEEE 754 standard."/>
+      <bit_field_value name="SCB_FPDSCR_FZ_0b1" value="0b1" description="Flush-to-zero mode enabled."/>
+    </bit_field>
+    <bit_field offset="25" width="1" name="DN" access="RW" reset_value="0" description="Default value for FPSCR.DN (Default NaN mode control bit).">
+      <bit_field_value name="SCB_FPDSCR_DN_0b0" value="0b0" description="NaN operands propagate through to the output of a floating-point operation."/>
+      <bit_field_value name="SCB_FPDSCR_DN_0b1" value="0b1" description="Any operation involving one or more NaNs returns the Default NaN."/>
+    </bit_field>
+    <bit_field offset="26" width="1" name="AHP" access="RW" reset_value="0" description="Default value for FPSCR.AHP (Alternative half-precision control bit).">
+      <bit_field_value name="SCB_FPDSCR_AHP_0b0" value="0b0" description="IEEE half-precision format selected."/>
+      <bit_field_value name="SCB_FPDSCR_AHP_0b1" value="0b1" description="Alternative half-precision format selected."/>
+    </bit_field>
+    <reserved_bit_field offset="27" width="5" reset_value="0"/>
+  </register>
+</regs:peripheral>

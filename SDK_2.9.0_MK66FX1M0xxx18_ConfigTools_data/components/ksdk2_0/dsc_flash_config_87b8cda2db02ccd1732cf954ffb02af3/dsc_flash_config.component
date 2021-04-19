@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component:config_component
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd"
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0" options="UI_COMPONENT_MODE_HIDDEN"
+   id="dsc_flash_config" label="Flash_configuration" category="Utility" registers_init="false" auto_add_instances="1">
+   <description>Flash configuration</description>
+   <mode id="general" label="General">
+      <description>Flash initialization</description>
+      <config_set_refs>
+          <config_set_ref>fcf_config</config_set_ref>
+      </config_set_refs>
+   </mode>
+    <script file="dsc_flash_config_codegenerator.js"/>
+    <config_set id="fcf_config" label="General configuration">
+      <description>General configuration</description>
+      <generated_types/>
+       <user_types>
+           <enum id="mcu_t">
+               <item id="nevis3" label="Nevis3" value="DSC 56F83000"></item>
+               <item id="anguilla_nano" label="Anguilla nano" value="DSC 56F81000"></item>
+           </enum>
+           <struct id="bytes">
+                <integer type="uint8_t" id="byteValue" label="Byte"></integer>
+           </struct>
+           <struct  id="NV_FSEC_t">
+               <enum id="SEC" label="Flash security">
+                   <description>Enables or disables the security state of the MCU. In the secure state, the MCU limits access to flash memory
+                       module (FTFx) resources. The limitations are MCU specific. If the flash memory module is unsecured using backdoor key access,
+                       the SEC bits are forced to unsecure state.</description>
+                   <validation>
+                       <constraint when_expr="$this.getValue()==`secure`" cond_expr="$parent.MEEN.getValue()" level="warning" description="The flash is secured permanently. The chip can not be reprogrammed again (Mass erase is disabled)."/>
+                   </validation>
+                   <item id="unsecure" label="Unsecure state" value="2"></item>
+                   <item id="secure" label="Secure state" value="3"></item>
+               </enum>
+               <enum id="FSLACC" label="Factory security level access">
+                   <description>Enables or disables access to the flash memory contents during returned part failure analysis at NXP.
+                       When SEC (flash security) is secure and FSLACC (factory security level access code) is denied, access to the program flash contents is denied and
+                       any failure analysis performed by NXP factory test must begin with a full erase to unsecure the part.
+                       When access is granted (SEC is unsecure, or SEC is secure and FSLACC is granted), NXP factory testing
+                       has visibility of the current flash contents. The state of the FSLACC bits is only relevant when the SEC bits
+                       are set to secure. When the SEC field is set to unsecure, the FSLACC setting does not matter.
+                   </description>
+                   <item id="granted" label="Factory access granted" value="3"></item>
+                   <item id="denied" label="Factory access denied" value="2"></item>
+               </enum>
+               <bool id="KEYEN" label="Backdoor key security">
+                   <description>Enables or disables backdoor key access to the flash memory module.</description>
+               </bool>
+               <variable id="KEYEN_v" value="$parent.KEYEN.getValue(false) ? 2 : 1"></variable>
+               <bool id="MEEN" label="Mass erase">
+                   <description>Enables or disables mass erase capability of the flash memory module. When the SEC (flash security) field is set to unsecure, the MEEN setting does not matter.</description>
+               </bool>
+               <variable id="MEEN_v" value="$parent.MEEN.getValue(false) ? 3 : 2"></variable>
+               <variable id="NV_FSEC" value="toString($parent.SEC.getEnumItemValue().toInt() + ($parent.FSLACC.getEnumItemValue().toInt() &lt;&lt; 2) + ($parent.MEEN_v.getValue().toInt() &lt;&lt; 4) + ($parent.KEYEN_v.getValue().toInt() &lt;&lt; 6) ,16)"></variable>
+           </struct>
+           <struct id="flashConfig_t">
+               <array type="bytes" id="keyBytes" label="Backdoor comparison key" size="8" options="UI_SHOW_CONTENT_AS=TABLE;UI_ARRAY_LAYOUT_HORIZONTAL;UI_TABLE_COLUMN_WIDTHS=4;UI_BORDER_HIDDEN"  key_selector_expr="x-> x.getID()">
+                   <item_defaults>
+                       <set_default id="byteValue" value_expr="x-> 0xFF"/>
+                   </item_defaults>
+               </array>
+               <array type="bytes" id="protBytes" label="Program flash protection" size="4" options="UI_SHOW_CONTENT_AS=TABLE;UI_ARRAY_LAYOUT_HORIZONTAL;UI_TABLE_COLUMN_WIDTHS=4;UI_BORDER_HIDDEN;"  key_selector_expr="x-> x.getID()">
+                   <item_defaults>
+                       <set_default id="byteValue" value_expr="x-> 0xFF"/>
+                   </item_defaults>
+               </array>
+               <reference type="NV_FSEC_t" id="FSEC" label="Flash security configuration">
+                   <description>Configures security of the MCU and flash memory module.</description>
+               </reference>
+               <enum id="bootOption" label="Boot option">
+                   <description expr="($configSet.mcu.getValue()==`anguilla_nano` ?
+                       `The flash memory module's FOPT register allows the user to customize the operation of the MCU at boot time.
+                       FOPT[7:6] defines POR boot from ROM or flash. The value of &quot;FOPT[7:6] | SIM_BOOT_MODE_OVERRIDE[BOOT_OVERRIDE]&quot; 
+                       determines the boot option after software reset: value 11b means booting from ROM, while any other value means booting from flash.
+                         
+                       NOTE: Project startup codes do not support booting from ROM directly because it conflicts with fast/normal configuration mode.
+                       To enable bootloader start from ROM select &quot;Boot from flash&quot; and configure Boot_option component.
+                       Otherwise, the program will go to ROM bootloader after SW reset caused by enabling fast mode.`
+                       :
+                       `The flash memory module's FOPT register allows the user to customize the operation of the MCU at boot time.
+                       FOPT [7:6] is for boot. The value of &quot;FOPT[7:6] &amp; (~SIM_BOOT_MODE_OVERRIDE[BOOT_OVERRIDE])&quot; determines the
+                       boot option: value 11b means booting from ROM, while any other value means booting from flash.` 
+                       )"/>
+                   <validation>
+                       <constraint when_expr="$configSet.mcu.getValue()==`anguilla_nano`" cond_expr="$this.getValue()!=`3`" level="warning" 
+                           description="To enable bootloader start from ROM on this MCU select &quot;Boot from flash&quot; and configure Boot_option component."/>
+                   </validation>
+                   <item id="0" label="Boot from flash"></item>
+                   <item id="3" label="Boot from ROM"></item>
+               </enum>
+               <enum id="pwrMode" label="Advanced power mode">
+                   <description>Enables advanced powermode. If enabled, writing SIM_PWRMODE register takes effect and writing SIM_PWR register doesn't take effect. If disabled writing SIM_PWRMODE register doesn't take effect and writing SIM_PWR register takes effect.
+                   </description>
+                   <item id="0" label="Use SIM_PWR register"><description>SIM_PWR register takes effect, SIM_PWRMODE register doesn't take effect</description></item>
+                   <item id="1" label="Use SIM_PWRMODE register"><description>SIM_PWRMODE register takes effect, SIM_PWR register doesn't take effect</description></item>
+               </enum>
+               <variable id="FOPT" value="toString(toInt(0x3E) + $parent.pwrMode.getValue().toInt() + ($parent.bootOption.getValue().toInt() &lt;&lt; 6), 16)"/>
+           </struct>
+           <struct id="bcaConfig_t">
+               <struct id="crcCheck" label="CRC check configuration">
+                   <integer type="uint32_t" id="crcStartAddress" label="Start address">
+                       <description>Start address for application image CRC check. The value 0xFFFFFFFF sets the bootloader not to perform any CRC check.</description>
+                   </integer>
+                   <integer type="uint32_t" id="crcByteCount" label="Byte count " >
+                       <description>Byte count for application image CRC check. The value 0xFFFFFFFF sets the bootloader not to perform any CRC check.</description>
+                   </integer>
+                   <integer type="uint32_t" id="crcExpectedValue" label="Expected value" >
+                       <description>Expected CRC value for application CRC check. The value 0xFFFFFFFF sets the bootloader not to perform any CRC check.</description>
+                   </integer>
+               </struct>
+               <set id="enabledPeripherals" label="Peripheral enable">
+                   <description>Bootloader will enable the peripheral if corresponding bit is set to 1.</description>
+                   <item id="uart" label="QSCI/UART" value="0"><description>Bootloader enables UART peripheral.</description></item>
+                   <item id="i2c" label_expr="$configSet.mcu.getValue()==`anguilla_nano` ? `LPI2C` : `I2C`" value="1"><description expr="`Bootloader enables `+ $this.i2c.getLabel()+` peripheral.`"></description></item>
+                   <item id="spi" label="SPI" value="2" available="$configSet.mcu.getValue()==`nevis3`"><description>Bootloader enables SPI peripheral.</description></item>
+                   <item id="can" label="CAN" value="3" available="$configSet.mcu.getValue()==`nevis3`"><description>Bootloader enables CAN peripheral.</description></item>
+               </set>
+               <variable id="enabledPeripherals_v" value="$parent.enabledPeripherals.reduce(0xF0,(last, ac) -> last | (ac.getValue(true).system::boolToInt() &lt;&lt; ac.getSetItemValue(0).toInt())).toString(16)"></variable>
+               <integer type="uint8_t" id="i2cSlaveAddress" label="I2C slave address" >
+                   <description>Sets 7-bit I2C slave address. Default value 0xFF sets 0x10 for I2C slave address.</description>        
+               </integer>
+               <integer type="uint16_t" id="peripheralDetectionTimeout" label="Peripheral detection timeout [ms]" >
+                   <description>Timeout in milliseconds for active peripheral detection. Default value 0xFFFF sets 5 seconds.</description>
+               </integer>
+               <bool id="directBootFlag" label="Direct boot">
+                   <description>Enables direct boot.</description>
+               </bool>
+               <struct id="canConfig" label="CAN configuration" available="$configSet.mcu.getValue() == `nevis3`">
+                   <description>The Bootloader in this device's ROM supports loading data into flash via the FlexCAN peripheral.</description>
+                   <variable id="can0peripheralExists" value="peripheralExists(`CAN0`)"></variable>
+                   <enum id="baudRateConfig" label="Baud rate configuration">
+                       <description>Selects data loading speed into flash via FlexCAN peripheral configuration type.</description>
+                       <item id="auto" label="Automatic detection (1 MHz default)"></item>
+                       <item id="preCalc" label="Pre-calculated configuration"></item>
+                       <item id="manual" label="Manual configuration"></item>
+                   </enum>
+                   <info id="clkSel" label="Clock source" available="$parent.baudRateConfig.getValue()==`manual`" value="($parent.can0peripheralExists.getValue() ? (getPeripheralClockSignal(`CAN0`, `BusInterfaceClock`) + `: `) : `BUS_CLK: `) + frequencyToString(24000000)">
+                       <description>CAN clock source configured for bootloader. This clock source and frequency is used only for bootloader configuration and it may be different from run mode configuration in the Clocks tool.</description>
+                   </info>
+                   <variable id="clockSourceFreq" available="$parent.baudRateConfig.getValue()==`manual` &amp;&amp; $parent.can0peripheralExists.getValue(false)"
+                       value="24000000">
+                   </variable>
+                   <enum id="speedIndex" label="Baud rate" available="$parent.baudRateConfig.getValue()==`preCalc`">
+                       <description>Pre-configured data loading speed into flash via FlexCAN peripheral.</description>
+                       <item id="0" label="125 kHz" value="0"></item>
+                       <item id="1" label="250 kHz" value="1"></item>
+                       <item id="2" label="500 kHz" value="2"></item>
+                       <item id="3" label="750 kHz" value="3" available="false"></item>    <!-- disabled because 750 kHz does not work on DSCs - MCUCM-7926 -->
+                       <item id="4" label="1 MHz" value="4"></item>
+                   </enum>
+                   <variable id="speedSpec" value="$parent.baudRateConfig.getValue() == `preCalc` ? 0 : 1"></variable>
+                   <integer id="propSeg" label="Propagation segment" type="uint8_t" min_expr="1" max_expr="8" available="$parent.baudRateConfig.getValue()==`manual`">
+                       <description>Propagation Segment length. It defines the length of the Propagation Segment in the bit time. The available values are 1–8</description>
+                   </integer>
+                   <variable id="canConfig1" value="
+                       $parent.baudRateConfig.getValue()==`auto` ? `0x0F` :
+                       toString((($parent.clkSel.isAvailable() ? 1 : 0) &lt;&lt; 7) + ($parent.propSeg.getValue(1)-1 &lt;&lt; 4) + ($parent.speedSpec.getValue().toInt() &lt;&lt; 3) + ($parent.speedIndex.getValue(0).toInt() &lt;&lt; 0),16)"></variable>
+                   <integer id="pDiv" label="Clock pre-scaler divider" type="uint16_t" min_expr="1" max_expr="256" available="$parent.baudRateConfig.getValue()==`manual`">
+                       <description>Clock Pre-scaler Division Factor. It defines the ratio between the PE clock frequency and the Serial Clock (Sclock) frequency. The
+                           Sclock period defines the time quantum of the CAN protocol. The available values are 1–256.</description>
+                   </integer>
+                   <integer id="pSeg1" label="Phase buffer segment 1" type="uint8_t" min_expr="1" max_expr="8" available="$parent.baudRateConfig.getValue()==`manual`">
+                       <description>Phase Segment 1 length. It defines the length of Phase Buffer Segment 1 in the bit time. The available values are 1–8.</description>
+                   </integer>
+                   <integer id="pSeg2" label="Phase buffer segment 2" type="uint8_t" min_expr="2" max_expr="8" available="$parent.baudRateConfig.getValue()==`manual`">
+                       <description>Phase Segment 2 length. It defines the length of Phase Buffer Segment 2 in the bit time. The available values are 2–8.</description>
+                   </integer>
+                   <integer id="rJumpwidth" label="Re-sync jump width" type="uint8_t" min_expr="1" max_expr="4" available="$parent.baudRateConfig.getValue()==`manual`">
+                       <description>Re-synchronization jump width. It defines the maximum number of time quanta that a bit time can be changed by one resynchronization.
+                           The available values are 1–4.
+                       </description>
+                   </integer>
+                   <info id="timeQuantum" label="Time Quantum" available="$parent.baudRateConfig.getValue()==`manual`"
+                       value="$parent.can0peripheralExists.getValue(false) ? timeToString(getTime(($parent.clockSourceFreq.getValue().toHertz().toInt() * 1.0) / $parent.pDiv.getValue(),`ns`,`Hz`)/1000.0) : `N/A`">
+                       <description>The time quantum value that is used for calculation of time segments, propagation time and re-synchronization time.</description>
+                   </info>
+                   <info id="bitRate" label="Calculated baud rate" available="$parent.baudRateConfig.getValue()==`manual`"
+                       value="($parent.can0peripheralExists.getValue(false) ? frequencyToString(getFreq(($parent.clockSourceFreq.getValue().toHertz().toInt() * 1.0) / $parent.pDiv.getValue() / (1 + $parent.pSeg1.getValue() + $parent.pSeg2.getValue() + $parent.propSeg.getValue()),`Hz`,`Hz`)) : `N/A`)">
+                       <description>Calculated value of the baud rate (nominal bit rate) that is used for for communication.
+                           Baud rate (bit rate) = Clock source frequency / pre-scaler division factor / (1 + propagation segment + phase segment 1 + phase segment 2)
+                       </description>
+                   </info>
+                   <variable id="canConfig2" value="toString(($parent.pDiv.getValue(1)-1 &lt;&lt; 8) + ($parent.pSeg1.getValue(1)-1 &lt;&lt; 5) + ($parent.pSeg2.getValue(1)-1 &lt;&lt; 2)  + ($parent.rJumpwidth.getValue(1)-1 &lt;&lt; 0),16)"></variable>
+                   <integer id="canTxId" label="Tx buffer ID" type="uint16_t">
+                       <description>CAN tramsmit buffer ID</description>
+                   </integer>
+                   <integer id="canRxId" label="Rx buffer ID" type="uint16_t">
+                       <description>CAN receive buffer ID</description>
+                   </integer>
+               </struct>
+           </struct>
+       </user_types>
+      <settings>
+   <!-- Fragment variables -->
+          <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+          <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+          <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+          <!-- UI --> 
+          <variable id="mcu" value="enumItemsOfType($configSet, `mcu_t`).findFirst(x->x.getValue() == getSeries()).getID()"></variable>
+          <info id="line_bca" value="`Bootloader configuration area (BCA)`"  options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+          <reference type="bcaConfig_t" id="bcaConfig" label="Bootloader configuration area (BCA)" options="UI_BORDER_HIDDEN;UI_LABEL_HIDDEN"></reference>
+          <info id="line_fcf" value="`Flash configuration field (FCF)`"  options="UI_LINE_BREAK;UI_LABEL_HIDDEN"></info>
+          <reference type="flashConfig_t" id="flashConfig" label="Flash configuration field (FCF)" options="UI_BORDER_HIDDEN;UI_LABEL_HIDDEN"></reference>
+          <!-- Template parameters -->
+          <struct id="fcf_codegenerator" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+              <variable id="mcu" value="$configSet.mcu.getValue()"></variable>
+              <variable id="BACKKEY0" value="$configSet.getSetting(`flashConfig.keyBytes.0.byteValue`).getCValue(0) + `U`"></variable>
+              <variable id="BACKKEY1" value="$configSet.getSetting(`flashConfig.keyBytes.1.byteValue`).getCValue(0) + `U`"></variable>
+              <variable id="BACKKEY2" value="$configSet.getSetting(`flashConfig.keyBytes.2.byteValue`).getCValue(0) + `U`"></variable>
+              <variable id="BACKKEY3" value="$configSet.getSetting(`flashConfig.keyBytes.3.byteValue`).getCValue(0) + `U`"></variable>
+              <variable id="BACKKEY4" value="$configSet.getSetting(`flashConfig.keyBytes.4.byteValue`).getCValue(0) + `U`"></variable>
+              <variable id="BACKKEY5" value="$configSet.getSetting(`flashConfig.keyBytes.5.byteValue`).getCValue(0) + `U`"></variable>
+              <variable id="BACKKEY6" value="$configSet.getSetting(`flashConfig.keyBytes.6.byteValue`).getCValue(0) + `U`"></variable>
+              <variable id="BACKKEY7" value="$configSet.getSetting(`flashConfig.keyBytes.7.byteValue`).getCValue(0) + `U`"></variable>
+              
+              <variable id="FPROT0" value="$configSet.getSetting(`flashConfig.protBytes.0.byteValue`).getCValue(0) + `U`"></variable>
+              <variable id="FPROT1" value="$configSet.getSetting(`flashConfig.protBytes.1.byteValue`).getCValue(0) + `U`"></variable>
+              <variable id="FPROT2" value="$configSet.getSetting(`flashConfig.protBytes.2.byteValue`).getCValue(0) + `U`"></variable>
+              <variable id="FPROT3" value="$configSet.getSetting(`flashConfig.protBytes.3.byteValue`).getCValue(0) + `U`"></variable>
+              
+              <variable id="KEYEN" value="$configSet.flashConfig.FSEC.KEYEN_v.getValue(0) + `U`"></variable>
+              <variable id="MEEN" value="$configSet.flashConfig.FSEC.MEEN_v.getValue(0) + `U`"></variable>
+              <variable id="FSLACC" value="$configSet.flashConfig.FSEC.FSLACC.getEnumItemValue(0) + `U`"></variable>
+              <variable id="SEC" value="$configSet.flashConfig.FSEC.SEC.getEnumItemValue(0) + `U`"></variable>
+              <variable id="FSEC" value="$configSet.flashConfig.FSEC.NV_FSEC.getValue(0) + `U`"></variable>
+              <variable id="FOPT" value="$configSet.flashConfig.FOPT.getValue(0) + `U`"></variable>
+              
+              <variable id="CRC_START_ADDR" value="$configSet.bcaConfig.crcCheck.crcStartAddress.getCValue(0) + `U`"></variable>
+              <variable id="CRC_BYTE_COUNT" value="$configSet.bcaConfig.crcCheck.crcByteCount.getCValue(0) + `U`"></variable>
+              <variable id="CRC_EXP_VALUE" value="$configSet.bcaConfig.crcCheck.crcExpectedValue.getCValue(0) + `U`"></variable>
+              <variable id="ENABLED_PERIPHERALS" value="$configSet.bcaConfig.enabledPeripherals_v.getValue(0) + `U`"></variable>
+              <variable id="I2C_SLAVE_ADDR" value="$configSet.bcaConfig.i2cSlaveAddress.getCValue(0) + `U`"></variable>
+              <variable id="PERIPH_DETECT_TIME" value="$configSet.bcaConfig.peripheralDetectionTimeout.getCValue(0) + `U`"></variable>
+              <variable id="DIRECT_BOOT_FLAG" value="$configSet.bcaConfig.directBootFlag.getValue(0) ? `0xFEU` : `0xFFU`"></variable>
+              <variable id="CAN_CONFIG1" value="$configSet.bcaConfig.canConfig.canConfig1.getValue(0) + `U`"></variable>
+              <variable id="CAN_CONFIG2" value="$configSet.bcaConfig.canConfig.canConfig2.getValue(0) + `U`"></variable>
+              <variable id="CAN_TX" value="$configSet.bcaConfig.canConfig.canTxId.getCValue(0) + `U`"></variable>
+              <variable id="CAN_RX" value="$configSet.bcaConfig.canConfig.canRxId.getCValue(0) + `U`"></variable>
+          </struct>
+      </settings>
+        <validation>
+          <constraint level="error" description_expr="`Only one instance of the Flash configuration component should be enabled.`"
+              cond_expr="$root.flatMap(x -> x).filter(x -> x.isEnabled()).countOccurrences(i -> (i.getType() == $instance.getType()), false) == 1"/>
+          <!-- Update for v9 -->
+          <!--constraint level="error" description_expr="msg::message(`err_component_instance`, `Flash configuration`)"
+            cond_expr="$components.system.#global.all_enabled_instances.getValue().countOccurrences(i -> (i.getType() == $instance.getType()), false) == 1"/-->
+        </validation>
+       <fragment_defs>
+           <import>
+               <from component_id="system" config_set_id="common_code_templates"/>
+           </import>
+       </fragment_defs>
+       <code>
+           <section target="includes">
+               <fragment id="include">
+                   <param id="name">device_registers</param>
+                   <param id="filename">fsl_device_registers.h</param>
+               </fragment>
+           </section>
+       </code> 
+      <quick_selections>
+          <quick_selection id="default" label="Default">
+            <description>Default configuration</description>
+                 <set id="flashConfig.keyBytes.0.byteValue">0xFF</set>
+                 <set id="flashConfig.keyBytes.1.byteValue">0xFF</set>
+                 <set id="flashConfig.keyBytes.2.byteValue">0xFF</set>
+                 <set id="flashConfig.keyBytes.3.byteValue">0xFF</set>
+                 <set id="flashConfig.keyBytes.4.byteValue">0xFF</set>
+                 <set id="flashConfig.keyBytes.5.byteValue">0xFF</set>
+                 <set id="flashConfig.keyBytes.6.byteValue">0xFF</set>
+                 <set id="flashConfig.keyBytes.7.byteValue">0xFF</set>
+                 
+                 <set id="flashConfig.protBytes.0.byteValue">0xFF</set>
+                 <set id="flashConfig.protBytes.1.byteValue">0xFF</set>
+                 <set id="flashConfig.protBytes.2.byteValue">0xFF</set>
+                 <set id="flashConfig.protBytes.3.byteValue">0xFF</set>
+                 
+                 <set id="flashConfig.FSEC.SEC">unsecure</set>
+                 <set id="flashConfig.FSEC.FSLACC">granted</set>
+                 <set id="flashConfig.FSEC.KEYEN">false</set>
+                 <set id="flashConfig.FSEC.MEEN">true</set>
+                 <set id="flashConfig.bootOption" from_resource="getSeries()==`DSC 56F81000` ? 0 : 3"></set>
+                 <set id="flashConfig.pwrMode">1</set>
+                 
+                 <set id="bcaConfig.crcCheck.crcStartAddress">0xFFFFFFFF</set>
+                 <set id="bcaConfig.crcCheck.crcByteCount">0xFFFFFFFF</set>
+                 <set id="bcaConfig.crcCheck.crcExpectedValue">0xFFFFFFFF</set>
+                 <set id="bcaConfig.enabledPeripherals.uart">true</set>
+                 <set id="bcaConfig.enabledPeripherals.i2c">true</set>
+                 <set id="bcaConfig.enabledPeripherals.spi">true</set>
+                 <set id="bcaConfig.enabledPeripherals.can">true</set>
+                 <set id="bcaConfig.i2cSlaveAddress">0xFF</set>
+                 <set id="bcaConfig.peripheralDetectionTimeout">6000</set>
+                 <set id="bcaConfig.directBootFlag">false</set>
+                 
+                 <set id="bcaConfig.canConfig.propSeg">8</set>
+                 <set id="bcaConfig.canConfig.pDiv">256</set>
+                 <set id="bcaConfig.canConfig.pSeg1">8</set>
+                 <set id="bcaConfig.canConfig.pSeg2">8</set>
+                 <set id="bcaConfig.canConfig.rJumpwidth">4</set>
+                 <set id="bcaConfig.canConfig.canTxId">0xFFFF</set>
+                 <set id="bcaConfig.canConfig.canRxId">0xFFFF</set>
+            </quick_selection>
+            <default>default</default>
+      </quick_selections>
+   </config_set>
+</component:config_component>

@@ -1,0 +1,1103 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="generic_can" label="Generic_can" auto_add="true" category="System" global_only="true" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <config_set id="global_can" label="Global generic CAN definitions" from_source="fsl_common.h">
+      <description>Global generic CAN definitions</description>
+      <generated_types/>
+      <!--  Generic can options -->
+      <!-- 
+        #Options
+        
+         <option id="genericCanPeripheralFlexcanNotSupported"/>            FlexCAN peripheral is not supported
+         <option id="genericCanPeripheralMcanNotSupported"/>               MCAN peripheral is not supported
+         <option id="genericCanPeripheralMscanNotSupported"/>              MsCAN peripheral is not supported
+         <option id="genericCanPeripheralNotAvailableText" expr="`Any peripheral is not available.`"/>         The warning text if any peripheral is not supported
+         <option id="genericCanPeripheralUnsupportedText" expr="`Peripheral is not supported.`"/>              The warning text if the selected peripheral (e.g. CAN0) is not supported
+         <option id="genericCanPeripheralSelect"/>                         Enable selection of the peripheral
+         <option id="genericCanRxPinDependencyPeripheralSetting"/>         Enable RX pin dependency in the peripheral setting
+         <option id="genericCanTxPinDependencyPeripheralSetting"/>         Enable TX pin dependency in the peripheral setting
+         <option id="genericCanDriverDependencyPeripheralSetting"/>        Enable SDK driver dependency in the peripheral setting
+         <option id="genericCanClocks"/>                                   Enable clock settings
+         <option id="genericCanBaudrate"/>                                 Enable baudrate setting
+         <option id="genericCanFDBaudrate"/>                               Enable FD baudrate
+         <option id="genericCanMcanFDNormal"/>                             Enable MCAN FD Normal setitng
+         <option id="genericCanMcanFDSwitch"/>                             Enable MCAN FD Switch setitng
+         <option id="genericCanMcanImprovedTimingCalc"/>                   Enable MCAN improved timinig calculation
+         <option id="genericCanDriverVersions"/>                           Enable CAN SDK driver versions selector
+         
+         FLEXCAN INTERRUPTS
+         Message buffer interrupt
+         <option id="genericCanFlexcanInterruptMBVector"/>                                       Enable interrupt vector
+         <option id="genericCanFlexcanInterruptMBVectorDisable"/>                                Disable bool setting of the interrupt vector
+         <option id="genericCanFlexcanInterruptMB_irq_handler_insert"                          
+         expr="(`&#10;` +  leftPadding(`/* Place your code here */`,1) + `&#10;`)"/>             Interrupt vector handler text
+         <option id="genericCanFlexcanInterruptMB_irq_handler_remove_arm_errata_838869"/>        Interrupt vector remove errata 838869
+         <option id="genericCanFlexcanInterruptMB_irq_generate_handler"/>                        Interrupt handler generation      
+         <option id="genericCanFlexcanInterruptMB_without_handler_settings"/>                    Interrupt vector without handler settings   
+         
+         Bus off interrupt
+         <option id="genericCanFlexcanInterruptBusoffVector"/>                                   Enable interrupt vector
+         <option id="genericCanFlexcanInterruptBusoffVectorDisable"/>                            Disable bool setting of the interrupt vector
+         <option id="genericCanFlexcanInterruptBusoff_irq_handler_insert"  
+         expr="(`&#10;` +  leftPadding(`/* Place your code here */`,1) + `&#10;`)"/>             Interrupt vector handler text
+         <option id="genericCanFlexcanInterruptBusoff_irq_handler_remove_arm_errata_838869"/>    Interrupt vector remove errata 838869
+         <option id="genericCanFlexcanInterruptBusoff_irq_generate_handler"/>                    Interrupt handler generation  
+         <option id="genericCanFlexcanInterruptBusoff_without_handler_settings"/>                Interrupt vector without handler settings               
+         
+         Error interrupt
+         <option id="genericCanFlexcanInterruptErrorVector"/>                                    Enable interrupt vector
+         <option id="genericCanFlexcanInterruptErrorVectorDisable"/>                             Disable bool setting of the interrupt vector
+         <option id="genericCanFlexcanInterruptError_irq_handler_insert"                         
+         expr="(`&#10;` +  leftPadding(`/* Place your code here */`,1) + `&#10;`)"/>             Interrupt vector handler text
+         <option id="genericCanFlexcanInterruptError_irq_handler_remove_arm_errata_838869"/>     Interrupt vector remove errata 838869
+         <option id="genericCanFlexcanInterruptError_irq_generate_handler"/>                     Interrupt handler generation 
+         <option id="genericCanFlexcanInterruptError_without_handler_settings"/>                 Interrupt vector without handler settings   
+         
+         Transmit warning interrupt
+         <option id="genericCanFlexcanInterruptTxWarnVector"/>                                   Enable interrupt vector
+         <option id="genericCanFlexcanInterruptTxWarnVectorDisable"/>                            Disable bool setting of the interrupt vector
+         <option id="genericCanFlexcanInterruptTxWarn_irq_handler_insert"                        
+         expr="(`&#10;` +  leftPadding(`/* Place your code here */`,1) + `&#10;`)"/>             Interrupt vector handler text
+         <option id="genericCanFlexcanInterrupttxWarn_irq_handler_remove_arm_errata_838869"/>    Interrupt vector remove errata 838869
+         <option id="genericCanFlexcanInterruptTxWarn_irq_generate_handler"/>                    Interrupt handler generation 
+         <option id="genericCanFlexcanInterruptTxWarn_without_handler_settings"/>                Interrupt vector without handler settings   
+         
+         Receive warning interrupt
+         <option id="genericCanFlexcanInterruptRxWarnVector"/>                                   Enable interrupt vector
+         <option id="genericCanFlexcanInterruptRxWarnVectorDisable"/>                            Disable bool setting of the interrupt vector
+         <option id="genericCanFlexcanInterruptRxWarn_irq_handler_insert"                        
+         expr="(`&#10;` +  leftPadding(`/* Place your code here */`,1) + `&#10;`)"/>             Interrupt vector handler text
+         <option id="genericCanFlexcanInterruptRxWarn_irq_handler_remove_arm_errata_838869"/>    Interrupt vector remove errata 838869
+         <option id="genericCanFlexcanInterruptRxWarn_irq_generate_handler"/>                    Interrupt handler generation 
+         <option id="genericCanFlexcanInterruptRxWarn_without_handler_settings"/>                Interrupt vector without handler settings   
+         
+         Wakeup interrupt
+         <option id="genericCanFlexcanInterruptWakeupVector"/>                                   Enable interrupt vector
+         <option id="genericCanFlexcanInterruptWakeupVectorDisable"/>                            Disable bool setting of the interrupt vector
+         <option id="genericCanFlexcanInterruptWakeup_irq_handler_insert"
+         expr="(`&#10;` +  leftPadding(`/* Place your code here */`,1) + `&#10;`)/>              Interrupt vector handler text
+         <option id="genericCanFlexcanInterruptWakeup_irq_handler_remove_arm_errata_838869"/>    Interrupt vector remove errata 838869
+         <option id="genericCanFlexcanInterruptWakeup_irq_generate_handler"/>                    Interrupt handler generation 
+         <option id="genericCanFlexcanInterruptWakeup_without_handler_settings"/>                Interrupt vector without handler settings      
+         
+         
+         MCAN INTERRUPTS
+         Can 0 interrupt
+         <option id="genericCanMcanInterruptCan0Vector"/>                                        Enable interrupt vector
+         <option id="genericCanMcanInterruptCan0custom"/>                                        Enable custom can vector selection (can0 or can1 vector can be selected)
+         <option id="genericCanMcanInterruptCan0VectorDisable"/>                                 Disable bool setting of the interrupt vector
+         <option id="genericCanMcanInterruptCan0_irq_handler_insert" 
+         expr="(`&#10;` +  leftPadding(`/* Place your code here */`,1) + `&#10;`)"/>             Interrupt vector handler text
+         <option id="genericCanMcanInterruptCan0_irq_generate_handler"/>                         Interrupt handler generation 
+         <option id="genericCanMcanInterruptCan0_irq_handler_remove_arm_errata_838869"/>         Interrupt vector remove errata 838869    
+         <option id="genericCanMcanInterruptCan0_without_handler_settings"/>                     Interrupt vector without handler settings   
+         
+         Can 1 interrupt
+         <option id="genericCanMcanInterruptCan1Vector"/>                                        Enable interrupt vector
+         <option id="genericCanMcanInterruptCan1VectorDisable"/>                                 Disable bool setting of the interrupt vector
+         <option id="genericCanMcanInterruptCan1_irq_handler_insert" 
+         expr="(`&#10;` +  leftPadding(`/* Place your code here */`,1) + `&#10;`)"/>             Interrupt vector handler text
+         <option id="genericCanMcanInterruptCan1_irq_handler_remove_arm_errata_838869"/>         Interrupt vector remove errata 838869
+         <option id="genericCanMcanInterruptCan1_irq_generate_handler"/>                         Interrupt handler generation         
+         <option id="genericCanMcanInterruptCan1_without_handler_settings"/>                     Interrupt vector without handler settings      
+         
+         
+         MSCAN INTERRUPTS
+         Transmit interrupt
+         <option id="genericCanMscanInterruptTxVector"/>                                          Enable Tx interrupt vector
+         <option id="genericCanMscanInterruptTxVectorDisable"/>                                   Disable bool setting of the interrupt vector
+         <option id="genericCanMscanInterruptTx_irq_handler_insert" 
+         expr="(`&#10;` +  leftPadding(`/* Place your code here */`,1) + `&#10;`)"/>              Interrupt vector handler text
+         <option id="genericCanMscanInterruptTx_irq_handler_remove_arm_errata_838869"/>           Interrupt vector remove errata 838869 
+         <option id="genericCanMscanInterruptTx_irq_generate_handler"/>                           Interrupt handler generation 
+         <option id="genericCanMscanInterruptTx_without_handler_settings"/>                       Interrupt vector without handler settings     
+         
+         Receive interrupt
+         <option id="genericCanMscanInterruptRxVector"/>                                          Enable Rx interrupt vector
+         <option id="genericCanMscanInterruptRxVectorDisable"/>                                   Disable bool setting of the interrupt vector
+         <option id="genericCanMscanInterruptRx_irq_handler_insert" 
+         expr="(`&#10;` +  leftPadding(`/* Place your code here */`,1) + `&#10;`)"/>              Interrupt vector handler text
+         <option id="genericCanMscanInterruptRx_irq_handler_remove_arm_errata_838869"/>           Interrupt vector remove errata 838869       
+         <option id="genericCanMscanInterruptRx_irq_generate_handler"/>                           Interrupt handler generation       
+         <option id="genericCanMscanInterruptRx_without_handler_settings"/>                       Interrupt vector without handler settings        
+         
+         <option id="genericCanUserInit"/>                                    Enable user init function
+         <option id="genericCanDefaultUserInit"/>                             Enable user init function
+         
+         <option id="genericCanTestZeroPeripheral"/>                          Test no supported peripheral
+         <option id="genericCanTestUnknownPeripheralType"/>                   Test unknown peripheral
+        
+        #Fragments
+         
+        Fragment_defs - items are relative to peripheral_config_t structure (apply_to="peripheral_config structure")
+         
+         generic_can_includes
+         generic_cam_defines
+         generic_can_global_vars
+         generic_can_global_vars_extern
+         generic_can_irq_vectors
+         generic_can_init_function_body
+        
+      #Example
+      <reference type="peripheral_config_t" id="canConfig" label="CAN communication interface" config_set_id="global_can" component_id="generic_can">
+         <options_expr>
+            <option id="genericCanPeripheralFlexcanNotSupported"/>
+            <option id="genericCanPeripheralMcanNotSupported"/>
+            <option id="genericCanPeripheralMscanNotSupported"/>
+            <option id="genericCanPeripheralNotAvailableText" expr="`Any peripheral is not available.`"/>
+            <option id="genericCanPeripheralUnsupportedText" expr="`Peripheral is not supported.`"/>
+            <option id="genericCanPeripheralSelect"/>
+            <option id="genericCanRxPinDependencyPeripheralSetting"/>
+            <option id="genericCanTxPinDependencyPeripheralSetting"/>
+            <option id="genericCanDriverDependencyPeripheralSetting"/>
+            <option id="genericCanClocks"/>
+            <option id="genericCanBaudrate"/>
+            <option id="genericCanFDBaudrate"/>
+            <option id="genericCanMcanFDNormal"/>
+            <option id="genericCanMcanFDSwitch"/>
+            <option id="genericCanDriverVersions"/>
+            <option id="genericCanUserInit"/>
+            <option id="genericCanDefaultUserInit"/>
+            
+            <option id="genericCanFlexcanInterruptMBVector"/>
+            <option id="genericCanFlexcanInterruptMBVectorDisable"/>
+            <option id="genericCanFlexcanInterruptMB_irq_handler_insert" expr="(`&#10;` +  leftPadding(`/* Place your code here */`,1) + `&#10;`)"/>
+            <option id="genericCanFlexcanInterruptMB_irq_handler_remove_arm_errata_838869"/>
+            <option id="genericCanFlexcanInterruptMB_without_handler_settings"/>
+                      
+            <option id="genericCanMcanInterruptCan0Vector"/>
+            <option id="genericCanMcanInterruptCan0custom"/>
+            <option id="genericCanMcanInterruptCan0VectorDisable"/>
+            <option id="genericCanMcanInterruptCan0_irq_handler_insert" expr="(`&#10;` +  leftPadding(`/* Place your code here */`,1) + `&#10;`)"/>
+            <option id="genericCanMcanInterruptCan0_irq_handler_remove_arm_errata_838869"/>
+            <option id="genericCanMcanInterruptCan0_without_handler_settings"/>
+            
+            <option id="genericCanMcanInterruptCan1Vector"/>
+            <option id="genericCanMcanInterruptCan1VectorDisable"/>
+            <option id="genericCanMcanInterruptCan1_irq_handler_insert" expr="(`&#10;` +  leftPadding(`/* Place your code here */`,1) + `&#10;`)"/>
+            <option id="genericCanMcanInterruptCan1_irq_handler_remove_arm_errata_838869"/>
+            <option id="genericCanMcanInterruptCan1_without_handler_settings"/>
+            
+            <option id="genericCanMscanInterruptTxVector"/>
+            <option id="genericCanMscanInterruptTxVectorDisable"/>
+            <option id="genericCanMscanInterruptTx_irq_handler_insert" expr="(`&#10;` +  leftPadding(`/* Place your code here */`,1) + `&#10;`)"/>
+            <option id="genericCanMscanInterruptTx_irq_handler_remove_arm_errata_838869"/>
+            <option id="genericCanMscanInterruptTx_without_handler_settings"/>
+            
+            <option id="genericCanMscanInterruptRxVector"/>
+            <option id="genericCanMscanInterruptRxVectorDisable"/>
+            <option id="genericCanMscanInterruptRx_irq_handler_insert" expr="(`&#10;` +  leftPadding(`/* Place your code here */`,1) + `&#10;`)"/>
+            <option id="genericCanMscanInterruptRx_irq_handler_remove_arm_errata_838869"/>
+            <option id="genericCanMscanInterruptRx_without_handler_settings"/>
+                        
+            <option id="genericCanTestZeroPeripheral"/>
+            <option id="genericCanTestUnknownPeripheralType"/>
+        </options_expr>
+     </reference>
+     
+      -->
+      <user_types>
+         <!-- User initialization -->
+         <struct id="user_init_t">
+            <!-- Variable section -->
+            <variable id="deviceName" value="$parent.getParent().getSetting(`generic_can_sdk_driver_prefix`).getValue(``)"></variable>
+            <variable id="deviceBase" value="$parent.getParent().getSetting(`generic_can_peripheral_alias`).getValue(``)"></variable>
+            <variable id="deviceFreqDef" value="$parent.getParent().getSetting(`generic_can_peripheral_clock_ID`).getValue(``)"></variable>
+            <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+            <variable id="inst_ID_def" value="toUpperCase($instance.getFnGroupPrefix() + $instance.getID())"></variable>
+            <variable id="canConfigDef" value="$parent.inst_ID.getValue(``) + `_can_config`"></variable>
+            <!-- Function -->
+            <variable id="flexcanConfigBody" value="($parent.getParent().getSetting(`isPeripheralCANType`).getValue() &amp;&amp; $parent.deviceName.getValue(``)==`FLEXCAN`) ? 
+               leftPadding($parent.canConfigDef.getValue() + `.clkSrc = kFLEXCAN_ClkSrcPeri;    // set required clock source &#10;`,1) +
+               leftPadding($parent.canConfigDef.getValue() + `.baudRate = 500000UL;              // set required baud rate &#10;&#10;`,1)
+               :``">
+            </variable>
+            <variable id="flexcanDscConfigBody" value="($parent.getParent().getSetting(`isPeripheralDSCCANType`).getValue() &amp;&amp; $parent.deviceName.getValue(``)==`FLEXCAN`) ? 
+               leftPadding($parent.canConfigDef.getValue() + `.eClkSrc = kFLEXCAN_ClkSrc0;    // set required clock source &#10;`,1) +
+               leftPadding($parent.canConfigDef.getValue() + `.u32BaudRateBps = 500000UL;              // set required baud rate &#10;&#10;`,1)
+               :``">
+            </variable>
+            <variable id="mscanConfigBody" value="($parent.getParent().getSetting(`isPeripheralMSCANType`).getValue() &amp;&amp; $parent.deviceName.getValue(``)==`MSCAN`) ? 
+               leftPadding($parent.canConfigDef.getValue() + `.clkSrc = kMSCAN_ClkSrcOsc;    // set required clock source &#10;`,1) +
+               leftPadding($parent.canConfigDef.getValue() + `.baudRate = 500000UL;           // set required baud rate &#10;&#10;`,1)
+               :``">
+            </variable>
+            <variable id="mcanConfigBody" value="($parent.getParent().getSetting(`isPeripheralCANType`).getValue() &amp;&amp; $parent.deviceName.getValue(``)==`MCAN`) ? 
+               leftPadding($parent.canConfigDef.getValue() + `.baudRateA = 500000UL;              // set required arbitration phase baud rate/baud rate &#10;`,1)+
+               leftPadding($parent.canConfigDef.getValue() + `.baudRateD = 1000000UL;             // set required data phase baud rate for CAN FD &#10;&#10;`,1)
+               :``">
+            </variable>
+            <variable id="canInitFcn" value="
+               leftPadding(`&#10;/* CAN communication interface init example */ &#10;&#10;`,1) +
+               leftPadding(`// ` + toUpperCase($parent.deviceName.getValue(``)) + ` module initialization ;&#10;`,1) +
+               leftPadding(toLowerCase($parent.deviceName.getValue(``) + `_config_t `) + $parent.canConfigDef.getValue(``) + `;&#10;&#10;`,1) +
+               
+               ($parent.getParent().getSetting(`isPeripheralDSCCANType`).getValue(false) ? 
+               leftPadding(`// Use ` + toUpperCase($parent.deviceName.getValue(``)) + ` default configuration and modify it.&#10;`,1) +
+               leftPadding(`// Define the required clock frequency: #define `+ $parent.deviceFreqDef.getValue(``) +`&#10;`,1) +
+               leftPadding(toUpperCase($parent.deviceName.getValue(``))+`_GetDefaultConfig(&amp;`+ $parent.canConfigDef.getValue(``) + `, ` + $parent.deviceFreqDef.getValue(``) + `);&#10;&#10;`,1) :
+               leftPadding(`// Use ` + toUpperCase($parent.deviceName.getValue(``)) + ` default configuration and modify it;&#10;`,1) +
+               leftPadding(toUpperCase($parent.deviceName.getValue(``))+`_GetDefaultConfig(&amp;`+ $parent.canConfigDef.getValue(``) +`);&#10;&#10;`,1)) +
+               $parent.flexcanConfigBody.getValue() + $parent.flexcanDscConfigBody.getValue() + $parent.mcanConfigBody.getValue() + $parent.mscanConfigBody.getValue() +  
+               
+               ($parent.getParent().getSetting(`isPeripheralDSCCANType`).getValue(false) ? 
+               leftPadding(`// Initialize ` + toUpperCase($parent.deviceName.getValue(``)) + `&#10;`,1) +
+               leftPadding(toUpperCase($parent.deviceName.getValue(``))+`_Init(`+ $parent.deviceBase.getValue(``) +`, &amp;` + $parent.canConfigDef.getValue() + `);`,1) :
+               leftPadding(`// Initialize ` + toUpperCase($parent.deviceName.getValue(``)) + ` module, define the required clock frequency: #define `+ $parent.deviceFreqDef.getValue(``) + `&#10;`,1) +
+               leftPadding(toUpperCase($parent.deviceName.getValue(``))+`_Init(`+ $parent.deviceBase.getValue(``) +`, &amp;` + $parent.canConfigDef.getValue() + `, ` + $parent.deviceFreqDef.getValue(``) +`);`,1))">
+            </variable>
+            <!-- Template -->
+            <variable id="functionBody" value="$parent.hasOption(`genericCanDefaultUserInit`) ? `&#10;` + leftPadding(`/* Place your code here */`,1) + `&#10;` : $parent.canInitFcn.getValue()"></variable>
+            <variable id="templateText" value="`void ` + $parent.initFunctionID.getValue(``) + `(void){&#10;` + $parent.functionBody.getValue(``) + `&#10;};`"></variable>
+            <string id="initFunctionID" label="User init function">
+               <description expr="`Set extern initialization function ID of CAN communication interface. Define following function in your code: ` + ($this.getValue(``)==`` ? `N/A` : (`void ` + $this.getValue(``) + `(void)`)) "></description>
+               <validation>
+                  <constraint cond_expr="isCIdentifier($this.getValue())" level="error"  description_expr="$this.getValue() + ` is not a valid C identifier!`"/>
+               </validation>
+            </string>
+            <info id="functionTemplate" label="Function template" options="UI_INFO_COPY_BUTTON" value="$parent.templateText.getValue(``)">
+               <description>Copy this template of user init function into your code and define it.</description>
+            </info>
+         </struct>
+         
+         <!-- Clock source enumms -->
+         <enum id="flexcan_clock_source_t" label="FlexCAN clock source">
+            <item id="kFLEXCAN_ClkSrcOsc" label_expr="getPeripheralClock($parent.generic_can_peripheral.getValue(), `OscillatorClock`) + ` `" value="OscillatorClock" available="!$parent.generic_can_driver_version.getEnumItemValue().regexMatch(`2.5.\d+`)"/>
+            <item id="kFLEXCAN_ClkSrcPeri" label_expr="getPeripheralClock($parent.generic_can_peripheral.getValue(), `BusInterfaceClock`) + ` `" value="BusInterfaceClock" available="(!peripheralFeatureDefined(`FSL_FEATURE_FLEXCAN_SUPPORT_ENGINE_CLK_SEL_REMOVE`, $parent.generic_can_peripheral.getValue()) || !(getPeripheralFeature(`FSL_FEATURE_FLEXCAN_SUPPORT_ENGINE_CLK_SEL_REMOVE`, $parent.generic_can_peripheral.getValue())==1)) &amp;&amp; !$parent.generic_can_driver_version.getEnumItemValue().regexMatch(`2.5.\d+`)"/>
+            <item id="kFLEXCAN_ClkSrc0" label_expr="getPeripheralClock($parent.generic_can_peripheral.getValue(), `OscillatorClock`)" value="OscillatorClock" available="$parent.generic_can_driver_version.getEnumItemValue().regexMatch(`2.5.\d+`)"/>
+            <item id="kFLEXCAN_ClkSrc1" label_expr="getPeripheralClock($parent.generic_can_peripheral.getValue(), `BusInterfaceClock`)" value="BusInterfaceClock" available="(!peripheralFeatureDefined(`FSL_FEATURE_FLEXCAN_SUPPORT_ENGINE_CLK_SEL_REMOVE`, $parent.generic_can_peripheral.getValue()) ||  !(getPeripheralFeature(`FSL_FEATURE_FLEXCAN_SUPPORT_ENGINE_CLK_SEL_REMOVE`, $parent.generic_can_peripheral.getValue())==1)) &amp;&amp; $parent.generic_can_driver_version.getEnumItemValue().regexMatch(`2.5.\d+`)"/>
+         </enum>
+         <enum id="dsc_flexcan_clock_source_t" label="FlexCAN clock source">
+            <item id="kFLEXCAN_ClkSrc0" label_expr="getPeripheralClock($parent.generic_can_peripheral.getValue(), `OscillatorClock`)" value="OscillatorClock" available="$parent.generic_can_driver_version.getEnumItemValue().regexMatch(`2.0.\d+`)"/>
+            <item id="kFLEXCAN_ClkSrc1" label_expr="getPeripheralClock($parent.generic_can_peripheral.getValue(), `BusInterfaceClock`)" value="BusInterfaceClock" available="(!peripheralFeatureDefined(`FSL_FEATURE_FLEXCAN_SUPPORT_ENGINE_CLK_SEL_REMOVE`, $parent.generic_can_peripheral.getValue()) ||  !(getPeripheralFeature(`FSL_FEATURE_FLEXCAN_SUPPORT_ENGINE_CLK_SEL_REMOVE`, $parent.generic_can_peripheral.getValue())==1)) &amp;&amp; $parent.generic_can_driver_version.getEnumItemValue().regexMatch(`2.0.\d+`)"/>
+         </enum>
+         <enum id="mscan_clock_source_t" label="MsCAN clock source">
+            <item id="kMSCAN_ClkSrcBus" label_expr="getPeripheralClock($parent.generic_can_peripheral.getValue(), `BusInterfaceClock`)" value="BusInterfaceClock"/>
+            <item id="kMSCAN_ClkSrcOsc" label_expr="getPeripheralClock($parent.generic_can_peripheral.getValue(), `OscillatorClock`)" value="OscillatorClock"/>
+         </enum>
+         <enum id="mcan_clock_source_t" label="MCAN clock source">
+            <item id="mcan_clkSrc" label_expr="getPeripheralClock($parent.generic_can_peripheral.getValue(), `FunctionClock`)" value="FunctionClock"/>
+         </enum>
+
+         <!-- flexcan structure -->
+         <struct id="flexcanConfig_t" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+            <options_expr>
+               <option id="genericCanBaudrate" available="$parent.hasOption(`genericCanBaudrate`)" />
+          </options_expr>
+            <!-- config structure -->
+            <variable id="clkSrc" value="$parent.getParent().getSetting(`clockSource`).getValue(``)" options="add_to_struct"></variable>
+            <variable id="clkSrcFreq" value="$parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue(0).toHertz()"></variable>
+            <variable id="bitTimeSegments" value="10"></variable>
+            <integer id="baudRate" label="Baud rate" type="uint32_t" min_expr="1" available="$parent.hasOption(`genericCanBaudrate`)">
+               <description>
+FlexCAN baud rate in bps that is used for calculation of the pre-scaler division factor and the Time quantum (Tq).  
+The nominal bit time (1 / baud rate) = synchronization segment + propagation segment + phase segment 1 + phase segment 2.   
+The default timing of the FlexCAN driver is used for initialization of the CAN communication:  
+  
+**Nominal bit time** = synchronization segment (1\*Tq) + propagation segment (2\*Tq) + phase segment 1 (4\*Tq) + phase segment 2 (3\*Tq) = **10*Tq**
+               </description>
+            </integer>
+            <info id="preDivider" label="Clock pre-scaler division factor" value="(($parent.baudRate.getValue() != 0) &amp;&amp; ($parent.clkSrcFreq.getValue() != 0)) ? ($parent.clkSrcFreq.getValue().toInt() / ($parent.baudRate.getValue() * $parent.bitTimeSegments.getValue())) : `N/A`" available="$parent.hasOption(`genericCanBaudrate`)">
+               <description>Clock Pre-scaler Division Factor. It defines the ratio between the PE clock frequency and the Serial Clock (Sclock) frequency. The Sclock period defines the time quantum of the CAN protocol. </description>
+               <validation>
+                  <constraint when_expr="$this.getValue() != `N/A`" cond_expr="($this.getValue().toInt() &gt; 0) &amp;&amp; ($this.getValue().toInt() &lt;= 256)" level="error" description_expr="`The clock pre-scaler division factor is out of range 1 - 256 (computed value is ` + $this.getValue() + `). Select different baudrate and/or CAN clock source frequency.`"/>
+               </validation>
+            </info>
+            <info id="timeQuantum" label="Time Quantum" value="(($parent.preDivider.getValue() != `N/A`) &amp;&amp; ($parent.preDivider.getValue() != 0)) ? timeToString(getTime((($parent.clkSrcFreq.getValue().toInt() * 1.0) / $parent.preDivider.getValue()),`ns`,`Hz`)/1000.0) : `N/A`" available="$parent.hasOption(`genericCanBaudrate`)">
+               <description>The time quantum value that is used with used time segments, propagation time and re-synchronization time.</description>
+            </info>
+            <info id="bitRate" label="Calculated baud rate" value="(($parent.preDivider.getValue() != `N/A`) &amp;&amp; ($parent.preDivider.getValue() != 0)) ? frequencyToString(getFreq((($parent.clkSrcFreq.getValue().toInt() * 1.0) / $parent.preDivider.getValue() / $parent.bitTimeSegments.getValue()),`Hz`,`Hz`)) : `N/A`" available="$parent.hasOption(`genericCanBaudrate`)">
+               <description>
+The calculated value of the baud rate (nominal bit rate) that is used for communication.  
+*Note:* The bit rate frequency can differ from the required baud rate because of limitation of the pre-scaler division factor.
+               </description>
+            </info>
+         </struct>
+         <!-- dsc flexcan structure -->
+         <struct id="dscFlexcanConfig_t" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+            <options_expr>
+               <option id="genericCanBaudrate" available="$parent.hasOption(`genericCanBaudrate`)" />
+            </options_expr>
+            <!-- config structure -->
+            <variable id="clkSrc" value="$parent.getParent().getSetting(`clockSource`).getValue(``)" options="add_to_struct"></variable>
+            <variable id="clkSrcFreq" value="$parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue(0).toHertz()"></variable>
+            <variable id="bitTimeSegments" value="10"></variable>
+            <integer id="baudRate" label="Baud rate" type="uint32_t" min_expr="1" available="$parent.hasOption(`genericCanBaudrate`)">
+               <description>
+FlexCAN baud rate in bps that is used for calculation of the pre-scaler division factor and the Time quantum (Tq).  
+The nominal bit time (1 / baud rate) = synchronization segment + propagation segment + phase segment 1 + phase segment 2.   
+The default timing of the FlexCAN driver is used for initialization of the CAN communication:  
+
+**Nominal bit time** = synchronization segment (1\*Tq) + propagation segment (2\*Tq) + phase segment 1 (4\*Tq) + phase segment 2 (3\*Tq) = **10*Tq**
+               </description>
+            </integer>
+            <info id="preDivider" label="Clock pre-scaler division factor" value="(($parent.baudRate.getValue() != 0) &amp;&amp; ($parent.clkSrcFreq.getValue() != 0)) ? ($parent.clkSrcFreq.getValue().toInt() / ($parent.baudRate.getValue() * $parent.bitTimeSegments.getValue())) : `N/A`" available="$parent.hasOption(`genericCanBaudrate`)">
+               <description>Clock Pre-scaler Division Factor. It defines the ratio between the PE clock frequency and the Serial Clock (Sclock) frequency. The Sclock period defines the time quantum of the CAN protocol. </description>
+               <validation>
+                  <constraint when_expr="$this.getValue() != `N/A`" cond_expr="($this.getValue().toInt() &gt; 0) &amp;&amp; ($this.getValue().toInt() &lt;= 256)" level="error" description_expr="`The clock pre-scaler division factor is out of range 1 - 256 (computed value is ` + $this.getValue() + `). Select different baudrate and/or CAN clock source frequency.`"/>
+               </validation>
+            </info>
+            <info id="timeQuantum" label="Time Quantum" value="(($parent.preDivider.getValue() != `N/A`) &amp;&amp; ($parent.preDivider.getValue() != 0)) ? timeToString(getTime((($parent.clkSrcFreq.getValue().toInt() * 1.0) / $parent.preDivider.getValue()),`ns`,`Hz`)/1000.0) : `N/A`" available="$parent.hasOption(`genericCanBaudrate`)">
+               <description>The time quantum value that is used with used time segments, propagation time and re-synchronization time.</description>
+            </info>
+            <info id="bitRate" label="Calculated baud rate" value="(($parent.preDivider.getValue() != `N/A`) &amp;&amp; ($parent.preDivider.getValue() != 0)) ? frequencyToString(getFreq((($parent.clkSrcFreq.getValue().toInt() * 1.0) / $parent.preDivider.getValue() / $parent.bitTimeSegments.getValue()),`Hz`,`Hz`)) : `N/A`" available="$parent.hasOption(`genericCanBaudrate`)">
+               <description>
+                  The calculated value of the baud rate (nominal bit rate) that is used for communication.  
+                  *Note:* The bit rate frequency can differ from the required baud rate because of limitation of the pre-scaler division factor.
+               </description>
+            </info>
+         </struct>
+         <!-- mscan structure -->
+         <struct id="mscanConfig_t" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+            <options_expr>
+               <option id="genericCanBaudrate" available="$parent.hasOption(`genericCanBaudrate`)" />
+            </options_expr>
+            <!-- config structure -->
+            <variable id="clkSrc" value="$parent.getParent().getSetting(`clockSource`).getValue(``)" options="add_to_struct"></variable>
+            <variable id="clkSrcFreq" value="$parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue(0).toHertz()"></variable>
+            <variable id="bitTimeSegments" value="8"></variable>
+            <integer id="baudRate" label="Baud rate" type="uint32_t" min_expr="1" available="$parent.hasOption(`genericCanBaudrate`)">
+               <description>
+MsCAN baud rate in bps that is used for calculation of the pre-scaler division factor and the Time quantum (Tq).  
+The nominal bit time (1 / baud rate) = synchronization segment + time segment 1 + time segment 2.   
+The default timing of the MsCAN driver is used for initialization of the CAN communication:  
+
+**Nominal bit time** = synchronization segment (1\*Tq) + time segment 1 (4\*Tq) + time segment 2 (3\Tq) = **8*Tq**
+               </description>
+            </integer>
+            <info id="preDivider" label="Clock pre-scaler division factor" value="(($parent.baudRate.getValue() != 0) &amp;&amp; ($parent.clkSrcFreq.getValue() != 0)) ? ($parent.clkSrcFreq.getValue().toInt() / ($parent.baudRate.getValue() * $parent.bitTimeSegments.getValue())) : `N/A`" available="$parent.hasOption(`genericCanBaudrate`)">
+               <description>Clock Pre-scaler Division Factor. It defines the ratio between the PE clock frequency and the Serial Clock (Sclock) frequency. The Sclock period defines the time quantum of the CAN protocol. </description>
+               <validation>
+                  <constraint when_expr="$this.getValue() != `N/A`" cond_expr="($this.getValue().toInt() &gt; 0) &amp;&amp; ($this.getValue().toInt() &lt;= 64)" level="error" description_expr="`The clock pre-scaler division factor is out of range 1 - 64 (computed value is ` + $this.getValue() + `). Select different baudrate and/or CAN clock source frequency.`"/>
+               </validation>
+            </info>
+            <info id="timeQuantum" label="Time Quantum" value="(($parent.preDivider.getValue() != `N/A`) &amp;&amp; ($parent.preDivider.getValue() != 0)) ? timeToString(getTime((($parent.clkSrcFreq.getValue().toInt() * 1.0) / $parent.preDivider.getValue()),`ns`,`Hz`)/1000.0) : `N/A`" available="$parent.hasOption(`genericCanBaudrate`)">
+               <description>The time quantum value that is used with used time segments, propagation time and re-synchronization time.</description>
+            </info>
+            <info id="bitRate" label="Calculated baud rate" value="(($parent.preDivider.getValue() != `N/A`) &amp;&amp; ($parent.preDivider.getValue() != 0)) ? frequencyToString(getFreq((($parent.clkSrcFreq.getValue().toInt() * 1.0) / $parent.preDivider.getValue() / $parent.bitTimeSegments.getValue()),`Hz`,`Hz`)) : `N/A`">
+               <description>
+The calculated value of the baud rate (nominal bit rate) that is used for communication.  
+*Note:* The bit rate frequency can differ from the required baud rate because of limitation of the pre-scaler division factor.
+               </description>
+            </info>
+         </struct>
+         <!-- mcan structure -->
+         <struct id="mcanConfig_t" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+            <options_expr>
+               <option id="genericCanBaudrate" available="$parent.hasOption(`genericCanBaudrate`)" />
+               <option id="genericCanFDBaudrate" available="$parent.hasOption(`genericCanFDBaudrate`)" />
+               <option id="genericCanMcanFDNormal" available="$parent.hasOption(`genericCanMcanFDNormal`)" />
+               <option id="genericCanMcanFDSwitch" available="$parent.hasOption(`genericCanMcanFDSwitch`)" />
+            </options_expr>
+            <!-- config structure -->
+            <variable id="clkSrc" value="$parent.getParent().getSetting(`clockSource`).getValue(``)" options="add_to_struct"></variable>
+            <variable id="clkSrcFreq" value="$parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue(0).toHertz()"></variable>
+            <variable id="bitTimeSegments" value="16"></variable>
+            <integer id="baudRateA" label="Nominal baud rate" available="$parent.hasOption(`genericCanBaudrate`)"
+               type="uint32_t" min_expr="1">
+               <description>
+MCAN baud rate in bps that is used for calculation of the pre-scaler division factor and the Time quantum (Tq).  
+The nominal bit time (1 / baud rate) = synchronization segment + time segment 1 + time segment 2.   
+The default timing of the MCAN driver is used for initialization of the CAN communication:  
+
+**Nominal bit time** = synchronization segment (1\*Tq) + time segment 1 (11\*Tq) + time segment 2 (4\*Tq) = **16*Tq**
+               </description>
+            </integer>
+            <info id="preDivider" label="Clock pre-scaler division factor" value="(($parent.baudRateA.getValue() != 0) &amp;&amp; ($parent.clkSrcFreq.getValue() != 0)) ? ($parent.clkSrcFreq.getValue().toInt() / ($parent.baudRateA.getValue() * $parent.bitTimeSegments.getValue())) : `N/A`" available="$parent.hasOption(`genericCanBaudrate`)">
+               <description>Clock Pre-scaler Division Factor. It defines the ratio between the PE clock frequency and the Serial Clock (Sclock) frequency. The Sclock period defines the time quantum of the CAN protocol. </description>
+               <validation>
+                  <constraint when_expr="$this.getValue() != `N/A`" cond_expr="($this.getValue().toInt() &gt; 0) &amp;&amp; ($this.getValue().toInt() &lt;= 512)" level="error" description_expr="`The clock pre-scaler division factor is out of range 1 - 512 (computed value is ` + $this.getValue() + `). Select different baudrate and/or CAN clock source frequency.`"/>
+               </validation>
+            </info>
+            <info id="timeQuantum" label="Time Quantum" value="(($parent.preDivider.getValue() != `N/A`) &amp;&amp; ($parent.preDivider.getValue() != 0)) ? timeToString(getTime((($parent.clkSrcFreq.getValue().toInt() * 1.0) / $parent.preDivider.getValue()),`ns`,`Hz`)/1000.0) : `N/A`" available="$parent.hasOption(`genericCanBaudrate`)">
+               <description>The time quantum value that is used with used time segments, propagation time and re-synchronization time.</description>
+            </info>
+            <info id="bitRate" label="Calculated baud rate" value="(($parent.preDivider.getValue() != `N/A`) &amp;&amp; ($parent.preDivider.getValue() != 0)) ? frequencyToString(getFreq((($parent.clkSrcFreq.getValue().toInt() * 1.0) / $parent.preDivider.getValue() / $parent.bitTimeSegments.getValue()),`Hz`,`Hz`)) : `N/A`">
+               <description>
+The calculated value of the baud rate (nominal bit rate) that is used for communication.  
+*Note:* The bit rate frequency can differ from the required baud rate because of limitation of the pre-scaler division factor.
+               </description>
+            </info>
+            <integer id="baudRateD" label="Fast data baud rate" type="uint32_t" available="$parent.hasOption(`genericCanFDBaudrate`) &amp;&amp; (peripheralFeatureDefined(`FSL_FEATURE_CAN_SUPPORT_CANFD`, $parent.getParent().getSetting(`generic_can_peripheral`).getValue()) &amp;&amp; getPeripheralFeature(`FSL_FEATURE_CAN_SUPPORT_CANFD`, $parent.getParent().getSetting(`generic_can_peripheral`).getValue()))" min_expr="1">
+               <description>Fast data phase baud rate that is used when the CAN flexible data rate mode and bit rate switching is enabled. Note: When the flexible data rate mode is disabled the fast data baud rate bit timing default configuration (based on the selected value of this setting) is set in the MCAN initialization function.</description>
+            </integer>
+            <bool id="enableCanfdNormal" label="Enable flexible data rate mode" available="$parent.hasOption(`genericCanMcanFDNormal`) &amp;&amp; (peripheralFeatureDefined(`FSL_FEATURE_CAN_SUPPORT_CANFD`, $parent.getParent().getSetting(`generic_can_peripheral`).getValue()) &amp;&amp; getPeripheralFeature(`FSL_FEATURE_CAN_SUPPORT_CANFD`, $parent.getParent().getSetting(`generic_can_peripheral`).getValue()))">
+               <description>When enabled the CAN flexible data rate operation mode is enabled.</description>
+            </bool>
+            <bool id="enableCanfdSwitch" label="Enable flexible data bit rate switching" available="$parent.hasOption(`genericCanMcanFDSwitch`) &amp;&amp; (peripheralFeatureDefined(`FSL_FEATURE_CAN_SUPPORT_CANFD`, $parent.getParent().getSetting(`generic_can_peripheral`).getValue()) &amp;&amp; getPeripheralFeature(`FSL_FEATURE_CAN_SUPPORT_CANFD`, $parent.getParent().getSetting(`generic_can_peripheral`).getValue()))">
+               <description>When enabled the CAN flexible data bit rate switching is enabled for transmission.</description>
+            </bool>
+         </struct>
+         
+         <!-- Generic CAN peripheral configuration -->
+         <struct id="peripheral_config_t" public="true">
+            <!-- Quick selections -->          
+            <quick_selections>
+               <quick_selection id="QuickSelection1" label="Default">
+                  <set id="user_init.initFunctionID">CAN_communication_init</set>
+                  <set id="flexcanConfig.baudRate">500000</set> 
+                  <set id="dscFlexcanConfig.baudRate">500000</set> 
+                  <set id="mscanConfig.baudRate">500000</set> 
+                  <set id="mcanConfig.baudRateA">500000</set> 
+                  <set id="mcanConfig.baudRateD">1000000</set> 
+                  <set id="mcanConfig.enableCanfdNormal">true</set> 
+                  
+                  <set id="enable_flexcan_mb_irq">true</set>
+                  <set id="flexcan_interrupt_mb.useDefaultISR">true</set>
+                  <set id="enable_flexcan_busoff_irq">true</set>
+                  <set id="flexcan_interrupt_busoff.useDefaultISR">true</set>
+                  <set id="enable_flexcan_error_irq">true</set>
+                  <set id="flexcan_interrupt_error.useDefaultISR">true</set>
+                  <set id="enable_flexcan_txwarn_irq">true</set>
+                  <set id="flexcan_interrupt_txwarn.useDefaultISR">true</set>
+                  <set id="enable_flexcan_rxwarn_irq">true</set>
+                  <set id="flexcan_interrupt_rxwarn.useDefaultISR">true</set>
+                  <set id="enable_flexcan_wakeup_irq">true</set>
+                  <set id="flexcan_interrupt_wakeup.useDefaultISR">true</set>
+                  <set id="enable_mscan_tx_irq">true</set>
+                  <set id="mscan_interrupt_tx.useDefaultISR">true</set>
+                  <set id="enable_mscan_rx_irq">true</set>
+                  <set id="mscan_interrupt_rx.useDefaultISR">true</set>
+                  <set id="enable_can0_irq">true</set>
+                  <set id="mcan_interrupt_0.useDefaultISR">true</set>
+                  <set id="enable_can1_irq">true</set>
+                  <set id="mcan_interrupt_1.useDefaultISR">true</set>
+               </quick_selection>
+               <default>QuickSelection1</default>
+            </quick_selections>
+            <!-- CAN Type -->
+            <variable id="can_type_table" value="getResource(`generic_can`,`canList`,`generic_can`)"/>
+            <variable id="CAN_Type_peripherals" value="getPeripherals(`CAN`).sort((item1, item2) -> stringCompare(item1,item2))"/>
+            <variable id="CAN_Type_peripherals_size" value="$parent.CAN_Type_peripherals.getValue().size()"/>
+            <variable id="MSCAN_Type_peripherals" value="getPeripherals(`MSCAN`).sort((item1, item2) -> stringCompare(item1,item2))"/>
+            <variable id="MSCAN_Type_peripherals_size" value="$parent.MSCAN_Type_peripherals.getValue().size()"/>           
+            <variable id="can_peripherals" value="createArray().merge($parent.CAN_Type_peripherals.getValue()).merge($parent.MSCAN_Type_peripherals.getValue())"/>
+            <variable id="can_peripherals_size" value="$parent.hasOption(`genericCanTestZeroPeripheral`) ? 0 : $parent.can_peripherals.getValue().size()"/>
+
+            <!-- Selected peripheral -->
+            <dynamic_enum id="peripheralCAN" label="Peripheral" items="$parent.can_peripherals.getValue()" available="$parent.can_peripherals_size.getValue() &gt; 0">
+               <options_expr>
+                  <option id="FEATURE_PERIPHERAL_SELECT" available="$parent.isAvailable() &amp;&amp; $parent.hasOption(`genericCanPeripheralSelect`)"/>
+                  <option id="UI_REFRESH"/>
+                  <option id="remove_from_struct_init"/>
+               </options_expr>
+               <description>CAN peripheral selection</description>
+               <validation>
+                  <dependency when_expr="$parent.hasOption(`genericCanRxPinDependencyPeripheralSetting`) &amp;&amp; $parent.isPeripheralCanIndexValid.getValue(false)"
+                     resource_type="PeripheralUnifiedSignal"
+                     resource_id_expr="$parent.peripheralCAN.getEnumItemId() + `.` + $parent.generic_can_rx_signal_unified_id.getValue()"
+                     description_expr="msg::message(`err_routed_signal`, $parent.generic_can_rx_signal_description.getValue() , $parent.peripheralCAN.getEnumItemId())"
+                     level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="$parent.hasOption(`genericCanTxPinDependencyPeripheralSetting`) &amp;&amp; $parent.isPeripheralCanIndexValid.getValue(false)"
+                     resource_type="PeripheralUnifiedSignal"
+                     resource_id_expr="$parent.peripheralCAN.getEnumItemId() + `.` + $parent.generic_can_tx_signal_unified_id.getValue()"
+                     description_expr="msg::message(`err_routed_signal`, $parent.generic_can_tx_signal_description.getValue() , $parent.peripheralCAN.getEnumItemId())"
+                     level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="$parent.hasOption(`genericCanDriverDependencyPeripheralSetting`) &amp;&amp; $parent.isPeripheralCanIndexValid.getValue()"
+                     resource_type="SWComponent" resource_id_expr="$parent.generic_can_sdk_driver_id.getValue(``)"
+                     description_expr="msg::message(`err_missing_driver`, $parent.generic_can_sdk_driver_filename.getValue(``) , ` (required for ` + $instance.getID() + `)`)"
+                     level="Warning">
+                     <feature name="enabled" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            
+            <variable id="peripheralCanIndex" value="$parent.peripheralCAN.enumItemsOf().searchInArray(x -> (x.getID() == $parent.peripheralCAN.getEnumItemId()))"/>
+          
+            <variable id="can_type_table_index" value="((!$parent.hasOption(`genericCanTestUnknownPeripheralType`) &amp;&amp; ($parent.can_peripherals_size.getValue() &gt; 0))
+               ? 
+               (($parent.peripheralCanIndex.getValue().toInt() &lt;  ($parent.CAN_Type_peripherals_size.getValue())) ?      
+               (isSdkComponentDefined(`platform.drivers.flexcan`) &amp;&amp; !$parent.hasOption(`genericCanPeripheralFlexcanNotSupported`) ? 0 : (isSdkComponentDefined(`platform.drivers.mcan`) &amp;&amp; !$parent.hasOption(`genericCanPeripheralMcanNotSupported`) ? 1 : (isSdkComponentDefined(`platform.drivers.dsc_flexcan`) &amp;&amp; !$parent.hasOption(`genericCanPeripheralDscFlexcanNotSupported`) ? 3 :-1)))
+               :
+               (($parent.peripheralCanIndex.getValue().toInt() &lt;  ($parent.CAN_Type_peripherals_size.getValue() + $parent.MSCAN_Type_peripherals_size.getValue())) ?
+               (isSdkComponentDefined(`platform.drivers.mscan`) &amp;&amp; !$parent.hasOption(`genericCanPeripheralMscanNotSupported`) ? 2 : -1)
+               :              
+               -1))
+               : 
+               -1)" />
+            
+            <variable id="isPeripheralCanIndexValid" value="($parent.can_type_table_index.getValue() &gt; - 1)"/>
+            
+            <info id="peripheralWarning" label="Note:"  value="($parent.isPeripheralCanIndexValid.getValue() ? `` :(($parent.can_peripherals_size.getValue() &gt; 0) ?  ($parent.hasOption(`genericCanPeripheralUnsupportedText`) ? $parent.optionValue(`genericCanPeripheralUnsupportedText`) : $parent.peripheralCAN.getEnumItemId() + ` peripheral is not supported.`) : ($parent.hasOption(`genericCanPeripheralNotAvailableText`) ? $parent.optionValue(`genericCanPeripheralNotAvailableText`) :`Any peripheral is not available.`)))" available="!$parent.isPeripheralCanIndexValid.getValue()"/>
+            
+            <variable id="isPeripheralCANType" value="($parent.can_type_table_index.getValue() == 0 || $parent.can_type_table_index.getValue() == 1) "/> <!-- FLEXCAN and MCAN  -->
+            <variable id="isPeripheralMSCANType" value="($parent.can_type_table_index.getValue() == 2)"/> <!-- MSCAN -->
+            <variable id="isPeripheralDSCCANType" value="($parent.can_type_table_index.getValue() == 3)"/> <!-- DSC FLEXCAN -->
+  
+            <!-- Resource table date for CAN peripheral -->
+            <variable id="generic_can_peripheral_type"                  value="$parent.isPeripheralCanIndexValid.getValue() &amp;&amp; ($parent.can_type_table.getValue().size() &gt; 0)? $parent.can_type_table.getValue().get($parent.can_type_table_index.getValue().toInt()).getSetting(`peripheral_type`).getValue():-1"/>
+            <variable id="generic_can_peripheral_description"           value="$parent.isPeripheralCanIndexValid.getValue() &amp;&amp; ($parent.can_type_table.getValue().size() &gt; 0) ? $parent.can_type_table.getValue().get($parent.can_type_table_index.getValue().toInt()).getSetting(`peripheral_description`).getValue():-1"/>
+            <variable id="generic_can_sdk_driver_id"                    value="$parent.isPeripheralCanIndexValid.getValue() &amp;&amp; ($parent.can_type_table.getValue().size() &gt; 0) ? $parent.can_type_table.getValue().get($parent.can_type_table_index.getValue().toInt()).getSetting(`sdk_driver_id`).getValue():-1"/>
+            <variable id="generic_can_sdk_driver_id_short"              value="$parent.generic_can_sdk_driver_id.getValue().regexMatch(`platform\.drivers\.(.*)`) ? $parent.generic_can_sdk_driver_id.getValue().regexSubstr(`platform\.drivers\.(.*)`,1)  : -1"/>
+            <variable id="generic_can_sdk_driver_filename"              value="$parent.isPeripheralCanIndexValid.getValue() &amp;&amp; ($parent.can_type_table.getValue().size() &gt; 0) ? $parent.can_type_table.getValue().get($parent.can_type_table_index.getValue().toInt()).getSetting(`sdk_driver_filename`).getValue():-1"/>
+            <variable id="generic_can_sdk_driver_prefix"                value="$parent.isPeripheralCanIndexValid.getValue() &amp;&amp; ($parent.can_type_table.getValue().size() &gt; 0) ? $parent.can_type_table.getValue().get($parent.can_type_table_index.getValue().toInt()).getSetting(`sdk_driver_prefix`).getValue():-1"/>
+            <variable id="generic_can_sdk_freemaster_id"                value="$parent.isPeripheralCanIndexValid.getValue() &amp;&amp; ($parent.can_type_table.getValue().size() &gt; 0) ? $parent.can_type_table.getValue().get($parent.can_type_table_index.getValue().toInt()).getSetting(`sdk_freemaster_id`).getValue():-1"/>
+            <variable id="generic_can_sdk_freemaster_driver_filename"   value="$parent.isPeripheralCanIndexValid.getValue() &amp;&amp; ($parent.can_type_table.getValue().size() &gt; 0) ? $parent.can_type_table.getValue().get($parent.can_type_table_index.getValue().toInt()).getSetting(`sdk_freemaster_driver_filename`).getValue():-1"/>
+            <variable id="generic_can_rx_signal_unified_id"             value="$parent.isPeripheralCanIndexValid.getValue() &amp;&amp; ($parent.can_type_table.getValue().size() &gt; 0) ? $parent.can_type_table.getValue().get($parent.can_type_table_index.getValue().toInt()).getSetting(`rx_signal_unified_id`).getValue():-1"/>
+            <variable id="generic_can_rx_signal_description"            value="$parent.isPeripheralCanIndexValid.getValue() &amp;&amp; ($parent.can_type_table.getValue().size() &gt; 0) ? $parent.can_type_table.getValue().get($parent.can_type_table_index.getValue().toInt()).getSetting(`rx_signal_description`).getValue():-1"/>
+            <variable id="generic_can_tx_signal_unified_id"             value="$parent.isPeripheralCanIndexValid.getValue() &amp;&amp; ($parent.can_type_table.getValue().size() &gt; 0) ? $parent.can_type_table.getValue().get($parent.can_type_table_index.getValue().toInt()).getSetting(`tx_signal_unified_id`).getValue():-1"/>
+            <variable id="generic_can_tx_signal_description"            value="$parent.isPeripheralCanIndexValid.getValue() &amp;&amp; ($parent.can_type_table.getValue().size() &gt; 0) ? $parent.can_type_table.getValue().get($parent.can_type_table_index.getValue().toInt()).getSetting(`tx_signal_description`).getValue():-1"/>
+            <variable id="generic_can_peripheral_alias_prefix"                value="$parent.isPeripheralCanIndexValid.getValue() &amp;&amp; ($parent.can_type_table.getValue().size() &gt; 0) ? $parent.can_type_table.getValue().get($parent.can_type_table_index.getValue().toInt()).getSetting(`peripheral_alias`).getValue():-1"/>
+            <variable id="generic_can_peripheral_alias_index_feature_postfix" value="$parent.isPeripheralCanIndexValid.getValue() &amp;&amp; ($parent.can_type_table.getValue().size() &gt; 0) ? $parent.can_type_table.getValue().get($parent.can_type_table_index.getValue().toInt()).getSetting(`peripheral_alias_index_feature_postfix`).getValue():-1"/>
+            
+            <variable id="generic_can_peripheral" value="$parent.peripheralCAN.getEnumItemId()" available="$parent.isPeripheralCanIndexValid.getValue()"/>
+            <variable id="generic_can_peripheral_alias" value="$parent.peripheralCAN.getEnumItemValue()" available="$parent.isPeripheralCanIndexValid.getValue()"/>
+            
+            <!-- Driver version -->
+            <variable id="projectDriverVersion" value="queryFeatureAdvanced(`SWComponent`, $parent.generic_can_sdk_driver_id.getValue(), `version`,false).regexSubstr(`\[(.*)\]`,1)"/>
+            <variable id="isProjectDriverVersionAvailable" value="$parent.projectDriverVersion.getValue() != ``"/>
+            <dynamic_enum id="generic_can_driver_version" label="Driver version" available="$parent.hasOption(`genericCanDriverVersions`) &amp;&amp; $parent.isPeripheralCanIndexValid.getValue()"
+               items="getDefinedSdkComponentVersions($parent.generic_can_sdk_driver_id.getValue()).arrayToEnumItems(
+               enumItem -> (!$parent.isProjectDriverVersionAvailable.getValue(false)) || ($parent.projectDriverVersion.getValue(``) == enumItem),
+               enumItem -> enumItem,
+               enumItem -> enumItem,
+               enumItem -> enumItem)">
+               <description expr="`Version of the ` + ($parent.isPeripheralCanIndexValid.getValue(false) ? $parent.generic_can_sdk_driver_filename.getValue(`N/A`) : `N/A`) + ` SDK driver`"/>
+               <custom_value_support default="2.0.0" validation_expr="x -> x.regexMatch(`\d+\.\d+\.\d+`)"/>
+            </dynamic_enum>
+            <!-- Clock sources -->
+            <variable id="clkSrcSelect" value="$parent.generic_can_sdk_driver_prefix.getValue()==`FLEXCAN` ? ($parent.isPeripheralCANType.getValue() ? `flexcan_clock_source_t` : `dsc_flexcan_clock_source_t`) :
+               ($parent.generic_can_sdk_driver_prefix.getValue()==`MCAN` ? `mcan_clock_source_t` :
+               ($parent.generic_can_sdk_driver_prefix.getValue()==`MSCAN` ? `mscan_clock_source_t` :
+               ``))">
+            </variable>
+            <dynamic_enum  id="clockSource" label="Clock source" options="remove_from_struct_init" items="$parent.isPeripheralCanIndexValid.getValue() ? enumItemsOfType($components.generic_can.#global, $parent.clkSrcSelect.getValue()) : createArray()" available="$parent.hasOption(`genericCanClocks`) &amp;&amp; $parent.isPeripheralCanIndexValid.getValue()">
+               <description>Clock source selection</description>
+               <validation>
+                  <dependency when_expr="(getPeripheralClockType($parent.generic_can_peripheral.getValue(),$parent.clockSource.getEnumItemValue()) == `INPUT_SIGNAL`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($parent.generic_can_peripheral.getValue(),$parent.clockSource.getEnumItemValue())"
+                     description_expr="(getPeripheralClock($parent.generic_can_peripheral.getValue(), $parent.clockSource.getEnumItemValue()).regexMatch(`.*-.*`)?(getPeripheralClock($parent.generic_can_peripheral.getValue(), $parent.clockSource.getEnumItemValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($parent.generic_can_peripheral.getValue(), $parent.clockSource.getEnumItemValue()) + `is inactive.`))"
+                     level="Warning">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="(getPeripheralClockType($parent.generic_can_peripheral.getValue(),$parent.clockSource.getEnumItemValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($parent.generic_can_peripheral.getValue(),$parent.clockSource.getEnumItemValue())"
+                     description_expr="(getPeripheralClock($parent.generic_can_peripheral.getValue(), $parent.clockSource.getEnumItemValue()).regexMatch(`.*-.*`)?(getPeripheralClock($parent.generic_can_peripheral.getValue(), $parent.clockSource.getEnumItemValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($parent.generic_can_peripheral.getValue(), $parent.clockSource.getEnumItemValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" available="$parent.hasOption(`genericCanClocks`) &amp;&amp; $parent.isPeripheralCanIndexValid.getValue()"
+               items="
+               getClockFunctionalGroups().arrayToEnumItems(
+               enumItem -> $parent.hasOption(`genericCanClocks`) &amp;&amp; $parent.isPeripheralCanIndexValid.getValue(),
+               enumItem -> enumItem,
+               enumItem -> frequencyToString(getPeripheralClockFrequency($parent.generic_can_peripheral.getValue(), $parent.clockSource.getEnumItemValue(), enumItem)) + ` (` + enumItem + `)`,
+               enumItem -> getPeripheralClockFrequency($parent.generic_can_peripheral.getValue(), $parent.clockSource.getEnumItemValue(), enumItem))" >
+               <description>
+Selection of the clock source frequency. 
+*Note:* Correct timing functionality depends on the **clock source frequency** and corresponding **baud rate**.
+               </description>
+               <validation>
+                  <constraint cond_expr="$this.getEnumItemValue().toHertz() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+            </dynamic_enum>
+            
+            <reference type="flexcanConfig_t" id="flexcanConfig" available="$parent.isPeripheralCANType.getValue()  &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`FLEXCAN`"></reference>
+            <reference type="dscFlexcanConfig_t" id="dscFlexcanConfig" available="$parent.isPeripheralDSCCANType.getValue()  &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`FLEXCAN`"></reference>
+            <reference type="mscanConfig_t" id="mscanConfig" available="$parent.generic_can_sdk_driver_prefix.getValue(``)==`MSCAN`"></reference>
+            <reference type="mcanConfig_t" id="mcanConfig" available="$parent.generic_can_sdk_driver_prefix.getValue(``)==`MCAN`"></reference>
+  
+            <bool id="enableUserInit" label="Enable custom initialization" options="UI_LABEL_BOLD" available="($parent.hasOption(`genericCanUserInit`) || $parent.hasOption(`genericCanDefaultUserInit`))">
+               <description expr="`Enable custom initialization of the CAN peripheral. If disabled, use peripherals tool component for initialization of ` + $parent.peripheralCAN.getValue() + `.`"></description>
+            </bool>
+            <reference type="user_init_t" id="user_init" options="UI_LABEL_HIDDEN" enable="$parent.enableUserInit.getValue(false)" available="($parent.hasOption(`genericCanUserInit`) || $parent.hasOption(`genericCanDefaultUserInit`))">
+               <options_expr>
+                  <option id="genericCanUserInit" available="$parent.isPeripheralCanIndexValid.getValue(false) ? $parent.hasOption(`genericCanUserInit`) : false"></option>
+                  <option id="genericCanDefaultUserInit" available="$parent.isPeripheralCanIndexValid.getValue(false) ? $parent.hasOption(`genericCanDefaultUserInit`) : true"></option>
+               </options_expr>
+            </reference>
+            <info value="`Interrupt configuration`" id="line_Irq_cfg" options="UI_LINE_BREAK;UI_LABEL_HIDDEN" available="$parent.enable_flexcan_mb_irq.isAvailable() || $parent.enable_mscan_tx_irq.isAvailable() || $parent.enable_mscan_rx_irq.isAvailable() || $parent.enable_can0_irq.isAvailable() || $parent.enable_can1_irq.isAvailable()"/>
+            <variable id="intControllerName" value="(featureDefined(`SOC_INTC_COUNT`) &amp;&amp; getFeature(`SOC_INTC_COUNT`)) ? `INTC (Interrupt Controller peripheral)` : `NVIC (Nested Vectored Interrupt Controller peripheral)`"/>            
+            <!-- FLEXCAN Interrupt -->
+            <bool id="enable_flexcan_mb_irq" label="Message buffers interrupt vector" options="remove_from_struct_init;UI_LABEL_BOLD" enable="$parent.hasOption(`genericCanFlexcanInterruptMBVectorDisable`) ? false : true" 
+               available="$parent.getSetting(`isPeripheralCanIndexValid`).getValue(false) &amp;&amp; $parent.hasOption(`genericCanFlexcanInterruptMBVector`) &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`FLEXCAN`
+               &amp;&amp;
+               getResource(`interrupts`, $instance.getCoreId()).anyMatch(item -> (
+               (item.getSetting(`devices`).searchInArray(
+               devItem -> (devItem.getSetting(`id`).getValue() == $parent.getSetting(`peripheralCAN`).getEnumItemId()) &amp;&amp;
+               (devItem.getSetting(`function`).getValue() == `can_ored_mb`)
+               ) >= 0)))">
+               <description expr="`Enable initialization of the message buffers interrupt vector in the ` + $parent.intControllerName.getValue() + ` and definition of the interrupt routine name.`"></description>
+            </bool>
+            <reference id="flexcan_interrupt_mb" label="Message buffers interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_flexcan_mb_irq.isEnabled() &amp;&amp; $parent.enable_flexcan_mb_irq.getValue(false)" available="$parent.enable_flexcan_mb_irq.isAvailable() &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`FLEXCAN`">
+               <options_expr>
+                  <option id="irq_device" expr="$parent.getSetting(`peripheralCAN`).getEnumItemId()"/>
+                  <option id="irq_function" expr="`can_ored_mb`"/>
+                  <option id="irq_generate_handler" available="$parent.hasOption(`genericCanFlexcanInterruptMB_irq_generate_handler`)"/>
+                  <option id="irq_handler_insert" expr="$parent.hasOption(`genericCanFlexcanInterruptMB_irq_handler_insert`) ? $parent.optionValue(`genericCanFlexcanInterruptMB_irq_handler_insert`) : ``" available="$parent.hasOption(`genericCanFlexcanInterruptMB_irq_handler_insert`) &amp;&amp; ($parent.optionValue(`genericCanFlexcanInterruptMB_irq_handler_insert`) != ``)"/>
+                  <option id="irq_handler_remove_arm_errata_838869" available="$parent.hasOption(`genericCanFlexcanInterruptMB_irq_handler_remove_arm_errata_838869`)"/>
+                  <option id="without_handler_settings" available="$parent.hasOption(`genericCanFlexcanInterruptMB_without_handler_settings`)"/>
+                  <option id="remove_from_struct_init"/>
+                  <option id="UI_LABEL_HIDDEN"/>
+               </options_expr>
+            </reference>
+            <bool id="enable_flexcan_busoff_irq" label="Bus off interrupt vector" options="remove_from_struct_init;UI_LABEL_BOLD" enable="$parent.hasOption(`genericCanFlexcanInterruptBusoffVectorDisable`) ? false : true"
+               available="$parent.getSetting(`isPeripheralCanIndexValid`).getValue(false) &amp;&amp; $parent.hasOption(`genericCanFlexcanInterruptBusoffVector`) &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`FLEXCAN`
+               &amp;&amp;
+               getResource(`interrupts`, $instance.getCoreId()).anyMatch(item -> (
+               (item.getSetting(`devices`).searchInArray(
+               devItem -> (devItem.getSetting(`id`).getValue() == $parent.getSetting(`peripheralCAN`).getEnumItemId()) &amp;&amp;
+               (devItem.getSetting(`function`).getValue() == `can_busoff`)
+               ) >= 0)
+               ))">
+               <description expr="`Enable initialization of the bus off interrupt vector in the ` + $parent.intControllerName.getValue() + ` and definition of the interrupt routine name.`"></description>
+            </bool>
+            <reference id="flexcan_interrupt_busoff" label="Bus off interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_flexcan_busoff_irq.isEnabled() &amp;&amp; $parent.enable_flexcan_busoff_irq.getValue(false)" available="$parent.enable_flexcan_busoff_irq.isAvailable() &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`FLEXCAN`">
+               <options_expr>
+                  <option id="irq_device" expr="$parent.getSetting(`peripheralCAN`).getEnumItemId()"/>
+                  <option id="irq_function" expr="`can_busoff`"/>
+                  <option id="irq_generate_handler" available="$parent.hasOption(`genericCanFlexcanInterruptBusoff_irq_generate_handler`)"/>
+                  <option id="irq_handler_insert" expr="$parent.hasOption(`genericCanFlexcanInterruptBusoff_irq_handler_insert`) ? $parent.optionValue(`genericCanFlexcanInterruptBusoff_irq_handler_insert`) : ``" available="$parent.hasOption(`genericCanFlexcanInterruptBusoff_irq_handler_insert`) &amp;&amp; ($parent.optionValue(`genericCanFlexcanInterruptBusoff_irq_handler_insert`) != ``)"/>
+                  <option id="irq_handler_remove_arm_errata_838869" available="$parent.hasOption(`genericCanFlexcanInterruptBusoff_irq_handler_remove_arm_errata_838869`)"/>
+                  <option id="without_handler_settings" available="$parent.hasOption(`genericCanFlexcanInterruptBusoff_without_handler_settings`)"/>
+                  <option id="remove_from_struct_init"/>
+                  <option id="UI_LABEL_HIDDEN"/>
+               </options_expr>
+            </reference>
+            <bool id="enable_flexcan_error_irq" label="Error interrupt vector" options="remove_from_struct_init;UI_LABEL_BOLD" enable="$parent.hasOption(`genericCanFlexcanInterruptErrorVectorDisable`) ? false : true" 
+               available="$parent.getSetting(`isPeripheralCanIndexValid`).getValue(false) &amp;&amp; $parent.hasOption(`genericCanFlexcanInterruptErrorVector`) &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`FLEXCAN`
+               &amp;&amp;
+               getResource(`interrupts`, $instance.getCoreId()).anyMatch(item -> (
+               (item.getSetting(`devices`).searchInArray(
+               devItem -> (devItem.getSetting(`id`).getValue() == $parent.getSetting(`peripheralCAN`).getEnumItemId()) &amp;&amp;
+               (devItem.getSetting(`function`).getValue() == `can_error`)
+               ) >= 0)
+               ))">
+               <description expr="`Enable initialization of the error interrupt vector in the ` + $parent.intControllerName.getValue() + ` and definition of the interrupt routine name.`"></description>
+            </bool>
+            <reference id="flexcan_interrupt_error" label="Error interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_flexcan_error_irq.isEnabled() &amp;&amp; $parent.enable_flexcan_error_irq.getValue(false)" available="$parent.enable_flexcan_error_irq.isAvailable() &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`FLEXCAN`">
+               <options_expr>
+                  <option id="irq_device" expr="$parent.getSetting(`peripheralCAN`).getEnumItemId()"/>
+                  <option id="irq_function" expr="`can_error`"/>
+                  <option id="irq_generate_handler" available="$parent.hasOption(`genericCanFlexcanInterruptError_irq_generate_handler`)"/>
+                  <option id="irq_handler_insert" expr="$parent.hasOption(`genericCanFlexcanInterruptError_irq_handler_insert`) ? $parent.optionValue(`genericCanFlexcanInterruptError_irq_handler_insert`) : ``" available="$parent.hasOption(`genericCanFlexcanInterruptError_irq_handler_insert`) &amp;&amp; ($parent.optionValue(`genericCanFlexcanInterruptError_irq_handler_insert`) != ``)"/>
+                  <option id="irq_handler_remove_arm_errata_838869" available="$parent.hasOption(`genericCanFlexcanInterruptError_irq_handler_remove_arm_errata_838869`)"/>
+                  <option id="without_handler_settings" available="$parent.hasOption(`genericCanFlexcanInterruptError_without_handler_settings`)"/>
+                  <option id="remove_from_struct_init"/>
+                  <option id="UI_LABEL_HIDDEN"/>
+               </options_expr>
+            </reference>
+            <bool id="enable_flexcan_txwarn_irq" label="Tx warning interrupt vector" options="remove_from_struct_init;UI_LABEL_BOLD" enable="$parent.hasOption(`genericCanFlexcanInterruptTxWarnVectorDisable`) ? false : true"
+               available="$parent.getSetting(`isPeripheralCanIndexValid`).getValue(false) &amp;&amp; $parent.hasOption(`genericCanFlexcanInterruptTxWarnVector`) &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`FLEXCAN`
+               &amp;&amp;
+               getResource(`interrupts`, $instance.getCoreId()).anyMatch(item -> (
+               (item.getSetting(`devices`).searchInArray(
+               devItem -> (devItem.getSetting(`id`).getValue() == $parent.getSetting(`peripheralCAN`).getEnumItemId()) &amp;&amp;
+               (devItem.getSetting(`function`).getValue() == `can_error`)
+               ) >= 0)
+               ))">
+               <description expr="`Enable initialization of the transmit warning interrupt vector in the ` + $parent.intControllerName.getValue() + ` and definition of the interrupt routine name.`"></description>
+            </bool>
+            <reference id="flexcan_interrupt_txwarn" label="Tx warning interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_flexcan_txwarn_irq.isEnabled() &amp;&amp; $parent.enable_flexcan_txwarn_irq.getValue(false)" available="$parent.enable_flexcan_txwarn_irq.isAvailable() &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`FLEXCAN`">
+               <options_expr>
+                  <option id="irq_device" expr="$parent.getSetting(`peripheralCAN`).getEnumItemId()"/>
+                  <option id="irq_function" expr="`can_tx`"/>
+                  <option id="irq_generate_handler" available="$parent.hasOption(`genericCanFlexcanInterruptTxWarn_irq_generate_handler`)"/>
+                  <option id="irq_handler_insert" expr="$parent.hasOption(`genericCanFlexcanInterruptTxWarn_irq_handler_insert`) ? $parent.optionValue(`genericCanFlexcanInterruptTxWarn_irq_handler_insert`) : ``" available="$parent.hasOption(`genericCanFlexcanInterruptTxWarn_irq_handler_insert`) &amp;&amp; ($parent.optionValue(`genericCanFlexcanInterruptTxWarn_irq_handler_insert`) != ``)"/>
+                  <option id="irq_handler_remove_arm_errata_838869" available="$parent.hasOption(`genericCanFlexcanInterruptTxWarn_irq_handler_remove_arm_errata_838869`)"/>
+                  <option id="without_handler_settings" available="$parent.hasOption(`genericCanFlexcanInterruptTxWarn_without_handler_settings`)"/>
+                  <option id="remove_from_struct_init"/>
+                  <option id="UI_LABEL_HIDDEN"/>
+               </options_expr>
+            </reference>
+            <bool id="enable_flexcan_rxwarn_irq" label="Rx warning interrupt vector" options="remove_from_struct_init;UI_LABEL_BOLD" enable="$parent.hasOption(`genericCanFlexcanInterruptRxWarnVectorDisable`) ? false : true"
+               available="$parent.getSetting(`isPeripheralCanIndexValid`).getValue(false) &amp;&amp; $parent.hasOption(`genericCanFlexcanInterruptRxWarnVector`) &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`FLEXCAN`
+               &amp;&amp;
+               getResource(`interrupts`, $instance.getCoreId()).anyMatch(item -> (
+               (item.getSetting(`devices`).searchInArray(
+               devItem -> (devItem.getSetting(`id`).getValue() == $parent.getSetting(`peripheralCAN`).getEnumItemId()) &amp;&amp;
+               (devItem.getSetting(`function`).getValue() == `can_rx`)
+               ) >= 0)
+               ))">
+               <description expr="`Enable initialization of the receive warning interrupt vector in the ` + $parent.intControllerName.getValue() + ` and definition of the interrupt routine name.`"></description>
+            </bool>
+            <reference id="flexcan_interrupt_rxwarn" label="Rx warning interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_flexcan_rxwarn_irq.isEnabled() &amp;&amp; $parent.enable_flexcan_rxwarn_irq.getValue(false)" available="$parent.enable_flexcan_rxwarn_irq.isAvailable() &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`FLEXCAN`">
+               <options_expr>
+                  <option id="irq_device" expr="$parent.getSetting(`peripheralCAN`).getEnumItemId()"/>
+                  <option id="irq_function" expr="`can_rx`"/>
+                  <option id="irq_generate_handler" available="$parent.hasOption(`genericCanFlexcanInterruptRxWarn_irq_generate_handler`)"/>
+                  <option id="irq_handler_insert" expr="$parent.hasOption(`genericCanFlexcanInterruptRxWarn_irq_handler_insert`) ? $parent.optionValue(`genericCanFlexcanInterruptRxWarn_irq_handler_insert`) : ``" available="$parent.hasOption(`genericCanFlexcanInterruptRxWarn_irq_handler_insert`) &amp;&amp; ($parent.optionValue(`genericCanFlexcanInterruptRxWarn_irq_handler_insert`) != ``)"/>
+                  <option id="irq_handler_remove_arm_errata_838869" available="$parent.hasOption(`genericCanFlexcanInterruptRxWarn_irq_handler_remove_arm_errata_838869`)"/>
+                  <option id="without_handler_settings" available="$parent.hasOption(`genericCanFlexcanInterruptRxWarn_without_handler_settings`)"/>
+                  <option id="remove_from_struct_init"/>
+                  <option id="UI_LABEL_HIDDEN"/>
+               </options_expr>
+            </reference>
+            <bool id="enable_flexcan_wakeup_irq" label="Wakeup interrupt vector" options="remove_from_struct_init;UI_LABEL_BOLD" enable="$parent.hasOption(`genericCanFlexcanInterruptWakeupVectorDisable`) ? false : true" 
+               available="$parent.getSetting(`isPeripheralCanIndexValid`).getValue(false) &amp;&amp; $parent.hasOption(`genericCanFlexcanInterruptWakeupVector`) &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`FLEXCAN`
+               &amp;&amp;
+               getResource(`interrupts`, $instance.getCoreId()).anyMatch(item -> (
+               (item.getSetting(`devices`).searchInArray(
+               devItem -> (devItem.getSetting(`id`).getValue() == $parent.getSetting(`peripheralCAN`).getEnumItemId()) &amp;&amp;
+               (devItem.getSetting(`function`).getValue() == `can_wakeup`)
+               ) >= 0)
+               ))">
+               <description expr="`Enable initialization of the wakeup interrupt vector in the ` + $parent.intControllerName.getValue() + ` and definition of the interrupt routine name.`"></description>
+            </bool>
+            <reference id="flexcan_interrupt_wakeup" label="Wakeup interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_flexcan_wakeup_irq.isEnabled() &amp;&amp; $parent.enable_flexcan_wakeup_irq.getValue(false)" available="$parent.enable_flexcan_wakeup_irq.isAvailable() &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`FLEXCAN`">
+               <options_expr>
+                  <option id="irq_device" expr="$parent.getSetting(`peripheralCAN`).getEnumItemId()"/>
+                  <option id="irq_function" expr="`can_wakeup`"/>
+                  <option id="irq_generate_handler" available="$parent.hasOption(`genericCanFlexcanInterruptWakeup_irq_generate_handler`)"/>
+                  <option id="irq_handler_insert" expr="$parent.hasOption(`genericCanFlexcanInterruptWakeup_irq_handler_insert`) ? $parent.optionValue(`genericCanFlexcanInterruptWakeup_irq_handler_insert`) : ``" available="$parent.hasOption(`genericCanFlexcanInterruptWakeup_irq_handler_insert`) &amp;&amp; ($parent.optionValue(`genericCanFlexcanInterruptWakeup_irq_handler_insert`) != ``)"/>
+                  <option id="irq_handler_remove_arm_errata_838869" available="$parent.hasOption(`genericCanFlexcanInterruptWakeup_irq_handler_remove_arm_errata_838869`)"/>
+                  <option id="without_handler_settings" available="$parent.hasOption(`genericCanFlexcanInterruptWakeup_without_handler_settings`)"/>
+                  <option id="remove_from_struct_init"/>
+                  <option id="UI_LABEL_HIDDEN"/>
+               </options_expr>
+            </reference>
+  
+            <!-- MSCAN Interrupt -->
+            
+            <bool id="enable_mscan_tx_irq" label="Tx interrupt vector" options="remove_from_struct_init;UI_LABEL_BOLD" enable="$parent.hasOption(`genericCanMscanInterruptTxVectorDisable`) ? false : true" 
+               available="$parent.getSetting(`isPeripheralCanIndexValid`).getValue(false) &amp;&amp; $parent.hasOption(`genericCanMscanInterruptTxVector`) &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`MSCAN`
+               &amp;&amp;
+               getResource(`interrupts`, $instance.getCoreId()).anyMatch(item -> (
+               (item.getSetting(`devices`).searchInArray(
+               devItem -> (devItem.getSetting(`id`).getValue() == $parent.getSetting(`peripheralCAN`).getEnumItemId()) &amp;&amp;
+               (devItem.getSetting(`function`).getValue() == `tx_irq`)
+               ) >= 0)
+               ))">
+               <description expr="`Enable initialization of the transmit interrupt vector in the ` + $parent.intControllerName.getValue() + ` and definition of the interrupt routine name.`"></description>
+            </bool>
+            <reference id="mscan_interrupt_tx" label="Tx interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_mscan_tx_irq.isEnabled() &amp;&amp; $parent.enable_mscan_tx_irq.getValue(false)" available="$parent.enable_mscan_tx_irq.isAvailable() &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`MSCAN`">
+               <options_expr>
+                  <option id="irq_device" expr="$parent.getSetting(`peripheralCAN`).getEnumItemId()"/>
+                  <option id="irq_function" expr="`tx_irq`"/>
+                  <option id="irq_custom_name" expr="$parent.inst_ID_def.getValue() + `_CAN_TX`"/>
+                  <option id="irq_generate_handler" available="$parent.hasOption(`genericCanMscanInterruptTx_irq_generate_handler`)"/>
+                  <option id="irq_handler_insert" expr="$parent.hasOption(`genericCanMscanInterruptTx_irq_handler_insert`) ? $parent.optionValue(`genericCanMscanInterruptTx_irq_handler_insert`) : ``" available="$parent.hasOption(`genericCanMscanInterruptTx_irq_handler_insert`) &amp;&amp; ($parent.optionValue(`genericCanMscanInterruptTx_irq_handler_insert`) != ``)"/>
+                  <option id="irq_handler_remove_arm_errata_838869" available="$parent.hasOption(`genericCanMscanInterruptTx_irq_handler_remove_arm_errata_838869`)"/>
+                  <option id="without_handler_settings" available="$parent.hasOption(`genericCanMscanInterruptTx_without_handler_settings`)"/>
+                  <option id="remove_from_struct_init"/>
+                  <option id="UI_LABEL_HIDDEN"/>
+               </options_expr>
+            </reference>
+            
+            <bool id="enable_mscan_rx_irq" label="Rx interrupt vector" options="remove_from_struct_init;UI_LABEL_BOLD" enable="$parent.hasOption(`genericCanMscanInterruptRxVectorDisable`) ? false : true"
+               available="$parent.getSetting(`isPeripheralCanIndexValid`).getValue(false) &amp;&amp; $parent.hasOption(`genericCanMscanInterruptRxVector`) &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`MSCAN`
+               &amp;&amp;
+               getResource(`interrupts`, $instance.getCoreId()).anyMatch(item -> (
+               (item.getSetting(`devices`).searchInArray(
+               devItem -> (devItem.getSetting(`id`).getValue() == $parent.getSetting(`peripheralCAN`).getEnumItemId()) &amp;&amp;
+               (devItem.getSetting(`function`).getValue() == `rx_irq`)
+               ) >= 0)
+               ))">
+               <description expr="`Enable initialization of the receive interrupt vector in the ` + $parent.intControllerName.getValue() + ` and definition of the interrupt routine name.`"></description>
+            </bool>
+            <reference id="mscan_interrupt_rx" label="Rx interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_mscan_rx_irq.isEnabled() &amp;&amp; $parent.enable_mscan_rx_irq.getValue(false)" available="$parent.enable_mscan_rx_irq.isAvailable() &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`MSCAN`">
+               <options_expr>
+                  <option id="irq_device" expr="$parent.getSetting(`peripheralCAN`).getEnumItemId()"/>
+                  <option id="irq_function" expr="`rx_irq`"/>
+                  <option id="irq_custom_name" expr="$parent.inst_ID_def.getValue() + `_CAN_RX`"/>
+                  <option id="irq_generate_handler" available="$parent.hasOption(`genericCanMscanInterruptRx_irq_generate_handler`)"/>
+                  <option id="irq_handler_insert" expr="$parent.hasOption(`genericCanMscanInterruptRx_irq_handler_insert`) ? $parent.optionValue(`genericCanMscanInterruptRx_irq_handler_insert`) : ``" available="$parent.hasOption(`genericCanMscanInterruptRx_irq_handler_insert`) &amp;&amp; ($parent.optionValue(`genericCanMscanInterruptRx_irq_handler_insert`) != ``)"/>
+                  <option id="irq_handler_remove_arm_errata_838869" available="$parent.hasOption(`genericCanMscanInterruptRx_irq_handler_remove_arm_errata_838869`)"/>
+                  <option id="without_handler_settings" available="$parent.hasOption(`genericCanMscanInterruptRx_without_handler_settings`)"/>
+                  <option id="remove_from_struct_init"/>
+                  <option id="UI_LABEL_HIDDEN"/>
+               </options_expr>
+            </reference>
+               
+            <!-- MCAN Interrupt  -->  
+            
+            <bool id="enable_can0_irq" label_expr="$parent.hasOption(`genericCanMcanInterruptCan0custom`) ? `Interrupt vector` : `Interrupt 0 vector`" options="remove_from_struct_init;UI_LABEL_BOLD" enable="$parent.hasOption(`genericCanMcanInterruptCan0VectorDisable`) ? false : true"
+               available="$parent.getSetting(`isPeripheralCanIndexValid`).getValue(false) &amp;&amp; $parent.hasOption(`genericCanMcanInterruptCan0Vector`) &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`MCAN`
+               &amp;&amp;
+               getResource(`interrupts`, $instance.getCoreId()).anyMatch(item -> (
+               (item.getSetting(`devices`).searchInArray(
+               devItem -> (devItem.getSetting(`id`).getValue() == $parent.getSetting(`peripheralCAN`).getEnumItemId()) &amp;&amp;
+               (devItem.getSetting(`function`).getValue() == `can`)
+               ) >= 0)
+               ))">
+               <description expr="`Enable initialization of the interrupt vector in the ` + $parent.intControllerName.getValue() + ` and definition of the interrupt routine name.`"></description>
+            </bool>
+            <reference id="mcan_interrupt_0" label_expr="$parent.hasOption(`genericCanMcanInterruptCan0custom`) ? `Interrupt` : `Interrupt 0`" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_can0_irq.isEnabled() &amp;&amp; $parent.enable_can0_irq.getValue(false)" available="$parent.enable_can0_irq.isAvailable() &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`MCAN`">
+               <options_expr>
+                  <option id="irq_device" expr="$parent.getSetting(`peripheralCAN`).getEnumItemId()"/>
+                  <option id="irq_function" expr="`can`"/>
+                  <option id="irq_channel" expr="0" available="!$parent.hasOption(`genericCanMcanInterruptCan0custom`)"/>
+                  <option id="irq_generate_handler" available="$parent.hasOption(`genericCanMcanInterruptCan0_irq_generate_handler`)"/>
+                  <option id="irq_handler_insert" expr="$parent.hasOption(`genericCanMcanInterruptCan0_irq_handler_insert`) ? $parent.optionValue(`genericCanMcanInterruptCan0_irq_handler_insert`) : ``" available="$parent.hasOption(`genericCanMcanInterruptCan0_irq_handler_insert`) &amp;&amp; ($parent.optionValue(`genericCanMcanInterruptCan0_irq_handler_insert`) != ``)"/>
+                  <option id="irq_handler_remove_arm_errata_838869" available="$parent.hasOption(`genericCanMcanInterruptCan0_irq_handler_remove_arm_errata_838869`)"/>
+                  <option id="without_handler_settings" available="$parent.hasOption(`genericCanMcanInterruptCan0_without_handler_settings`)"/>
+                  <option id="remove_from_struct_init"/>
+                  <option id="UI_LABEL_HIDDEN"/>
+               </options_expr>
+            </reference>
+            <bool id="enable_can1_irq" label="Interrupt 1 vector" options="remove_from_struct_init;UI_LABEL_BOLD" enable="$parent.hasOption(`genericCanMcanInterruptCan1VectorDisable`) ? false : true"
+               available="$parent.getSetting(`isPeripheralCanIndexValid`).getValue(false) &amp;&amp; $parent.hasOption(`genericCanMcanInterruptCan1Vector`) &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`MCAN`
+               &amp;&amp;
+               getResource(`interrupts`, $instance.getCoreId()).anyMatch(item -> (
+               (item.getSetting(`devices`).searchInArray(
+               devItem -> (devItem.getSetting(`id`).getValue() == $parent.getSetting(`peripheralCAN`).getEnumItemId()) &amp;&amp;
+               (devItem.getSetting(`function`).getValue() == `can`)
+               ) >= 0)
+               ))">
+               <description expr="`Enable initialization of the interrupt vector in the ` + $parent.intControllerName.getValue() + ` and definition of the interrupt routine name.`"></description>
+            </bool>
+            <reference id="mcan_interrupt_1" label="Interrupt 1" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_can1_irq.isEnabled() &amp;&amp; $parent.enable_can1_irq.getValue(false)" available="$parent.enable_can1_irq.isAvailable() &amp;&amp; $parent.generic_can_sdk_driver_prefix.getValue(``)==`MCAN`">
+               <options_expr>
+                  <option id="irq_device" expr="$parent.getSetting(`peripheralCAN`).getEnumItemId()"/>
+                  <option id="irq_function" expr="`can`"/>
+                  <option id="irq_channel" expr="1"/>
+                  <option id="irq_generate_handler" available="$parent.hasOption(`genericCanMcanInterruptCan1_irq_generate_handler`)"/>
+                  <option id="irq_handler_insert" expr="$parent.hasOption(`genericCanMcanInterruptCan1_irq_handler_insert`) ? $parent.optionValue(`genericCanMcanInterruptCan1_irq_handler_insert`) : ``" available="$parent.hasOption(`genericCanMcanInterruptCan1_irq_handler_insert`) &amp;&amp; ($parent.optionValue(`genericCanMcanInterruptCan1_irq_handler_insert`) != ``)"/>
+                  <option id="irq_handler_remove_arm_errata_838869" available="$parent.hasOption(`genericCanMcanInterruptCan1_irq_handler_remove_arm_errata_838869`)"/>
+                  <option id="without_handler_settings" available="$parent.hasOption(`genericCanMcanInterruptCan1_without_handler_settings`)"/>
+                  <option id="remove_from_struct_init"/>
+                  <option id="UI_LABEL_HIDDEN"/>
+               </options_expr>
+            </reference>
+               
+            <!-- Code and fragment_defs variables -->
+            <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+            <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+            <variable id="generic_can_config_ID" value="$parent.inst_ID.getValue() + `_can_config`"/>
+            <variable id="generic_can_timing_config_ID" value="$parent.inst_ID.getValue() + `_timing_config`"/>
+            <variable id="generic_can_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_CAN_PERIPHERAL`"/>
+            <variable id="generic_can_peripheral_clock_ID" value="$parent.inst_ID_def.getValue() + `_CAN_PERIPHERAL_CLK_FREQ`"/>
+            <variable id="flexcanConfigStruct" value="$parent.flexcanConfig.isAvailable() ?
+               ($parent.clockSource.isAvailable() ? leftPadding($parent.generic_can_config_ID.getValue(``) + `.clkSrc = ` + $parent.flexcanConfig.clkSrc.getValue() + `;&#10;`,1) : ``) +
+               ($parent.flexcanConfig.baudRate.isAvailable() ? leftPadding($parent.generic_can_config_ID.getValue(``) + `.baudRate = ` + $parent.flexcanConfig.baudRate.getValue() + `UL;&#10;`,1) : ``)
+               : ``"/>
+            <variable id="dscFlexcanConfigStruct" value="$parent.dscFlexcanConfig.isAvailable() ?
+               ($parent.clockSource.isAvailable() ? leftPadding($parent.generic_can_config_ID.getValue(``) + `.eClkSrc = ` + $parent.dscFlexcanConfig.clkSrc.getValue() + `;&#10;`,1) : ``) +
+               ($parent.dscFlexcanConfig.baudRate.isAvailable() ? leftPadding($parent.generic_can_config_ID.getValue(``) + `.u32BaudRateBps = ` + $parent.dscFlexcanConfig.baudRate.getValue() + `UL;&#10;`,1) : ``)
+               : ``"/>
+            <variable id="mscanConfigStruct" value="$parent.mscanConfig.isAvailable() ?
+               ($parent.clockSource.isAvailable() ? leftPadding($parent.generic_can_config_ID.getValue(``) + `.clkSrc = ` + $parent.mscanConfig.clkSrc.getValue() + `;&#10;`,1) : ``) +
+               ($parent.mscanConfig.baudRate.isAvailable() ? leftPadding($parent.generic_can_config_ID.getValue(``) + `.baudRate = ` + $parent.mscanConfig.baudRate.getValue() + `UL;&#10;`,1) : ``)
+               : ``"/>
+            <variable id="mcanConfigStruct" value="$parent.mcanConfig.isAvailable() ? 
+               ($parent.mcanConfig.baudRateA.isAvailable() ? leftPadding($parent.generic_can_config_ID.getValue(``) + `.baudRateA = ` + $parent.mcanConfig.baudRateA.getValue() + `UL;&#10;`,1) : ``) + 
+               ($parent.mcanConfig.baudRateD.isAvailable() ? leftPadding($parent.generic_can_config_ID.getValue(``) + `.baudRateD = ` + $parent.mcanConfig.baudRateD.getValue() + `UL;&#10;`,1) : ``) + 
+               ($parent.mcanConfig.enableCanfdNormal.isAvailable() ? leftPadding($parent.generic_can_config_ID.getValue(``) + `.enableCanfdNormal = ` + $parent.mcanConfig.enableCanfdNormal.getValue() + `;&#10;`,1) : ``) + 
+               ($parent.mcanConfig.enableCanfdSwitch.isAvailable() ? leftPadding($parent.generic_can_config_ID.getValue(``) + `.enableCanfdSwitch = ` + $parent.mcanConfig.enableCanfdSwitch.getValue() + `;&#10;`,1) : ``)
+               : ``"/>
+            <variable id="mcanImprovedTiming" value="$parent.hasOption(`genericCanMcanImprovedTimingCalc`) &amp;&amp; $parent.mcanConfig.baudRateA.isAvailable() ? 
+               leftPadding(`/* Update the improved timing configuration */&#10;`,1) +
+               leftPadding(`if (MCAN_CalculateImprovedTimingValues(` + $parent.generic_can_config_ID.getValue(``) + `.baudRateA, CLOCK_GetMCanClkFreq(0U), &amp;` + $parent.generic_can_timing_config_ID.getValue() + `))&#10;`,1) +
+               leftPadding(`memcpy(&amp;(` + $parent.generic_can_config_ID.getValue(``) + `.timingConfig), &amp;` + $parent.generic_can_timing_config_ID.getValue() + `, sizeof(mcan_timing_config_t));&#10;`,2)
+               : ``"/>
+            <variable id="generic_can_init_function" value="  
+               leftPadding(`/* CAN peripheral communication initialization */&#10;`,1) +
+               
+               leftPadding(`/* Get ` + toUpperCase($parent.generic_can_sdk_driver_prefix.getValue(``)) + ` default configuration and then modify it */&#10;`,1) +
+               ($parent.isPeripheralDSCCANType.getValue(false) ? 
+               leftPadding(toUpperCase($parent.generic_can_sdk_driver_prefix.getValue(``))+`_GetDefaultConfig(&amp;`+ $parent.generic_can_config_ID.getValue(``) +`, `+ $parent.generic_can_peripheral_clock_ID.getValue()+`);&#10;&#10;`,1) :
+               leftPadding(toUpperCase($parent.generic_can_sdk_driver_prefix.getValue(``))+`_GetDefaultConfig(&amp;`+ $parent.generic_can_config_ID.getValue(``) +`);&#10;&#10;`,1)) +
+               
+               $parent.flexcanConfigStruct.getValue() + $parent.dscFlexcanConfigStruct.getValue() + $parent.mcanConfigStruct.getValue() + $parent.mscanConfigStruct.getValue() + `&#10;` +
+               $parent.mcanImprovedTiming.getValue() + 
+               
+               leftPadding(`/* Initialize ` + toUpperCase($parent.generic_can_sdk_driver_prefix.getValue(``)) + ` module. ` + ($parent.clockSource.isAvailable() ? `` : `Define the required clock frequency: #define `+ $parent.generic_can_peripheral_clock_ID.getValue(``)) + `*/&#10;`,1) +
+               ($parent.isPeripheralDSCCANType.getValue(false) ? 
+               leftPadding(toUpperCase($parent.generic_can_sdk_driver_prefix.getValue(``))+`_Init(`+ $parent.generic_can_peripheral_ID.getValue(``) +`, &amp;` + $parent.generic_can_config_ID.getValue() + `);`,1) :
+               leftPadding(toUpperCase($parent.generic_can_sdk_driver_prefix.getValue(``))+`_Init(`+ $parent.generic_can_peripheral_ID.getValue(``) +`, &amp;` + $parent.generic_can_config_ID.getValue() + `, ` + $parent.generic_can_peripheral_clock_ID.getValue(``) +`);`,1))
+              "/>   
+         </struct>
+      </user_types>
+      <settings/>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+         <!-- The every def items are relative to peripheral_config_t structure (apply_to="peripheral_config structure"), there is used prefix generic_can_ in the def items  -->
+         <def fragment="generic_can_includes" public="true">
+            <fragment id="include">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include" if_expr="$this.isPeripheralCanIndexValid.getValue() &amp;&amp; !$this.hasOption(`genericCanInlcudeDriverDisable`)">
+               <param id="name" expr="$this.generic_can_sdk_driver_id_short.getValue()"/>
+               <param id="filename" expr="$this.generic_can_sdk_driver_filename.getValue()"/>
+            </fragment>
+            <fragment id="include">
+               <param id="name">clock</param>
+               <param id="filename">fsl_clock.h</param>
+            </fragment>
+         </def>
+         <def fragment="generic_can_defines" public="true">
+            <fragment id="define" if_expr="$this.isPeripheralCanIndexValid.getValue(false)">
+               <param id="name" expr="$this.generic_can_peripheral_ID.getValue()"/>
+               <param id="value" expr="$this.generic_can_peripheral.getValue()"/>
+               <param id="description">Definition of peripheral ID</param>
+            </fragment>
+            <fragment id="define" if_expr="$this.clockSourceFreq.isAvailable()">
+               <param id="name" expr="$this.generic_can_peripheral_clock_ID.getValue()"/>
+               <param id="value" expr="($this.clockSourceFreq.getEnumItemValue().toHertz() + `UL`)"/> 
+               <param id="description">Definition of the clock source frequency</param>
+            </fragment>
+            
+            <fragment id="IRQ_definitions" apply_to="$this.flexcan_interrupt_mb"
+               if_expr="$this.flexcan_interrupt_mb.isAvailable() &amp;&amp; $this.flexcan_interrupt_mb.isEnabled()"/>
+            <fragment id="IRQ_definitions" apply_to="$this.flexcan_interrupt_busoff"
+               if_expr="$this.flexcan_interrupt_busoff.isAvailable() &amp;&amp; $this.flexcan_interrupt_busoff.isEnabled()"/>
+            <fragment id="IRQ_definitions" apply_to="$this.flexcan_interrupt_error"
+               if_expr="$this.flexcan_interrupt_error.isAvailable() &amp;&amp; $this.flexcan_interrupt_error.isEnabled()"/>
+            <fragment id="IRQ_definitions" apply_to="$this.flexcan_interrupt_txwarn"
+               if_expr="$this.flexcan_interrupt_txwarn.isAvailable() &amp;&amp; $this.flexcan_interrupt_txwarn.isEnabled()"/>
+            <fragment id="IRQ_definitions" apply_to="$this.flexcan_interrupt_rxwarn"
+               if_expr="$this.flexcan_interrupt_rxwarn.isAvailable() &amp;&amp; $this.flexcan_interrupt_rxwarn.isEnabled()"/>
+            <fragment id="IRQ_definitions" apply_to="$this.flexcan_interrupt_wakeup"
+               if_expr="$this.flexcan_interrupt_wakeup.isAvailable() &amp;&amp; $this.flexcan_interrupt_wakeup.isEnabled()"/>
+            
+            <fragment id="IRQ_definitions" apply_to="$this.mscan_interrupt_tx"
+               if_expr="$this.enable_mscan_tx_irq.isAvailable() &amp;&amp; $this.enable_mscan_tx_irq.isEnabled()"/>
+            <fragment id="IRQ_definitions" apply_to="$this.mscan_interrupt_rx"
+               if_expr="$this.enable_mscan_rx_irq.isAvailable() &amp;&amp; $this.enable_mscan_rx_irq.isEnabled()"/>
+            
+            <fragment id="IRQ_definitions" apply_to="$this.mcan_interrupt_0"
+               if_expr="$this.mcan_interrupt_0.isAvailable() &amp;&amp; $this.mcan_interrupt_0.isEnabled()"/>
+            <fragment id="IRQ_definitions" apply_to="$this.mcan_interrupt_1"
+               if_expr="$this.mcan_interrupt_1.isAvailable() &amp;&amp; $this.mcan_interrupt_1.isEnabled()"/>
+
+         </def>
+         <def fragment="generic_can_global_vars" public="true">
+            <fragment id="global_var" if_expr="$this.isPeripheralCanIndexValid.getValue(false)">
+               <param id="name" expr="$this.generic_can_config_ID.getValue(``)" />
+               <param id="type" expr="toLowerCase($this.generic_can_sdk_driver_prefix.getValue(``)) + `_config_t`"/>
+               <param id="description" expr="toUpperCase($this.generic_can_sdk_driver_prefix.getValue(``)) + ` configuration structure`"/>
+            </fragment>
+            <fragment id="global_var" if_expr="$this.isPeripheralCanIndexValid.getValue(false) &amp;&amp; $this.hasOption(`genericCanMcanImprovedTimingCalc`) &amp;&amp; $this.mcanConfig.baudRateA.isAvailable()">
+               <param id="name" expr="$this.generic_can_timing_config_ID.getValue(``)" />
+               <param id="type" expr="toLowerCase($this.generic_can_sdk_driver_prefix.getValue(``)) + `_timing_config_t`"/>
+               <param id="description" expr="toUpperCase($this.generic_can_sdk_driver_prefix.getValue(``)) + ` timing configuration structure`"/>
+            </fragment>
+         </def>
+         <def fragment="generic_can_global_vars_extern" public="true">
+            <fragment id="extern_var" if_expr="$this.isPeripheralCanIndexValid.getValue(false) &amp;&amp; $this.hasOption(`genericCanUserInit`)">
+               <param id="name" expr="$this.user_init.initFunctionID.getValue() + `(void)`" />
+               <param id="type" expr="`void`"/>
+               <param id="description" expr="toUpperCase($this.generic_can_sdk_driver_prefix.getValue(``)) + ` communication initialization function`"/>
+            </fragment>
+            <fragment id="extern_var" if_expr="$this.isPeripheralCanIndexValid.getValue(false) &amp;&amp; !$this.hasOption(`genericCanUserInit`)">
+               <param id="name" expr="$this.generic_can_config_ID.getValue(``)" />
+               <param id="type" expr="toLowerCase($this.generic_can_sdk_driver_prefix.getValue(``)) + `_config_t`"/>
+               <param id="description" expr="toUpperCase($this.generic_can_sdk_driver_prefix.getValue(``)) + ` configuration structure`"/>
+            </fragment>
+            <fragment id="extern_var" if_expr="$this.isPeripheralCanIndexValid.getValue(false) &amp;&amp; $this.hasOption(`genericCanMcanImprovedTimingCalc`) &amp;&amp; $this.mcanConfig.baudRateA.isAvailable()">
+               <param id="name" expr="$this.generic_can_timing_config_ID.getValue(``)" />
+               <param id="type" expr="toLowerCase($this.generic_can_sdk_driver_prefix.getValue(``)) + `_timing_config_t`"/>
+               <param id="description" expr="toUpperCase($this.generic_can_sdk_driver_prefix.getValue(``)) + ` timing configuration structure`"/>
+            </fragment>
+         </def>
+         <def fragment="generic_can_irq_handler_functions" public="true">
+            <!-- FlexCAN -->
+            <fragment id="IRQn_handler_function" apply_to="$this.flexcan_interrupt_mb"
+               if_expr="$this.flexcan_interrupt_mb.isAvailable() &amp;&amp; $this.flexcan_interrupt_mb.isEnabled()"/>
+            <fragment id="IRQn_handler_function" apply_to="$this.flexcan_interrupt_busoff"
+               if_expr="$this.flexcan_interrupt_busoff.isAvailable() &amp;&amp; $this.flexcan_interrupt_busoff.isEnabled()"/>
+            <fragment id="IRQn_handler_function" apply_to="$this.flexcan_interrupt_error"
+               if_expr="$this.flexcan_interrupt_error.isAvailable() &amp;&amp; $this.flexcan_interrupt_error.isEnabled()"/>
+            <fragment id="IRQn_handler_function" apply_to="$this.flexcan_interrupt_txwarn"
+               if_expr="$this.flexcan_interrupt_txwarn.isAvailable() &amp;&amp; $this.flexcan_interrupt_txwarn.isEnabled()"/>
+            <fragment id="IRQn_handler_function" apply_to="$this.flexcan_interrupt_rxwarn"
+               if_expr="$this.flexcan_interrupt_rxwarn.isAvailable() &amp;&amp; $this.flexcan_interrupt_rxwarn.isEnabled()"/>
+            <fragment id="IRQn_handler_function" apply_to="$this.flexcan_interrupt_wakeup"
+               if_expr="$this.flexcan_interrupt_wakeup.isAvailable() &amp;&amp; $this.flexcan_interrupt_wakeup.isEnabled()"/>
+            <!-- MsCAN -->
+            <fragment id="IRQn_handler_function"  apply_to="$this.mscan_interrupt_tx"
+               if_expr="$this.mscan_interrupt_tx.isAvailable() &amp;&amp; $this.mscan_interrupt_tx.isEnabled()"/>
+            <fragment id="IRQn_handler_function"  apply_to="$this.mscan_interrupt_rx"
+               if_expr="$this.mscan_interrupt_rx.isAvailable() &amp;&amp; $this.mscan_interrupt_rx.isEnabled()"/>
+            <!-- MCAN -->
+            <fragment id="IRQn_handler_function"  apply_to="$this.mcan_interrupt_0"
+               if_expr="$this.mcan_interrupt_0.isAvailable() &amp;&amp; $this.mcan_interrupt_0.isEnabled()"/>
+            <fragment id="IRQn_handler_function"  apply_to="$this.mcan_interrupt_1"
+               if_expr="$this.mcan_interrupt_1.isAvailable() &amp;&amp; $this.mcan_interrupt_1.isEnabled()"/>
+         </def>
+         <def fragment="generic_can_irq_vectors" public="true">
+            <!-- Flexcan -->
+            <fragment id="IRQn_set_priority_default"
+               if_expr="$this.flexcan_interrupt_mb.isAvailable() &amp;&amp; $this.flexcan_interrupt_mb.isEnabled()"
+               apply_to="$this.flexcan_interrupt_mb"/>
+            <fragment id="IRQn_enable_default"
+               if_expr="$this.flexcan_interrupt_mb.isAvailable() &amp;&amp; $this.flexcan_interrupt_mb.isEnabled()"
+               apply_to="$this.flexcan_interrupt_mb"/>
+            <fragment id="IRQn_set_priority_default"
+               if_expr="$this.flexcan_interrupt_busoff.isAvailable() &amp;&amp; $this.flexcan_interrupt_busoff.isEnabled()"
+               apply_to="$this.flexcan_interrupt_busoff"/>
+            <fragment id="IRQn_enable_default"
+               if_expr="$this.flexcan_interrupt_busoff.isAvailable() &amp;&amp; $this.flexcan_interrupt_busoff.isEnabled()"
+               apply_to="$this.flexcan_interrupt_busoff"/>
+            <fragment id="IRQn_set_priority_default"
+               if_expr="$this.flexcan_interrupt_error.isAvailable() &amp;&amp; $this.flexcan_interrupt_error.isEnabled()"
+               apply_to="$this.flexcan_interrupt_error"/>
+            <fragment id="IRQn_enable_default"
+               if_expr="$this.flexcan_interrupt_error.isAvailable() &amp;&amp; $this.flexcan_interrupt_error.isEnabled()"
+               apply_to="$this.flexcan_interrupt_error"/>
+            <fragment id="IRQn_set_priority_default"
+               if_expr="$this.flexcan_interrupt_txwarn.isAvailable() &amp;&amp; $this.flexcan_interrupt_txwarn.isEnabled()"
+               apply_to="$this.flexcan_interrupt_txwarn"/>
+            <fragment id="IRQn_enable_default"
+               if_expr="$this.flexcan_interrupt_txwarn.isAvailable() &amp;&amp; $this.flexcan_interrupt_txwarn.isEnabled()"
+               apply_to="$this.flexcan_interrupt_txwarn"/>
+            <fragment id="IRQn_set_priority_default"
+               if_expr="$this.flexcan_interrupt_rxwarn.isAvailable() &amp;&amp; $this.flexcan_interrupt_rxwarn.isEnabled()"
+               apply_to="$this.flexcan_interrupt_rxwarn"/>
+            <fragment id="IRQn_enable_default"
+               if_expr="$this.flexcan_interrupt_rxwarn.isAvailable() &amp;&amp; $this.flexcan_interrupt_rxwarn.isEnabled()"
+               apply_to="$this.flexcan_interrupt_rxwarn"/>
+            <fragment id="IRQn_set_priority_default"
+               if_expr="$this.flexcan_interrupt_wakeup.isAvailable() &amp;&amp; $this.flexcan_interrupt_wakeup.isEnabled()"
+               apply_to="$this.flexcan_interrupt_wakeup"/>
+            <fragment id="IRQn_enable_default"
+               if_expr="$this.flexcan_interrupt_wakeup.isAvailable() &amp;&amp; $this.flexcan_interrupt_wakeup.isEnabled()"
+               apply_to="$this.flexcan_interrupt_wakeup"/>
+            <!-- Mscan -->
+            <fragment id="IRQn_set_priority_default"
+               if_expr="$this.enable_mscan_tx_irq.isAvailable() &amp;&amp; $this.enable_mscan_tx_irq.isEnabled()"
+               apply_to="$this.mscan_interrupt_tx"/>
+            <fragment id="IRQn_enable_default"
+               if_expr="$this.enable_mscan_tx_irq.isAvailable() &amp;&amp; $this.enable_mscan_tx_irq.isEnabled()"
+               apply_to="$this.mscan_interrupt_tx"/>
+            
+            <fragment id="IRQn_set_priority_default"
+               if_expr="$this.enable_mscan_rx_irq.isAvailable() &amp;&amp; $this.enable_mscan_rx_irq.isEnabled()"
+               apply_to="$this.mscan_interrupt_rx"/>
+            <fragment id="IRQn_enable_default"
+               if_expr="$this.enable_mscan_rx_irq.isAvailable() &amp;&amp; $this.enable_mscan_rx_irq.isEnabled()"
+               apply_to="$this.mscan_interrupt_rx"/>
+            <!-- Mcan -->
+            <fragment id="IRQn_set_priority_default"
+               if_expr="$this.mcan_interrupt_0.isAvailable() &amp;&amp; $this.mcan_interrupt_0.isEnabled()"
+               apply_to="$this.mcan_interrupt_0"/>
+            <fragment id="IRQn_enable_default"
+               if_expr="$this.mcan_interrupt_0.isAvailable() &amp;&amp; $this.mcan_interrupt_0.isEnabled()"
+               apply_to="$this.mcan_interrupt_0"/>
+            <fragment id="IRQn_set_priority_default"
+               if_expr="$this.mcan_interrupt_1.isAvailable() &amp;&amp; $this.mcan_interrupt_1.isEnabled()"
+               apply_to="$this.mcan_interrupt_1"/>
+            <fragment id="IRQn_enable_default"
+               if_expr="$this.mcan_interrupt_1.isAvailable() &amp;&amp; $this.mcan_interrupt_1.isEnabled()"
+               apply_to="$this.mcan_interrupt_1"/>
+         </def>
+         <def fragment="generic_can_init_function_body" public="true">
+            <if expr="$this.generic_can_init_function.isAvailable() &amp;&amp; $this.isPeripheralCanIndexValid.getValue(false)">
+               <expr>$this.hasOption(`genericCanUserInit`) &amp;&amp; $this.enableUserInit.getValue(false)
+                  ? (leftPadding(`/* Custom CAN communication interface initalization */&#10;`,1) + leftPadding($this.user_init.initFunctionID.getValue() + `();`,1))
+                  : $this.generic_can_init_function.getValue()</expr><br/>
+            </if>
+         </def>
+      </fragment_defs>
+   <quick_selections/>   
+   </config_set>
+   <global_config_set_ref>global_can</global_config_set_ref>
+</component:config_component>

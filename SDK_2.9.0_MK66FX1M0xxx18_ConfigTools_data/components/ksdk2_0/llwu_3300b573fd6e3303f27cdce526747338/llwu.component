@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-5.0.xsd"
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0"
+   id="llwu" label="LLWU" category="Peripheral driver">
+   <sw_comp_ref name="platform.drivers.llwu" version="2.0.1"/>
+   <description>Low-Leakage Wakeup Unit (LLWU)</description>
+   <mode id="LLWU_GENERAL" label="General">
+      <description>General LLWU initialization</description>
+      <config_set_refs>
+         <config_set_ref>fsl_llwu</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>LLWU</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="fsl_llwu" label="General LLWU configuration" from_source="fsl_llwu.h">
+      <description>General LLWU configuration</description>
+      <generated_types>
+         <enum id="llwu_external_pin_mode_t" label="External input pin control modes." from="_llwu_external_pin_mode">
+            <item id="kLLWU_ExternalPinDisable" label="Pin disabled as a wakeup input."/>
+            <item id="kLLWU_ExternalPinRisingEdge" label="Pin enabled with the rising edge detection."/>
+            <item id="kLLWU_ExternalPinFallingEdge" label="Pin enabled with the falling edge detection."/>
+            <item id="kLLWU_ExternalPinAnyEdge" label="Pin enabled with any change detection."/>
+         </enum>
+         <enum id="llwu_pin_filter_mode_t" label="Digital filter control modes." from="_llwu_pin_filter_mode">
+            <item id="kLLWU_PinFilterDisable" label="Filter disabled."/>
+            <item id="kLLWU_PinFilterRisingEdge" label="Filter positive edge detection."/>
+            <item id="kLLWU_PinFilterFallingEdge" label="Filter negative edge detection."/>
+            <item id="kLLWU_PinFilterAnyEdge" label="Filter any edge detection."/>
+         </enum>
+         <struct id="llwu_version_id_t" label="IP version ID definition." available="((featureDefined(`FSL_FEATURE_LLWU_HAS_VERID`) &amp;&amp; getFeature(`FSL_FEATURE_LLWU_HAS_VERID`)))" from="_llwu_version_id">
+            <integer id="feature" label="A feature specification number." type="uint16_t">
+               <description>A feature specification number.</description>
+            </integer>
+            <integer id="minor" label="The minor version number." type="uint8_t">
+               <description>The minor version number.</description>
+            </integer>
+            <integer id="major" label="The major version number." type="uint8_t">
+               <description>The major version number.</description>
+            </integer>
+         </struct>
+         <struct id="llwu_param_t" label="IP parameter definition." available="((featureDefined(`FSL_FEATURE_LLWU_HAS_PARAM`) &amp;&amp; getFeature(`FSL_FEATURE_LLWU_HAS_PARAM`)))" from="_llwu_param">
+            <integer id="filters" label="A number of the pin filter." type="uint8_t">
+               <description>A number of the pin filter.</description>
+            </integer>
+            <integer id="dmas" label="A number of the wakeup DMA." type="uint8_t">
+               <description>A number of the wakeup DMA.</description>
+            </integer>
+            <integer id="modules" label="A number of the wakeup module." type="uint8_t">
+               <description>A number of the wakeup module.</description>
+            </integer>
+            <integer id="pins" label="A number of the wake up pin." type="uint8_t">
+               <description>A number of the wake up pin.</description>
+            </integer>
+         </struct>
+         <struct id="llwu_external_pin_filter_mode_t" label="An external input pin filter control structure." available="((featureDefined(`FSL_FEATURE_LLWU_HAS_PIN_FILTER`) &amp;&amp; getFeature(`FSL_FEATURE_LLWU_HAS_PIN_FILTER`)))" from="_llwu_external_pin_filter_mode">
+            <integer id="pinIndex" label="A pin number" type="uint32_t">
+               <description>A pin number</description>
+            </integer>
+            <reference id="filterMode" label="Filter mode" type="llwu_pin_filter_mode_t">
+               <description>Filter mode</description>
+            </reference>
+         </struct>
+      </generated_types>
+
+      <user_types>
+         <enum id="llwu_external_pin_mode_t" label="External input pin control modes" from="_llwu_external_pin_mode">
+            <item id="Disable" label="Wakeup disabled"/>
+            <item id="RisingEdge" label="Rising edge"/>
+            <item id="FallingEdge" label="Falling edge"/>
+            <item id="AnyEdge" label="Any edge"/>
+         </enum>
+         <struct id="input_pin">
+            <dynamic_enum items="$instance.fsl_llwu.llwuSignals.value().filter(x -> (
+                  (
+                     (!$parent.getParent()
+                       .filter(y -> y.getId() != $parent.getId())
+                       .anyMatch(z -> (z.getSetting(`wakeupPin`).value() == x.getId())))
+                  )
+                  &amp;&amp; !(x.getId().toUpperCase().contains(`RESET`))
+               ))"
+               id="wakeupPin" label="Wakeup pin">
+               <validation>
+                  <dependency
+                     resource_type="PeripheralUnifiedSignal"
+                     resource_id_expr="$instance.getPeripheral() + `.llwu_wakeup.` + $this.getCValue().extractChannelID()"
+                     description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage($this.getCValue().extractChannelID(), $instance.getPeripheral())"
+                     level="Warning">
+                     <feature name="routed">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>
+                  <dependency
+                     resource_type="PeripheralUnifiedSignal"
+                     resource_id_expr="$instance.getPeripheral() + `.llwu_wakeup.` + $this.getCValue().extractChannelID()"
+                     description_expr="`Direction of pin ` + $this.getCValue().extractChannelID() + ` of peripheral ` + $instance.getPeripheral() + ` has to be configured as input in Pins Tool.`" level="Error">
+                     <feature name="direction" evaluation="equal">
+                        <data expr="`INPUT`"></data>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <reference id="pinMode" label="Wakeup event" type="llwu_external_pin_mode_t">
+               <description>Choose, which event on the pin will wake the CPU up.</description>
+            </reference>
+            <bool id="filter" label="Edge detection filter" enable="featureDefined(`FSL_FEATURE_LLWU_HAS_PIN_FILTER`) &amp;&amp; ((getFeature(`FSL_FEATURE_LLWU_HAS_PIN_FILTER`) &gt; $parent.getParent().countOccurrences(x -> x.getSetting(`filter`).value())) || ($this.value())) &amp;&amp; ($parent.pinMode.value() != `Disable`)">
+               <description>
+                  Edge detection digital filter. The filter causes a 5 LPO clock cycles long delay between a pin event occurrence and the transition from Low Leakage mode.
+               </description>
+            </bool>
+         </struct>
+         <struct id="reset_config">
+            <description>
+               Reset pin configuration. Enable or disable the RESET pin in Low Leakage modes and optionally enable the RESET pin digital filter.
+            </description>
+            <validation>
+               <dependency
+                  when_expr="$this.enableResetPin.value() || $this.enableResetFilter.value()"
+                  resource_type="PeripheralUnifiedSignal"
+                  resource_id_expr="$instance.getPeripheral() + `.reset`"
+                  description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`reset`, $instance.getPeripheral())"
+                  level="Warning">
+                  <feature name="routed">
+                     <data expr="true"/>
+                  </feature>
+               </dependency>
+            </validation>
+            <bool id="enableResetPin" label="Reset in Low Leakage modes">
+               <description>
+                  Enable the RESET pin in Low Leakage modes. If enabled, the CPU will wake up from Low Leakage modes on RESET pin event. Else, RESET pin events will be ignored in Low Leakage modes.
+               </description>
+            </bool>
+            <bool id="enableResetFilter" label="Digital filter on reset pin">
+               <description>Reset pin digital filter. The filter causes a 5 LPO clock cycles long delay between the RESET pin event occurrence and the reset flow.</description>
+            </bool>
+         </struct>
+
+         <struct id="internal_module">
+            <dynamic_enum
+               id="wakeupModule"
+               label="Internal wakeup module"
+               items="merge(toArray(0), toArray(1), toArray(2), toArray(3), toArray(4), toArray(5), toArray(6), toArray(7))
+                      .filter(x -> 
+                                (!($parent.getParent()
+                                   .filter(y -> y.getId() != $parent.getId())
+                                   .anyMatch(z -> (z.getSetting(`wakeupModule`).value() == x)))
+                                )
+                             )
+                      .arrayToEnumItems(
+                         enumItem -> featureDefined(`FSL_FEATURE_LLWU_HAS_INTERNAL_MODULE` + enumItem) &amp;&amp; getFeature(`FSL_FEATURE_LLWU_HAS_INTERNAL_MODULE` + enumItem),
+                         enumItem -> enumItem,
+                         enumItem -> `Wakeup module ` + enumItem,
+                         enumItem -> enumItem
+                      )">
+               <description>
+                  Configure internal modules capable to wake the CPU up. To see, which peripherals are assigned to the modules see the Low-Leakage Wake-up Unit (LLWU) Configuration
+                  subchapter of the Chip Configuration chapter in Reference Manual.
+               </description>
+            </dynamic_enum>
+            
+            <bool id="enableDma" label="Wakeup on DMA request" enable="featureDefined(`FSL_FEATURE_LLWU_HAS_DMA_ENABLE_REG`) &amp;&amp; getFeature(`FSL_FEATURE_LLWU_HAS_DMA_ENABLE_REG`)">
+               <description>Wake the CPU up, when the module requests a DMA transfer. This feature may not be available on some devices.</description>
+            </bool>
+         </struct>
+      </user_types>
+      <settings>
+         <variable id="llwuSignals" value="getPeripheralSignals($instance.getPeripheral())"/>
+         <bool id="enable_irq" label="Enable interrupt request">
+             <description>Enable interupt request in the NVIC (Nested Interrupt Vector Controller) of the CPU.</description>
+         </bool>
+         <reference id="interrupt" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_irq.value()"/>
+
+         <reference id="resetConfig" label="Reset pin configuration" type="reset_config" available="featureDefined(`FSL_FEATURE_LLWU_HAS_RESET_ENABLE`) &amp;&amp; getFeature(`FSL_FEATURE_LLWU_HAS_RESET_ENABLE`) &amp;&amp; ($instance.fsl_llwu.llwuSignals.value().searchInArray(x -> x.getId().toUpperCase().contains(`RESET`)) &gt;= 0)">
+            <description>Reset pin configuration</description>
+         </reference>
+         <array id="input_pins" label="External wakeup pins configuration" type="input_pin" options="ShowContentAs=Table;UI_ARRAY_INDICES_HIDDEN">
+            <description>
+               Configure external LLWU wakeup pins, mode and optionally a digital filter. The Filter mode is the same as a Pin mode in corresponding pin configuration.
+            </description>
+            <item_defaults>
+               <set_default id="pinMode" value_expr="x -> `Disable`"/>
+               <set_default id="filter" value_expr="x -> false"/>
+            </item_defaults>
+         </array>
+         <array id="internal_modules" label="Internal module wakeup sources" type="internal_module" options="ShowContentAs=Table;UI_ARRAY_INDICES_HIDDEN">
+            <description>
+               Configure internal wakeup sources. The peripherals can cause a wakeup from Low Leakage mode, when the internal peripheral interrupt subroutine is executed, or optionally when the peripheral generates a DMA request.
+            </description>
+            <validation>
+               <constraint
+                  cond_expr="$this.findDuplicates(item -> item.getSetting(`wakeupModule`).value()).length() == 0"
+                  level="warning"
+                  description="There are some duplicated LLWU wakeup modules in the configuration."/>
+            </validation>
+         </array>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+         <def fragment="filter_mode_init">
+            <fragment id="init_line" if_expr="$this.filter.isEnabled()">
+               <param id="code" expr="`LLWU_SetPinFilterMode(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID()) + `_PERIPHERAL, ` + $param._index + `U, ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID()) + `_filter_config[` + $param._index + `]);`"/>
+               <param id="description" expr="`Initialize digital filter on wakeup pin ` + $this.wakeupPin.value().extractChannelID() + `.`"/>
+               <param id="paddingLevel" expr="1"/>
+            </fragment>
+         </def>
+         <def fragment="filter_mode_config">
+            <expr> leftPadding(`{`, 1) </expr>
+            <br/>
+            <expr> leftPadding(`.pinIndex = ` + $this.wakeupPin.value().extractChannelID() + `U,`, 2) </expr>
+            <br/>
+            <expr> leftPadding(`.filterMode = kLLWU_PinFilter` + $this.pinMode.value(), 2) </expr>
+            <br/>
+            <expr> leftPadding(`}`, 1) + ($param._last ? ``: `,`) </expr>
+            <br/>
+         </def>
+         <def fragment="filter_mode_arr">
+            <if expr="$this.filter(x -> (x.getSetting(`filter`).isEnabled() &amp;&amp; x.getSetting(`filter`).value())).size() &gt; 0">
+               <fragment id="comment">
+                  <param id="content" expr="$instance.getPeripheral() + ` digital filters configuration.`"></param>
+                  <param id="paddingLevel" expr="0"></param>
+               </fragment>
+               <expr>`const llwu_external_pin_filter_mode_t ` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID()) + `_filter_config[` + $this.filter(x -> (x.getSetting(`filter`).isEnabled() &amp;&amp; x.getSetting(`filter`).value())).size() + `] = {`</expr>
+               <br/>
+               <fragment id="filter_mode_config" for_elements_of="$this.filter(x -> (x.getSetting(`filter`).isEnabled() &amp;&amp; x.getSetting(`filter`).value()))"/>
+               <text>};</text>
+               <br/>
+            </if>
+         </def>
+         <def fragment="input_pin_init">
+             <fragment id="init_line">
+               <param id="code" expr="`LLWU_SetExternalWakeupPinMode(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID()) + `_PERIPHERAL, ` + $this.wakeupPin.value().extractChannelID() + `U, kLLWU_ExternalPin` + $this.pinMode.value() + `);`"></param>
+               <param id="description" expr="`Initialize the LLWU wakeup pin ` + $this.wakeupPin.value().extractChannelID() + `.`"/>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+         </def>
+         <def fragment="reset_init">
+            <fragment id="init_line" if_expr="$this.enableResetPin.value() || $this.enableResetFilter.value()">
+               <param id="code" expr="`LLWU_SetResetPinMode(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID()) + `_PERIPHERAL, ` + $this.enableResetPin.value() + `, ` + $this.enableResetFilter.value() + `);`"></param>
+               <param id="description" expr="`Initialize the LLWU RESET pin.`"/>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+         </def>
+         <def fragment="internal_module_init">
+            <fragment id="init_line">
+               <param id="code" expr="`LLWU_EnableInternalModuleInterruptWakup(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID()) + `_PERIPHERAL, ` + $this.wakeupModule.value() + `U, true);`"></param>
+               <param id="description" expr="`Enable module ` + $this.wakeupModule.value() + ` as the wakeup source.`"/>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <fragment id="init_line" if_expr="$this.enableDma.value()">
+               <param id="code" expr="`LLWU_EnableInternalModuleDmaRequestWakup(` + toUpperCase($instance.getFnGroupPrefix() + $instance.getID()) + `_PERIPHERAL, ` + $this.wakeupModule.value() + `U, true);`"></param>
+               <param id="description" expr="`Enable wakeup on module ` + $this.wakeupModule.value() + ` DMA request.`"/>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">pit</param>
+               <param id="filename">fsl_llwu.h</param>
+            </fragment>
+         </section>
+         <section target="global_vars">
+            <fragment id="filter_mode_arr" apply_to="$this.input_pins"/>
+         </section>
+         <section target="global_vars_extern">
+            <fragment id="extern_const" if_expr="$this.input_pins.countOccurrences(x -> (x.getSetting(`filter`).isEnabled() &amp;&amp; x.getSetting(`filter`).value())) &gt; 0">
+               <param id="name" expr="$instance.getFnGroupPrefix() + $instance.getID() + `_filter_config[` + $this.input_pins.countOccurrences(x -> (x.getSetting(`filter`).isEnabled() &amp;&amp; x.getSetting(`filter`).value())) + `]`" />
+               <param id="type">llwu_external_pin_filter_mode_t</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <fragment id="comment">
+               <param id="content" expr="$instance.getFnGroupName() + ` defines for ` + $instance.getPeripheral()"></param>
+               <param id="paddingLevel" expr="0"></param>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="toUpperCase($instance.getFnGroupPrefix() + $instance.getID() + `_PERIPHERAL`)"/>
+               <param id="value" expr="$instance.getPeripheral()"/>
+               <param id="description">Definition of peripheral ID.</param>
+            </fragment>
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt" if_expr="$this.enable_irq.value()"></fragment>
+         </section>
+         <section target="init_function_body">
+            <fragment id="input_pin_init" for_elements_of="$this.input_pins"/>
+            <fragment id="filter_mode_init" for_elements_of="$this.input_pins.filter(x -> (x.getSetting(`filter`).isEnabled() &amp;&amp; x.getSetting(`filter`).value()))"/>
+            <fragment id="internal_module_init" for_elements_of="$this.internal_modules"/>
+            <fragment id="reset_init" apply_to="$this.resetConfig" if_expr="$this.resetConfig.isAvailable()"/>
+            <fragment id="IRQn_set_priority_default" apply_to="$this.interrupt"/>
+            <fragment id="IRQn_enable_default" apply_to="$this.interrupt" if_expr="$this.enable_irq.value()"/>
+         </section>
+      </code>
+      <quick_selections/>
+   </config_set>
+</component:config_component>

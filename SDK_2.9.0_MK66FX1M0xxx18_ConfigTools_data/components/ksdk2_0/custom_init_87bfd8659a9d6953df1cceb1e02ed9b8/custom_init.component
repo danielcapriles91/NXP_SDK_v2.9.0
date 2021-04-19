@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="custom_init" label="Custom_peripheral_initialization" category="custom_initialization" hidden="false" options="UI_COMPONENT_MODE_HIDDEN"
+    xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-9.0.xsd" 
+    xmlns:component="http://swtools.freescale.net/XSD/component/1.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <description>Custom peripheral initialization</description>
+    <mode id="general" label="General">
+        <description>General config set</description>
+        <config_set_refs>
+            <config_set_ref>general</config_set_ref>
+        </config_set_refs>
+        <master_peripheral>
+            <peripheral_type>*</peripheral_type>
+        </master_peripheral>
+    </mode>
+    <config_set id="general" label="General" from_source="general.c">
+        <description>General configuration of the custom initialization component</description>
+        <generated_types>
+        </generated_types>
+        <user_types>
+        </user_types>
+        <settings>
+            <info id="userCodeInfo" label="Custom initialization source code" value="`Custom initialization source code`" options="UI_LINE_BREAK;UI_LABEL_HIDDEN;remove_from_struct_init"/>
+            <string id="user_includes" label="Includes" options="UI_MULTI_LINE=10">
+                <description>Custom list of includes (a code snippet) that is included in the generated peripherals.h file as a plain text.</description>
+            </string>
+            <string id="user_definitions" label="Definitions" options="UI_MULTI_LINE=10">
+                <description>Custom user code (a code snippet of definitions) that is included in the generated peripherals.h file as a plain text.</description>
+            </string>
+            <string id="user_code" label="Initialization code" options="UI_MULTI_LINE=10">
+                <description>Custom user initialization code that is included in the generated initialization function of the peripherals.c file. The code is not validated and formatted.</description>
+            </string>
+        </settings>
+        <fragment_defs>
+        </fragment_defs>
+        <code>
+            <section target="includes">
+                <expr>$configSet.user_includes.getValue()</expr><br/>
+            </section>
+            <section target="defines">
+                <expr>$configSet.user_definitions.getValue()</expr><br/>
+            </section>
+            <section target="init_function_body">
+                <expr>$configSet.user_code.getValue()</expr><br/>
+            </section>
+        </code>
+        <validation/>
+        <quick_selections>
+        </quick_selections>
+    </config_set>
+</component:config_component>

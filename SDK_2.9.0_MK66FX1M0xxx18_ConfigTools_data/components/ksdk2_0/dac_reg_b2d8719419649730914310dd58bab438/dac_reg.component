@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="dsc_dac" label="DAC" category="Register init" registers_init="true" options="UI_COMPONENT_MODE_HIDDEN" global_only="false" hidden="false" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <description>12-bit Digital-to-Analog Converter (DAC)</description>
+    <mode id="dac_general" label="General" available="true">
+        <description>General DAC initialization</description>
+        <config_set_refs>
+            <config_set_ref>fsl_dac</config_set_ref>
+        </config_set_refs>
+        <master_peripheral>
+            <peripheral_type>DAC</peripheral_type>
+        </master_peripheral>
+    </mode>
+    <config_set id="fsl_dac" label="General configuration" from_source="fsl_dac.h">
+        <description></description>
+        <generated_types/>
+        <user_types>
+            <enum id="dac_conversion_mode_t" label="The enumeration of DSC DAC conversion mode" from="_dac_conversion_mode">
+                <assign when="true">
+                    <register name="CTRL0" bitfield="SYNC_EN" value="$this.getEnumItemId().toInt()" reverse_value="x -> x.toString()"/>
+                </assign>
+                <item id="0" label="Asynchronous">
+                    <description>Asynchronous Conversion Mode.</description>
+                </item>
+                <item id="1" label="Synchronous">
+                    <description>Synchronous Conversion Mode.</description>
+                </item>                
+            </enum>
+            <enum id="dac_sync_input_edge_t" label="The enumeration of sync input edge that used for updates buffered registers" from="_dac_sync_input_edge">
+                <assign when="true">
+                    <register name="CTRL0" bitfield="SYNCEDGE" value="$this.getEnumItemId().toInt()" reverse_value="x -> x.toString()"/>
+                </assign>
+                <item id="0" label="No active edge">
+                    <description>No active edge is selected, it means the SYNC input is ignored.</description>
+                </item>
+                <item id="1" label="Falling edge">
+                    <description>Updates occur on the falling edge of the SYNC input.</description>
+                </item>
+                <item id="2" label="Rising edge">
+                    <description>Updates occur on the rising edge of the SYNC input.</description>
+                </item>
+                <item id="3" label="Both edges">
+                    <description>Updates occur on both edges of the SYNC input.</description>
+                </item>
+            </enum>
+            <enum id="dac_speed_mode_t" label="The enumeration of DSC DAC speed mode" from="_dac_speed_mode">
+                <assign when="true">
+                    <register name="CTRL0" bitfield="HSLS" value="$this.getEnumItemId().toInt()" reverse_value="x -> x.toString()"/>
+                </assign>
+                <item id="0" label="High">
+                    <description>In High Speed Mode, the setting time of the DAC module is 1us, but the DAC module uses more power.</description>
+                </item>
+                <item id="1" label="Low">
+                    <description>In Low Speed Mode, the DAC module uses less power but takes more time to settle.</description>
+                </item>
+            </enum>
+            <enum id="dac_data_format_t" label="The enumeration of DSC DAC data format" from="_dac_data_format">
+                <assign when="true">
+                    <register name="CTRL0" bitfield="FORMAT" value="$this.getEnumItemId().toInt()" reverse_value="x -> x.toString()"/>
+                </assign>
+                <item id="0" label="12 bits right-justified">
+                    <description>The 12 bits data is right-justified.</description>
+                </item>
+                <item id="1" label="12 bits left-justified">
+                    <description>The 12 bits data is left-justified.</description>
+                </item>
+            </enum>
+            <enum id="dac_operation_mode_t" label="The enumeration of DSC DAC operation mode" from="_dac_operation_mode">
+                <assign when="true">
+                    <register name="CTRL0" bitfield="AUTO" value="$this.getEnumItemId().toInt()" reverse_value="x -> x.toString()"/>
+                </assign>
+                <item id="0" label="Normal">
+                    <description>Normal Mode.</description>
+                </item>
+                <item id="1" label="Automatic">
+                    <description>Automatic Mode to generate waveform.</description>
+                </item>
+            </enum>
+            <enum id="dac_watermark_level_t" label="The enumeration of FIFO watermark level" from="_dac_watermark_level">
+                <assign when="true">
+                    <register name="CTRL0" bitfield="WTMK_LVL" value="$this.getEnumItemId().toInt()" reverse_value="x -> x.toString()"/>
+                </assign>
+                <item id="0" label="0">
+                    <description>Watermark value is 0.</description>
+                </item>
+                <item id="1" label="2">
+                    <description>Watermark value is 2.</description>
+                </item>
+                <item id="2" label="4">
+                    <description>Watermark value is 4.</description>
+                </item>
+                <item id="3" label="6">
+                    <description>Watermark value is 6</description>
+                </item>
+            </enum>
+            <!-- <enum id="dac_waveform_type_t" label="The enumeration of waveform type" from="_dac_waveform_type">
+                <description></description>
+                <item id="0" label="Sawtooth, from min value to max value">
+                    <description>DAC generates sawtooth waveform0. The waveform increases from min value to max value firstly.</description>
+                </item>
+                <item id="1" label="Sawtooth, from max value to min value">
+                    <description>DAC generates sawtooth waveform1. The waveform decreases from max value to min value firstly.</description>
+                </item>
+                <item id="2" label="Triangle waveform">
+                    <description>DAC generates triangle waveform.</description>
+                </item>
+                <item id="3" label="Square waveform">
+                    <description>DAC generates square waveform.</description>
+                </item>
+            </enum> -->
+            <enum id="dac_upDown_type_t" label="The enumeration of up/down counting selection" from="_dac_waveform_type">
+                <assign when="$this.isEnabled() &amp;&amp; $this.isAvailable()">
+                    <register name="CTRL0" bitfield="UP" value="($this.getEnumItemId() != `0` &amp;&amp; $this.getEnumItemId() != `2`) ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                    <register name="CTRL0" bitfield="DOWN" value="($this.getEnumItemId() != `0` &amp;&amp; $this.getEnumItemId() != `1`) ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                </assign>
+                <item id="0" label="Counting disabled">
+                    <description>Counting (up/down) disabled.</description>
+                </item>
+                <item id="1" label="Up">
+                    <description>Only counting up enabled.</description>
+                </item>
+                <item id="2" label="Down">
+                    <description>Only counting down enabled.</description>
+                </item>
+                <item id="3" label="First up then down">
+                    <description>Both directions are enabled first counting up then counting down.</description>
+                </item>
+                <item id="4" label="First down then up">
+                    <description>Both directions are enabled first counting down then counting up.</description>
+                </item>
+            </enum>
+            <enum id="startingCountSel_t" label="Starting counting direction" from="_dac_waveform_type">
+                    <item id="0" label="First up then down">
+                        <description>Both directions are enabled, first counting up then counting down.</description>
+                    </item>
+                    <item id="1" label="First down then up">
+                        <description>Both directions are enabled, first counting down then counting up.</description>
+                    </item>
+            </enum>
+            <struct id="dac_normal_mode_config_t" label="The structure of DAC Normal Mode configuration" from="_dac_normal_mode_config">
+                <description></description>
+                <integer id="value" label="Value" type="uint16_t" max_expr="0xFFF">
+                    <description>The value of digital data to be converted to analog.</description>
+                    <assign when="$this.isEnabled() &amp;&amp; $this.isAvailable()">
+                        <register name="" name_expr="`DATAREG_FMT` + $configSet.dacConfig.dataFormat.getEnumItemId()" bitfield="DATA" value="$this.getValue()" reverse_value="x -> x"/>
+                    </assign>
+                </integer>
+            </struct>
+            <struct id="dac_automatic_mode_config_t" label="The structure of DAC Automatic Mode configuration" from="_dac_automatic_mode_config">
+                <description></description>
+                <!-- <reference id="waveformType" type="dac_waveform_type_t" label="Waveform type" options="remove_from_struct_init"></reference> -->                
+                <integer id="value" label="Starting value" type="uint16_t" max_expr="0xFFF">
+                    <description>The starting value of digital data to be converted to analog. Then the Step size will be added or sobstracted from.</description>
+                    <assign when="$this.isEnabled() &amp;&amp; $this.isAvailable()">
+                        <register name="" name_expr="`DATAREG_FMT` + $configSet.dacConfig.dataFormat.getEnumItemId()" bitfield="DATA" value="$this.getValue()" reverse_value="x -> x"/>
+                    </assign>
+                </integer>
+                <integer id="stepSize" label="Step size" type="uint16_t" max_expr="0xFFF">
+                    <description>The step size to be added to or subtracted from the current value.</description>
+                    <assign when="$this.isEnabled() &amp;&amp; $this.isAvailable()">
+                        <register name="" name_expr="`STEPVAL_FMT` + $configSet.dacConfig.dataFormat.getEnumItemId()" bitfield="STEP" value="$this.getValue()" reverse_value="x -> x"/>
+                    </assign>
+                </integer>
+                <integer id="minValue" label="Minimum value" type="uint16_t" max_expr="0xFFF">
+                    <description>The minimum value is the lower range limit during automatic waveform generation.</description>
+                    <assign when="$this.isEnabled() &amp;&amp; $this.isAvailable()">
+                        <register name="" name_expr="`MINVAL_FMT` + $configSet.dacConfig.dataFormat.getEnumItemId()" bitfield="MINVAL" value="$this.getValue()" reverse_value="x -> x"/>
+                    </assign>
+                </integer>
+                <integer id="maxValue" label="Maximum value" type="uint16_t" max_expr="0xFFF">
+                    <description>The maximum value is the upper range limit during automatic waveform generation.</description>
+                    <assign when="$this.isEnabled() &amp;&amp; $this.isAvailable()">
+                        <register name="" name_expr="`MAXVAL_FMT` + $configSet.dacConfig.dataFormat.getEnumItemId()" bitfield="MAXVAL" value="$this.getValue()" reverse_value="x -> x"/>
+                    </assign>
+                </integer>
+                <integer id="compare" label="Compare value" type="uint16_t">
+                    <description>It selects when the automatically generated waveform value is updated.</description>
+                    <assign when="$this.isEnabled() &amp;&amp; $this.isAvailable()">
+                        <register name="COMPARE" bitfield="COMPARE" value="$this.getValue()" reverse_value="x -> x"/>
+                    </assign>
+                </integer>
+                <info id="refreshRate" label="Waveform refresh rate" value="system::calculateFreqPeriodRationalClk(toHertz($parent.compare.getValue() + 1), toHertz($configSet.dacConfig.clockSourceFreq.getEnumItemValue()))">
+                   <description>
+                      Frequency of the Waveform refresh rate calculated as Clock source divided by (Compare value + 1) and the period is 1/calculated frequency.
+                   </description>
+                </info>
+                <!-- <integer id="waveformFreq" label="Waveform frequency [Hz]" type="uint32_t" min_expr="1">
+                    <description>The frequency of the generated waveform.</description>
+                </integer>
+                <variable id="period" value="1.0 / $parent.waveformFreq.getValue()"/>
+                <info id="resultingPeriod" label="Resulting period" value="timeToString(((($parent.maxValue.getValue() - $parent.minValue.getValue()) * $parent.period.getValue()) / $parent.stepSize.getValue()) * 2)">
+                    <description>Resulting period = (((Maximum value - Minimum value) / Step size) * Updated period) * 2</description>
+                </info> -->
+                
+                <!-- <reference id="dac_upDown" label="Counting direction select" type="dac_upDown_type_t">
+                    <description>The data format of DAC instance.</description>
+                </reference> -->
+                <bool id="up" label="Up counting">
+                    <description>Enables counting up in automatic mode.</description>
+                    <assign when="$this.isEnabled() &amp;&amp; $this.isAvailable()">
+                        <register name="CTRL0" bitfield="UP" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                    </assign>
+                </bool>
+                <bool id="down" label="Down counting">
+                    <description>Enables counting down in automatic mode.</description>
+                    <assign when="$this.isEnabled() &amp;&amp; $this.isAvailable()">
+                        <register name="CTRL0" bitfield="DOWN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                    </assign>
+                </bool>
+                <reference id="startingCountSel" label="Starting counting direction" type="startingCountSel_t" available="($parent.up.getValue() &amp;&amp; $parent.down.getValue())">
+                    <description>Selection which direction will be first when both are enabled.</description>
+                </reference>
+                <bool id="oneShot" label="One shot">
+                    <description>Generate the repeated waveform or single waveform. true  Generate a single pattern. false  Generate a repeated waveform.</description>
+                    <assign when="$this.isEnabled() &amp;&amp; $this.isAvailable()">
+                        <register name="CTRL0" bitfield="ONESHOT" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                    </assign>
+                </bool>
+                <bool id="loadOK" label="Load buffered values">                
+                    <description>Buffered values of STEPVAL, MINVAL, and MAXVAL will be updated and used at active edge of SYNC_IN, else previous values will be reused.</description>
+                    <assign when="$this.isEnabled() &amp;&amp; $this.isAvailable()">
+                        <register name="CTRL0" bitfield="LDOK" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                    </assign>
+                </bool>
+            </struct>  
+            <struct id="dac_config_t" label="The structure of DAC configuration" from="_dac_config">
+                <description></description>
+                <variable id="clockSourceUId" value="`BusInterfaceClock`" options="remove_from_struct_init"/>
+                <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" 
+                    items="createArray().addItemToList($parent.clockSourceUId.getValue(), getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()), ($instance.getPeripheral() + `_CLK_SRC`),true)">
+                    <description>DAC clock source</description>
+                    <validation>
+                        <dependency when_expr="($parent.clockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                            description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                            level="Error">
+                            <feature name="frequency" evaluation="greaterThan">
+                                <data expr="0" unit="Hz" type="Frequency"/>
+                            </feature>
+                        </dependency>
+                    </validation>
+                </dynamic_enum>
+                <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" items="
+                    getClockFunctionalGroups().arrayToEnumItems(
+                    enumItem -> true,
+                    enumItem -> enumItem,
+                    enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), `BusInterfaceClock`, enumItem)) + ` (`+ enumItem + `)`,
+                    enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), `BusInterfaceClock` , enumItem))">
+                    <validation>
+                        <constraint cond_expr="(($this.getEnumItemValue() == `GetIpFreq`) || ($this.getEnumItemValue().toHertz() != 0))" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+                    </validation>
+                    <custom_value_support default="0" validation_expr="x -> toHertz(x) >= 0" />
+                </dynamic_enum>
+                <variable id="clockSource_Hz" value="($parent.clockSource.isAvailable() ? ($parent.clockSourceFreq.getEnumItemValue().toHertz()) : `N/A`)"/>
+                <info id="resultingFreqPeriod" label="Resulting frequency/period" value="system::calculateFreqPeriod(1, $parent.clockSourceFreq.getEnumItemValue())"/>
+                <reference id="dataFormat" label="Data format" type="dac_data_format_t" options="REGISTERS_REFRESH">
+                    <description>The data format of DAC instance.</description>
+                </reference>
+                <reference id="dac_mode" type="dac_operation_mode_t" label="Operation mode" options="UI_LABEL_BOLD;REGISTERS_REFRESH"></reference>
+                <reference id="normal_mode" type="dac_normal_mode_config_t" label=" " available="$parent.dac_mode.getEnumItemId() == `0`" options="UI_LABEL_HIDDEN"></reference>
+                <reference id="automatic_mode" type="dac_automatic_mode_config_t" label=" " available="$parent.dac_mode.getEnumItemId() == `1`" options="UI_LABEL_HIDDEN"></reference>
+                <reference id="conversionMode" label="Conversion mode" type="dac_conversion_mode_t">
+                    <description>The conversion mode of DAC instance.</description>
+                    <validation>
+                        <constraint when_expr="$parent.enableDMA.getValue()"
+                        cond_expr="($this.getEnumItemId() == `1`)"
+                        level="warning"
+                        description_expr="`In Asynchronous mode buffered registers will be updated every clock cycle and the DMA may not be able to keep up unless the clock is very slow.`"/>
+                        <dependency when_expr="($this.getEnumItemId() == `1`)"
+                             resource_type="PeripheralUnifiedSignal" 
+                             resource_id_expr="$instance.getPeripheral() + `.dac_trigger`" 
+                             description_expr="$instance.getPeripheral() + `.TRG signal needs to be routed`" level="Warning">
+                            <feature name="routed" evaluation="equal">
+                               <data expr="true"/>
+                            </feature>
+                        </dependency>
+                    </validation>
+                </reference>
+                <reference id="syncEdge" label="SYNC input edge" type="dac_sync_input_edge_t">
+                    <description>The SYNC input edge used to update buffered registers.</description>
+                </reference>
+                <reference id="speedMode" label="Speed mode" type="dac_speed_mode_t">
+                    <description>The speed mode of DAC instance.</description>
+                </reference>
+                <bool id="enableDMA" label="Enable DMA" available="($parent.dac_mode.getEnumItemId() == `0`)">
+                    <description>Enable DMA support.</description>
+                    <validation>
+                        <constraint when_expr="$this.getValue()"
+                        cond_expr="($parent.conversionMode.getEnumItemId() == `1`)"
+                        level="warning"
+                        description_expr="`In Asynchronous mode buffered registers will be updated every clock cycle and the DMA may not be able to keep up unless the clock is very slow.`"/>
+                    </validation>
+                    <assign when="true">
+                        <register name="CTRL0" bitfield="DMA_EN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                    </assign>
+                </bool>
+                <reference id="watermarkLevel" label="FIFO watermark level" type="dac_watermark_level_t">
+                    <description>The FIFO watermark level. FIFO depth is 8.</description>
+                </reference>
+                <bool id="enableGlitchFilter" label="Enable glitch suppression filter">
+                    <description>Enable glitch suppression filter.</description>
+                    <assign when="true">
+                        <register name="CTRL0" bitfield="FILT_EN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                    </assign>
+                </bool>
+                <integer id="filterCount" label="Glitch filter count" type="uint8_t" max_expr="63">
+                    <description>Glitch filter count.</description>
+                    <assign when="true">
+                        <register name="CTRL1" bitfield="FILT_CNT" value="$this.getValue()" reverse_value="x -> x"/>                 
+                    </assign>
+                </integer>
+                <bool id="powerDown" label="Power down">                
+                    <description>The DAC output is pulled low when selected. The analog block requires 12 µs to recover from the powerdown state before proper operation is guaranteed.</description>
+                    <assign when="true">
+                        <register name="CTRL0" bitfield="PDN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                    </assign>
+                </bool>
+            </struct>
+            <!-- Software reset -->
+            <variable id="softwareReset" value="0">           
+                <assign when="true">
+                    <register peripheral_expr="system::getInstanceSwResetPeripheral()" name_expr="system::getInstanceSwResetRegister()" bitfield_expr="system::getInstanceSwResetBitfield()" value="system::getInstanceSwResetDisableValue()"/>              
+                </assign>
+            </variable>            
+            <struct id="dac_template_params_t" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+                <variable id="PERIPHERAL" value="$instance.getPeripheral()"></variable>
+                <variable id="VPREFIX" value="$configSet.inst_ID_def.getValue()"></variable>
+                <!-- Software reset -->
+                <variable id="SW_RESET_CONTROL_PERIPHERAL" value="system::getInstanceSwResetPeripheral()"></variable>
+                <variable id="SW_RESET_CONTROL_REGISTER" value="system::getInstanceSwResetRegister()"></variable>
+                <variable id="SW_RESET_CONTROL_BITFIELD" value="system::getInstanceSwResetBitfield()"></variable>
+            </struct>
+        </user_types>
+        <settings>
+            <reference id="dacConfig" type="dac_config_t" label="" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+                <description></description>
+            </reference>
+            <!-- Fragment variables -->
+            <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+            <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+            <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+            <variable id="clockGate" value="1">
+                <assign when="true">
+                <register peripheral_expr="system::getInstanceClockGatePeripheral()" name_expr="system::getInstanceClockGateRegister()" bitfield_expr="system::getInstanceClockGateBitfield()" value="system::getInstanceClockGateEnableValue()"/>
+                </assign>
+             </variable>
+            <!-- Template parameters -->
+            <reference id="dac_template_params" type="dac_template_params_t" label="" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+            </reference>
+        </settings>
+        <fragment_defs>
+            <import>
+                <from component_id="system" config_set_id="common_code_templates"/>
+            </import>
+        </fragment_defs>
+        <code>
+            <!-- #includes -->
+            <section target="includes">
+                <fragment id="include">
+                    <param id="name">fsl_common</param>
+                    <param id="filename">fsl_common.h</param>
+                </fragment>
+            </section>
+            
+            <!-- defines -->
+            <section target="defines">
+                <fragment id="comment">
+                    <param id="content" expr="$instance.getFnGroupName() + ` defines for ` + $instance.getPeripheral()"/>
+                    <param id="paddingLevel" expr="0"/>
+                </fragment>
+                <fragment id="define">
+                    <param id="name" expr="$configSet.inst_peripheral_ID.getValue()"/>
+                    <param id="value" expr="$instance.getPeripheral()"/>
+                    <param id="description">Definition of peripheral ID.</param>
+                </fragment>                
+                <fragment id="define" if_expr="$this.getSetting(`dacConfig.clockSource_Hz`).getValue() != `N/A`">
+                    <param id="name" expr="$configSet.inst_ID_def.getValue() + `_CLK_SOURCE_FREQ_HZ`"/>
+                    <param id="value" expr="$this.getSetting(`dacConfig.clockSource_Hz`).getValue().toHertz() + `U`"/>
+                    <param id="description" expr="`Definition of the` + $instance.getPeripheral() + `clock source frequency in Hertz`"></param>
+                </fragment>
+                <fragment id="define" if_expr="($this.dacConfig.automatic_mode.startingCountSel.isAvailable())">
+                    <param id="name" expr="$configSet.inst_ID_def.getValue() + `_FIRST_COUNT_DIR_MASK`"/>
+                    <param id="value" expr="(($this.dacConfig.automatic_mode.startingCountSel.getEnumItemId() == `0`) ? `DAC_CTRL0_UP_MASK` : `DAC_CTRL0_DOWN_MASK`)"/>
+                    <param id="description">Definition of mask of bitfield for first selected direction.</param>
+                </fragment>
+                <fragment id="all_assigned_regs_init">
+                    <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+                </fragment>           
+            </section>
+            <section target="common_pre_init_function">
+                <!-- Clock gate enable -->
+                <fragment id="clock_gate_enable_init"></fragment>
+            </section>
+            <section target="init_function_body">
+               <fragment id="template" apply_to="$configSet.dac_template_params">
+                    <param id="file">dac.template</param>
+                    <param id="setting" expr="$this"></param>
+                    <param id="separators"></param>
+                    <param id="description" expr="$instance.getPeripheral() + ` initialization`"></param>
+               </fragment>
+            </section>  
+        </code>
+        <validation/>
+        <quick_selections>
+            <quick_selection id="QS_DAC" label="Default">
+                <description>Default setting for DAC</description>
+                <set id="dacConfig.conversionMode">0</set>
+                <set id="dacConfig.syncEdge">0</set>
+                <set id="dacConfig.speedMode">0</set>
+                <set id="dacConfig.dataFormate">0</set>
+                <set id="dacConfig.enableDMA">false</set>
+                <set id="dacConfig.watermarkLevel">1</set>
+                <set id="dacConfig.enableGlitchFilter">true</set>
+                <set id="dacConfig.filterCount">29</set>
+            </quick_selection>
+            <default>QS_DAC</default>
+           
+        </quick_selections>
+    </config_set>
+</component:config_component>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="i2c_cmsis" label="I2C_CMSIS" category="Universal driver" global_only="false" hidden="false" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-9.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+   <sw_comp_ref name="platform.drivers.i2c_cmsis" version="2.2.0"/>
+   <description>Inter-Integrated Circuit (I2C) - CMSIS</description>
+   <mode id="interrupt" label="Interrupt">
+      <description>Interrupts mode - CMSIS driver operation using interrupts.</description>
+      <config_set_refs>
+         <config_set_ref>fsl_i2c_cmsis</config_set_ref>
+      </config_set_refs>
+      <master_peripheral exclusive="true">
+         <peripheral_type>I2C</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="dma" label="DMA" available="(featureDefined(`FSL_FEATURE_SOC_DMA_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SOC_DMA_COUNT`) &gt; 0))">
+      <description>DMA mode - CMSIS driver operation using DMA peripheral.</description>
+      <config_set_refs>
+         <config_set_ref>fsl_i2c_cmsis</config_set_ref>
+      </config_set_refs>
+      <master_peripheral exclusive="true">
+         <peripheral_type>I2C</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="edma" label="eDMA" available="featureDefined(`FSL_FEATURE_SOC_EDMA_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SOC_EDMA_COUNT`) &gt; 0)">
+      <description>eDMA mode - CMSIS driver operation using eDMA peripheral.</description>
+      <config_set_refs>
+         <config_set_ref>fsl_i2c_cmsis</config_set_ref>
+      </config_set_refs>
+      <master_peripheral exclusive="true">
+         <peripheral_type>I2C</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set_reference id="fsl_i2c_cmsis" config_set_id="fsl_i2c_cmsis_common" config_component="i2c_cmsis_common" label="General configuration" options="UI_BORDER_HIDDEN;UI_LABEL_HIDDEN">
+      <description>Configuration of CMSIS I2C</description>
+      <options_expr>
+         <option id="driver" expr="`i2c_cmsis`"/>
+         <option id="clockSourceUId" expr="`BusInterfaceClock`"/>
+         <option id="interruptModeFunction" expr="``" available="$instance.getMode() == `interrupt`"/>
+         <option id="dmaModeType" expr="$instance.getMode()" available="$instance.getMode().contains(`dma`)"/>
+      </options_expr>
+   </config_set_reference>
+</component:config_component>

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="crc_reg" label="CRC" category="Register init" registers_init="true" global_only="false" hidden="false" options="UI_COMPONENT_MODE_HIDDEN" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd" 
+xmlns:component="http://swtools.freescale.net/XSD/component/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <description>Cyclic Redundancy Check (CRC)</description>
+   <mode id="General" label="General" available="true">
+      <description>General mode of CRC peripheral</description>
+      <config_set_refs>
+         <config_set_ref>fsl_crc</config_set_ref>
+      </config_set_refs>
+      <master_peripheral exclusive="true">
+         <peripheral_type>CRC</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="fsl_crc" label="CRC configuration" from_source="fsl_crc.h">
+      <description>Configuration of CRC peripheral</description>
+      <generated_types>
+      </generated_types>
+      <user_types>
+         <enum id="crcMode_t" label="CRC Mode">
+            <item id="0" label="16-bit" value="0"/>
+            <item id="1" label="32-bit" value="1"/>
+         </enum>
+         <enum id="crcTranspose_t" label="Data transpose">
+            <item id="0" label="None" value="0">
+               <description>No transposition</description>
+            </item>
+            <item id="1" label="Only bits in bytes" value="1">
+               <description>reg[31:0] becomes {reg[24:31], reg[16:23], reg[8:15], reg[0:7]}</description>
+            </item>
+            <item id="2" label="Bytes and bits in bytes" value="2">
+               <description>reg[31:0] becomes reg [0:31]</description>
+            </item>
+            <item id="3" label="Only bytes" value="3">
+               <description>reg[31:0] becomes {reg[7:0], reg[15:8], reg[23:16], reg[31:24]}</description>
+            </item>
+         </enum>
+         <struct id="crc_config_t" label="CRC protocol configuration." from="_crc_config">
+            <description>This structure holds the configuration for the CRC protocol.</description>
+            <reference id="crcMode" type="crcMode_t" label="Mode" options="REGISTERS_REFRESH">
+                <description>Width of CRC protocol.</description>
+                <assign when="true">
+                        <register name="CTRL" bitfield="TCRC" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                </assign>
+            </reference>
+            <integer id="polynomial" label="Polynomial" type="uint32_t" options="REGISTERS_REFRESH">
+               <description>CRC polynomial with MSB on the left. Example: 0x1021 = 0b1000000100001 = x^12+x^5+1</description>
+               <validation>
+                  <constraint when_expr="$this.value() &gt;= 2**16" cond_expr="$parent.crcMode.getEnumItemId() == `1`" level="warning"
+                     description_expr="`Use value smaller than ` + 2**16 + ` (0xFFFF) when configuration is in 16-bit mode as this value will be cliped to 16-bit value`"/>
+               </validation>
+               <assign when="true">
+                        <register name="GPOLY" bitfield="HIGH" 
+                            value="($this.getValue() &gt;&gt; 16)" 
+                            reverse_value="x -> (x.toInt() &lt;&lt; 16) | getBitFieldValue($instance.getPeripheral(), `GPOLY`,`LOW`).toInt()"/>
+                </assign>
+                <assign when="true">
+                    <register name="GPOLY" bitfield="LOW" 
+                        value="($this.getValue() &amp; 0xFFFF)" 
+                        reverse_value="x -> (getBitFieldValue($instance.getPeripheral(), `GPOLY`,`HIGH`).toInt() &lt;&lt; 16) | x "/>
+                </assign>
+            </integer>
+            <integer id="seed" label="Starting checksum value" type="uint32_t" options="REGISTERS_REFRESH">
+               <description>Starting checksum value</description>
+               <validation>
+                  <constraint when_expr="$this.value() &gt;= 2**16" cond_expr="$parent.crcMode.getEnumItemId() == `1`" level="info"
+                     description_expr="`When configuration is in 16-bit mode this value will be cliped to 16-bit value (the lower 16 bits will be used). In specific setting of Write data transpose, the upper 16 bits will be used`"/>
+               </validation>
+               <assign when="true">
+                        <register name="DATA" bitfield="HU" 
+                            value="($this.getValue() &gt;&gt; 24)" 
+                            reverse_value="x -> (x.toInt() &lt;&lt; 24) | (getBitFieldValue($instance.getPeripheral(), `DATA`,`HL`).toInt() &lt;&lt; 16) | (getBitFieldValue($instance.getPeripheral(), `DATA`,`LU`).toInt() &lt;&lt; 8) | getBitFieldValue($instance.getPeripheral(), `DATA`,`LL`).toInt()"/>
+                </assign>
+                <assign when="true">
+                    <register name="DATA" bitfield="HL" 
+                        value="($this.getValue() &gt;&gt; 16) &amp; 0xFF" 
+                        reverse_value="x -> (getBitFieldValue($instance.getPeripheral(), `DATA`,`HU`).toInt() &lt;&lt; 24) | (x.toInt() &lt;&lt; 16) | (getBitFieldValue($instance.getPeripheral(), `DATA`,`LU`).toInt() &lt;&lt; 8) | getBitFieldValue($instance.getPeripheral(), `DATA`,`LL`).toInt()"/>
+                </assign>
+                <assign when="true">
+                        <register name="DATA" bitfield="LU" 
+                            value="($this.getValue() &gt;&gt; 8) &amp; 0xFF" 
+                            reverse_value="x -> (getBitFieldValue($instance.getPeripheral(), `DATA`,`HU`).toInt() &lt;&lt; 24) | (getBitFieldValue($instance.getPeripheral(), `DATA`,`HL`).toInt() &lt;&lt; 16) | (x.toInt() &lt;&lt; 8) | getBitFieldValue($instance.getPeripheral(), `DATA`,`LL`).toInt()"/>
+                </assign>
+                <assign when="true">
+                    <register name="DATA" bitfield="LL" 
+                        value="($this.getValue() &amp; 0xFF)" 
+                        reverse_value="x -> (getBitFieldValue($instance.getPeripheral(), `DATA`,`HU`).toInt() &lt;&lt; 24) | (getBitFieldValue($instance.getPeripheral(), `DATA`,`HL`).toInt() &lt;&lt; 16) | (getBitFieldValue($instance.getPeripheral(), `DATA`,`LU`).toInt() &lt;&lt; 8) | x.toInt()"/>
+                </assign>
+            </integer>
+            <reference id="crcTransposeWrite" label="Write data transpose" type="crcTranspose_t" options="REGISTERS_REFRESH">
+                <description>Defines the transpose (reverse order) configuration of the data written to the CRC data register. For more information on transpose, see Reference manual.</description>
+                <assign when="true">
+                        <register name="CTRL" bitfield="TOT" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                </assign>
+            </reference>
+            <reference id="crcTransposeRead" label="Read data transpose" type="crcTranspose_t" options="REGISTERS_REFRESH">
+                <description>Identifies the transpose (reverse order) configuration of the value read from the CRC Data register. For more information on transpose, see Reference manual.</description>
+                <assign when="true">
+                        <register name="CTRL" bitfield="TOTR" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                </assign>
+            </reference>
+            <bool id="crcComplement" label="Complement checksum" options="REGISTERS_REFRESH">
+                <description>Complement Read Of CRC Data Register. Some CRC protocols require the final checksum to be XORed with 0xFFFFFFFF or 0xFFFF. Asserting this bit enables on the fly complementing of read data.</description>
+                <assign when="true">
+                        <register name="CTRL" bitfield="FXOR" value="$this.getValue().system::boolToInt()" reverse_value="x ->  x.system::IntToBool()"/>
+                </assign>
+            </bool>
+         </struct>
+      </user_types>
+      <settings>
+         <reference id="config" label="CRC configuration" type="crc_config_t" available="true" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+            <description>Configuration</description>
+         </reference>
+         <!-- Enable clock gate -->
+        <variable id="clockGate" value="1">
+           <assign when="true"> 
+               <register peripheral_expr="system::getInstanceClockGatePeripheral()" 
+                   name_expr="system::getInstanceClockGateRegister()" 
+                   bitfield_expr="system::getInstanceClockGateBitfield()" 
+                   value="system::getInstanceClockGateEnableValue()"/>
+           </assign>     
+       </variable> 
+       <!-- Software reset -->
+       <variable id="softwareReset" value="0">           
+           <assign when="true">
+               <register peripheral_expr="system::getInstanceSwResetPeripheral()" name_expr="system::getInstanceSwResetRegister()" bitfield_expr="system::getInstanceSwResetBitfield()" value="system::getInstanceSwResetDisableValue()"/>              
+           </assign>
+       </variable>
+       <!-- Fragment variables -->
+        <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+        <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+        <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+        <!-- SIM template params -->
+        <struct id="crc_params" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+            <variable id="PERIPHERAL" value="$instance.getPeripheral()"></variable>
+            <variable id="VPREFIX" value="$configSet.inst_ID_def.getValue()"></variable>
+            <!-- Software reset -->
+            <variable id="SW_RESET_CONTROL_PERIPHERAL" value="system::getInstanceSwResetPeripheral()"></variable>
+            <variable id="SW_RESET_CONTROL_REGISTER" value="system::getInstanceSwResetRegister()"></variable>
+            <variable id="SW_RESET_CONTROL_BITFIELD" value="system::getInstanceSwResetBitfield()"></variable>
+        </struct>
+      </settings>
+      <quick_selections>
+         <quick_selection id="CRC_QS_1" label="Default">
+            <description>Default configuration</description>
+            <set id="config.crcMode">0</set>
+            <set id="config.polynomial">0x1021</set>
+            <set id="config.seed">0xFFFFFFFF</set>
+            <set id="config.crcTransposeWrite">0</set>
+            <set id="config.crcTransposeRead">0</set>
+            <set id="config.crcComplement">false</set>
+         </quick_selection>
+         <quick_selection id="CRC_QS_2" label="CRC16 CCIT false">
+            <description>CCIT false configuration</description>
+            <set id="config.crcMode">0</set>
+            <set id="config.polynomial">0x1021</set>
+            <set id="config.seed">0xFFFF</set>
+            <set id="config.crcTransposeWrite">3</set>
+            <set id="config.crcTransposeRead">0</set>
+            <set id="config.crcComplement">false</set>
+         </quick_selection>
+         <quick_selection id="CRC_QS_3" label="CRC16">
+            <description>CRC16 configuration</description>
+            <set id="config.crcMode">0</set>
+            <set id="config.polynomial">0x8005</set>
+            <set id="config.seed">0x00</set>
+            <set id="config.crcTransposeWrite">2</set>
+            <set id="config.crcTransposeRead">2</set>
+            <set id="config.crcComplement">true</set>
+         </quick_selection>
+         <quick_selection id="CRC_QS_4" label="CRC16 Kermit">
+            <description>CRC16 Kermit configuration</description>
+            <set id="config.crcMode">0</set>
+            <set id="config.polynomial">0x1021</set>
+            <set id="config.seed">0x00</set>
+            <set id="config.crcTransposeWrite">2</set>
+            <set id="config.crcTransposeRead">2</set>
+            <set id="config.crcComplement">false</set>
+         </quick_selection>
+         <quick_selection id="CRC_QS_5" label="CRC32">
+            <description>CRC32 configuration</description>
+            <set id="config.crcMode">1</set>
+            <set id="config.polynomial">0x04c11db7</set>
+            <set id="config.seed">0xFFFFFFFF</set>
+            <set id="config.crcTransposeWrite">2</set>
+            <set id="config.crcTransposeRead">2</set>
+            <set id="config.crcComplement">true</set>
+         </quick_selection>
+         <quick_selection id="CRC_QS_6" label="CRC32 Posix">
+            <description>CRC32 POSIX configuration</description>
+            <set id="config.crcMode">1</set>
+            <set id="config.polynomial">0x04c11db7</set>
+            <set id="config.seed">0x00</set>
+            <set id="config.crcTransposeWrite">3</set>
+            <set id="config.crcTransposeRead">0</set>
+            <set id="config.crcComplement">true</set>
+         </quick_selection>
+         <default>CRC_QS_1</default>
+      </quick_selections>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+         </import>
+      </fragment_defs>
+      <code>
+        <section target="includes">
+            <fragment id="include">
+                <param id="name">device_registers</param>
+                <param id="filename">fsl_device_registers.h</param>
+            </fragment>
+        </section>
+        <section target="common_pre_init_function"> 
+            <!-- Clock gate enable --> 
+            <fragment id="clock_gate_enable_init"></fragment> 
+        </section>
+         
+        <section target="defines">
+            <fragment id="all_assigned_regs_init">
+               <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+           </fragment>
+        </section> 
+         
+         
+        <section target="init_function_body">
+            <fragment id="template">
+                <param id="file">fsl_crc.template</param>
+                <param id="setting" expr="$configSet.crc_params"></param>
+                <param id="separators"></param>
+                <param id="description" expr="$configSet.inst_ID.getValue() + ` initialization`"></param>
+            </fragment>
+        </section>
+      </code>
+      <validation/>
+   </config_set>
+</component:config_component>

@@ -1,0 +1,108 @@
+/*
+ * Copyright ${(new Date()).getFullYear()}$ NXP
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ * FreeMASTER Communication Driver - User Configuration File
+ */
+
+#ifndef __FREEMASTER_CFG_H
+#define __FREEMASTER_CFG_H
+${<code>if(FMSTR_CAN_DRV == 'FMSTR_CAN_MCUX_MCAN' && FMSTR_MCAN_SHAREDMEMORY_EXTERN != ''){</code>}$
+#include "fsl_common.h"
+${<code>};</code>}$  
+////////////////////////////////////////////////////////////////////////////////
+// Definitions
+////////////////////////////////////////////////////////////////////////////////
+
+#define FMSTR_GENERATED_CONFIGURATION    1   // Generated FreeMASTER configuration 
+
+#define ${FMSTR_PLATFORM}$  1   /* Used platform (see freemaster.h for list of all supported platforms) */
+
+//! Enable/Disable FreeMASTER support as a whole
+#define FMSTR_DISABLE           ${FMSTR_DISABLE}$   // To disable all FreeMASTER functionalities
+
+//! Select interrupt or poll-driven serial communication
+#define FMSTR_LONG_INTR         ${FMSTR_LONG_INTR}$   // Complete message processing in interrupt
+#define FMSTR_SHORT_INTR        ${FMSTR_SHORT_INTR}$   // Queuing done in interrupt
+#define FMSTR_POLL_DRIVEN       ${FMSTR_POLL_DRIVEN}$   // No interrupt needed, polling only
+
+//! Select communication interface
+#define FMSTR_TRANSPORT         ${FMSTR_TRANSPORT}$  // Select FMSTR_SERIAL, FMSTR_CAN or FMSTR_PDBDM transport interface${<code>switch(FMSTR_TRANSPORT){case 'FMSTR_SERIAL':</code>}$
+#define FMSTR_SERIAL_DRV        ${FMSTR_SERIAL_DRV}$   // When using FMSTR_SERIAL: select Serial low-level communication driver${<code>break;case 'FMSTR_CAN':</code>}$
+#define FMSTR_CAN_DRV           ${FMSTR_CAN_DRV}$   // When using FMSTR_CAN: select CAN low-level communication driver${<code>break;default:break;};</code>}$
+${<code>if(FMSTR_BASE_ADDR != ''){</code>}$
+//! Define communication interface base address or leave undefined for runtime setting
+${FMSTR_BASE_ADDR}$
+${<code>};</code>}$${<code>if(FMSTR_CAN_DRV == 'FMSTR_CAN_MCUX_FLEXCAN' || FMSTR_CAN_DRV == 'FMSTR_CAN_MCUX_DSCFLEXCAN'){</code>}$
+//! FlexCAN-specific, communication message buffers
+#define FMSTR_FLEXCAN_TXMB      ${FMSTR_FLEXCAN_TXMB}$
+#define FMSTR_FLEXCAN_RXMB      ${FMSTR_FLEXCAN_RXMB}$
+${<code>};</code>}$${<code>if(FMSTR_CAN_DRV == 'FMSTR_CAN_MCUX_MCAN'){</code>}$
+//! mCAN-specific, memory
+#define FMSTR_MCAN_SHAREDMEMORY_OFFSET  ${FMSTR_MCAN_SHAREDMEMORY_OFFSET}$
+#define FMSTR_MCAN_TXMB_OFFSET          ${FMSTR_MCAN_TXMB_OFFSET}$U  
+#define FMSTR_MCAN_RXMB_OFFSET          ${FMSTR_MCAN_RXMB_OFFSET}$U
+${<code>};</code>}$
+//! Input/output communication buffer size
+#define FMSTR_COMM_BUFFER_SIZE  ${FMSTR_COMM_BUFFER_SIZE}$   // Set to 0 for "automatic"
+
+//! Receive FIFO queue size (use with FMSTR_SHORT_INTR only)
+#define FMSTR_COMM_RQUEUE_SIZE  ${FMSTR_COMM_RQUEUE_SIZE}$  // Set to 0 for "default"
+
+//! Oscilloscope support
+#define FMSTR_USE_SCOPE         ${FMSTR_USE_SCOPE}$   // Specify number of supported oscilloscopes
+#define FMSTR_MAX_SCOPE_VARS    ${FMSTR_MAX_SCOPE_VARS}$   // Specify maximum number of scope variables per one oscilloscope
+
+//! Recorder support
+#define FMSTR_USE_RECORDER      ${FMSTR_USE_RECORDER}$   // Specify number of supported recorders
+#define FMSTR_REC_FLOAT_TRIG    ${FMSTR_REC_FLOAT_TRIG}$   // Enable/disable floating point triggering
+
+// Target-side address translation (TSA)
+#define FMSTR_USE_TSA           ${FMSTR_USE_TSA}$   // Enable TSA functionality
+#define FMSTR_USE_TSA_INROM     ${FMSTR_USE_TSA_INROM}$   // TSA tables declared as const (put to ROM)
+#define FMSTR_USE_TSA_SAFETY    ${FMSTR_USE_TSA_SAFETY}$   // Enable/Disable TSA memory protection
+#define FMSTR_USE_TSA_DYNAMIC   ${FMSTR_USE_TSA_DYNAMIC}$   // Enable/Disable TSA entries to be added also in runtime
+
+// Pipes as data streaming over FreeMASTER protocol
+#define FMSTR_USE_PIPES         ${FMSTR_USE_PIPES}$   // Specify number of supported pipe objects
+
+// Enable/Disable read/write memory commands
+#define FMSTR_USE_READMEM       ${FMSTR_USE_READMEM}$   // Enable read memory commands
+#define FMSTR_USE_WRITEMEM      ${FMSTR_USE_WRITEMEM}$   // Enable write memory commands
+#define FMSTR_USE_WRITEMEMMASK  ${FMSTR_USE_WRITEMEMMASK}$   // Enable write memory bits commands
+${<code>if(noPassword){</code>}$
+// Define password for access levels to protect them. AVOID SHORT PASSWORDS in production version.
+// Passwords should be at least 20 characters long to prevent dictionary attacks.${<code>if(FMSTR_RESTRICTED_ACCESS_R_PASSWORD!='""'){</code>}$
+#define FMSTR_RESTRICTED_ACCESS_R_PASSWORD     ${FMSTR_RESTRICTED_ACCESS_R_PASSWORD}$   // Read-only access level password. Let undefined when no password is required.${<code>};if(FMSTR_RESTRICTED_ACCESS_RW_PASSWORD!='""'){</code>}$
+#define FMSTR_RESTRICTED_ACCESS_RW_PASSWORD    ${FMSTR_RESTRICTED_ACCESS_RW_PASSWORD}$  // Write access level password. Let undefined to set the same as for read-only access level.${<code>};if(FMSTR_RESTRICTED_ACCESS_RWF_PASSWORD!='""'){</code>}$
+#define FMSTR_RESTRICTED_ACCESS_RWF_PASSWORD   ${FMSTR_RESTRICTED_ACCESS_RWF_PASSWORD}$ // Flash access level password. Let undefined to set the same as for write access level.${<code>};</code>}$
+
+// Storing cleartext passwords in Flash memory is not safe, consider storing their SHA1 hash instead
+// Even with this option, the hash must be generated from reasonably complex password to prevent dictionary attack.
+#define FMSTR_USE_HASHED_PASSWORDS  ${FMSTR_USE_HASHED_PASSWORDS}$  // When non-zero, the passwords above are specified as a pointer to 20-byte SHA1 hash of password text
+${<code>};</code>}$
+//! Support for Application Commands
+#define FMSTR_USE_APPCMD        ${FMSTR_USE_APPCMD}$  // Enable/disable App.Commands support
+#define FMSTR_APPCMD_BUFF_SIZE  ${FMSTR_APPCMD_BUFF_SIZE}$  // App.Command data buffer size
+#define FMSTR_MAX_APPCMD_CALLS  ${FMSTR_MAX_APPCMD_CALLS}$   // How many app.cmd callbacks? (0=disable)
+${<code>if(FMSTR_CAN_DRV == 'FMSTR_CAN_MCUX_MCAN' && FMSTR_MCAN_SHAREDMEMORY_EXTERN != ''){</code>}$
+////////////////////////////////////////////////////////////////////////////////
+// Shared MCAN memory 
+////////////////////////////////////////////////////////////////////////////////
+
+extern ${FMSTR_MCAN_SHAREDMEMORY_EXTERN}$;
+${<code>};</code>}$${<code>if(FMSTR_USE_HASHED_PASSWORDS==1){</code>}$
+////////////////////////////////////////////////////////////////////////////////
+// Password variables
+////////////////////////////////////////////////////////////////////////////////
+${<code>if(FMSTR_RESTRICTED_ACCESS_R_PASSWORD!='""'){</code>}$
+extern char _fmstr_password_r[20];     // Read-only access level password.${<code>};</code>}$${<code>if(FMSTR_RESTRICTED_ACCESS_RW_PASSWORD!='""'){</code>}$
+extern char _fmstr_password_rw[20];    // Write access level password.${<code>};</code>}$${<code>if(FMSTR_RESTRICTED_ACCESS_RWF_PASSWORD!='""'){</code>}$
+extern char _fmstr_password_rwf[20];   // Flash access level password.${<code>};</code>}$
+${<code>};</code>}$
+#endif /* __FREEMASTER_CFG_H */
+
+////////////////////////////////////////////////////////////////////////////////
+// EOF
+////////////////////////////////////////////////////////////////////////////////

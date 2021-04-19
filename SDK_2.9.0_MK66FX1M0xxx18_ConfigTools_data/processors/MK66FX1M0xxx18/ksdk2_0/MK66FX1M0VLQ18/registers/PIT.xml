@@ -1,0 +1,190 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="32" name="MCR" description="PIT Module Control Register">
+    <alias type="CMSIS" value="MCR"/>
+    <bit_field offset="0" width="1" name="FRZ" access="RW" reset_value="0" description="Freeze">
+      <alias type="CMSIS" value="PIT_MCR_FRZ(x)"/>
+      <bit_field_value name="MCR_FRZ_0b0" value="0b0" description="Timers continue to run in Debug mode."/>
+      <bit_field_value name="MCR_FRZ_0b1" value="0b1" description="Timers are stopped in Debug mode."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="MDIS" access="RW" reset_value="0x1" description="Module Disable - (PIT section)">
+      <alias type="CMSIS" value="PIT_MCR_MDIS(x)"/>
+      <bit_field_value name="MCR_MDIS_0b0" value="0b0" description="Clock for standard PIT timers is enabled."/>
+      <bit_field_value name="MCR_MDIS_0b1" value="0b1" description="Clock for standard PIT timers is disabled."/>
+    </bit_field>
+    <reserved_bit_field offset="2" width="1" reset_value="0x1"/>
+    <reserved_bit_field offset="3" width="29" reset_value="0"/>
+  </register>
+  <register offset="0xE0" width="32" name="LTMR64H" description="PIT Upper Lifetime Timer Register">
+    <alias type="CMSIS" value="LTMR64H"/>
+    <bit_field offset="0" width="32" name="LTH" access="RO" reset_value="0" description="Life Timer value">
+      <alias type="CMSIS" value="PIT_LTMR64H_LTH(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0xE4" width="32" name="LTMR64L" description="PIT Lower Lifetime Timer Register">
+    <alias type="CMSIS" value="LTMR64L"/>
+    <bit_field offset="0" width="32" name="LTL" access="RO" reset_value="0" description="Life Timer value">
+      <alias type="CMSIS" value="PIT_LTMR64L_LTL(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x100" width="32" name="LDVAL0" description="Timer Load Value Register">
+    <alias type="CMSIS" value="CHANNEL[0].LDVAL"/>
+    <bit_field offset="0" width="32" name="TSV" access="RW" reset_value="0" description="Timer Start Value">
+      <alias type="CMSIS" value="PIT_LDVAL_TSV(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x104" width="32" name="CVAL0" description="Current Timer Value Register">
+    <alias type="CMSIS" value="CHANNEL[0].CVAL"/>
+    <bit_field offset="0" width="32" name="TVL" access="RO" reset_value="0" description="Current Timer Value">
+      <alias type="CMSIS" value="PIT_CVAL_TVL(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x108" width="32" name="TCTRL0" description="Timer Control Register">
+    <alias type="CMSIS" value="CHANNEL[0].TCTRL"/>
+    <bit_field offset="0" width="1" name="TEN" access="RW" reset_value="0" description="Timer Enable">
+      <alias type="CMSIS" value="PIT_TCTRL_TEN(x)"/>
+      <bit_field_value name="CHANNEL_TEN_0b0" value="0b0" description="Timer n is disabled."/>
+      <bit_field_value name="CHANNEL_TEN_0b1" value="0b1" description="Timer n is enabled."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="TIE" access="RW" reset_value="0" description="Timer Interrupt Enable">
+      <alias type="CMSIS" value="PIT_TCTRL_TIE(x)"/>
+      <bit_field_value name="CHANNEL_TIE_0b0" value="0b0" description="Interrupt requests from Timer n are disabled."/>
+      <bit_field_value name="CHANNEL_TIE_0b1" value="0b1" description="Interrupt will be requested whenever TIF is set."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="CHN" access="RW" reset_value="0" description="Chain Mode">
+      <alias type="CMSIS" value="PIT_TCTRL_CHN(x)"/>
+      <bit_field_value name="CHANNEL_CHN_0b0" value="0b0" description="Timer is not chained."/>
+      <bit_field_value name="CHANNEL_CHN_0b1" value="0b1" description="Timer is chained to previous timer. For example, for Channel 2, if this field is set, Timer 2 is chained to Timer 1."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="29" reset_value="0"/>
+  </register>
+  <register offset="0x10C" width="32" name="TFLG0" description="Timer Flag Register">
+    <alias type="CMSIS" value="CHANNEL[0].TFLG"/>
+    <bit_field offset="0" width="1" name="TIF" access="W1C" reset_value="0" description="Timer Interrupt Flag">
+      <alias type="CMSIS" value="PIT_TFLG_TIF(x)"/>
+      <bit_field_value name="CHANNEL_TIF_0b0" value="0b0" description="Timeout has not yet occurred."/>
+      <bit_field_value name="CHANNEL_TIF_0b1" value="0b1" description="Timeout has occurred."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="31" reset_value="0"/>
+  </register>
+  <register offset="0x110" width="32" name="LDVAL1" description="Timer Load Value Register">
+    <alias type="CMSIS" value="CHANNEL[1].LDVAL"/>
+    <bit_field offset="0" width="32" name="TSV" access="RW" reset_value="0" description="Timer Start Value">
+      <alias type="CMSIS" value="PIT_LDVAL_TSV(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x114" width="32" name="CVAL1" description="Current Timer Value Register">
+    <alias type="CMSIS" value="CHANNEL[1].CVAL"/>
+    <bit_field offset="0" width="32" name="TVL" access="RO" reset_value="0" description="Current Timer Value">
+      <alias type="CMSIS" value="PIT_CVAL_TVL(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x118" width="32" name="TCTRL1" description="Timer Control Register">
+    <alias type="CMSIS" value="CHANNEL[1].TCTRL"/>
+    <bit_field offset="0" width="1" name="TEN" access="RW" reset_value="0" description="Timer Enable">
+      <alias type="CMSIS" value="PIT_TCTRL_TEN(x)"/>
+      <bit_field_value name="CHANNEL_TEN_0b0" value="0b0" description="Timer n is disabled."/>
+      <bit_field_value name="CHANNEL_TEN_0b1" value="0b1" description="Timer n is enabled."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="TIE" access="RW" reset_value="0" description="Timer Interrupt Enable">
+      <alias type="CMSIS" value="PIT_TCTRL_TIE(x)"/>
+      <bit_field_value name="CHANNEL_TIE_0b0" value="0b0" description="Interrupt requests from Timer n are disabled."/>
+      <bit_field_value name="CHANNEL_TIE_0b1" value="0b1" description="Interrupt will be requested whenever TIF is set."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="CHN" access="RW" reset_value="0" description="Chain Mode">
+      <alias type="CMSIS" value="PIT_TCTRL_CHN(x)"/>
+      <bit_field_value name="CHANNEL_CHN_0b0" value="0b0" description="Timer is not chained."/>
+      <bit_field_value name="CHANNEL_CHN_0b1" value="0b1" description="Timer is chained to previous timer. For example, for Channel 2, if this field is set, Timer 2 is chained to Timer 1."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="29" reset_value="0"/>
+  </register>
+  <register offset="0x11C" width="32" name="TFLG1" description="Timer Flag Register">
+    <alias type="CMSIS" value="CHANNEL[1].TFLG"/>
+    <bit_field offset="0" width="1" name="TIF" access="W1C" reset_value="0" description="Timer Interrupt Flag">
+      <alias type="CMSIS" value="PIT_TFLG_TIF(x)"/>
+      <bit_field_value name="CHANNEL_TIF_0b0" value="0b0" description="Timeout has not yet occurred."/>
+      <bit_field_value name="CHANNEL_TIF_0b1" value="0b1" description="Timeout has occurred."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="31" reset_value="0"/>
+  </register>
+  <register offset="0x120" width="32" name="LDVAL2" description="Timer Load Value Register">
+    <alias type="CMSIS" value="CHANNEL[2].LDVAL"/>
+    <bit_field offset="0" width="32" name="TSV" access="RW" reset_value="0" description="Timer Start Value">
+      <alias type="CMSIS" value="PIT_LDVAL_TSV(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x124" width="32" name="CVAL2" description="Current Timer Value Register">
+    <alias type="CMSIS" value="CHANNEL[2].CVAL"/>
+    <bit_field offset="0" width="32" name="TVL" access="RO" reset_value="0" description="Current Timer Value">
+      <alias type="CMSIS" value="PIT_CVAL_TVL(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x128" width="32" name="TCTRL2" description="Timer Control Register">
+    <alias type="CMSIS" value="CHANNEL[2].TCTRL"/>
+    <bit_field offset="0" width="1" name="TEN" access="RW" reset_value="0" description="Timer Enable">
+      <alias type="CMSIS" value="PIT_TCTRL_TEN(x)"/>
+      <bit_field_value name="CHANNEL_TEN_0b0" value="0b0" description="Timer n is disabled."/>
+      <bit_field_value name="CHANNEL_TEN_0b1" value="0b1" description="Timer n is enabled."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="TIE" access="RW" reset_value="0" description="Timer Interrupt Enable">
+      <alias type="CMSIS" value="PIT_TCTRL_TIE(x)"/>
+      <bit_field_value name="CHANNEL_TIE_0b0" value="0b0" description="Interrupt requests from Timer n are disabled."/>
+      <bit_field_value name="CHANNEL_TIE_0b1" value="0b1" description="Interrupt will be requested whenever TIF is set."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="CHN" access="RW" reset_value="0" description="Chain Mode">
+      <alias type="CMSIS" value="PIT_TCTRL_CHN(x)"/>
+      <bit_field_value name="CHANNEL_CHN_0b0" value="0b0" description="Timer is not chained."/>
+      <bit_field_value name="CHANNEL_CHN_0b1" value="0b1" description="Timer is chained to previous timer. For example, for Channel 2, if this field is set, Timer 2 is chained to Timer 1."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="29" reset_value="0"/>
+  </register>
+  <register offset="0x12C" width="32" name="TFLG2" description="Timer Flag Register">
+    <alias type="CMSIS" value="CHANNEL[2].TFLG"/>
+    <bit_field offset="0" width="1" name="TIF" access="W1C" reset_value="0" description="Timer Interrupt Flag">
+      <alias type="CMSIS" value="PIT_TFLG_TIF(x)"/>
+      <bit_field_value name="CHANNEL_TIF_0b0" value="0b0" description="Timeout has not yet occurred."/>
+      <bit_field_value name="CHANNEL_TIF_0b1" value="0b1" description="Timeout has occurred."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="31" reset_value="0"/>
+  </register>
+  <register offset="0x130" width="32" name="LDVAL3" description="Timer Load Value Register">
+    <alias type="CMSIS" value="CHANNEL[3].LDVAL"/>
+    <bit_field offset="0" width="32" name="TSV" access="RW" reset_value="0" description="Timer Start Value">
+      <alias type="CMSIS" value="PIT_LDVAL_TSV(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x134" width="32" name="CVAL3" description="Current Timer Value Register">
+    <alias type="CMSIS" value="CHANNEL[3].CVAL"/>
+    <bit_field offset="0" width="32" name="TVL" access="RO" reset_value="0" description="Current Timer Value">
+      <alias type="CMSIS" value="PIT_CVAL_TVL(x)"/>
+    </bit_field>
+  </register>
+  <register offset="0x138" width="32" name="TCTRL3" description="Timer Control Register">
+    <alias type="CMSIS" value="CHANNEL[3].TCTRL"/>
+    <bit_field offset="0" width="1" name="TEN" access="RW" reset_value="0" description="Timer Enable">
+      <alias type="CMSIS" value="PIT_TCTRL_TEN(x)"/>
+      <bit_field_value name="CHANNEL_TEN_0b0" value="0b0" description="Timer n is disabled."/>
+      <bit_field_value name="CHANNEL_TEN_0b1" value="0b1" description="Timer n is enabled."/>
+    </bit_field>
+    <bit_field offset="1" width="1" name="TIE" access="RW" reset_value="0" description="Timer Interrupt Enable">
+      <alias type="CMSIS" value="PIT_TCTRL_TIE(x)"/>
+      <bit_field_value name="CHANNEL_TIE_0b0" value="0b0" description="Interrupt requests from Timer n are disabled."/>
+      <bit_field_value name="CHANNEL_TIE_0b1" value="0b1" description="Interrupt will be requested whenever TIF is set."/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="CHN" access="RW" reset_value="0" description="Chain Mode">
+      <alias type="CMSIS" value="PIT_TCTRL_CHN(x)"/>
+      <bit_field_value name="CHANNEL_CHN_0b0" value="0b0" description="Timer is not chained."/>
+      <bit_field_value name="CHANNEL_CHN_0b1" value="0b1" description="Timer is chained to previous timer. For example, for Channel 2, if this field is set, Timer 2 is chained to Timer 1."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="29" reset_value="0"/>
+  </register>
+  <register offset="0x13C" width="32" name="TFLG3" description="Timer Flag Register">
+    <alias type="CMSIS" value="CHANNEL[3].TFLG"/>
+    <bit_field offset="0" width="1" name="TIF" access="W1C" reset_value="0" description="Timer Interrupt Flag">
+      <alias type="CMSIS" value="PIT_TFLG_TIF(x)"/>
+      <bit_field_value name="CHANNEL_TIF_0b0" value="0b0" description="Timeout has not yet occurred."/>
+      <bit_field_value name="CHANNEL_TIF_0b1" value="0b1" description="Timeout has occurred."/>
+    </bit_field>
+    <reserved_bit_field offset="1" width="31" reset_value="0"/>
+  </register>
+</regs:peripheral>

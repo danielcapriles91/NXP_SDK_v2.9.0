@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="dspi_cmsis" label="DSPI_CMSIS" 
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-9.0.xsd" 
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="Universal driver">
+   <sw_comp_ref name="platform.drivers.dspi_cmsis" version="2.3.0" required="true"/>
+   <description>Dual Serial Peripheral Interface (DSPI) - CMSIS</description>
+   
+   <mode id="interrupt" label="Interrupt">
+      <description>Interrupts mode - CMSIS driver operation using interrupts.</description>
+      <config_set_refs>
+         <config_set_ref>general</config_set_ref>
+         <config_set_ref>fsl_spi</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>SPI</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="dma" label="DMA" available="featureDefined(`FSL_FEATURE_SOC_DMA_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SOC_DMA_COUNT`) &gt; 0)">
+      <description>DMA transfer mode - Operation using DMA mode (DMA device). This mode supports transactional API by using DMA device.</description>
+      <config_set_refs>
+         <config_set_ref>general</config_set_ref>
+         <config_set_ref>fsl_spi</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>SPI</peripheral_type>
+      </master_peripheral>
+   </mode>
+   
+   <mode id="edma" label="eDMA" available="featureDefined(`FSL_FEATURE_SOC_EDMA_COUNT`) &amp;&amp; (getFeature(`FSL_FEATURE_SOC_EDMA_COUNT`) &gt; 0)">
+      <description>eDMA mode - CMSIS driver operation using eDMA peripheral. </description>
+      <config_set_refs>
+         <config_set_ref>general</config_set_ref>
+         <config_set_ref>fsl_spi</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>SPI</peripheral_type>
+      </master_peripheral>
+   </mode>
+   
+   
+   <config_set id="fsl_spi" label="General configuration" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+      <description>Configuration of CMSIS SPI</description>
+      <generated_types></generated_types>
+      <user_types></user_types>
+      
+      <settings>
+         
+         <reference id="interrupt" label="Interrupt setting" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" available="$instance.getMode() == `interrupt`">
+            <options_expr>
+               <option id="without_handler_settings"/>
+               <option id="irq_without_enable_control"/>
+            </options_expr>
+         </reference>
+         
+         <!-- DMA settings -->
+         <struct id="dma_channels" label="DMA channels" available="$instance.getMode()== `dma`">
+            <reference id="dma_rx_channel" label="Rx DMA channel" type="dma_channel_t" config_set_id="fsl_dma_peripheral" component_id="system" options="dma_function=RX">
+               <options_expr>
+                  <option id="without_handle" expr="true"></option>
+                  <option id="without_priority" expr="true"/>
+                  <option id="without_periodic_trigger" expr="true"/>
+               </options_expr>
+            </reference>
+            <reference id="dma_tx_channel" label="Tx DMA channel" type="dma_channel_t" config_set_id="fsl_dma_peripheral" component_id="system" options="dma_function=TX">
+               <options_expr>
+                  <option id="without_handle" expr="true"></option>
+                  <option id="without_priority" expr="true"/>
+                  <option id="without_periodic_trigger" expr="true"/>
+               </options_expr>
+            </reference>            
+         </struct>
+         
+         <!-- eDMA settings -->
+         <variable id="DSPI_HAS_SEPARATE_DMA_RX_TX_REQ" value="featureDefined(`FSL_FEATURE_DSPI_HAS_SEPARATE_DMA_RX_TX_REQ`) &amp;&amp; (getFeature(`FSL_FEATURE_DSPI_HAS_SEPARATE_DMA_RX_TX_REQ`) &gt; 0)"/>
+         <variable id="DSPI_HAS_GASKET" value="featureDefined(`FSL_FEATURE_DSPI_HAS_GASKET`) &amp;&amp; (getFeature(`FSL_FEATURE_DSPI_HAS_GASKET`) &gt; 0)"/>
+         <struct id="edma_channels" label="eDMA channels" available="$instance.getMode() == `edma`">
+            <reference id="edma_rx_channel" label="Rx eDMA channel" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" options="dma_function=RX"  available="$parent.getParent().getSetting(`DSPI_HAS_SEPARATE_DMA_RX_TX_REQ`).getValue()">
+               <options_expr>
+                  <option id="without_handle" expr="true"></option>
+                  <option id="without_priority" expr="true"/>
+                  <option id="without_periodic_trigger" expr="true"/>
+               </options_expr>
+            </reference>
+            <reference id="edma_rx_channel_NoSep" label="Rx eDMA channel" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" available="!$parent.getParent().getSetting(`DSPI_HAS_SEPARATE_DMA_RX_TX_REQ`).getValue()">
+               <options_expr>
+                  <option id="without_handle" expr="true"></option>
+                  <option id="without_priority" expr="true"/>
+                  <option id="without_periodic_trigger" expr="true"/>
+               </options_expr>
+            </reference>
+            <reference id="edma_intermediary_channel" label="Intermediary eDMA channel" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" options="dma_function=Intermediary;without_dmamux_init=true" available="!$parent.getParent().getSetting(`DSPI_HAS_GASKET`).getValue()">
+               <options_expr>
+                  <option id="without_handle" expr="true"></option>
+                  <option id="without_priority" expr="true"/>
+                  <option id="without_periodic_trigger" expr="true"/>
+               </options_expr>
+            </reference>
+            <reference id="edma_tx_channel" label="Tx eDMA channel" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" options="dma_function=TX" available="$parent.getParent().getSetting(`DSPI_HAS_SEPARATE_DMA_RX_TX_REQ`).getValue()">
+               <options_expr>
+                  <option id="without_handle" expr="true"></option>
+                  <option id="without_priority" expr="true"/>
+                  <option id="without_periodic_trigger" expr="true"/>
+               </options_expr>
+            </reference>
+            <reference id="edma_tx_channel_NoSep" label="Tx eDMA channel" type="edma_channel_t" config_set_id="fsl_edma_peripheral" component_id="system" options="dma_function=TX;without_dmamux_init=true"  available="!$parent.getParent().getSetting(`DSPI_HAS_SEPARATE_DMA_RX_TX_REQ`).getValue()">
+               <options_expr>
+                  <option id="without_handle" expr="true"></option>
+                  <option id="without_priority" expr="true"/>
+                  <option id="without_periodic_trigger" expr="true"/>
+               </options_expr>
+            </reference>
+         </struct>
+        
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+            <from component_id="system" config_set_id="fsl_dma_peripheral"/>
+            <from component_id="system" config_set_id="fsl_edma_peripheral"/>
+         </import>
+         
+         <def fragment="dma_def_RTE">  
+            <fragment id="define">
+               <param id="name" expr="`RTE_SPI` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_DMA_` + ($this.getId().contains(`rx`) ? `RX` : `TX`) + `_CH`"/>
+               <param id="value" expr="$this.DMAn.getCValue()"/> 
+               <param id="description" expr="`Selected DMA channel number.`"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="`RTE_SPI` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_DMA_` + ($this.getId().contains(`rx`) ? `RX` : `TX`) + `_PERI_SEL`"/>
+               <param id="value" expr="`(uint8_t) ` + $this.DMA_source.getValue()"/> 
+               <param id="description" expr="$instance.getID() + ` DMA source request.`"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="`RTE_SPI` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_DMA_` + ($this.getId().contains(`rx`) ? `RX` : `TX`) + `_DMAMUX_BASE`"/>
+               <param id="value" expr="$this.dmamux_instance.getValue()"/> 
+               <param id="description" expr="`DMAMUX device that is used for muxing of the request.`"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="`RTE_SPI` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_DMA_` + ($this.getId().contains(`rx`) ? `RX` : `TX`) + `_DMA_BASE`"/>
+               <param id="value" expr="$this.dma_cmsis_instance.getValue()"/> 
+               <param id="description" expr="`Used DMA device.`"/>
+            </fragment>
+         </def>
+         
+         <def fragment="edma_def_RTE">  
+            <fragment id="define">
+               <param id="name" expr="`RTE_SPI` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_DMA_` + ($this.getId().contains(`rx`) ? `RX` : `TX`) + `_CH`"/>
+               <param id="value" expr="$this.eDMAn.getCValue()"/> 
+               <param id="description" expr="`Selected DMA channel number.`"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="`RTE_SPI` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_DMA_` + ($this.getId().contains(`rx`) ? `RX` : `TX`) + `_PERI_SEL`"/>
+               <param id="value" expr="`(uint8_t) ` + $this.eDMA_source.getValue()"/> 
+               <param id="description" expr="$instance.getID() + ` DMA source request.`"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="`RTE_SPI` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_DMA_` + ($this.getId().contains(`rx`) ? `RX` : `TX`) + `_DMAMUX_BASE`"/>
+               <param id="value" expr="$this.dmamux_instance.getValue()"/> 
+               <param id="description" expr="`DMAMUX device that is used for muxing of the request.`"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="`RTE_SPI` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_DMA_` + ($this.getId().contains(`rx`) ? `RX` : `TX`) + `_DMA_BASE`"/>
+               <param id="value" expr="$this.dma_cmsis_instance.getValue()"/> 
+               <param id="description" expr="`Used DMA device.`"/>
+            </fragment>    
+         </def>
+         
+         <def fragment="edma_link_def_RTE">
+            <fragment id="define">
+               <param id="name" expr="`RTE_SPI` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_DMA_LINK_CH`"/>
+               <param id="value" expr="$this.eDMAn.getCValue()"/> 
+               <param id="description" expr="`Selected DMA channel number.`"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="`RTE_SPI` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_DMA_LINK_DMA_BASE`"/>
+               <param id="value" expr="$this.dma_cmsis_instance.getValue()"/> 
+               <param id="description" expr="`Used DMA device.`"/>
+            </fragment>    
+            
+         </def>
+         
+         <def fragment="pins_enable">
+            <fragment id="define" if_expr="$instance.general.main_config.enableInitPinsFnCustomName.getValue(false)">
+               <param id="name" expr="`RTE_SPI` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_PIN_INIT`"/>
+               <param id="value" expr="$instance.general.main_config.initPinFunctionCustomID.getValue()"/> 
+               <param id="description" expr="`Init pins.`"/>
+            </fragment>
+            <fragment id="define" if_expr="$instance.general.main_config.enableDeinitPinsFnCustomName.getValue(false)">
+               <param id="name" expr="`RTE_SPI` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_PIN_DEINIT`"/>
+               <param id="value" expr="$instance.general.main_config.deinitPinFunctionCustomID.getValue()"/> 
+               <param id="description" expr="`Deinit pins.`"/>
+            </fragment>
+         </def>
+         
+         <def fragment="additional_define">
+            <fragment id="define">
+               <param id="name" expr="`RTE_SPI` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_PCS_TO_SCK_DELAY`"/>
+               <param id="value" expr="$instance.general.main_config.pcsToSckDelayInNanoSec.getValue()"/> 
+               <param id="description" expr="`PCS to SCK delay.`"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="`RTE_SPI` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_SCK_TO_PSC_DELAY`"/>
+               <param id="value" expr="$instance.general.main_config.lastSckToPcsDelayInNanoSec.getValue()"/> 
+               <param id="description" expr="`SCK to PCS delay.`"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="`RTE_SPI` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_BETWEEN_TRANSFER_DELAY`"/>
+               <param id="value" expr="$instance.general.main_config.betweenTransferDelayInNanoSec.getValue()"/> 
+               <param id="description" expr="`Between transfer delay.`"/>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="`RTE_SPI` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_MASTER_PCS_PIN_SEL`"/>
+               <param id="value" expr="`kDSPI_MasterPcs` + $instance.general.main_config.spi_chip_select.getValue().regexSubstr(`\d+`,0)"/> 
+               <param id="description" expr="`Peripheral chip select.`"/>
+            </fragment>
+            
+         </def>
+         
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">dspi</param>
+               <param id="filename">fsl_dspi_cmsis.h</param>
+            </fragment>
+         </section>
+         
+         <section target="defines">
+            <fragment id="IRQ_definitions" apply_to="$configSet.interrupt" if_expr="$configSet.interrupt.enable_priority.getValue(false)"/>
+         </section>
+         
+         <section target="driver_name_map_defines">
+            <fragment id="define">
+               <param id="name" expr="`RTE_SPI` + $instance.getPeripheral().regexSubstr(`\d+`,0)"/>
+               <param id="value" expr="1"/>
+               <param id="description">Enable peripheral</param>
+            </fragment>
+            <fragment id="define" if_expr="$instance.getMode() == `dma` || $instance.getMode() == `edma`">
+               <param id="name" expr="`RTE_SPI` + $instance.getPeripheral().regexSubstr(`\d+`,0) + `_DMA_EN`"/>
+               <param id="value" expr="1"/>
+               <param id="description">Enable SPI DMA</param>
+            </fragment>
+         </section>
+         
+         <section target="driver_config_defines">     
+            <fragment id="pins_enable"/>
+            <fragment id="additional_define"/>
+            <fragment id="dma_def_RTE" apply_to="$this.dma_channels.dma_rx_channel" if_expr="$instance.getMode() == `dma`"/>
+            <fragment id="dma_def_RTE" apply_to="$this.dma_channels.dma_tx_channel" if_expr="$instance.getMode() == `dma`"/> 
+            
+            <fragment id="edma_def_RTE" apply_to="$this.edma_channels.edma_rx_channel" if_expr="$instance.getMode() == `edma`"/>
+            <fragment id="edma_def_RTE" apply_to="$this.edma_channels.edma_tx_channel" if_expr="$instance.getMode() == `edma`"/>
+            <fragment id="edma_link_def_RTE" apply_to="$this.edma_channels.edma_intermediary_channel" if_expr="$instance.getMode() == `edma`"/>
+         </section>
+         
+         <section target="init_function_preinit0">
+            <fragment id="IRQn_set_priority_default" apply_to="$configSet.interrupt" if_expr="$instance.getMode() == `interrupt`"/>
+         </section>
+         
+      </code>
+      <validation>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral()+`.spi_rxd`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`serial data in`, $instance.getPeripheral())" level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral()+`.spi_txd`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`serial data out`, $instance.getPeripheral())" level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.spi_sck`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`serial clock`, $instance.getPeripheral())" level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.spi_cs0`" when_expr="(($instance.general.main_config.spi_mode_user.value() == `ARM_SPI_MODE_MASTER`) &amp;&amp; ($instance.general.main_config.spi_chip_select.getValue().regexSubstr(`.*[cC][sS](\d+).*`, 1) == `0`)) || ($instance.general.main_config.spi_mode_user.value() == `ARM_SPI_MODE_SLAVE`)" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage((($instance.general.main_config.spi_mode_user.value() == `ARM_SPI_MODE_MASTER`)? `chip select 0` : `slave select`), $instance.getPeripheral())" level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.spi_cs1`" when_expr="($instance.general.main_config.spi_mode_user.value() == `ARM_SPI_MODE_MASTER`) &amp;&amp; ($instance.general.main_config.spi_chip_select.value().regexSubstr(`.*[cC][sS](\d+).*`, 1) == `1`)" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`chip select 1`, $instance.getPeripheral())" level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.spi_cs2`"  when_expr="($instance.general.main_config.spi_mode_user.value() == `ARM_SPI_MODE_MASTER`) &amp;&amp; ($instance.general.main_config.spi_chip_select.value().regexSubstr(`.*[cC][sS](\d+).*`, 1) == `2`)" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`chip select 2`, $instance.getPeripheral())" level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.spi_cs3`"  when_expr="($instance.general.main_config.spi_mode_user.value() == `ARM_SPI_MODE_MASTER`) &amp;&amp; ($instance.general.main_config.spi_chip_select.value().regexSubstr(`.*[cC][sS](\d+).*`, 1) == `3`)" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`chip select 3`, $instance.getPeripheral())" level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.spi_cs4`"  when_expr="($instance.general.main_config.spi_mode_user.value() == `ARM_SPI_MODE_MASTER`) &amp;&amp; ($instance.general.main_config.spi_chip_select.value().regexSubstr(`.*[cC][sS](\d+).*`, 1) == `4`)" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`chip select 4`, $instance.getPeripheral())" level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.spi_cs5`"  when_expr="($instance.general.main_config.spi_mode_user.value() == `ARM_SPI_MODE_MASTER`) &amp;&amp; ($instance.general.main_config.spi_chip_select.value().regexSubstr(`.*[cC][sS](\d+).*`, 1) == `5`)" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`chip select 5 / chip select strobe`, $instance.getPeripheral())" level="Warning">
+            <feature name="routed">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+      </validation>
+      <quick_selections>
+         <quick_selection id="default" label="Default">
+            <set id="edma_channels.edma_rx_channel.eDMAn">0</set>
+            <set id="edma_channels.edma_tx_channel.eDMAn">1</set>
+            <set id="edma_channels.edma_intermediary_channel.eDMAn">2</set>
+            <set id="dma_channels.dma_rx_channel.DMAn">0</set>
+            <set id="dma_channels.dma_tx_channel.DMAn">1</set>
+         </quick_selection>
+         <default>default</default>
+      </quick_selections>      
+   </config_set>
+   
+   <config_set_reference id="general" label="General configuration" config_component="spi_cmsis_common" config_set_id="fsl_cmsis_spi">
+      <options_expr>
+         <option id="clockSourceUId" expr="`BusInterfaceClock`"/>
+         <option id="synchronous_serial_interface" expr="false"/>
+         <option id="simplex_mode" expr="true"/>
+         <option id="microwire_interface" expr="false"/>
+         <option id="min_data_bits" expr="4"/>
+         <option id="max_data_bits" expr="16"/>
+         <option id="master_unused" expr="false"/>
+         <option id="master_sw" expr="false"/>
+         <option id="slave_sw" expr="false"/>
+         <option id="hardware_output" expr="true"/>
+         <option id="hardware_input" expr="false"/>
+         <option id="isDspi" expr="true"/>
+      </options_expr>
+   </config_set_reference>
+</component:config_component>

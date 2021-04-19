@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="dac" label="DAC" global_only="false" category="Peripheral driver" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-6.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <sw_comp_ref name="platform.drivers.dac" version="2.0.1"/>
+   <description>12-bit Digital-to-Analog Converter (DAC)</description> 
+   <mode id="basic" label="Simple">
+      <description>Basic mode of DAC</description>
+      <config_set_refs>
+         <config_set_ref>fsl_dac</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>DAC</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <mode id="buffered" label="Buffered">
+      <description>Buffered mode of DAC</description>
+      <config_set_refs>
+         <config_set_ref>fsl_dac</config_set_ref>
+         <config_set_ref>buffered_dac</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>DAC</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="fsl_dac" label="DAC configuration" from_source="fsl_dac.h">
+      <description>Configuration of the 12-bit digital-to-analog converter</description>
+      <generated_types>
+         <enum id="dac_reference_voltage_source_t" label="DAC reference voltage source." from="_dac_reference_voltage_source">
+            <item id="kDAC_ReferenceVoltageSourceVref1" label="The DAC selects DACREF_1 as the reference voltage."/>
+            <item id="kDAC_ReferenceVoltageSourceVref2" label="The DAC selects DACREF_2 as the reference voltage."/>
+         </enum>
+         <enum id="dac_buffer_trigger_mode_t" label="DAC buffer trigger mode." from="_dac_buffer_trigger_mode">
+            <item id="kDAC_BufferTriggerByHardwareMode" label="The DAC hardware trigger is selected."/>
+            <item id="kDAC_BufferTriggerBySoftwareMode" label="The DAC software trigger is selected."/>
+         </enum>
+         <enum id="dac_buffer_watermark_t" label="DAC buffer watermark." from="_dac_buffer_watermark" available="(featureDefined(`FSL_FEATURE_DAC_HAS_WATERMARK_SELECTION`) &amp;&amp; getFeature(`FSL_FEATURE_DAC_HAS_WATERMARK_SELECTION`))">
+            <item id="kDAC_BufferWatermark1Word" label="1 word away from the upper limit." available="(featureDefined(`FSL_FEATURE_DAC_HAS_WATERMARK_1_WORD`) &amp;&amp; getFeature(`FSL_FEATURE_DAC_HAS_WATERMARK_1_WORD`))"/>
+            <item id="kDAC_BufferWatermark2Word" label="2 words away from the upper limit." available="(featureDefined(`FSL_FEATURE_DAC_HAS_WATERMARK_2_WORDS`) &amp;&amp; getFeature(`FSL_FEATURE_DAC_HAS_WATERMARK_2_WORDS`))"/>
+            <item id="kDAC_BufferWatermark3Word" label="3 words away from the upper limit." available="(featureDefined(`FSL_FEATURE_DAC_HAS_WATERMARK_3_WORDS`) &amp;&amp; getFeature(`FSL_FEATURE_DAC_HAS_WATERMARK_3_WORDS`))"/>
+            <item id="kDAC_BufferWatermark4Word" label="4 words away from the upper limit." available="(featureDefined(`FSL_FEATURE_DAC_HAS_WATERMARK_4_WORDS`) &amp;&amp; getFeature(`FSL_FEATURE_DAC_HAS_WATERMARK_4_WORDS`))"/>
+         </enum>
+         <enum id="dac_buffer_work_mode_t" label="DAC buffer work mode." from="_dac_buffer_work_mode">
+            <item id="kDAC_BufferWorkAsNormalMode" label="Normal mode."/>
+            <item id="kDAC_BufferWorkAsSwingMode" label="Swing mode." available="(featureDefined(`FSL_FEATURE_DAC_HAS_BUFFER_SWING_MODE`) &amp;&amp; getFeature(`FSL_FEATURE_DAC_HAS_BUFFER_SWING_MODE`))"/>
+            <item id="kDAC_BufferWorkAsOneTimeScanMode" label="One-Time Scan mode."/>
+            <item id="kDAC_BufferWorkAsFIFOMode" label="FIFO mode." available="(featureDefined(`FSL_FEATURE_DAC_HAS_BUFFER_FIFO_MODE`) &amp;&amp; getFeature(`FSL_FEATURE_DAC_HAS_BUFFER_FIFO_MODE`))"/>
+         </enum>
+         <struct id="dac_config_t" label="DAC module configuration." from="_dac_config">
+            <reference id="referenceVoltageSource" label="Select the DAC reference voltage source." type="dac_reference_voltage_source_t">
+               <description>Select the DAC reference voltage source.</description>
+            </reference>
+            <bool id="enableLowPowerMode" label="Enable the low-power mode.">
+               <description>Enable the low-power mode.</description>
+            </bool>
+         </struct>
+         <struct id="dac_buffer_config_t" label="buffer configuration." from="_dac_buffer_config">
+            <reference id="triggerMode" label="Select the buffer&apos;s trigger mode." type="dac_buffer_trigger_mode_t">
+               <description>Select the buffer&apos;s trigger mode.</description>
+            </reference>
+            <reference id="watermark" label="Select the buffer&apos;s watermark." type="dac_buffer_watermark_t" available="(featureDefined(`FSL_FEATURE_DAC_HAS_WATERMARK_SELECTION`) &amp;&amp; getFeature(`FSL_FEATURE_DAC_HAS_WATERMARK_SELECTION`))">
+               <description>Select the buffer&apos;s watermark.</description>
+            </reference>
+            <reference id="workMode" label="Select the buffer&apos;s work mode." type="dac_buffer_work_mode_t">
+               <description>Select the buffer&apos;s work mode.</description>
+            </reference>
+            <integer id="upperLimit" label="Set the upper limit for the buffer index." type="uint8_t">
+               <description>Set the upper limit for the buffer index. Normally, 0-15 is available for a buffer with 16 items.</description>
+            </integer>
+         </struct>
+      </generated_types>
+      <user_types>
+         <enum id="dac_reference_voltage_source_t" label="DAC reference voltage" from="_dac_reference_voltage_source">
+            <item id="kDAC_ReferenceVoltageSourceVref1" label="DACREF_1" value="1"/>
+            <item id="kDAC_ReferenceVoltageSourceVref2" label="DACREF_2" value="2"/>
+         </enum>
+         <struct id="dac_config_t" label="DAC module configuration" from="_dac_config" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+            <reference id="referenceVoltageSource" label="DAC reference voltage" type="dac_reference_voltage_source_t">
+               <description>Selection of the DAC reference voltage source.</description>
+               <validation>
+                  <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.dac_ref_` + $this.getEnumItemValue()" description_expr="$this.getEnumItemLabel() + ` signal not routed for ` + $instance.getPeripheral()" level="Warning">
+                     <feature name="routed">
+                        <data expr="true"></data>
+                     </feature>
+                  </dependency>
+               </validation>
+            </reference>
+            <bool id="enableLowPowerMode" label="Enable the low-power mode">
+               <description>When enabled the DAC peripheral will run in the low-power mode otherwise it will be suspended.</description>
+            </bool>
+         </struct>
+      </user_types>
+      <settings>
+         <reference id="dac_config" label="DAC module configuration." type="dac_config_t">
+            <description>Configure DAC peripheral</description>
+         </reference>
+         <bool id="dac_enable" label="Enable DAC">
+            <description>
+               When enabled, the DAC module is enabled during the initialization, otherwise the DAC module is disabled.
+            </description>
+            <validation>
+               <dependency resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.dac_out`" level="Warning" description_expr="`Output signal not routed for ` + $instance.getPeripheral()">
+                 <feature name="routed" evaluation="equal">
+                    <data expr="true"></data>
+                 </feature>
+              </dependency> 
+            </validation>
+         </bool> 
+         <integer type="int16_t" id="dac_value" label="Value" min_expr="0" max_expr="4095" available="$instance.getMode() == `basic`">
+            <description>DAC output value. 12bit-value that will be converted into voltage. Write decimal number in range 0-4095.</description>
+         </integer>
+         <variable id="inst_ID" value="$instance.fsl_dac.getFnGroupPrefix() + $instance.getID()"></variable>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+         
+      </fragment_defs>
+      <code>
+         <!-- 
+         DAC_Init(DEMO_DAC_BASEADDR, &dacConfigStruct);
+         DAC_Enable(DEMO_DAC_BASEADDR, true);             
+         DAC_SetBufferReadPointer(DEMO_DAC_BASEADDR, 0U);
+         -->
+         <section target="includes">
+            <fragment id="include">
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="filename">fsl_dac.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <fragment id="define">
+               <param id="name" expr="toUpperCase($instance.fsl_dac.inst_ID.getValue() + `_PERIPHERAL`)"/>
+               <param id="value" expr="$instance.getPeripheral()"/>
+               <param id="description" expr="`Alias for ` + $instance.getPeripheral() + ` peripheral`"></param>
+            </fragment>
+         </section>
+         <section target="global_vars">
+            <fragment id="const_struct" apply_to="$this.dac_config">
+               <param id="name" expr="$instance.fsl_dac.inst_ID.getValue() + `_config`"/>
+               <param id="type">dac_config_t</param>
+            </fragment>
+         </section>
+         <section target="global_vars_extern">
+            <fragment id="extern_const">
+               <param id="name" expr="$instance.fsl_dac.inst_ID.getValue() + `_config`"/>
+               <param id="type">dac_config_t</param>
+            </fragment>
+         </section>
+         <section target="init_function_body">
+            <fragment id="init_line">
+               <param id="code" expr="`DAC_Init(` + toUpperCase($instance.fsl_dac.inst_ID.getValue() + `_PERIPHERAL, &amp;`) + $instance.fsl_dac.inst_ID.getValue() + `_config);`"></param>
+               <param id="description">Initialize DAC converter</param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <fragment id="init_line" if_expr="$configSet.dac_value.isAvailable()">
+               <param id="code" expr="`DAC_SetBufferValue(` + toUpperCase($instance.fsl_dac.inst_ID.getValue()) + `_PERIPHERAL, 0U, ` + $configSet.dac_value.value() + `U);`"></param>
+               <param id="description">Output value of DAC.</param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <fragment id="init_line" if_expr="$instance.getMode() == `basic`">
+               <param id="code" expr="`DAC_SetBufferReadPointer(` + toUpperCase($instance.fsl_dac.inst_ID.getValue() + `_PERIPHERAL, `) + `0U);`"></param>
+               <param id="description">Make sure the read pointer is set to the start</param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <fragment id="init_line">
+               <param id="code" expr="`DAC_Enable(` + toUpperCase($instance.fsl_dac.inst_ID.getValue() + `_PERIPHERAL, `) + $this.dac_enable.value() + `);`"></param>
+               <param id="description" expr="($this.dac_enable.value() ? `Enable` : `Disable`) + ` DAC output`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+         </section>
+      </code>
+      <validation/>
+      <quick_selections>
+         <quick_selection id="QS_DAC_1" label="Default">
+            <description>DAC module always converts the data in DAT0 to the analog output voltage</description>
+            <!-- default values taken from DAC_GetDefaultConfig() implementation -->
+            <set id="dac_config.referenceVoltageSource">kDAC_ReferenceVoltageSourceVref2</set>
+            <set id="dac_config.enableLowPowerMode">false</set>
+            <set id="dac_enable">true</set>
+         </quick_selection>
+         <default>QS_DAC_1</default>
+      </quick_selections>
+   </config_set>
+   <config_set id="buffered_dac" label="DAC buffer" from_source="fsl_dac.h">
+      <description>Configuration of the 12-bit digital-to-analog converter using buffer</description>
+      <generated_types></generated_types>
+      <user_types>
+         <set id="_dac_buffer_interrupt_enable" label="DAC buffer interrupts">
+            <item id="kDAC_BufferWatermarkInterruptEnable" label="Watermark interrupt" available="(featureDefined(`FSL_FEATURE_DAC_HAS_WATERMARK_DETECTION`) &amp;&amp; getFeature(`FSL_FEATURE_DAC_HAS_WATERMARK_DETECTION`))"/>
+            <item id="kDAC_BufferReadPointerTopInterruptEnable" label="Read pointer top flag interrupt"/> 
+            <item id="kDAC_BufferReadPointerBottomInterruptEnable" label="Read pointer bottom flag interrupt"/> 
+         </set>
+         <enum id="dac_buffer_trigger_mode_t" label="DAC buffer trigger mode" from="_dac_buffer_trigger_mode">
+            <item id="kDAC_BufferTriggerByHardwareMode" label="Hardware trigger" value="1"/>
+            <item id="kDAC_BufferTriggerBySoftwareMode" label="Software trigger" value="2"/>
+         </enum>
+         <enum id="dac_buffer_watermark_t" label="DAC buffer watermark." from="_dac_buffer_watermark" available="(featureDefined(`FSL_FEATURE_DAC_HAS_WATERMARK_SELECTION`) &amp;&amp; getFeature(`FSL_FEATURE_DAC_HAS_WATERMARK_SELECTION`))">
+            <item id="kDAC_BufferWatermark1Word" label="1 word away from the upper limit" available="(featureDefined(`FSL_FEATURE_DAC_HAS_WATERMARK_1_WORD`) &amp;&amp; getFeature(`FSL_FEATURE_DAC_HAS_WATERMARK_1_WORD`))"/>
+            <item id="kDAC_BufferWatermark2Word" label="2 words away from the upper limit" available="(featureDefined(`FSL_FEATURE_DAC_HAS_WATERMARK_2_WORDS`) &amp;&amp; getFeature(`FSL_FEATURE_DAC_HAS_WATERMARK_2_WORDS`))"/>
+            <item id="kDAC_BufferWatermark3Word" label="3 words away from the upper limit" available="(featureDefined(`FSL_FEATURE_DAC_HAS_WATERMARK_3_WORDS`) &amp;&amp; getFeature(`FSL_FEATURE_DAC_HAS_WATERMARK_3_WORDS`))"/>
+            <item id="kDAC_BufferWatermark4Word" label="4 words away from the upper limit" available="(featureDefined(`FSL_FEATURE_DAC_HAS_WATERMARK_4_WORDS`) &amp;&amp; getFeature(`FSL_FEATURE_DAC_HAS_WATERMARK_4_WORDS`))"/>
+         </enum>
+         <enum id="dac_buffer_work_mode_t" label="DAC buffer work mode." from="_dac_buffer_work_mode">
+            <item id="kDAC_BufferWorkAsNormalMode" label="Normal mode"/>
+            <item id="kDAC_BufferWorkAsSwingMode" label="Swing mode" available="(featureDefined(`FSL_FEATURE_DAC_HAS_BUFFER_SWING_MODE`) &amp;&amp; getFeature(`FSL_FEATURE_DAC_HAS_BUFFER_SWING_MODE`))"/>
+            <item id="kDAC_BufferWorkAsOneTimeScanMode" label="One-Time Scan mode"/>
+            <item id="kDAC_BufferWorkAsFIFOMode" label="FIFO mode" available="(featureDefined(`FSL_FEATURE_DAC_HAS_BUFFER_FIFO_MODE`) &amp;&amp; getFeature(`FSL_FEATURE_DAC_HAS_BUFFER_FIFO_MODE`))"/>
+         </enum>
+         <struct id="dac_buffer_config_t" label="DAC buffer configuration." from="_dac_buffer_config" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+            <variable id="upperLimit" options="add_to_struct" value="($configSet.dac_data_buffer.size() - 1) + `U`"></variable>
+            <reference id="triggerMode" label="Trigger mode" type="dac_buffer_trigger_mode_t">
+               <description>Select the buffer&apos;s trigger mode.</description>
+               <validation>
+                  <dependency when_expr="$this.getEnumItemValue().toInt() == 1" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.dac_trigger`" level="Warning" description_expr="`Trigger signal not routed for ` + $instance.getPeripheral()">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"></data>
+                     </feature>
+                  </dependency>
+               </validation>
+            </reference>
+            <reference id="watermark" label="Watermark" type="dac_buffer_watermark_t" available="(featureDefined(`FSL_FEATURE_DAC_HAS_WATERMARK_SELECTION`) &amp;&amp; getFeature(`FSL_FEATURE_DAC_HAS_WATERMARK_SELECTION`))">
+               <description>Select the buffer&apos;s watermark.</description>
+            </reference>
+            <reference id="workMode" label="Work mode" type="dac_buffer_work_mode_t">
+               <description>Select the buffer&apos;s work mode.</description>
+            </reference>
+         </struct>
+         <integer type="uint16_t" id="dac_data" label="DAC Data" min_expr="0" max_expr="4095">
+            <description>Data (12-bit value) which is converted to the analog output voltage.</description>
+         </integer>
+      </user_types>
+      <settings>
+         <bool id="dac_enable_buffer" label="Enable DAC buffer">
+            <description>
+               When both the DAC and the buffer are enabled, the DAC converts the data in the data buffer to analog output voltage.
+               The data buffer read pointer advances to the next word whenever a hardware or software trigger event occurs.
+            </description>
+            <validation>
+               <constraint cond_expr="$instance.fsl_dac.dac_enable.value() || !$this.value()" level="warning" description_expr="`When DAC buffer is enabled the DAC device must be also enabled in the initialization, see the Enable DAC setting.`" />
+            </validation>
+         </bool>
+         <reference id="dac_buffer_config" label="DAC buffer configuration." type="dac_buffer_config_t" enable="$parent.dac_enable_buffer.value()">
+            <description>Configure DAC buffer</description>
+         </reference>
+         <array type="dac_data" id="dac_data_buffer" label="Data buffer values" options="ShowContentAs=Table" enable="$parent.dac_enable_buffer.value()" min_expr="1">
+            <description>DAC output values, size of the array controls size of the data buffer</description>
+            <validation>
+               <constraint cond_expr="featureDefined(`FSL_FEATURE_DAC_BUFFER_SIZE`) &amp;&amp; (getFeature(`FSL_FEATURE_DAC_BUFFER_SIZE`) &gt;= $configSet.dac_data_buffer.size())" level="error" description_expr="`DAC buffer size limit exceeded. Maximum size: `+ getFeature(`FSL_FEATURE_DAC_BUFFER_SIZE`) + ` values.`"/>
+            </validation>
+         </array>
+         <integer type="uint8_t" id="dac_buffer_read_pointer" label="Buffer read index" min_expr="0" max_expr="$configSet.dac_data_buffer.size()!=0?$configSet.dac_data_buffer.size()-1:0">
+            <description>Index of buffer read at initialization</description>
+         </integer>
+         <reference id="dac_buffer_interrupt_enable" label="Buffer interrupts" type="_dac_buffer_interrupt_enable" enable="$parent.dac_enable_buffer.value()">
+            <description>DAC buffer interrupts</description>
+         </reference>
+         <bool id="enable_interrupt" label="Enable interrupt request" enable="$parent.dac_enable_buffer.value()">
+            <description>Enable interupt request in the NVIC (Nested Interrupt Vector Controller) of the CPU</description>
+         </bool>
+         <reference id="dac_interrupt" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" enable="$parent.enable_interrupt.value() &amp;&amp; $parent.dac_enable_buffer.value()"/>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+         </import>
+         <def fragment="init_buffer_array" public="true">
+            <!-- 
+            uint16_t DAC_1_data_array[16] = {
+               2U, 3U, 45U, 453U, 345U, 657U, 456U, 23U, 23U, 456U, 222U, 2222U, 3333U, 2222U, 444U, 2222U
+            };
+            -->
+            <expr>`uint16_t ` + $instance.fsl_dac.inst_ID.getValue() + `_data_array[` + (size($this.dac_data_buffer)) + `] = {`</expr><br/>
+            <expr>leftPadding($this.dac_data_buffer.map(item -> item.value() + `U`).join(`, `), 1)</expr><br/>
+            <text>};</text><br/>
+         </def>
+         <def fragment="set_buffer_values" public="true">
+            <!-- 
+            /* Set values in the data buffer */
+            uint8_t index;
+            for (index = 0U; index <= 15; index++)
+            {
+               DAC_SetBufferValue(DAC_1_PERIPHERAL, index, DAC_1_data_array[index]);
+            }
+            -->
+            <br/>
+            <fragment id="comment">
+               <param id="content">Set values in the data buffer</param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <expr>leftPadding(`uint8_t index;`, 1)</expr><br/>
+            <expr>leftPadding(`for (index = 0U; index &lt; ` + $instance.buffered_dac.dac_data_buffer.size() + `U` +  `; index++)`, 1)</expr><br/>
+            <expr>leftPadding(`{`, 1)</expr><br/>
+            <expr>leftPadding(`DAC_SetBufferValue(` + toUpperCase($instance.fsl_dac.inst_ID.getValue() + `_PERIPHERAL, `) + `index, ` + $instance.fsl_dac.inst_ID.getValue() + `_data_array[index]);`, 2)</expr><br/>
+            <expr>leftPadding(`}`, 1)</expr><br/><br/>
+         </def>
+         <def fragment="enable_buffer_interrupts">
+            <!--
+               /* Enable DAC buffer interrupts */
+               uint32_t mask = 0
+               mask |= kDAC_BufferWatermarkInterruptEnable | kDAC_BufferReadPointerTopInterruptEnable | kDAC_BufferReadPointerBottomInterruptEnable;
+               DAC_EnableBufferInterrupts(DEMO_DAC_BASEADDR, mask);
+            -->
+            <br/>
+            <fragment id="comment" if_expr="$this.dac_enable_buffer.value()">
+               <param id="content">Set mask value for interrupts</param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <fragment id="init_line" if_expr="$this.dac_enable_buffer.value()"> 
+               <param id="code" expr="`DAC_EnableBufferInterrupts(` + toUpperCase($instance.fsl_dac.inst_ID.getValue() + `_PERIPHERAL, `) + $instance.fsl_dac.inst_ID.getValue() + `_mask);`"></param>
+               <param id="description">Enable DAC buffer interrupts</param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+         </def>
+      </fragment_defs>
+      <code>
+         <section target="defines">
+            <fragment id="IRQ_definitions" apply_to="$this.dac_interrupt"></fragment>
+         </section>
+         <section target="global_vars">
+            <fragment id="const_struct" apply_to="$this.dac_buffer_config">
+               <param id="name" expr="$instance.fsl_dac.inst_ID.getValue() + `_buffer_config`"/>
+               <param id="type">dac_buffer_config_t</param>
+            </fragment>
+            <fragment id="init_buffer_array" if_expr="$this.dac_enable_buffer.value()"/>
+         </section>
+         <section target="global_vars_extern">
+            <fragment id="extern_const">
+               <param id="name" expr="$instance.fsl_dac.inst_ID.getValue() + `_buffer_config`"/>
+               <param id="type">dac_buffer_config_t</param>
+            </fragment>
+         </section>
+         <section target="init_function_body">
+         <!--
+         /* Configure the DAC buffer. */
+         DAC_SetBufferConfig(DEMO_DAC_BASEADDR, &dacBufferConfigStruct);
+         /* Set values in the data buffer */
+         uint8_t index;
+         for (index = 0U; index <= 15; index++)
+         {
+            DAC_SetBufferValue(DAC_1_PERIPHERAL, index, DAC_1_data_array[index]);
+         }
+         DAC_EnableBuffer(DEMO_DAC_BASEADDR, true);
+         -->
+            <fragment id="init_line" if_expr="$this.dac_enable_buffer.value()">
+               <param id="code" expr="`DAC_SetBufferConfig(` + toUpperCase($instance.fsl_dac.inst_ID.getValue() + `_PERIPHERAL, &amp;`) + $instance.fsl_dac.inst_ID.getValue() + `_buffer_config);`"></param>
+               <param id="description">Configure the DAC buffer</param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <fragment id="set_buffer_values" if_expr="$this.dac_enable_buffer.value()"/>
+            <fragment id="init_line">
+               <param id="code" expr="`DAC_EnableBuffer(` + toUpperCase($instance.fsl_dac.inst_ID.getValue() + `_PERIPHERAL, `) + $this.dac_enable_buffer.value() + `);`"></param>
+               <param id="description" expr="($this.dac_enable_buffer.value() ? `Enable` : `Disable`) + ` DAC buffer`"></param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <fragment id="init_line">
+               <param id="code" expr="`DAC_SetBufferReadPointer(` + toUpperCase($instance.fsl_dac.inst_ID.getValue() + `_PERIPHERAL, `) + $this.dac_buffer_read_pointer.value() + `U);`"></param>
+               <param id="description">Make sure the read pointer is set to the start</param>
+               <param id="paddingLevel" expr="1"></param>
+            </fragment>
+            <!-- 
+               /* Enable interrupt DAC0_IRQn request in the NVIC */
+            -->
+            <fragment id="IRQn_set_priority_default" apply_to="$this.dac_interrupt" if_expr="$this.dac_interrupt.enable_priority.value() &amp;&amp; $this.dac_enable_buffer.value()"/>
+            <fragment id="IRQn_enable_default" apply_to="$this.dac_interrupt" if_expr="$this.enable_interrupt.value() &amp;&amp; $this.dac_enable_buffer.value()"/>
+            <fragment id="init_line" if_expr="$this.dac_buffer_interrupt_enable.getCValue() != ``">
+               <param id="code" expr="`DAC_EnableBufferInterrupts(` + toUpperCase($instance.fsl_dac.inst_ID.getValue() + `_PERIPHERAL, `) + ($this.dac_buffer_interrupt_enable.getCValue()) + `);`"></param>
+               <param id="description">Enable DAC buffer interrupts</param>
+               <param id="paddingLevel" expr="1"></param>               
+            </fragment>
+         </section>
+      </code>
+      <validation/>
+      <quick_selections>
+         <quick_selection id="QS_DAC" label="Default">
+            <description>DAC converts the data in the data buffer to analog output voltage</description>
+            <!-- default values taken from DAC_GetDefaultConfig() implementation -->
+            <set id="dac_config.referenceVoltageSource">kDAC_ReferenceVoltageSourceVref2</set>
+            <set id="dac_config.enableLowPowerMode">false</set>
+            <set id="dac_enable">true</set>
+            <set id="dac_enable_buffer">true</set>
+            <set id="dac_data_buffer.0">0</set>
+            <set id="dac_buffer_config.triggerMode">kDAC_BufferTriggerBySoftwareMode</set>
+            <set id="dac_buffer_read_pointer">0</set>
+            <set id="enable_interrupt">true</set>
+         </quick_selection>
+         <default>QS_DAC</default></quick_selections>
+   </config_set>
+</component:config_component>

@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component:config_component
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd"
+   xmlns:component="http://swtools.freescale.net/XSD/component/1.0" options="UI_COMPONENT_MODE_HIDDEN"
+   id="sim_reg" label="SIM" category="Register init" registers_init="true">
+    <description>System Integration Module (SIM)</description>
+   <mode id="general" label="General">
+      <description>General SIM register initialization</description>
+      <config_set_refs>
+         <config_set_ref>generalConfig</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>SIM</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="generalConfig" label="General configuration" options="REGISTERS_REFRESH">
+      <description>General configuration</description>
+      <generated_types/>
+       <user_types>
+           <struct id="ctrl_t">
+               <enum id="WAIT_DISABLE" label="Wait mode" options="REGISTERS_REFRESH">
+                   <description>WAIT mode configuration</description>
+                   <assign when="true">
+                       <register name="CTRL" bitfield="WAIT_DISABLE" value="$this.getEnumItemValue().toInt()" reverse_value="x -> `wait` + x"/>
+                   </assign>
+                   <item id="wait0" label="Enable" value="0"><description>Wait mode is entered when the DSC core executes a WAIT instruction.</description></item>
+                   <item id="wait1" label="Disable" value="1"><description>The DSC core WAIT instruction does not cause entry into wait mode.</description></item>
+                   <item id="wait2" label="Enable and lock" value="2"><description>Wait mode is entered when the DSC core executes a WAIT instruction, and the WAIT_disable field is write protected until the next reset.</description></item>
+                   <item id="wait3" label="Disable and lock" value="3"><description>The DSC core WAIT instruction does not cause entry into wait mode, and the WAIT_disable field is write protected until the next reset.</description></item>
+               </enum>
+               <enum id="STOP_DISABLE" label="Stop mode" options="REGISTERS_REFRESH">
+                   <description>STOP mode configuration</description>
+                   <assign when="true">
+                       <register name="CTRL" bitfield="STOP_DISABLE" value="$this.getEnumItemValue().toInt()" reverse_value="x -> `stop` + x"/>
+                   </assign>
+                   <item id="stop0" label="Enable" value="0"><description>Stop mode is entered when the DSC core executes a STOP instruction.</description></item>
+                   <item id="stop1" label="Disable" value="1"><description>The DSC core STOP instruction does not cause entry into wait mode.</description></item>
+                   <item id="stop2" label="Enable and lock" value="2"><description>Stop mode is entered when the DSC core executes a STOP instruction, and the STOP_disable field is write protected until the next reset.</description></item>
+                   <item id="stop3" label="Disable and lock" value="3"><description>The DSC core STOP instruction does not cause entry into wait mode, and the STOP_disable field is write protected until the next reset.</description></item>
+               </enum>
+               <bool id="ONCEEBL" label="OnCE Enable" options="REGISTERS_REFRESH">
+                   <description>
+**0** - The OnCE clock to the DSC core is enabled when the core TAP is enabled.  
+**1** - The OnCE clock to the DSC core is always enabled.  
+                   </description>
+                   <assign when="true">
+                       <register name="CTRL" bitfield="ONCEEBL" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+               <enum id="DMAEBL" label="DMA module" options="REGISTERS_REFRESH">
+                   <description>
+This field controls whether DMA is enabled in *RUN*, *WAIT*, *RUN and WAIT*, or all modes.
+The DMA functions as a system bus master capable of performing IO on any address in data space.
+It also contains memory mapped registers through which it is configured. 
+The DMA must be enabled to function either as a system bus master or to perform IO to its memory mapped registers.
+NOTE: The DMA incorporates synchronous reset logic and must therefore be powered on at reset. It
+may subsequently be powered down at any time when not in use.  
+  
+*NOTE:* Entry to stop mode affects in-progress DMA transactions differently than does entry to wait mode:  
+- When the DMA module is configured to be **disabled in stop mode**: If any DMA transaction is in progress during stop mode entry, the transaction will complete before the MCU gates the DMA controller's clock.  
+- When the DMA module is configured to be **disabled in wait mode**: If any DMA transaction is in progress during wait mode entry, the transaction might be incomplete and end prematurely when the MCU gates the DMA controller's clock.
+To avoid data loss, the user's application must ensure no DMA transaction is in progress during the entry to wait mode.
+                   </description>
+                   <assign when="true">
+                       <register name="CTRL" bitfield="DMAEBL" value="$this.getEnumItemValue().toInt()" reverse_value="x -> `dma` + x"/>
+                   </assign>
+                   <item id="dma0" label="Disable" value="0"><description>DMA module is disabled</description></item>
+                   <item id="dma1" label="Enable in RUN" value="1"><description>DMA module is enabled in run mode only.</description></item>
+                   <item id="dma2" label="Enable in RUN and WAIT" value="2"><description>DMA module is enabled in run and wait modes only</description></item>
+                   <item id="dma3" label="Enable in all power modes" value="3"><description>DMA module is enabled in all power modes.In this option, the MCU cannot switch to WAIT or STOP mode.</description></item>
+                   <item id="dma4" label="Disable and lock" value="4"><description>DMA module is disabled and the DMAEbl field is write protected until the next reset.</description></item>
+                   <item id="dma5" label="Enable in RUN and lock" value="5"><description>DMA module is enabled in run mode only and the DMAEbl field is write protected until the next reset.</description></item>
+                   <item id="dma6" label="Enable in RUN and WAIT and lock" value="6"><description>DMA module is enabled in run and wait modes only and the DMAEbl field is write protected until the next reset.</description></item>
+                   <item id="dma7" label="Enable in all power modes and lock" value="7"><description>DMA module is enabled in all low power modes and the DMAEbl field is write protected until the next reset.In this option, the MCU cannot switch to WAIT or STOP mode.</description></item>
+               </enum>
+               <bool id="RST_FILT" label="External reset padcell input filter" options="REGISTERS_REFRESH">
+                   <description>
+External Reset Padcell Input Filter Enable
+This input controls an optional analog input filter on the padcell supporting the external reset input function. 
+When enabled, the filter removes transient signals on the input at the expense of an increased input delay. 
+When enabled, the filter affects all input functions supported by that padcell, including GPIO.
+This bit is reset on POR only.  
+The filter has two basic applications. When this pad is configured as an output function such as a GPIO output and the part is reset, the filter can remove transients that might
+result in a false indication of an external reset assertion in the SIM's RSTAT register. 
+When this padcell is configured as the external reset input, the filter can filter out noise on the external reset to reduce the chance of an unintended external reset assertion.
+The filter delay should be considered before enabling the filter, especially for safety critical applications.  
+**0** - Input filter on external reset disabled  
+**1** - Input filter on external reset enabled  
+                   </description>
+                   <validation>
+                       <dependency when_expr="$this.getValue()" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.reset`"
+                           description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`Reset `, $instance.getPeripheral())" level="Warning">
+                           <feature name="routed">
+                               <data expr="true"/>
+                           </feature>
+                       </dependency>
+                   </validation>
+                   <assign when="true">
+                       <register name="CTRL" bitfield="RST_FILT" value="$this.getValue(false).system::boolToInt()" reverse_value="x -> ((x == 1) ? true : false)"/>
+                   </assign>
+               </bool>
+           </struct>
+           <struct id="scr_t">
+               <integer type="uint16_t" id="SCR" label="Software control register" options="REGISTERS_REFRESH">
+                   <description>Software Control Data
+                       This field is for general-purpose use by software. It is reset only by a power-on reset.
+                   </description>
+                   <assign when="true">
+                       <register name_expr="$parent.getID()" bitfield_expr="$parent.getID()" value="$this.getValue()" reverse_value="x -> x"/>
+                   </assign>
+               </integer>
+           </struct>
+           <struct id="pwr_t">
+               <enum id="LRSTDBY" label="Large Regulator standby" options="REGISTERS_REFRESH">
+                   <description>Large Regulator standby control</description>
+                   <assign when="true">
+                       <register name="PWR" bitfield="LRSTDBY" value="$this.getEnumItemValue().toInt()" reverse_value="x -> `v` + x"/>
+                   </assign>
+                   <item id="v0" label="Normal mode" value="0"><description>Large regulator placed in normal mode (default).</description></item>
+                   <item id="v1" label="Standby mode" value="1"><description>Large regulator placed in standby mode.</description></item>
+                   <item id="v2" label="Normal mode and lock" value="2"><description>Large regulator placed in normal mode and LRSTDBY is write protected until device reset.</description></item>
+                   <item id="v3" label="Standby mode and lock" value="3"><description>Large regulator placed in standby mode and LRSTDBY is write protected until device reset.</description></item>
+               </enum>
+               <enum id="SR27STDBY" label="Regulator 2.7 V supply standby" options="REGISTERS_REFRESH">
+                   <description>Small regulator 2.7 V supply standby control</description>
+                   <assign when="true">
+                       <register name="PWR" bitfield="SR27STDBY" value="$this.getEnumItemValue().toInt()" reverse_value="x -> `v` + x"/>
+                   </assign>
+                   <item id="v0" label="Normal mode" value="0"><description>Small regulator 2.7 V supply placed in normal mode (default).</description></item>
+                   <item id="v1" label="Standby mode" value="1"><description>Small regulator 2.7 V supply placed in normal mode (default).</description></item>
+                   <item id="v2" label="Normal mode and lock" value="2"><description>Small regulator 2.7 V supply placed in normal mode and SR27STDBY is write protected until chip reset.</description></item>
+                   <item id="v3" label="Standby mode and lock" value="3"><description>Small regulator 2.7 V supply placed in standby mode and SR27STDBY is write protected until chip reset.</description></item>
+               </enum>
+               <enum id="SR27PDN" label="Regulator 2.7 V supply powerdown" options="REGISTERS_REFRESH">
+                   <description>Small regulator 2.7 V supply powerdown control</description>
+                   <assign when="true">
+                       <register name="PWR" bitfield="SR27PDN" value="$this.getEnumItemValue().toInt()" reverse_value="x -> `v` + x"/>
+                   </assign>
+                   <item id="v0" label="Normal mode" value="0"><description>Small regulator 2.7 V supply placed in normal mode (default).</description></item>
+                   <item id="v1" label="Standby mode" value="1"><description>Small regulator 2.7 V supply placed in normal mode (default).</description></item>
+                   <item id="v2" label="Normal mode and lock" value="2"><description>Small regulator 2.7 V supply placed in normal mode and SR27PDN is write protected until chip reset.</description></item>
+                   <item id="v3" label="Standby mode and lock" value="3"><description>Small regulator 2.7 V supply placed in standby mode and SR27PDN is write protected until chip reset.</description></item>
+               </enum>
+               <enum id="SR12STDBY" label="Regulator 1.2 V supply standby" options="REGISTERS_REFRESH">
+                   <description>Small regulator 1.2 V supply standby control</description>
+                   <assign when="true">
+                       <register name="PWR" bitfield="SR12STDBY" value="$this.getEnumItemValue().toInt()" reverse_value="x -> `v` + x"/>
+                   </assign>
+                   <item id="v0" label="Normal mode" value="0"><description>Small regulator 1.2 V supply placed in normal mode (default).</description></item>
+                   <item id="v1" label="Standby mode" value="1"><description>Small regulator 1.2 V supply placed in normal mode (default).</description></item>
+                   <item id="v2" label="Normal mode and lock" value="2"><description>Small regulator 1.2 V supply placed in normal mode and SR12STDBY is write protected until chip reset.</description></item>
+                   <item id="v3" label="Standby mode and lock" value="3"><description>Small regulator 1.2 V supply placed in standby mode and SR12STDBY is write protected until chip reset.</description></item>
+               </enum>
+           </struct>
+           <struct id="isal_t">
+               <integer type="uint32_t" id="ISAL" label="I/O short address location" max_expr="0x00FFFFC0" options="REGISTERS_REFRESH">
+                   <description>The I/O short address is calculated by concatenating the combined 18-bit ISAL value with the 6-bit short address from the CPU short address opcode. </description>
+                   <validation>
+                       <constraint cond_expr="($this.getValue() % 0x40) == 0" level="warning" description="I/O short address location should have 64 Byte granularity."/>
+                   </validation>
+                   <assign when="true">
+                       <register name="IOSALO" bitfield="ISAL21_6" value="($this.getValue() &amp; 0x003FFFC0) &gt;&gt; 6" reverse_value="x -> ($this.getValue() &amp; ~0x003FFFC0) | (x.toInt() &lt;&lt; 6)"/>
+                   </assign>
+                   <assign when="true">
+                       <register name="IOSAHI" bitfield="ISAL23_22" value="($this.getValue() &amp; 0x00C00000) &gt;&gt; 22" reverse_value="x -> ($this.getValue() &amp; ~0x00C00000) | (x.toInt() &lt;&lt; 22)"/>  
+                   </assign>
+               </integer>
+           </struct>
+           <struct id="prot_t">
+               <enum id="GIPSP" label="GPIO and IPS protection" options="REGISTERS_REFRESH">
+                   <description>GPIO and Internal Peripheral Select protection</description>
+                   <assign when="true">
+                       <register name="PROT" bitfield="GIPSP" value="$this.getEnumItemValue().toInt()" reverse_value="x -> `v` + x"/>
+                   </assign>
+                   <item id="v0" label="Disable" value="0"><description>Write protection off (default).</description></item>
+                   <item id="v1" label="Enable" value="1"><description>Write protection on.</description></item>
+                   <item id="v2" label="Disable and lock" value="2"><description>Write protection off and locked until chip reset.</description></item>
+                   <item id="v3" label="Enable and lock" value="3"><description>Write protection on and locked until chip reset.</description></item>
+               </enum>
+               <enum id="PCEP" label="PCE protection" options="REGISTERS_REFRESH">
+                   <description>Peripheral Clock Enable protection</description>
+                   <assign when="true">
+                       <register name="PROT" bitfield="PCEP" value="$this.getEnumItemValue().toInt()" reverse_value="x -> `v` + x"/>
+                   </assign>
+                   <item id="v0" label="Disable" value="0"><description>Write protection off (default).</description></item>
+                   <item id="v1" label="Enable" value="1"><description>Write protection on.</description></item>
+                   <item id="v2" label="Disable and lock" value="2"><description>Write protection off and locked until chip reset.</description></item>
+                   <item id="v3" label="Enable and lock" value="3"><description>Write protection on and locked until chip reset.</description></item>
+               </enum>
+               <enum id="GDP" label="GPIO Port D protection" options="REGISTERS_REFRESH">
+                   <description>GPIO Port D protection</description>
+                   <assign when="true">
+                       <register name="PROT" bitfield="GDP" value="$this.getEnumItemValue().toInt()" reverse_value="x -> `v` + x"/>
+                   </assign>
+                   <item id="v0" label="Disable" value="0"><description>Write protection off (default).</description></item>
+                   <item id="v1" label="Enable" value="1"><description>Write protection on.</description></item>
+                   <item id="v2" label="Disable and lock" value="2"><description>Write protection off and locked until chip reset.</description></item>
+                   <item id="v3" label="Enable and lock" value="3"><description>Write protection on and locked until chip reset.</description></item>
+               </enum>
+               <enum id="PMODE" label="PMODE protection" options="REGISTERS_REFRESH">
+                   <description>Power Mode Control write protection</description>
+                   <assign when="true">
+                       <register name="PROT" bitfield="PMODE" value="$this.getEnumItemValue().toInt()" reverse_value="x -> `v` + x"/>
+                   </assign>
+                   <item id="v0" label="Disable" value="0"><description>Write protection off (default).</description></item>
+                   <item id="v1" label="Enable" value="1"><description>Write protection on.</description></item>
+                   <item id="v2" label="Disable and lock" value="2"><description>Write protection off and locked until chip reset.</description></item>
+                   <item id="v3" label="Enable and lock" value="3"><description>Write protection on and locked until chip reset.</description></item>
+               </enum>
+           </struct>
+           <struct id="misc0_t">
+               <enum id="PIT_MSTR" label="PIT master" options="REGISTERS_REFRESH" available="bitfieldExists($instance.getPeripheral(),`MISC0`,`PIT_MSTR`)">
+                   <description>Select Master Programmable Interval Timer (PIT)</description>
+                   <assign when="true">
+                       <register name="MISC0" bitfield="PIT_MSTR" value="$this.getEnumItemValue().toInt()" reverse_value="x -> `v` + x"/>
+                   </assign>
+                   <item id="v0" label="PIT0" value="0"><description>PIT0 is master and PIT1 is slave</description></item>
+                   <item id="v1" label="PIT1" value="1"><description>PIT1 is master and PIT0 is slave.</description></item>
+               </enum>
+               <enum id="LPI2C0_TRIG_SEL" label="LPI2C0 trigger" options="REGISTERS_REFRESH" available="bitfieldExists($instance.getPeripheral(),`MISC0`,`LPI2C0_TRIG_SEL`)">
+                   <description>Select LPI2C0 slave/master trigger</description>
+                   <assign when="true">
+                       <register name="MISC0" bitfield="LPI2C0_TRIG_SEL" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="Slave" value="0"><description>Selects LPI2C0 slave trigger</description></item>
+                   <item id="1" label="Master" value="1"><description>Selects LPI2C0 master trigger</description></item>
+               </enum>
+               <enum id="LPI2C1_TRIG_SEL" label="LPI2C1 trigger" options="REGISTERS_REFRESH" available="bitfieldExists($instance.getPeripheral(),`MISC0`,`LPI2C1_TRIG_SEL`)">
+                   <description>Select LPI2C1 slave/master trigger</description>
+                   <assign when="true">
+                       <register name="MISC0" bitfield="LPI2C1_TRIG_SEL" value="$this.getEnumItemValue().toInt()" reverse_value="x -> x"/>
+                   </assign>
+                   <item id="0" label="Slave" value="0"><description>Selects LPI2C1 slave trigger</description></item>
+                   <item id="1" label="Master" value="1"><description>Selects LPI2C1 master trigger</description></item>
+               </enum>
+               <enum id="SCTRL_REORDER" label="ADC scan re-order" options="REGISTERS_REFRESH" available="bitfieldExists($instance.getPeripheral(),`MISC0`,`SCTRL_REORDER`)">
+                   <description>
+This bit enables the re-ordering of scan control bits (SCTRL[SC]) of Cyclic ADC for test channels.  
+**Values:**  
+- **Normal order** - In parallel scan modes, **ADCA** uses bits *SC0* to *SC3* followed by *SC8* to *SC11* in scan control register (SCTRL) for simultaneous and non-simultaneous scans,
+and **ADCB** uses bits *SC4* to *SC7* followed by *SC12* to *SC15* in scan control register for non-simultaneous scans.  
+- **Re-order** - In parallel scan modes, **ADCA** uses bits *SC0* to *SC7* in scan control register (SCTRL) for simultaneous and non-simultaneous scans,
+and **ADCB** uses bits *SC8* to *SC15* in scan control register for non-simultaneous scans.  
+                   </description>
+                   <assign when="true">
+                       <register name="MISC0" bitfield="SCTRL_REORDER" value="$this.getEnumItemValue().toInt()" reverse_value="x -> `v` + x"/>
+                   </assign>
+                   <item id="v0" label="Normal order" value="0"><description>Normal order - ADCA: SC0-SC3, SC8-SC11  |  ADCB: SC4-SC7, SC12-SC15</description></item>
+                   <item id="v1" label="Re-order" value="1"><description>Re-order - ADCA: SC0-SC7  |  ADCB: SC8-SC15</description></item>
+               </enum>
+           </struct>
+           <struct id="boot_mode_override_t">
+               <enum id="BOOT_MODE_OVERRIDE" label="Boot from" options="REGISTERS_REFRESH">
+                   <description expr="`Expression &quot;FOPT[7:6] ` + (getSeries()==`DSC 56F81000` ? `| BOOT_OVERRIDE&quot;` : `&amp; (~BOOT_OVERRIDE)&quot;`) + ` determines the boot option. BOOT_OVERRIDE acts as a mask to FOPT[7:6].`"></description>
+                   <assign when="true">
+                       <register name="BOOT_MODE_OVERRIDE" bitfield="BOOT_OVERRIDE" value="$this.getEnumItemValue().toInt()" reverse_value="x -> `v` + x"/>
+                   </assign>
+                   <item id="v0" label="ROM or Flash depending on FOPT[7:6] at next non-POR reset" value="0"><description>FOPT[7:6] not masked.</description></item>
+                   <item id="v3" label_expr="(getSeries()==`DSC 56F81000` ? `ROM` : `Flash`)+` at next non-POR reset (FOPT[7:6] masked)`" value="3"><description>FOPT[7:6] masked.</description></item>
+               </enum>
+           </struct>
+           <struct id="stopClockGate_t" options="REGISTERS_REFRESH">
+               <variable id="clockResource" value="$configSet.stopModeClockGates.getValue().get($parent.getID().toInt())"></variable>
+               <variable id="register" value="$parent.clockResource.getValue().getSetting(`control.register`).getValue()"></variable>
+               <variable id="bitfield" value="$parent.clockResource.getValue().getSetting(`control.bitfield`).getValue()"></variable>
+               <variable id="enable" value="$parent.clockResource.getValue().getSetting(`control.enabled`).getValue().toInt()"></variable>
+               <variable id="disable" value="$parent.clockResource.getValue().getSetting(`control.disabled`).getValue().toInt()"></variable>
+               <info id="clockGate" label="Clock gate" value="$parent.clockResource.getValue().getSetting(`peripherals`).reduce(``,(x,y) -> x +(x==``? `` : `, `) + y.getSetting(`device`).getValue() + (y.getSetting(`submodule_name`).getValue()==``? `` : (` ` + y.getSetting(`submodule_name`).getValue())))">
+                   <description>Enable peripheral (or submodule) clock gate in STOP mode.</description>
+               </info>
+               <bool id="enableStopClockGate" label="Enable" options="REGISTERS_REFRESH">
+                    <description expr="`Enable clock gate in STOP mode`"></description>
+                    <assign when="true">
+                        <register name_expr="$parent.register.getValue()" bitfield_expr="$parent.bitfield.getValue()" value="$this.getValue(false) ? $parent.enable.getValue() : $parent.disable.getValue()" reverse_value="x -> ((x == $parent.enable.getValue()) ? true : false)"/>
+                    </assign>
+                </bool>
+           </struct>
+       </user_types>
+      <settings>
+          <bool id="initCTRL" label="Initialize CTRL register" options="UI_LABEL_BOLD;REGISTERS_REFRESH"><description>Initialize control register</description></bool>
+          <reference type="ctrl_t" id="CTRL" options="UI_LABEL_HIDDEN" enable="$parent.initCTRL.getValue()"></reference>
+          <!-- Removed SCR and registers MCUCM-7612, PWR register controlled by the clocks tool
+          <bool id="initSCR0" label="Initialize SCR0 register" options="UI_LABEL_BOLD;REGISTERS_REFRESH"><description>Initialize software control 0 register</description></bool>
+          <reference type="scr_t" id="SCR0" options="UI_LABEL_HIDDEN" enable="$parent.initSCR0.getValue()"></reference>
+          <bool id="initSCR1" label="Initialize SCR1 register" options="UI_LABEL_BOLD;REGISTERS_REFRESH"><description>Initialize software control 1 register</description></bool>
+          <reference type="scr_t" id="SCR1" options="UI_LABEL_HIDDEN" enable="$parent.initSCR1.getValue()"></reference>
+          <bool id="initSCR2" label="Initialize SCR2 register" options="UI_LABEL_BOLD;REGISTERS_REFRESH"><description>Initialize software control 2 register</description></bool>
+          <reference type="scr_t" id="SCR2" options="UI_LABEL_HIDDEN" enable="$parent.initSCR2.getValue()"></reference>
+          <bool id="initSCR3" label="Initialize SCR3 register" options="UI_LABEL_BOLD;REGISTERS_REFRESH"><description>Initialize software control 3 register</description></bool>
+          <reference type="scr_t" id="SCR3" options="UI_LABEL_HIDDEN" enable="$parent.initSCR3.getValue()"></reference>
+          <bool id="initPWR" label="Initialize PWR register" options="UI_LABEL_BOLD;REGISTERS_REFRESH"><description>Initialize power control register</description></bool>
+          <reference type="pwr_t" id="PWR" options="UI_LABEL_HIDDEN" enable="$parent.initPWR.getValue()"></reference-->
+          <bool id="initISAL" label="Initialize I/O short address registers" options="UI_LABEL_BOLD;REGISTERS_REFRESH"><description>Initialize I/O short address location register</description></bool>
+          <reference type="isal_t" id="isal" options="UI_LABEL_HIDDEN" enable="$parent.initISAL.getValue()"></reference>
+          <bool id="initPROT" label="Initialize PROT register" options="UI_LABEL_BOLD;REGISTERS_REFRESH"><description>Initialize protection register</description></bool>
+          <reference type="prot_t" id="PROT" options="UI_LABEL_HIDDEN" enable="$parent.initPROT.getValue()"></reference>
+          <bool id="initMISC0" label="Initialize MISC0 register" options="UI_LABEL_BOLD;REGISTERS_REFRESH"><description>Initialize miscellaneous register 0</description></bool>
+          <reference type="misc0_t" id="MISC0" options="UI_LABEL_HIDDEN" enable="$parent.initMISC0.getValue()"></reference>
+          <bool id="initBOOT_MODE_OVERRIDE" label="Initialize BOOT_MODE_OVERRIDE register" options="UI_LABEL_BOLD;REGISTERS_REFRESH"><description>Initialize protection register</description></bool>
+          <reference type="boot_mode_override_t" id="BOOT_MODE_OVERRIDE" options="UI_LABEL_HIDDEN" enable="$parent.initBOOT_MODE_OVERRIDE.getValue()"></reference>
+          <variable id="stopModeClockGates" value="getResource(`clockGatesStopMode`,$instance.getCoreId())" ></variable>
+          <variable id="clockGatesSize" value="$parent.stopModeClockGates.getValue().size()"/>
+          <bool id="initSDs" label="Initialize STOP mode clocks registers" options="UI_LABEL_BOLD;REGISTERS_REFRESH;UI_REFRESH"><description>Initialize STOP mode peripheral clocks</description></bool>
+          <array type="stopClockGate_t" id="SDs" label="STOP mode peripheral clocks" enable="$parent.initSDs.getValue()"
+              size="$parent.clockGatesSize.getValue()" options="UI_LABEL_HIDDEN;UI_SHOW_CONTENT_AS=TABLE;UI_TABLE_COLUMN_WIDTHS=4,15,6;REGISTERS_REFRESH;UI_REFRESH">
+              <item_defaults>
+                  <set_default id="enableStopClockGate" value_expr="x -> false"/>
+              </item_defaults>
+          </array>
+          <variable id="MISC0_MASK" value="toString($parent.MISC0.getChildren().filter(x -> x.isAvailable() &amp;&amp; x.isEnabled()).map(x -> getBitfieldOffset($instance.getPeripheral(), `MISC0`, x.getId())).reduce(0,(x,y) -> (x | (1 &lt;&lt; y))).toInt(),16)"></variable>
+          <!-- Fragment variables -->
+          <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+          <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+          <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+          <!-- SIM template params -->
+          <struct id="sim_params" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+              <variable id="PERIPHERAL" value="$instance.getPeripheral()"></variable>
+              <variable id="VPREFIX" value="$configSet.inst_ID_def.getValue()"></variable>
+          </struct>
+      </settings>
+       <fragment_defs>
+           <import>
+               <from component_id="system" config_set_id="common_code_templates"/>
+           </import>
+       </fragment_defs>
+       <code>
+           <section target="includes">
+               <fragment id="include">
+                   <param id="name">device_registers</param>
+                   <param id="filename">fsl_device_registers.h</param>
+               </fragment>
+           </section>
+           <section target="defines">
+               <fragment id="node_assigned_regs_init">
+                   <param id="node" expr="$configSet.CTRL"></param>
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               </fragment>
+               <!--fragment id="node_assigned_regs_init">
+                   <param id="node" expr="$configSet.SCR0"></param>
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               </fragment>
+               <fragment id="node_assigned_regs_init">
+                   <param id="node" expr="$configSet.SCR1"></param>
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               </fragment>
+               <fragment id="node_assigned_regs_init">
+                   <param id="node" expr="$configSet.SCR2"></param>
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               </fragment>
+               <fragment id="node_assigned_regs_init">
+                   <param id="node" expr="$configSet.SCR3"></param>
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               </fragment>
+               <fragment id="node_assigned_regs_init">
+                   <param id="node" expr="$configSet.PWR"></param>
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               </fragment-->
+               <fragment id="node_assigned_regs_init">
+                   <param id="node" expr="$configSet.isal"></param>
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               </fragment>
+               <fragment id="node_assigned_regs_init">
+                   <param id="node" expr="$configSet.PROT"></param>
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               </fragment>
+               <fragment id="node_assigned_regs_init">
+                   <param id="node" expr="$configSet.MISC0"></param>
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               </fragment>
+               <fragment id="define">
+                   <param id="name" expr="$configSet.inst_ID_def.getValue() + `_MISC0_INIT_MASK`"></param>
+                   <param id="value" expr="$configSet.MISC0_MASK.getValue() + `U`"/>
+                   <param id="description" expr="`MISC0 register mask`"/>
+               </fragment>
+               <fragment id="node_assigned_regs_init">
+                   <param id="node" expr="$configSet.BOOT_MODE_OVERRIDE"></param>
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               </fragment>
+               <fragment id="node_assigned_regs_init">
+                   <param id="node" expr="$configSet.SDs"></param>
+                   <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+               </fragment>
+           </section>
+           <section target="init_function_body">
+               <fragment id="template">
+                   <param id="file">sim.template</param>
+                   <param id="setting" expr="$configSet.sim_params"></param>
+                   <param id="separators"></param>
+                   <param id="description" expr="`System integration module initialization`"></param>
+               </fragment>
+           </section>
+       </code> 
+      <quick_selections>
+         <quick_selection id="default" label="Default">
+            <description>Default SIM configuration</description>
+            <set id="CTRL.WAIT_DISABLE">wait0</set>
+            <set id="CTRL.DMAEBL">dma3</set>
+            <set id="isal.ISAL">0xE000</set>
+         </quick_selection>
+         <default>default</default>
+      </quick_selections>
+   </config_set>
+</component:config_component>

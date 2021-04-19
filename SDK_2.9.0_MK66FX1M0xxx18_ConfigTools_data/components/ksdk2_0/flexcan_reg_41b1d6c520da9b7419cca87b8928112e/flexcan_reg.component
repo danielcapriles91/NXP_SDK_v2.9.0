@@ -1,0 +1,1000 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="flexcan" label="FlexCAN" category="Register init" registers_init="true" options="UI_COMPONENT_MODE_HIDDEN" global_only="false" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-8.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <description>Flexible Controller Area Network (FLEXCAN)</description>
+   <mode id="interrupts" label="Interrupts">
+      <description>FlexCAN operation using interrupts (interrupt routines are defined by users)</description>
+      <config_set_refs>
+         <config_set_ref>fsl_flexcan</config_set_ref>
+         <config_set_ref>interruptsCfg</config_set_ref>
+      </config_set_refs>
+      <master_peripheral>
+         <peripheral_type>CAN</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="fsl_flexcan" label="FlexCAN configuration" from_source="fsl_flexcan.h">
+      <description>FlexCAN general configuration of the device and timing.</description>
+      <generated_types/>
+      <user_types>
+         <enum id="flexcan_clock_source_t" label="FlexCAN clock source" from="_flexcan_clock_source">
+            <item id="0" label="FlexCAN Protocol Engine clock from Oscillator (functional clock)" value="OscillatorClock"/>
+            <!-- This clock is not available for some SoC - the FlexCAN functional clock is configured independently in the SCG, CCM or ... -->
+            <item id="1" label="FlexCAN Protocol Engine clock from Peripheral Clock" value="BusInterfaceClock" available="(!featureDefined(`FSL_FEATURE_FLEXCAN_SUPPORT_ENGINE_CLK_SEL_REMOVE`) ||  !(getFeature(`FSL_FEATURE_FLEXCAN_SUPPORT_ENGINE_CLK_SEL_REMOVE`)==1))"/>
+         </enum>
+         <enum id="flexcan_rx_fifo_filter_type_t" label="FlexCAN Rx Fifo Filter type" from="_flexcan_rx_fifo_filter_type">
+            <assign when="true">
+                <register name="MCR" bitfield="IDAM" value="$this.getEnumItemId().toInt()" reverse_value="x -> x.toString()"/>
+            </assign>
+            <item id="0" label="Format A: One full ID (standard and extended) per ID Filter element"/>
+            <item id="1" label="Format B: Two full standard IDs or two partial 14-bit ID slices per ID Filter Table element"/>
+            <item id="2" label="Format C: Four partial 8-bit Standard or extended ID slices per ID Filter Table element"/>
+            <item id="3" label="Format D: All frames rejected"/>
+         </enum>
+         <!-- Flexcan message buffer payload configuration -  the value represent the number of used bytes in the memory for the given payload size -->
+         <enum id="flexcan_mb_size_t" label="FlexCAN Message Buffer Data Size" from="_flexcan_mb_size" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+            <assign when="true">
+                <register name="FDCTRL" bitfield="MBDSR0" value="$this.getEnumItemId().toInt()" reverse_value="x -> x.toString()"/>
+            </assign>
+            <item id="0" label="8 bytes" value="16"/>
+            <item id="1" label="16 bytes" value="24"/>
+            <item id="2" label="32 bytes" value="41"/>
+            <item id="3" label="64 bytes" value="72"/>
+         </enum>
+         <enum id="flexcan_rx_fifo_priority_t" label="FlexCAN Rx FIFO priority" from="_flexcan_rx_fifo_priority">
+            <description>Selects whether matching starts from Rx FIFO and continues on mailboxes (Rx message buffers) or matching starts from mailboxes (Rx message buffers) and continues to Rx FIFO.</description>
+            <item id="0" label="Rx FIFO then mailboxes">
+                <description>Matching starts from Rx FIFO and continues on mailboxes (Rx message buffers) or matching starts from mailboxes (Rx message buffers) and continues to Rx FIFO.</description>
+            </item>
+            <item id="1" label="Mailboxes then Rx FIFO">
+                <description>Matching starts from mailboxes (Rx message buffers) and continues to Rx FIFO.</description>
+            </item>
+         </enum>
+         <struct id="flexcan_timing_config_t" label="FlexCAN protocol timing characteristic configuration structure" from="_flexcan_timing_config">
+            <!-- Integer - range 0-255 (divider value 1 - 256), it define the Time-Quantum = one Sclock period. -->
+<!--             <info id="preDivider" label="Clock Pre-scaler Division Factor" options="add_to_struct" value="(($parent.getParent().getSetting(`baudRate`).getValue() != 0) &amp;&amp; ($parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toHertz() != 0)) ? ($parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toHertz().toInt() / ($parent.getParent().getSetting(`baudRate`).getValue() * (1 + $parent.phaseSeg1.getValue() + $parent.phaseSeg2.getValue() + $parent.propSeg.getValue()))) : `N/A`">
+               <description>Clock Pre-scaler Division Factor. It defines the ratio between the PE clock frequency and the Serial Clock (Sclock) frequency. The Sclock period defines the time quantum of the CAN protocol. </description>
+               <validation>
+                  <constraint when_expr="$this.getValue() != `N/A`" cond_expr="($this.getValue().toInt() &gt; 0) &amp;&amp; ($this.getValue().toInt() &lt;= 256)" level="error" description_expr="`The Clock Pre-scaler Division Factor is out of range 1 - 256 (computed value is ` + $this.getValue() + `). Select different baudrate and/or CAN clock source frequency.`"/>
+               </validation>
+            </info> -->
+            <bool id="extendedTiming" label="Extended timing" options="REGISTERS_REFRESH">
+               <description>Enables/disables the use of extended CAN bit timing fields EPRESDIV, EPROPSEG, EPSEG1, EPSEG2 and ERJW replacing the CAN bit timing variables defined in CTRL1 register.</description>
+               <assign when="true">
+                    <register name="CBT" bitfield="BTF" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+               </assign>
+            </bool>
+            <integer id="preDivider" label="Clock pre-scaler division factor" type="uint16_t" min_expr="1" max_expr="($parent.extendedTiming.getValue() ? (1 &lt;&lt; 10) : 256)">
+                <description expr="`Clock Pre-scaler Division Factor. It defines the ratio between the PE clock frequency and the Serial Clock (Sclock) frequency. The Sclock period defines the time quantum of the CAN protocol. The valid programmable values are 1-` + ($parent.extendedTiming.getValue() ? (1 &lt;&lt; 10) : 256) + `.`"></description>                
+               <assign when="!$parent.extendedTiming.getValue()">
+                    <register name="CTRL1" bitfield="PRESDIV" value="($this.getValue() - 1)" reverse_value="x -> (x + 1)"/>                 
+               </assign>
+               <assign when="$parent.extendedTiming.getValue()">
+                    <register name="CBT" bitfield="EPRESDIV" value="($this.getValue() - 1)" reverse_value="x -> (x + 1)"/>                 
+               </assign>
+            </integer>
+            <info id="timeQuantum" label="Time Quantum" value="(($parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toHertz() != 0) &amp;&amp; ($parent.preDivider.getValue() != `N/A`) &amp;&amp; ($parent.preDivider.getValue() != 0)) ? timeToString(getTime((($parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toHertz().toInt() * 1.0) / $parent.preDivider.getValue()),`ns`,`Hz`)/1000.0) : `N/A`">
+               <description>The time quantum value that is used for calculation of time segments, propagation time and re-synchronization time.</description>
+            </info>
+            <info id="bitRate" label="Baud rate (nominal)" value="(($parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toHertz() != 0) &amp;&amp; ($parent.preDivider.getValue() != `N/A`) &amp;&amp; ($parent.preDivider.getValue() != 0)) ? frequencyToString(getFreq((($parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toHertz().toInt() * 1.0) / $parent.preDivider.getValue() / (1 + $parent.phaseSeg1.getValue() + $parent.phaseSeg2.getValue() + $parent.propSeg.getValue())),`Hz`,`Hz`)) : `N/A`">
+               <description>The real value of the baud rate (nominal bit rate) that is used for for communication.&lt;br/&gt;&lt;b&gt;Note: The bit rate frequency can differ from the required baud rate because of limitation of the pre-scaler division factor.&lt;/b&gt;&lt;br/&gt;
+               The nominal baud rate (bit rate) = Clock source frequency / pre-scaler division factor / (synchronization segment + propagation segment + phase segment 1 + phase segment 2)
+               </description>
+            </info>
+            <info id="syncSeg" label="Synchronization segment" value="1">
+               <description>Synchronization segment length. It defines the length of the synchronization segment. It is always 1 (different value is not supported).</description>
+            </info>
+            <!-- Propagation Segment Time = (PROPSEG + 1) × Time-Quanta. value 0 - 7, range 1 - 8 Time-Quanta -->
+            <integer id="propSeg" label="Propagation segment" type="uint8_t" min_expr="1" max_expr="($parent.extendedTiming.getValue() ? (1 &lt;&lt; 6) : 8)">
+               <description expr="`Propagation Segment length. It defines the length of the Propagation Segment in the bit time. The valid programmable values are 1-` + ($parent.extendedTiming.getValue() ? (1 &lt;&lt; 6) : 8) + `.`"></description>
+               <assign when="!$parent.extendedTiming.getValue()">
+                    <register name="CTRL1" bitfield="PROPSEG" value="($this.getValue() - 1)" reverse_value="x -> (x + 1)"/>
+               </assign>
+               <assign when="$parent.extendedTiming.getValue()">
+                    <register name="CBT" bitfield="EPROPSEG" value="($this.getValue() - 1)" reverse_value="x -> (x + 1)"/>
+               </assign>
+            </integer>
+            <!--  Phase Buffer Segment 1 = (PSEG1 + 1) × Time-Quanta. value 0 - 7, range  1 - 8 Time-Quanta -->
+            <integer id="phaseSeg1" label="Phase segment 1" type="uint8_t" min_expr="1" max_expr="($parent.extendedTiming.getValue() ? (1 &lt;&lt; 5) : 8)">
+               <description expr="`Phase Segment 1 length. It defines the length of Phase Buffer Segment 1 in the bit time. The valid programmable values are 1-` + ($parent.extendedTiming.getValue() ? (1 &lt;&lt; 5) : 8) + `.`"></description>
+               <assign when="!$parent.extendedTiming.getValue()">
+                    <register name="CTRL1" bitfield="PSEG1" value="($this.getValue() - 1)" reverse_value="x -> (x + 1)"/>
+               </assign>
+               <assign when="$parent.extendedTiming.getValue()">
+                    <register name="CBT" bitfield="EPSEG1" value="($this.getValue() - 1)" reverse_value="x -> (x + 1)"/>
+               </assign>
+            </integer>
+            <!--  Phase Buffer Segment 2 = (PSEG2 + 1) × Time-Quanta. value 1 - 7, range  2 - 8 Time-Quanta -->
+            <integer id="phaseSeg2" label="Phase segment 2" type="uint8_t" min_expr="($parent.extendedTiming.getValue() ? 1 : 2)" max_expr="($parent.extendedTiming.getValue() ? (1 &lt;&lt; 5) : 8)">
+               <description expr="`Phase Segment 2 length. It defines the length of Phase Buffer Segment 2 in the bit time. The valid programmable values are ` + ($parent.extendedTiming.getValue() ? 1 : 2) + `-` + ($parent.extendedTiming.getValue() ? (1 &lt;&lt; 5) : 8) + `.`"></description>
+               <assign when="!$parent.extendedTiming.getValue()">
+                    <register name="CTRL1" bitfield="PSEG2" value="($this.getValue() - 1)" reverse_value="x -> (x + 1)"/>
+               </assign>
+               <assign when="$parent.extendedTiming.getValue()">
+                    <register name="CBT" bitfield="EPSEG2" value="($this.getValue() - 1)" reverse_value="x -> (x + 1)"/>
+               </assign>
+            </integer>
+            <!-- Resync Jump Width = RJW + 1. value 0 - 3 (range 1 - 4 time Time-Quanta) -->
+            <integer id="rJumpwidth" label="Re-sync jump width" type="uint8_t" min_expr="1" max_expr="($parent.extendedTiming.getValue() ? (1 &lt;&lt; 4) : 4)">
+               <description expr="`Re-synchronization jump width. It defines the maximum number of time quanta that a bit time can be changed by one resynchronization. The valid programmable values are 1-` + ($parent.extendedTiming.getValue() ? (1 &lt;&lt; 4) : 4) + `.`"></description>
+               <assign when="!$parent.extendedTiming.getValue()">
+                    <register name="CTRL1" bitfield="RJW" value="($this.getValue() - 1)" reverse_value="x -> (x + 1)"/>
+               </assign>
+               <assign when="$parent.extendedTiming.getValue()">
+                    <register name="CBT" bitfield="ERJW" value="($this.getValue() - 1)" reverse_value="x -> (x + 1)"/>
+               </assign>
+            </integer>
+            <struct id="bitTime" label="Bit time" options="remove_from_struct_init">
+               <info id="syncSeg" label="Synchronization segment" value="$parent.getParent().getSetting(`timeQuantum`).getValue()" > 
+<!--                  value="($parent.getParent().getSetting(`preDivider`).getValue() != `N/A`) ? timeToString(getTime((($parent.getParent().getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toInt() * 1.0) / $parent.getParent().getSetting(`preDivider`).getValue()),`ns`,`Hz`)) : `N/A`">-->
+                  <description>Synchronization segment time based on the selected length.</description>
+               </info>
+               <info id="propSeg" label="Propagation segment" value="($parent.getParent().getSetting(`timeQuantum`).getValue() != `N/A`) ? timeToString(getTime($parent.getParent().getSetting(`timeQuantum`).getValue(),`ns`,`s`) / 1000.0 * $parent.getParent().getSetting(`propSeg`).getValue()): `N/A`" > 
+<!--                  value="($parent.getParent().getSetting(`preDivider`).getValue() != `N/A`) ? timeToString(getTime((($parent.getParent().getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toInt() * 1.0) / $parent.getParent().getSetting(`preDivider`).getValue()),`ns`,`Hz`)) : `N/A`">-->
+                  <description>Propagation segment time based on the selected length.</description>
+               </info>
+               <info id="phaseSeg1" label="Phase segment 1" value="($parent.getParent().getSetting(`timeQuantum`).getValue() != `N/A`) ? timeToString(getTime($parent.getParent().getSetting(`timeQuantum`).getValue(),`ns`,`s`) / 1000.0 * $parent.getParent().getSetting(`phaseSeg1`).getValue()): `N/A`" > 
+                  <description>Phase segment 1 time based on the selected length.</description>
+               </info>
+               <info id="phaseSeg2" label="Phase segment 2" value="($parent.getParent().getSetting(`timeQuantum`).getValue() != `N/A`) ? timeToString(getTime($parent.getParent().getSetting(`timeQuantum`).getValue(),`ns`,`s`) / 1000.0 * $parent.getParent().getSetting(`phaseSeg2`).getValue()): `N/A`" > 
+                  <description>Phase segment 2 time based on the selected length.</description>
+               </info>
+               <info id="bitTime" label="Nominal bit time" value="($parent.getParent().getSetting(`timeQuantum`).getValue() != `N/A`) ? timeToString(getTime($parent.getParent().getSetting(`timeQuantum`).getValue(),`ns`,`s`) / 1000.0 * (1 + $parent.getParent().getSetting(`propSeg`).getValue() + $parent.getParent().getSetting(`phaseSeg1`).getValue() + $parent.getParent().getSetting(`phaseSeg2`).getValue())): `N/A`" > 
+                  <description>Nominal bit time in time units.</description>
+               </info>
+            </struct>
+            <!-- Flexible Data Rate mode support -->
+            <!-- Integer - range 0-255 (divider value 1 - 256), it define the Time-Quantum = one Sclock period. -->
+            <!-- <info id="fpreDivider" label="Fast Clock Pre-scaler Division Factor" options="add_to_struct" value="(($parent.getParent().getSetting(`baudRateFD`).getValue() != 0) &amp;&amp; ($parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toHertz() != 0)) ? ($parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toHertz().toInt() / ($parent.getParent().getSetting(`baudRateFD`).getValue() * (1 + $parent.phaseSeg1.getValue() + $parent.phaseSeg2.getValue() + $parent.propSeg.getValue()))) : `N/A`" 
+               enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Clock Pre-scaler Division Factor of the fast mode. It defines the ratio between the PE clock frequency and the Serial Clock (Sclock) frequency. The Sclock period defines the time quantum of the CAN protocol. </description>
+               <validation>
+                  <constraint when_expr="$this.getValue() != `N/A`" cond_expr="($this.getValue().toInt() &gt; 0) &amp;&amp; ($this.getValue().toInt() &lt;= 1024)" level="error" description_expr="`The Clock Pre-scaler Division Factor is out of range 1 - 256 (computed value is ` + $this.getValue() + `). Select different baudRateFD and/or CAN clock source frequency.`"/>
+               </validation>
+            </info> -->            
+            <integer id="fpreDivider" label="Fast Clock Pre-scaler Division Factor" type="uint16_t" min_expr="1" max_expr="1024" enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Clock Pre-scaler Division Factor of the fast mode. It defines the ratio between the PE clock frequency and the Serial Clock (Sclock) frequency. The Sclock period defines the time quantum of the CAN protocol. </description>
+               <assign when="true">
+                    <register name="FDCBT" bitfield="FPRESDIV" value="($this.getValue() - 1)" reverse_value="x -> (x + 1)"/>                 
+               </assign>
+            </integer>
+             <info id="ftimeQuantum" label="Fast Time Quantum" value="(($parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toHertz() != 0) &amp;&amp; ($parent.fpreDivider.getValue() != `N/A`) &amp;&amp; ($parent.fpreDivider.getValue() != 0)) ? timeToString(getTime((($parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toHertz().toInt() * 1.0) / $parent.fpreDivider.getValue()),`ns`,`Hz`)/1000.0) : `N/A`"
+               enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>The time quantum value of the fast mode that is used for calculation of time segments, propagation time and re-synchronization time.</description>
+            </info>
+            <info id="fbitRate" label="Fast baud rate (nominal)" value="(($parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toHertz() != 0) &amp;&amp; ($parent.fpreDivider.getValue() != `N/A`) &amp;&amp; ($parent.fpreDivider.getValue() != 0)) ? frequencyToString(getFreq((($parent.getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toHertz().toInt() * 1.0) / $parent.fpreDivider.getValue() / (1 + $parent.fphaseSeg1.getValue() + $parent.fphaseSeg2.getValue() + $parent.fpropSeg.getValue())),`Hz`,`Hz`)) : `N/A`"
+               enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>The real value of the fast baud rate (nominal bit rate) that is used for for communication.&lt;br/&gt;&lt;b&gt;Note: The bit rate frequency can differ from the required baud rate because of limitation of the pre-scaler division factor.&lt;/b&gt;&lt;br/&gt;
+               The nominal baud rate (bit rate) = Clock source frequency / pre-scaler division factor / (synchronization segment + propagation segment + phase segment 1 + phase segment 2)
+               </description>
+            </info>
+            <info id="fsyncSeg" label="Fast Synchronization segment" value="1"
+               enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Synchronization segment length of the fast mode. It defines the length of the synchronization segment. It is always 1 (different value is not supported).</description>
+            </info>
+<!--            <integer id="fpreDivider" label="Fast Clock Pre-scaler Division Factor" type="uint16_t" enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Fast Clock Pre-scaler Division Factor.</description>
+            </integer>-->
+            <!-- Fast Propagation Segment Time = (PROPSEG + 1) × Time-Quanta. value 0 - 31, range 1 - 32 Time-Quanta -->
+            <integer id="fpropSeg" label="Fast Propagation Segment" type="uint8_t" min_expr="1" max_expr="32" enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Fast Propagation Segment.</description>
+               <assign when="true">
+                    <register name="FDCBT" bitfield="FPROPSEG" value="($this.getValue() - 1)" reverse_value="x -> (x + 1)"/>
+               </assign>
+            </integer>
+            <!--  Fast Phase Buffer Segment 1 = (PSEG1 + 1) × Time-Quanta. value 0 - 7, range  1 - 8 Time-Quanta -->
+            <integer id="fphaseSeg1" label="Fast Phase Segment 1" type="uint8_t" min_expr="1" max_expr="8" enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Fast Phase Segment 1.</description>
+               <assign when="true">
+                    <register name="FDCBT" bitfield="FPSEG1" value="($this.getValue() - 1)" reverse_value="x -> (x + 1)"/>
+               </assign>
+            </integer>
+            <!--  Fast Phase Buffer Segment 2 = (PSEG2 + 1) × Time-Quanta. value 1 - 7, range  2 - 8 Time-Quanta -->
+            <integer id="fphaseSeg2" label="Fast Phase Segment 2" type="uint8_t" min_expr="2" max_expr="8" enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Fast Phase Segment 2.</description>
+               <assign when="true">
+                    <register name="FDCBT" bitfield="FPSEG2" value="($this.getValue() - 1)" reverse_value="x -> (x + 1)"/>
+               </assign>
+            </integer>
+            <!-- Fast Resync Jump Width = RJW + 1. value 0 - 7 (range 1 - 8 time Time-Quanta) -->
+            <integer id="frJumpwidth" label="Fast Re-sync Jump Width" type="uint8_t" min_expr="1" max_expr="8" enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Fast Re-sync Jump Width.</description>
+               <assign when="true">
+                    <register name="FDCBT" bitfield="FRJW" value="($this.getValue() - 1)" reverse_value="x -> (x + 1)"/>
+               </assign>
+            </integer>
+            <struct id="fbitTime" label="Fast bit time" options="remove_from_struct_init" enable="$parent.getParent().getSetting(`flexibleDataRate`).getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <info id="fsyncSeg" label="Fast synchronization segment" value="$parent.getParent().getSetting(`ftimeQuantum`).getValue()" > 
+<!--                  value="($parent.getParent().getSetting(`preDivider`).getValue() != `N/A`) ? timeToString(getTime((($parent.getParent().getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toInt() * 1.0) / $parent.getParent().getSetting(`preDivider`).getValue()),`ns`,`Hz`)) : `N/A`">-->
+                  <description>Fast synchronization segment time based on the selected length.</description>
+               </info>
+               <info id="fpropSeg" label="Fast propagation segment" value="($parent.getParent().getSetting(`ftimeQuantum`).getValue() != `N/A`) ? timeToString(getTime($parent.getParent().getSetting(`ftimeQuantum`).getValue(),`ns`,`s`) / 1000.0 * $parent.getParent().getSetting(`fpropSeg`).getValue()): `N/A`" > 
+<!--                  value="($parent.getParent().getSetting(`preDivider`).getValue() != `N/A`) ? timeToString(getTime((($parent.getParent().getParent().getSetting(`clockSourceFreq`).getEnumItemValue().toInt() * 1.0) / $parent.getParent().getSetting(`preDivider`).getValue()),`ns`,`Hz`)) : `N/A`">-->
+                  <description>Fast propagation segment time based on the selected length.</description>
+               </info>
+               <info id="fphaseSeg1" label="Fast phase segment 1" value="($parent.getParent().getSetting(`ftimeQuantum`).getValue() != `N/A`) ? timeToString(getTime($parent.getParent().getSetting(`ftimeQuantum`).getValue(),`ns`,`s`) / 1000.0 * $parent.getParent().getSetting(`fphaseSeg1`).getValue()): `N/A`" > 
+                  <description>Fast phase segment 1 time based on the selected length.</description>
+               </info>
+               <info id="fphaseSeg2" label="Fast phase segment 2" value="($parent.getParent().getSetting(`ftimeQuantum`).getValue() != `N/A`) ? timeToString(getTime($parent.getParent().getSetting(`ftimeQuantum`).getValue(),`ns`,`s`) / 1000.0 * $parent.getParent().getSetting(`fphaseSeg2`).getValue()): `N/A`" > 
+                  <description>Fast phase segment 2 time based on the selected length.</description>
+               </info>
+               <info id="fbitTime" label="Fast nominal bit time" value="($parent.getParent().getSetting(`ftimeQuantum`).getValue() != `N/A`) ? timeToString(getTime($parent.getParent().getSetting(`ftimeQuantum`).getValue(),`ns`,`s`) / 1000.0 * (1 + $parent.getParent().getSetting(`fpropSeg`).getValue() + $parent.getParent().getSetting(`fphaseSeg1`).getValue() + $parent.getParent().getSetting(`fphaseSeg2`).getValue())): `N/A`" > 
+                  <description>Nominal bit time of the fast mode in time units.</description>
+               </info>
+            </struct>
+         </struct>
+         <struct id="tdcStruct" label="Transceiver delay configuration structure" from="_flexcan_timing_config">
+            <bool id="tdcEn" label="Transceiver delay compensation" options="REGISTERS_REFRESH">
+               <description>Enables/disables the use of Transceiver Delay Compensation feature.</description>
+               <assign when="true">
+                    <register name="FDCTRL" bitfield="TDCEN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </bool>
+            <integer id="tdcOff" label="Transceiver delay compensation offset" type="uint8_t" min_expr="0" max_expr="(1 &lt;&lt; 5)">
+                <description expr="`The offset value to be added to the measured transceiver&apos;s loop delay in order to define the position of the delayed comparison point when bit rate switching is active.  The valid programmable values are 1-` + (1 &lt;&lt; 5) + `.`"></description>
+                <validation>
+                    <constraint cond_expr="$this.getValue() != 0" level="warning" description="It is not recommended to have TDCOFF equal to 0."/>
+               </validation>                
+               <assign when="true">
+                    <register name="FDCTRL" bitfield="TDCOFF" value="($this.getValue())" reverse_value="x -> (x)"/>                 
+               </assign>
+            </integer>
+         </struct>
+         <enum id="flexcan_wake_up_source_t" label="FlexCAN wake up source" from="_flexcan_wake_up_source">
+            <description></description>
+            <item id="0" label="Unfiltered Rx input"/>
+            <item id="1" label="Filtered Rx input"/>
+         </enum>
+        <struct id="globalMask_14_15_t" label="Rx MB masking">
+            <integer id="globalMask" label="Rx MB global mask" type="uint32_t">
+               <description>It masks the filter fields of all Rx MBs, excluding MBs 14-15, which have individual masks selected by Rx MB14 mask and Rx MB15 mask items.</description>
+               <assign when="true">
+                    <register name="RXMGMASK" bitfield="MG" value="$this.getValue()" reverse_value="x -> x"/>                 
+               </assign>
+            </integer> 
+            <integer id="mask14" label="Rx MB14 mask" type="uint32_t">
+               <description>It masks the filter fields of Rx message buffer 14.</description>
+               <assign when="true">
+                    <register name="RX14MASK" bitfield="RX14M" value="$this.getValue()" reverse_value="x -> x"/>                 
+               </assign>
+            </integer> 
+            <integer id="mask15" label="Rx MB15 mask" type="uint32_t">
+               <description>It masks the filter fields of Rx message buffer 15.</description>
+               <assign when="true">
+                    <register name="RX15MASK" bitfield="RX15M" value="$this.getValue()" reverse_value="x -> x"/>                 
+               </assign>
+            </integer>
+         </struct>
+        <struct id="individualMask_struct" label="Individual Rx MB masking"> 
+            <integer id="index" label="Index" type="uint8_t" min_expr="0" max_expr="31" options="REGISTERS_REFRESH">
+               <description>Selects index of the MB or Rx FIFO ID filter table element which use the selected mask.</description>
+            </integer> 
+            <integer id="mask" label="Rx mask" type="uint32_t">
+               <description>It masks the filter fields of Rx message buffer or Rx FIFO ID filter table element selected in by the Index item.</description>
+               <assign when="true">
+                    <register name_expr="`RXIMR` + $parent.index.getValue()" bitfield="MI" value="$this.getValue()" reverse_value="x -> x"/>                 
+               </assign>
+            </integer>
+         </struct>         
+         <struct id="flexcan_config_t" label="FlexCAN module configuration structure" from="_flexcan_config">
+            <reference id="_clkSrc" label="Clock source for FlexCAN Protocol Engine" type="flexcan_clock_source_t" available="false">
+               <description>Clock source for FlexCAN Protocol Engine.</description>
+            </reference>
+            <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="enumItemsOf($parent._clkSrc).filter(i -> i.isAvailable()).arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> enumItem.getID(),
+               enumItem -> getPeripheralClock($instance.getPeripheral(), enumItem.getValue()),
+               enumItem -> enumItem.getValue())">
+               <description>FlexCAN clock source selection.</description>
+               <validation>
+<!--                  <dependency when_expr="$this.getEnumItemValue() == `ExternalClock`" resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.` + getPeripheralClockSignal($instance.getPeripheral(), $this.getEnumItemValue())" description_expr="`External clock source signal ` +  getPeripheralClock($instance.getPeripheral(), $this.getEnumItemValue()) + ` of peripheral ` + $instance.getPeripheral() + ` is not routed`" level="Warning">
+                     <feature name="routed" evaluation="equal">
+                        <data expr="true"/>
+                     </feature>
+                  </dependency>-->
+                  <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.clockSource.getEnumItemValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() == `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSource.getEnumItemValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSource.getEnumItemValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSource.getEnumItemValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSource.getEnumItemValue()) + `is inactive.`))"
+                     level="Warning">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.clockSource.getEnumItemValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSource.getEnumItemValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSource.getEnumItemValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSource.getEnumItemValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSource.getEnumItemValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+               <assign when="true">
+                    <register name="CTRL1" bitfield="CLKSRC" value="$this.getEnumItemId().toInt()" reverse_value="x -> x.toString()"/>                 
+               </assign>
+            </dynamic_enum>
+            <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" 
+               items="createArray().merge(getClockFunctionalGroups().arrayToEnumItems(
+                  enumItem -> true,
+                  enumItem -> enumItem,
+                  enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemValue(), enumItem)) + ` (` + enumItem + `)`,
+                  enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSource.getEnumItemValue(), enumItem)))" >
+               <description>Selection of the clock source frequency</description>
+               <validation>
+                  <constraint cond_expr="$this.getEnumItemValue().toHertz() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> x.toHertz() >= 0" />
+            </dynamic_enum>
+            <!-- Glitch filter clock -->
+            <dynamic_enum id="glitchFilterClockSource" label="Glitch filter clock source" options="remove_from_struct_init" items="createArray().addItemToList(`GlitchFilter`, `Glitch filter clock`, `GlitchFilter`, true, `Glitch filter clock source that is used for filtering out of unwanted noise on the CAN bus.`).arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> enumItem.getID(),
+               enumItem -> getPeripheralClock($instance.getPeripheral(), enumItem.getValue()),
+               enumItem -> enumItem.getValue(),
+               enumItem -> enumItem.getDescription())">
+               <description>FlexCAN glitch filter clock source.</description>
+               <validation>
+                  <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.glitchFilterClockSource.getEnumItemValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() == `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.glitchFilterClockSource.getEnumItemValue())"
+                     description_expr="`Glitch filter clock ` + (getPeripheralClock($instance.getPeripheral(), $parent.glitchFilterClockSource.getEnumItemValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.glitchFilterClockSource.getEnumItemValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.glitchFilterClockSource.getEnumItemValue()) + `is inactive.`))"
+                     level="Warning">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="(getPeripheralClockType($instance.getPeripheral(),$parent.glitchFilterClockSource.getEnumItemValue()) == `INPUT_SIGNAL`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.glitchFilterClockSource.getEnumItemValue())"
+                     description_expr="`Glitch filter clock ` + (getPeripheralClock($instance.getPeripheral(), $parent.glitchFilterClockSource.getEnumItemValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.glitchFilterClockSource.getEnumItemValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.glitchFilterClockSource.getEnumItemValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>            
+            <!-- clkSrc is an element of the flexcan initialization structure on part of the SoC but the clock source selection (clockSource) is always provided (enabled) -->
+             <variable id="clkSrc" value="(($parent.clockSource.getEnumItemId() == `1`)? `kFLEXCAN_ClkSrc1` : `kFLEXCAN_ClkSrc0`)" options="add_to_struct" available="(!featureDefined(`FLEXCAN_INSTANCE_SUPPORT_ENGINE_CLK_SEL_REMOVE`) ||  !getFeature(`FLEXCAN_INSTANCE_SUPPORT_ENGINE_CLK_SEL_REMOVE`))"></variable>
+            <bool id="flexibleDataRate" label="Flexible data rate mode" options="UI_LABEL_BOLD;REGISTERS_REFRESH" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Enable/disable flexible data rate mode that allows usage of the fast mode settings. It also allows extended message frames and long payload. It disallows usage of the Rx FIFO.</description>
+               <assign when="true">
+                    <register name="MCR" bitfield="FDEN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+               </assign>
+            </bool>
+            <!-- <integer id="baudRate" label="Baud rate (required)" type="uint32_t" min_expr="1">
+               <description>FlexCAN baud rate in bps that is used for calculation of the pre-scaler division factor (time quantum). For the real baud rate value see the Timing configuration settings below.</description>
+            </integer>
+            <integer id="baudRateFD" label="Fast baud rate" type="uint32_t" min_expr="1" enable="$parent.flexibleDataRate.getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>FlexCAN fast baud rate in bps for the Flexible data rate. This setting is available nad used in the configuration when the Flexible data rate is enabled.</description>
+            </integer> -->
+            <bool id="enableBRS" label="Bit rate switch" options="remove_from_struct_init" enable="$parent.flexibleDataRate.getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Enables/disables the bit rate switch. It enables the effect of the Bit Rate Switch (BRS bit) during the data phase of Tx messages.</description>
+               <assign when="true">
+                    <register name="FDCTRL" bitfield="FDRATE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </bool>
+            <reference id="timingConfig" label="Timing configuration" type="flexcan_timing_config_t" options="remove_from_struct_init"/>
+            <enum id="sampling" label="Bit sampling" from="_flexcan_wake_up_source">
+                <description>It defines the sampling mode of CAN bits at the Rx input.</description>
+                <validation>
+                  <constraint when_expr="($this.getEnumItemValue() != 0)" cond_expr="!$parent.flexibleDataRate.getValue()" level="error" description="Flexible data rate cannot be set together with more than 1 sample (see the Flexible data rate mode item)."/>
+                  <constraint when_expr="($this.getEnumItemValue() != 0)" cond_expr="($parent.timingConfig.phaseSeg1.getValue() &gt;= 2)" level="error" description="It is necessary to guarantee a minimum value of two TQs in Phase segment 1 when more than 1 sample is selected."/>
+                </validation>
+                <assign when="true">
+                    <register name="CTRL1" bitfield="SMP" value="$this.getEnumItemId().toInt()" reverse_value="x -> x.toString()"/>                 
+                </assign>
+                <item id="0" label="1 sample"/>
+                <item id="1" label="3 samples"/>
+            </enum>
+            <bool id="autoBusOffRecovery" label="Automatic Bus Off recovery">
+               <description>Enables/disables automatic Bus off state recovery. If enabled automatic recovering from Bus Off state occurs according to the CAN Specification 2.0B. If disabled automatic recovering from Bus Off is disabled and the module remains in Bus Off state until the bit is negated by the user. If the negation occurs before 128 sequences of 11 recessive bits are detected on the CAN bus, then Bus Off recovery happens. If the negation occurs after 128 sequences of 11 recessive bits occurred, then FlexCAN will resynchronize to the bus by waiting for 11 recessive bits before joining the bus. After negation, the BOFFREC bit can be reasserted again during Bus Off, but it will be effective only the next time the module enters Bus Off. If BOFFREC was negated when the module entered Bus Off, asserting it during Bus Off will not be effective for the current Bus Off recovery.</description>
+               <assign when="true">
+                    <register name="CTRL1" bitfield="BOFFREC" value="$this.getValue() ? 0 : 1" reverse_value="x -> ((x == 0) ? true : false)"/>
+               </assign>
+            </bool>
+            <reference id="wakeupSrc" label="Wake up source" type="flexcan_wake_up_source_t">
+               <description>Selection of the wake up source for detection of recessive to dominant edges on the CAN bus. Either filtered (low-pass filter) Rx input or unfiltered Rx input can be used.</description>
+               <assign when="true">
+                    <register name="MCR" bitfield="WAKSRC" value="$this.getEnumItemId().toInt()" reverse_value="x -> x.toString()"/>                 
+               </assign>
+            </reference>
+            <bool id="enableLoopBack" label="Loop back self test mode">
+               <description>Enable/Disable Loop back self test mode.</description>
+               <assign when="true">
+                    <register name="CTRL1" bitfield="LPB" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </bool>
+            <bool id="enableTimerSync" label="Timer synchronization">
+               <description>Enables/Disables the timer synchronization. It enables a mechanism that resets the free-running timer each time a message is received in Message Buffer 0. This feature provides means to synchronize multiple FlexCAN stations with a special “SYNC” message, that is, global network time.</description>
+               <assign when="true">
+                    <register name="CTRL1" bitfield="TSYN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </bool>
+            <integer id="timerValue" label="Initialization timer value" type="uint16_t">
+               <description>The initialization value of the 16-bit free-running timer used for time stamp. The supported range of values is MCU specific.</description>
+               <assign when="true">
+                    <register name="TIMER" bitfield="TIMER" value="$this.getValue()" reverse_value="x -> x"/>                 
+               </assign>
+            </integer>           
+            <bool id="enableSelfWakeup" label="Self wakeup mode">
+               <description>Enable/Disable Self wakeup mode.</description>
+               <assign when="true">
+                    <register name="MCR" bitfield="SLFWAK" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+               </assign>
+            </bool>
+            <bool id="disableSelfReception" label="Self reception">
+                <description>Enable/Disable Self reception.</description>
+                <assign when="true">
+                    <register name="MCR" bitfield="SRXDIS" value="$this.getValue() ? 0 : 1" reverse_value="x -> ((x == 0) ? true : false)"/>
+                </assign>
+            </bool>
+            <bool id="enableSupervisorMode" label="Supervisor mode" available="false">
+                <description>Switch between Supervisor and User mode.</description>
+                <assign when="true">
+                    <register name="MCR" bitfield="SUPV" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                </assign>
+            </bool>
+            <bool id="enableListenOnlyMode" label="Listen only mode">
+                <description>Enable/Disable Listen only mode.</description>
+                <assign when="true">
+                    <register name="CTRL1" bitfield="LOM" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                </assign>
+            </bool>
+            <bool id="enableDoze" label="Doze mode" available="$instance.getPeripheral().bitfieldExists(`MCR`,`DOZE`)">
+               <description>Enable/Disable Doze mode.</description>
+               <assign when="true">
+                    <register name="MCR" bitfield="DOZE" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+               </assign>
+            </bool>
+            <bool id="enableFreezeMode" label="Enable Freeze mode entering">
+               <description>Enable/Disable Freeze mode entering.</description>
+               <assign when="true">
+                    <register name="MCR" bitfield="FRZ" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+               </assign>
+            </bool>
+            <bool id="enterFreezeMode" label="Enter Freeze mode" available="$parent.enableFreezeMode.getValue()">
+               <description>Enter Freeze mode.</description>
+               <assign when="true">
+                    <register name="MCR" bitfield="HALT" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+               </assign>
+            </bool>
+            <bool id="mDis" label="Disable module">
+               <description>Disable module in initialization.</description>
+               <assign when="true">
+                    <register name="MCR" bitfield="MDIS" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+               </assign>
+            </bool>
+            <enum id="lbuf" label="First transmitted" from="_flexcan_wake_up_source">
+                <description>It defines the ordering mechanism for message buffer transmission.</description>
+                <validation>
+                  <constraint when_expr="($this.getEnumItemValue() != 0)" cond_expr="!$parent.enableLocalPriority.getValue()" level="warning" description="Local priority setting is overridden by this item."/>
+                  <constraint when_expr="($this.getEnumItemValue() != 0)" cond_expr="($parent.timingConfig.phaseSeg1.getValue() &gt;= 2)" level="error" description="It is necessary to guarantee a minimum value of two TQs in Phase segment 1 when more than 1 sample is selected."/>
+               </validation>
+                <assign when="true">
+                    <register name="CTRL1" bitfield="LBUF" value="$this.getEnumItemId().toInt()" reverse_value="x -> x.toString()"/>                 
+                </assign>
+                <item id="0" label="Buffer with highest priority"/>
+                <item id="1" label="Lowest number buffer"/>
+            </enum>
+            <bool id="enableLocalPriority" label="Local priority">
+                <description>Enable/disable local priority feature. It is used to expand the ID used during the arbitration process. With this expanded ID concept, the arbitration process is done based on the full 32-bit word, but the actual transmitted ID still has 11-bit for standard frames and 29-bit for extended frames.</description>
+                <assign when="true">
+                    <register name="MCR" bitfield="LPRIOEN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>
+                </assign>
+            </bool>
+            <integer id="txArbitrationStartDelay" label="Tx arbitration start delay" type="uint8_t" min_expr="0" max_expr="0x1F">
+               <description>It specify how many CAN bits the Tx arbitration process start point can be delayed from the first bit of CRC field on CAN bus.</description>
+               <assign when="true">
+                    <register name="CTRL2" bitfield="TASD" value="$this.getValue()" reverse_value="x -> x"/>                 
+               </assign>
+            </integer> 
+            <bool id="enableTxAbort" label="Tx abort mechanism">
+                <description>Enable/disable Tx Abort mechanism. This mechanism guarantees a safe procedure for aborting a pending transmission, so that no frame is sent in the CAN bus without notification.</description>
+                <assign when="true">
+                    <register name="MCR" bitfield="AEN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                </assign>
+            </bool>
+            <reference id="tdc" label="Transceiver delay compensation configuration" type="tdcStruct" enable="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`)) &amp;&amp; $parent.flexibleDataRate.getValue()"/>
+            <enum id="eacen" label="Rx arbitration field comparison for mailboxes" from="_flexcan_wake_up_source">
+                <description>It controls the comparison of IDE and RTR bits within Rx mailbox filters with their corresponding bits in the incoming frame by the matching process. This setting does not affect matching for Rx FIFO.</description>
+                <assign when="true">
+                    <register name="CTRL2" bitfield="EACEN" value="$this.getEnumItemId().toInt()" reverse_value="x -> x.toString()"/>                 
+                </assign>
+                <item id="0" label="IDE compared; RTR never compared">
+                    <description>Rx mailbox filter&apos;s IDE bit is always compared and RTR is never compared despite mask bits.</description>
+                </item>
+                <item id="1" label="Both IDE and RTR compared">
+                    <description>Enables the comparison of both Rx mailbox filter&apos;s IDE and RTR bit with their corresponding bits within the incoming frame. Mask bits do apply.</description>
+                </item>
+            </enum>
+            <enum id="rrs" label="Remote request handling" from="_flexcan_wake_up_source">
+                <description>It selects whether automatic remote response will be generated or the remote request frame is treated as normal data frame.</description>
+                <assign when="true">
+                    <register name="CTRL2" bitfield="RRS" value="$this.getEnumItemId().toInt()" reverse_value="x -> x.toString()"/>                 
+                </assign>
+                <item id="0" label="Remote response frame is generated">
+                    <description>Remote request frame is submitted to a matching process and an automatic remote response frame is generated if a message buffer with CODE=0b1010 is found with the same ID.</description>
+                </item>    
+                <item id="1" label="Remote request frame is stored">
+                    <description>No automatic remote response frame will be generated. Remote request frame is submitted to a matching process and stored in the corresponding message buffer in the same fashion as a data frame.</description>
+                </item>
+            </enum>
+            <reference id="dataSize" label="Message buffer size" type="flexcan_mb_size_t" options="remove_from_struct_init" enable="$parent.flexibleDataRate.getValue()" available="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`))">
+               <description>Payload configuration of the message buffers (available when the Flexible data rate is enabled). This setting also impacts the maximum number of the message buffers, e.g. when the peripheral supports 64 message buffer (8 bytes payload) then there are 42 message buffers for 16 bytes payload, 24 message buffers for 32 bytes payload and 14 message buffer for 64 bytes payload.</description>
+            </reference>
+            <integer id="maxMbNum" label="Last Message Buffer index" type="uint8_t" min_expr="0" max_expr="(featureDefined(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`) &amp;&amp; getFeature(`FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE`)  &amp;&amp; $parent.flexibleDataRate.getValue()) ? ((featureDefined(`FLEXCAN_HAS_MESSAGE_BUFFER_MAX_NUMBER`) ? getFeature(`FLEXCAN_HAS_MESSAGE_BUFFER_MAX_NUMBER`) - 1 : 63) * 16 / $parent.dataSize.getEnumItemValue().toInt()) : (featureDefined(`FLEXCAN_HAS_MESSAGE_BUFFER_MAX_NUMBER`) ? getFeature(`FLEXCAN_HAS_MESSAGE_BUFFER_MAX_NUMBER`)- 1 : 63)">
+               <description>The maximum index of Message Buffers used by user. The supported range of values is MCU specific.</description>
+               <assign when="true">
+                    <register name="MCR" bitfield="MAXMB" value="$this.getValue()" reverse_value="x -> x"/>                 
+               </assign>
+            </integer>
+         </struct>
+         <!-- Messag Buffer configuration structures FIFO, RX and TX -->
+         <enum id="flexcan_frame_format_t" label="FlexCAN frame format" from="_flexcan_frame_format">
+            <item id="kFLEXCAN_FrameFormatStandard" label="Standard"/>
+            <item id="kFLEXCAN_FrameFormatExtend" label="Extended"/>
+         </enum>
+         <enum id="flexcan_frame_type_t" label="FlexCAN frame type" from="_flexcan_frame_type">
+            <item id="kFLEXCAN_FrameTypeData" label="Data"/>
+            <item id="kFLEXCAN_FrameTypeRemote" label="Remote request"/>
+         </enum>
+         <struct id="flexcan_rx_mb_config_t" label="FlexCAN Receive Message Buffer configuration structure" from="_flexcan_rx_mb_config">
+            <description>This structure is used as the parameter of FLEXCAN_SetRxMbConfig() function. The FLEXCAN_SetRxMbConfig() function is used to configure FlexCAN Receive Message Buffer. The function abort previous receiving process, clean the Message Buffer and activate the Rx Message Buffer using given Message Buffer setting.</description>
+<!--        The id parameter should be set using FLEXCAN_ID_EXT() or FLEXCAN_ID_STD() macro-->
+            <integer id="id" label="Frame ID" type="uint32_t">
+               <description>CAN Message Buffer Frame Identifier (the ID can be set in the hexadecimal format by using the 0x prefix, e.g. 0x123).</description>
+            </integer>
+            <reference id="format" label="Frame ID format" type="flexcan_frame_format_t">
+               <description>CAN Frame Identifier format (Standard of Extend).</description>
+            </reference>
+            <reference id="type" label="Frame Type" type="flexcan_frame_type_t">
+               <description>CAN Frame Type (Data or Remote).</description>
+            </reference>
+         </struct>
+         <enum id="flexcan_mb_type_confg"  label="FlexCAN message buffer type configuration" from="user_type" >
+            <item id="mbInactive" label="Inactive"/>
+            <item id="mbRx" label="Rx"/>
+            <item id="mbTx" label="Tx"/>
+         </enum>
+         <struct id="flexcan_mb_config" label="FlexCAN message buffer configuration">
+            <integer id="mbID" label="Buffer ID"  type="uint8_t">
+               <description>The message buffer ID represent the index of the message buffer in the FlexCAN memory device. The index must be in the range of the maximum number defined in the settings above.</description>
+               <validation>
+                  <!-- constraint for checking of duplicated message buffers -->
+                  <constraint cond_expr="($parent.getParent().searchInArray(item -> (($parent.getID() != item.getID()) &amp;&amp; 
+                                      ((item.getSetting(`mbID`).getValue())  ==  ($this.getValue())))) &lt; 0)" level="error" 
+                                      description_expr="`Duplicated message buffer (` + $this.getValue() + `) is selected. Select each message buffer once only.`"/>
+                  <constraint cond_expr="$this.getValue() &lt;= $configSet.can_config.maxMbNum.getValue()" level="error" description_expr="`The message buffer ID must be in the range of the selected Last Message buffer index, select a message buffer in the available range (` + $configSet.mbRange.getValue() + `).`"/>
+                  <constraint cond_expr="$this.getValue() &gt; $configSet.rx_FIFO_max_MB_index.getValue().toInt()" level="error" description_expr="`The selected message buffer is allocated by the Rx FIFO. Please, select a message buffer in the available range (` + ($configSet.rx_FIFO_max_MB_index.getValue().toInt()+1) + ` - ` + ($configSet.can_config.maxMbNum.getValue()) + `).`"/>
+                  <constraint cond_expr="$this.getValue() &gt; $configSet.rx_FIFO_max_MB_index.getValue().toInt()" level="error" description_expr="`The selected message buffer is allocated by the Rx FIFO. Please, select a message buffer in the available range (` + $configSet.mbRange.getValue() + `).`"/>
+               </validation>
+            </integer>
+            <reference id="mbType" label="MB Type" type="flexcan_mb_type_confg">
+               <description>Message Buffer type. Rx (receive) bufffer, Tx (transmit) or Inactive (this type is not initialized, it is the default state).</description>
+            </reference>
+            <reference id="rxMb" label="rxMbConfig" type="flexcan_rx_mb_config_t" enable="$parent.mbType.getValue() == `mbRx`"></reference>            
+         </struct>
+         <enum id="rx_FIFO_filters" label="Number of Rx FIFO filters" from="user_type" >
+            <item id="0" label="8" value="0"/>
+            <item id="1" label="16" value="1"/>
+            <item id="2" label="24" value="2"/>
+            <item id="3" label="32" value="3"/>
+            <item id="4" label="40" value="4"/>
+            <item id="5" label="48" value="5"/>
+            <item id="6" label="56" value="6"/>
+            <item id="7" label="64" value="7"/>
+            <item id="8" label="72" value="8"/>
+            <item id="9" label="80" value="9"/>
+            <item id="10" label="88" value="10"/>
+            <item id="11" label="96" value="11"/>
+            <item id="12" label="104" value="12"/>
+            <item id="13" label="112" value="13"/>
+            <item id="14" label="120" value="14"/>
+            <item id="15" label="128" value="15"/>
+         </enum>
+         <struct id="flexcan_rx_fifo_config_t" label="FlexCAN Rx FIFO configuration structure" from="_flexcan_rx_fifo_config">
+            <!-- <string id="idFilterTable" label="Pointer to filter table identifier" options="remove_from_struct_init">
+               <description>Pointer to the FlexCAN Rx FIFO identifier filter table identifier ("uint32_t *" type). &lt;b&gt;Please note that the identifier must defined and must contain the filter values in the user code.&lt;/b&gt;</description>
+               <validation>
+                  <constraint cond_expr="$this.getValue().isCIdentifier()" level="error" description="An ANSI-C valid identifier is expected."/>
+               </validation>
+            </string> -->
+<!--            <integer id="idFilterNum" label="Number of filter elements" type="uint8_t">
+               <description>The quantity of filter elements.</description>
+            </integer>-->
+            <reference id="idFilterNum" label="Number of filter elements" type="rx_FIFO_filters" options="use_enum_value">
+               <description>The quantity of filter elements that are available. Note: Eight filter elements occupies two message buffers that are allocated by the Rx FIFO.</description>
+               <validation>
+                  <constraint cond_expr="($configSet.rx_FIFO_max_MB_index.getValue().toInt()) &lt;= ($configSet.can_config.maxMbNum.getValue())" level="error" description_expr="`The selected number of filter elements requires more message buffers than specified in the Last Message Buffer index item. The Last Message Buffer index has to be at least ` + ($configSet.rx_FIFO_max_MB_index.getValue().toInt()) + `.`"/>
+               </validation>
+               <assign when="true">
+                    <register name="CTRL2" bitfield="RFFN" value="$this.getEnumItemId().toInt()" reverse_value="x -> x.toString()"/>                 
+                </assign>
+            </reference>
+            <reference id="idFilterType" label="FIFO Filter type" type="flexcan_rx_fifo_filter_type_t">
+               <description>The FlexCAN Rx FIFO Filter type.</description>
+            </reference>
+            <reference id="priority" label="FIFO receive priority" type="flexcan_rx_fifo_priority_t">
+               <description>Selects whether matching starts from Rx FIFO and continues on mailboxes (Rx message buffers) or matching starts from mailboxes (Rx message buffers) and continues to Rx FIFO.</description>
+               <assign when="true">
+                    <register name="CTRL2" bitfield="MRP" value="$this.getEnumItemId().toInt()" reverse_value="x -> x.toString()"/>                 
+                </assign>
+            </reference>
+            <integer id="globalMask" label="FIFO global mask" type="uint32_t">
+               <description>It masks Rx FIFO ID filter table elements that do not have a corresponding individual masks selected by Individual masks array of items.</description>
+               <assign when="true">
+                    <register name="RXFGMASK" bitfield="FGM" value="$this.getValue()" reverse_value="x -> x"/>                 
+               </assign>
+            </integer> 
+            <bool id="enableRx_DMA" label="Enable DMA">
+                <description>Enable/disable Rx FIFO DMA operation. IFLAG1[BUF5I] generates the DMA request and no RX FIFO interrupt is generated.</description>
+                <assign when="true">
+                    <register name="MCR" bitfield="DMA" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+                </assign>
+            </bool>
+         </struct>
+        <!-- Software reset -->
+        <variable id="softwareReset" value="0">           
+            <assign when="true">
+                <register peripheral_expr="system::getInstanceSwResetPeripheral()" name_expr="system::getInstanceSwResetRegister()" bitfield_expr="system::getInstanceSwResetBitfield()" value="system::getInstanceSwResetDisableValue()"/>              
+            </assign>
+        </variable>            
+        <struct id="flexcan_template_params_t" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+            <variable id="PERIPHERAL" value="$instance.getPeripheral()"></variable>
+            <variable id="VPREFIX" value="$configSet.inst_ID_def.getValue()"></variable>
+            <!-- Software reset -->
+            <variable id="SW_RESET_CONTROL_PERIPHERAL" value="system::getInstanceSwResetPeripheral()"></variable>
+            <variable id="SW_RESET_CONTROL_REGISTER" value="system::getInstanceSwResetRegister()"></variable>
+            <variable id="SW_RESET_CONTROL_BITFIELD" value="system::getInstanceSwResetBitfield()"></variable>
+        </struct>
+      </user_types>
+      <settings>
+         <reference id="can_config" label="FlexCAN configuration" type="flexcan_config_t" options="UI_LABEL_HIDDEN; UI_BORDER_HIDDEN">
+            <description>FlexCAN main configuration.</description>
+         </reference>
+        <bool id="enableIndividMask" label="Rx individual mask" options="REGISTERS_REFRESH;UI_LABEL_BOLD">
+           <description>Enable/Disable Receiver individual mask it influence also the global mask availability in Rx FIFO.</description>
+           <assign when="true">
+                <register name="MCR" bitfield="IRMQ" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+           </assign>
+        </bool>
+        <reference id="globalMask_14_15" label="Rx MB global and 14-15 masking" type="globalMask_14_15_t" options="UI_LABEL_HIDDEN" enable="!($parent.enableIndividMask.getValue())"/>
+        <array id="individualMasks" label="Individual masks for MBs or Rx FIFO ID filter table element" type="individualMask_struct" min_expr="0" max_expr="32" options="ShowContentAs=Table;UI_TABLE_COLUMN_WIDTHS=7,8;UI_ARRAY_INDICES_HIDDEN;REGISTERS_REFRESH" enable="($parent.enableIndividMask.getValue())">
+           <description>Setup individual masks for Message buffers or Rx FIFO ID filter table element with selected index.</description>
+           <validation>
+                <constraint cond_expr="($this.findDuplicates(x -> x.getSetting(`index`).getValue()).size() == 0)" level="error" description="There are some duplicated MBs."/>
+           </validation>
+           <item_defaults>
+                <set_default id="index" value_expr="x -> x.getId()"/>
+                <set_default id="mask" value_expr="x -> 0x3FFFFFFF"/>
+           </item_defaults>
+        </array>
+         <bool id="enableRxFIFO" label="Enable Rx FIFO" enable="!($configSet.can_config.flexibleDataRate.isAvailable() &amp;&amp; $configSet.can_config.flexibleDataRate.getValue())" options="UI_LABEL_BOLD">
+            <description>Enable/disable Rx FIFO configuration. When enabled a part of message buffers is allocated for the Rx FIFO and filters. Note: The Rx FIFO (legacy Rx FIFO) is not available when the Flexible data rate is enabled.</description>
+           <assign when="true">
+                <register name="MCR" bitfield="RFEN" value="$this.getValue() ? 1 : 0" reverse_value="x -> ((x == 1) ? true : false)"/>                 
+           </assign>
+         </bool>
+         <variable id="enableRxFIFOStatus" value="$parent.enableRxFIFO.getValue() &amp;&amp; (!($configSet.can_config.flexibleDataRate.isAvailable() &amp;&amp; $configSet.can_config.flexibleDataRate.getValue()))" ></variable>
+         <reference id="rxFIFO" label="Rx FIFO" type="flexcan_rx_fifo_config_t" options="UI_LABEL_HIDDEN" enable="$parent.enableRxFIFOStatus.getValue()">
+            <description>Rx FIFO configuration.</description>
+         </reference>
+         <!-- Number of Message Buffers (MB) used for Rx FIFO = 8 + ((number_of_filters / 8 - 1) * 2) = 8 + (RFFN * 2); index of the last MB used for Rx FIFO = number_of_MB - 1 -->
+         <variable id="rx_FIFO_max_MB_index" value="$parent.enableRxFIFOStatus.getValue() ? (8 + ($parent.rxFIFO.idFilterNum.getEnumItemValue().toInt() * 2) - 1) : -1"></variable>
+         <info id="mbRange" label="Message buffers range" value="(($configSet.rx_FIFO_max_MB_index.getValue().toInt()) &lt; ($configSet.can_config.maxMbNum.getValue())) ? (($configSet.rx_FIFO_max_MB_index.getValue().toInt() + 1) + ` - ` + ($configSet.can_config.maxMbNum.getValue())) : `No message buffer available`">  
+            <description>The message buffer range is defined by the Last Message Buffer index item and usage of the Rx FIFO with filters (the Rx FIFO allocates (8 + ((number_of_filters / 8 - 1) * 2)) message buffers) </description>
+         </info>
+         <!-- <array id="channels" label="Message buffers initalization" type="flexcan_mb_config" options="ShowContentAs=Table;UI_ARRAY_INDICES_HIDDEN" key_selector_expr="x -> x.getSetting(`mbID`).getValue()">
+            <item_defaults>
+               <set_default id="mbID" value_expr="x -> (x.getID()==`0`) ? ($configSet.rx_FIFO_max_MB_index.getValue().toInt() + 1) : x.getParent().get(x.getID().toInt() - 1).getSetting(`mbID`).getValue() + 1"/>
+               <set_default id="mbType" value_expr="x -> `mbInactive`"/>
+               <set_default id="rxMb.id" value_expr="x -> 0"/>
+               <set_default id="rxMb.format" value_expr="x -> `kFLEXCAN_FrameFormatStandard`"/>
+               <set_default id="rxMb.type" value_expr="x -> `kFLEXCAN_FrameTypeData`"/>
+            </item_defaults>
+         </array> -->
+         <!-- IDs used for an instance of this component -->
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+         <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>
+         <variable id="inst_clock_src_ID" value="$parent.inst_ID_def.getValue() + `_CLOCK_SOURCE`"></variable>
+         <variable id="inst_mode_ID" value="$parent.inst_ID_def.getValue() + `_MODE`"></variable>
+        <variable id="clockGate" value="1">
+            <assign when="true">
+            <register peripheral_expr="system::getInstanceClockGatePeripheral()" name_expr="system::getInstanceClockGateRegister()" bitfield_expr="system::getInstanceClockGateBitfield()" value="system::getInstanceClockGateEnableValue()"/>
+            </assign>
+         </variable>
+        <!-- Template parameters -->
+        <reference id="flexcan_template_params" type="flexcan_template_params_t" label="" options="UI_LABEL_HIDDEN;UI_BORDER_HIDDEN">
+        </reference>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">device_registers</param>
+                <param id="filename">fsl_device_registers.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <fragment id="define">
+               <param id="name" expr="$this.inst_peripheral_ID.getValue()"/>
+               <param id="value" expr="$instance.getPeripheral()"/>
+               <param id="description">Definition of peripheral ID</param>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="$this.inst_clock_src_ID.getValue()"/>
+               <param id="value" expr="$this.can_config.clockSourceFreq.getEnumItemValue().toHertz() + `UL`"/> 
+               <param id="description">Definition of the clock source frequency</param>
+            </fragment>
+            <fragment id="all_assigned_regs_init">
+                <param id="name" expr="$configSet.inst_ID_def.getValue()"/>
+            </fragment> 
+         </section>
+        <section target="common_pre_init_function">
+            <!-- Clock gate enable -->
+            <fragment id="clock_gate_enable_init"></fragment>
+        </section>
+        <section target="init_function_body">
+           <fragment id="template" apply_to="$configSet.flexcan_template_params">
+                <param id="file">fsl_flexcan.template</param>
+                <param id="setting" expr="$this"></param>
+                <param id="separators"></param>
+                <param id="description" expr="$instance.getPeripheral() + ` initialization`"></param>
+           </fragment>
+        </section>
+      </code>
+      <validation>
+         <!-- RX and TX pins are always used -->
+         <dependency  resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.can_rxd`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`RX`, $instance.getPeripheral())" level="Warning">
+             <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+         <dependency  resource_type="PeripheralUnifiedSignal" resource_id_expr="$instance.getPeripheral() + `.can_txd`" description_expr="$components.system.#global.err_routed_signal.getValue().formatMessage(`TX`, $instance.getPeripheral())" level="Warning">
+             <feature name="routed" evaluation="equal">
+               <data expr="true"/>
+            </feature>
+         </dependency>
+      </validation>      
+      <quick_selections>
+         <quick_selection id="default" label="Default" >
+            <description>After reset configuration of the FlexCAN</description>
+            <set id="can_config.enableBRS">true</set>
+            <set id="can_config.maxMbNum">15</set>
+            <set id="can_config.enableLoopBack">false</set>
+            <set id="can_config.enableTimerSync">true</set>
+            <set id="can_config.enableSelfWakeup">false</set>
+            <set id="can_config.wakeupSrc">0</set>
+            <set id="can_config.enableDoze">false</set>
+            <set id="can_config.autoBusOffRecovery">true</set>
+            <set id="can_config.tdc.tdcOff">1</set>
+            <set id="can_config.timingConfig.propSeg">1</set>
+            <set id="can_config.timingConfig.phaseSeg1">1</set>
+            <set id="can_config.timingConfig.phaseSeg2">2</set>
+            <set id="can_config.timingConfig.rJumpwidth">1</set>
+            <set id="can_config.timingConfig.fpropSeg">1</set>
+            <set id="can_config.timingConfig.fphaseSeg1">1</set>
+            <set id="can_config.timingConfig.fphaseSeg2">2</set>
+            <set id="can_config.timingConfig.frJumpwidth">1</set>
+            <set id="can_config.txArbitrationStartDelay">20</set>
+            <set id="enableIndividMask">false</set>
+            <set id="globalMask_14_15.globalMask">0x3FFFFFFF</set>
+            <set id="globalMask_14_15.mask14">0x3FFFFFFF</set>
+            <set id="globalMask_14_15.mask15">0x3FFFFFFF</set>
+            <set id="rxFIFO.globalMask">0x3FFFFFFF</set>
+            <set id="rxFIFO">false</set>
+            <!-- <set id="channels.0.mbID">0</set>
+            <set id="channels.0.mbType">mbRx</set>
+            <set id="channels.1.mbID">1</set>
+            <set id="channels.1.mbType">mbTx</set> -->
+         </quick_selection>
+         <default>default</default>
+      </quick_selections>
+   </config_set>
+   <config_set id="interruptsCfg" label="Interrupt configuration">
+      <description>FlexCAN interrupt mode configuration</description>
+      <generated_types/>
+      <user_types>
+         <set id="_flexcan_interrupt_enable" label="Interrupt enable masks">
+            <item id="kFLEXCAN_BusOffInterruptEnable" label="Bus Off interrupt">
+                <assign when="true">
+                    <register name="CTRL1" bitfield="BOFFMSK" value="$this.getValue() ? 1 : 0" 
+                       reverse_value="x -> ((x == 1) ? true : false)"/>
+                </assign>
+            </item>
+            <item id="kFLEXCAN_BusOffDoneInterruptEnable" label="Bus Off done interrupt">
+                <assign when="true">
+                    <register name="CTRL2" bitfield="BOFFDONEMSK" value="$this.getValue() ? 1 : 0" 
+                       reverse_value="x -> ((x == 1) ? true : false)"/>
+                </assign>
+            </item>
+            <item id="kFLEXCAN_ErrorInterruptEnable" label="Error interrupt">
+                <assign when="true">
+                    <register name="CTRL1" bitfield="ERRMSK" value="$this.getValue() ? 1 : 0" 
+                       reverse_value="x -> ((x == 1) ? true : false)"/>
+                </assign>
+            </item>
+            <item id="kFLEXCAN_ErrorFastInterruptEnable" label="Error fast interrupt">
+                <assign when="true">
+                    <register name="CTRL2" bitfield="ERRMSK_FAST" value="$this.getValue() ? 1 : 0" 
+                       reverse_value="x -> ((x == 1) ? true : false)"/>
+                </assign>
+            </item>
+            <item id="kFLEXCAN_TxWarningInterruptEnable" label="Tx warning interrupt">
+                <assign when="true">
+                    <register name="CTRL1" bitfield="TWRNMSK" value="$this.getValue() ? 1 : 0" 
+                       reverse_value="x -> ((x == 1) ? true : false)"/>
+                    <register name="MCR" bitfield="WRNEN" value="$this.getValue() ? 1 : getBitFieldValue($instance.getPeripheral(), `CTRL1`, `RWRNMSK`)" 
+                       reverse_value="x -> ((getBitFieldValue($instance.getPeripheral(), `CTRL1`, `TWRNMSK`) == 1) ? true : false)"/>
+                </assign>
+            </item>
+            <item id="kFLEXCAN_RxWarningInterruptEnable" label="Rx warning interrupt" >
+                <assign when="true">
+                    <register name="CTRL1" bitfield="RWRNMSK" value="$this.getValue() ? 1 : 0" 
+                       reverse_value="x -> ((x == 1) ? true : false)"/>
+                    <register name="MCR" bitfield="WRNEN" value="$this.getValue() ? 1 : getBitFieldValue($instance.getPeripheral(), `CTRL1`, `TWRNMSK`)" 
+                       reverse_value="x -> ((getBitFieldValue($instance.getPeripheral(), `CTRL1`, `RWRNMSK`) == 1) ? true : false)"/>
+                </assign>
+            </item>
+            <item id="kFLEXCAN_WakeUpInterruptEnable" label="Wake up interrupt">
+                <assign when="true">
+                    <register name="MCR" bitfield="WAKMSK" value="$this.getValue() ? 1 : 0" 
+                       reverse_value="x -> ((x == 1) ? true : false)"/>
+                </assign>
+            </item>
+         </set>
+      </user_types>
+      <settings>
+<!--         <integer id="messageBufferIrqs" label="Message buffer interrupt enable mask" type="int64_t">
+            <description>Message buffer interrupt mask that is used for enable of individual message buffer interrupts. Each bit represents the corresponding message buffer.</description>
+         </integer>-->
+         <reference id="interruptsEnable" type="_flexcan_interrupt_enable" label="Interrupt sources">
+            <description>Selection of interrupt sources of the FlexCAN device.</description>
+            <validation>
+                <constraint when_expr="$parent.sharedInterrupt.getValue() &amp;&amp; ($this.getCValue() !=``)"
+                cond_expr="$parent.enable_irq.getValue()"
+                level="warning"
+                description_expr="`Interrupt source is enabled, but the INTC settings not. See Enable interrupt vector item.`"/>
+                <constraint when_expr="$this.getSetting(`kFLEXCAN_BusOffInterruptEnable`).getValue() &amp;&amp; !$parent.sharedInterrupt.getValue()"
+                cond_expr="$parent.enable_busoff_irq.getValue()"
+                level="warning"
+                description_expr="`Interrupt source is enabled, but the INTC settings not. See Enable Bus Off interrupt vector item.`"/>
+                <constraint when_expr="$this.getSetting(`kFLEXCAN_BusOffDoneInterruptEnable`).getValue() &amp;&amp; !$parent.sharedInterrupt.getValue()"
+                cond_expr="$parent.enable_busoff_irq.getValue()"
+                level="warning"
+                description_expr="`Interrupt source is enabled, but the INTC settings not. See Enable Bus Off interrupt vector item.`"/>
+                <constraint when_expr="$this.getSetting(`kFLEXCAN_ErrorInterruptEnable`).getValue() &amp;&amp; !$parent.sharedInterrupt.getValue()"
+                cond_expr="$parent.enable_error_irq.getValue()"
+                level="warning"
+                description_expr="`Interrupt source is enabled, but the INTC settings not. See Enable Error interrupt vector item.`"/>
+                <constraint when_expr="$this.getSetting(`kFLEXCAN_ErrorFastInterruptEnable`).getValue() &amp;&amp; !$parent.sharedInterrupt.getValue()"
+                cond_expr="$parent.enable_error_irq.getValue()"
+                level="warning"
+                description_expr="`Interrupt source is enabled, but the INTC settings not. See Enable Error interrupt vector item.`"/>
+                <constraint when_expr="$this.getSetting(`kFLEXCAN_TxWarningInterruptEnable`).getValue() &amp;&amp; !$parent.sharedInterrupt.getValue()"
+                cond_expr="$parent.enable_tx_irq.getValue()"
+                level="warning"
+                description_expr="`Interrupt source is enabled, but the INTC settings not. See Enable Tx warning interrupt vector item.`"/>
+                <constraint when_expr="$this.getSetting(`kFLEXCAN_RxWarningInterruptEnable`).getValue() &amp;&amp; !$parent.sharedInterrupt.getValue()"
+                cond_expr="$parent.enable_rx_irq.getValue()"
+                level="warning"
+                description_expr="`Interrupt source is enabled, but the INTC settings not. See Enable Rx warning interrupt vector item.`"/>
+                <constraint when_expr="$this.getSetting(`kFLEXCAN_WakeUpInterruptEnable`).getValue() &amp;&amp; !$parent.sharedInterrupt.getValue()"
+                cond_expr="$parent.enable_wakeup_irq.getValue()"
+                level="warning"
+                description_expr="`Interrupt source is enabled, but the INTC settings not. See Enable Wake up interrupt vector item.`"/>
+            </validation>
+         </reference>
+         <integer id="messageBufferIrqs" label="Message buffers 0 - 31 interrupt enable mask" type="uint32_t">
+            <description>Message buffer interrupt mask that is used for enable of individual interrupts of message buffers 0 - 31 (IMASK1 register). Each bit represents the corresponding message buffer.</description>
+            <validation>
+                <constraint when_expr="$this.getValue() != 0 &amp;&amp; $parent.sharedInterrupt.getValue()"
+                cond_expr="$parent.enable_irq.getValue()"
+                level="warning"
+                description_expr="`Interrupt source is enabled, but the INTC settings not. See Enable interrupt vector item.`"/>
+                <constraint when_expr="$this.getValue() != 0 &amp;&amp; !$parent.sharedInterrupt.getValue()"
+                cond_expr="$parent.enable_ored_mb_irq.getValue()"
+                level="warning"
+                description_expr="`Interrupt source is enabled, but the INTC settings not. See Enable Message buffers interrupt vector item.`"/>
+            </validation>            
+            <assign when="true">
+                <register name="IMASK1" bitfield="BUF31TO0M" value="$this.getValue()" reverse_value="x -> x"/>                 
+            </assign>
+         </integer>
+         <!-- Check the interrupt resource if the CAN shared interrupt is defined (function == "flexcan") -->
+         <variable id="sharedInterrupt" value="getResource(`interrupts`, $instance.getCoreId()).countOccurrences(item -> (item.getSetting(`devices`).searchInArray(devItem -> (devItem.getSetting(`id`).getValue() == $instance.getPeripheral()) &amp;&amp; (devItem.getSetting(`function`).getValue() == `flexcan`)) >= 0), false) > 0"></variable>
+         <!-- Shared interrupt only on the SoC -->
+         <bool id="enable_irq" label="Enable interrupt" available="$parent.sharedInterrupt.getValue()" options="UI_LABEL_BOLD">
+            <description>"Enable/disable shared interrupt for the CAN interrupt sources."</description>
+            <validation>
+                <constraint when_expr="$this.getValue()"
+                cond_expr="($parent.interruptsEnable.getCValue() !=``) || ($parent.messageBufferIrqs.getValue() != 0)"
+                level="warning"
+                description_expr="`INTC settings are initialized, but the Interrupt source is not enabled.`"/>
+            </validation>
+         </bool>
+         <reference id="interrupt_shared" label="Interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=flexcan" enable="$parent.enable_irq.getValue()" available="$parent.sharedInterrupt.getValue()"/>
+         <!-- Dedicated interrupts on the SoC -->
+         <bool id="enable_ored_mb_irq" label="Enable Message buffers interrupt" available="!$parent.sharedInterrupt.getValue()" options="UI_LABEL_BOLD">
+            <description>"Enable/disable interrupt from Message buffers selected by mask in Message buffers 0 - 31 interrupt enable mask item."</description>
+            <validation>
+                <constraint when_expr="$this.getValue()"
+                cond_expr="($parent.messageBufferIrqs.getValue() != 0)"
+                level="warning"
+                description_expr="`INTC settings are initialized, but the Interrupt source is not enabled.`"/>
+            </validation>
+         </bool>
+         <reference id="interrupt_ored_mb" label="Message buffers interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=can_ored_mb" enable="$parent.enable_ored_mb_irq.getValue()" available="!$parent.sharedInterrupt.getValue()"/>
+         <bool id="enable_busoff_irq" label="Enable Bus Off interrupt" available="!$parent.sharedInterrupt.getValue()" options="UI_LABEL_BOLD">
+            <description>"Enable/disable Bus Off interrupt which can be caused by Bus Off or Bus Off done flag."</description>
+            <validation>
+                <constraint when_expr="$this.getValue()"
+                cond_expr="($parent.getSetting(`interruptsEnable.kFLEXCAN_BusOffInterruptEnable`).getValue()) || ($parent.getSetting(`interruptsEnable.kFLEXCAN_BusOffDoneInterruptEnable`).getValue())"
+                level="warning"
+                description_expr="`INTC settings are initialized, but neither the Bus Off nor Bus Off done interrupt source is enabled.`"/>
+            </validation>
+         </bool>
+         <reference id="interrupt_busoff" label="Bus Off interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=can_busoff" enable="$parent.enable_busoff_irq.getValue()" available="!$parent.sharedInterrupt.getValue()"/>
+         <bool id="enable_error_irq" label="Enable Error interrupt" available="!$parent.sharedInterrupt.getValue()" options="UI_LABEL_BOLD">
+            <description>"Enable/disable Error interrupt which can be caused by Error or Error fast flag."</description>
+            <validation>
+                <constraint when_expr="$this.getValue()"
+                cond_expr="($parent.getSetting(`interruptsEnable.kFLEXCAN_ErrorInterruptEnable`).getValue()) || ($parent.getSetting(`interruptsEnable.kFLEXCAN_ErrorFastInterruptEnable`).getValue())"
+                level="warning"
+                description_expr="`INTC settings are initialized, but neither the Error nor Error fast interrupt source is enabled.`"/>
+            </validation>
+         </bool>
+         <reference id="interrupt_error" label="Error interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=can_error" enable="$parent.enable_error_irq.getValue()" available="!$parent.sharedInterrupt.getValue()"/>
+         <bool id="enable_tx_irq" label="Enable Tx warning interrupt" available="!$parent.sharedInterrupt.getValue()" options="UI_LABEL_BOLD">
+            <description>"Enable/disable Error interrupt which can be caused by Tx warning flag."</description>
+            <validation>
+                <constraint when_expr="$this.getValue()"
+                cond_expr="($parent.getSetting(`interruptsEnable.kFLEXCAN_TxWarningInterruptEnable`).getValue())"
+                level="warning"
+                description_expr="`INTC settings are initialized, but Tx warning interrupt source is not enabled.`"/>
+            </validation>
+         </bool>
+         <reference id="interrupt_tx" label="Tx warning interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=can_tx" enable="$parent.enable_tx_irq.getValue()" available="!$parent.sharedInterrupt.getValue()"/>
+         <bool id="enable_rx_irq" label="Enable Rx warning interrupt" available="!$parent.sharedInterrupt.getValue()" options="UI_LABEL_BOLD">
+            <description>"Enable/disable Error interrupt which can be caused by Rx warning flag."</description>
+            <validation>
+                <constraint when_expr="$this.getValue()"
+                cond_expr="($parent.getSetting(`interruptsEnable.kFLEXCAN_RxWarningInterruptEnable`).getValue())"
+                level="warning"
+                description_expr="`INTC settings are initialized, but Rx warning interrupt source is not enabled.`"/>
+            </validation>
+         </bool>
+         <reference id="interrupt_rx" label="Rx warning interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=can_rx" enable="$parent.enable_rx_irq.getValue()" available="!$parent.sharedInterrupt.getValue()"/>
+         <bool id="enable_wakeup_irq" label="Enable Wake up interrupt" available="!$parent.sharedInterrupt.getValue()" options="UI_LABEL_BOLD">
+            <description>"Enable/disable Error interrupt which can be caused by Wake up flag."</description>
+            <validation>
+                <constraint when_expr="$this.getValue()"
+                cond_expr="($parent.getSetting(`interruptsEnable.kFLEXCAN_WakeUpInterruptEnable`).getValue())"
+                level="warning"
+                description_expr="`INTC settings are initialized, but Wake up interrupt source is not enabled.`"/>
+            </validation>
+         </bool>
+         <reference id="interrupt_wakeup" label="Wake up interrupt" type="interrupt_vector_t" config_set_id="fsl_interrupt_peripheral" component_id="system" options="UI_LABEL_HIDDEN;irq_function=can_wakeup" enable="$parent.enable_wakeup_irq.getValue()" available="!$parent.sharedInterrupt.getValue()"/>
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="fsl_interrupt_peripheral"/>
+            <from component_id="system" config_set_id="common_code_templates"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="defines">
+            <!-- Shared interrupt definitions -->
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_shared" if_expr="$this.enable_irq.getValue() &amp;&amp; $this.sharedInterrupt.getValue()" />
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_ored_mb" if_expr="$this.enable_ored_mb_irq.getValue() &amp;&amp; (!$this.sharedInterrupt.getValue())" />
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_busoff" if_expr="$this.enable_busoff_irq.getValue() &amp;&amp; (!$this.sharedInterrupt.getValue())" />
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_error" if_expr="$this.enable_error_irq.getValue() &amp;&amp; (!$this.sharedInterrupt.getValue())" />
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_tx" if_expr="$this.enable_tx_irq.getValue() &amp;&amp; (!$this.sharedInterrupt.getValue())" />
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_rx" if_expr="$this.enable_rx_irq.getValue() &amp;&amp; (!$this.sharedInterrupt.getValue())" />
+            <fragment id="IRQ_definitions" apply_to="$this.interrupt_wakeup" if_expr="$this.enable_wakeup_irq.getValue() &amp;&amp; (!$this.sharedInterrupt.getValue())" />
+         </section>                  
+         <section target="init_function_body">
+         </section>
+      </code>
+      <validation></validation>
+      <quick_selections></quick_selections>
+   </config_set>
+</component:config_component>

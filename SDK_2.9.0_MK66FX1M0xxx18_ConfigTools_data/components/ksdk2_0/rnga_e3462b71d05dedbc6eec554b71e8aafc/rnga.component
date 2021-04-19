@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<component:config_component id="rnga" label="RNG" options="UI_COMPONENT_MODE_HIDDEN" global_only="false" hidden="false" xsi:schemaLocation="http://swtools.freescale.net/XSD/component/1.0 http://swtools.freescale.net/XSD/component/1.0/component-5.0.xsd" xmlns:component="http://swtools.freescale.net/XSD/component/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="Peripheral driver">
+   <sw_comp_ref name="platform.drivers.rnga" version="2.0.1"/>
+   <description>Random Number Generator Accelerator (RNGA)</description>
+   <mode id="general" label="General">
+      <description>General mode</description>
+      <config_set_refs>
+         <config_set_ref>fsl_rnga</config_set_ref>
+      </config_set_refs>
+      <master_peripheral exclusive="true">
+         <peripheral_type>RNG</peripheral_type>
+      </master_peripheral>
+   </mode>
+   <config_set id="fsl_rnga" label="General configuration" from_source="fsl_rnga.h">
+      <description>General configuration of the Random Number Generator Accelerator.</description>
+      <generated_types>
+         <enum id="rnga_mode_t" label="RNGA working mode" from="_rnga_mode" available="(featureDefined(`FSL_FEATURE_SOC_RNG_COUNT`) &amp;&amp; getFeature(`FSL_FEATURE_SOC_RNG_COUNT`))">
+            <item id="kRNGA_ModeNormal" label="Normal Mode"/>
+            <item id="kRNGA_ModeSleep" label="Sleep Mode"/>
+         </enum>
+      </generated_types>
+      <user_types>
+         <enum id="rnga_mode_t" label="Work mode" from="_rnga_mode" available="(featureDefined(`FSL_FEATURE_SOC_RNG_COUNT`) &amp;&amp; getFeature(`FSL_FEATURE_SOC_RNG_COUNT`))">
+            <item id="kRNGA_ModeNormal" label="Normal">
+               <description>RNGA is running (the ring-oscillator clocks are active) and generate random data (entropy) every period calculated in the Random data generation period item value. RNGA_SetMode() function is not called due to selection of this work mode by RNGA_Init() function.</description>
+            </item>
+            <item id="kRNGA_ModeSleep" label="Sleep">
+               <description>RNGA is not running (the ring-oscillator clocks are inactive). Do not use RNGA_GetRandomData() to read the generated data in this mode, the return value is 0 until the run mode is set again. Check the mode by RNGA_GetMode() before call RNGA_GetRandomData(). DOZE signal can also put the RNGA into the sleep mode.</description>
+            </item>
+         </enum>
+         <struct id="clockConfig_t" label="Clock configuration" from="clock">
+            <variable id="clockSourceUId" value="`BusInterfaceClock`"/>
+            <dynamic_enum id="clockSource" label="Clock source" options="remove_from_struct_init" items="createArray().addItemToList($parent.clockSourceUId.getValue(), getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()), ($instance.getPeripheral() + `_CLK_SRC`),true)">
+               <description>RNGA clock source</description>
+               <validation>
+                  <dependency when_expr="$parent.clockSourceFreq.getEnumItemId() == `GetFreq`" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Warning">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+                  <dependency when_expr="($parent.clockSourceFreq.getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.clockSourceFreq.getEnumItemId() != `custom`)" resource_type="ClockOutput" resource_id_expr="getPeripheralClockSignal($instance.getPeripheral(),$parent.clockSourceUId.getValue())"
+                     description_expr="(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexMatch(`.*-.*`)?(getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()).regexSubstr(`(.*)-`,1) + `is inactive.`): (getPeripheralClock($instance.getPeripheral(), $parent.clockSourceUId.getValue()) + `is inactive.`))"
+                     level="Error">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data expr="0" unit="Hz" type="Frequency"/>
+                     </feature>
+                  </dependency>
+               </validation>
+            </dynamic_enum>
+            <dynamic_enum id="clockSourceFreq" label="Clock source frequency" options="remove_from_struct_init" items="createArray()
+               .merge(getClockFunctionalGroups().arrayToEnumItems(
+               enumItem -> true,
+               enumItem -> enumItem,
+               enumItem -> frequencyToString(getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSourceUId.getValue(), enumItem)) + ` (`+ enumItem + `)`,
+               enumItem -> getPeripheralClockFrequency($instance.getPeripheral(), $parent.clockSourceUId.getValue() , enumItem)))">
+               <validation>
+                  <constraint cond_expr="$this.getEnumItemValue().toHertz() != 0" level="error" description="Clock source frequency cannot be 0 when it is used."/>
+               </validation>
+               <custom_value_support default="0" validation_expr="x -> toHertz(x) >= 0" />
+            </dynamic_enum>            
+         </struct>
+      </user_types>
+      <settings>
+         <reference id="clockConfig" label="Clock configuration" type="clockConfig_t" config_set_id="fsl_rnga" options="remove_from_struct_init"  available="true">
+            <description>RNGA clock configuration</description>
+         </reference>
+         <variable id="generationPeriod_rational" value="((($parent.getSetting(`clockConfig.clockSourceFreq`).getEnumItemId() != `GetFreq`) &amp;&amp; ($parent.getSetting(`clockConfig.clockSourceFreq`).getEnumItemValue().toHertz() &gt; 0)) ? (1.0 / (1.0 * $parent.getSetting(`clockConfig.clockSourceFreq`).getEnumItemValue().toHertz()/(256))) : `N/A`)"></variable>            
+         
+         <reference id="workMode" label="Work mode" type="rnga_mode_t" config_set_id="fsl_rnga">
+            <description>RNGA working mode: Normal or Sleep. Check the mode by RNGA_GetMode() before call RNGA_GetRandomData(). Cause in the sleep mode it always returns 0.</description>
+         </reference>
+         <info id="generationPeriod" label="Random data generation period" 
+          value="($parent.workMode.getEnumItemId() == `kRNGA_ModeNormal`) ? (($parent.generationPeriod_rational.getValue() != `N/A`) ? timeToString(1000000.0 * ($parent.generationPeriod_rational.getValue())) : `N/A`) : `N/A`" enable="$parent.workMode.getEnumItemId() == `kRNGA_ModeNormal`">
+            <description>Period of new random data generation cycle (256 clock source ticks).</description>
+         </info>
+         <bool id="setSeed" label="Set seed">
+            <description>Call method RNGA_Seed() with below specified seed. Specifying a seed is optional but recommended. You can write it any time during operation. Specifies an entropy value that RNGA uses in addition to its ring oscillators to seed its pseudo-random algorithm.</description>
+         </bool>
+         <integer type="uint32_t" id="seed" label="Seed" min_expr="0" max_expr="0xFFFFFFFF" enable="$parent.setSeed.getValue()">
+            <description>Input of an entropy value (32-bit) that the RNGA uses to seed its pseudo-random algorithm. Range: 0 to 0xFFFFFFFF.</description>
+         </integer>
+         <variable id="inst_ID" value="$instance.getFnGroupPrefix() + $instance.getID()"></variable>
+         <variable id="inst_ID_def" value="toUpperCase($parent.inst_ID.getValue())"></variable>
+         <variable id="inst_peripheral_ID" value="$parent.inst_ID_def.getValue() + `_PERIPHERAL`"></variable>   
+      </settings>
+      <fragment_defs>
+         <import>
+            <from component_id="system" config_set_id="common_code_templates"/>
+         </import>
+      </fragment_defs>
+      <code>
+         <section target="includes">
+            <fragment id="include">
+               <param id="name">common</param>
+               <param id="filename">fsl_common.h</param>
+            </fragment>
+            <fragment id="include">
+               <param id="name">rnga</param>
+               <param id="filename">fsl_rnga.h</param>
+            </fragment>
+         </section>
+         <section target="defines">
+            <fragment id="comment">
+               <param id="content" expr="$instance.getFnGroupName() + ` defines for ` + $instance.getPeripheral()"></param>
+               <param id="paddingLevel" expr="0"></param>
+            </fragment>
+            <fragment id="define">
+               <param id="name" expr="$this.inst_peripheral_ID.getValue()"/>
+               <param id="value" expr="$instance.getPeripheral()"/>
+               <param id="description">Definition of peripheral ID</param>
+            </fragment>
+         </section>
+         <section target="init_function_body">
+         <!-- Init -->
+            <expr>leftPadding(`/* RNGA initialization */`,1)</expr><br/>
+            <expr>leftPadding(`RNGA_Init(` + $configSet.inst_peripheral_ID.getValue() + `);`, 1)</expr><br/>
+            <if expr="(($this.setSeed.isAvailable()) &amp;&amp; ($this.setSeed.getValue()))">
+               <expr>leftPadding(`/* Set user seed */`,1)</expr><br/>
+               <expr>leftPadding(`RNGA_Seed(` + $configSet.inst_peripheral_ID.getValue() + `, ` + $this.seed.getValue() + `UL);`, 1)</expr><br/>
+            </if>
+            <if expr="(($this.workMode.isAvailable()) &amp;&amp; ($this.workMode.getEnumItemId() != `kRNGA_ModeNormal`))">
+               <expr>leftPadding(`/* Select Sleep work mode */`,1)</expr><br/>
+               <expr>leftPadding(`RNGA_SetMode(` + $configSet.inst_peripheral_ID.getValue() + `, ` + $this.workMode.getEnumItemId() + `);`, 1)</expr><br/>
+            </if>
+         </section>
+      </code>
+      <validation/>
+      <quick_selections>
+         <quick_selection id="QuickSelection1" label="Default">
+            <set id="workMode">kRNGA_ModeNormal</set>
+            <set id="setSeed">false</set>
+         </quick_selection>
+         <default>QuickSelection1</default>
+      </quick_selections>     
+   </config_set>
+</component:config_component>

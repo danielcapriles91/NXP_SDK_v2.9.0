@@ -1,0 +1,279 @@
+#include "usb_device_config.h"
+#include "usb.h"
+#include "usb_device.h"
+
+#include "usb_device_class.h"
+#include "usb_device_printer.h"
+
+#include "usb_device_ch9.h"
+#include "usb_device_descriptor.h"
+
+#include "usb_device_composite.h"
+#include "usb_device_${idLowerSnakeCase}$.h"
+
+#include "fsl_debug_console.h"
+
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/${<code>
+var outEpSnakeCase = "";
+var inEpSnakeCase = "";
+
+endpointsSettings[0].endpoints.forEach(function (ep){
+    if (ep.directionSnakeCase === "IN" && inEpSnakeCase === "") {
+        inEpSnakeCase = ep.idSnakeCase;
+    } else if (outEpSnakeCase === "") {
+        outEpSnakeCase = ep.idSnakeCase;
+    }
+});
+</code>}$
+#define USB_PRINTER_BUFFER_SIZE                                                                            \\
+    (HS_${outEpSnakeCase}$_PACKET_SIZE > FS_${outEpSnakeCase}$_PACKET_SIZE ? \\
+            HS_${outEpSnakeCase}$_PACKET_SIZE : FS_${outEpSnakeCase}$_PACKET_SIZE)
+
+/* Define the types for application */
+typedef struct _usb_printer_struct_t
+{
+    class_handle_t classHandle;
+    uint32_t dataReceiveLength;
+    /*!< buffer for send, still NULL in this demo.
+    if the user\'s application parses the received data and needs to send back the status information,
+    user needs to set the data to this buffer and length*/
+    uint8_t *sendBuffer;
+    uint32_t sendLength;
+    uint8_t *printerBuffer;
+    volatile uint8_t printerState;
+    uint8_t printerPortStatus;
+} usb_printer_struct_t;
+
+typedef enum _usb_device_printer_state
+{
+    kPrinter_Idle = 0x00,
+    kPrinter_Receiving,
+    kPrinter_Received,
+} usb_device_printer_buffer_t;
+
+/*******************************************************************************
+ * Prototypes
+ ******************************************************************************/
+
+usb_status_t USB_Device${idCamelCase}$Callback(class_handle_t handle, uint32_t event, void *param);
+
+usb_status_t USB_Device${idCamelCase}$SetConfiguration(class_handle_t handle, uint8_t configuration_idx);
+
+usb_status_t USB_Device${idCamelCase}$SetInterface(class_handle_t handle, uint8_t alternateSetting);
+
+usb_status_t USB_Device${idCamelCase}$Init(usb_device_composite_struct_t *deviceComposite);
+
+/*******************************************************************************
+ * Variables
+ ******************************************************************************/
+
+/* Data buffer for receiving and sending*/
+USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static uint8_t s_PrinterBuffer[USB_PRINTER_BUFFER_SIZE];
+
+USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static usb_device_composite_struct_t *s_UsbDeviceComposite;
+USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static usb_printer_struct_t s_UsbDevicePrinter;
+
+USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static uint8_t s_PrinterClassBuffer[64];
+
+/*******************************************************************************
+ * Code
+ ******************************************************************************/
+
+/* ksdk debug console must have been initialized. */
+static void USB_PrinterPrintData(uint8_t *data, uint32_t length)
+{
+    while (length--)
+    {
+        PUTCHAR(*(data++));
+    }
+}
+
+/*!
+ * @brief Interface task function.
+ */
+void USB_Device${idCamelCase}$Task(void)
+{
+    usb_status_t status = kStatus_USB_Error;
+
+    if (s_UsbDeviceComposite->attach)
+    {
+        if (s_UsbDevicePrinter.printerState == kPrinter_Received)
+        {
+            USB_PrinterPrintData(s_UsbDevicePrinter.printerBuffer, s_UsbDevicePrinter.dataReceiveLength);
+            s_UsbDevicePrinter.printerState = kPrinter_Idle;
+        }
+
+        if (s_UsbDevicePrinter.printerState == kPrinter_Idle)
+        {
+            status = USB_DevicePrinterRecv(s_UsbDevicePrinter.classHandle, USB_${outEpSnakeCase}$,
+                    s_UsbDevicePrinter.printerBuffer, USB_PRINTER_BUFFER_SIZE);
+
+            if (status == kStatus_USB_Success)
+            {
+                s_UsbDevicePrinter.printerState = kPrinter_Receiving;
+            }
+        }
+    }
+}
+
+/*!
+* @brief Function that processes class specific events.
+*
+* @param handle Handle to USB device class.
+* @param event Class event code.
+* @param param    The parameter of the class specific event.
+* @return usb_status_t Status of USB transaction.
+*/
+usb_status_t USB_Device${idCamelCase}$Callback(class_handle_t handle, uint32_t event, void *param)
+{
+    usb_status_t status = kStatus_USB_Error;
+    usb_device_printer_class_request_t *classRequest;
+    usb_device_endpoint_callback_message_struct_t *message;
+    const uint8_t printerId[] = "xxMFG:NXP;MDL: printer demo;CMD:POSTSCRIPT";
+
+    uint32_t len;
+
+    switch (event)
+    {
+        case kUSB_DevicePrinterEventGetDeviceId:
+            classRequest = (usb_device_printer_class_request_t *)param;
+            if ((classRequest->configIndex == 0U) && (classRequest->interface == USB_${idSnakeCase}$_INDEX) &&
+                (classRequest->alternateSetting == 0))
+            {
+                for (len = 0; len < sizeof(printerId); ++len)
+                {
+                    s_PrinterClassBuffer[len] = printerId[len];
+                }
+                len = sizeof(printerId) - 1;
+                s_PrinterClassBuffer[0] = ((uint8_t)(len >> 8));
+                s_PrinterClassBuffer[1] = (uint8_t)len;
+                classRequest->buffer = s_PrinterClassBuffer;
+                classRequest->length = len;
+            }
+            else
+            {
+                classRequest->buffer = NULL;
+                classRequest->length = 0U;
+            }
+            break;
+
+        case kUSB_DevicePrinterEventGetPortStatus:
+            classRequest = (usb_device_printer_class_request_t *)param;
+            s_PrinterClassBuffer[0] = s_UsbDevicePrinter.printerPortStatus;
+            classRequest->buffer = s_PrinterClassBuffer;
+            classRequest->length = 1U;
+            break;
+
+        case kUSB_DevicePrinterEventSoftReset:
+            s_UsbDevicePrinter.printerState = kPrinter_Idle;
+            break;
+
+        case kUSB_DevicePrinterEventRecvResponse:
+            message = (usb_device_endpoint_callback_message_struct_t *)param;
+            if ((s_UsbDeviceComposite->attach) && (s_UsbDevicePrinter.printerState == kPrinter_Receiving))
+            {
+                if ((message != NULL) && (message->length != USB_UNINITIALIZED_VAL_32))
+                {
+                    s_UsbDevicePrinter.printerState = kPrinter_Received;
+                    s_UsbDevicePrinter.dataReceiveLength = message->length;
+                }
+                else
+                {
+                    s_UsbDevicePrinter.printerState = kPrinter_Idle;
+                    status = USB_DevicePrinterRecv(s_UsbDevicePrinter.classHandle, USB_${outEpSnakeCase}$,
+                            s_UsbDevicePrinter.printerBuffer, USB_PRINTER_BUFFER_SIZE);
+                    if (status == kStatus_USB_Success)
+                    {
+                        s_UsbDevicePrinter.printerState = kPrinter_Receiving;
+                    }
+                }
+            }
+            break;
+
+        case kUSB_DevicePrinterEventSendResponse:
+            USB_DevicePrinterSend(s_UsbDevicePrinter.classHandle, USB_${inEpSnakeCase}$,
+                    s_UsbDevicePrinter.sendBuffer, s_UsbDevicePrinter.sendLength);
+            break;
+
+        default:
+            break;
+    }
+
+    return status;
+}
+
+/*!
+* @brief Notifies application layer about set configuration event.
+*
+* @param handle Handle to USB device class.
+* @param configuration_idx Id of device configuration.
+* @return usb_status_t Status of USB transaction.
+*/
+usb_status_t USB_Device${idCamelCase}$SetConfiguration(class_handle_t handle, uint8_t configuration_idx)
+{
+    usb_status_t status = kStatus_USB_Error;s_UsbDevicePrinter.printerState = kPrinter_Idle;
+
+    /* demo run */
+    status = USB_DevicePrinterRecv(s_UsbDevicePrinter.classHandle, USB_${outEpSnakeCase}$,
+            s_UsbDevicePrinter.printerBuffer, USB_PRINTER_BUFFER_SIZE);
+    if (status == kStatus_USB_Success)
+    {
+        s_UsbDevicePrinter.printerState = kPrinter_Receiving;
+    }
+
+    USB_DevicePrinterSend(s_UsbDevicePrinter.classHandle, USB_${inEpSnakeCase}$,
+            s_UsbDevicePrinter.sendBuffer, s_UsbDevicePrinter.sendLength);
+    
+    return status;
+}
+
+/*!
+* @brief Notifies application layer about set configuration event.
+*
+* @param class_handle_t Handle to USB device class.
+* @param alternateSetting Id of device alternative setting.
+* @return usb_status_t Status of USB transaction.
+*/
+usb_status_t USB_Device${idCamelCase}$SetInterface(class_handle_t handle, uint8_t alternateSetting)
+{
+    usb_status_t status = kStatus_USB_Error;
+
+    s_UsbDevicePrinter.printerState = kPrinter_Idle;
+
+    /* demo run */
+    if (alternateSetting == 0U)
+    {
+        status = USB_DevicePrinterRecv(s_UsbDevicePrinter.classHandle, USB_${outEpSnakeCase}$,
+                s_UsbDevicePrinter.printerBuffer, USB_PRINTER_BUFFER_SIZE);
+        if (status == kStatus_USB_Success)
+        {
+            s_UsbDevicePrinter.printerState = kPrinter_Receiving;
+        }
+
+        USB_DevicePrinterSend(s_UsbDevicePrinter.classHandle, USB_${inEpSnakeCase}$,
+                s_UsbDevicePrinter.sendBuffer, s_UsbDevicePrinter.sendLength);
+    }
+
+    return status;
+ }
+
+/*!
+* @brief Initializes device structure and buffer pointers.
+*
+* @param *device Pointer to structure to initialize to.
+* @return usb_status_t Always return kStatus_USB_Success value.
+*/
+usb_status_t USB_Device${idCamelCase}$Init(usb_device_composite_struct_t *deviceComposite)
+{
+    s_UsbDeviceComposite = deviceComposite;
+    s_UsbDevicePrinter.classHandle = s_UsbDeviceComposite->${idLowerCamelCase}$Handle;
+    s_UsbDevicePrinter.printerPortStatus = USB_DEVICE_PRINTER_PORT_STATUS_DEFAULT_VALUE;
+    s_UsbDevicePrinter.printerState = kPrinter_Idle;
+    s_UsbDevicePrinter.sendBuffer = NULL;
+    s_UsbDevicePrinter.sendLength = 0;
+    s_UsbDevicePrinter.printerBuffer = s_PrinterBuffer;
+
+    return kStatus_USB_Success;
+}

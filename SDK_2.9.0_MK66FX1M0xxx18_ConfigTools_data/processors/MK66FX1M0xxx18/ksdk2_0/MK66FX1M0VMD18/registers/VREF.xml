@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<regs:peripheral xmlns:regs="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd http://swtools.freescale.net/XSD/registers/4.0/regsPeripheral.xsd">
+  <register offset="0" width="8" name="TRM" description="VREF Trim Register">
+    <alias type="CMSIS" value="TRM"/>
+    <bit_field offset="0" width="6" name="TRIM" access="RW" reset_value="0" reset_mask="0" description="Trim bits">
+      <alias type="CMSIS" value="VREF_TRM_TRIM(x)"/>
+      <bit_field_value name="TRM_TRIM_0b000000" value="0b000000" description="Min"/>
+      <bit_field_value name="TRM_TRIM_0b111111" value="0b111111" description="Max"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="CHOPEN" access="RW" reset_value="0" description="Chop oscillator enable. When set, internal chopping operation is enabled and the internal analog offset will be minimized.">
+      <alias type="CMSIS" value="VREF_TRM_CHOPEN(x)"/>
+      <bit_field_value name="TRM_CHOPEN_0b0" value="0b0" description="Chop oscillator is disabled."/>
+      <bit_field_value name="TRM_CHOPEN_0b1" value="0b1" description="Chop oscillator is enabled."/>
+    </bit_field>
+    <reserved_bit_field offset="7" width="1" reset_value="0" reset_mask="0"/>
+  </register>
+  <register offset="0x1" width="8" name="SC" description="VREF Status and Control Register">
+    <alias type="CMSIS" value="SC"/>
+    <bit_field offset="0" width="2" name="MODE_LV" access="RW" reset_value="0" description="Buffer Mode selection">
+      <alias type="CMSIS" value="VREF_SC_MODE_LV(x)"/>
+      <bit_field_value name="SC_MODE_LV_0b00" value="0b00" description="Bandgap on only, for stabilization and startup"/>
+      <bit_field_value name="SC_MODE_LV_0b01" value="0b01" description="High power buffer mode enabled"/>
+      <bit_field_value name="SC_MODE_LV_0b10" value="0b10" description="Low-power buffer mode enabled"/>
+      <bit_field_value name="SC_MODE_LV_0b11" value="0b11" description="Reserved"/>
+    </bit_field>
+    <bit_field offset="2" width="1" name="VREFST" access="RO" reset_value="0" description="Internal Voltage Reference stable">
+      <alias type="CMSIS" value="VREF_SC_VREFST(x)"/>
+      <bit_field_value name="SC_VREFST_0b0" value="0b0" description="The module is disabled or not stable."/>
+      <bit_field_value name="SC_VREFST_0b1" value="0b1" description="The module is stable."/>
+    </bit_field>
+    <reserved_bit_field offset="3" width="1" reset_value="0"/>
+    <reserved_bit_field offset="4" width="1" reset_value="0"/>
+    <bit_field offset="5" width="1" name="ICOMPEN" access="RW" reset_value="0" description="Second order curvature compensation enable">
+      <alias type="CMSIS" value="VREF_SC_ICOMPEN(x)"/>
+      <bit_field_value name="SC_ICOMPEN_0b0" value="0b0" description="Disabled"/>
+      <bit_field_value name="SC_ICOMPEN_0b1" value="0b1" description="Enabled"/>
+    </bit_field>
+    <bit_field offset="6" width="1" name="REGEN" access="RW" reset_value="0" description="Regulator enable">
+      <alias type="CMSIS" value="VREF_SC_REGEN(x)"/>
+      <bit_field_value name="SC_REGEN_0b0" value="0b0" description="Internal 1.75 V regulator is disabled."/>
+      <bit_field_value name="SC_REGEN_0b1" value="0b1" description="Internal 1.75 V regulator is enabled."/>
+    </bit_field>
+    <bit_field offset="7" width="1" name="VREFEN" access="RW" reset_value="0" description="Internal Voltage Reference enable">
+      <alias type="CMSIS" value="VREF_SC_VREFEN(x)"/>
+      <bit_field_value name="SC_VREFEN_0b0" value="0b0" description="The module is disabled."/>
+      <bit_field_value name="SC_VREFEN_0b1" value="0b1" description="The module is enabled."/>
+    </bit_field>
+  </register>
+</regs:peripheral>
